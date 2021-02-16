@@ -33,7 +33,7 @@ namespace Allors.Database.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            var session = cycle.Session;
+            var transaction = cycle.Transaction;
             var validation = cycle.Validation;
 
             foreach (var @this in matches.Cast<WorkTask>())
@@ -49,12 +49,12 @@ namespace Allors.Database.Domain
 
                 if (!@this.ExistWorkEffortNumber && @this.ExistTakenBy)
                 {
-                    var year = @this.Session().Now().Year;
+                    var year = @this.Transaction().Now().Year;
                     @this.WorkEffortNumber = @this.TakenBy.NextWorkEffortNumber(year);
 
                     var fiscalYearInternalOrganisationSequenceNumbers = @this.TakenBy.FiscalYearsInternalOrganisationSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
                     var prefix = @this.TakenBy.WorkEffortSequence.IsEnforcedSequence ? @this.TakenBy.WorkEffortNumberPrefix : fiscalYearInternalOrganisationSequenceNumbers.WorkEffortNumberPrefix;
-                    @this.SortableWorkEffortNumber = @this.Session().GetSingleton().SortableNumber(prefix, @this.WorkEffortNumber, year.ToString());
+                    @this.SortableWorkEffortNumber = @this.Transaction().GetSingleton().SortableNumber(prefix, @this.WorkEffortNumber, year.ToString());
                 }
 
                 if (!@this.ExistExecutedBy && @this.ExistTakenBy)
@@ -88,7 +88,7 @@ namespace Allors.Database.Domain
                             }
                             else if (worker != null) // Sync a new WorkEffortPartyAssignment
                             {
-                                new WorkEffortPartyAssignmentBuilder(@this.Strategy.Session)
+                                new WorkEffortPartyAssignmentBuilder(@this.Strategy.Transaction)
                                     .WithAssignment(@this)
                                     .WithParty(worker)
                                     .WithFacility(facility)
@@ -128,12 +128,12 @@ namespace Allors.Database.Domain
 
                 if (@this.ExistActualStart && @this.WorkEffortState.IsCreated)
                 {
-                    @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Session).InProgress;
+                    @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Transaction).InProgress;
                 }
 
                 if (@this.WorkEffortState.IsFinished && @this.CanInvoice)
                 {
-                    @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Session).Completed;
+                    @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Transaction).Completed;
                 }
 
                 foreach (WorkEffortInventoryAssignment inventoryAssignment in @this.WorkEffortInventoryAssignmentsWhereAssignment)
@@ -177,7 +177,7 @@ namespace Allors.Database.Domain
 
                     if (adjustmentQuantity != 0)
                     {
-                        workEffortInventoryAssignment.AddInventoryItemTransaction(new InventoryItemTransactionBuilder(workEffortInventoryAssignment.Session())
+                        workEffortInventoryAssignment.AddInventoryItemTransaction(new InventoryItemTransactionBuilder(workEffortInventoryAssignment.Transaction())
                             .WithPart(inventoryItem.Part)
                             .WithFacility(inventoryItem.Facility)
                             .WithQuantity(adjustmentQuantity)

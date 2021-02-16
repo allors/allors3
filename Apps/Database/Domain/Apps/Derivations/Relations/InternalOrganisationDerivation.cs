@@ -35,55 +35,55 @@ namespace Allors.Database.Domain
                 var organisation = (Organisation)@this;
                 if (organisation.IsInternalOrganisation)
                 {
-                    if (!@this.ExistDefaultCollectionMethod && @this.Strategy.Session.Extent<PaymentMethod>().Count == 1)
+                    if (!@this.ExistDefaultCollectionMethod && @this.Strategy.Transaction.Extent<PaymentMethod>().Count == 1)
                     {
-                        @this.DefaultCollectionMethod = @this.Strategy.Session.Extent<PaymentMethod>().First;
+                        @this.DefaultCollectionMethod = @this.Strategy.Transaction.Extent<PaymentMethod>().First;
                     }
 
                     @this.DerivedActiveCollectionMethods = @this.AssignedActiveCollectionMethods;
                     @this.AddDerivedActiveCollectionMethod(@this.DefaultCollectionMethod);
 
-                    if (@this.InvoiceSequence != new InvoiceSequences(@this.Strategy.Session).RestartOnFiscalYear)
+                    if (@this.InvoiceSequence != new InvoiceSequences(@this.Strategy.Transaction).RestartOnFiscalYear)
                     {
                         if (!@this.ExistPurchaseInvoiceNumberCounter)
                         {
-                            @this.PurchaseInvoiceNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
+                            @this.PurchaseInvoiceNumberCounter = new CounterBuilder(@this.Strategy.Transaction).Build();
                         }
 
                         if (!@this.ExistPurchaseOrderNumberCounter)
                         {
-                            @this.PurchaseOrderNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
+                            @this.PurchaseOrderNumberCounter = new CounterBuilder(@this.Strategy.Transaction).Build();
                         }
                     }
 
-                    if (@this.RequestSequence != new RequestSequences(@this.Strategy.Session).RestartOnFiscalYear && !@this.ExistRequestNumberCounter)
+                    if (@this.RequestSequence != new RequestSequences(@this.Strategy.Transaction).RestartOnFiscalYear && !@this.ExistRequestNumberCounter)
                     {
-                        @this.RequestNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
+                        @this.RequestNumberCounter = new CounterBuilder(@this.Strategy.Transaction).Build();
                     }
 
-                    if (@this.QuoteSequence != new QuoteSequences(@this.Strategy.Session).RestartOnFiscalYear && !@this.ExistQuoteNumberCounter)
+                    if (@this.QuoteSequence != new QuoteSequences(@this.Strategy.Transaction).RestartOnFiscalYear && !@this.ExistQuoteNumberCounter)
                     {
-                        @this.QuoteNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
+                        @this.QuoteNumberCounter = new CounterBuilder(@this.Strategy.Transaction).Build();
                     }
 
-                    if (@this.WorkEffortSequence != new WorkEffortSequences(@this.Strategy.Session).RestartOnFiscalYear && !@this.ExistWorkEffortNumberCounter)
+                    if (@this.WorkEffortSequence != new WorkEffortSequences(@this.Strategy.Transaction).RestartOnFiscalYear && !@this.ExistWorkEffortNumberCounter)
                     {
-                        @this.WorkEffortNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
+                        @this.WorkEffortNumberCounter = new CounterBuilder(@this.Strategy.Transaction).Build();
                     }
 
-                    if (@this.PurchaseShipmentSequence != new PurchaseShipmentSequences(@this.Strategy.Session).RestartOnFiscalYear && !@this.ExistPurchaseShipmentNumberCounter)
+                    if (@this.PurchaseShipmentSequence != new PurchaseShipmentSequences(@this.Strategy.Transaction).RestartOnFiscalYear && !@this.ExistPurchaseShipmentNumberCounter)
                     {
-                        @this.PurchaseShipmentNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
+                        @this.PurchaseShipmentNumberCounter = new CounterBuilder(@this.Strategy.Transaction).Build();
                     }
 
-                    if (@this.CustomerReturnSequence != new CustomerReturnSequences(@this.Strategy.Session).RestartOnFiscalYear && !@this.ExistCustomerReturnNumberCounter)
+                    if (@this.CustomerReturnSequence != new CustomerReturnSequences(@this.Strategy.Transaction).RestartOnFiscalYear && !@this.ExistCustomerReturnNumberCounter)
                     {
-                        @this.CustomerReturnNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
+                        @this.CustomerReturnNumberCounter = new CounterBuilder(@this.Strategy.Transaction).Build();
                     }
 
-                    if (@this.IncomingTransferSequence != new IncomingTransferSequences(@this.Strategy.Session).RestartOnFiscalYear && !@this.ExistIncomingTransferNumberCounter)
+                    if (@this.IncomingTransferSequence != new IncomingTransferSequences(@this.Strategy.Transaction).RestartOnFiscalYear && !@this.ExistIncomingTransferNumberCounter)
                     {
-                        @this.IncomingTransferNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
+                        @this.IncomingTransferNumberCounter = new CounterBuilder(@this.Strategy.Transaction).Build();
                     }
                 }
             }

@@ -22,13 +22,13 @@ namespace Allors.Database.Data
 
         void IPredicateContainer.AddPredicate(IPredicate predicate) => this.Operand = predicate;
 
-        void IPredicate.Build(ISession session, IDictionary<string, string> parameters, Database.ICompositePredicate compositePredicate)
+        void IPredicate.Build(ITransaction transaction, IDictionary<string, string> parameters, Database.ICompositePredicate compositePredicate)
         {
             var not = compositePredicate.AddNot();
 
             if (this.Operand != null && !this.Operand.ShouldTreeShake(parameters))
             {
-                this.Operand?.Build(session, parameters, not);
+                this.Operand?.Build(transaction, parameters, not);
             }
         }
 

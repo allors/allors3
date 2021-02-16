@@ -7,9 +7,9 @@ namespace Allors.Database.Domain
 {
     public partial class Parties
     {
-        public static void Daily(ISession session)
+        public static void Daily(ITransaction transaction)
         {
-            var parties = new Parties(session).Extent();
+            var parties = new Parties(transaction).Extent();
 
             foreach (Party party in parties)
             {

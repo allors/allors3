@@ -9,7 +9,7 @@ namespace Allors.Database.Domain.Derivations.Default
 
     public class DomainDerivationCycle : IDomainDerivationCycle
     {
-        public ISession Session { get; internal set; }
+        public ITransaction Transaction { get; internal set; }
 
         public IChangeSet ChangeSet { get; internal set; }
 

@@ -15,19 +15,19 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void DeriveCatScope()
         {
-            var catalogue = new CatalogueBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var catalogue = new CatalogueBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            Assert.Equal(new Scopes(this.Session).Public, catalogue.CatScope);
+            Assert.Equal(new Scopes(this.Transaction).Public, catalogue.CatScope);
         }
 
         [Fact]
         public void DeriveCatalogueImage()
         {
-            var catalogue = new CatalogueBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var catalogue = new CatalogueBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            Assert.Equal(this.Session.GetSingleton().Settings.NoImageAvailableImage, catalogue.CatalogueImage);
+            Assert.Equal(this.Transaction.GetSingleton().Settings.NoImageAvailableImage, catalogue.CatalogueImage);
         }
     }
 
@@ -38,14 +38,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedLocalisedNamesDeriveName()
         {
-            var defaultLocale = this.Session.GetSingleton().DefaultLocale;
-            var localisedName = new LocalisedTextBuilder(this.Session).WithLocale(defaultLocale).WithText("defaultname").Build();
+            var defaultLocale = this.Transaction.GetSingleton().DefaultLocale;
+            var localisedName = new LocalisedTextBuilder(this.Transaction).WithLocale(defaultLocale).WithText("defaultname").Build();
 
-            var catalogue = new CatalogueBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var catalogue = new CatalogueBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             catalogue.AddLocalisedName(localisedName);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(catalogue.Name, localisedName.Text);
         }
@@ -53,14 +53,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedLocalisedTextTextDeriveName()
         {
-            var defaultLocale = this.Session.GetSingleton().DefaultLocale;
-            var localisedName = new LocalisedTextBuilder(this.Session).WithLocale(defaultLocale).WithText("defaultname").Build();
+            var defaultLocale = this.Transaction.GetSingleton().DefaultLocale;
+            var localisedName = new LocalisedTextBuilder(this.Transaction).WithLocale(defaultLocale).WithText("defaultname").Build();
 
-            var catalogue = new CatalogueBuilder(this.Session).WithLocalisedName(localisedName).Build();
-            this.Session.Derive(false);
+            var catalogue = new CatalogueBuilder(this.Transaction).WithLocalisedName(localisedName).Build();
+            this.Transaction.Derive(false);
 
             localisedName.Text = "changed";
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(catalogue.Name, localisedName.Text);
         }
@@ -68,14 +68,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedLocalisedDescriptionsDeriveDescription()
         {
-            var defaultLocale = this.Session.GetSingleton().DefaultLocale;
-            var localisedDesc = new LocalisedTextBuilder(this.Session).WithLocale(defaultLocale).WithText("defaultdesc").Build();
+            var defaultLocale = this.Transaction.GetSingleton().DefaultLocale;
+            var localisedDesc = new LocalisedTextBuilder(this.Transaction).WithLocale(defaultLocale).WithText("defaultdesc").Build();
 
-            var catalogue = new CatalogueBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var catalogue = new CatalogueBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             catalogue.AddLocalisedDescription(localisedDesc);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(catalogue.Description, localisedDesc.Text);
         }
@@ -83,14 +83,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedLocalisedTextTextDeriveDescription()
         {
-            var defaultLocale = this.Session.GetSingleton().DefaultLocale;
-            var localisedDesc = new LocalisedTextBuilder(this.Session).WithLocale(defaultLocale).WithText("defaultdesc").Build();
+            var defaultLocale = this.Transaction.GetSingleton().DefaultLocale;
+            var localisedDesc = new LocalisedTextBuilder(this.Transaction).WithLocale(defaultLocale).WithText("defaultdesc").Build();
 
-            var catalogue = new CatalogueBuilder(this.Session).WithLocalisedDescription(localisedDesc).Build();
-            this.Session.Derive(false);
+            var catalogue = new CatalogueBuilder(this.Transaction).WithLocalisedDescription(localisedDesc).Build();
+            this.Transaction.Derive(false);
 
             localisedDesc.Text = "changed";
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(catalogue.Description, localisedDesc.Text);
         }
@@ -98,13 +98,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedCatalogueImageDeriveCatalogueImage()
         {
-            var noImageAvailableImage = this.Session.GetSingleton().Settings.NoImageAvailableImage;
+            var noImageAvailableImage = this.Transaction.GetSingleton().Settings.NoImageAvailableImage;
 
-            var catalogue = new CatalogueBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var catalogue = new CatalogueBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             catalogue.RemoveCatalogueImage();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(noImageAvailableImage, catalogue.CatalogueImage);
         }

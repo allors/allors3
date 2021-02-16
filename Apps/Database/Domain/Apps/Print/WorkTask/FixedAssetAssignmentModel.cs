@@ -11,8 +11,8 @@ namespace Allors.Database.Domain.Print.WorkTaskModel
     {
         public FixedAssetAssignmentModel(WorkEffortFixedAssetAssignment assignment)
         {
-            var session = assignment.Strategy.Session;
-            var m = session.Database.Context().M;
+            var transaction = assignment.Strategy.Transaction;
+            var m = transaction.Database.Context().M;
 
             this.Name = assignment.FixedAsset?.Name;
             this.Comment = assignment.FixedAsset?.Comment?.Split('\n');
@@ -25,7 +25,7 @@ namespace Allors.Database.Domain.Print.WorkTaskModel
                 this.Brand = serialisedItem.PartWhereSerialisedItem?.Brand?.Name;
                 this.Model = serialisedItem.PartWhereSerialisedItem?.Model?.Name;
 
-                var hoursType = new SerialisedItemCharacteristicTypes(session).FindBy(m.SerialisedItemCharacteristicType.Name, "Operating Hours");
+                var hoursType = new SerialisedItemCharacteristicTypes(transaction).FindBy(m.SerialisedItemCharacteristicType.Name, "Operating Hours");
                 var hoursCharacteristic = serialisedItem.SerialisedItemCharacteristics.FirstOrDefault(v => v.SerialisedItemCharacteristicType.Equals(hoursType));
                 this.Hours = $"{hoursCharacteristic?.Value} {hoursType?.UnitOfMeasure?.Abbreviation}";
             }

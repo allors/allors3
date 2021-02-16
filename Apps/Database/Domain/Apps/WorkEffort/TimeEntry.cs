@@ -14,9 +14,9 @@ namespace Allors.Database.Domain
         {
             get
             {
-                var frequencies = new TimeFrequencies(this.Strategy.Session);
+                var frequencies = new TimeFrequencies(this.Strategy.Transaction);
 
-                var through = this.ExistThroughDate ? this.ThroughDate : this.Session().Now();
+                var through = this.ExistThroughDate ? this.ThroughDate : this.Transaction().Now();
                 var minutes = (decimal)(through - this.FromDate).Value.TotalMinutes;
                 var hours = (decimal)frequencies.Minute.ConvertToFrequency((decimal)minutes, frequencies.Hour);
 
@@ -30,12 +30,12 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistBillingFrequency)
             {
-                this.BillingFrequency = new TimeFrequencies(this.Strategy.Session).Hour;
+                this.BillingFrequency = new TimeFrequencies(this.Strategy.Transaction).Hour;
             }
 
             if (!this.ExistTimeFrequency)
             {
-                this.TimeFrequency = new TimeFrequencies(this.Strategy.Session).Hour;
+                this.TimeFrequency = new TimeFrequencies(this.Strategy.Transaction).Hour;
             }
 
             if (!this.ExistIsBillable)
@@ -50,7 +50,7 @@ namespace Allors.Database.Domain
 
             if (!this.ExistRateType)
             {
-                this.RateType = useInternalRate ? new RateTypes(this.Session()).InternalRate : new RateTypes(this.Session()).StandardRate;
+                this.RateType = useInternalRate ? new RateTypes(this.Transaction()).InternalRate : new RateTypes(this.Transaction()).StandardRate;
             }
         }
         public void AppsOnPostDerive(ObjectOnPostDerive method)

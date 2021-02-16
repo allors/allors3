@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
 
         public InventoryStrategy Standard => this.Cache[StandardId];
 
-        private UniquelyIdentifiableCache<InventoryStrategy> Cache => this.cache ??= new UniquelyIdentifiableCache<InventoryStrategy>(this.Session);
+        private UniquelyIdentifiableCache<InventoryStrategy> Cache => this.cache ??= new UniquelyIdentifiableCache<InventoryStrategy>(this.Transaction);
 
         protected override void AppsPrepare(Setup setup)
         {
@@ -25,8 +25,8 @@ namespace Allors.Database.Domain
 
         protected override void AppsSetup(Setup setup)
         {
-            var nonSerialisedStates = new NonSerialisedInventoryItemStates(this.Session);
-            var serialisedStates = new SerialisedInventoryItemStates(this.Session);
+            var nonSerialisedStates = new NonSerialisedInventoryItemStates(this.Transaction);
+            var serialisedStates = new SerialisedInventoryItemStates(this.Transaction);
 
             var merge = this.Cache.Merger().Action();
 

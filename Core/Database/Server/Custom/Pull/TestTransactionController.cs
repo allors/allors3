@@ -1,4 +1,4 @@
-// <copyright file="TestSessionController.cs" company="Allors bvba">
+// <copyright file="TestTransactionController.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -11,16 +11,16 @@ namespace Allors.Server.Controllers
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
-    public class TestSessionController : Controller
+    public class TestTransactionController : Controller
     {
-        public TestSessionController(ISessionService sessionService, IWorkspaceService workspaceService)
+        public TestTransactionController(ITransactionService transactionService, IWorkspaceService workspaceService)
         {
             this.WorkspaceService = workspaceService;
-            this.Session = sessionService.Session;
-            this.TreeCache = this.Session.Database.Context().TreeCache;
+            this.Transaction = transactionService.Transaction;
+            this.TreeCache = this.Transaction.Database.Context().TreeCache;
         }
 
-        private ISession Session { get; }
+        private ITransaction Transaction { get; }
 
         public IWorkspaceService WorkspaceService { get; }
 
@@ -31,7 +31,7 @@ namespace Allors.Server.Controllers
         [Authorize]
         public IActionResult UserName()
         {
-            var user = this.Session.Context().User;
+            var user = this.Transaction.Context().User;
             var result = user?.UserName;
             return this.Content(result);
         }

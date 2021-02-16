@@ -24,7 +24,7 @@ namespace Allors.Database.Domain
 
         public PurchaseOrderItemShipmentState Na => this.Cache[NaId];
 
-        private UniquelyIdentifiableCache<PurchaseOrderItemShipmentState> Cache => this.cache ??= new UniquelyIdentifiableCache<PurchaseOrderItemShipmentState>(this.Session);
+        private UniquelyIdentifiableCache<PurchaseOrderItemShipmentState> Cache => this.cache ??= new UniquelyIdentifiableCache<PurchaseOrderItemShipmentState>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

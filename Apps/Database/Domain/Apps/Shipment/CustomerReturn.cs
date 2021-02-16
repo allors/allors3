@@ -18,18 +18,18 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistShipmentState)
             {
-                this.ShipmentState = new ShipmentStates(this.Strategy.Session).Created;
+                this.ShipmentState = new ShipmentStates(this.Strategy.Transaction).Created;
             }
 
             if (!this.ExistEstimatedArrivalDate)
             {
-                this.EstimatedArrivalDate = this.Session().Now().Date;
+                this.EstimatedArrivalDate = this.Transaction().Now().Date;
             }
         }
 
         public void AppsOnInit(ObjectOnInit method)
         {
-            var internalOrganisations = new Organisations(this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
+            var internalOrganisations = new Organisations(this.Strategy.Transaction).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
 
             if (!this.ExistShipToParty && internalOrganisations.Count() == 1)
             {

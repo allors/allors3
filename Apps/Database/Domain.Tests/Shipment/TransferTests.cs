@@ -15,10 +15,10 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipToPartyDeriveShipToAddress()
         {
-            var shipment = new TransferBuilder(this.Session)
+            var shipment = new TransferBuilder(this.Transaction)
                 .WithShipToParty(this.InternalOrganisation.ActiveCustomers.First)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(this.InternalOrganisation.ActiveCustomers.First.ShippingAddress, shipment.ShipToAddress);
         }
@@ -26,13 +26,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipToAddressDeriveShipToAddress()
         {
-            var shipment = new TransferBuilder(this.Session)
+            var shipment = new TransferBuilder(this.Transaction)
                 .WithShipToParty(this.InternalOrganisation.ActiveCustomers.First)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             shipment.RemoveShipToAddress();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(this.InternalOrganisation.ActiveCustomers.First.ShippingAddress, shipment.ShipToAddress);
         }
@@ -40,10 +40,10 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipFromPartyDeriveShipFromAddress()
         {
-            var shipment = new TransferBuilder(this.Session)
+            var shipment = new TransferBuilder(this.Transaction)
                 .WithShipFromParty(this.InternalOrganisation)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(this.InternalOrganisation.ShippingAddress, shipment.ShipFromAddress);
         }
@@ -51,13 +51,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipFromAddressDeriveShipFromAddress()
         {
-            var shipment = new TransferBuilder(this.Session)
+            var shipment = new TransferBuilder(this.Transaction)
                 .WithShipFromParty(this.InternalOrganisation)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             shipment.RemoveShipFromAddress();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(this.InternalOrganisation.ShippingAddress, shipment.ShipFromAddress);
         }

@@ -10,12 +10,12 @@ namespace Allors.Database.Domain
 
     public class TestPopulation
     {
-        private readonly ISession session;
+        private readonly ITransaction transaction;
         private readonly string population;
 
-        public TestPopulation(ISession session, string population)
+        public TestPopulation(ITransaction transaction, string population)
         {
-            this.session = session;
+            this.transaction = transaction;
             this.population = population;
         }
 
@@ -29,22 +29,22 @@ namespace Allors.Database.Domain
 
         private void Full()
         {
-            new PersonBuilder(this.session).WithUserName("noacl").WithFirstName("no").WithLastName("acl").Build();
+            new PersonBuilder(this.transaction).WithUserName("noacl").WithFirstName("no").WithLastName("acl").Build();
             
-            var noperm = new PersonBuilder(this.session).WithUserName("noperm").WithFirstName("no").WithLastName("perm").Build();
-            var emptyRole = new RoleBuilder(this.session).WithName("Empty").Build();
-            var defaultSecurityToken = new SecurityTokens(this.session).DefaultSecurityToken;
+            var noperm = new PersonBuilder(this.transaction).WithUserName("noperm").WithFirstName("no").WithLastName("perm").Build();
+            var emptyRole = new RoleBuilder(this.transaction).WithName("Empty").Build();
+            var defaultSecurityToken = new SecurityTokens(this.transaction).DefaultSecurityToken;
 
-            var acl = new AccessControlBuilder(this.session).WithRole(emptyRole).WithSubject(noperm).WithSecurityToken(defaultSecurityToken).Build();
+            var acl = new AccessControlBuilder(this.transaction).WithRole(emptyRole).WithSubject(noperm).WithSecurityToken(defaultSecurityToken).Build();
 
-            var c1A = new C1Builder(this.session).WithName("c1A").Build();
-            var c1B = new C1Builder(this.session).WithName("c1B").Build();
-            var c1C = new C1Builder(this.session).WithName("c1C").Build();
-            var c1D = new C1Builder(this.session).WithName("c1D").Build();
-            var c2A = new C2Builder(this.session).WithName("c2A").Build();
-            var c2B = new C2Builder(this.session).WithName("c2B").Build();
-            var c2C = new C2Builder(this.session).WithName("c2C").Build();
-            var c2D = new C2Builder(this.session).WithName("c2D").Build();
+            var c1A = new C1Builder(this.transaction).WithName("c1A").Build();
+            var c1B = new C1Builder(this.transaction).WithName("c1B").Build();
+            var c1C = new C1Builder(this.transaction).WithName("c1C").Build();
+            var c1D = new C1Builder(this.transaction).WithName("c1D").Build();
+            var c2A = new C2Builder(this.transaction).WithName("c2A").Build();
+            var c2B = new C2Builder(this.transaction).WithName("c2B").Build();
+            var c2C = new C2Builder(this.transaction).WithName("c2C").Build();
+            var c2D = new C2Builder(this.transaction).WithName("c2D").Build();
 
             // class
             c1B.C1AllorsString = "ᴀbra";

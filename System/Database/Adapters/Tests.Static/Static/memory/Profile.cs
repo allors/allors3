@@ -18,7 +18,7 @@ namespace Allors.Database.Adapters.Memory
                 var markers = new List<Action>
                 {
                     () => { },
-                    () => this.Session.Commit(),
+                    () => this.Transaction.Commit(),
                 };
 
                 if (Settings.ExtraMarkers)
@@ -26,7 +26,7 @@ namespace Allors.Database.Adapters.Memory
                     markers.Add(
                         () =>
                         {
-                            this.Session.Checkpoint();
+                            this.Transaction.Checkpoint();
                         });
                 }
 

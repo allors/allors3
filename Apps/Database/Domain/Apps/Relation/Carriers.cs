@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
 
         public Carrier Customer => this.Cache[CustomerId];
 
-        private UniquelyIdentifiableCache<Carrier> Cache => this.cache ??= new UniquelyIdentifiableCache<Carrier>(this.Session);
+        private UniquelyIdentifiableCache<Carrier> Cache => this.cache ??= new UniquelyIdentifiableCache<Carrier>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

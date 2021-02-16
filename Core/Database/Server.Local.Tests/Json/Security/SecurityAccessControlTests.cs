@@ -19,8 +19,8 @@ namespace Tests
         public void SameWorkspace()
         {
             var workspaceName = "X";
-            var meta = this.Session.Database.Context().MetaCache;
-            var accessControl = new AccessControls(this.Session).Administrator;
+            var meta = this.Transaction.Database.Context().MetaCache;
+            var accessControl = new AccessControls(this.Transaction).Administrator;
 
             this.SetUser("jane@example.com");
 
@@ -29,7 +29,7 @@ namespace Tests
                 AccessControls = new[] { $"{accessControl.Id}" },
             };
 
-            var api = new Api(this.Session, workspaceName);
+            var api = new Api(this.Transaction, workspaceName);
             var securityResponse = api.Security(securityRequest);
 
             Assert.Single(securityResponse.AccessControls);
@@ -40,7 +40,7 @@ namespace Tests
             Assert.Equal($"{accessControl.Strategy.ObjectVersion}", securityResponseAccessControl.Version);
 
             var permissions = securityResponseAccessControl.PermissionIds.Split(",")
-                .Select(v => this.Session.Instantiate(v))
+                .Select(v => this.Transaction.Instantiate(v))
                 .Cast<Permission>()
                 .Where(v => v != null)
                 .ToArray();
@@ -61,8 +61,8 @@ namespace Tests
         public void NoneWorkspace()
         {
             var workspaceName = "None";
-            var metaCache = this.Session.Database.Context().MetaCache;
-            var accessControl = new AccessControls(this.Session).Administrator;
+            var metaCache = this.Transaction.Database.Context().MetaCache;
+            var accessControl = new AccessControls(this.Transaction).Administrator;
 
             this.SetUser("jane@example.com");
 
@@ -71,7 +71,7 @@ namespace Tests
                 AccessControls = new[] { $"{accessControl.Id}" },
             };
 
-            var api = new Api(this.Session, workspaceName);
+            var api = new Api(this.Transaction, workspaceName);
             var securityResponse = api.Security(securityRequest);
 
             Assert.Single(securityResponse.AccessControls);
@@ -82,7 +82,7 @@ namespace Tests
             Assert.Equal($"{accessControl.Strategy.ObjectVersion}", securityResponseAccessControl.Version);
 
             var permissions = securityResponseAccessControl.PermissionIds.Split(",")
-                .Select(v => this.Session.Instantiate(v))
+                .Select(v => this.Transaction.Instantiate(v))
                 .Cast<Permission>()
                 .Where(v => v != null)
                 .ToArray();

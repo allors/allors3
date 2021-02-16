@@ -29,8 +29,8 @@ namespace Allors.Database.Domain
                 {
                     @this.PurchasePrice = @this.PurchaseInvoiceItemsWhereSerialisedItem
                         .LastOrDefault(v => v.ExistInvoiceWhereValidInvoiceItem
-                                            && (v.InvoiceItemType.Equals(new InvoiceItemTypes(@this.Session()).PartItem)
-                                                || v.InvoiceItemType.Equals(new InvoiceItemTypes(@this.Session()).ProductItem)))?
+                                            && (v.InvoiceItemType.Equals(new InvoiceItemTypes(@this.Transaction()).PartItem)
+                                                || v.InvoiceItemType.Equals(new InvoiceItemTypes(@this.Transaction()).ProductItem)))?
                         .UnitPrice ?? 0M;
 
                     @this.RemoveAssignedPurchasePrice();

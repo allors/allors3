@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
 
         private UniquelyIdentifiableCache<AutomatedAgent> cache;
 
-        public UniquelyIdentifiableCache<AutomatedAgent> Cache => this.cache ??= new UniquelyIdentifiableCache<AutomatedAgent>(this.Session);
+        public UniquelyIdentifiableCache<AutomatedAgent> Cache => this.cache ??= new UniquelyIdentifiableCache<AutomatedAgent>(this.Transaction);
 
         public AutomatedAgent Guest => this.Cache[GuestId];
 
@@ -34,7 +34,7 @@ namespace Allors.Database.Domain
             var guest = merge(GuestId, v => v.UserName = "Guest");
             merge(SystemId, v => v.UserName = "System");
 
-            var userGroups = new UserGroups(this.Session);
+            var userGroups = new UserGroups(this.Transaction);
             userGroups.Guests.AddMember(guest);
         }
     }

@@ -11,8 +11,8 @@ namespace Allors.Database.Domain
     public class UniquelyIdentifiableCache<TObject> : Cache<Guid, TObject>
         where TObject : class, UniquelyIdentifiable
     {
-        public UniquelyIdentifiableCache(ISession session)
-            : base(session, session.Database.Context().M.UniquelyIdentifiable.UniqueId)
+        public UniquelyIdentifiableCache(ITransaction transaction)
+            : base(transaction, transaction.Database.Context().M.UniquelyIdentifiable.UniqueId)
         {
         }
     }

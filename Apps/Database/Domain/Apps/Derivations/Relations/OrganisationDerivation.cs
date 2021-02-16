@@ -41,20 +41,20 @@ namespace Allors.Database.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            var session = cycle.Session;
+            var transaction = cycle.Transaction;
 
             foreach (var @this in matches.Cast<Organisation>())
             {
-                var now = session.Now();
+                var now = transaction.Now();
 
-                session.Prefetch(@this.PrefetchPolicy);
+                transaction.Prefetch(@this.PrefetchPolicy);
 
                 @this.PartyName = @this.Name;
 
                 if (!@this.ExistContactsUserGroup)
                 {
                     var customerContactGroupName = $"Customer contacts at {@this.Name} ({@this.UniqueId})";
-                    @this.ContactsUserGroup = new UserGroupBuilder(@this.Strategy.Session).WithName(customerContactGroupName).Build();
+                    @this.ContactsUserGroup = new UserGroupBuilder(@this.Strategy.Transaction).WithName(customerContactGroupName).Build();
                 }
 
                 @this.DeriveRelationships();

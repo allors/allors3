@@ -51,7 +51,7 @@ namespace Tests.Workspace.Direct
 
         public async Task InitializeAsync()
         {
-            using var session = this.Database.CreateSession();
+            using var session = this.Database.CreateTransaction();
             new Setup(session, new Config()).Apply();
 
             var administrator = new PersonBuilder(session).WithUserName("administrator").Build();
@@ -76,7 +76,7 @@ namespace Tests.Workspace.Direct
 
         public async Task Login(string user)
         {
-            using var session = this.Database.CreateSession();
+            using var session = this.Database.CreateTransaction();
             var administrator = session.Instantiate(this.administratorId) as Person;
             session.Context().User = administrator;
         }

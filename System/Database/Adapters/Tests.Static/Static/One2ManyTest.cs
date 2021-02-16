@@ -19,7 +19,7 @@ namespace Allors.Database.Adapters
     {
         protected abstract IProfile Profile { get; }
 
-        protected ISession Session => this.Profile.Session;
+        protected ITransaction Transaction => this.Profile.Transaction;
 
         protected Action[] Markers => this.Profile.Markers;
 
@@ -33,19 +33,19 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
                     for (var i = 0; i < Settings.NumberOfRuns; i++)
                     {
-                        var from = C1.Create(this.Session);
-                        var fromAnother = C1.Create(this.Session);
+                        var from = C1.Create(this.Transaction);
+                        var fromAnother = C1.Create(this.Transaction);
 
-                        var to1 = C1.Create(this.Session);
-                        var to2 = C1.Create(this.Session);
-                        var to3 = C1.Create(this.Session);
-                        var to4 = C1.Create(this.Session);
+                        var to1 = C1.Create(this.Transaction);
+                        var to2 = C1.Create(this.Transaction);
+                        var to3 = C1.Create(this.Transaction);
+                        var to4 = C1.Create(this.Transaction);
 
                         C1[] to1Array = { to1 };
                         C1[] to2Array = { to2 };
@@ -592,36 +592,36 @@ namespace Allors.Database.Adapters
                         Assert.Contains(to2, from.C1C1one2manies);
 
                         // Remove and Add
-                        from = C1.Create(this.Session);
-                        var to = C1.Create(this.Session);
+                        from = C1.Create(this.Transaction);
+                        var to = C1.Create(this.Transaction);
 
                         from.AddC1C1one2many(to);
 
-                        this.Session.Commit();
+                        this.Transaction.Commit();
 
                         from.RemoveC1C1one2many(to);
                         from.AddC1C1one2many(to);
 
-                        this.Session.Commit();
+                        this.Transaction.Commit();
 
                         // Add and Remove
-                        from = C1.Create(this.Session);
-                        to1 = C1.Create(this.Session);
-                        to2 = C1.Create(this.Session);
+                        from = C1.Create(this.Transaction);
+                        to1 = C1.Create(this.Transaction);
+                        to2 = C1.Create(this.Transaction);
 
                         from.AddC1C1one2many(to1);
 
-                        this.Session.Commit();
+                        this.Transaction.Commit();
 
                         from.AddC1C1one2many(to2);
                         from.RemoveC1C1one2many(to2);
 
-                        this.Session.Commit();
+                        this.Transaction.Commit();
 
                         // From - Middle - To
-                        from = C1.Create(this.Session);
-                        var middle = C1.Create(this.Session);
-                        to = C1.Create(this.Session);
+                        from = C1.Create(this.Transaction);
+                        var middle = C1.Create(this.Transaction);
+                        to = C1.Create(this.Transaction);
 
                         from.AddC1C1one2many(middle);
                         middle.AddC1C1one2many(to);
@@ -632,7 +632,7 @@ namespace Allors.Database.Adapters
                         Assert.False(middle.ExistC1C1one2manies);
 
                         // Very Big Array
-                        var bigArray = C1.Create(this.Session, Settings.LargeArraySize);
+                        var bigArray = C1.Create(this.Transaction, Settings.LargeArraySize);
                         from.C1C1one2manies = bigArray;
                         C1[] getBigArray = from.C1C1one2manies;
 
@@ -645,7 +645,7 @@ namespace Allors.Database.Adapters
                             Assert.Contains(bigArrayObject, objects);
                         }
 
-                        from = C1.Create(this.Session);
+                        from = C1.Create(this.Transaction);
 
                         from.Strategy.SetRole(m.C1.C1C1one2manies, to1Array);
                         from.Strategy.SetRole(m.C1.C1C1one2manies, to1Array);
@@ -656,8 +656,8 @@ namespace Allors.Database.Adapters
                         Assert.Equal(from, to1Array[0].C1WhereC1C1one2many);
 
                         // Extent.ToArray()
-                        from = C1.Create(this.Session);
-                        to1 = C1.Create(this.Session);
+                        from = C1.Create(this.Transaction);
+                        to1 = C1.Create(this.Transaction);
 
                         from.AddC1C1one2many(to1);
 
@@ -666,8 +666,8 @@ namespace Allors.Database.Adapters
                         Assert.Equal(to1, from.Strategy.GetCompositeRoles(m.C1.C1C1one2manies).ToArray()[0]);
 
                         // Extent<T>.ToArray()
-                        from = C1.Create(this.Session);
-                        to1 = C1.Create(this.Session);
+                        from = C1.Create(this.Transaction);
+                        to1 = C1.Create(this.Transaction);
 
                         from.AddC1C1one2many(to1);
 
@@ -685,17 +685,17 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
-                    var from = C1.Create(this.Session);
-                    var fromAnother = C1.Create(this.Session);
+                    var from = C1.Create(this.Transaction);
+                    var fromAnother = C1.Create(this.Transaction);
 
-                    var to1 = C2.Create(this.Session);
-                    var to2 = C2.Create(this.Session);
-                    var to3 = C2.Create(this.Session);
-                    var to4 = C2.Create(this.Session);
+                    var to1 = C2.Create(this.Transaction);
+                    var to2 = C2.Create(this.Transaction);
+                    var to3 = C2.Create(this.Transaction);
+                    var to4 = C2.Create(this.Transaction);
 
                     mark();
 
@@ -975,7 +975,7 @@ namespace Allors.Database.Adapters
                     Assert.Empty(from.C1C2one2manies);
 
                     // Very Big Array
-                    var bigArray = C2.Create(this.Session, Settings.LargeArraySize);
+                    var bigArray = C2.Create(this.Transaction, Settings.LargeArraySize);
                     from.C1C2one2manies = bigArray;
                     C2[] getBigArray = from.C1C2one2manies;
 
@@ -989,8 +989,8 @@ namespace Allors.Database.Adapters
                     }
 
                     // Extent.ToArray()
-                    from = C1.Create(this.Session);
-                    to1 = C2.Create(this.Session);
+                    from = C1.Create(this.Transaction);
+                    to1 = C2.Create(this.Transaction);
 
                     from.AddC1C2one2many(to1);
 
@@ -999,8 +999,8 @@ namespace Allors.Database.Adapters
                     Assert.Equal(to1, from.Strategy.GetCompositeRoles(m.C1.C1C2one2manies).ToArray()[0]);
 
                     // Extent<T>.ToArray()
-                    from = C1.Create(this.Session);
-                    to1 = C2.Create(this.Session);
+                    from = C1.Create(this.Transaction);
+                    to1 = C2.Create(this.Transaction);
 
                     from.AddC1C2one2many(to1);
 
@@ -1018,17 +1018,17 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
-                    var from = C1.Create(this.Session);
-                    var fromAnother = C1.Create(this.Session);
+                    var from = C1.Create(this.Transaction);
+                    var fromAnother = C1.Create(this.Transaction);
 
-                    var to1 = C1.Create(this.Session);
-                    var to2 = C1.Create(this.Session);
-                    var to3 = C1.Create(this.Session);
-                    var to4 = C1.Create(this.Session);
+                    var to1 = C1.Create(this.Transaction);
+                    var to2 = C1.Create(this.Transaction);
+                    var to3 = C1.Create(this.Transaction);
+                    var to4 = C1.Create(this.Transaction);
 
                     mark();
 
@@ -1308,7 +1308,7 @@ namespace Allors.Database.Adapters
                     Assert.Empty(from.C1I1one2manies);
 
                     // Very Big Array
-                    var bigArray = C1.Create(this.Session, Settings.LargeArraySize);
+                    var bigArray = C1.Create(this.Transaction, Settings.LargeArraySize);
                     from.C1I1one2manies = bigArray;
                     I1[] getBigArray = from.C1I1one2manies;
 
@@ -1323,8 +1323,8 @@ namespace Allors.Database.Adapters
                     }
 
                     // Extent.ToArray()
-                    from = C1.Create(this.Session);
-                    to1 = C1.Create(this.Session);
+                    from = C1.Create(this.Transaction);
+                    to1 = C1.Create(this.Transaction);
 
                     from.AddC1I1one2many(to1);
 
@@ -1333,8 +1333,8 @@ namespace Allors.Database.Adapters
                     Assert.Equal(to1, from.Strategy.GetCompositeRoles(m.C1.C1I1one2manies).ToArray()[0]);
 
                     // Extent<T>.ToArray()
-                    from = C1.Create(this.Session);
-                    to1 = C1.Create(this.Session);
+                    from = C1.Create(this.Transaction);
+                    to1 = C1.Create(this.Transaction);
 
                     from.AddC1I1one2many(to1);
 
@@ -1352,17 +1352,17 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
-                    var from = C1.Create(this.Session);
-                    var fromAnother = C1.Create(this.Session);
+                    var from = C1.Create(this.Transaction);
+                    var fromAnother = C1.Create(this.Transaction);
 
-                    var to1 = C2.Create(this.Session);
-                    var to2 = C2.Create(this.Session);
-                    var to3 = C2.Create(this.Session);
-                    var to4 = C2.Create(this.Session);
+                    var to1 = C2.Create(this.Transaction);
+                    var to2 = C2.Create(this.Transaction);
+                    var to3 = C2.Create(this.Transaction);
+                    var to4 = C2.Create(this.Transaction);
 
                     // To 0-4-0
                     mark();
@@ -1624,7 +1624,7 @@ namespace Allors.Database.Adapters
                     Assert.Empty(from.C1I2one2manies);
 
                     // Very Big Array
-                    var bigArray = C2.Create(this.Session, Settings.LargeArraySize);
+                    var bigArray = C2.Create(this.Transaction, Settings.LargeArraySize);
                     from.C1I2one2manies = bigArray;
                     I2[] getBigArray = from.C1I2one2manies;
 
@@ -1639,8 +1639,8 @@ namespace Allors.Database.Adapters
                     }
 
                     // Extent.ToArray()
-                    from = C1.Create(this.Session);
-                    to1 = C2.Create(this.Session);
+                    from = C1.Create(this.Transaction);
+                    to1 = C2.Create(this.Transaction);
 
                     from.AddC1I2one2many(to1);
 
@@ -1649,8 +1649,8 @@ namespace Allors.Database.Adapters
                     Assert.Equal(to1, from.Strategy.GetCompositeRoles(m.C1.C1I2one2manies).ToArray()[0]);
 
                     // Extent<T>.ToArray()
-                    from = C1.Create(this.Session);
-                    to1 = C2.Create(this.Session);
+                    from = C1.Create(this.Transaction);
+                    to1 = C2.Create(this.Transaction);
 
                     from.AddC1I2one2many(to1);
 
@@ -1668,17 +1668,17 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
-                    var from = C3.Create(this.Session);
-                    var fromAnother = C3.Create(this.Session);
+                    var from = C3.Create(this.Transaction);
+                    var fromAnother = C3.Create(this.Transaction);
 
-                    var to1 = C4.Create(this.Session);
-                    var to2 = C4.Create(this.Session);
-                    var to3 = C4.Create(this.Session);
-                    var to4 = C4.Create(this.Session);
+                    var to1 = C4.Create(this.Transaction);
+                    var to2 = C4.Create(this.Transaction);
+                    var to3 = C4.Create(this.Transaction);
+                    var to4 = C4.Create(this.Transaction);
 
                     // To 0-4-0
                     mark();
@@ -1939,7 +1939,7 @@ namespace Allors.Database.Adapters
                     Assert.Empty(from.C3C4one2manies);
 
                     // Very Big Array
-                    var bigArray = C4.Create(this.Session, Settings.LargeArraySize);
+                    var bigArray = C4.Create(this.Transaction, Settings.LargeArraySize);
                     from.C3C4one2manies = bigArray;
                     C4[] getBigArray = from.C3C4one2manies;
 
@@ -1954,8 +1954,8 @@ namespace Allors.Database.Adapters
                     }
 
                     // Extent.ToArray()
-                    from = C3.Create(this.Session);
-                    to1 = C4.Create(this.Session);
+                    from = C3.Create(this.Transaction);
+                    to1 = C4.Create(this.Transaction);
 
                     from.AddC3C4one2many(to1);
 
@@ -1964,8 +1964,8 @@ namespace Allors.Database.Adapters
                     Assert.Equal(to1, from.Strategy.GetCompositeRoles(m.C3.C3C4one2manies).ToArray()[0]);
 
                     // Extent<T>.ToArray()
-                    from = C3.Create(this.Session);
-                    to1 = C4.Create(this.Session);
+                    from = C3.Create(this.Transaction);
+                    to1 = C4.Create(this.Transaction);
 
                     from.AddC3C4one2many(to1);
 
@@ -1983,19 +1983,19 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
                     for (var i = 0; i < Settings.NumberOfRuns; i++)
                     {
-                        var from = C1.Create(this.Session);
-                        var fromAnother = C1.Create(this.Session);
+                        var from = C1.Create(this.Transaction);
+                        var fromAnother = C1.Create(this.Transaction);
 
-                        var to1 = C1.Create(this.Session);
-                        var to2 = C1.Create(this.Session);
-                        var to3 = C2.Create(this.Session);
-                        var to4 = C2.Create(this.Session);
+                        var to1 = C1.Create(this.Transaction);
+                        var to2 = C1.Create(this.Transaction);
+                        var to3 = C2.Create(this.Transaction);
+                        var to4 = C2.Create(this.Transaction);
 
                         // To 0-4-0
                         // Get
@@ -2496,7 +2496,7 @@ namespace Allors.Database.Adapters
                         Assert.Empty(from.I1I12one2manies);
 
                         // Very Big Array
-                        var bigArray = C2.Create(this.Session, Settings.LargeArraySize);
+                        var bigArray = C2.Create(this.Transaction, Settings.LargeArraySize);
                         from.I1I12one2manies = bigArray;
                         I12[] getBigArray = from.I1I12one2manies;
 
@@ -2511,8 +2511,8 @@ namespace Allors.Database.Adapters
                         }
 
                         // Extent.ToArray() I12->C1
-                        from = C1.Create(this.Session);
-                        to1 = C1.Create(this.Session);
+                        from = C1.Create(this.Transaction);
+                        to1 = C1.Create(this.Transaction);
 
                         from.AddI1I12one2many(to1);
 
@@ -2521,8 +2521,8 @@ namespace Allors.Database.Adapters
                         Assert.Equal(to1, from.Strategy.GetCompositeRoles(m.I1.I1I12one2manies).ToArray()[0]);
 
                         // Extent<T>.ToArray() I12->C1
-                        from = C1.Create(this.Session);
-                        to1 = C1.Create(this.Session);
+                        from = C1.Create(this.Transaction);
+                        to1 = C1.Create(this.Transaction);
 
                         from.AddI1I12one2many(to1);
 
@@ -2531,8 +2531,8 @@ namespace Allors.Database.Adapters
                         Assert.Equal(to1, from.I1I12one2manies.ToArray()[0]);
 
                         // Extent.ToArray() I12->C2
-                        from = C1.Create(this.Session);
-                        to3 = C2.Create(this.Session);
+                        from = C1.Create(this.Transaction);
+                        to3 = C2.Create(this.Transaction);
 
                         from.AddI1I12one2many(to3);
 
@@ -2541,8 +2541,8 @@ namespace Allors.Database.Adapters
                         Assert.Equal(to3, from.Strategy.GetCompositeRoles(m.I1.I1I12one2manies).ToArray()[0]);
 
                         // Extent<T>.ToArray() I12->C2
-                        from = C1.Create(this.Session);
-                        to3 = C2.Create(this.Session);
+                        from = C1.Create(this.Transaction);
+                        to3 = C2.Create(this.Transaction);
 
                         from.AddI1I12one2many(to3);
 
@@ -2560,17 +2560,17 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
-                    var from = C1.Create(this.Session);
-                    var fromAnother = C1.Create(this.Session);
+                    var from = C1.Create(this.Transaction);
+                    var fromAnother = C1.Create(this.Transaction);
 
-                    var to1 = C1.Create(this.Session);
-                    var to2 = C1.Create(this.Session);
-                    var to3 = C1.Create(this.Session);
-                    var to4 = C1.Create(this.Session);
+                    var to1 = C1.Create(this.Transaction);
+                    var to2 = C1.Create(this.Transaction);
+                    var to3 = C1.Create(this.Transaction);
+                    var to4 = C1.Create(this.Transaction);
 
                     // To 0-4-0
                     mark();
@@ -2831,7 +2831,7 @@ namespace Allors.Database.Adapters
                     Assert.Empty(from.I1I1one2manies);
 
                     // Very Big Array
-                    var bigArray = C1.Create(this.Session, Settings.LargeArraySize);
+                    var bigArray = C1.Create(this.Transaction, Settings.LargeArraySize);
                     from.I1I1one2manies = bigArray;
                     I1[] getBigArray = from.I1I1one2manies;
 
@@ -2846,9 +2846,9 @@ namespace Allors.Database.Adapters
                     }
 
                     // From - Middle - To
-                    from = C1.Create(this.Session);
-                    var middle = C1.Create(this.Session);
-                    var to = C1.Create(this.Session);
+                    from = C1.Create(this.Transaction);
+                    var middle = C1.Create(this.Transaction);
+                    var to = C1.Create(this.Transaction);
 
                     from.AddI1I1one2many(middle);
                     middle.AddI1I1one2many(to);
@@ -2859,8 +2859,8 @@ namespace Allors.Database.Adapters
                     Assert.False(middle.ExistI1I1one2manies);
 
                     // Extent.ToArray()
-                    from = C1.Create(this.Session);
-                    to1 = C1.Create(this.Session);
+                    from = C1.Create(this.Transaction);
+                    to1 = C1.Create(this.Transaction);
 
                     from.AddI1I1one2many(to1);
 
@@ -2869,8 +2869,8 @@ namespace Allors.Database.Adapters
                     Assert.Equal(to1, from.Strategy.GetCompositeRoles(m.I1.I1I1one2manies).ToArray()[0]);
 
                     // Extent<T>.ToArray()
-                    from = C1.Create(this.Session);
-                    to1 = C1.Create(this.Session);
+                    from = C1.Create(this.Transaction);
+                    to1 = C1.Create(this.Transaction);
 
                     from.AddI1I1one2many(to1);
 
@@ -2887,17 +2887,17 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
-                    var from = C1.Create(this.Session);
-                    var fromAnother = C1.Create(this.Session);
+                    var from = C1.Create(this.Transaction);
+                    var fromAnother = C1.Create(this.Transaction);
 
-                    var to1 = C2.Create(this.Session);
-                    var to2 = C2.Create(this.Session);
-                    var to3 = C2.Create(this.Session);
-                    var to4 = C2.Create(this.Session);
+                    var to1 = C2.Create(this.Transaction);
+                    var to2 = C2.Create(this.Transaction);
+                    var to3 = C2.Create(this.Transaction);
+                    var to4 = C2.Create(this.Transaction);
 
                     // To 0-4-0
                     mark();
@@ -3158,7 +3158,7 @@ namespace Allors.Database.Adapters
                     Assert.Empty(from.I1I2one2manies);
 
                     // Very Big Array
-                    var bigArray = C2.Create(this.Session, Settings.LargeArraySize);
+                    var bigArray = C2.Create(this.Transaction, Settings.LargeArraySize);
                     from.I1I2one2manies = bigArray;
                     I2[] getBigArray = from.I1I2one2manies;
 
@@ -3173,8 +3173,8 @@ namespace Allors.Database.Adapters
                     }
 
                     // Extent.ToArray()
-                    from = C1.Create(this.Session);
-                    to1 = C2.Create(this.Session);
+                    from = C1.Create(this.Transaction);
+                    to1 = C2.Create(this.Transaction);
 
                     from.AddI1I2one2many(to1);
 
@@ -3183,8 +3183,8 @@ namespace Allors.Database.Adapters
                     Assert.Equal(to1, from.Strategy.GetCompositeRoles(m.I1.I1I2one2manies).ToArray()[0]);
 
                     // Extent<T>.ToArray()
-                    from = C1.Create(this.Session);
-                    to1 = C2.Create(this.Session);
+                    from = C1.Create(this.Transaction);
+                    to1 = C2.Create(this.Transaction);
 
                     from.AddI1I2one2many(to1);
 
@@ -3202,19 +3202,19 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
                     for (var i = 0; i < Settings.NumberOfRuns; i++)
                     {
-                        var from = C1.Create(this.Session);
-                        var fromAnother = C1.Create(this.Session);
+                        var from = C1.Create(this.Transaction);
+                        var fromAnother = C1.Create(this.Transaction);
 
-                        var to1 = C3.Create(this.Session);
-                        var to2 = C3.Create(this.Session);
-                        var to3 = C4.Create(this.Session);
-                        var to4 = C4.Create(this.Session);
+                        var to1 = C3.Create(this.Transaction);
+                        var to2 = C3.Create(this.Transaction);
+                        var to3 = C4.Create(this.Transaction);
+                        var to4 = C4.Create(this.Transaction);
 
                         // To 0-4-0
                         // Get
@@ -3716,7 +3716,7 @@ namespace Allors.Database.Adapters
                         Assert.Empty(from.I1I34one2manies);
 
                         // Very Big Array
-                        var bigArray = C4.Create(this.Session, Settings.LargeArraySize);
+                        var bigArray = C4.Create(this.Transaction, Settings.LargeArraySize);
                         from.I1I34one2manies = bigArray;
                         I34[] getBigArray = from.I1I34one2manies;
 
@@ -3731,8 +3731,8 @@ namespace Allors.Database.Adapters
                         }
 
                         // Extent.ToArray()
-                        from = C1.Create(this.Session);
-                        to1 = C3.Create(this.Session);
+                        from = C1.Create(this.Transaction);
+                        to1 = C3.Create(this.Transaction);
 
                         from.AddI1I34one2many(to1);
 
@@ -3741,8 +3741,8 @@ namespace Allors.Database.Adapters
                         Assert.Equal(to1, from.Strategy.GetCompositeRoles(m.I1.I1I34one2manies).ToArray()[0]);
 
                         // Extent<T>.ToArray()
-                        from = C1.Create(this.Session);
-                        to1 = C3.Create(this.Session);
+                        from = C1.Create(this.Transaction);
+                        to1 = C3.Create(this.Transaction);
 
                         from.AddI1I34one2many(to1);
 
@@ -3761,15 +3761,15 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
-                    var c1A = C1.Create(this.Session);
-                    var c1B = C1.Create(this.Session);
+                    var c1A = C1.Create(this.Transaction);
+                    var c1B = C1.Create(this.Transaction);
                     C1[] c1Bs = { c1B };
 
-                    var c2A = C2.Create(this.Session);
+                    var c2A = C2.Create(this.Transaction);
                     C2[] c2As = { c2A };
 
                     // Illegal role

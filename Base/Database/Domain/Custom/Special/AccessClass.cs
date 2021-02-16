@@ -14,8 +14,8 @@ namespace Allors.Database.Domain
                 return;
             }
 
-            var defaultSecurityToken = new SecurityTokens(this.Session()).DefaultSecurityToken;
-            var initialSecurityToken = new SecurityTokens(this.Session()).InitialSecurityToken;
+            var defaultSecurityToken = new SecurityTokens(this.Transaction()).DefaultSecurityToken;
+            var initialSecurityToken = new SecurityTokens(this.Transaction()).InitialSecurityToken;
 
             method.SecurityTokens = new[] { defaultSecurityToken, initialSecurityToken };
         }

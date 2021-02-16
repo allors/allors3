@@ -17,22 +17,22 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void One2ManyWithPropertyTypes()
         {
-            var c2A = new C2Builder(this.Session).WithC2AllorsString("c2A").Build();
-            var c2B = new C2Builder(this.Session).WithC2AllorsString("c2B").Build();
-            var c2C = new C2Builder(this.Session).WithC2AllorsString("c2C").Build();
+            var c2A = new C2Builder(this.Transaction).WithC2AllorsString("c2A").Build();
+            var c2B = new C2Builder(this.Transaction).WithC2AllorsString("c2B").Build();
+            var c2C = new C2Builder(this.Transaction).WithC2AllorsString("c2C").Build();
 
-            var c1a = new C1Builder(this.Session)
+            var c1a = new C1Builder(this.Transaction)
                 .WithC1AllorsString("c1A")
                 .WithC1C2One2Many(c2A)
                 .Build();
 
-            var c1b = new C1Builder(this.Session)
+            var c1b = new C1Builder(this.Transaction)
                 .WithC1AllorsString("c1B")
                 .WithC1C2One2Many(c2B)
                 .WithC1C2One2Many(c2C)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var path = new Fetch(this.M.C1.C1C2One2Manies, this.M.C2.C2AllorsString);
 
@@ -49,22 +49,22 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void One2ManyWithPropertyTypeIds()
         {
-            var c2A = new C2Builder(this.Session).WithC2AllorsString("c2A").Build();
-            var c2B = new C2Builder(this.Session).WithC2AllorsString("c2B").Build();
-            var c2C = new C2Builder(this.Session).WithC2AllorsString("c2C").Build();
+            var c2A = new C2Builder(this.Transaction).WithC2AllorsString("c2A").Build();
+            var c2B = new C2Builder(this.Transaction).WithC2AllorsString("c2B").Build();
+            var c2C = new C2Builder(this.Transaction).WithC2AllorsString("c2C").Build();
 
-            var c1a = new C1Builder(this.Session)
+            var c1a = new C1Builder(this.Transaction)
                 .WithC1AllorsString("c1A")
                 .WithC1C2One2Many(c2A)
                 .Build();
 
-            var c1b = new C1Builder(this.Session)
+            var c1b = new C1Builder(this.Transaction)
                 .WithC1AllorsString("c1B")
                 .WithC1C2One2Many(c2B)
                 .WithC1C2One2Many(c2C)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var path = new Fetch(this.M.C1.C1C2One2Manies, this.M.C2.C2AllorsString);
 
@@ -81,22 +81,22 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void One2ManyWithPropertyNames()
         {
-            var c2A = new C2Builder(this.Session).WithC2AllorsString("c2A").Build();
-            var c2B = new C2Builder(this.Session).WithC2AllorsString("c2B").Build();
-            var c2C = new C2Builder(this.Session).WithC2AllorsString("c2C").Build();
+            var c2A = new C2Builder(this.Transaction).WithC2AllorsString("c2A").Build();
+            var c2B = new C2Builder(this.Transaction).WithC2AllorsString("c2B").Build();
+            var c2C = new C2Builder(this.Transaction).WithC2AllorsString("c2C").Build();
 
-            var c1A = new C1Builder(this.Session)
+            var c1A = new C1Builder(this.Transaction)
                 .WithC1AllorsString("c1A")
                 .WithC1C2One2Many(c2A)
                 .Build();
 
-            var c1B = new C1Builder(this.Session)
+            var c1B = new C1Builder(this.Transaction)
                 .WithC1AllorsString("c1B")
                 .WithC1C2One2Many(c2B)
                 .WithC1C2One2Many(c2C)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Fetch.TryParse(this.M.C2.ObjectType, "C1WhereC1C2One2Many", out var fetch);
 

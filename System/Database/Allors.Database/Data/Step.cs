@@ -193,7 +193,7 @@ namespace Allors.Database.Data
                         {
                             if (acl.CanWrite(roleType))
                             {
-                                role = @object.Strategy.Session.Create((IClass)roleType.ObjectType);
+                                role = @object.Strategy.Transaction.Create((IClass)roleType.ObjectType);
                                 roleType.Set(@object.Strategy, role);
                             }
                         }

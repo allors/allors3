@@ -39,7 +39,7 @@ namespace Allors.Database.Domain
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
-            var session = cycle.Session;
+            var transaction = cycle.Transaction;
 
             foreach (var @this in matches.Cast<SalesOrderItem>())
             {
@@ -47,7 +47,7 @@ namespace Allors.Database.Domain
 
                 if (@this.ExistProduct && !@this.ExistInvoiceItemType)
                 {
-                    @this.InvoiceItemType = new InvoiceItemTypes(@this.Session()).ProductItem;
+                    @this.InvoiceItemType = new InvoiceItemTypes(@this.Transaction()).ProductItem;
                 }
 
                 if (@this.ExistSerialisedItem && !@this.ExistNextSerialisedItemAvailability)
@@ -164,7 +164,7 @@ namespace Allors.Database.Domain
                     && @this.ExistProduct
                     && !salesOrder.SalesOrderItemsByProduct.Any(v => v.Product.Equals(@this.Product)))
                 {
-                    salesOrder.AddSalesOrderItemsByProduct(new SalesOrderItemByProductBuilder(session).WithProduct(@this.Product).Build());
+                    salesOrder.AddSalesOrderItemsByProduct(new SalesOrderItemByProductBuilder(transaction).WithProduct(@this.Product).Build());
                 }
 
                 @this.PreviousReservedFromNonSerialisedInventoryItem = @this.ReservedFromNonSerialisedInventoryItem;

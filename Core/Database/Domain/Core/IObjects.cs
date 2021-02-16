@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
 
     public interface IObjects : ISetup, ISecure
     {
-        ISession Session { get; }
+        ITransaction Transaction { get; }
 
         Composite ObjectType { get; }
     }

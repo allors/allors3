@@ -15,37 +15,37 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenEngagement_WhenDeriving_ThenDescriptionIsRequired()
         {
-            var mechelen = new CityBuilder(this.Session).WithName("Mechelen").Build();
-            var billToContactMechanism = new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
-            var partyContactMechanism = new PartyContactMechanismBuilder(this.Session)
+            var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
+            var billToContactMechanism = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
+            var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction)
                 .WithContactMechanism(billToContactMechanism)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).BillingAddress)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
                 .WithUseAsDefault(true)
                 .Build();
 
-            var customer = new OrganisationBuilder(this.Session).WithName("customer").WithPartyContactMechanism(partyContactMechanism).Build();
+            var customer = new OrganisationBuilder(this.Transaction).WithName("customer").WithPartyContactMechanism(partyContactMechanism).Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var builder = new EngagementBuilder(this.Session);
+            var builder = new EngagementBuilder(this.Transaction);
             var customEngagementItem = builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithDescription("Engagement");
             customEngagementItem = builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithBillToParty(customer);
             customEngagementItem = builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
     }
 
@@ -58,20 +58,20 @@ namespace Allors.Database.Domain.Tests
         {
             var billToParty = this.InternalOrganisation.ActiveCustomers[0];
 
-            var partyContactMechanism = new PartyContactMechanismBuilder(this.Session)
+            var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction)
                 .WithUseAsDefault(true)
-                .WithContactMechanism(new PostalAddressBuilder(this.Session).Build())
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).BillingAddress)
+                .WithContactMechanism(new PostalAddressBuilder(this.Transaction).Build())
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
                 .Build();
 
             billToParty.AddPartyContactMechanism(partyContactMechanism);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var engagement = new EngagementBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var engagement = new EngagementBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             engagement.BillToParty = billToParty;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(partyContactMechanism.ContactMechanism, engagement.BillToContactMechanism);
         }
@@ -81,20 +81,20 @@ namespace Allors.Database.Domain.Tests
         {
             var placingParty = this.InternalOrganisation.ActiveCustomers[0];
 
-            var partyContactMechanism = new PartyContactMechanismBuilder(this.Session)
+            var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction)
                 .WithUseAsDefault(true)
-                .WithContactMechanism(new PostalAddressBuilder(this.Session).Build())
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).OrderAddress)
+                .WithContactMechanism(new PostalAddressBuilder(this.Transaction).Build())
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).OrderAddress)
                 .Build();
 
             placingParty.AddPartyContactMechanism(partyContactMechanism);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var engagement = new EngagementBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var engagement = new EngagementBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             engagement.PlacingParty = placingParty;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(partyContactMechanism.ContactMechanism, engagement.PlacingContactMechanism);
         }

@@ -20,14 +20,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenNoAccessControlWhenCreatingAnAccessControlWithoutARoleThenAccessControlIsInvalid()
         {
-            var userGroup = new UserGroupBuilder(this.Session).WithName("UserGroup").Build();
-            var securityToken = new SecurityTokenBuilder(this.Session).Build();
+            var userGroup = new UserGroupBuilder(this.Transaction).WithName("UserGroup").Build();
+            var securityToken = new SecurityTokenBuilder(this.Transaction).Build();
 
-            securityToken.AddAccessControl(new AccessControlBuilder(this.Session)
+            securityToken.AddAccessControl(new AccessControlBuilder(this.Transaction)
                 .WithSubjectGroup(userGroup)
                 .Build());
 
-            var validation = this.Session.Derive(false);
+            var validation = this.Transaction.Derive(false);
 
             Assert.True(validation.HasErrors);
             Assert.Single(validation.Errors);
@@ -42,15 +42,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenNoAccessControlWhenCreatingAAccessControlWithoutAUserOrUserGroupThenAccessControlIsInvalid()
         {
-            var securityToken = new SecurityTokenBuilder(this.Session).Build();
-            var role = new RoleBuilder(this.Session).WithName("Role").Build();
+            var securityToken = new SecurityTokenBuilder(this.Transaction).Build();
+            var role = new RoleBuilder(this.Transaction).WithName("Role").Build();
 
             securityToken.AddAccessControl(
-            new AccessControlBuilder(this.Session)
+            new AccessControlBuilder(this.Transaction)
                 .WithRole(role)
                 .Build());
 
-            var validation = this.Session.Derive(false);
+            var validation = this.Transaction.Derive(false);
 
             Assert.True(validation.HasErrors);
             Assert.Single(validation.Errors);

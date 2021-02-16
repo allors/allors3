@@ -23,15 +23,15 @@ namespace Allors.Database.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            var session = cycle.Session;
+            var transaction = cycle.Transaction;
             var validation = cycle.Validation;
 
             foreach (var @this in matches.Cast<SalesInvoice>())
             {
                 @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
-                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta.ObjectType, @this.Meta.Delete);
                 if (@this.ExistSalesInvoiceState &&
-                    @this.SalesInvoiceState.Equals(new SalesInvoiceStates(@this.Strategy.Session).ReadyForPosting) &&
+                    @this.SalesInvoiceState.Equals(new SalesInvoiceStates(@this.Strategy.Transaction).ReadyForPosting) &&
                     @this.SalesInvoiceItems.All(v => v.IsDeletable) &&
                     !@this.ExistSalesOrders &&
                     !@this.ExistPurchaseInvoice &&

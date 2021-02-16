@@ -9,6 +9,6 @@ namespace Allors.Database.Domain
     {
         private UniquelyIdentifiableCache<PositionType> cache;
 
-        private UniquelyIdentifiableCache<PositionType> Cache => this.cache ??= new UniquelyIdentifiableCache<PositionType>(this.Session);
+        private UniquelyIdentifiableCache<PositionType> Cache => this.cache ??= new UniquelyIdentifiableCache<PositionType>(this.Transaction);
     }
 }

@@ -18,22 +18,22 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void One2One()
         {
-            var cc = new CCBuilder(this.Session)
+            var cc = new CCBuilder(this.Transaction)
                 .Build();
 
-            var bb = new BBBuilder(this.Session)
+            var bb = new BBBuilder(this.Transaction)
                 .WithOne2One(cc)
                 .Build();
 
-            var aa = new AABuilder(this.Session)
+            var aa = new AABuilder(this.Transaction)
                 .WithOne2One(bb)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             cc.Assigned = "x";
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal("x", aa.Derived);
         }
@@ -41,22 +41,22 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void Many2One()
         {
-            var cc = new CCBuilder(this.Session)
+            var cc = new CCBuilder(this.Transaction)
                 .Build();
 
-            var bb = new BBBuilder(this.Session)
+            var bb = new BBBuilder(this.Transaction)
                 .WithMany2One(cc)
                 .Build();
 
-            var aa = new AABuilder(this.Session)
+            var aa = new AABuilder(this.Transaction)
                 .WithMany2One(bb)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             cc.Assigned = "x";
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal("x", aa.Derived);
         }
@@ -64,22 +64,22 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void One2Many()
         {
-            var cc = new CCBuilder(this.Session)
+            var cc = new CCBuilder(this.Transaction)
                 .Build();
 
-            var bb = new BBBuilder(this.Session)
+            var bb = new BBBuilder(this.Transaction)
                 .WithOne2Many(cc)
                 .Build();
 
-            var aa = new AABuilder(this.Session)
+            var aa = new AABuilder(this.Transaction)
                 .WithOne2Many(bb)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             cc.Assigned = "x";
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal("x", aa.Derived);
         }
@@ -87,22 +87,22 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void Many2Many()
         {
-            var cc = new CCBuilder(this.Session)
+            var cc = new CCBuilder(this.Transaction)
                 .Build();
 
-            var bb = new BBBuilder(this.Session)
+            var bb = new BBBuilder(this.Transaction)
                 .WithMany2Many(cc)
                 .Build();
 
-            var aa = new AABuilder(this.Session)
+            var aa = new AABuilder(this.Transaction)
                 .WithMany2Many(bb)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             cc.Assigned = "x";
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal("x", aa.Derived);
         }
@@ -111,15 +111,15 @@ namespace Allors.Database.Domain.Tests
         public void C1ChangedRole()
         {
             var derivation = new C1ChangedRoleDerivation(this.M);
-            this.Session.Database.AddDerivation(derivation);
+            this.Transaction.Database.AddDerivation(derivation);
 
-            var c1 = new C1Builder(this.Session).Build();
-            var c2 = new C2Builder(this.Session).Build();
+            var c1 = new C1Builder(this.Transaction).Build();
+            var c2 = new C2Builder(this.Transaction).Build();
 
             c1.ChangedRolePing = true;
             c2.ChangedRolePing = true;
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(c1.ChangedRolePong);
             Assert.Null(c2.ChangedRolePong);
@@ -129,15 +129,15 @@ namespace Allors.Database.Domain.Tests
         public void I1ChangedRole()
         {
             var derivation = new I1ChangedRoleDerivation(this.M);
-            this.Session.Database.AddDerivation(derivation);
+            this.Transaction.Database.AddDerivation(derivation);
 
-            var c1 = new C1Builder(this.Session).Build();
-            var c2 = new C2Builder(this.Session).Build();
+            var c1 = new C1Builder(this.Transaction).Build();
+            var c2 = new C2Builder(this.Transaction).Build();
 
             c1.ChangedRolePing = true;
             c2.ChangedRolePing = true;
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(c1.ChangedRolePong);
             Assert.Null(c2.ChangedRolePong);
@@ -147,15 +147,15 @@ namespace Allors.Database.Domain.Tests
         public void I12ChangedRole()
         {
             var derivation = new I12ChangedRoleDerivation(this.M);
-            this.Session.Database.AddDerivation(derivation);
+            this.Transaction.Database.AddDerivation(derivation);
 
-            var c1 = new C1Builder(this.Session).Build();
-            var c2 = new C2Builder(this.Session).Build();
+            var c1 = new C1Builder(this.Transaction).Build();
+            var c2 = new C2Builder(this.Transaction).Build();
 
             c1.ChangedRolePing = true;
             c2.ChangedRolePing = true;
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(c1.ChangedRolePong);
             Assert.True(c2.ChangedRolePong);
@@ -165,15 +165,15 @@ namespace Allors.Database.Domain.Tests
         public void S12ChangedRole()
         {
             var derivation = new S12ChangedRoleDerivation(this.M);
-            this.Session.Database.AddDerivation(derivation);
+            this.Transaction.Database.AddDerivation(derivation);
 
-            var c1 = new C1Builder(this.Session).Build();
-            var c2 = new C2Builder(this.Session).Build();
+            var c1 = new C1Builder(this.Transaction).Build();
+            var c2 = new C2Builder(this.Transaction).Build();
 
             c1.ChangedRolePing = true;
             c2.ChangedRolePing = true;
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(c1.ChangedRolePong);
             Assert.True(c2.ChangedRolePong);

@@ -33,7 +33,7 @@ namespace Allors.Database.Adapters.SqlClient
 
         public override ICompositePredicate Filter => null;
 
-        internal override Session Session => this.first.Session;
+        internal override Transaction Transaction => this.first.Transaction;
 
         public override IComposite ObjectType => this.first.ObjectType;
 
@@ -52,7 +52,7 @@ namespace Allors.Database.Adapters.SqlClient
                     break;
 
                 case ExtentOperations.Except:
-                    statement.Append("\n" + this.Session.Database.Except + "\n");
+                    statement.Append("\n" + this.Transaction.Database.Except + "\n");
                     break;
             }
 
@@ -65,7 +65,7 @@ namespace Allors.Database.Adapters.SqlClient
 
         protected override IList<long> GetObjectIds()
         {
-            this.Session.Flush();
+            this.Transaction.Flush();
 
             var statement = new ExtentStatementRoot(this);
             var alias = this.BuildSql(statement);
@@ -77,7 +77,7 @@ namespace Allors.Database.Adapters.SqlClient
                 {
                     while (reader.Read())
                     {
-                        var objectId = this.Session.State.GetObjectIdForExistingObject(reader.GetValue(0).ToString());
+                        var objectId = this.Transaction.State.GetObjectIdForExistingObject(reader.GetValue(0).ToString());
                         objectIds.Add(objectId);
                     }
                 }

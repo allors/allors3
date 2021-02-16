@@ -32,16 +32,16 @@ namespace Allors.Database.Domain
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
-            var session = cycle.Session;
+            var transaction = cycle.Transaction;
 
             foreach (var @this in matches.Cast<SalesOrderItem>())
             {
                 var salesOrder = @this.SalesOrderWhereSalesOrderItem;
 
-                var salesOrderItemShipmentStates = new SalesOrderItemShipmentStates(session);
-                var salesOrderItemPaymentStates = new SalesOrderItemPaymentStates(session);
-                var salesOrderItemInvoiceStates = new SalesOrderItemInvoiceStates(session);
-                var salesOrderItemStates = new SalesOrderItemStates(session);
+                var salesOrderItemShipmentStates = new SalesOrderItemShipmentStates(transaction);
+                var salesOrderItemPaymentStates = new SalesOrderItemPaymentStates(transaction);
+                var salesOrderItemInvoiceStates = new SalesOrderItemInvoiceStates(transaction);
+                var salesOrderItemStates = new SalesOrderItemStates(transaction);
 
                 if (@this.IsValid && salesOrder != null && salesOrder.ExistSalesOrderState)
                 {

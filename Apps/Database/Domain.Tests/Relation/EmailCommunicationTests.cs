@@ -15,17 +15,17 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenEmailCommunicationIsBuild_WhenDeriving_ThenStatusIsSet()
         {
-            var personalEmailAddress = new ContactMechanismPurposes(this.Session).PersonalEmailAddress;
+            var personalEmailAddress = new ContactMechanismPurposes(this.Transaction).PersonalEmailAddress;
 
-            var originatorEmail = new EmailAddressBuilder(this.Session).WithElectronicAddressString("originator@allors.com").Build();
-            var originatorContact = new PartyContactMechanismBuilder(this.Session).WithContactMechanism(originatorEmail).WithContactPurpose(personalEmailAddress).WithUseAsDefault(true).Build();
-            var originator = new PersonBuilder(this.Session).WithLastName("originator").WithPartyContactMechanism(originatorContact).Build();
+            var originatorEmail = new EmailAddressBuilder(this.Transaction).WithElectronicAddressString("originator@allors.com").Build();
+            var originatorContact = new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(originatorEmail).WithContactPurpose(personalEmailAddress).WithUseAsDefault(true).Build();
+            var originator = new PersonBuilder(this.Transaction).WithLastName("originator").WithPartyContactMechanism(originatorContact).Build();
 
-            var addresseeEmail = new EmailAddressBuilder(this.Session).WithElectronicAddressString("addressee@allors.com").Build();
-            var addresseeContact = new PartyContactMechanismBuilder(this.Session).WithContactMechanism(addresseeEmail).WithContactPurpose(personalEmailAddress).WithUseAsDefault(true).Build();
-            var addressee = new PersonBuilder(this.Session).WithLastName("addressee").WithPartyContactMechanism(addresseeContact).Build();
+            var addresseeEmail = new EmailAddressBuilder(this.Transaction).WithElectronicAddressString("addressee@allors.com").Build();
+            var addresseeContact = new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(addresseeEmail).WithContactPurpose(personalEmailAddress).WithUseAsDefault(true).Build();
+            var addressee = new PersonBuilder(this.Transaction).WithLastName("addressee").WithPartyContactMechanism(addresseeContact).Build();
 
-            var communication = new EmailCommunicationBuilder(this.Session)
+            var communication = new EmailCommunicationBuilder(this.Transaction)
                 .WithOwner(this.Administrator)
                 .WithSubject("Hello")
                 .WithDescription("Hello world!")
@@ -35,31 +35,31 @@ namespace Allors.Database.Domain.Tests
                 .WithToEmail(addresseeEmail)
                 .Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
-            Assert.Equal(communication.CommunicationEventState, new CommunicationEventStates(this.Session).Scheduled);
+            Assert.Equal(communication.CommunicationEventState, new CommunicationEventStates(this.Transaction).Scheduled);
             Assert.Equal(communication.CommunicationEventState, communication.LastCommunicationEventState);
         }
 
         [Fact]
         public void GivenEmailCommunication_WhenDeriving_ThenInvolvedPartiesAreDerived()
         {
-            var owner = new PersonBuilder(this.Session).WithLastName("owner").Build();
+            var owner = new PersonBuilder(this.Transaction).WithLastName("owner").Build();
 
-            var personalEmailAddress = new ContactMechanismPurposes(this.Session).PersonalEmailAddress;
+            var personalEmailAddress = new ContactMechanismPurposes(this.Transaction).PersonalEmailAddress;
 
-            var originatorEmail = new EmailAddressBuilder(this.Session).WithElectronicAddressString("originator@allors.com").Build();
-            var originatorContact = new PartyContactMechanismBuilder(this.Session).WithContactMechanism(originatorEmail).WithContactPurpose(personalEmailAddress).WithUseAsDefault(true).Build();
-            var originator = new PersonBuilder(this.Session).WithLastName("originator").WithPartyContactMechanism(originatorContact).Build();
+            var originatorEmail = new EmailAddressBuilder(this.Transaction).WithElectronicAddressString("originator@allors.com").Build();
+            var originatorContact = new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(originatorEmail).WithContactPurpose(personalEmailAddress).WithUseAsDefault(true).Build();
+            var originator = new PersonBuilder(this.Transaction).WithLastName("originator").WithPartyContactMechanism(originatorContact).Build();
 
-            var addresseeEmail = new EmailAddressBuilder(this.Session).WithElectronicAddressString("addressee@allors.com").Build();
-            var addresseeContact = new PartyContactMechanismBuilder(this.Session).WithContactMechanism(addresseeEmail).WithContactPurpose(personalEmailAddress).WithUseAsDefault(true).Build();
-            var addressee = new PersonBuilder(this.Session).WithLastName("addressee").WithPartyContactMechanism(addresseeContact).Build();
+            var addresseeEmail = new EmailAddressBuilder(this.Transaction).WithElectronicAddressString("addressee@allors.com").Build();
+            var addresseeContact = new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(addresseeEmail).WithContactPurpose(personalEmailAddress).WithUseAsDefault(true).Build();
+            var addressee = new PersonBuilder(this.Transaction).WithLastName("addressee").WithPartyContactMechanism(addresseeContact).Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var communication = new EmailCommunicationBuilder(this.Session)
+            var communication = new EmailCommunicationBuilder(this.Transaction)
                 .WithSubject("Hello")
                 .WithDescription("Hello world!")
                 .WithOwner(owner)
@@ -69,7 +69,7 @@ namespace Allors.Database.Domain.Tests
                 .WithToEmail(addresseeEmail)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(3, communication.InvolvedParties.Count);
             Assert.Contains(owner, communication.InvolvedParties);
@@ -80,20 +80,20 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenEmailCommunication_WhenOriginatorIsDeleted_ThenCommunicationEventIsDeleted()
         {
-            var personalEmailAddress = new ContactMechanismPurposes(this.Session).PersonalEmailAddress;
+            var personalEmailAddress = new ContactMechanismPurposes(this.Transaction).PersonalEmailAddress;
 
-            var originatorEmail = new EmailAddressBuilder(this.Session).WithElectronicAddressString("originator@allors.com").Build();
-            var originatorContact = new PartyContactMechanismBuilder(this.Session).WithContactMechanism(originatorEmail).WithContactPurpose(personalEmailAddress).WithUseAsDefault(true).Build();
-            var originator = new PersonBuilder(this.Session).WithLastName("originator").WithPartyContactMechanism(originatorContact).Build();
+            var originatorEmail = new EmailAddressBuilder(this.Transaction).WithElectronicAddressString("originator@allors.com").Build();
+            var originatorContact = new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(originatorEmail).WithContactPurpose(personalEmailAddress).WithUseAsDefault(true).Build();
+            var originator = new PersonBuilder(this.Transaction).WithLastName("originator").WithPartyContactMechanism(originatorContact).Build();
 
-            var addresseeEmail = new EmailAddressBuilder(this.Session).WithElectronicAddressString("addressee@allors.com").Build();
-            var addresseeContact = new PartyContactMechanismBuilder(this.Session).WithContactMechanism(addresseeEmail).WithContactPurpose(personalEmailAddress).WithUseAsDefault(true).Build();
-            var addressee = new PersonBuilder(this.Session).WithLastName("addressee").WithPartyContactMechanism(addresseeContact).Build();
+            var addresseeEmail = new EmailAddressBuilder(this.Transaction).WithElectronicAddressString("addressee@allors.com").Build();
+            var addresseeContact = new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(addresseeEmail).WithContactPurpose(personalEmailAddress).WithUseAsDefault(true).Build();
+            var addressee = new PersonBuilder(this.Transaction).WithLastName("addressee").WithPartyContactMechanism(addresseeContact).Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var communication = new EmailCommunicationBuilder(this.Session)
+            var communication = new EmailCommunicationBuilder(this.Transaction)
                 .WithSubject("Hello")
                 .WithDescription("Hello world!")
                 .WithFromParty(originator)
@@ -102,14 +102,14 @@ namespace Allors.Database.Domain.Tests
                 .WithToEmail(addresseeEmail)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Single(this.Session.Extent<EmailCommunication>());
+            Assert.Single(this.Transaction.Extent<EmailCommunication>());
 
             originator.Delete();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Empty(this.Session.Extent<EmailCommunication>());
+            Assert.Empty(this.Transaction.Extent<EmailCommunication>());
         }
     }
 
@@ -121,14 +121,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSubjectDeriveSubject()
         {
-            var emailCommunication = new EmailCommunicationBuilder(this.Session)
-                .WithEmailTemplate(new EmailTemplateBuilder(this.Session).WithSubjectTemplate("subjectfromtemplate").Build())
+            var emailCommunication = new EmailCommunicationBuilder(this.Transaction)
+                .WithEmailTemplate(new EmailTemplateBuilder(this.Transaction).WithSubjectTemplate("subjectfromtemplate").Build())
                 .WithSubject("subject")
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             emailCommunication.RemoveSubject();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal("subjectfromtemplate", emailCommunication.Subject);
         }
@@ -136,12 +136,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedEmailTemplateDeriveSubject()
         {
-            var emailCommunication = new EmailCommunicationBuilder(this.Session)
+            var emailCommunication = new EmailCommunicationBuilder(this.Transaction)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            emailCommunication.EmailTemplate = new EmailTemplateBuilder(this.Session).WithSubjectTemplate("subjectfromtemplate").Build();
-            this.Session.Derive(false);
+            emailCommunication.EmailTemplate = new EmailTemplateBuilder(this.Transaction).WithSubjectTemplate("subjectfromtemplate").Build();
+            this.Transaction.Derive(false);
 
             Assert.Equal("subjectfromtemplate", emailCommunication.Subject);
         }
@@ -149,12 +149,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSubjectDeriveWorkItemDescription()
         {
-            var emailCommunication = new EmailCommunicationBuilder(this.Session)
+            var emailCommunication = new EmailCommunicationBuilder(this.Transaction)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             emailCommunication.Subject = "subject";
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains("subject", emailCommunication.WorkItemDescription);
         }
@@ -162,13 +162,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedToEmailDeriveWorkItemDescription()
         {
-            var emailCommunication = new EmailCommunicationBuilder(this.Session)
+            var emailCommunication = new EmailCommunicationBuilder(this.Transaction)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var to = new EmailAddressBuilder(this.Session).WithElectronicAddressString("email@something.com").Build();
+            var to = new EmailAddressBuilder(this.Transaction).WithElectronicAddressString("email@something.com").Build();
             emailCommunication.ToEmail = to;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains("email@something.com", emailCommunication.WorkItemDescription);
         }

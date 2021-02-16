@@ -21,7 +21,7 @@ namespace Allors.Database.Adapters.SqlClient
 
         public override void Dispose() => this.profile.Dispose();
 
-        protected override ISession CreateSession() => this.profile.CreateSession();
+        protected override ITransaction CreateTransaction() => this.profile.CreateTransaction();
 
         [Fact]
         public override void SortOne()
@@ -32,19 +32,19 @@ namespace Allors.Database.Adapters.SqlClient
                 {
                     init();
                     this.Populate();
-                    var m = this.Session.Database.Context().M;
+                    var m = this.Transaction.Database.Context().M;
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
                     this.c1B.C1AllorsString = "3";
                     this.c1C.C1AllorsString = "1";
                     this.c1D.C1AllorsString = "2";
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
                     marker();
 
-                    var extent = this.Session.Extent(m.C1.ObjectType);
+                    var extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.AddSort(m.C1.C1AllorsString);
 
                     var sortedObjects = (C1[])extent.ToArray(typeof(C1));
@@ -56,7 +56,7 @@ namespace Allors.Database.Adapters.SqlClient
 
                     marker();
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.AddSort(m.C1.C1AllorsString, SortDirection.Ascending);
 
                     sortedObjects = (C1[])extent.ToArray(typeof(C1));
@@ -68,7 +68,7 @@ namespace Allors.Database.Adapters.SqlClient
 
                     marker();
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.AddSort(m.C1.C1AllorsString, SortDirection.Ascending);
 
                     sortedObjects = (C1[])extent.ToArray(typeof(C1));
@@ -80,7 +80,7 @@ namespace Allors.Database.Adapters.SqlClient
 
                     marker();
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.AddSort(m.C1.C1AllorsString, SortDirection.Descending);
 
                     sortedObjects = (C1[])extent.ToArray(typeof(C1));
@@ -92,7 +92,7 @@ namespace Allors.Database.Adapters.SqlClient
 
                     marker();
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.AddSort(m.C1.C1AllorsString, SortDirection.Descending);
 
                     sortedObjects = (C1[])extent.ToArray(typeof(C1));
@@ -108,10 +108,10 @@ namespace Allors.Database.Adapters.SqlClient
                         {
                             marker();
 
-                            var firstExtent = this.Session.Extent(m.C1.ObjectType);
+                            var firstExtent = this.Transaction.Extent(m.C1.ObjectType);
                             firstExtent.Filter.AddLike(m.C1.C1AllorsString, "1");
-                            var secondExtent = this.Session.Extent(m.C1.ObjectType);
-                            extent = this.Session.Union(firstExtent, secondExtent);
+                            var secondExtent = this.Transaction.Extent(m.C1.ObjectType);
+                            extent = this.Transaction.Union(firstExtent, secondExtent);
                             secondExtent.Filter.AddLike(m.C1.C1AllorsString, "3");
                             extent.AddSort(m.C1.C1AllorsString);
 
@@ -131,7 +131,7 @@ namespace Allors.Database.Adapters.SqlClient
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 this.Populate();
 
@@ -143,9 +143,9 @@ namespace Allors.Database.Adapters.SqlClient
                 this.c1C.C1AllorsInteger = 1;
                 this.c1D.C1AllorsInteger = 0;
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.AddSort(m.C1.C1AllorsString);
                 extent.AddSort(m.C1.C1AllorsInteger);
 
@@ -156,7 +156,7 @@ namespace Allors.Database.Adapters.SqlClient
                 Assert.Equal(this.c1B, sortedObjects[2]);
                 Assert.Equal(this.c1C, sortedObjects[3]);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.AddSort(m.C1.C1AllorsString);
                 extent.AddSort(m.C1.C1AllorsInteger, SortDirection.Ascending);
 
@@ -167,7 +167,7 @@ namespace Allors.Database.Adapters.SqlClient
                 Assert.Equal(this.c1B, sortedObjects[2]);
                 Assert.Equal(this.c1C, sortedObjects[3]);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.AddSort(m.C1.C1AllorsString);
                 extent.AddSort(m.C1.C1AllorsInteger, SortDirection.Descending);
 
@@ -178,7 +178,7 @@ namespace Allors.Database.Adapters.SqlClient
                 Assert.Equal(this.c1D, sortedObjects[2]);
                 Assert.Equal(this.c1C, sortedObjects[3]);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.AddSort(m.C1.C1AllorsString, SortDirection.Descending);
                 extent.AddSort(m.C1.C1AllorsInteger, SortDirection.Descending);
 
@@ -192,23 +192,23 @@ namespace Allors.Database.Adapters.SqlClient
         }
 
         [Fact]
-        public override void SortDifferentSession()
+        public override void SortDifferentTransaction()
         {
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var c1A = C1.Create(this.Session);
-                var c1B = C1.Create(this.Session);
-                var c1C = C1.Create(this.Session);
-                var c1D = C1.Create(this.Session);
+                var c1A = C1.Create(this.Transaction);
+                var c1B = C1.Create(this.Transaction);
+                var c1C = C1.Create(this.Transaction);
+                var c1D = C1.Create(this.Transaction);
 
                 c1A.C1AllorsString = "2";
                 c1B.C1AllorsString = "1";
                 c1C.C1AllorsString = "3";
 
-                var extent = this.Session.Extent(m.C1.Class);
+                var extent = this.Transaction.Extent(m.C1.Class);
                 extent.AddSort(m.C1.C1AllorsString, SortDirection.Ascending);
 
                 var sortedObjects = (C1[])extent.ToArray(typeof(C1));
@@ -223,13 +223,13 @@ namespace Allors.Database.Adapters.SqlClient
 
                 var c1AId = c1A.Id;
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                using (var session2 = this.CreateSession())
+                using (var transaction2 = this.CreateTransaction())
                 {
-                    c1A = (C1)session2.Instantiate(c1AId);
+                    c1A = (C1)transaction2.Instantiate(c1AId);
 
-                    extent = session2.Extent(m.C1.Class);
+                    extent = transaction2.Extent(m.C1.Class);
                     extent.AddSort(m.C1.C1AllorsString, SortDirection.Ascending);
 
                     sortedObjects = (C1[])extent.ToArray(typeof(C1));

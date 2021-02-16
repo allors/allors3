@@ -38,7 +38,7 @@ namespace Allors.Database.Domain
                 {
                     //cancel shipment if nothing left to ship
                     if (@this.ExistShipmentItems && @this.PendingPickList == null
-                        && !@this.ShipmentState.Equals(new ShipmentStates(@this.Session()).Cancelled))
+                        && !@this.ShipmentState.Equals(new ShipmentStates(@this.Transaction()).Cancelled))
                     {
                         var canCancel = true;
                         foreach (ShipmentItem shipmentItem in @this.ShipmentItems)
@@ -62,7 +62,7 @@ namespace Allors.Database.Domain
                         foreach (PickList pickList in @this.ShipToParty.PickListsWhereShipToParty)
                         {
                             if (@this.Store.Equals(pickList.Store) &&
-                                !pickList.PickListState.Equals(new PickListStates(@this.Session()).Picked))
+                                !pickList.PickListState.Equals(new PickListStates(@this.Transaction()).Picked))
                             {
                                 isPicked = false;
                             }
@@ -103,7 +103,7 @@ namespace Allors.Database.Domain
                         }
                     }
 
-                    if (@this.ShipmentState.Equals(new ShipmentStates(@this.Session()).OnHold) &&
+                    if (@this.ShipmentState.Equals(new ShipmentStates(@this.Transaction()).OnHold) &&
                         !@this.HeldManually &&
                         ((@this.ShipmentValue >= @this.Store.ShipmentThreshold) || @this.ReleasedManually))
                     {

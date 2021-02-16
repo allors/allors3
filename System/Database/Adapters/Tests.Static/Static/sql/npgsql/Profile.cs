@@ -34,7 +34,7 @@ namespace Allors.Database.Adapters.Npgsql
                 var markers = new List<Action>
                 {
                     () => { },
-                    () => this.Session.Commit(),
+                    () => this.Transaction.Commit(),
                 };
 
                 return markers.ToArray();

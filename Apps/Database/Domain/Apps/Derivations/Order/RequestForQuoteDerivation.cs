@@ -34,7 +34,7 @@ namespace Allors.Database.Domain
                     validation.AddError($"{@this} {this.M.RequestForQuote.Recipient} {ErrorMessages.InternalOrganisationChanged}");
                 }
 
-                //session.Prefetch(requestForQuote.SyncPrefetch, requestForQuote);
+                //transaction.Prefetch(requestForQuote.SyncPrefetch, requestForQuote);
                 foreach (RequestItem requestItem in @this.RequestItems)
                 {
                     requestItem.Sync(@this);

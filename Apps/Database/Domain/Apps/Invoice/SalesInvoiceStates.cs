@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
 
         public SalesInvoiceState Cancelled => this.Cache[CancelledId];
 
-        private UniquelyIdentifiableCache<SalesInvoiceState> Cache => this.cache ??= new UniquelyIdentifiableCache<SalesInvoiceState>(this.Session);
+        private UniquelyIdentifiableCache<SalesInvoiceState> Cache => this.cache ??= new UniquelyIdentifiableCache<SalesInvoiceState>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

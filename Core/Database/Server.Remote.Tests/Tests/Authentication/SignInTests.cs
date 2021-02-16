@@ -17,10 +17,10 @@ namespace Allors.Server.Tests
     {
         public SignInTests()
         {
-            new PersonBuilder(this.Session).WithUserName("John").Build();
-            new PersonBuilder(this.Session).WithUserName("Jane").Build().SetPassword("p@ssw0rd");
-            this.Session.Derive();
-            this.Session.Commit();
+            new PersonBuilder(this.Transaction).WithUserName("John").Build();
+            new PersonBuilder(this.Transaction).WithUserName("Jane").Build().SetPassword("p@ssw0rd");
+            this.Transaction.Derive();
+            this.Transaction.Commit();
         }
 
         [Fact]

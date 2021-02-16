@@ -20,21 +20,21 @@ namespace Allors.Database.Domain
         private readonly Dictionary<ObjectType, IObjects> objectsByObjectType;
         private readonly Dictionary<Guid, Dictionary<OperandType, Permission>> readPermissionsByObjectTypeId;
         private readonly Dictionary<Guid, Role> roleById;
-        private readonly ISession session;
+        private readonly ITransaction transaction;
         private readonly Dictionary<Guid, Dictionary<OperandType, Permission>> writePermissionsByObjectTypeId;
 
-        public Security(ISession session)
+        public Security(ITransaction transaction)
         {
-            this.session = session;
+            this.transaction = transaction;
 
             this.objectsByObjectType = new Dictionary<ObjectType, IObjects>();
-            foreach (ObjectType objectType in session.Database.MetaPopulation.DatabaseComposites)
+            foreach (ObjectType objectType in transaction.Database.MetaPopulation.DatabaseComposites)
             {
-                this.objectsByObjectType[objectType] = objectType.GetObjects(session);
+                this.objectsByObjectType[objectType] = objectType.GetObjects(transaction);
             }
 
             this.roleById = new Dictionary<Guid, Role>();
-            foreach (Role role in session.Extent<Role>())
+            foreach (Role role in transaction.Extent<Role>())
             {
                 if (!role.ExistUniqueId)
                 {
@@ -50,7 +50,7 @@ namespace Allors.Database.Domain
 
             this.deniablePermissionByOperandTypeByObjectTypeId = new Dictionary<Guid, Dictionary<OperandType, Permission>>();
 
-            foreach (Permission permission in session.Extent<Permission>())
+            foreach (Permission permission in transaction.Extent<Permission>())
             {
                 if (!permission.ExistClassPointer || !permission.ExistOperation)
                 {
@@ -110,7 +110,7 @@ namespace Allors.Database.Domain
 
         public void Apply()
         {
-            foreach (Role role in this.session.Extent<Role>())
+            foreach (Role role in this.transaction.Extent<Role>())
             {
                 role.RemovePermissions();
                 role.RemoveDeniedPermissions();
@@ -125,7 +125,7 @@ namespace Allors.Database.Domain
 
             this.OnPostSetup();
 
-            this.session.Derive();
+            this.transaction.Derive();
         }
         
         public void Grant(Guid roleId, ObjectType objectType, params Operations[] operations)

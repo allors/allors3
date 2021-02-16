@@ -19,13 +19,13 @@ namespace Allors.Server
 
     public class AuthenticationController : Controller
     {
-        public AuthenticationController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, ILogger<AuthenticationController> logger, IConfiguration config, ISessionService sessionService)
+        public AuthenticationController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, ILogger<AuthenticationController> logger, IConfiguration config, ITransactionService transactionService)
         {
             this.UserManager = userManager;
             this.SignInManager = signInManager;
             this.Logger = logger;
             this.Configuration = config;
-            this.SessionService = sessionService;
+            this.TransactionService = transactionService;
         }
 
         public UserManager<IdentityUser> UserManager { get; }
@@ -36,7 +36,7 @@ namespace Allors.Server
 
         public IConfiguration Configuration { get; }
 
-        public ISessionService SessionService { get; }
+        public ITransactionService TransactionService { get; }
 
         [HttpPost]
         [AllowAnonymous]

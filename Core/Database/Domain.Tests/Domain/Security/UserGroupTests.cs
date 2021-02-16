@@ -21,9 +21,9 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenNoUserGroupWhenCreatingAUserGroupWithoutANameThenUserGroupIsInvalid()
         {
-            new UserGroupBuilder(this.Session).Build();
+            new UserGroupBuilder(this.Transaction).Build();
 
-            var validation = this.Session.Derive(false);
+            var validation = this.Transaction.Derive(false);
 
             Assert.True(validation.HasErrors);
             Assert.Single(validation.Errors);
@@ -38,10 +38,10 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenAUserGroupWhenCreatingAUserGroupWithTheSameNameThenUserGroupIsInvalid()
         {
-            new UserGroupBuilder(this.Session).WithName("Same").Build();
-            new UserGroupBuilder(this.Session).WithName("Same").Build();
+            new UserGroupBuilder(this.Transaction).WithName("Same").Build();
+            new UserGroupBuilder(this.Transaction).WithName("Same").Build();
 
-            var validation = this.Session.Derive(false);
+            var validation = this.Transaction.Derive(false);
 
             Assert.True(validation.HasErrors);
             Assert.Equal(2, validation.Errors.Length);

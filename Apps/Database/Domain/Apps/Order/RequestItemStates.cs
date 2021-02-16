@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
 
         public RequestItemState Quoted => this.Cache[QuotedId];
 
-        private UniquelyIdentifiableCache<RequestItemState> Cache => this.cache ??= new UniquelyIdentifiableCache<RequestItemState>(this.Session);
+        private UniquelyIdentifiableCache<RequestItemState> Cache => this.cache ??= new UniquelyIdentifiableCache<RequestItemState>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

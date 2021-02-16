@@ -16,14 +16,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPartDeriveFacility()
         {
-            var facility = new FacilityBuilder(this.Session).Build();
-            var part = new NonUnifiedPartBuilder(this.Session).WithDefaultFacility(facility).Build();
+            var facility = new FacilityBuilder(this.Transaction).Build();
+            var part = new NonUnifiedPartBuilder(this.Transaction).WithDefaultFacility(facility).Build();
 
-            var inventoryItem = new NonSerialisedInventoryItemBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var inventoryItem = new NonSerialisedInventoryItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             inventoryItem.Part = part;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(facility, inventoryItem.Facility);
         }
@@ -36,13 +36,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPartDeriveSearchString()
         {
-            var part = new NonUnifiedPartBuilder(this.Session).WithSearchString("partsearch").Build();
+            var part = new NonUnifiedPartBuilder(this.Transaction).WithSearchString("partsearch").Build();
 
-            var inventoryItem = new NonSerialisedInventoryItemBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var inventoryItem = new NonSerialisedInventoryItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             inventoryItem.Part = part;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains(part.SearchString, inventoryItem.SearchString);
         }
@@ -55,14 +55,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPartDerivePartDisplayName()
         {
-            var part = new NonUnifiedPartBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var part = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var inventoryItem = new NonSerialisedInventoryItemBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var inventoryItem = new NonSerialisedInventoryItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             inventoryItem.Part = part;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains(part.DisplayName, inventoryItem.PartDisplayName);
         }

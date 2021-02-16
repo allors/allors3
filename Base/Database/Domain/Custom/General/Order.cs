@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
         {
             if (this.ExistAmount && this.Amount == -1)
             {
-                this.OrderState = new OrderStates(this.Strategy.Session).Cancelled;
+                this.OrderState = new OrderStates(this.Strategy.Transaction).Cancelled;
             }
         }
     }

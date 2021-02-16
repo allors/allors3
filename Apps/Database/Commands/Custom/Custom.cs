@@ -20,15 +20,15 @@ namespace Commands
 
         public int OnExecute(CommandLineApplication app)
         {
-            using var session = this.Parent.Database.CreateSession();
+            using var transaction = this.Parent.Database.CreateTransaction();
             this.Logger.Info("Begin");
 
-            var scheduler = new AutomatedAgents(session).System;
-            session.Context().User = scheduler;
+            var scheduler = new AutomatedAgents(transaction).System;
+            transaction.Context().User = scheduler;
 
             // Custom code
-            session.Derive();
-            session.Commit();
+            transaction.Derive();
+            transaction.Commit();
 
             this.Logger.Info("End");
 

@@ -22,10 +22,10 @@ namespace Allors.Workspace.Adapters.Direct
         public PullResult(Workspace workspace)
         {
             this.Workspace = workspace;
-            this.Session = this.Workspace.Database.CreateSession();
+            this.Transaction = this.Workspace.Database.CreateTransaction();
 
-            var sessionContext = this.Session.Context();
-            var databaseContext = this.Session.Database.Context();
+            var sessionContext = this.Transaction.Context();
+            var databaseContext = this.Transaction.Database.Context();
             var metaCache = databaseContext.MetaCache;
             var user = sessionContext.User;
 
@@ -47,7 +47,7 @@ namespace Allors.Workspace.Adapters.Direct
 
         public Workspace Workspace { get; }
 
-        public ISession Session { get; }
+        public ITransaction Transaction { get; }
 
         public IAccessControlLists AccessControlLists { get; }
 
@@ -104,7 +104,7 @@ namespace Allors.Workspace.Adapters.Direct
                     if (tree != null)
                     {
                         // Prefetch
-                        var session = @object.Strategy.Session;
+                        var session = @object.Strategy.Transaction;
                         var prefetcher = tree.BuildPrefetchPolicy();
                         session.Prefetch(prefetcher, @object);
                     }
@@ -141,14 +141,14 @@ namespace Allors.Workspace.Adapters.Direct
                     if (existingCollection != null)
                     {
                         newCollection = filteredCollection.ToArray();
-                        this.Session.Prefetch(prefetchPolicy, newCollection);
+                        this.Transaction.Prefetch(prefetchPolicy, newCollection);
                         existingCollection.UnionWith(newCollection);
                     }
                     else
                     {
                         var newSet = new HashSet<IObject>(filteredCollection);
                         newCollection = newSet;
-                        this.Session.Prefetch(prefetchPolicy, newCollection);
+                        this.Transaction.Prefetch(prefetchPolicy, newCollection);
                         this.CollectionsByName.Add(name, newSet);
                     }
 
@@ -177,19 +177,19 @@ namespace Allors.Workspace.Adapters.Direct
 
         public void Execute(IEnumerable<Allors.Workspace.Data.Pull> workspacePulls)
         {
-            var visitor = new ToDatabaseVisitor(this.Session);
+            var visitor = new ToDatabaseVisitor(this.Transaction);
             var pulls = workspacePulls.Select(v => visitor.Visit(v));
 
             foreach (var pull in pulls)
             {
                 if (pull.Object != null)
                 {
-                    var pullInstantiate = new PullInstantiate(this.Session, pull, this.AccessControlLists, this.PreparedFetches);
+                    var pullInstantiate = new PullInstantiate(this.Transaction, pull, this.AccessControlLists, this.PreparedFetches);
                     pullInstantiate.Execute(this);
                 }
                 else
                 {
-                    var pullExtent = new PullExtent(this.Session, pull, this.AccessControlLists, this.PreparedFetches, this.PreparedExtents);
+                    var pullExtent = new PullExtent(this.Transaction, pull, this.AccessControlLists, this.PreparedFetches, this.PreparedExtents);
                     pullExtent.Execute(this);
                 }
             }

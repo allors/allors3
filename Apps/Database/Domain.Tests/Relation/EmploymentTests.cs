@@ -16,29 +16,29 @@ namespace Allors.Database.Domain.Tests
 
         public EmploymentTests(Fixture fixture) : base(fixture)
         {
-            this.employee = new PersonBuilder(this.Session).WithLastName("slave").Build();
+            this.employee = new PersonBuilder(this.Transaction).WithLastName("slave").Build();
 
-            this.employment = new EmploymentBuilder(this.Session)
+            this.employment = new EmploymentBuilder(this.Transaction)
                 .WithEmployee(this.employee)
-                .WithFromDate(this.Session.Now())
+                .WithFromDate(this.Transaction.Now())
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
         }
 
         [Fact]
         public void GivenActiveEmployment_WhenDeriving_ThenInternalOrganisationEmployeesContainsEmployee()
         {
-            var employee = new PersonBuilder(this.Session).WithLastName("customer").Build();
+            var employee = new PersonBuilder(this.Transaction).WithLastName("customer").Build();
             var employer = this.InternalOrganisation;
 
-            new EmploymentBuilder(this.Session)
+            new EmploymentBuilder(this.Transaction)
                 .WithEmployee(employee)
                 .WithEmployer(employer)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Contains(employee, employer.ActiveEmployees);
         }
@@ -46,15 +46,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenEmploymentToCome_WhenDeriving_ThenInternalOrganisationEmployeesDosNotContainEmployee()
         {
-            var employee = new PersonBuilder(this.Session).WithLastName("customer").Build();
+            var employee = new PersonBuilder(this.Transaction).WithLastName("customer").Build();
             var employer = this.InternalOrganisation;
 
-            new EmploymentBuilder(this.Session)
+            new EmploymentBuilder(this.Transaction)
                 .WithEmployee(employee)
-                .WithFromDate(this.Session.Now().AddDays(1))
+                .WithFromDate(this.Transaction.Now().AddDays(1))
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.DoesNotContain(employee, employer.ActiveEmployees);
         }
@@ -62,25 +62,25 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenEmploymentThatHasEnded_WhenDeriving_ThenInternalOrganisationEmployeesDosNotContainEmployee()
         {
-            var employee = new PersonBuilder(this.Session).WithLastName("customer").Build();
+            var employee = new PersonBuilder(this.Transaction).WithLastName("customer").Build();
             var employer = this.InternalOrganisation;
 
-            new EmploymentBuilder(this.Session)
+            new EmploymentBuilder(this.Transaction)
                 .WithEmployee(employee)
-                .WithFromDate(this.Session.Now().AddDays(-10))
-                .WithThroughDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddDays(-10))
+                .WithThroughDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.DoesNotContain(employee, employer.ActiveEmployees);
         }
 
-        private void InstantiateObjects(ISession session)
+        private void InstantiateObjects(ITransaction transaction)
         {
-            this.employee = (Person)session.Instantiate(this.employee);
-            this.internalOrganisation = (InternalOrganisation)session.Instantiate(this.internalOrganisation);
-            this.employment = (Employment)session.Instantiate(this.employment);
+            this.employee = (Person)transaction.Instantiate(this.employee);
+            this.internalOrganisation = (InternalOrganisation)transaction.Instantiate(this.internalOrganisation);
+            this.employment = (Employment)transaction.Instantiate(this.employment);
         }
     }
 
@@ -91,12 +91,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedEmployeeDeriveParties()
         {
-            var employment = new EmploymentBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var employment = new EmploymentBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var customer = new PersonBuilder(this.Session).Build();
+            var customer = new PersonBuilder(this.Transaction).Build();
             employment.Employee = customer;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains(customer, employment.Parties);
         }
@@ -104,12 +104,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedEmployerDeriveParties()
         {
-            var employment = new EmploymentBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var employment = new EmploymentBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var internalOrganisation = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+            var internalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
             employment.Employer = internalOrganisation;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains(internalOrganisation, employment.Parties);
         }

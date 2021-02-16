@@ -19,20 +19,20 @@ namespace Tests
         {
             this.SetUser("jane@example.com");
 
-            var organisation = new OrganisationBuilder(this.Session).WithName("Acme").Build();
-            this.Session.Derive();
-            this.Session.Commit();
+            var organisation = new OrganisationBuilder(this.Transaction).WithName("Acme").Build();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
             organisation.Strategy.Delete();
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
             var syncRequest = new SyncRequest
             {
                 Objects = new[] { organisation.Id.ToString() },
             };
 
-            var api = new Api(this.Session, "Default");
+            var api = new Api(this.Transaction, "Default");
             var syncResponse = api.Sync(syncRequest);
 
             Assert.Empty(syncResponse.Objects);
@@ -43,7 +43,7 @@ namespace Tests
         {
             this.SetUser("jane@example.com");
 
-            var people = new People(this.Session).Extent();
+            var people = new People(this.Transaction).Extent();
             var person = people[0];
 
             var syncRequest = new SyncRequest
@@ -51,7 +51,7 @@ namespace Tests
                 Objects = new[] { person.Id.ToString() },
             };
 
-            var api = new Api(this.Session, "Default");
+            var api = new Api(this.Transaction, "Default");
             var syncResponse = api.Sync(syncRequest);
 
             Assert.Single(syncResponse.Objects);
@@ -66,13 +66,13 @@ namespace Tests
         [Fact]
         public void WithoutAccessControl()
         {
-            new PersonBuilder(this.Session).WithUserName("noacl").WithFirstName("No").WithLastName("acl").Build();
-            this.Session.Derive();
-            this.Session.Commit();
+            new PersonBuilder(this.Transaction).WithUserName("noacl").WithFirstName("No").WithLastName("acl").Build();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
             this.SetUser("noacl");
 
-            var people = new People(this.Session).Extent();
+            var people = new People(this.Transaction).Extent();
             var person = people[0];
 
             var syncRequest = new SyncRequest
@@ -80,7 +80,7 @@ namespace Tests
                 Objects = new[] { person.Id.ToString() },
             };
 
-            var api = new Api(this.Session, "Default");
+            var api = new Api(this.Transaction, "Default");
             var syncResponse = api.Sync(syncRequest);
             
             Assert.Single(syncResponse.Objects);

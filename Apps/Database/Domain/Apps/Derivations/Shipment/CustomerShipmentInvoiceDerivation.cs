@@ -26,9 +26,9 @@ namespace Allors.Database.Domain
             {
 
                 if (@this.ExistShipmentState && !@this.ShipmentState.Equals(@this.LastShipmentState) &&
-                    @this.ShipmentState.Equals(new ShipmentStates(@this.Strategy.Session).Shipped))
+                    @this.ShipmentState.Equals(new ShipmentStates(@this.Strategy.Transaction).Shipped))
                 {
-                    if (Equals(@this.Store.BillingProcess, new BillingProcesses(@this.Strategy.Session).BillingForShipmentItems))
+                    if (Equals(@this.Store.BillingProcess, new BillingProcesses(@this.Strategy.Transaction).BillingForShipmentItems))
                     {
                         @this.Invoice();
                     }

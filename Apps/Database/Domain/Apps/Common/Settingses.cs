@@ -18,16 +18,16 @@ namespace Allors.Database.Domain
 
         protected override void AppsSetup(Setup setup)
         {
-            var singleton = this.Session.GetSingleton();
-            singleton.Settings ??= new SettingsBuilder(this.Session)
+            var singleton = this.Transaction.GetSingleton();
+            singleton.Settings ??= new SettingsBuilder(this.Transaction)
                 .WithUseProductNumberCounter(true)
                 .WithUsePartNumberCounter(true)
                 .Build();
 
             var settings = singleton.Settings;
 
-            var inventoryStrategy = new InventoryStrategies(this.Session).Standard;
-            var preferredCurrency = new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR");
+            var inventoryStrategy = new InventoryStrategies(this.Transaction).Standard;
+            var preferredCurrency = new Currencies(this.Transaction).FindBy(this.M.Currency.IsoCode, "EUR");
 
             settings.InventoryStrategy ??= inventoryStrategy;
             settings.SkuPrefix ??= "Sku-";
@@ -36,10 +36,10 @@ namespace Allors.Database.Domain
             settings.PartNumberPrefix ??= "Part-";
             settings.PreferredCurrency ??= preferredCurrency;
 
-            settings.SkuCounter ??= new CounterBuilder(this.Session).Build();
-            settings.SerialisedItemCounter ??= new CounterBuilder(this.Session).Build();
-            settings.ProductNumberCounter ??= new CounterBuilder(this.Session).Build();
-            settings.PartNumberCounter ??= new CounterBuilder(this.Session).Build();
+            settings.SkuCounter ??= new CounterBuilder(this.Transaction).Build();
+            settings.SerialisedItemCounter ??= new CounterBuilder(this.Transaction).Build();
+            settings.ProductNumberCounter ??= new CounterBuilder(this.Transaction).Build();
+            settings.PartNumberCounter ??= new CounterBuilder(this.Transaction).Build();
         }
     }
 }

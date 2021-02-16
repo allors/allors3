@@ -25,12 +25,12 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistQuoteItemState)
             {
-                this.QuoteItemState = new QuoteItemStates(this.Strategy.Session).Draft;
+                this.QuoteItemState = new QuoteItemStates(this.Strategy.Transaction).Draft;
             }
 
             if (this.ExistProduct && !this.ExistInvoiceItemType)
             {
-                this.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Session).ProductItem;
+                this.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Transaction).ProductItem;
             }
         }
 
@@ -42,15 +42,15 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void AppsSend(QuoteItemSend method) => this.QuoteItemState = new QuoteItemStates(this.Strategy.Session).AwaitingAcceptance;
+        public void AppsSend(QuoteItemSend method) => this.QuoteItemState = new QuoteItemStates(this.Strategy.Transaction).AwaitingAcceptance;
 
-        public void AppsCancel(QuoteItemCancel method) => this.QuoteItemState = new QuoteItemStates(this.Strategy.Session).Cancelled;
+        public void AppsCancel(QuoteItemCancel method) => this.QuoteItemState = new QuoteItemStates(this.Strategy.Transaction).Cancelled;
 
-        public void AppsReject(QuoteItemReject method) => this.QuoteItemState = new QuoteItemStates(this.Strategy.Session).Rejected;
+        public void AppsReject(QuoteItemReject method) => this.QuoteItemState = new QuoteItemStates(this.Strategy.Transaction).Rejected;
 
-        public void AppsOrder(QuoteItemOrder method) => this.QuoteItemState = new QuoteItemStates(this.Strategy.Session).Ordered;
+        public void AppsOrder(QuoteItemOrder method) => this.QuoteItemState = new QuoteItemStates(this.Strategy.Transaction).Ordered;
 
-        public void AppsSubmit(QuoteItemSubmit method) => this.QuoteItemState = new QuoteItemStates(this.Strategy.Session).Submitted;
+        public void AppsSubmit(QuoteItemSubmit method) => this.QuoteItemState = new QuoteItemStates(this.Strategy.Transaction).Submitted;
 
         public void Sync(Quote quote) => this.SyncedQuote = quote;
     }

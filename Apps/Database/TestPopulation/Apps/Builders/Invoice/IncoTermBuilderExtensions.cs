@@ -10,10 +10,10 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static IncoTermBuilder WithDefaults(this IncoTermBuilder @this)
         {
-            var faker = @this.Session.Faker();
+            var faker = @this.Transaction.Faker();
 
             @this.WithTermValue(faker.Lorem.Sentence());
-            @this.WithTermType(faker.Random.ListItem(@this.Session.Extent<IncoTermType>()));
+            @this.WithTermType(faker.Random.ListItem(@this.Transaction.Extent<IncoTermType>()));
             @this.WithDescription(faker.Lorem.Sentence());
 
             return @this;

@@ -112,7 +112,7 @@ namespace Allors.Database.Domain
             if (!this.lazyLoaded)
             {
                 var strategy = this.Object.Strategy;
-                var session = strategy.Session;
+                var transaction = strategy.Transaction;
 
                 SecurityToken[] securityTokens;
                 if (this.Object is DelegatedAccessControlledObject controlledObject)
@@ -148,8 +148,8 @@ namespace Allors.Database.Domain
 
                 if (securityTokens == null || securityTokens.Length == 0)
                 {
-                    var tokens = new SecurityTokens(session);
-                    securityTokens = strategy.IsNewInSession
+                    var tokens = new SecurityTokens(transaction);
+                    securityTokens = strategy.IsNewInTransaction
                                           ? new[] { tokens.InitialSecurityToken ?? tokens.DefaultSecurityToken }
                                           : new[] { tokens.DefaultSecurityToken };
                 }

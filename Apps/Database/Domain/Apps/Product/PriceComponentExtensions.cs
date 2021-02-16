@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
     {
         public static void AppsOnInit(this PriceComponent @this, ObjectOnInit method)
         {
-            var internalOrganisations = new Organisations(@this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
+            var internalOrganisations = new Organisations(@this.Strategy.Transaction).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
 
             if (!@this.ExistPricedBy && internalOrganisations.Count() == 1)
             {

@@ -15,13 +15,13 @@ namespace Allors.Database.Domain
 
         protected override void AppsSecure(Security config)
         {
-            var created = new ShipmentStates(this.Session).Created;
-            var picking = new ShipmentStates(this.Session).Picking;
-            var picked = new ShipmentStates(this.Session).Picked;
-            var packed = new ShipmentStates(this.Session).Packed;
-            var shipped = new ShipmentStates(this.Session).Shipped;
-            var cancelled = new ShipmentStates(this.Session).Cancelled;
-            var onHold = new ShipmentStates(this.Session).OnHold;
+            var created = new ShipmentStates(this.Transaction).Created;
+            var picking = new ShipmentStates(this.Transaction).Picking;
+            var picked = new ShipmentStates(this.Transaction).Picked;
+            var packed = new ShipmentStates(this.Transaction).Packed;
+            var shipped = new ShipmentStates(this.Transaction).Shipped;
+            var cancelled = new ShipmentStates(this.Transaction).Cancelled;
+            var onHold = new ShipmentStates(this.Transaction).OnHold;
 
             var pick = this.Meta.Pick;
             var setPacked = this.Meta.SetPacked;

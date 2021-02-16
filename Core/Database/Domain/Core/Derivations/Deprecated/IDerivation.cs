@@ -20,7 +20,7 @@ namespace Allors.Database.Domain
 
         DateTime TimeStamp { get; }
 
-        ISession Session { get; }
+        ITransaction Transaction { get; }
 
         IValidation Validation { get; }
 

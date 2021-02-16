@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
             }
             else
             {
-                var permissions = new Permissions(this.strategy.Session);
+                var permissions = new Permissions(this.strategy.Transaction);
                 var deniedPermissions = new[]
                                             {
                                                 permissions.Get(this.Meta.Class, this.Meta.Name, Operations.Write),

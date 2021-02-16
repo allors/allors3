@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
         private UniquelyIdentifiableCache<TemplateType> cache;
 
-        public Cache<Guid, TemplateType> Cache => this.cache ??= new UniquelyIdentifiableCache<TemplateType>(this.Session);
+        public Cache<Guid, TemplateType> Cache => this.cache ??= new UniquelyIdentifiableCache<TemplateType>(this.Transaction);
 
         public TemplateType OpenDocumentType => this.Cache[OpenDocumentTypeId];
 

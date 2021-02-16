@@ -92,7 +92,7 @@ namespace Allors.Database.Domain
 
                 if (adjustmentQuantity != 0)
                 {
-                    var newTransaction = new InventoryItemTransactionBuilder(salesOrderItemInventoryAssignment.Session())
+                    var newTransaction = new InventoryItemTransactionBuilder(salesOrderItemInventoryAssignment.Transaction())
                         .WithInventoryItem(inventoryItem)
                         .WithPart(inventoryItem.Part)
                         .WithQuantity(adjustmentQuantity)

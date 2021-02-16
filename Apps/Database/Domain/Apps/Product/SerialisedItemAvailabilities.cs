@@ -25,7 +25,7 @@ namespace Allors.Database.Domain
         public SerialisedItemAvailability NotAvailable => this.Cache[NotAvailableId];
 
         private UniquelyIdentifiableCache<SerialisedItemAvailability> Cache =>
-            this.cache ??= new UniquelyIdentifiableCache<SerialisedItemAvailability>(this.Session);
+            this.cache ??= new UniquelyIdentifiableCache<SerialisedItemAvailability>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

@@ -36,7 +36,7 @@ namespace Allors.Database.Domain
 
         public VatRegime Exempt => this.Cache[ExemptId];
 
-        private UniquelyIdentifiableCache<VatRegime> Cache => this.cache ??= new UniquelyIdentifiableCache<VatRegime>(this.Session);
+        private UniquelyIdentifiableCache<VatRegime> Cache => this.cache ??= new UniquelyIdentifiableCache<VatRegime>(this.Transaction);
 
         protected override void AppsPrepare(Setup setup)
         {
@@ -46,12 +46,12 @@ namespace Allors.Database.Domain
 
         protected override void AppsSetup(Setup setup)
         {
-            var vatRate0 = new VatRates(this.Session).Zero;
-            var vatRate21 = new VatRates(this.Session).TwentyOne;
-            var vatRate10 = new VatRates(this.Session).Ten;
-            var vatRate9 = new VatRates(this.Session).Nine;
+            var vatRate0 = new VatRates(this.Transaction).Zero;
+            var vatRate21 = new VatRates(this.Transaction).TwentyOne;
+            var vatRate10 = new VatRates(this.Transaction).Ten;
+            var vatRate9 = new VatRates(this.Transaction).Nine;
 
-            var dutchLocale = new Locales(this.Session).DutchNetherlands;
+            var dutchLocale = new Locales(this.Transaction).DutchNetherlands;
 
             var merge = this.Cache.Merger().Action();
             var localisedName = new LocalisedTextAccessor(this.Meta.LocalisedNames);
@@ -101,7 +101,7 @@ namespace Allors.Database.Domain
                 v.Name = "Intracommunautair";
                 localisedName.Set(v, dutchLocale, "Intracommunautair");
                 v.VatRate = vatRate0;
-                v.VatClause = new VatClauses(this.Session).Intracommunautair;
+                v.VatClause = new VatClauses(this.Transaction).Intracommunautair;
                 v.IsActive = true;
             });
 
@@ -110,7 +110,7 @@ namespace Allors.Database.Domain
                 v.Name = "Service B2B: Not VAT assessable";
                 localisedName.Set(v, dutchLocale, "Service B2B: Niet BTW-plichtig");
                 v.VatRate = vatRate0;
-                v.VatClause = new VatClauses(this.Session).ServiceB2B;
+                v.VatClause = new VatClauses(this.Transaction).ServiceB2B;
                 v.IsActive = true;
             });
 

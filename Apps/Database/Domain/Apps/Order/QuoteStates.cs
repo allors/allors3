@@ -36,7 +36,7 @@ namespace Allors.Database.Domain
 
         public QuoteState Rejected => this.Cache[RejectedId];
 
-        private UniquelyIdentifiableCache<QuoteState> Cache => this.cache ??= new UniquelyIdentifiableCache<QuoteState>(this.Session);
+        private UniquelyIdentifiableCache<QuoteState> Cache => this.cache ??= new UniquelyIdentifiableCache<QuoteState>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

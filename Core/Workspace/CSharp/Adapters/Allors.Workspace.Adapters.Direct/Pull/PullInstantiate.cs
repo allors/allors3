@@ -17,14 +17,14 @@ namespace Allors.Workspace.Adapters.Direct
 
     public class PullInstantiate
     {
-        private readonly ISession session;
+        private readonly ITransaction transaction;
         private readonly Database.Data.Pull pull;
         private readonly IAccessControlLists acls;
         private readonly IPreparedFetches preparedFetches;
 
-        public PullInstantiate(ISession session, Database.Data.Pull pull, IAccessControlLists acls, IPreparedFetches preparedFetches)
+        public PullInstantiate(ITransaction transaction, Database.Data.Pull pull, IAccessControlLists acls, IPreparedFetches preparedFetches)
         {
-            this.session = session;
+            this.transaction = transaction;
             this.pull = pull;
             this.acls = acls;
             this.preparedFetches = preparedFetches;
@@ -32,7 +32,7 @@ namespace Allors.Workspace.Adapters.Direct
 
         public void Execute(Direct.PullResult response)
         {
-            var @object = this.session.Instantiate(this.pull.Object);
+            var @object = this.transaction.Instantiate(this.pull.Object);
 
             var @class = @object.Strategy?.Class;
 

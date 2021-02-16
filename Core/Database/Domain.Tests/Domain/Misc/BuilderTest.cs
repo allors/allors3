@@ -15,7 +15,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void BaseOnPostBuild()
         {
-            var person = new PersonBuilder(this.Session).Build();
+            var person = new PersonBuilder(this.Transaction).Build();
 
             Assert.True(person.ExistUniqueId);
         }

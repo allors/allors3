@@ -22,7 +22,7 @@ namespace Allors.Database.Domain
             if (!method.Result.HasValue)
             {
                 this.QuoteState = this.AppsNeedsApproval
-                    ? new QuoteStates(this.Strategy.Session).AwaitingApproval : new QuoteStates(this.Strategy.Session).InProcess;
+                    ? new QuoteStates(this.Strategy.Transaction).AwaitingApproval : new QuoteStates(this.Strategy.Transaction).InProcess;
 
                 method.Result = true;
             }
@@ -30,9 +30,9 @@ namespace Allors.Database.Domain
 
         public void AppsOrder(ProductQuoteOrder method)
         {
-            this.QuoteState = new QuoteStates(this.Strategy.Session).Ordered;
+            this.QuoteState = new QuoteStates(this.Strategy.Transaction).Ordered;
 
-            var quoteItemStates = new QuoteItemStates(this.Session());
+            var quoteItemStates = new QuoteItemStates(this.Transaction());
             foreach (QuoteItem quoteItem in this.QuoteItems)
             {
                 if (Equals(quoteItem.QuoteItemState, quoteItemStates.Accepted))
@@ -48,7 +48,7 @@ namespace Allors.Database.Domain
         {
             if (!method.IsPrinted)
             {
-                var singleton = this.Strategy.Session.GetSingleton();
+                var singleton = this.Strategy.Transaction.GetSingleton();
                 var logo = this.Issuer?.ExistLogoImage == true ?
                                this.Issuer.LogoImage.MediaContent.Data :
                                singleton.LogoImage.MediaContent.Data;
@@ -61,8 +61,8 @@ namespace Allors.Database.Domain
 
                 if (this.ExistQuoteNumber)
                 {
-                    var session = this.Strategy.Session;
-                    var barcodeService = session.Database.Context().BarcodeGenerator;
+                    var transaction = this.Strategy.Transaction;
+                    var barcodeService = transaction.Database.Context().BarcodeGenerator;
                     var barcode = barcodeService.Generate(this.QuoteNumber, BarcodeType.CODE_128, 320, 80, pure: true);
                     images.Add("Barcode", barcode);
                 }
@@ -76,7 +76,7 @@ namespace Allors.Database.Domain
 
         private SalesOrder OrderThis()
         {
-            var salesOrder = new SalesOrderBuilder(this.Strategy.Session)
+            var salesOrder = new SalesOrderBuilder(this.Strategy.Transaction)
                 .WithTakenBy(this.Issuer)
                 .WithBillToCustomer(this.Receiver)
                 .WithDescription(this.Description)
@@ -90,15 +90,15 @@ namespace Allors.Database.Domain
                 .Build();
 
             var quoteItems = this.ValidQuoteItems
-                .Where(i => i.QuoteItemState.Equals(new QuoteItemStates(this.Strategy.Session).Ordered))
+                .Where(i => i.QuoteItemState.Equals(new QuoteItemStates(this.Strategy.Transaction).Ordered))
                 .ToArray();
 
             foreach (var quoteItem in quoteItems)
             {
-                quoteItem.QuoteItemState = new QuoteItemStates(this.Strategy.Session).Ordered;
+                quoteItem.QuoteItemState = new QuoteItemStates(this.Strategy.Transaction).Ordered;
 
                 salesOrder.AddSalesOrderItem(
-                    new SalesOrderItemBuilder(this.Strategy.Session)
+                    new SalesOrderItemBuilder(this.Strategy.Transaction)
                         .WithInvoiceItemType(quoteItem.InvoiceItemType)
                         .WithInternalComment(quoteItem.InternalComment)
                         .WithAssignedDeliveryDate(quoteItem.EstimatedDeliveryDate)
@@ -107,7 +107,7 @@ namespace Allors.Database.Domain
                         .WithAssignedIrpfRegime(quoteItem.AssignedIrpfRegime)
                         .WithProduct(quoteItem.Product)
                         .WithSerialisedItem(quoteItem.SerialisedItem)
-                        .WithNextSerialisedItemAvailability(new SerialisedItemAvailabilities(this.Session()).Sold)
+                        .WithNextSerialisedItemAvailability(new SerialisedItemAvailabilities(this.Transaction()).Sold)
                         .WithProductFeature(quoteItem.ProductFeature)
                         .WithQuantityOrdered(quoteItem.Quantity)
                         .WithInternalComment(quoteItem.InternalComment)

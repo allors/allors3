@@ -35,18 +35,18 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistPurchaseInvoiceItemState)
             {
-                this.PurchaseInvoiceItemState = new PurchaseInvoiceItemStates(this.Strategy.Session).Created;
+                this.PurchaseInvoiceItemState = new PurchaseInvoiceItemStates(this.Strategy.Transaction).Created;
             }
 
             if (this.ExistPart && !this.ExistInvoiceItemType)
             {
-                this.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Session).PartItem;
+                this.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Transaction).PartItem;
             }
 
             this.DerivationTrigger = Guid.NewGuid();
         }
 
-        public void CancelFromInvoice() => this.PurchaseInvoiceItemState = new PurchaseInvoiceItemStates(this.Strategy.Session).CancelledByinvoice;
+        public void CancelFromInvoice() => this.PurchaseInvoiceItemState = new PurchaseInvoiceItemStates(this.Strategy.Transaction).CancelledByinvoice;
 
         public void AppsDelete(DeletableDelete method)
         {
@@ -61,10 +61,10 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void AppsReject(PurchaseInvoiceItemReject method) => this.PurchaseInvoiceItemState = new PurchaseInvoiceItemStates(this.Strategy.Session).Rejected;
+        public void AppsReject(PurchaseInvoiceItemReject method) => this.PurchaseInvoiceItemState = new PurchaseInvoiceItemStates(this.Strategy.Transaction).Rejected;
 
-        public void AppsRevise(PurchaseInvoiceItemRevise method) => this.PurchaseInvoiceItemState = new PurchaseInvoiceItemStates(this.Strategy.Session).Revising;
+        public void AppsRevise(PurchaseInvoiceItemRevise method) => this.PurchaseInvoiceItemState = new PurchaseInvoiceItemStates(this.Strategy.Transaction).Revising;
 
-        public void AppsFinishRevising(PurchaseInvoiceItemFinishRevising method) => this.PurchaseInvoiceItemState = new PurchaseInvoiceItemStates(this.Strategy.Session).Created;
+        public void AppsFinishRevising(PurchaseInvoiceItemFinishRevising method) => this.PurchaseInvoiceItemState = new PurchaseInvoiceItemStates(this.Strategy.Transaction).Created;
     }
 }

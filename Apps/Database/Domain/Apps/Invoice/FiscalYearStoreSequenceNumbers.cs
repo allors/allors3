@@ -11,37 +11,37 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistSalesInvoiceNumberCounter)
             {
-                this.SalesInvoiceNumberCounter = new CounterBuilder(this.Session()).Build();
+                this.SalesInvoiceNumberCounter = new CounterBuilder(this.Transaction()).Build();
             }
 
             if (!this.ExistCreditNoteNumberCounter)
             {
-                this.CreditNoteNumberCounter = new CounterBuilder(this.Session()).Build();
+                this.CreditNoteNumberCounter = new CounterBuilder(this.Transaction()).Build();
             }
 
             if (!this.ExistCustomerShipmentNumberCounter)
             {
-                this.CustomerShipmentNumberCounter = new CounterBuilder(this.Session()).Build();
+                this.CustomerShipmentNumberCounter = new CounterBuilder(this.Transaction()).Build();
             }
 
             if (!this.ExistPurchaseReturnNumberCounter)
             {
-                this.PurchaseReturnNumberCounter = new CounterBuilder(this.Session()).Build();
+                this.PurchaseReturnNumberCounter = new CounterBuilder(this.Transaction()).Build();
             }
 
             if (!this.ExistDropShipmentNumberCounter)
             {
-                this.DropShipmentNumberCounter = new CounterBuilder(this.Session()).Build();
+                this.DropShipmentNumberCounter = new CounterBuilder(this.Transaction()).Build();
             }
 
             if (!this.ExistOutgoingTransferNumberCounter)
             {
-                this.OutgoingTransferNumberCounter = new CounterBuilder(this.Session()).Build();
+                this.OutgoingTransferNumberCounter = new CounterBuilder(this.Transaction()).Build();
             }
 
             if (!this.ExistSalesOrderNumberCounter)
             {
-                this.SalesOrderNumberCounter = new CounterBuilder(this.Session()).Build();
+                this.SalesOrderNumberCounter = new CounterBuilder(this.Transaction()).Build();
             }
         }
 

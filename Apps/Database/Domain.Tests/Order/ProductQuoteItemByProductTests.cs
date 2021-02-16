@@ -15,14 +15,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedProductQuoteItemProductDeriveQuantityOrdered()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            var quote = new ProductQuoteBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var quoteItem = new QuoteItemBuilder(this.Session).WithProduct(product).WithQuantity(1).WithAssignedUnitPrice(1).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).WithProduct(product).WithQuantity(1).WithAssignedUnitPrice(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, quote.ProductQuoteItemsByProduct.First.QuantityOrdered);
         }
@@ -30,14 +30,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedProductQuoteItemProductDeriveValueOrdered()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            var quote = new ProductQuoteBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var quoteItem = new QuoteItemBuilder(this.Session).WithProduct(product).WithQuantity(1).WithAssignedUnitPrice(1).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).WithProduct(product).WithQuantity(1).WithAssignedUnitPrice(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, quote.ProductQuoteItemsByProduct.First.ValueOrdered);
         }
@@ -45,18 +45,18 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedProductQuoteItemVersionProductDeriveValueOrdered()
         {
-            var product1 = new NonUnifiedGoodBuilder(this.Session).Build();
-            var product2 = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product1 = new NonUnifiedGoodBuilder(this.Transaction).Build();
+            var product2 = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            var quote = new ProductQuoteBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var QuoteItem = new QuoteItemBuilder(this.Session).WithProduct(product1).WithQuantity(1).WithAssignedUnitPrice(1).Build();
+            var QuoteItem = new QuoteItemBuilder(this.Transaction).WithProduct(product1).WithQuantity(1).WithAssignedUnitPrice(1).Build();
             quote.AddQuoteItem(QuoteItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             QuoteItem.Product = product2;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0, product1.ProductQuoteItemByProductsWhereProduct.First.ValueOrdered);
         }

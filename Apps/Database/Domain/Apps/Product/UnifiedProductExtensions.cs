@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
         {
             if (!@this.ExistScope)
             {
-                @this.Scope = new Scopes(@this.Strategy.Session).Public;
+                @this.Scope = new Scopes(@this.Strategy.Transaction).Public;
             }
         }
     }

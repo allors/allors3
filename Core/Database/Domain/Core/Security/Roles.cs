@@ -33,7 +33,7 @@ namespace Allors.Database.Domain
 
         public Role Owner => this.Cache[OwnerId];
 
-        private UniquelyIdentifiableCache<Role> Cache => this.cache ??= new UniquelyIdentifiableCache<Role>(this.Session);
+        private UniquelyIdentifiableCache<Role> Cache => this.cache ??= new UniquelyIdentifiableCache<Role>(this.Transaction);
 
         protected override void CoreSetup(Setup setup)
         {

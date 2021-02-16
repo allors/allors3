@@ -39,7 +39,7 @@ namespace Allors.Database.Domain
                 }
 
                 var identifications = @this.ProductIdentifications;
-                identifications.Filter.AddEquals(this.M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(@this.Strategy.Session).Part);
+                identifications.Filter.AddEquals(this.M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(@this.Strategy.Transaction).Part);
                 var partIdentification = identifications.FirstOrDefault();
 
                 @this.ProductNumber = partIdentification?.Identification;

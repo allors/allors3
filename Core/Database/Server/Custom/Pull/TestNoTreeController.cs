@@ -13,14 +13,14 @@ namespace Allors.Server.Controllers
 
     public class TestNoTreeController : Controller
     {
-        public TestNoTreeController(ISessionService sessionService, IWorkspaceService workspaceService)
+        public TestNoTreeController(ITransactionService transactionService, IWorkspaceService workspaceService)
         {
             this.WorkspaceService = workspaceService;
-            this.Session = sessionService.Session;
-            this.TreeCache = this.Session.Database.Context().TreeCache;
+            this.Transaction = transactionService.Transaction;
+            this.TreeCache = this.Transaction.Database.Context().TreeCache;
         }
 
-        private ISession Session { get; }
+        private ITransaction Transaction { get; }
 
         public IWorkspaceService WorkspaceService { get; }
 
@@ -29,10 +29,10 @@ namespace Allors.Server.Controllers
         [HttpPost]
         public IActionResult Pull()
         {
-            var api = new Api(this.Session, this.WorkspaceService.Name);
+            var api = new Api(this.Transaction, this.WorkspaceService.Name);
             var response = api.CreatePullResponseBuilder();
             response.AddObject("object", api.User);
-            response.AddCollection("collection", new Organisations(this.Session).Extent());
+            response.AddCollection("collection", new Organisations(this.Transaction).Extent());
             return this.Ok(response.Build());
         }
     }

@@ -11,7 +11,7 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static EmailAddressBuilder WithDefaults(this EmailAddressBuilder @this)
         {
-            var faker = @this.Session.Faker();
+            var faker = @this.Transaction.Faker();
 
             @this.WithElectronicAddressString(faker.Internet.Email());
             @this.WithDescription(faker.Lorem.Sentence());

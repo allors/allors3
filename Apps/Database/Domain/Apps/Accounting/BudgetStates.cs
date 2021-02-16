@@ -19,7 +19,7 @@ namespace Allors.Database.Domain
 
         public BudgetState Closed => this.Cache[ClosedId];
 
-        private UniquelyIdentifiableCache<BudgetState> Cache => this.cache ??= new UniquelyIdentifiableCache<BudgetState>(this.Session);
+        private UniquelyIdentifiableCache<BudgetState> Cache => this.cache ??= new UniquelyIdentifiableCache<BudgetState>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

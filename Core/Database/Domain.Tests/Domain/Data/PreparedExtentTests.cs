@@ -18,9 +18,9 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public async void WithParameter()
         {
-            var organisations = new Organisations(this.Session).Extent().ToArray();
+            var organisations = new Organisations(this.Transaction).Extent().ToArray();
 
-            var extentService = this.Session.Database.Context().PreparedExtents;
+            var extentService = this.Transaction.Database.Context().PreparedExtents;
             var organizationByName = extentService.Get(PreparedExtents.OrganisationByName);
 
             var arguments = new Dictionary<string, string>
@@ -28,7 +28,7 @@ namespace Allors.Database.Domain.Tests
                 { "name", "Acme" },
             };
 
-            Extent<Organisation> organizations = organizationByName.Build(this.Session, arguments).ToArray();
+            Extent<Organisation> organizations = organizationByName.Build(this.Transaction, arguments).ToArray();
 
             Assert.Single(organizations);
 

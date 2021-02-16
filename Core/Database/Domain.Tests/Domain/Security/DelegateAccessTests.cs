@@ -18,20 +18,20 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void DelegateAccessReturnsTokens()
         {
-            var administrator = new PersonBuilder(this.Session).WithUserName("administrator").Build();
-            var administrators = new UserGroups(this.Session).Administrators;
+            var administrator = new PersonBuilder(this.Transaction).WithUserName("administrator").Build();
+            var administrators = new UserGroups(this.Transaction).Administrators;
             administrators.AddMember(administrator);
-            var accessClass = new AccessClassBuilder(this.Session).Build();
+            var accessClass = new AccessClassBuilder(this.Transaction).Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var defaultSecurityToken = new SecurityTokens(this.Session).DefaultSecurityToken;
+            var defaultSecurityToken = new SecurityTokens(this.Transaction).DefaultSecurityToken;
             var dstAcs = defaultSecurityToken.AccessControls.Where(v => v.EffectiveUsers.Contains(administrator));
             var dstAcs2 = defaultSecurityToken.AccessControls.Where(v => v.SubjectGroups.Contains(administrators));
 
-            var acs = new AccessControls(this.Session).Extent().Where(v => v.EffectiveUsers.Contains(administrator));
-            var acs2 = new AccessControls(this.Session).Extent().Where(v => v.SubjectGroups.Contains(administrators));
+            var acs = new AccessControls(this.Transaction).Extent().Where(v => v.EffectiveUsers.Contains(administrator));
+            var acs2 = new AccessControls(this.Transaction).Extent().Where(v => v.SubjectGroups.Contains(administrators));
 
             var acl = new DatabaseAccessControlLists(administrator)[accessClass];
             Assert.True(acl.CanRead(this.M.AccessClass.Property));
@@ -44,14 +44,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void DelegateAccessReturnsNoTokens()
         {
-            var administrator = new PersonBuilder(this.Session).WithUserName("administrator").Build();
-            new UserGroups(this.Session).Administrators.AddMember(administrator);
-            var accessClass = new AccessClassBuilder(this.Session).WithBlock(true).Build();
+            var administrator = new PersonBuilder(this.Transaction).WithUserName("administrator").Build();
+            new UserGroups(this.Transaction).Administrators.AddMember(administrator);
+            var accessClass = new AccessClassBuilder(this.Transaction).WithBlock(true).Build();
 
             accessClass.Block = true;
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
             // Use default security from Singleton
             var acl = new DatabaseAccessControlLists(administrator)[accessClass];

@@ -22,9 +22,9 @@ namespace Allors.Database.Data
 
         bool IExtent.HasMissingArguments(IDictionary<string, string> parameters) => this.Operands.Any(v => v.HasMissingArguments(parameters));
 
-        Database.Extent IExtent.Build(ISession session, IDictionary<string, string> parameters)
+        Database.Extent IExtent.Build(ITransaction transaction, IDictionary<string, string> parameters)
         {
-            var extent = session.Intersect(this.Operands[0].Build(session, parameters), this.Operands[1].Build(session, parameters));
+            var extent = transaction.Intersect(this.Operands[0].Build(transaction, parameters), this.Operands[1].Build(transaction, parameters));
             foreach (var sort in this.Sorting)
             {
                 sort.Build(extent);

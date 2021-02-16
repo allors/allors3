@@ -15,14 +15,14 @@ namespace Allors.Database.Domain.Derivations.Default
 
     public class DomainDerive
     {
-        public DomainDerive(ISession session, IValidation validation, DerivationConfig derivationConfig)
+        public DomainDerive(ITransaction transaction, IValidation validation, DerivationConfig derivationConfig)
         {
-            this.Session = session;
+            this.Transaction = transaction;
             this.Validation = validation;
             this.DerivationConfig = derivationConfig;
         }
 
-        public ISession Session { get; }
+        public ITransaction Transaction { get; }
 
         public IValidation Validation { get; }
 
@@ -30,7 +30,7 @@ namespace Allors.Database.Domain.Derivations.Default
 
         public AccumulatedChangeSet Execute()
         {
-            var derivations = this.Session.Database.Derivations;
+            var derivations = this.Transaction.Database.Derivations;
 
             var maxDomainDerivationCycles = this.DerivationConfig.MaxDomainDerivationCycles;
             var domainCycles = 0;
@@ -40,7 +40,7 @@ namespace Allors.Database.Domain.Derivations.Default
             domainAccumulatedChangeSet = new AccumulatedChangeSet();
             var domainValidation = new DomainValidation(this.Validation);
 
-            var changeSet = this.Session.Checkpoint();
+            var changeSet = this.Transaction.Checkpoint();
             domainAccumulatedChangeSet.Add(changeSet);
 
             while (changeSet.Associations.Any() || changeSet.Roles.Any() || changeSet.Created.Any() || changeSet.Deleted.Any())
@@ -60,7 +60,7 @@ namespace Allors.Database.Domain.Derivations.Default
                     }
                 }
 
-                var domainCycle = new DomainDerivationCycle { ChangeSet = changeSet, Session = this.Session, Validation = domainValidation };
+                var domainCycle = new DomainDerivationCycle { ChangeSet = changeSet, Transaction = this.Transaction, Validation = domainValidation };
 
                 var matchesByDerivation = new Dictionary<IDomainDerivation, IEnumerable<IObject>>();
                 foreach (var domainDerivation in derivations)
@@ -75,19 +75,19 @@ namespace Allors.Database.Domain.Derivations.Default
                             ChangedPattern changedRolePattern when changedRolePattern.RoleType is RoleDefault roleInterface => changeSet
                                     .AssociationsByRoleType
                                     .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
-                                    .SelectMany(v => this.Session.Instantiate(v.Value)),
+                                    .SelectMany(v => this.Transaction.Instantiate(v.Value)),
 
                             // RoleInterface
                             ChangedPattern changedRolePattern when changedRolePattern.RoleType is RoleInterface roleInterface => changeSet
                                     .AssociationsByRoleType
                                     .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
-                                    .SelectMany(v => this.Session.Instantiate(v.Value))
+                                    .SelectMany(v => this.Transaction.Instantiate(v.Value))
                                     .Where(v => roleInterface.AssociationTypeComposite.IsAssignableFrom(v.Strategy.Class)),
 
                             // RoleClass
                             ChangedPattern changedRolePattern when changedRolePattern.RoleType is RoleClass roleClass => changeSet
                                     .AssociationsByRoleType.Where(v => v.Key.Equals(roleClass))
-                                    .SelectMany(v => this.Session.Instantiate(v.Value))
+                                    .SelectMany(v => this.Transaction.Instantiate(v.Value))
                                     .Where(v => v.Strategy.Class.Equals(roleClass.AssociationTypeComposite)),
 
                             _ => Array.Empty<IObject>()
@@ -125,7 +125,7 @@ namespace Allors.Database.Domain.Derivations.Default
                     domainDerivation.Derive(domainCycle, matches);
                 }
 
-                changeSet = this.Session.Checkpoint();
+                changeSet = this.Transaction.Checkpoint();
                 domainAccumulatedChangeSet.Add(changeSet);
             }
 

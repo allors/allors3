@@ -1,8 +1,8 @@
-// <copyright file="Session.cs" company="Allors bvba">
+// <copyright file="Transaction.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
-// <summary>Defines the Session type.</summary>
+// <summary>Defines the Transaction type.</summary>
 
 namespace Allors.Database.Adapters.Npgsql
 {
@@ -12,14 +12,14 @@ namespace Allors.Database.Adapters.Npgsql
 
     using Meta;
 
-    public sealed class Session : ISession
+    public sealed class Transaction : ITransaction
     {
         private static readonly IObject[] EmptyObjects = { };
         private bool busyCommittingOrRollingBack;
 
         private Dictionary<string, object> properties;
 
-        internal Session(Database database, Connection connection, ISessionLifecycle scope)
+        internal Transaction(Database database, Connection connection, ITransactionLifecycle scope)
         {
             this.Database = database;
             this.Connection = connection;
@@ -39,9 +39,9 @@ namespace Allors.Database.Adapters.Npgsql
 
         public State State { get; }
 
-        IDatabase ISession.Database => this.Database;
+        IDatabase ITransaction.Database => this.Database;
 
-        public ISessionLifecycle StateLifecycle { get; }
+        public ITransactionLifecycle StateLifecycle { get; }
         
         public Database Database { get; }
 
@@ -369,7 +369,7 @@ namespace Allors.Database.Adapters.Npgsql
             return (T)this.Create(objectType);
         }
 
-        public override string ToString() => "Session[id=" + this.GetHashCode() + "] " + this.Database;
+        public override string ToString() => "Transaction[id=" + this.GetHashCode() + "] " + this.Database;
 
         internal Reference GetAssociation(Strategy roleStrategy, IAssociationType associationType)
         {

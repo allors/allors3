@@ -38,7 +38,7 @@ namespace Allors.Database.Domain
 
                     foreach (ItemIssuance itemIssuance in @this.ItemIssuancesWherePickListItem)
                     {
-                        itemIssuance.IssuanceDateTime = @this.Session().Now();
+                        itemIssuance.IssuanceDateTime = @this.Transaction().Now();
                         foreach (OrderShipment orderShipment in itemIssuance.ShipmentItem.OrderShipmentsWhereShipmentItem)
                         {
                             if (orderShipment.OrderItem is SalesOrderItem salesOrderItem)

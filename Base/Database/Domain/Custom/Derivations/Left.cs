@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
 
             if (this.CreateMiddle && !this.ExistMiddle)
             {
-                this.Middle = new MiddleBuilder(this.strategy.Session).Build();
+                this.Middle = new MiddleBuilder(this.strategy.Transaction).Build();
             }
         }
     }

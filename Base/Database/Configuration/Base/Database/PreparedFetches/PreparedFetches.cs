@@ -26,17 +26,17 @@ namespace Allors.Database.Configuration
         {
             if (!this.fetchById.TryGetValue(id, out var fetch))
             {
-                var session = this.DatabaseContext.Database.CreateSession();
+                var transaction = this.DatabaseContext.Database.CreateTransaction();
                 try
                 {
-                    var m = session.Database.Context().M;
+                    var m = transaction.Database.Context().M;
 
                     var filter = new Extent(m.PersistentPreparedFetch.Class)
                     {
                         Predicate = new Equals(m.PersistentPreparedFetch.UniqueId) { Value = id },
                     };
 
-                    var preparedFetch = (PersistentPreparedFetch)filter.Build(session).First;
+                    var preparedFetch = (PersistentPreparedFetch)filter.Build(transaction).First;
                     if (preparedFetch != null)
                     {
                         fetch = preparedFetch.Fetch;
@@ -47,7 +47,7 @@ namespace Allors.Database.Configuration
                 {
                     if (this.DatabaseContext.Database.IsShared)
                     {
-                        session.Dispose();
+                        transaction.Dispose();
                     }
                 }
             }

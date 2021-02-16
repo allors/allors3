@@ -12,13 +12,13 @@ namespace Allors.Database.Adapters.Memory
 
     public class Save
     {
-        private readonly Session session;
+        private readonly Transaction transaction;
         private readonly XmlWriter writer;
         private readonly Dictionary<IObjectType, List<Strategy>> sortedNonDeletedStrategiesByObjectType;
 
-        public Save(Session session, XmlWriter writer, Dictionary<IObjectType, List<Strategy>> sortedNonDeletedStrategiesByObjectType)
+        public Save(Transaction transaction, XmlWriter writer, Dictionary<IObjectType, List<Strategy>> sortedNonDeletedStrategiesByObjectType)
         {
-            this.session = session;
+            this.transaction = transaction;
             this.writer = writer;
             this.sortedNonDeletedStrategiesByObjectType = sortedNonDeletedStrategiesByObjectType;
         }
@@ -112,7 +112,7 @@ namespace Allors.Database.Adapters.Memory
                 strategies.Sort(strategySorter);
             }
 
-            var sortedRelationTypes = new List<IRelationType>(this.session.Population.MetaPopulation.DatabaseRelationTypes);
+            var sortedRelationTypes = new List<IRelationType>(this.transaction.Population.MetaPopulation.DatabaseRelationTypes);
             sortedRelationTypes.Sort();
             foreach (var relationType in sortedRelationTypes)
             {

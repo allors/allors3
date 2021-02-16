@@ -13,11 +13,11 @@ namespace Allors.Database.Domain
 
         protected override void AppsSecure(Security config)
         {
-            var readyForPosting = new SalesInvoiceItemStates(this.Session).ReadyForPosting;
-            var notPaid = new SalesInvoiceItemStates(this.Session).NotPaid;
-            var paid = new SalesInvoiceItemStates(this.Session).Paid;
-            var writtenOff = new SalesInvoiceItemStates(this.Session).WrittenOff;
-            var cancelledByInvoice = new SalesInvoiceItemStates(this.Session).CancelledByInvoice;
+            var readyForPosting = new SalesInvoiceItemStates(this.Transaction).ReadyForPosting;
+            var notPaid = new SalesInvoiceItemStates(this.Transaction).NotPaid;
+            var paid = new SalesInvoiceItemStates(this.Transaction).Paid;
+            var writtenOff = new SalesInvoiceItemStates(this.Transaction).WrittenOff;
+            var cancelledByInvoice = new SalesInvoiceItemStates(this.Transaction).CancelledByInvoice;
 
             config.Deny(this.ObjectType, notPaid, Operations.Write);
             config.Deny(this.ObjectType, paid, Operations.Write);

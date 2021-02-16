@@ -17,8 +17,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesInvoiceTotalIncVatDeriveAmountDue()
         {
-            var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
-            this.Session.Derive();
+            var invoice = new SalesInvoiceBuilder(this.Transaction).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+            this.Transaction.Derive();
 
             var partyFinancial = invoice.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, invoice.BilledFrom));
 
@@ -28,13 +28,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesInvoiceAmountPaidDeriveAmountDue()
         {
-            var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
-            this.Session.Derive();
+            var invoice = new SalesInvoiceBuilder(this.Transaction).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+            this.Transaction.Derive();
 
             var partyFinancial = invoice.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, invoice.BilledFrom));
 
             invoice.AdvancePayment = 0;
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(partyFinancial.AmountDue == invoice.TotalIncVat);
         }
@@ -42,16 +42,16 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesInvoiceDueDateDeriveAmountOverDue()
         {
-            var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
-            this.Session.Derive();
+            var invoice = new SalesInvoiceBuilder(this.Transaction).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+            this.Transaction.Derive();
 
             invoice.Store.PaymentGracePeriod = 0;
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var partyFinancial = invoice.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, invoice.BilledFrom));
 
-            invoice.DueDate = this.Session.Now().AddDays(-31);
-            this.Session.Derive();
+            invoice.DueDate = this.Transaction.Now().AddDays(-31);
+            this.Transaction.Derive();
 
             Assert.True(partyFinancial.AmountOverDue == invoice.TotalIncVat - invoice.AdvancePayment);
         }
@@ -59,16 +59,16 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedStorePaymentGracePeriodWithoutGraceDeriveAmountOverDue()
         {
-            var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+            var invoice = new SalesInvoiceBuilder(this.Transaction).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
 
             // we know payment must be made within 30 days
-            invoice.InvoiceDate = this.Session.Now().AddDays(-31); //due becomes yesterday
-            this.Session.Derive();
+            invoice.InvoiceDate = this.Transaction.Now().AddDays(-31); //due becomes yesterday
+            this.Transaction.Derive();
 
             var partyFinancial = invoice.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, invoice.BilledFrom));
 
             invoice.Store.PaymentGracePeriod = 0;
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(partyFinancial.AmountOverDue == invoice.TotalIncVat - invoice.AdvancePayment);
         }
@@ -76,14 +76,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedStorePaymentGracePeriodWitGraceDeriveAmountOverDue()
         {
-            var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
-            this.Session.Derive(false);
+            var invoice = new SalesInvoiceBuilder(this.Transaction).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+            this.Transaction.Derive(false);
 
             var partyFinancial = invoice.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, invoice.BilledFrom));
 
-            invoice.DueDate = this.Session.Now().AddDays(-1);
+            invoice.DueDate = this.Transaction.Now().AddDays(-1);
             invoice.Store.PaymentGracePeriod = 10;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(partyFinancial.AmountOverDue == 0);
         }
@@ -96,8 +96,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void DeriveOpenOrderAmount()
         {
-            var order = this.InternalOrganisation.CreateB2BSalesOrder(this.Session.Faker());
-            this.Session.Derive();
+            var order = this.InternalOrganisation.CreateB2BSalesOrder(this.Transaction.Faker());
+            this.Transaction.Derive();
 
             var partyFinancial = order.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, order.TakenBy));
 

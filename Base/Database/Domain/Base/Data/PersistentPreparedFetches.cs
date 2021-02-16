@@ -11,6 +11,6 @@ namespace Allors.Database.Domain
     {
         private UniquelyIdentifiableCache<PersistentPreparedFetch> cache;
 
-        public UniquelyIdentifiableCache<PersistentPreparedFetch> Cache => this.cache ??= new UniquelyIdentifiableCache<PersistentPreparedFetch>(this.Session);
+        public UniquelyIdentifiableCache<PersistentPreparedFetch> Cache => this.cache ??= new UniquelyIdentifiableCache<PersistentPreparedFetch>(this.Transaction);
     }
 }

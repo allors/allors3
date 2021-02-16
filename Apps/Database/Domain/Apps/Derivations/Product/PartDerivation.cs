@@ -26,7 +26,7 @@ namespace Allors.Database.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            var m = cycle.Session.Database.Context().M;
+            var m = cycle.Transaction.Database.Context().M;
 
             foreach (var @this in matches.Cast<Part>())
             {
@@ -39,7 +39,7 @@ namespace Allors.Database.Domain
                         if (!inventoryItems.Any(i => i.ExistFacility && i.Facility.Equals(@this.DefaultFacility)
                                                     && i.ExistUnitOfMeasure && i.UnitOfMeasure.Equals(@this.UnitOfMeasure)))
                         {
-                            var inventoryItem = (InventoryItem)new NonSerialisedInventoryItemBuilder(@this.Strategy.Session)
+                            var inventoryItem = (InventoryItem)new NonSerialisedInventoryItemBuilder(@this.Strategy.Transaction)
                               .WithFacility(@this.DefaultFacility)
                               .WithUnitOfMeasure(@this.UnitOfMeasure)
                               .WithPart(@this)
@@ -58,7 +58,7 @@ namespace Allors.Database.Domain
                         if (characteristic == null)
                         {
                             @this.AddSerialisedItemCharacteristic(
-                                                        new SerialisedItemCharacteristicBuilder(@this.Strategy.Session)
+                                                        new SerialisedItemCharacteristicBuilder(@this.Strategy.Transaction)
                                                             .WithSerialisedItemCharacteristicType(characteristicType)
                                                             .Build());
                         }

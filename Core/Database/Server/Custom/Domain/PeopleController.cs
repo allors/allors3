@@ -16,14 +16,14 @@ namespace Allors.Server.Controllers
 
     public class PeopleController : Controller
     {
-        public PeopleController(ISessionService sessionService, IWorkspaceService workspaceService)
+        public PeopleController(ITransactionService transactionService, IWorkspaceService workspaceService)
         {
             this.WorkspaceService = workspaceService;
-            this.Session = sessionService.Session;
-            this.TreeCache = this.Session.Database.Context().TreeCache;
+            this.Transaction = transactionService.Transaction;
+            this.TreeCache = this.Transaction.Database.Context().TreeCache;
         }
 
-        private ISession Session { get; }
+        private ITransaction Transaction { get; }
 
         public IWorkspaceService WorkspaceService { get; }
 
@@ -33,9 +33,9 @@ namespace Allors.Server.Controllers
         [Authorize]
         public async Task<IActionResult> Pull()
         {
-            var api = new Api(this.Session, this.WorkspaceService.Name);
+            var api = new Api(this.Transaction, this.WorkspaceService.Name);
             var response = api.CreatePullResponseBuilder();
-            var people = new People(this.Session).Extent().ToArray();
+            var people = new People(this.Transaction).Extent().ToArray();
             response.AddCollection("people", people);
             return this.Ok(response.Build());
         }

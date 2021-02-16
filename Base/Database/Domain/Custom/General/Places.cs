@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
     {
         public Extent<Place> ExtentByPostalCode()
         {
-            var places = this.Session.Extent<Place>();
+            var places = this.Transaction.Extent<Place>();
             places.AddSort(this.M.Place.PostalCode);
 
             return places;

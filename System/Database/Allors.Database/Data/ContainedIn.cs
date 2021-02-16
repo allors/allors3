@@ -26,11 +26,11 @@ namespace Allors.Database.Data
 
         bool IPredicate.HasMissingArguments(IDictionary<string, string> parameters) => this.HasMissingArguments(parameters);
 
-        void IPredicate.Build(ISession session, IDictionary<string, string> parameters, Database.ICompositePredicate compositePredicate)
+        void IPredicate.Build(ITransaction transaction, IDictionary<string, string> parameters, Database.ICompositePredicate compositePredicate)
         {
             if (!this.HasMissingArguments(parameters))
             {
-                var objects = this.Parameter != null ? session.GetObjects(parameters[this.Parameter]) : this.Objects;
+                var objects = this.Parameter != null ? transaction.GetObjects(parameters[this.Parameter]) : this.Objects;
 
                 if (this.PropertyType is IRoleType roleType)
                 {
@@ -40,7 +40,7 @@ namespace Allors.Database.Data
                     }
                     else
                     {
-                        compositePredicate.AddContainedIn(roleType, this.Extent.Build(session, parameters));
+                        compositePredicate.AddContainedIn(roleType, this.Extent.Build(transaction, parameters));
                     }
                 }
                 else
@@ -52,7 +52,7 @@ namespace Allors.Database.Data
                     }
                     else
                     {
-                        compositePredicate.AddContainedIn(associationType, this.Extent.Build(session, parameters));
+                        compositePredicate.AddContainedIn(associationType, this.Extent.Build(transaction, parameters));
                     }
                 }
             }

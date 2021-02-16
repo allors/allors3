@@ -16,7 +16,7 @@ namespace Allors.Database.Adapters
 
     public abstract class Profile : IProfile
     {
-        public ISession Session { get; private set; }
+        public ITransaction Transaction { get; private set; }
 
         public IDatabase Database { get; private set; }
 
@@ -39,17 +39,17 @@ namespace Allors.Database.Adapters
 
         public void SwitchDatabase()
         {
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             this.Database = this.CreateDatabase();
-            this.Session = this.Database.CreateSession();
-            this.Session.Commit();
+            this.Transaction = this.Database.CreateTransaction();
+            this.Transaction.Commit();
         }
 
         public virtual void Dispose()
         {
-            this.Session?.Rollback();
+            this.Transaction?.Rollback();
 
-            this.Session = null;
+            this.Transaction = null;
             this.Database = null;
         }
 
@@ -65,18 +65,18 @@ namespace Allors.Database.Adapters
 
         public abstract IDatabase CreateDatabase();
 
-        internal ISession CreateSession() => this.Database.CreateSession();
+        internal ITransaction CreateTransaction() => this.Database.CreateTransaction();
 
         protected internal void Init()
         {
             try
             {
-                this.Session?.Rollback();
+                this.Transaction?.Rollback();
 
                 this.Database = this.CreateDatabase();
                 this.Database.Init();
-                this.Session = this.Database.CreateSession();
-                this.Session.Commit();
+                this.Transaction = this.Database.CreateTransaction();
+                this.Transaction.Commit();
             }
             catch (Exception e)
             {

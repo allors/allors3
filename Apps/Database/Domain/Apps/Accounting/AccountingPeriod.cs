@@ -24,15 +24,15 @@ namespace Allors.Database.Domain
 
         private AccountingPeriod AppsAddNextMonth()
         {
-            var allPeriods = new AccountingPeriods(this.Strategy.Session).Extent();
-            allPeriods.Filter.AddEquals(this.Meta.Frequency, new TimeFrequencies(this.Strategy.Session).Month);
+            var allPeriods = new AccountingPeriods(this.Strategy.Transaction).Extent();
+            allPeriods.Filter.AddEquals(this.Meta.Frequency, new TimeFrequencies(this.Strategy.Transaction).Month);
             allPeriods.AddSort(this.Meta.FromDate, SortDirection.Descending);
 
             var mostRecentMonth = allPeriods.First;
 
-            var newMonth = new AccountingPeriodBuilder(this.Strategy.Session)
+            var newMonth = new AccountingPeriodBuilder(this.Strategy.Transaction)
                 .WithPeriodNumber(mostRecentMonth.PeriodNumber + 1)
-                .WithFrequency(new TimeFrequencies(this.Strategy.Session).Month)
+                .WithFrequency(new TimeFrequencies(this.Strategy.Transaction).Month)
                 .Build();
 
             if (newMonth.PeriodNumber < 13)
@@ -60,9 +60,9 @@ namespace Allors.Database.Domain
 
         private AccountingPeriod AppsAddNextQuarter(AccountingPeriod previousPeriod)
         {
-            var newQuarter = new AccountingPeriodBuilder(this.Strategy.Session)
+            var newQuarter = new AccountingPeriodBuilder(this.Strategy.Transaction)
                 .WithPeriodNumber(previousPeriod.PeriodNumber + 1)
-                .WithFrequency(new TimeFrequencies(this.Strategy.Session).Trimester)
+                .WithFrequency(new TimeFrequencies(this.Strategy.Transaction).Trimester)
                 .WithFromDate(previousPeriod.FromDate.AddMonths(3).Date)
                 .WithThroughDate(previousPeriod.FromDate.AddMonths(6).AddSeconds(-1).Date)
                 .Build();
@@ -81,9 +81,9 @@ namespace Allors.Database.Domain
 
         private AccountingPeriod AppsAddNextSemester(AccountingPeriod previousPeriod)
         {
-            var newSemester = new AccountingPeriodBuilder(this.Strategy.Session)
+            var newSemester = new AccountingPeriodBuilder(this.Strategy.Transaction)
                 .WithPeriodNumber(previousPeriod.PeriodNumber + 1)
-                .WithFrequency(new TimeFrequencies(this.Strategy.Session).Semester)
+                .WithFrequency(new TimeFrequencies(this.Strategy.Transaction).Semester)
                 .WithFromDate(previousPeriod.FromDate.AddMonths(6).Date)
                 .WithThroughDate(previousPeriod.FromDate.AddMonths(12).AddSeconds(-1).Date)
                 .WithParent(previousPeriod.Parent)

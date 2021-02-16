@@ -81,10 +81,10 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
+                        var allorsObject = this.GetTransaction().Create(testType);
                         if (transactionFlag)
                         {
-                            this.GetSession().Commit();
+                            this.GetTransaction().Commit();
                         }
 
                         var testRoleTypes = this.GetBinaryRoles(testType);
@@ -98,7 +98,7 @@ namespace Allors.Database.Adapters
                                 allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
                                 if (transactionFlag)
                                 {
-                                    this.GetSession().Commit();
+                                    this.GetTransaction().Commit();
                                 }
 
                                 Assert.Equal(value, allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
@@ -128,10 +128,10 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
+                        var allorsObject = this.GetTransaction().Create(testType);
                         if (transactionFlag)
                         {
-                            this.GetSession().Commit();
+                            this.GetTransaction().Commit();
                         }
 
                         var testRoleTypes = this.GetBooleanRoles(testType);
@@ -141,7 +141,7 @@ namespace Allors.Database.Adapters
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
                             if (transactionFlag)
                             {
-                                this.GetSession().Commit();
+                                this.GetTransaction().Commit();
                             }
 
                             Assert.Equal(value, (bool)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
@@ -154,10 +154,10 @@ namespace Allors.Database.Adapters
                 for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                 {
                     var testType = this.GetTestTypes()[testTypeIndex];
-                    var allorsObject = this.GetSession().Create(testType);
+                    var allorsObject = this.GetTransaction().Create(testType);
                     if (transactionFlag)
                     {
-                        this.GetSession().Commit();
+                        this.GetTransaction().Commit();
                     }
 
                     var testRoleTypes = this.GetBooleanRoles(testType);
@@ -170,7 +170,7 @@ namespace Allors.Database.Adapters
 
                         if (transactionFlag)
                         {
-                            this.GetSession().Commit();
+                            this.GetTransaction().Commit();
                         }
 
                         Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -185,7 +185,7 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
+                        var allorsObject = this.GetTransaction().Create(testType);
 
                         var testRoleTypes = this.GetBooleanRoles(testType);
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
@@ -194,7 +194,7 @@ namespace Allors.Database.Adapters
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
                             if (transactionFlag)
                             {
-                                this.GetSession().Commit();
+                                this.GetTransaction().Commit();
                             }
 
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -203,12 +203,12 @@ namespace Allors.Database.Adapters
                             allorsObject.Strategy.RemoveRole(testRoleType.RoleType);
                             if (transactionFlag)
                             {
-                                this.GetSession().Commit();
+                                this.GetTransaction().Commit();
                             }
 
                             if (transactionFlag)
                             {
-                                this.GetSession().Commit();
+                                this.GetTransaction().Commit();
                             }
 
                             Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -230,8 +230,8 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
-                        this.GetSession().Commit();
+                        var allorsObject = this.GetTransaction().Create(testType);
+                        this.GetTransaction().Commit();
 
                         var testRoleTypes = this.GetBooleanRoles(testType);
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
@@ -239,7 +239,7 @@ namespace Allors.Database.Adapters
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
-                            this.GetSession().Rollback();
+                            this.GetTransaction().Rollback();
 
                             Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                             Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -254,7 +254,7 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
+                        var allorsObject = this.GetTransaction().Create(testType);
 
                         var testRoleTypes = this.GetBooleanRoles(testType);
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
@@ -262,13 +262,13 @@ namespace Allors.Database.Adapters
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
-                            this.GetSession().Commit();
+                            this.GetTransaction().Commit();
 
                             bool value2 = !value;
 
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value2);
 
-                            this.GetSession().Rollback();
+                            this.GetTransaction().Rollback();
 
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -285,7 +285,7 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
+                        var allorsObject = this.GetTransaction().Create(testType);
 
                         var testRoleTypes = this.GetBooleanRoles(testType);
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
@@ -293,11 +293,11 @@ namespace Allors.Database.Adapters
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
-                            this.GetSession().Commit();
+                            this.GetTransaction().Commit();
 
                             allorsObject.Strategy.RemoveRole(testRoleType.RoleType);
 
-                            this.GetSession().Rollback();
+                            this.GetTransaction().Rollback();
 
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -331,10 +331,10 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
+                        var allorsObject = this.GetTransaction().Create(testType);
                         if (transactionFlag)
                         {
-                            this.GetSession().Commit();
+                            this.GetTransaction().Commit();
                         }
 
                         var testRoleTypes = this.GetDateTimeRoles(testType);
@@ -344,7 +344,7 @@ namespace Allors.Database.Adapters
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
                             if (transactionFlag)
                             {
-                                this.GetSession().Commit();
+                                this.GetTransaction().Commit();
                             }
 
                             var dateTime = (DateTime)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType);
@@ -363,10 +363,10 @@ namespace Allors.Database.Adapters
                 for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                 {
                     var testType = this.GetTestTypes()[testTypeIndex];
-                    var allorsObject = this.GetSession().Create(testType);
+                    var allorsObject = this.GetTransaction().Create(testType);
                     if (transactionFlag)
                     {
-                        this.GetSession().Commit();
+                        this.GetTransaction().Commit();
                     }
 
                     var testRoleTypes = this.GetDateTimeRoles(testType);
@@ -379,7 +379,7 @@ namespace Allors.Database.Adapters
 
                         if (transactionFlag)
                         {
-                            this.GetSession().Commit();
+                            this.GetTransaction().Commit();
                         }
 
                         Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -394,7 +394,7 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
+                        var allorsObject = this.GetTransaction().Create(testType);
 
                         var testRoleTypes = this.GetDateTimeRoles(testType);
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
@@ -403,7 +403,7 @@ namespace Allors.Database.Adapters
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
                             if (transactionFlag)
                             {
-                                this.GetSession().Commit();
+                                this.GetTransaction().Commit();
                             }
 
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -412,12 +412,12 @@ namespace Allors.Database.Adapters
                             allorsObject.Strategy.RemoveRole(testRoleType.RoleType);
                             if (transactionFlag)
                             {
-                                this.GetSession().Commit();
+                                this.GetTransaction().Commit();
                             }
 
                             if (transactionFlag)
                             {
-                                this.GetSession().Commit();
+                                this.GetTransaction().Commit();
                             }
 
                             Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -439,8 +439,8 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
-                        this.GetSession().Commit();
+                        var allorsObject = this.GetTransaction().Create(testType);
+                        this.GetTransaction().Commit();
 
                         var testRoleTypes = this.GetDateTimeRoles(testType);
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
@@ -448,7 +448,7 @@ namespace Allors.Database.Adapters
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
-                            this.GetSession().Rollback();
+                            this.GetTransaction().Rollback();
 
                             Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                             Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -463,7 +463,7 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
+                        var allorsObject = this.GetTransaction().Create(testType);
 
                         var testRoleTypes = this.GetDateTimeRoles(testType);
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
@@ -471,13 +471,13 @@ namespace Allors.Database.Adapters
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
-                            this.GetSession().Commit();
+                            this.GetTransaction().Commit();
 
                             var value2 = this.ValueGenerator.GenerateDateTime();
 
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value2);
 
-                            this.GetSession().Rollback();
+                            this.GetTransaction().Rollback();
 
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -494,7 +494,7 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
+                        var allorsObject = this.GetTransaction().Create(testType);
 
                         var testRoleTypes = this.GetDateTimeRoles(testType);
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
@@ -502,11 +502,11 @@ namespace Allors.Database.Adapters
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
-                            this.GetSession().Commit();
+                            this.GetTransaction().Commit();
 
                             allorsObject.Strategy.RemoveRole(testRoleType.RoleType);
 
-                            this.GetSession().Rollback();
+                            this.GetTransaction().Rollback();
 
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -540,10 +540,10 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
+                        var allorsObject = this.GetTransaction().Create(testType);
                         if (transactionFlag)
                         {
-                            this.GetSession().Commit();
+                            this.GetTransaction().Commit();
                         }
 
                         var testRoleTypes = this.GetDecimalRoles(testType);
@@ -553,7 +553,7 @@ namespace Allors.Database.Adapters
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
                             if (transactionFlag)
                             {
-                                this.GetSession().Commit();
+                                this.GetTransaction().Commit();
                             }
 
                             Assert.Equal(value, (decimal)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
@@ -566,10 +566,10 @@ namespace Allors.Database.Adapters
                 for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                 {
                     var testType = this.GetTestTypes()[testTypeIndex];
-                    var allorsObject = this.GetSession().Create(testType);
+                    var allorsObject = this.GetTransaction().Create(testType);
                     if (transactionFlag)
                     {
-                        this.GetSession().Commit();
+                        this.GetTransaction().Commit();
                     }
 
                     var testRoleTypes = this.GetDecimalRoles(testType);
@@ -582,7 +582,7 @@ namespace Allors.Database.Adapters
 
                         if (transactionFlag)
                         {
-                            this.GetSession().Commit();
+                            this.GetTransaction().Commit();
                         }
 
                         Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -597,7 +597,7 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
+                        var allorsObject = this.GetTransaction().Create(testType);
 
                         var testRoleTypes = this.GetDecimalRoles(testType);
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
@@ -606,7 +606,7 @@ namespace Allors.Database.Adapters
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
                             if (transactionFlag)
                             {
-                                this.GetSession().Commit();
+                                this.GetTransaction().Commit();
                             }
 
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -615,12 +615,12 @@ namespace Allors.Database.Adapters
                             allorsObject.Strategy.RemoveRole(testRoleType.RoleType);
                             if (transactionFlag)
                             {
-                                this.GetSession().Commit();
+                                this.GetTransaction().Commit();
                             }
 
                             if (transactionFlag)
                             {
-                                this.GetSession().Commit();
+                                this.GetTransaction().Commit();
                             }
 
                             Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -642,8 +642,8 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
-                        this.GetSession().Commit();
+                        var allorsObject = this.GetTransaction().Create(testType);
+                        this.GetTransaction().Commit();
 
                         var testRoleTypes = this.GetDecimalRoles(testType);
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
@@ -651,7 +651,7 @@ namespace Allors.Database.Adapters
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
-                            this.GetSession().Rollback();
+                            this.GetTransaction().Rollback();
 
                             Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                             Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -666,7 +666,7 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
+                        var allorsObject = this.GetTransaction().Create(testType);
 
                         var testRoleTypes = this.GetDecimalRoles(testType);
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
@@ -674,13 +674,13 @@ namespace Allors.Database.Adapters
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
-                            this.GetSession().Commit();
+                            this.GetTransaction().Commit();
 
                             object value2 = this.ValueGenerator.GenerateDecimal();
 
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value2);
 
-                            this.GetSession().Rollback();
+                            this.GetTransaction().Rollback();
 
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -697,7 +697,7 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
+                        var allorsObject = this.GetTransaction().Create(testType);
 
                         var testRoleTypes = this.GetDecimalRoles(testType);
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
@@ -705,11 +705,11 @@ namespace Allors.Database.Adapters
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
-                            this.GetSession().Commit();
+                            this.GetTransaction().Commit();
 
                             allorsObject.Strategy.RemoveRole(testRoleType.RoleType);
 
-                            this.GetSession().Rollback();
+                            this.GetTransaction().Rollback();
 
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -739,10 +739,10 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
+                        var allorsObject = this.GetTransaction().Create(testType);
                         if (transactionFlag)
                         {
-                            this.GetSession().Commit();
+                            this.GetTransaction().Commit();
                         }
 
                         var testRoleTypes = this.GetFloatRoles(testType);
@@ -752,7 +752,7 @@ namespace Allors.Database.Adapters
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
                             if (transactionFlag)
                             {
-                                this.GetSession().Commit();
+                                this.GetTransaction().Commit();
                             }
 
                             Assert.Equal(value, (double)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
@@ -765,10 +765,10 @@ namespace Allors.Database.Adapters
                 for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                 {
                     var testType = this.GetTestTypes()[testTypeIndex];
-                    var allorsObject = this.GetSession().Create(testType);
+                    var allorsObject = this.GetTransaction().Create(testType);
                     if (transactionFlag)
                     {
-                        this.GetSession().Commit();
+                        this.GetTransaction().Commit();
                     }
 
                     var testRoleTypes = this.GetFloatRoles(testType);
@@ -781,7 +781,7 @@ namespace Allors.Database.Adapters
 
                         if (transactionFlag)
                         {
-                            this.GetSession().Commit();
+                            this.GetTransaction().Commit();
                         }
 
                         Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -796,7 +796,7 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
+                        var allorsObject = this.GetTransaction().Create(testType);
 
                         var testRoleTypes = this.GetFloatRoles(testType);
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
@@ -805,7 +805,7 @@ namespace Allors.Database.Adapters
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
                             if (transactionFlag)
                             {
-                                this.GetSession().Commit();
+                                this.GetTransaction().Commit();
                             }
 
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -814,12 +814,12 @@ namespace Allors.Database.Adapters
                             allorsObject.Strategy.RemoveRole(testRoleType.RoleType);
                             if (transactionFlag)
                             {
-                                this.GetSession().Commit();
+                                this.GetTransaction().Commit();
                             }
 
                             if (transactionFlag)
                             {
-                                this.GetSession().Commit();
+                                this.GetTransaction().Commit();
                             }
 
                             Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -841,8 +841,8 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
-                        this.GetSession().Commit();
+                        var allorsObject = this.GetTransaction().Create(testType);
+                        this.GetTransaction().Commit();
 
                         var testRoleTypes = this.GetFloatRoles(testType);
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
@@ -850,7 +850,7 @@ namespace Allors.Database.Adapters
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
-                            this.GetSession().Rollback();
+                            this.GetTransaction().Rollback();
 
                             Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                             Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -865,7 +865,7 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
+                        var allorsObject = this.GetTransaction().Create(testType);
 
                         var testRoleTypes = this.GetFloatRoles(testType);
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
@@ -873,13 +873,13 @@ namespace Allors.Database.Adapters
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
-                            this.GetSession().Commit();
+                            this.GetTransaction().Commit();
 
                             double value2 = this.ValueGenerator.GenerateFloat();
 
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value2);
 
-                            this.GetSession().Rollback();
+                            this.GetTransaction().Rollback();
 
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -896,7 +896,7 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
+                        var allorsObject = this.GetTransaction().Create(testType);
 
                         var testRoleTypes = this.GetFloatRoles(testType);
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
@@ -904,11 +904,11 @@ namespace Allors.Database.Adapters
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
-                            this.GetSession().Commit();
+                            this.GetTransaction().Commit();
 
                             allorsObject.Strategy.RemoveRole(testRoleType.RoleType);
 
-                            this.GetSession().Rollback();
+                            this.GetTransaction().Rollback();
 
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -940,10 +940,10 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < testTypes.Count(); testTypeIndex++)
                     {
                         var testType = testTypes[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
+                        var allorsObject = this.GetTransaction().Create(testType);
                         if (transactionFlag)
                         {
-                            this.GetSession().Commit();
+                            this.GetTransaction().Commit();
                         }
 
                         var testRoleTypes = this.GetIntegerRoles(testType);
@@ -953,7 +953,7 @@ namespace Allors.Database.Adapters
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
                             if (transactionFlag)
                             {
-                                this.GetSession().Commit();
+                                this.GetTransaction().Commit();
                             }
 
                             Assert.Equal(value, (int)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
@@ -966,10 +966,10 @@ namespace Allors.Database.Adapters
                 for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                 {
                     var testType = this.GetTestTypes()[testTypeIndex];
-                    var allorsObject = this.GetSession().Create(testType);
+                    var allorsObject = this.GetTransaction().Create(testType);
                     if (transactionFlag)
                     {
-                        this.GetSession().Commit();
+                        this.GetTransaction().Commit();
                     }
 
                     var testRoleTypes = this.GetIntegerRoles(testType);
@@ -982,7 +982,7 @@ namespace Allors.Database.Adapters
 
                         if (transactionFlag)
                         {
-                            this.GetSession().Commit();
+                            this.GetTransaction().Commit();
                         }
 
                         Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -997,7 +997,7 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
+                        var allorsObject = this.GetTransaction().Create(testType);
 
                         var testRoleTypes = this.GetIntegerRoles(testType);
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
@@ -1006,7 +1006,7 @@ namespace Allors.Database.Adapters
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
                             if (transactionFlag)
                             {
-                                this.GetSession().Commit();
+                                this.GetTransaction().Commit();
                             }
 
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -1015,12 +1015,12 @@ namespace Allors.Database.Adapters
                             allorsObject.Strategy.RemoveRole(testRoleType.RoleType);
                             if (transactionFlag)
                             {
-                                this.GetSession().Commit();
+                                this.GetTransaction().Commit();
                             }
 
                             if (transactionFlag)
                             {
-                                this.GetSession().Commit();
+                                this.GetTransaction().Commit();
                             }
 
                             Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -1042,8 +1042,8 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
-                        this.GetSession().Commit();
+                        var allorsObject = this.GetTransaction().Create(testType);
+                        this.GetTransaction().Commit();
 
                         var testRoleTypes = this.GetIntegerRoles(testType);
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
@@ -1051,7 +1051,7 @@ namespace Allors.Database.Adapters
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
-                            this.GetSession().Rollback();
+                            this.GetTransaction().Rollback();
 
                             Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                             Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -1066,7 +1066,7 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
+                        var allorsObject = this.GetTransaction().Create(testType);
 
                         var testRoleTypes = this.GetIntegerRoles(testType);
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
@@ -1074,13 +1074,13 @@ namespace Allors.Database.Adapters
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
-                            this.GetSession().Commit();
+                            this.GetTransaction().Commit();
 
                             int value2 = this.ValueGenerator.GenerateInteger();
 
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value2);
 
-                            this.GetSession().Rollback();
+                            this.GetTransaction().Rollback();
 
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -1097,7 +1097,7 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
+                        var allorsObject = this.GetTransaction().Create(testType);
 
                         var testRoleTypes = this.GetIntegerRoles(testType);
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
@@ -1105,11 +1105,11 @@ namespace Allors.Database.Adapters
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
-                            this.GetSession().Commit();
+                            this.GetTransaction().Commit();
 
                             allorsObject.Strategy.RemoveRole(testRoleType.RoleType);
 
-                            this.GetSession().Rollback();
+                            this.GetTransaction().Rollback();
 
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -1139,10 +1139,10 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
+                        var allorsObject = this.GetTransaction().Create(testType);
                         if (transactionFlag)
                         {
-                            this.GetSession().Commit();
+                            this.GetTransaction().Commit();
                         }
 
                         var testRoleTypes = this.GetStringRoles(testType);
@@ -1156,7 +1156,7 @@ namespace Allors.Database.Adapters
                                 allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
                                 if (transactionFlag)
                                 {
-                                    this.GetSession().Commit();
+                                    this.GetTransaction().Commit();
                                 }
 
                                 Assert.Equal(value, allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
@@ -1188,10 +1188,10 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < testTypes.Count(); testTypeIndex++)
                     {
                         var testType = testTypes[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
+                        var allorsObject = this.GetTransaction().Create(testType);
                         if (transactionFlag)
                         {
-                            this.GetSession().Commit();
+                            this.GetTransaction().Commit();
                         }
 
                         var testRoleTypes = this.GetUniqueRoles(testType);
@@ -1201,7 +1201,7 @@ namespace Allors.Database.Adapters
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
                             if (transactionFlag)
                             {
-                                this.GetSession().Commit();
+                                this.GetTransaction().Commit();
                             }
 
                             Assert.Equal(value, (Guid)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
@@ -1214,10 +1214,10 @@ namespace Allors.Database.Adapters
                 for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                 {
                     var testType = this.GetTestTypes()[testTypeIndex];
-                    var allorsObject = this.GetSession().Create(testType);
+                    var allorsObject = this.GetTransaction().Create(testType);
                     if (transactionFlag)
                     {
-                        this.GetSession().Commit();
+                        this.GetTransaction().Commit();
                     }
 
                     var testRoleTypes = this.GetUniqueRoles(testType);
@@ -1230,7 +1230,7 @@ namespace Allors.Database.Adapters
 
                         if (transactionFlag)
                         {
-                            this.GetSession().Commit();
+                            this.GetTransaction().Commit();
                         }
 
                         Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -1245,7 +1245,7 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
+                        var allorsObject = this.GetTransaction().Create(testType);
 
                         var testRoleTypes = this.GetUniqueRoles(testType);
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
@@ -1254,7 +1254,7 @@ namespace Allors.Database.Adapters
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
                             if (transactionFlag)
                             {
-                                this.GetSession().Commit();
+                                this.GetTransaction().Commit();
                             }
 
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -1263,12 +1263,12 @@ namespace Allors.Database.Adapters
                             allorsObject.Strategy.RemoveRole(testRoleType.RoleType);
                             if (transactionFlag)
                             {
-                                this.GetSession().Commit();
+                                this.GetTransaction().Commit();
                             }
 
                             if (transactionFlag)
                             {
-                                this.GetSession().Commit();
+                                this.GetTransaction().Commit();
                             }
 
                             Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -1290,8 +1290,8 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
-                        this.GetSession().Commit();
+                        var allorsObject = this.GetTransaction().Create(testType);
+                        this.GetTransaction().Commit();
 
                         var testRoleTypes = this.GetUniqueRoles(testType);
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
@@ -1299,7 +1299,7 @@ namespace Allors.Database.Adapters
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
-                            this.GetSession().Rollback();
+                            this.GetTransaction().Rollback();
 
                             Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                             Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -1314,7 +1314,7 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
+                        var allorsObject = this.GetTransaction().Create(testType);
 
                         var testRoleTypes = this.GetUniqueRoles(testType);
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
@@ -1322,13 +1322,13 @@ namespace Allors.Database.Adapters
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
-                            this.GetSession().Commit();
+                            this.GetTransaction().Commit();
 
                             Guid value2 = this.ValueGenerator.GenerateUnique();
 
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value2);
 
-                            this.GetSession().Rollback();
+                            this.GetTransaction().Rollback();
 
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
@@ -1345,7 +1345,7 @@ namespace Allors.Database.Adapters
                     for (int testTypeIndex = 0; testTypeIndex < this.GetTestTypes().Length; testTypeIndex++)
                     {
                         var testType = this.GetTestTypes()[testTypeIndex];
-                        var allorsObject = this.GetSession().Create(testType);
+                        var allorsObject = this.GetTransaction().Create(testType);
 
                         var testRoleTypes = this.GetUniqueRoles(testType);
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
@@ -1353,11 +1353,11 @@ namespace Allors.Database.Adapters
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
                             allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
-                            this.GetSession().Commit();
+                            this.GetTransaction().Commit();
 
                             allorsObject.Strategy.RemoveRole(testRoleType.RoleType);
 
-                            this.GetSession().Rollback();
+                            this.GetTransaction().Rollback();
 
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                             Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));

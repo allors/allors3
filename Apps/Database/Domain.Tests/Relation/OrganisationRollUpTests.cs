@@ -17,13 +17,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedParentDeriveParties()
         {
-            var parent = new OrganisationBuilder(this.Session).Build();
-            var child = new OrganisationBuilder(this.Session).Build();
-            var rollup = new OrganisationRollUpBuilder(this.Session).WithChild(child).Build();
-            this.Session.Derive(false);
+            var parent = new OrganisationBuilder(this.Transaction).Build();
+            var child = new OrganisationBuilder(this.Transaction).Build();
+            var rollup = new OrganisationRollUpBuilder(this.Transaction).WithChild(child).Build();
+            this.Transaction.Derive(false);
 
             rollup.Parent = parent;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains(parent, rollup.Parties);
         }
@@ -31,13 +31,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedChildDeriveParties()
         {
-            var parent = new OrganisationBuilder(this.Session).Build();
-            var child = new OrganisationBuilder(this.Session).Build();
-            var rollup = new OrganisationRollUpBuilder(this.Session).WithParent(parent).Build();
-            this.Session.Derive(false);
+            var parent = new OrganisationBuilder(this.Transaction).Build();
+            var child = new OrganisationBuilder(this.Transaction).Build();
+            var rollup = new OrganisationRollUpBuilder(this.Transaction).WithParent(parent).Build();
+            this.Transaction.Derive(false);
 
             rollup.Child = child;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains(child, rollup.Parties);
         }

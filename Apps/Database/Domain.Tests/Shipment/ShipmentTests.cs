@@ -15,12 +15,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipmentItemsSyncshipmentItemSyncedShipment()
         {
-            var shipment = new CustomerShipmentBuilder(this.Session).WithShipToParty(new PersonBuilder(this.Session).Build()).Build();
-            this.Session.Derive(false);
+            var shipment = new CustomerShipmentBuilder(this.Transaction).WithShipToParty(new PersonBuilder(this.Transaction).Build()).Build();
+            this.Transaction.Derive(false);
 
-            var shipmentItem = new ShipmentItemBuilder(this.Session).WithQuantity(1).Build();
+            var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(1).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(shipment, shipmentItem.SyncedShipment);
         }

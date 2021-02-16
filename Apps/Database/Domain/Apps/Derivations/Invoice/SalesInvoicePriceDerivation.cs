@@ -38,7 +38,7 @@ namespace Allors.Database.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            var session = cycle.Session;
+            var transaction = cycle.Transaction;
             var validation = cycle.Validation;
 
             // calculate prices only if salesinvoice is not posted yet.

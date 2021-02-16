@@ -18,12 +18,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void UnitRoles()
         {
-            var person = new PersonBuilder(this.Session)
+            var person = new PersonBuilder(this.Transaction)
                 .WithFirstName("Jane")
                 .WithLastName("Doe")
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal("Jane Doe", person.DomainFullName);
             Assert.Equal("Hello Jane Doe!", person.DomainGreeting);

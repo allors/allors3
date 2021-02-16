@@ -39,7 +39,7 @@ namespace Allors.Database.Domain
                 }
             }
 
-            var newLocalisedText = new LocalisedTextBuilder(@object.Strategy.Session)
+            var newLocalisedText = new LocalisedTextBuilder(@object.Strategy.Transaction)
                 .WithLocale(locale)
                 .WithText(text)
                 .Build();

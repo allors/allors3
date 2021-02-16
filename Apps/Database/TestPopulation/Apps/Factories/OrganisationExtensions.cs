@@ -13,22 +13,22 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static Person CreateEmployee(this Organisation @this, string password, Faker faker)
         {
-            var person = new PersonBuilder(@this.Session()).WithDefaults().Build();
+            var person = new PersonBuilder(@this.Transaction()).WithDefaults().Build();
 
-            new EmploymentBuilder(@this.Session())
+            new EmploymentBuilder(@this.Transaction())
                 .WithEmployee(person)
                 .WithEmployer(@this)
-                .WithFromDate(faker.Date.Past(refDate: @this.Session().Now()))
+                .WithFromDate(faker.Date.Past(refDate: @this.Transaction().Now()))
                 .Build();
 
-            new OrganisationContactRelationshipBuilder(@this.Session())
+            new OrganisationContactRelationshipBuilder(@this.Transaction())
                 .WithContact(person)
                 .WithOrganisation(@this)
-                .WithFromDate(faker.Date.Past(refDate: @this.Session().Now()))
+                .WithFromDate(faker.Date.Past(refDate: @this.Transaction().Now()))
                 .Build();
 
-            new UserGroups(@this.Session()).Creators.AddMember(person);
-            new UserGroups(@this.Session()).Employees.AddMember(person);
+            new UserGroups(@this.Transaction()).Creators.AddMember(person);
+            new UserGroups(@this.Transaction()).Employees.AddMember(person);
 
             person.SetPassword(password);
 
@@ -38,31 +38,31 @@ namespace Allors.Database.Domain.TestPopulation
         public static Person CreateAdministrator(this Organisation @this, string password, Faker faker)
         {
             var person = @this.CreateEmployee(password, faker);
-            new UserGroups(@this.Session()).Administrators.AddMember(person);
+            new UserGroups(@this.Transaction()).Administrators.AddMember(person);
 
             return person;
         }
 
         public static Organisation CreateB2BCustomer(this Organisation @this, Faker faker)
         {
-            var customer = new OrganisationBuilder(@this.Session()).WithDefaults().Build();
+            var customer = new OrganisationBuilder(@this.Transaction()).WithDefaults().Build();
 
-            new CustomerRelationshipBuilder(@this.Session())
+            new CustomerRelationshipBuilder(@this.Transaction())
                 .WithCustomer(customer)
                 .WithInternalOrganisation(@this)
-                .WithFromDate(faker.Date.Past(refDate: @this.Session().Now()))
-                .WithAgreement(new SalesAgreementBuilder(@this.Session())
+                .WithFromDate(faker.Date.Past(refDate: @this.Transaction().Now()))
+                .WithAgreement(new SalesAgreementBuilder(@this.Transaction())
                                 .WithDescription("PaymentNetDays")
-                                .WithAgreementTerm(new InvoiceTermBuilder(@this.Session())
-                                .WithTermType(new InvoiceTermTypes(@this.Session()).PaymentNetDays).WithTermValue("30").Build())
+                                .WithAgreementTerm(new InvoiceTermBuilder(@this.Transaction())
+                                .WithTermType(new InvoiceTermTypes(@this.Transaction()).PaymentNetDays).WithTermValue("30").Build())
                                 .Build())
                 .Build();
 
 
-            new OrganisationContactRelationshipBuilder(@this.Session())
-                .WithContact(new PersonBuilder(@this.Session()).WithDefaults().Build())
+            new OrganisationContactRelationshipBuilder(@this.Transaction())
+                .WithContact(new PersonBuilder(@this.Transaction()).WithDefaults().Build())
                 .WithOrganisation(customer)
-                .WithFromDate(faker.Date.Past(refDate: @this.Session().Now()))
+                .WithFromDate(faker.Date.Past(refDate: @this.Transaction().Now()))
                 .Build();
 
             return customer;
@@ -70,16 +70,16 @@ namespace Allors.Database.Domain.TestPopulation
 
         public static Person CreateB2CCustomer(this Organisation @this, Faker faker)
         {
-            var customer = new PersonBuilder(@this.Session()).WithDefaults().Build();
+            var customer = new PersonBuilder(@this.Transaction()).WithDefaults().Build();
 
-            new CustomerRelationshipBuilder(@this.Session())
+            new CustomerRelationshipBuilder(@this.Transaction())
                 .WithCustomer(customer)
                 .WithInternalOrganisation(@this)
-                .WithFromDate(faker.Date.Past(refDate: @this.Session().Now()))
-                .WithAgreement(new SalesAgreementBuilder(@this.Session())
+                .WithFromDate(faker.Date.Past(refDate: @this.Transaction().Now()))
+                .WithAgreement(new SalesAgreementBuilder(@this.Transaction())
                                 .WithDescription("PaymentNetDays")
-                                .WithAgreementTerm(new InvoiceTermBuilder(@this.Session())
-                                .WithTermType(new InvoiceTermTypes(@this.Session()).PaymentNetDays).WithTermValue("30").Build())
+                                .WithAgreementTerm(new InvoiceTermBuilder(@this.Transaction())
+                                .WithTermType(new InvoiceTermTypes(@this.Transaction()).PaymentNetDays).WithTermValue("30").Build())
                                 .Build())
                 .Build();
 
@@ -88,18 +88,18 @@ namespace Allors.Database.Domain.TestPopulation
 
         public static Organisation CreateSupplier(this Organisation @this, Faker faker)
         {
-            var supplier = new OrganisationBuilder(@this.Session()).WithDefaults().Build();
+            var supplier = new OrganisationBuilder(@this.Transaction()).WithDefaults().Build();
 
-            new SupplierRelationshipBuilder(@this.Session())
+            new SupplierRelationshipBuilder(@this.Transaction())
                 .WithSupplier(supplier)
                 .WithInternalOrganisation(@this)
-                .WithFromDate(faker.Date.Past(refDate: @this.Session().Now()))
+                .WithFromDate(faker.Date.Past(refDate: @this.Transaction().Now()))
                 .Build();
 
-            new OrganisationContactRelationshipBuilder(@this.Session())
-                .WithContact(new PersonBuilder(@this.Session()).WithDefaults().Build())
+            new OrganisationContactRelationshipBuilder(@this.Transaction())
+                .WithContact(new PersonBuilder(@this.Transaction()).WithDefaults().Build())
                 .WithOrganisation(supplier)
-                .WithFromDate(faker.Date.Past(refDate: @this.Session().Now()))
+                .WithFromDate(faker.Date.Past(refDate: @this.Transaction().Now()))
                 .Build();
 
             return supplier;
@@ -107,18 +107,18 @@ namespace Allors.Database.Domain.TestPopulation
 
         public static Organisation CreateSubContractor(this Organisation @this, Faker faker)
         {
-            var subContractor = new OrganisationBuilder(@this.Session()).WithDefaults().Build();
+            var subContractor = new OrganisationBuilder(@this.Transaction()).WithDefaults().Build();
 
-            new SubContractorRelationshipBuilder(@this.Session())
+            new SubContractorRelationshipBuilder(@this.Transaction())
                 .WithSubContractor(subContractor)
                 .WithContractor(@this)
-                .WithFromDate(faker.Date.Past(refDate: @this.Session().Now()))
+                .WithFromDate(faker.Date.Past(refDate: @this.Transaction().Now()))
                 .Build();
 
-            new OrganisationContactRelationshipBuilder(@this.Session())
-                .WithContact(new PersonBuilder(@this.Session()).WithDefaults().Build())
+            new OrganisationContactRelationshipBuilder(@this.Transaction())
+                .WithContact(new PersonBuilder(@this.Transaction()).WithDefaults().Build())
                 .WithOrganisation(subContractor)
-                .WithFromDate(faker.Date.Past(refDate: @this.Session().Now()))
+                .WithFromDate(faker.Date.Past(refDate: @this.Transaction().Now()))
                 .Build();
 
             return subContractor;
@@ -126,12 +126,12 @@ namespace Allors.Database.Domain.TestPopulation
 
         public static NonUnifiedPart CreateNonSerialisedNonUnifiedPart(this Organisation @this, Faker faker)
         {
-            var part = new NonUnifiedPartBuilder(@this.Session()).WithNonSerialisedDefaults(@this).Build();
+            var part = new NonUnifiedPartBuilder(@this.Transaction()).WithNonSerialisedDefaults(@this).Build();
 
             foreach (Organisation supplier in @this.ActiveSuppliers)
             {
-                new SupplierOfferingBuilder(@this.Session())
-                    .WithFromDate(faker.Date.Past(refDate: @this.Session().Now()))
+                new SupplierOfferingBuilder(@this.Transaction())
+                    .WithFromDate(faker.Date.Past(refDate: @this.Transaction().Now()))
                     .WithSupplier(supplier)
                     .WithPart(part)
                     .WithPrice(faker.Random.Decimal(0, 10))
@@ -139,11 +139,11 @@ namespace Allors.Database.Domain.TestPopulation
                     .Build();
             }
 
-            new InventoryItemTransactionBuilder(@this.Session())
+            new InventoryItemTransactionBuilder(@this.Transaction())
                 .WithPart(part)
                 .WithFacility(@this.FacilitiesWhereOwner.First)
                 .WithQuantity(faker.Random.Number(1000))
-                .WithReason(new InventoryTransactionReasons(@this.Session()).Unknown)
+                .WithReason(new InventoryTransactionReasons(@this.Transaction()).Unknown)
                 .Build();
 
             return part;
@@ -151,12 +151,12 @@ namespace Allors.Database.Domain.TestPopulation
 
         public static NonUnifiedPart CreateSerialisedNonUnifiedPart(this Organisation @this, Faker faker)
         {
-            var part = new NonUnifiedPartBuilder(@this.Session()).WithSerialisedDefaults(@this, faker).Build();
+            var part = new NonUnifiedPartBuilder(@this.Transaction()).WithSerialisedDefaults(@this, faker).Build();
 
             foreach (Organisation supplier in @this.ActiveSuppliers)
             {
-                new SupplierOfferingBuilder(@this.Session())
-                    .WithFromDate(faker.Date.Past(refDate: @this.Session().Now()))
+                new SupplierOfferingBuilder(@this.Transaction())
+                    .WithFromDate(faker.Date.Past(refDate: @this.Transaction().Now()))
                     .WithSupplier(supplier)
                     .WithPart(part)
                     .WithPrice(faker.Random.Decimal(0, 10))
@@ -169,17 +169,17 @@ namespace Allors.Database.Domain.TestPopulation
 
         public static UnifiedGood CreateUnifiedWithGoodInventoryAvailableForSale(this Organisation @this, Faker faker)
         {
-            var unifiedGood = new UnifiedGoodBuilder(@this.Session()).WithSerialisedDefaults(@this).Build();
-            var serialisedItem = new SerialisedItemBuilder(@this.Session()).WithForSaleDefaults(@this).Build();
+            var unifiedGood = new UnifiedGoodBuilder(@this.Transaction()).WithSerialisedDefaults(@this).Build();
+            var serialisedItem = new SerialisedItemBuilder(@this.Transaction()).WithForSaleDefaults(@this).Build();
 
             unifiedGood.AddSerialisedItem(serialisedItem);
 
-            new InventoryItemTransactionBuilder(@this.Session())
+            new InventoryItemTransactionBuilder(@this.Transaction())
                 .WithSerialisedItem(serialisedItem)
                 .WithFacility(@this.FacilitiesWhereOwner.First)
                 .WithQuantity(1)
-                .WithReason(new InventoryTransactionReasons(@this.Session()).IncomingShipment)
-                .WithSerialisedInventoryItemState(new SerialisedInventoryItemStates(@this.Session()).Good)
+                .WithReason(new InventoryTransactionReasons(@this.Transaction()).IncomingShipment)
+                .WithSerialisedInventoryItemState(new SerialisedInventoryItemStates(@this.Transaction()).Good)
                 .Build();
 
             return unifiedGood;
@@ -190,7 +190,7 @@ namespace Allors.Database.Domain.TestPopulation
          */
         public static PurchaseOrder CreatePurchaseOrderWithoutItems(this Organisation @this)
         {
-            var purchaseOrder = new PurchaseOrderBuilder(@this.Session()).WithDefaults(@this).Build();
+            var purchaseOrder = new PurchaseOrderBuilder(@this.Transaction()).WithDefaults(@this).Build();
 
             return purchaseOrder;
         }
@@ -200,24 +200,24 @@ namespace Allors.Database.Domain.TestPopulation
          */
         public static PurchaseOrder CreatePurchaseOrderWithBothItems(this Organisation @this, Faker faker)
         {
-            var serializedPart = new UnifiedGoodBuilder(@this.Session()).WithSerialisedDefaults(@this).Build();
-            var serializedItem = new SerialisedItemBuilder(@this.Session()).WithDefaults(@this).Build();
+            var serializedPart = new UnifiedGoodBuilder(@this.Transaction()).WithSerialisedDefaults(@this).Build();
+            var serializedItem = new SerialisedItemBuilder(@this.Transaction()).WithDefaults(@this).Build();
             serializedPart.AddSerialisedItem(serializedItem);
 
-            var nonSerializedPart = new NonUnifiedPartBuilder(@this.Session()).WithNonSerialisedDefaults(@this).Build();
+            var nonSerializedPart = new NonUnifiedPartBuilder(@this.Transaction()).WithNonSerialisedDefaults(@this).Build();
 
-            var purchaseOrder = new PurchaseOrderBuilder(@this.Session()).WithDefaults(@this).Build();
+            var purchaseOrder = new PurchaseOrderBuilder(@this.Transaction()).WithDefaults(@this).Build();
 
-            new SupplierOfferingBuilder(@this.Session())
+            new SupplierOfferingBuilder(@this.Transaction())
                 .WithPart(nonSerializedPart)
                 .WithSupplier(purchaseOrder.TakenViaSupplier)
-                .WithFromDate(@this.Session().Now().AddMinutes(-1))
-                .WithUnitOfMeasure(new UnitsOfMeasure(@this.Session()).Piece)
+                .WithFromDate(@this.Transaction().Now().AddMinutes(-1))
+                .WithUnitOfMeasure(new UnitsOfMeasure(@this.Transaction()).Piece)
                 .WithPrice(faker.Random.Decimal(0, 10))
                 .Build();
 
-            var nonSerializedPartItem = new PurchaseOrderItemBuilder(@this.Session()).WithNonSerializedPartDefaults(nonSerializedPart).Build();
-            var serializedPartItem = new PurchaseOrderItemBuilder(@this.Session()).WithSerializedPartDefaults(serializedPart, serializedItem).Build();
+            var nonSerializedPartItem = new PurchaseOrderItemBuilder(@this.Transaction()).WithNonSerializedPartDefaults(nonSerializedPart).Build();
+            var serializedPartItem = new PurchaseOrderItemBuilder(@this.Transaction()).WithSerializedPartDefaults(serializedPart, serializedItem).Build();
 
             purchaseOrder.AddPurchaseOrderItem(nonSerializedPartItem);
             purchaseOrder.AddPurchaseOrderItem(serializedPartItem);
@@ -230,13 +230,13 @@ namespace Allors.Database.Domain.TestPopulation
          */
         public static PurchaseOrder CreatePurchaseOrderWithSerializedItem(this Organisation @this)
         {
-            var serializedPart = new UnifiedGoodBuilder(@this.Session()).WithSerialisedDefaults(@this).Build();
-            var serializedItem = new SerialisedItemBuilder(@this.Session()).WithDefaults(@this).Build();
+            var serializedPart = new UnifiedGoodBuilder(@this.Transaction()).WithSerialisedDefaults(@this).Build();
+            var serializedItem = new SerialisedItemBuilder(@this.Transaction()).WithDefaults(@this).Build();
             serializedPart.AddSerialisedItem(serializedItem);
 
-            var purchaseOrder = new PurchaseOrderBuilder(@this.Session()).WithDefaults(@this).Build();
+            var purchaseOrder = new PurchaseOrderBuilder(@this.Transaction()).WithDefaults(@this).Build();
 
-            var item = new PurchaseOrderItemBuilder(@this.Session()).WithSerializedPartDefaults(serializedPart, serializedItem).Build();
+            var item = new PurchaseOrderItemBuilder(@this.Transaction()).WithSerializedPartDefaults(serializedPart, serializedItem).Build();
 
             purchaseOrder.AddPurchaseOrderItem(item);
 
@@ -248,19 +248,19 @@ namespace Allors.Database.Domain.TestPopulation
          */
         public static PurchaseOrder CreatePurchaseOrderWithNonSerializedItem(this Organisation @this, Faker faker)
         {
-            var nonSerializedPart = new NonUnifiedPartBuilder(@this.Session()).WithNonSerialisedDefaults(@this).Build();
+            var nonSerializedPart = new NonUnifiedPartBuilder(@this.Transaction()).WithNonSerialisedDefaults(@this).Build();
 
-            var purchaseOrder = new PurchaseOrderBuilder(@this.Session()).WithDefaults(@this).Build();
+            var purchaseOrder = new PurchaseOrderBuilder(@this.Transaction()).WithDefaults(@this).Build();
 
-            new SupplierOfferingBuilder(@this.Session())
+            new SupplierOfferingBuilder(@this.Transaction())
                 .WithPart(nonSerializedPart)
                 .WithSupplier(purchaseOrder.TakenViaSupplier)
-                .WithFromDate(@this.Session().Now().AddMinutes(-1))
-                .WithUnitOfMeasure(new UnitsOfMeasure(@this.Session()).Piece)
+                .WithFromDate(@this.Transaction().Now().AddMinutes(-1))
+                .WithUnitOfMeasure(new UnitsOfMeasure(@this.Transaction()).Piece)
                 .WithPrice(faker.Random.Decimal(0, 10))
                 .Build();
 
-            var item = new PurchaseOrderItemBuilder(@this.Session()).WithNonSerializedPartDefaults(nonSerializedPart).Build();
+            var item = new PurchaseOrderItemBuilder(@this.Transaction()).WithNonSerializedPartDefaults(nonSerializedPart).Build();
 
             purchaseOrder.AddPurchaseOrderItem(item);
 
@@ -272,9 +272,9 @@ namespace Allors.Database.Domain.TestPopulation
          */
         public static PurchaseInvoice CreatePurchaseInvoiceWithSerializedItem(this Organisation @this)
         {
-            var purchaseInvoice = new PurchaseInvoiceBuilder(@this.Session()).WithExternalB2BInvoiceDefaults(@this).Build();
+            var purchaseInvoice = new PurchaseInvoiceBuilder(@this.Transaction()).WithExternalB2BInvoiceDefaults(@this).Build();
 
-            var item = new PurchaseInvoiceItemBuilder(@this.Session()).WithSerialisedProductItemDefaults().Build();
+            var item = new PurchaseInvoiceItemBuilder(@this.Transaction()).WithSerialisedProductItemDefaults().Build();
             purchaseInvoice.AddPurchaseInvoiceItem(item);
 
             return purchaseInvoice;
@@ -282,96 +282,96 @@ namespace Allors.Database.Domain.TestPopulation
 
         public static SalesOrder CreateInternalSalesOrder(this Organisation @this, Faker faker)
         {
-            var salesOrder = new SalesOrderBuilder(@this.Session()).WithOrganisationInternalDefaults(@this).Build();
-            @this.Session().Derive();
+            var salesOrder = new SalesOrderBuilder(@this.Transaction()).WithOrganisationInternalDefaults(@this).Build();
+            @this.Transaction().Derive();
 
-            var productItem = new SalesOrderItemBuilder(@this.Session()).WithSerialisedProductDefaults().Build();
+            var productItem = new SalesOrderItemBuilder(@this.Transaction()).WithSerialisedProductDefaults().Build();
             salesOrder.AddSalesOrderItem(productItem);
-            @this.Session().Derive();
+            @this.Transaction().Derive();
 
-            var partItem = new SalesOrderItemBuilder(@this.Session()).WithNonSerialisedPartItemDefaults().Build();
+            var partItem = new SalesOrderItemBuilder(@this.Transaction()).WithNonSerialisedPartItemDefaults().Build();
             salesOrder.AddSalesOrderItem(partItem);
-            @this.Session().Derive();
+            @this.Transaction().Derive();
 
-            var otherItem = new SalesOrderItemBuilder(@this.Session()).WithDefaults().Build();
+            var otherItem = new SalesOrderItemBuilder(@this.Transaction()).WithDefaults().Build();
             salesOrder.AddSalesOrderItem(otherItem);
-            @this.Session().Derive();
+            @this.Transaction().Derive();
 
             return salesOrder;
         }
 
         public static SalesOrder CreateB2BSalesOrder(this Organisation @this, Faker faker)
         {
-            var salesOrder = new SalesOrderBuilder(@this.Session()).WithOrganisationExternalDefaults(@this).Build();
-            @this.Session().Derive();
+            var salesOrder = new SalesOrderBuilder(@this.Transaction()).WithOrganisationExternalDefaults(@this).Build();
+            @this.Transaction().Derive();
 
-            var productItem = new SalesOrderItemBuilder(@this.Session()).WithSerialisedProductDefaults().Build();
+            var productItem = new SalesOrderItemBuilder(@this.Transaction()).WithSerialisedProductDefaults().Build();
             salesOrder.AddSalesOrderItem(productItem);
-            @this.Session().Derive();
+            @this.Transaction().Derive();
 
-            var partItem = new SalesOrderItemBuilder(@this.Session()).WithNonSerialisedPartItemDefaults().Build();
+            var partItem = new SalesOrderItemBuilder(@this.Transaction()).WithNonSerialisedPartItemDefaults().Build();
             salesOrder.AddSalesOrderItem(partItem);
-            @this.Session().Derive();
+            @this.Transaction().Derive();
 
-            var otherItem = new SalesOrderItemBuilder(@this.Session()).WithDefaults().Build();
+            var otherItem = new SalesOrderItemBuilder(@this.Transaction()).WithDefaults().Build();
             salesOrder.AddSalesOrderItem(otherItem);
-            @this.Session().Derive();
+            @this.Transaction().Derive();
 
             return salesOrder;
         }
 
         public static SalesOrder CreateB2BSalesOrderForSingleNonSerialisedItem(this Organisation @this, Faker faker)
         {
-            var salesOrder = new SalesOrderBuilder(@this.Session()).WithOrganisationExternalDefaults(@this).Build();
-            @this.Session().Derive();
+            var salesOrder = new SalesOrderBuilder(@this.Transaction()).WithOrganisationExternalDefaults(@this).Build();
+            @this.Transaction().Derive();
 
-            var salesOrderItem = new SalesOrderItemBuilder(@this.Session()).WithNonSerialisedPartItemDefaults().Build();
+            var salesOrderItem = new SalesOrderItemBuilder(@this.Transaction()).WithNonSerialisedPartItemDefaults().Build();
             salesOrder.AddSalesOrderItem(salesOrderItem);
-            @this.Session().Derive();
+            @this.Transaction().Derive();
 
             return salesOrder;
         }
 
         public static SalesOrder CreateB2BSalesOrderForSingleSerialisedItem(this Organisation @this, Faker faker)
         {
-            var salesOrder = new SalesOrderBuilder(@this.Session()).WithOrganisationExternalDefaults(@this).Build();
-            @this.Session().Derive();
+            var salesOrder = new SalesOrderBuilder(@this.Transaction()).WithOrganisationExternalDefaults(@this).Build();
+            @this.Transaction().Derive();
 
-            var salesOrderItem = new SalesOrderItemBuilder(@this.Session()).WithSerialisedProductDefaults().Build();
+            var salesOrderItem = new SalesOrderItemBuilder(@this.Transaction()).WithSerialisedProductDefaults().Build();
             salesOrder.AddSalesOrderItem(salesOrderItem);
-            @this.Session().Derive();
+            @this.Transaction().Derive();
 
             return salesOrder;
         }
 
         public static SalesOrder CreateB2CSalesOrder(this Organisation @this, Faker faker)
         {
-            var salesOrder = new SalesOrderBuilder(@this.Session()).WithPersonExternalDefaults(@this).Build();
-            @this.Session().Derive();
+            var salesOrder = new SalesOrderBuilder(@this.Transaction()).WithPersonExternalDefaults(@this).Build();
+            @this.Transaction().Derive();
 
-            var productItem = new SalesOrderItemBuilder(@this.Session()).WithSerialisedProductDefaults().Build();
+            var productItem = new SalesOrderItemBuilder(@this.Transaction()).WithSerialisedProductDefaults().Build();
             salesOrder.AddSalesOrderItem(productItem);
-            @this.Session().Derive();
+            @this.Transaction().Derive();
 
-            var partItem = new SalesOrderItemBuilder(@this.Session()).WithNonSerialisedPartItemDefaults().Build();
+            var partItem = new SalesOrderItemBuilder(@this.Transaction()).WithNonSerialisedPartItemDefaults().Build();
             salesOrder.AddSalesOrderItem(partItem);
-            @this.Session().Derive();
+            @this.Transaction().Derive();
 
-            var otherItem = new SalesOrderItemBuilder(@this.Session()).WithDefaults().Build();
+            var otherItem = new SalesOrderItemBuilder(@this.Transaction()).WithDefaults().Build();
             salesOrder.AddSalesOrderItem(otherItem);
-            @this.Session().Derive();
+            @this.Transaction().Derive();
 
             return salesOrder;
         }
 
         public static ProductQuote CreateB2BProductQuoteWithSerialisedItem(this Organisation @this, Faker faker)
         {
-            var quote = new ProductQuoteBuilder(@this.Session()).WithDefaults(@this).Build();
-            @this.Session().Derive();
+            var quote = new ProductQuoteBuilder(@this.Transaction()).WithDefaults(@this).Build();
+            @this.Transaction().Derive();
 
-            var quoteItem = new QuoteItemBuilder(@this.Session()).WithSerializedDefaults(@this).Build();
+            var quoteItem = new QuoteItemBuilder(@this.Transaction()).WithSerializedDefaults(@this).Build();
             quote.AddQuoteItem(quoteItem);
-            @this.Session().Derive();
+            @this.Transaction().Derive();
 
             return quote;
         }

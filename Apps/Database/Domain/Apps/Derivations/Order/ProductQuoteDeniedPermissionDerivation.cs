@@ -22,14 +22,14 @@ namespace Allors.Database.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            var session = cycle.Session;
+            var transaction = cycle.Transaction;
             var validation = cycle.Validation;
 
             foreach (var @this in matches.Cast<ProductQuote>())
             {
                 @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
 
-                var SetReadyPermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.SetReadyForProcessing);
+                var SetReadyPermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta.ObjectType, @this.Meta.SetReadyForProcessing);
 
                 if (@this.QuoteState.IsCreated)
                 {
@@ -43,7 +43,7 @@ namespace Allors.Database.Domain
                     }
                 }
 
-                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta.ObjectType, @this.Meta.Delete);
                 if (@this.IsDeletable())
                 {
                     @this.RemoveDeniedPermission(deletePermission);

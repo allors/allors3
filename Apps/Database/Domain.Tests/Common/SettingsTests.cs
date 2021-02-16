@@ -15,9 +15,9 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void DeriveCounters()
         {
-            var settings = this.Session.GetSingleton().Settings;
+            var settings = this.Transaction.GetSingleton().Settings;
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(settings.ExistPartNumberCounter);
             Assert.True(settings.ExistProductNumberCounter);

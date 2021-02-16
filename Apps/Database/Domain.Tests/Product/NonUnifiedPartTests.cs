@@ -20,11 +20,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnPostDeriveAssertExistPart()
         {
-            this.Session.GetSingleton().Settings.UseProductNumberCounter = true;
+            this.Transaction.GetSingleton().Settings.UseProductNumberCounter = true;
 
-            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).Build();
+            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals("NonUnifiedGood.Part is required"));
         }
     }
@@ -36,20 +36,20 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedProductIdentificationsDeriveProductNumber()
         {
-            var settings = this.Session.GetSingleton().Settings;
+            var settings = this.Transaction.GetSingleton().Settings;
             settings.UsePartNumberCounter = false;
 
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.False(nonUnifiedPart.ExistProductNumber);
 
-            var goodIdentification = new ProductNumberBuilder(this.Session)
+            var goodIdentification = new ProductNumberBuilder(this.Transaction)
                 .WithIdentification(settings.NextProductNumber())
-                .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build();
+                .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build();
 
             nonUnifiedPart.AddProductIdentification(goodIdentification);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(nonUnifiedPart.ExistProductNumber);
         }
@@ -57,8 +57,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPartIdentificationDeriveName()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.Contains(nonUnifiedPart.ProductIdentifications.First.Identification, nonUnifiedPart.Name);
         }
@@ -66,11 +66,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedProductIdentificationsDeriveSearchString()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            nonUnifiedPart.AddProductIdentification(new SkuIdentificationBuilder(this.Session).WithIdentification("sku").WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Sku).Build());
-            this.Session.Derive(false);
+            nonUnifiedPart.AddProductIdentification(new SkuIdentificationBuilder(this.Transaction).WithIdentification("sku").WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Sku).Build());
+            this.Transaction.Derive(false);
 
             Assert.Contains("sku", nonUnifiedPart.SearchString);
         }
@@ -78,11 +78,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedLocalisedNamesDeriveSearchString()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            nonUnifiedPart.AddLocalisedName(new LocalisedTextBuilder(this.Session).WithText("localisedName").Build());
-            this.Session.Derive(false);
+            nonUnifiedPart.AddLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("localisedName").Build());
+            this.Transaction.Derive(false);
 
             Assert.Contains("localisedName", nonUnifiedPart.SearchString);
         }
@@ -90,14 +90,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedLocalisedTextTextDeriveSearchString()
         {
-            var localisedName = new LocalisedTextBuilder(this.Session).WithText("localisedName").Build();
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session)
+            var localisedName = new LocalisedTextBuilder(this.Transaction).WithText("localisedName").Build();
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction)
                 .WithLocalisedName(localisedName)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             localisedName.Text = "changed";
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains("changed", nonUnifiedPart.SearchString);
         }
@@ -105,11 +105,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPartCategoryPartsDeriveSearchString()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            new PartCategoryBuilder(this.Session).WithName("catname").WithPart(nonUnifiedPart).Build();
-            this.Session.Derive(false);
+            new PartCategoryBuilder(this.Transaction).WithName("catname").WithPart(nonUnifiedPart).Build();
+            this.Transaction.Derive(false);
 
             Assert.Contains("catname", nonUnifiedPart.SearchString);
         }
@@ -117,14 +117,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSupplierOfferingsPartDeriveSearchString()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            new SupplierOfferingBuilder(this.Session)
+            new SupplierOfferingBuilder(this.Transaction)
                 .WithSupplier(this.InternalOrganisation.ActiveSuppliers.First)
                 .WithPart(nonUnifiedPart)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains(this.InternalOrganisation.ActiveSuppliers.First.PartyName, nonUnifiedPart.SearchString);
         }
@@ -132,11 +132,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSerialisedItemsDeriveSearchString()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            nonUnifiedPart.AddSerialisedItem(new SerialisedItemBuilder(this.Session).WithSerialNumber("serialnumber").Build());
-            this.Session.Derive(false);
+            nonUnifiedPart.AddSerialisedItem(new SerialisedItemBuilder(this.Transaction).WithSerialNumber("serialnumber").Build());
+            this.Transaction.Derive(false);
 
             Assert.Contains("serialnumber", nonUnifiedPart.SearchString);
         }
@@ -144,11 +144,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedProductTypeDeriveSearchString()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            nonUnifiedPart.ProductType = new ProductTypeBuilder(this.Session).WithName("producttype").Build();
-            this.Session.Derive(false);
+            nonUnifiedPart.ProductType = new ProductTypeBuilder(this.Transaction).WithName("producttype").Build();
+            this.Transaction.Derive(false);
 
             Assert.Contains("producttype", nonUnifiedPart.SearchString);
         }
@@ -156,11 +156,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedBrandDeriveSearchString()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            nonUnifiedPart.Brand = new BrandBuilder(this.Session).WithName("brand").Build();
-            this.Session.Derive(false);
+            nonUnifiedPart.Brand = new BrandBuilder(this.Transaction).WithName("brand").Build();
+            this.Transaction.Derive(false);
 
             Assert.Contains("brand", nonUnifiedPart.SearchString);
         }
@@ -168,11 +168,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedModelDeriveSearchString()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            nonUnifiedPart.Model = new ModelBuilder(this.Session).WithName("model").Build();
-            this.Session.Derive(false);
+            nonUnifiedPart.Model = new ModelBuilder(this.Transaction).WithName("model").Build();
+            this.Transaction.Derive(false);
 
             Assert.Contains("model", nonUnifiedPart.SearchString);
         }
@@ -180,11 +180,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedKeywordsDeriveSearchString()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             nonUnifiedPart.Keywords = "keywords";
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains("keywords", nonUnifiedPart.SearchString);
         }
@@ -193,7 +193,7 @@ namespace Allors.Database.Domain.Tests
     [Trait("Category", "Security")]
     public class NonUnifiedPartDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public NonUnifiedPartDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.NonUnifiedPart.ObjectType, this.M.NonUnifiedPart.Delete);
+        public NonUnifiedPartDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.NonUnifiedPart.ObjectType, this.M.NonUnifiedPart.Delete);
         public override Config Config => new Config { SetupSecurity = true };
 
         private readonly Permission deletePermission;
@@ -201,8 +201,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedNonUnifiedPartDeriveDeletePermission()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.DoesNotContain(this.deletePermission, nonUnifiedPart.DeniedPermissions);
         }
@@ -210,9 +210,9 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedWorkEffortInventoryProducedPartDeletePermission()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
-            new WorkEffortInventoryProducedBuilder(this.Session).WithPart(nonUnifiedPart).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            new WorkEffortInventoryProducedBuilder(this.Transaction).WithPart(nonUnifiedPart).Build();
+            this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, nonUnifiedPart.DeniedPermissions);
         }
@@ -220,11 +220,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedWorkEffortPartStandardPartDeriveDeletePermission()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            new WorkEffortPartStandardBuilder(this.Session).WithPart(nonUnifiedPart).Build();
-            this.Session.Derive(false);
+            new WorkEffortPartStandardBuilder(this.Transaction).WithPart(nonUnifiedPart).Build();
+            this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, nonUnifiedPart.DeniedPermissions);
         }
@@ -232,11 +232,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedPartBillOfMaterialPartDeriveDeletePermission()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            new ManufacturingBomBuilder(this.Session).WithPart(nonUnifiedPart).Build();
-            this.Session.Derive(false);
+            new ManufacturingBomBuilder(this.Transaction).WithPart(nonUnifiedPart).Build();
+            this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, nonUnifiedPart.DeniedPermissions);
         }
@@ -244,11 +244,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedPartBillOfMaterialComponentPartDeriveDeletePermission()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            new ManufacturingBomBuilder(this.Session).WithComponentPart(nonUnifiedPart).Build();
-            this.Session.Derive(false);
+            new ManufacturingBomBuilder(this.Transaction).WithComponentPart(nonUnifiedPart).Build();
+            this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, nonUnifiedPart.DeniedPermissions);
         }
@@ -256,11 +256,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedInventoryItemTransactionPartDeriveDeletePermission()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            new InventoryItemTransactionBuilder(this.Session).WithPart(nonUnifiedPart).Build();
-            this.Session.Derive(false);
+            new InventoryItemTransactionBuilder(this.Transaction).WithPart(nonUnifiedPart).Build();
+            this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, nonUnifiedPart.DeniedPermissions);
         }

@@ -1,4 +1,4 @@
-// <copyright file="DefaultSessionContext.cs" company="Allors bvba">
+// <copyright file="DefaultTransactionContext.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -11,15 +11,14 @@ namespace Allors.Database.Configuration
     using Database;
     using Domain;
     using Microsoft.AspNetCore.Http;
-    using ISession = ISession;
 
-    public class DefaultSessionContext : ISessionContext
+    public class DefaultTransactionContext : ITransactionContext
     {
         private readonly HttpContext httpContext;
 
-        public DefaultSessionContext(IHttpContextAccessor httpContextAccessor) => this.httpContext = new HttpContext(httpContextAccessor);
+        public DefaultTransactionContext(IHttpContextAccessor httpContextAccessor) => this.httpContext = new HttpContext(httpContextAccessor);
 
-        public virtual void OnInit(ISession session) => this.httpContext.OnInit(session);
+        public virtual void OnInit(ITransaction session) => this.httpContext.OnInit(session);
 
         public void Dispose()
         {

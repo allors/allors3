@@ -26,7 +26,7 @@ namespace Allors.Database.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            var session = cycle.Session;
+            var transaction = cycle.Transaction;
             var validation = cycle.Validation;
 
             foreach (var @this in matches.Cast<WorkEffortInventoryAssignment>())
@@ -92,7 +92,7 @@ namespace Allors.Database.Domain
 
             if (adjustmentQuantity != 0)
             {
-                @this.AddInventoryItemTransaction(new InventoryItemTransactionBuilder(@this.Session())
+                @this.AddInventoryItemTransaction(new InventoryItemTransactionBuilder(@this.Transaction())
                     .WithPart(inventoryItem.Part)
                     .WithFacility(inventoryItem.Facility)
                     .WithQuantity(adjustmentQuantity)

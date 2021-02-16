@@ -7,13 +7,13 @@ namespace Allors.Database.Domain
 {
     public partial class RepeatingSalesInvoices
     {
-        public static void Daily(ISession session)
+        public static void Daily(ITransaction transaction)
         {
-            var repeatingSalesInvoices = new RepeatingSalesInvoices(session).Extent();
+            var repeatingSalesInvoices = new RepeatingSalesInvoices(transaction).Extent();
 
             foreach (RepeatingSalesInvoice repeatingSalesInvoice in repeatingSalesInvoices)
             {
-                if (repeatingSalesInvoice.NextExecutionDate.Date == session.Now().Date)
+                if (repeatingSalesInvoice.NextExecutionDate.Date == transaction.Now().Date)
                 {
                     repeatingSalesInvoice.Repeat();
                 }

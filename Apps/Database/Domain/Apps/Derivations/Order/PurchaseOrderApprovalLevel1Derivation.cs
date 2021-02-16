@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
                 // Lifecycle
                 if (!@this.ExistDateClosed && !@this.PurchaseOrder.PurchaseOrderState.IsAwaitingApprovalLevel1)
                 {
-                    @this.DateClosed = @this.Session().Now();
+                    @this.DateClosed = @this.Transaction().Now();
                 }
             }
         }

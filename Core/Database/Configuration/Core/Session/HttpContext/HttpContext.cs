@@ -10,7 +10,6 @@ namespace Allors.Database.Configuration
     using System.Security.Claims;
     using Domain;
     using Microsoft.AspNetCore.Http;
-    using ISession = ISession;
 
     public class HttpContext
     {
@@ -20,7 +19,7 @@ namespace Allors.Database.Configuration
 
         public User User { get; set; }
         
-        public virtual void OnInit(ISession session)
+        public virtual void OnInit(ITransaction transaction)
         {
             var nameIdentifier = this.httpContextAccessor?.HttpContext.User.Claims
                 .FirstOrDefault(v => v.Type == ClaimTypes.NameIdentifier)
@@ -28,7 +27,7 @@ namespace Allors.Database.Configuration
 
             if (long.TryParse(nameIdentifier, out var userId))
             {
-                this.User = (User)session.Instantiate(userId);
+                this.User = (User)transaction.Instantiate(userId);
             }
             else
             {

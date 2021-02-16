@@ -30,11 +30,11 @@ namespace Allors.Database.Domain
 
         public JournalType Purchase => this.Cache[PurchaseId];
 
-        private UniquelyIdentifiableCache<JournalType> Cache => this.cache ??= new UniquelyIdentifiableCache<JournalType>(this.Session);
+        private UniquelyIdentifiableCache<JournalType> Cache => this.cache ??= new UniquelyIdentifiableCache<JournalType>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {
-            var dutchLocale = new Locales(this.Session).DutchNetherlands;
+            var dutchLocale = new Locales(this.Transaction).DutchNetherlands;
 
             var merge = this.Cache.Merger().Action();
             var localisedName = new LocalisedTextAccessor(this.Meta.LocalisedNames);

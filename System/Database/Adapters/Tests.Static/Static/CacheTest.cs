@@ -21,16 +21,16 @@ namespace Allors.Database.Adapters
             var database = this.CreateDatabase();
             database.Init();
 
-            using (var session = database.CreateSession())
+            using (var transaction = database.CreateTransaction())
             {
-                var c1 = C1.Create(session);
+                var c1 = C1.Create(transaction);
                 c1.C1AllorsString = "a";
-                session.Commit();
+                transaction.Commit();
             }
 
-            using (var session = database.CreateSession())
+            using (var transaction = database.CreateTransaction())
             {
-                var c1 = session.Extent<C1>().First;
+                var c1 = transaction.Extent<C1>().First;
                 Assert.Equal("a", c1.C1AllorsString);
             }
 
@@ -38,22 +38,22 @@ namespace Allors.Database.Adapters
 
             var database2 = this.CreateDatabase();
 
-            using (var session = database.CreateSession())
+            using (var transaction = database.CreateTransaction())
             {
-                var c1 = C1.Create(session);
+                var c1 = C1.Create(transaction);
                 c1.C1AllorsString = "b";
-                session.Commit();
+                transaction.Commit();
             }
 
-            using (var session = database2.CreateSession())
+            using (var transaction = database2.CreateTransaction())
             {
-                var c1 = session.Extent<C1>().First;
+                var c1 = transaction.Extent<C1>().First;
                 c1.C1AllorsString = "c";
             }
 
-            using (var session = database.CreateSession())
+            using (var transaction = database.CreateTransaction())
             {
-                var c1 = session.Extent<C1>().First;
+                var c1 = transaction.Extent<C1>().First;
                 Assert.Equal("c", c1.C1AllorsString);
             }
         }
@@ -64,12 +64,12 @@ namespace Allors.Database.Adapters
             var database = this.CreateDatabase();
             database.Init();
 
-            using (var session = database.CreateSession())
+            using (var transaction = database.CreateTransaction())
             {
-                var c1a = C1.Create(session);
-                var c2a = C2.Create(session);
+                var c1a = C1.Create(transaction);
+                var c2a = C2.Create(transaction);
                 c1a.C1C2one2one = c2a;
-                session.Commit();
+                transaction.Commit();
 
                 // load cache
                 c2a = c1a.C1C2one2one;
@@ -77,14 +77,14 @@ namespace Allors.Database.Adapters
 
             database.Init();
 
-            using (var session = database.CreateSession())
+            using (var transaction = database.CreateTransaction())
             {
-                var c1a = C1.Create(session);
-                var c1b = C1.Create(session);
+                var c1a = C1.Create(transaction);
+                var c1b = C1.Create(transaction);
 
-                session.Commit();
+                transaction.Commit();
 
-                c1a = C1.Instantiate(session, c1a.Id);
+                c1a = C1.Instantiate(transaction, c1a.Id);
 
                 Assert.Null(c1a.C1C2one2one);
             }
@@ -96,12 +96,12 @@ namespace Allors.Database.Adapters
             var database = this.CreateDatabase();
             database.Init();
 
-            using (var session = database.CreateSession())
+            using (var transaction = database.CreateTransaction())
             {
-                var c1 = C1.Create(session);
+                var c1 = C1.Create(transaction);
                 c1.C1AllorsString = "Test";
 
-                session.Commit();
+                transaction.Commit();
             }
         }
 
@@ -114,33 +114,33 @@ namespace Allors.Database.Adapters
             long c1Id = 0;
             long c2Id = 0;
 
-            using (var session = database.CreateSession())
+            using (var transaction = database.CreateTransaction())
             {
-                var c1 = C1.Create(session);
-                var c2 = C2.Create(session);
+                var c1 = C1.Create(transaction);
+                var c2 = C2.Create(transaction);
 
                 c1Id = c1.Id;
                 c2Id = c2.Id;
 
                 c1.C1C2one2one = c2;
 
-                session.Commit();
+                transaction.Commit();
 
-                c1.C1AllorsString = "Session 1";
+                c1.C1AllorsString = "Transaction 1";
 
-                using (var session2 = database.CreateSession())
+                using (var transaction2 = database.CreateTransaction())
                 {
-                    var session2C1 = (C1)session2.Instantiate(c1);
-                    session2C1.C1AllorsString = "Session 2";
+                    var transaction2C1 = (C1)transaction2.Instantiate(c1);
+                    transaction2C1.C1AllorsString = "Transaction 2";
 
-                    session2C1.C1C2one2one = null;
+                    transaction2C1.C1C2one2one = null;
 
-                    session2.Commit();
+                    transaction2.Commit();
 
-                    var session2C2 = (C2)session2.Instantiate(c2);
-                    session2C2.Strategy.Delete();
+                    var transaction2C2 = (C2)transaction2.Instantiate(c2);
+                    transaction2C2.Strategy.Delete();
 
-                    session2.Commit();
+                    transaction2.Commit();
                 }
 
                 var triggerCache = c1.C1C2one2one;
@@ -148,7 +148,7 @@ namespace Allors.Database.Adapters
                 var exceptionThrown = false;
                 try
                 {
-                    session.Commit();
+                    transaction.Commit();
                 }
                 catch
                 {
@@ -158,10 +158,10 @@ namespace Allors.Database.Adapters
                 Assert.True(exceptionThrown);
             }
 
-            using (var session = database.CreateSession())
+            using (var transaction = database.CreateTransaction())
             {
-                var c1 = (C1)session.Instantiate(c1Id);
-                var c2 = session.Instantiate(c2Id);
+                var c1 = (C1)transaction.Instantiate(c1Id);
+                var c2 = transaction.Instantiate(c2Id);
 
                 Assert.Null(c1.C1C2one2one);
             }
@@ -174,18 +174,18 @@ namespace Allors.Database.Adapters
             database.Init();
             var m = database.Context().M;
 
-            using (var session = database.CreateSession())
+            using (var transaction = database.CreateTransaction())
             {
-                var c1a = C1.Create(session);
-                var c1b = C1.Create(session);
-                var c2a = C2.Create(session);
-                var c2b = C2.Create(session);
+                var c1a = C1.Create(transaction);
+                var c1b = C1.Create(transaction);
+                var c2a = C2.Create(transaction);
+                var c2b = C2.Create(transaction);
 
-                session.Commit();
+                transaction.Commit();
 
                 c1a.C1C2many2one = c2a;
 
-                var extent = session.Extent<C1>();
+                var extent = transaction.Extent<C1>();
                 var array = extent.ToArray();
 
                 var nestedPrefetchPolicyBuilder = new PrefetchPolicyBuilder();
@@ -195,11 +195,11 @@ namespace Allors.Database.Adapters
                 var prefetchPolicyBuilder = new PrefetchPolicyBuilder();
                 prefetchPolicyBuilder.WithRule(m.C1.C1C2many2one, nestedPrefetchPolicy);
                 var prefetchPolicy = prefetchPolicyBuilder.Build();
-                session.Prefetch(prefetchPolicy, new[] { c1a, c1b });
+                transaction.Prefetch(prefetchPolicy, new[] { c1a, c1b });
 
                 var result = c1a.C1C2many2one;
 
-                session.Rollback();
+                transaction.Rollback();
 
                 Assert.False(c1a.ExistC1C2many2one);
             }
@@ -212,23 +212,23 @@ namespace Allors.Database.Adapters
             database.Init();
             var m = database.Context().M;
 
-            using (var session = database.CreateSession())
+            using (var transaction = database.CreateTransaction())
             {
-                var c1a = C1.Create(session);
-                var c1b = C1.Create(session);
-                var c2a = C2.Create(session);
-                var c2b = C2.Create(session);
-                var c2c = C2.Create(session);
+                var c1a = C1.Create(transaction);
+                var c1b = C1.Create(transaction);
+                var c2a = C2.Create(transaction);
+                var c2b = C2.Create(transaction);
+                var c2c = C2.Create(transaction);
 
                 c1a.AddC1C2one2many(c2a);
                 c1a.AddC1C2one2many(c2b);
 
-                session.Commit();
+                transaction.Commit();
 
                 c1a.RemoveC1C1one2manies();
                 c1a.AddC1C2one2many(c2c);
 
-                var extent = session.Extent<C1>();
+                var extent = transaction.Extent<C1>();
                 var array = extent.ToArray();
 
                 var nestedPrefetchPolicyBuilder = new PrefetchPolicyBuilder();
@@ -238,11 +238,11 @@ namespace Allors.Database.Adapters
                 var prefetchPolicyBuilder = new PrefetchPolicyBuilder();
                 prefetchPolicyBuilder.WithRule(m.C1.C1C2one2manies, nestedPrefetchPolicy);
                 var prefetchPolicy = prefetchPolicyBuilder.Build();
-                session.Prefetch(prefetchPolicy, new[] { c1a, c1b });
+                transaction.Prefetch(prefetchPolicy, new[] { c1a, c1b });
 
                 var result = c1a.C1C2one2manies;
 
-                session.Rollback();
+                transaction.Rollback();
 
                 Assert.Equal(2, c1a.C1C2one2manies.Count);
                 Assert.Contains(c2a, c1a.C1C2one2manies.ToArray());

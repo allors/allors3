@@ -13,7 +13,6 @@ namespace Tests.Workspace.Remote
     using Allors.Database.Adapters.Memory;
     using Allors.Workspace;
     using Allors.Workspace.Adapters.Direct;
-    using ISession = Allors.Database.ISession;
 
     public class Test : IDisposable
     {
@@ -32,24 +31,24 @@ namespace Tests.Workspace.Remote
 
             if (populate)
             {
-                this.Session = this.Database.CreateSession();
+                this.Transaction = this.Database.CreateTransaction();
 
-                new Setup(this.Session, new Config()).Apply();
+                new Setup(this.Transaction, new Config()).Apply();
 
-                this.Administrator = new PersonBuilder(this.Session).WithUserName("administrator").Build();
-                var administrators = new UserGroups(this.Session).Administrators;
+                this.Administrator = new PersonBuilder(this.Transaction).WithUserName("administrator").Build();
+                var administrators = new UserGroups(this.Transaction).Administrators;
                 administrators.AddMember(this.Administrator);
-                this.Session.Context().User = this.Administrator;
+                this.Transaction.Context().User = this.Administrator;
 
-                var defaultSecurityToken = new SecurityTokens(this.Session).DefaultSecurityToken;
-                var administratorRole = new Roles(this.Session).Administrator;
-                var acl = new AccessControlBuilder(this.Session).WithRole(administratorRole).WithSubjectGroup(administrators).WithSecurityToken(defaultSecurityToken).Build();
+                var defaultSecurityToken = new SecurityTokens(this.Transaction).DefaultSecurityToken;
+                var administratorRole = new Roles(this.Transaction).Administrator;
+                var acl = new AccessControlBuilder(this.Transaction).WithRole(administratorRole).WithSubjectGroup(administrators).WithSecurityToken(defaultSecurityToken).Build();
 
-                this.Session.Derive();
+                this.Transaction.Derive();
 
-                new TestPopulation(this.Session, "full").Apply();
+                new TestPopulation(this.Transaction, "full").Apply();
 
-                this.Session.Commit();
+                this.Transaction.Commit();
             }
 
             this.Workspace = new Workspace(
@@ -64,14 +63,14 @@ namespace Tests.Workspace.Remote
 
         public IDatabase Database { get; }
 
-        public ISession Session { get; private set; }
+        public ITransaction Transaction { get; private set; }
 
         public Workspace Workspace { get; }
 
         public void Dispose()
         {
-            this.Session.Dispose();
-            this.Session = null;
+            this.Transaction.Dispose();
+            this.Transaction = null;
         }
     }
 }

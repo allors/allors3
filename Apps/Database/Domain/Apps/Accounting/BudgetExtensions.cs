@@ -11,12 +11,12 @@ namespace Allors.Database.Domain
         {
             if (!@this.ExistBudgetState)
             {
-                @this.BudgetState = new BudgetStates(@this.Strategy.Session).Opened;
+                @this.BudgetState = new BudgetStates(@this.Strategy.Transaction).Opened;
             }
         }
 
-        public static void AppsClose(this Budget @this, BudgetClose method) => @this.BudgetState = new BudgetStates(@this.Strategy.Session).Closed;
+        public static void AppsClose(this Budget @this, BudgetClose method) => @this.BudgetState = new BudgetStates(@this.Strategy.Transaction).Closed;
 
-        public static void AppsReopen(this Budget @this, BudgetReopen method) => @this.BudgetState = new BudgetStates(@this.Strategy.Session).Opened;
+        public static void AppsReopen(this Budget @this, BudgetReopen method) => @this.BudgetState = new BudgetStates(@this.Strategy.Transaction).Opened;
     }
 }

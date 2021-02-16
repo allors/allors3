@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistTransactionDate)
             {
-                this.TransactionDate = this.Session().Now();
+                this.TransactionDate = this.Transaction().Now();
             }
         }
 
@@ -138,7 +138,7 @@ namespace Allors.Database.Domain
 
         private void SyncInventoryItem()
         {
-            var derivation = new Derivations.Default.DefaultDerivation(this.Strategy.Session);
+            var derivation = new Derivations.Default.DefaultDerivation(this.Strategy.Transaction);
             var facility = this.Facility ?? this.Part.DefaultFacility;
             var unitOfMeasure = this.UnitOfMeasure ?? this.Part.UnitOfMeasure;
 
@@ -157,7 +157,7 @@ namespace Allors.Database.Domain
 
                 if (inventoryItem == null)
                 {
-                    var builder = new SerialisedInventoryItemBuilder(this.Strategy.Session)
+                    var builder = new SerialisedInventoryItemBuilder(this.Strategy.Transaction)
                         .WithFacility(facility)
                         .WithUnitOfMeasure(unitOfMeasure)
                         .WithSerialisedItem(this.SerialisedItem)
@@ -180,7 +180,7 @@ namespace Allors.Database.Domain
 
                 if (inventoryItem == null)
                 {
-                    var builder = new NonSerialisedInventoryItemBuilder(this.Strategy.Session)
+                    var builder = new NonSerialisedInventoryItemBuilder(this.Strategy.Transaction)
                         .WithFacility(facility)
                         .WithUnitOfMeasure(unitOfMeasure)
                         .WithPart(this.Part)

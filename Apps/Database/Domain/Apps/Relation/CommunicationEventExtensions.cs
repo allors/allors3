@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
     {
         public static void AppsOnInit(this CommunicationEvent @this, ObjectOnInit method)
         {
-            if (!@this.ExistOwner && @this.Strategy.Session.Context().User is Person owner)
+            if (!@this.ExistOwner && @this.Strategy.Transaction.Context().User is Person owner)
             {
                 @this.Owner = owner;
             }
@@ -23,10 +23,10 @@ namespace Allors.Database.Domain
             }
         }
 
-        public static void AppsClose(this CommunicationEvent @this, CommunicationEventClose method) => @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Session).Completed;
+        public static void AppsClose(this CommunicationEvent @this, CommunicationEventClose method) => @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Transaction).Completed;
 
-        public static void AppsReopen(this CommunicationEvent @this, CommunicationEventReopen method) => @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Session).Scheduled;
+        public static void AppsReopen(this CommunicationEvent @this, CommunicationEventReopen method) => @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Transaction).Scheduled;
 
-        public static void AppsCancel(this CommunicationEvent @this, CommunicationEventCancel method) => @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Session).Cancelled;
+        public static void AppsCancel(this CommunicationEvent @this, CommunicationEventCancel method) => @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Transaction).Cancelled;
     }
 }

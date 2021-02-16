@@ -11,9 +11,9 @@ namespace Allors.Database.Domain
     {
         public void Repeat()
         {
-            var now = this.Strategy.Session.Now().Date;
-            var monthly = new TimeFrequencies(this.Strategy.Session).Month;
-            var weekly = new TimeFrequencies(this.Strategy.Session).Week;
+            var now = this.Strategy.Transaction.Now().Date;
+            var monthly = new TimeFrequencies(this.Strategy.Transaction).Month;
+            var weekly = new TimeFrequencies(this.Strategy.Transaction).Week;
 
             if (this.Frequency.Equals(monthly))
             {

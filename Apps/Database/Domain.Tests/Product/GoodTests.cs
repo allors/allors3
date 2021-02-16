@@ -20,10 +20,10 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnInitAddProductIdentification()
         {
-            this.Session.GetSingleton().Settings.UseProductNumberCounter = true;
+            this.Transaction.GetSingleton().Settings.UseProductNumberCounter = true;
 
-            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.Single(nonUnifiedGood.ProductIdentifications);
         }
@@ -36,20 +36,20 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedProductIdentificationsDeriveProductNumber()
         {
-            var settings = this.Session.GetSingleton().Settings;
+            var settings = this.Transaction.GetSingleton().Settings;
             settings.UseProductNumberCounter = false;
 
-            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.False(nonUnifiedGood.ExistProductNumber);
 
-            var goodIdentification = new ProductNumberBuilder(this.Session)
+            var goodIdentification = new ProductNumberBuilder(this.Transaction)
                 .WithIdentification(settings.NextProductNumber())
-                .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build();
+                .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build();
 
             nonUnifiedGood.AddProductIdentification(goodIdentification);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(nonUnifiedGood.ExistProductNumber);
         }
@@ -57,14 +57,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedLocalisedNamesDeriveName()
         {
-            var defaultLocale = this.Session.GetSingleton().DefaultLocale;
-            var localisedName = new LocalisedTextBuilder(this.Session).WithLocale(defaultLocale).WithText("defaultname").Build();
+            var defaultLocale = this.Transaction.GetSingleton().DefaultLocale;
+            var localisedName = new LocalisedTextBuilder(this.Transaction).WithLocale(defaultLocale).WithText("defaultname").Build();
 
-            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             nonUnifiedGood.AddLocalisedName(localisedName);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(nonUnifiedGood.Name, localisedName.Text);
         }
@@ -72,14 +72,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedLocalisedTextTextDeriveName()
         {
-            var defaultLocale = this.Session.GetSingleton().DefaultLocale;
-            var localisedName = new LocalisedTextBuilder(this.Session).WithLocale(defaultLocale).WithText("defaultname").Build();
+            var defaultLocale = this.Transaction.GetSingleton().DefaultLocale;
+            var localisedName = new LocalisedTextBuilder(this.Transaction).WithLocale(defaultLocale).WithText("defaultname").Build();
 
-            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).WithLocalisedName(localisedName).Build();
-            this.Session.Derive(false);
+            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).WithLocalisedName(localisedName).Build();
+            this.Transaction.Derive(false);
 
             localisedName.Text = "changed";
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(nonUnifiedGood.Name, localisedName.Text);
         }
@@ -87,14 +87,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedLocalisedDescriptionsDeriveDescription()
         {
-            var defaultLocale = this.Session.GetSingleton().DefaultLocale;
-            var localisedDescription = new LocalisedTextBuilder(this.Session).WithLocale(defaultLocale).WithText("defaultname").Build();
+            var defaultLocale = this.Transaction.GetSingleton().DefaultLocale;
+            var localisedDescription = new LocalisedTextBuilder(this.Transaction).WithLocale(defaultLocale).WithText("defaultname").Build();
 
-            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             nonUnifiedGood.AddLocalisedDescription(localisedDescription);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(nonUnifiedGood.Description, localisedDescription.Text);
         }
@@ -102,14 +102,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedLocalisedTextTextDeriveDescription()
         {
-            var defaultLocale = this.Session.GetSingleton().DefaultLocale;
-            var localisedDescription = new LocalisedTextBuilder(this.Session).WithLocale(defaultLocale).WithText("defaultname").Build();
+            var defaultLocale = this.Transaction.GetSingleton().DefaultLocale;
+            var localisedDescription = new LocalisedTextBuilder(this.Transaction).WithLocale(defaultLocale).WithText("defaultname").Build();
 
-            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).WithLocalisedDescription(localisedDescription).Build();
-            this.Session.Derive(false);
+            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).WithLocalisedDescription(localisedDescription).Build();
+            this.Transaction.Derive(false);
 
             localisedDescription.Text = "changed";
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(nonUnifiedGood.Description, localisedDescription.Text);
         }

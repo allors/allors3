@@ -19,18 +19,18 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void AssertIsUniqueTest()
         {
-            var c1 = new ValidationC1Builder(this.Session).Build();
-            var c2 = new ValidationC2Builder(this.Session).Build();
+            var c1 = new ValidationC1Builder(this.Transaction).Build();
+            var c2 = new ValidationC2Builder(this.Transaction).Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
             c1.UniqueId = Guid.NewGuid();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
             c2.UniqueId = c1.UniqueId;
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
         }
     }
 }

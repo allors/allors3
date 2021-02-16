@@ -11,19 +11,19 @@ namespace Allors.Database.Domain
 
     public abstract partial class ObjectsBase<T> : IObjects where T : IObject
     {
-        protected ObjectsBase(ISession session)
+        protected ObjectsBase(ITransaction transaction)
         {
-            this.Session = session;
-            this.M = this.Session.Database.Context().M;
+            this.Transaction = transaction;
+            this.M = this.Transaction.Database.Context().M;
         }
 
         public M M { get; }
 
         public abstract Composite ObjectType { get; }
 
-        public ISession Session { get; private set; }
+        public ITransaction Transaction { get; private set; }
 
-        public Extent<T> Extent() => this.Session.Extent<T>();
+        public Extent<T> Extent() => this.Transaction.Extent<T>();
 
         public T FindBy(RoleType roleType, object parameter)
         {
@@ -32,7 +32,7 @@ namespace Allors.Database.Domain
                 return default(T);
             }
 
-            var extent = this.Session.Extent(this.ObjectType);
+            var extent = this.Transaction.Extent(this.ObjectType);
             extent.Filter.AddEquals(roleType, parameter);
             return (T)extent.First;
         }

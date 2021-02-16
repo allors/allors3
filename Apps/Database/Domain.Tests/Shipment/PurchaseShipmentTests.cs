@@ -17,16 +17,16 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPurchaseShipmentBuilder_WhenBuild_ThenPostBuildRelationsMustExist()
         {
-            var supplier = new OrganisationBuilder(this.Session).WithName("supplier").Build();
-            new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).Build();
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithSupplier(supplier).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var shipment = new PurchaseShipmentBuilder(this.Session).WithShipmentMethod(new ShipmentMethods(this.Session).Ground).WithShipFromParty(supplier).Build();
+            var shipment = new PurchaseShipmentBuilder(this.Transaction).WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground).WithShipFromParty(supplier).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Equal(new ShipmentStates(this.Session).Created, shipment.ShipmentState);
+            Assert.Equal(new ShipmentStates(this.Transaction).Created, shipment.ShipmentState);
             Assert.Equal(this.InternalOrganisation.GeneralCorrespondence, shipment.ShipToAddress);
             Assert.Equal(this.InternalOrganisation, shipment.ShipToParty);
         }
@@ -34,56 +34,56 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPurchaseShipment_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var supplier = new OrganisationBuilder(this.Session).WithName("supplier").Build();
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
 
-            this.Session.Commit();
+            this.Transaction.Commit();
 
-            var builder = new PurchaseShipmentBuilder(this.Session);
+            var builder = new PurchaseShipmentBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            builder.WithShipmentMethod(new ShipmentMethods(this.Session).Ground);
+            builder.WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithShipFromParty(supplier);
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void GivenPurchaseShipment_WhenGettingShipmentNumberWithoutFormat_ThenShipmentNumberShouldBeReturned()
         {
-            var supplier = new OrganisationBuilder(this.Session).WithName("supplier").Build();
-            new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).Build();
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithSupplier(supplier).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var internalOrganisation = this.InternalOrganisation;
             internalOrganisation.RemovePurchaseShipmentNumberPrefix();
 
-            var shipment1 = new PurchaseShipmentBuilder(this.Session)
-                .WithShipmentMethod(new ShipmentMethods(this.Session).Ground)
+            var shipment1 = new PurchaseShipmentBuilder(this.Transaction)
+                .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
                 .WithShipFromParty(supplier)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal("1", shipment1.ShipmentNumber);
 
-            var shipment2 = new PurchaseShipmentBuilder(this.Session)
-                .WithShipmentMethod(new ShipmentMethods(this.Session).Ground)
+            var shipment2 = new PurchaseShipmentBuilder(this.Transaction)
+                .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
                 .WithShipFromParty(supplier)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal("2", shipment2.ShipmentNumber);
         }
@@ -91,27 +91,27 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPurchaseShipment_WhenGettingShipmentNumberWithFormat_ThenFormattedShipmentNumberShouldBeReturned()
         {
-            this.InternalOrganisation.PurchaseShipmentSequence = new PurchaseShipmentSequences(this.Session).EnforcedSequence;
-            var supplier = new OrganisationBuilder(this.Session).WithName("supplier").Build();
-            new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).Build();
+            this.InternalOrganisation.PurchaseShipmentSequence = new PurchaseShipmentSequences(this.Transaction).EnforcedSequence;
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithSupplier(supplier).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var shipment1 = new PurchaseShipmentBuilder(this.Session)
-                .WithShipmentMethod(new ShipmentMethods(this.Session).Ground)
+            var shipment1 = new PurchaseShipmentBuilder(this.Transaction)
+                .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
                 .WithShipFromParty(supplier)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal("incoming shipmentno: 1", shipment1.ShipmentNumber);
 
-            var shipment2 = new PurchaseShipmentBuilder(this.Session)
-                .WithShipmentMethod(new ShipmentMethods(this.Session).Ground)
+            var shipment2 = new PurchaseShipmentBuilder(this.Transaction)
+                .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
                 .WithShipFromParty(supplier)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal("incoming shipmentno: 2", shipment2.ShipmentNumber);
         }
@@ -120,17 +120,17 @@ namespace Allors.Database.Domain.Tests
         public void GivenShipToWithoutShipmentNumberPrefix_WhenDeriving_ThenSortableShipmentNumberIsSet()
         {
             this.InternalOrganisation.RemovePurchaseShipmentNumberPrefix();
-            var supplier = new OrganisationBuilder(this.Session).WithName("supplier").Build();
-            new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).Build();
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithSupplier(supplier).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var shipment = new PurchaseShipmentBuilder(this.Session)
-                .WithShipmentMethod(new ShipmentMethods(this.Session).Ground)
+            var shipment = new PurchaseShipmentBuilder(this.Transaction)
+                .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
                 .WithShipFromParty(supplier)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(int.Parse(shipment.ShipmentNumber), shipment.SortableShipmentNumber);
         }
@@ -138,19 +138,19 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenShipToWithShipmentNumberPrefix_WhenDeriving_ThenSortableShipmentNumberIsSet()
         {
-            this.InternalOrganisation.PurchaseShipmentSequence = new PurchaseShipmentSequences(this.Session).EnforcedSequence;
+            this.InternalOrganisation.PurchaseShipmentSequence = new PurchaseShipmentSequences(this.Transaction).EnforcedSequence;
             this.InternalOrganisation.PurchaseShipmentNumberPrefix = "prefix-";
-            var supplier = new OrganisationBuilder(this.Session).WithName("supplier").Build();
-            new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).Build();
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithSupplier(supplier).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var shipment = new PurchaseShipmentBuilder(this.Session)
-                .WithShipmentMethod(new ShipmentMethods(this.Session).Ground)
+            var shipment = new PurchaseShipmentBuilder(this.Transaction)
+                .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
                 .WithShipFromParty(supplier)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(int.Parse(shipment.ShipmentNumber.Split('-')[1]), shipment.SortableShipmentNumber);
         }
@@ -158,27 +158,27 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPurchaseShipmentWithShipToCustomerWithshippingAddress_WhenDeriving_ThenDerivedShipToCustomerAndDerivedShipToAddressMustExist()
         {
-            var supplier = new OrganisationBuilder(this.Session).WithName("supplier").Build();
-            new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).Build();
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithSupplier(supplier).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var mechelen = new CityBuilder(this.Session).WithName("Mechelen").Build();
-            var shipToAddress = new PostalAddressBuilder(this.Session).WithAddress1("Haverwerf 15").WithPostalAddressBoundary(mechelen).Build();
+            var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
+            var shipToAddress = new PostalAddressBuilder(this.Transaction).WithAddress1("Haverwerf 15").WithPostalAddressBoundary(mechelen).Build();
 
-            var shippingAddress = new PartyContactMechanismBuilder(this.Session)
+            var shippingAddress = new PartyContactMechanismBuilder(this.Transaction)
                 .WithContactMechanism(shipToAddress)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).ShippingAddress)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
                 .WithUseAsDefault(true)
                 .Build();
 
             this.InternalOrganisation.AddPartyContactMechanism(shippingAddress);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var order = new PurchaseShipmentBuilder(this.Session).WithShipmentMethod(new ShipmentMethods(this.Session).Ground).WithShipFromParty(supplier).Build();
+            var order = new PurchaseShipmentBuilder(this.Transaction).WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground).WithShipFromParty(supplier).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(shippingAddress.ContactMechanism, order.ShipToAddress);
         }
@@ -186,9 +186,9 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnCreatedThrowValidationError()
         {
-            new PurchaseShipmentBuilder(this.Session).Build();
+            new PurchaseShipmentBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals("PurchaseShipment.ShipFromParty is required"));
         }
     }
@@ -203,8 +203,8 @@ namespace Allors.Database.Domain.Tests
             this.InternalOrganisation.RemovePurchaseShipmentNumberPrefix();
             var number = this.InternalOrganisation.PurchaseShipmentNumberCounter.Value;
 
-            var shipment = new PurchaseShipmentBuilder(this.Session).WithShipToParty(this.InternalOrganisation).Build();
-            this.Session.Derive(false);
+            var shipment = new PurchaseShipmentBuilder(this.Transaction).WithShipToParty(this.InternalOrganisation).Build();
+            this.Transaction.Derive(false);
 
             Assert.Equal(shipment.ShipmentNumber, (number + 1).ToString());
         }
@@ -213,8 +213,8 @@ namespace Allors.Database.Domain.Tests
         public void ChangedShipToPartyDeriveSortableShipmentNumber()
         {
             var number = this.InternalOrganisation.PurchaseShipmentNumberCounter.Value;
-            var shipment = new PurchaseShipmentBuilder(this.Session).WithShipToParty(this.InternalOrganisation).Build();
-            this.Session.Derive(false);
+            var shipment = new PurchaseShipmentBuilder(this.Transaction).WithShipToParty(this.InternalOrganisation).Build();
+            this.Transaction.Derive(false);
 
             Assert.Equal(shipment.SortableShipmentNumber.Value, number + 1);
         }
@@ -222,10 +222,10 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipToPartyDeriveShipToAddress()
         {
-            var shipment = new PurchaseShipmentBuilder(this.Session)
+            var shipment = new PurchaseShipmentBuilder(this.Transaction)
                 .WithShipToParty(this.InternalOrganisation)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(this.InternalOrganisation.ShippingAddress, shipment.ShipToAddress);
         }
@@ -233,13 +233,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipToAddressDeriveShipToAddress()
         {
-            var shipment = new PurchaseShipmentBuilder(this.Session)
+            var shipment = new PurchaseShipmentBuilder(this.Transaction)
                 .WithShipToParty(this.InternalOrganisation)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             shipment.RemoveShipToAddress();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(this.InternalOrganisation.ShippingAddress, shipment.ShipToAddress);
         }
@@ -247,10 +247,10 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipFromPartyDeriveShipFromAddress()
         {
-            var shipment = new PurchaseShipmentBuilder(this.Session)
+            var shipment = new PurchaseShipmentBuilder(this.Transaction)
                 .WithShipFromParty(this.InternalOrganisation.ActiveSuppliers.First)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(this.InternalOrganisation.ActiveSuppliers.First.ShippingAddress, shipment.ShipFromAddress);
         }
@@ -258,13 +258,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipFromAddressDeriveShipFromAddress()
         {
-            var shipment = new PurchaseShipmentBuilder(this.Session)
+            var shipment = new PurchaseShipmentBuilder(this.Transaction)
                 .WithShipFromParty(this.InternalOrganisation.ActiveSuppliers.First)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             shipment.RemoveShipFromAddress();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(this.InternalOrganisation.ActiveSuppliers.First.ShippingAddress, shipment.ShipFromAddress);
         }
@@ -277,18 +277,18 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipmentReceiptQuantityAcceptedDeriveShipmentState()
         {
-            var orderItem = new PurchaseOrderItemBuilder(this.Session).WithQuantityOrdered(10).Build();
-            this.Session.Derive(false);
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction).WithQuantityOrdered(10).Build();
+            this.Transaction.Derive(false);
 
-            var shipment = new PurchaseShipmentBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var shipment = new PurchaseShipmentBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var shipmentItem = new ShipmentItemBuilder(this.Session).WithShipmentItemState(new ShipmentItemStates(this.Session).Received).Build();
+            var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithShipmentItemState(new ShipmentItemStates(this.Transaction).Received).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            new ShipmentReceiptBuilder(this.Session).WithShipmentItem(shipmentItem).WithOrderItem(orderItem).WithQuantityAccepted(10).Build();
-            this.Session.Derive(false);
+            new ShipmentReceiptBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithOrderItem(orderItem).WithQuantityAccepted(10).Build();
+            this.Transaction.Derive(false);
 
             Assert.True(shipment.ShipmentState.IsReceived);
         }
@@ -296,21 +296,21 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipmentItemShipmentItemStateDeriveShipmentState()
         {
-            var orderItem = new PurchaseOrderItemBuilder(this.Session).WithQuantityOrdered(10).Build();
-            this.Session.Derive(false);
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction).WithQuantityOrdered(10).Build();
+            this.Transaction.Derive(false);
 
-            var shipment = new PurchaseShipmentBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var shipment = new PurchaseShipmentBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var shipmentItem = new ShipmentItemBuilder(this.Session).Build();
+            var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            new ShipmentReceiptBuilder(this.Session).WithShipmentItem(shipmentItem).WithOrderItem(orderItem).WithQuantityAccepted(10).Build();
-            this.Session.Derive(false);
+            new ShipmentReceiptBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithOrderItem(orderItem).WithQuantityAccepted(10).Build();
+            this.Transaction.Derive(false);
 
-            shipmentItem.ShipmentItemState = new ShipmentItemStates(this.Session).Received;
-            this.Session.Derive(false);
+            shipmentItem.ShipmentItemState = new ShipmentItemStates(this.Transaction).Received;
+            this.Transaction.Derive(false);
 
             Assert.True(shipment.ShipmentState.IsReceived);
         }

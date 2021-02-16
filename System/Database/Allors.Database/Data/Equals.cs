@@ -29,11 +29,11 @@ namespace Allors.Database.Data
         bool IPredicate.HasMissingArguments(IDictionary<string, string> parameters) => this.Parameter != null && (parameters == null || !parameters.ContainsKey(this.Parameter));
 
         /// <inheritdoc/>
-        void IPredicate.Build(ISession session, IDictionary<string, string> parameters, Database.ICompositePredicate compositePredicate)
+        void IPredicate.Build(ITransaction transaction, IDictionary<string, string> parameters, Database.ICompositePredicate compositePredicate)
         {
             if (this.PropertyType == null)
             {
-                var equals = this.Parameter != null ? session.Instantiate(parameters[this.Parameter]) : this.Object;
+                var equals = this.Parameter != null ? transaction.Instantiate(parameters[this.Parameter]) : this.Object;
                 if (equals != null)
                 {
                     compositePredicate.AddEquals(this.Object);
@@ -53,7 +53,7 @@ namespace Allors.Database.Data
                     }
                     else
                     {
-                        var equals = this.Parameter != null ? session.GetObject(parameters[this.Parameter]) : this.Object;
+                        var equals = this.Parameter != null ? transaction.GetObject(parameters[this.Parameter]) : this.Object;
                         if (equals != null)
                         {
                             compositePredicate.AddEquals(roleType, equals);
@@ -63,7 +63,7 @@ namespace Allors.Database.Data
                 else
                 {
                     var associationType = (IAssociationType)this.PropertyType;
-                    var equals = (IObject)(this.Parameter != null ? session.GetObject(parameters[this.Parameter]) : this.Object);
+                    var equals = (IObject)(this.Parameter != null ? transaction.GetObject(parameters[this.Parameter]) : this.Object);
                     if (equals != null)
                     {
                         compositePredicate.AddEquals(associationType, equals);

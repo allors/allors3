@@ -15,8 +15,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedNameDerivePartyName()
         {
-            var automatedAgent = new AutomatedAgentBuilder(this.Session).Build();
-            this.Session.Derive();
+            var automatedAgent = new AutomatedAgentBuilder(this.Transaction).Build();
+            this.Transaction.Derive();
 
             automatedAgent.Name = "name";
 

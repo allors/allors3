@@ -12,9 +12,9 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static InvoiceTermBuilder WithDefaults(this InvoiceTermBuilder @this)
         {
-            var faker = @this.Session.Faker();
+            var faker = @this.Transaction.Faker();
 
-            var allInvoiceItemTypes = @this.Session.Extent<InvoiceTermType>().ToList();
+            var allInvoiceItemTypes = @this.Transaction.Extent<InvoiceTermType>().ToList();
             var invoiceItemTypes = allInvoiceItemTypes.Except(allInvoiceItemTypes.Where(v => v.UniqueId == InvoiceTermTypes.PaymentNetDaysId).ToList()).ToList();
 
             @this.WithTermValue(faker.Lorem.Sentence());
@@ -26,10 +26,10 @@ namespace Allors.Database.Domain.TestPopulation
 
         public static InvoiceTermBuilder WithDefaultsForPaymentNetDays(this InvoiceTermBuilder @this)
         {
-            var faker = @this.Session.Faker();
+            var faker = @this.Transaction.Faker();
 
             @this.WithTermValue(faker.Random.Int(7, 30).ToString());
-            @this.WithTermType(new InvoiceTermTypes(@this.Session).PaymentNetDays);
+            @this.WithTermType(new InvoiceTermTypes(@this.Transaction).PaymentNetDays);
             @this.WithDescription(faker.Lorem.Sentence());
 
             return @this;

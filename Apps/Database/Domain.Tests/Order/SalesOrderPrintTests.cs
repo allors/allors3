@@ -19,7 +19,7 @@ namespace Allors.Database.Domain.Tests
         //public void GivenSalesOrder_WhenCreatingPrintModel_ThenPrintModelIsNotNull()
         //{
         //    // Arrange
-        //    var order = new SalesOrders(this.Session).Extent().First;
+        //    var order = new SalesOrders(this.Transaction).Extent().First;
 
         //    // Act
         //    var printModel = new Print.SalesOrderModel.Model(order);
@@ -34,10 +34,10 @@ namespace Allors.Database.Domain.Tests
         //    // Arrange
 
         //    // Act
-        //    this.Session.Derive(true);
+        //    this.Transaction.Derive(true);
 
         //    // Assert
-        //    var order = new SalesOrders(this.Session).Extent().First;
+        //    var order = new SalesOrders(this.Transaction).Extent().First;
 
         //    Assert.True(order.ExistPrintDocument);
         //    Assert.False(order.PrintDocument.ExistMedia);
@@ -47,13 +47,13 @@ namespace Allors.Database.Domain.Tests
         //public void GivenSalesOrderPrintDocument_WhenPrinting_ThenMediaCreated()
         //{
         //    // Arrange
-        //    var order = new SalesOrders(this.Session).Extent().First;
+        //    var order = new SalesOrders(this.Transaction).Extent().First;
 
         //    // Act
         //    order.Print();
 
-        //    this.Session.Derive();
-        //    this.Session.Commit();
+        //    this.Transaction.Derive();
+        //    this.Transaction.Commit();
 
         //    // Assert
         //    Assert.True(order.PrintDocument.ExistMedia);

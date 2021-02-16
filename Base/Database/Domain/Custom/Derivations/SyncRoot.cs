@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistSyncDepth1)
             {
-                this.SyncDepth1 = new SyncDepthC1Builder(this.strategy.Session).Build();
+                this.SyncDepth1 = new SyncDepthC1Builder(this.strategy.Transaction).Build();
             }
 
             this.SyncDepth1.Sync();

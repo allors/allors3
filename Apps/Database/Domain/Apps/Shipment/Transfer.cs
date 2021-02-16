@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistShipmentState)
             {
-                this.ShipmentState = new ShipmentStates(this.Strategy.Session).Created;
+                this.ShipmentState = new ShipmentStates(this.Strategy.Transaction).Created;
             }
         }
     }

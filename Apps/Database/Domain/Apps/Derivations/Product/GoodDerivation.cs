@@ -29,10 +29,10 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<Good>())
             {
-                var defaultLocale = @this.Strategy.Session.GetSingleton().DefaultLocale;
+                var defaultLocale = @this.Strategy.Transaction.GetSingleton().DefaultLocale;
 
                 var identifications = @this.ProductIdentifications;
-                identifications.Filter.AddEquals(this.M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(@this.Strategy.Session).Good);
+                identifications.Filter.AddEquals(this.M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(@this.Strategy.Transaction).Good);
                 var goodIdentification = identifications.FirstOrDefault();
 
                 @this.ProductNumber = goodIdentification?.Identification;

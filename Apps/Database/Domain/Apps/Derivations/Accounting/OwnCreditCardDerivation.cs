@@ -39,7 +39,7 @@ namespace Allors.Database.Domain
 
                 if (@this.ExistCreditCard)
                 {
-                    if (@this.CreditCard.ExpirationYear <= @this.Session().Now().Year && @this.CreditCard.ExpirationMonth <= @this.Session().Now().Month)
+                    if (@this.CreditCard.ExpirationYear <= @this.Transaction().Now().Year && @this.CreditCard.ExpirationMonth <= @this.Transaction().Now().Month)
                     {
                         @this.IsActive = false;
                     }

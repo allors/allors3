@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
         {
             if (!@this.ExistDateCreated)
             {
-                @this.DateCreated = @this.Strategy.Session.Now();
+                @this.DateCreated = @this.Strategy.Transaction.Now();
             }
         }
 
@@ -43,20 +43,20 @@ namespace Allors.Database.Domain
 
         public static void AssignPerformer(this Task @this)
         {
-            var currentUser = @this.Strategy.Session.Context().User as Person;
+            var currentUser = @this.Strategy.Transaction.Context().User as Person;
             @this.Performer = currentUser;
         }
 
         public static void AssignParticipants(this Task @this, IEnumerable<User> participants)
         {
-            var session = @this.Strategy.Session;
+            var transaction = @this.Strategy.Transaction;
 
             var participantSet = new HashSet<User>(participants.Where(v => v != null).Distinct());
 
             @this.Participants = participantSet.ToArray();
 
             // Manage Security
-            var defaultSecurityToken = new SecurityTokens(session).DefaultSecurityToken;
+            var defaultSecurityToken = new SecurityTokens(transaction).DefaultSecurityToken;
             var securityTokens = new HashSet<SecurityToken> { defaultSecurityToken };
             var ownerSecurityTokens = participantSet.Where(v => v.ExistOwnerSecurityToken).Select(v => v.OwnerSecurityToken);
             securityTokens.UnionWith(ownerSecurityTokens);
@@ -78,7 +78,7 @@ namespace Allors.Database.Domain
 
             foreach (var user in participantSet)
             {
-                new TaskAssignmentBuilder(session)
+                new TaskAssignmentBuilder(transaction)
                     .WithTask(@this)
                     .WithUser(user)
                     .Build();

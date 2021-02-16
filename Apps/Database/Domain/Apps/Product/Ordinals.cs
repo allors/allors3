@@ -21,11 +21,11 @@ namespace Allors.Database.Domain
 
         public Ordinal Third => this.Cache[ThirdId];
 
-        private UniquelyIdentifiableCache<Ordinal> Cache => this.cache ??= new UniquelyIdentifiableCache<Ordinal>(this.Session);
+        private UniquelyIdentifiableCache<Ordinal> Cache => this.cache ??= new UniquelyIdentifiableCache<Ordinal>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {
-            var dutchLocale = new Locales(this.Session).DutchNetherlands;
+            var dutchLocale = new Locales(this.Transaction).DutchNetherlands;
 
             var merge = this.Cache.Merger().Action();
             var localisedName = new LocalisedTextAccessor(this.Meta.LocalisedNames);

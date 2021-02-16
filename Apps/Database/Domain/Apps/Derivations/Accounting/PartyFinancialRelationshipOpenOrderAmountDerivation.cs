@@ -33,8 +33,8 @@ namespace Allors.Database.Domain
                         .Where(v =>
                             Equals(v.TakenBy, @this.InternalOrganisation)
                             && v.ExistSalesOrderState
-                            && !v.SalesOrderState.Equals(new SalesOrderStates(party.Strategy.Session).Finished)
-                            && !v.SalesOrderState.Equals(new SalesOrderStates(party.Strategy.Session).Cancelled))
+                            && !v.SalesOrderState.Equals(new SalesOrderStates(party.Strategy.Transaction).Finished)
+                            && !v.SalesOrderState.Equals(new SalesOrderStates(party.Strategy.Transaction).Cancelled))
                         .Sum(v => v.TotalIncVat);
                 }
             }

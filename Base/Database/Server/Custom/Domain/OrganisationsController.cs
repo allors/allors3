@@ -17,26 +17,26 @@ namespace Allors.Database.Server.Controllers
 
     public class OrganisationsController : Controller
     {
-        public OrganisationsController(ISessionService sessionService, IWorkspaceService workspaceService)
+        public OrganisationsController(ITransactionService sessionService, IWorkspaceService workspaceService)
         {
             this.WorkspaceService = workspaceService;
-            this.Session = sessionService.Session;
-            this.TreeCache = this.Session.Database.Context().TreeCache;
+            this.Transaction = sessionService.Transaction;
+            this.TreeCache = this.Transaction.Database.Context().TreeCache;
         }
 
         public ITreeCache TreeCache { get; }
 
         public IWorkspaceService WorkspaceService { get; }
 
-        private ISession Session { get; }
+        private ITransaction Transaction { get; }
 
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> Pull()
         {
-            var api = new Api(this.Session, this.WorkspaceService.Name);
+            var api = new Api(this.Transaction, this.WorkspaceService.Name);
             var response = api.CreatePullResponseBuilder();
-            var organisations = new Organisations(this.Session).Extent().ToArray();
+            var organisations = new Organisations(this.Transaction).Extent().ToArray();
             response.AddCollection("organisations", organisations);
             return this.Ok(response.Build());
         }

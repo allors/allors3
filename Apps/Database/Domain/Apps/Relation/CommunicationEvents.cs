@@ -11,9 +11,9 @@ namespace Allors.Database.Domain
 
         protected override void AppsSecure(Security config)
         {
-            ObjectState scheduled = new CommunicationEventStates(this.Session).Scheduled;
-            ObjectState cancelled = new CommunicationEventStates(this.Session).Cancelled;
-            ObjectState closed = new CommunicationEventStates(this.Session).Completed;
+            ObjectState scheduled = new CommunicationEventStates(this.Transaction).Scheduled;
+            ObjectState cancelled = new CommunicationEventStates(this.Transaction).Cancelled;
+            ObjectState closed = new CommunicationEventStates(this.Transaction).Completed;
 
             var reopenId = this.M.CommunicationEvent.Reopen;
             var closeId = this.M.CommunicationEvent.Close;

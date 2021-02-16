@@ -100,7 +100,7 @@ namespace Allors.Database.Domain
 
         public void DeriveRelationships()
         {
-            var now = this.Session().Now();
+            var now = this.Transaction().Now();
             var allOrganisationContactRelationships = this.OrganisationContactRelationshipsWhereContact;
 
             this.CurrentOrganisationContactRelationships = allOrganisationContactRelationships
@@ -118,8 +118,8 @@ namespace Allors.Database.Domain
             {
                 this.RemoveCurrentOrganisationContactMechanism(partyContactMechanism.ContactMechanism);
 
-                if (partyContactMechanism.FromDate <= this.Session().Now() &&
-                    (!partyContactMechanism.ExistThroughDate || partyContactMechanism.ThroughDate >= this.Session().Now()))
+                if (partyContactMechanism.FromDate <= this.Transaction().Now() &&
+                    (!partyContactMechanism.ExistThroughDate || partyContactMechanism.ThroughDate >= this.Transaction().Now()))
                 {
                     this.AddCurrentOrganisationContactMechanism(partyContactMechanism.ContactMechanism);
                 }

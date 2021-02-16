@@ -26,17 +26,17 @@ namespace Allors.Database.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            var session = cycle.Session;
+            var transaction = cycle.Transaction;
             var validation = cycle.Validation;
 
             foreach (var @this in matches.Cast<SalesInvoice>())
             {
-                var salesInvoiceItemStates = new SalesInvoiceItemStates(session);
-                var salesInvoiceStates = new SalesInvoiceStates(session);
+                var salesInvoiceItemStates = new SalesInvoiceItemStates(transaction);
+                var salesInvoiceStates = new SalesInvoiceStates(transaction);
 
                 if (!@this.ExistSalesInvoiceState)
                 {
-                    @this.SalesInvoiceState = new SalesInvoiceStates(session).ReadyForPosting;
+                    @this.SalesInvoiceState = new SalesInvoiceStates(transaction).ReadyForPosting;
                 }
 
                 var validInvoiceItems = @this.SalesInvoiceItems.Where(v => v.IsValid).ToArray();

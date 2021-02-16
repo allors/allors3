@@ -11,52 +11,52 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static OrganisationBuilder WithDefaults(this OrganisationBuilder @this)
         {
-            var m = @this.Session.Database.Context().M;
-            var faker = @this.Session.Faker();
+            var m = @this.Transaction.Database.Context().M;
+            var faker = @this.Transaction.Faker();
 
-            var euCountry = new Countries(@this.Session).FindBy(m.Country.IsoCode, faker.PickRandom(Countries.EuMemberStates));
+            var euCountry = new Countries(@this.Transaction).FindBy(m.Country.IsoCode, faker.PickRandom(Countries.EuMemberStates));
 
             @this.WithName(faker.Company.CompanyName());
             @this.WithEuListingState(euCountry);
-            @this.WithVatRegime(new VatRegimes(@this.Session).IntraCommunautair);
-            @this.WithLegalForm(faker.Random.ListItem(@this.Session.Extent<LegalForm>()));
-            @this.WithLocale(faker.Random.ListItem(@this.Session.GetSingleton().Locales));
+            @this.WithVatRegime(new VatRegimes(@this.Transaction).IntraCommunautair);
+            @this.WithLegalForm(faker.Random.ListItem(@this.Transaction.Extent<LegalForm>()));
+            @this.WithLocale(faker.Random.ListItem(@this.Transaction.GetSingleton().Locales));
             @this.WithTaxNumber($"{euCountry.IsoCode}{faker.Random.Number(99999999)}");
             @this.WithComment(faker.Lorem.Paragraph());
 
-            @this.WithPartyContactMechanism(new PartyContactMechanismBuilder(@this.Session)
+            @this.WithPartyContactMechanism(new PartyContactMechanismBuilder(@this.Transaction)
                 .WithUseAsDefault(true)
-                .WithContactMechanism(new PostalAddressBuilder(@this.Session).WithDefaults().Build())
-                .WithContactPurpose(new ContactMechanismPurposes(@this.Session).GeneralCorrespondence)
-                .WithContactPurpose(new ContactMechanismPurposes(@this.Session).ShippingAddress)
-                .WithContactPurpose(new ContactMechanismPurposes(@this.Session).HeadQuarters)
+                .WithContactMechanism(new PostalAddressBuilder(@this.Transaction).WithDefaults().Build())
+                .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction).GeneralCorrespondence)
+                .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction).ShippingAddress)
+                .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction).HeadQuarters)
                 .Build());
 
-            @this.WithPartyContactMechanism(new PartyContactMechanismBuilder(@this.Session)
+            @this.WithPartyContactMechanism(new PartyContactMechanismBuilder(@this.Transaction)
                 .WithUseAsDefault(true)
-                .WithContactMechanism(new EmailAddressBuilder(@this.Session).WithDefaults().Build())
-                .WithContactPurpose(new ContactMechanismPurposes(@this.Session).GeneralEmail)
-                .WithContactPurpose(new ContactMechanismPurposes(@this.Session).BillingAddress)
+                .WithContactMechanism(new EmailAddressBuilder(@this.Transaction).WithDefaults().Build())
+                .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction).GeneralEmail)
+                .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction).BillingAddress)
                 .Build());
 
-            @this.WithPartyContactMechanism(new PartyContactMechanismBuilder(@this.Session)
+            @this.WithPartyContactMechanism(new PartyContactMechanismBuilder(@this.Transaction)
                 .WithUseAsDefault(true)
-                .WithContactMechanism(new WebAddressBuilder(@this.Session).WithDefaults().Build())
-                .WithContactPurpose(new ContactMechanismPurposes(@this.Session).InternetAddress)
+                .WithContactMechanism(new WebAddressBuilder(@this.Transaction).WithDefaults().Build())
+                .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction).InternetAddress)
                 .Build());
 
-            @this.WithPartyContactMechanism(new PartyContactMechanismBuilder(@this.Session)
+            @this.WithPartyContactMechanism(new PartyContactMechanismBuilder(@this.Transaction)
                 .WithUseAsDefault(true)
-                .WithContactMechanism(new TelecommunicationsNumberBuilder(@this.Session).WithDefaults().Build())
-                .WithContactPurpose(new ContactMechanismPurposes(@this.Session).GeneralPhoneNumber)
-                .WithContactPurpose(new ContactMechanismPurposes(@this.Session).BillingInquiriesPhone)
+                .WithContactMechanism(new TelecommunicationsNumberBuilder(@this.Transaction).WithDefaults().Build())
+                .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction).GeneralPhoneNumber)
+                .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction).BillingInquiriesPhone)
                 .Build());
 
-            @this.WithPartyContactMechanism(new PartyContactMechanismBuilder(@this.Session)
+            @this.WithPartyContactMechanism(new PartyContactMechanismBuilder(@this.Transaction)
                 .WithUseAsDefault(true)
-                .WithContactMechanism(new TelecommunicationsNumberBuilder(@this.Session).WithDefaults().Build())
-                .WithContactPurpose(new ContactMechanismPurposes(@this.Session).OrderInquiriesPhone)
-                .WithContactPurpose(new ContactMechanismPurposes(@this.Session).ShippingInquiriesPhone)
+                .WithContactMechanism(new TelecommunicationsNumberBuilder(@this.Transaction).WithDefaults().Build())
+                .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction).OrderInquiriesPhone)
+                .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction).ShippingInquiriesPhone)
                 .Build());
 
             return @this;
@@ -74,17 +74,17 @@ namespace Allors.Database.Domain.TestPopulation
 
         public static OrganisationBuilder WithInternalOrganisationDefaults(this OrganisationBuilder @this)
         {
-            var m = @this.Session.Database.Context().M;
-            var faker = @this.Session.Faker();
+            var m = @this.Transaction.Database.Context().M;
+            var faker = @this.Transaction.Faker();
 
             var company = faker.Company;
-            var euCountry = new Countries(@this.Session).FindBy(m.Country.IsoCode, faker.PickRandom(Countries.EuMemberStates));
+            var euCountry = new Countries(@this.Transaction).FindBy(m.Country.IsoCode, faker.PickRandom(Countries.EuMemberStates));
 
             @this.WithName(company.CompanyName());
             @this.WithEuListingState(euCountry);
-            @this.WithVatRegime(new VatRegimes(@this.Session).IntraCommunautair);
-            @this.WithLegalForm(faker.Random.ListItem(@this.Session.Extent<LegalForm>()));
-            @this.WithLocale(faker.Random.ListItem(@this.Session.GetSingleton().Locales));
+            @this.WithVatRegime(new VatRegimes(@this.Transaction).IntraCommunautair);
+            @this.WithLegalForm(faker.Random.ListItem(@this.Transaction.Extent<LegalForm>()));
+            @this.WithLocale(faker.Random.ListItem(@this.Transaction.GetSingleton().Locales));
             @this.WithTaxNumber($"{euCountry.IsoCode}{faker.Random.Number(99999999)}");
             @this.WithComment(faker.Lorem.Paragraph());
             @this.WithIsInternalOrganisation(true);

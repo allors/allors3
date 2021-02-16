@@ -21,13 +21,13 @@ namespace Allors.Database.Data
 
         bool IExtent.HasMissingArguments(IDictionary<string, string> parameters) => this.Predicate != null && this.Predicate.HasMissingArguments(parameters);
 
-        public Database.Extent Build(ISession session, IDictionary<string, string> parameters = null)
+        public Database.Extent Build(ITransaction transaction, IDictionary<string, string> parameters = null)
         {
-            var extent = session.Extent(this.ObjectType);
+            var extent = transaction.Extent(this.ObjectType);
 
             if (this.Predicate != null && !this.Predicate.ShouldTreeShake(parameters))
             {
-                this.Predicate?.Build(session, parameters, extent.Filter);
+                this.Predicate?.Build(transaction, parameters, extent.Filter);
             }
 
             if (this.Sorting != null)

@@ -34,19 +34,19 @@ namespace Allors.Database.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            var session = cycle.Session;
+            var transaction = cycle.Transaction;
             var validation = cycle.Validation;
             var changeSet = cycle.ChangeSet;
 
             foreach (var @this in matches.Cast<SalesInvoiceItem>())
             {
                 var salesInvoice = @this.SalesInvoiceWhereSalesInvoiceItem;
-                var salesInvoiceItemStates = new SalesInvoiceItemStates(session);
+                var salesInvoiceItemStates = new SalesInvoiceItemStates(transaction);
 
                 validation.AssertExistsAtMostOne(@this, this.M.SalesInvoiceItem.Product, this.M.SalesInvoiceItem.ProductFeatures, this.M.SalesInvoiceItem.Part);
                 validation.AssertExistsAtMostOne(@this, this.M.SalesInvoiceItem.SerialisedItem, this.M.SalesInvoiceItem.ProductFeatures, this.M.SalesInvoiceItem.Part);
 
-                if (@this.ExistSerialisedItem && !@this.ExistNextSerialisedItemAvailability && salesInvoice.SalesInvoiceType.Equals(new SalesInvoiceTypes(@this.Session()).SalesInvoice))
+                if (@this.ExistSerialisedItem && !@this.ExistNextSerialisedItemAvailability && salesInvoice.SalesInvoiceType.Equals(new SalesInvoiceTypes(@this.Transaction()).SalesInvoice))
                 {
                     validation.AssertExists(@this, @this.Meta.NextSerialisedItemAvailability);
                 }

@@ -15,18 +15,18 @@ namespace Allors.Database.Domain
     {
         private IDictionary<TKey, long> cache;
 
-        public Cache(ISession session, RoleType roleType)
+        public Cache(ITransaction transaction, RoleType roleType)
         {
             if (!roleType.ObjectType.IsUnit)
             {
                 throw new ArgumentException("ObjectType of RoleType should be a Unit");
             }
 
-            this.Session = session;
+            this.Transaction = transaction;
             this.RoleType = roleType;
         }
 
-        public ISession Session { get; }
+        public ITransaction Transaction { get; }
 
         public RoleType RoleType { get; }
 
@@ -36,26 +36,26 @@ namespace Allors.Database.Domain
             {
                 if (this.cache == null)
                 {
-                    this.cache = this.Session.GetCache<TKey>(typeof(TObject), this.RoleType);
+                    this.cache = this.Transaction.GetCache<TKey>(typeof(TObject), this.RoleType);
                 }
 
                 if (!this.cache.TryGetValue(key, out var objectId))
                 {
-                    var extent = this.Session.Extent<TObject>();
+                    var extent = this.Transaction.Extent<TObject>();
                     extent.Filter.AddEquals(this.RoleType, key);
 
                     var @object = extent.First;
                     if (@object != null)
                     {
                         objectId = @object.Id;
-                        if (!@object.Strategy.IsNewInSession)
+                        if (!@object.Strategy.IsNewInTransaction)
                         {
                             this.cache[key] = @object.Id;
                         }
                     }
                 }
 
-                return (TObject)this.Session.Instantiate(objectId);
+                return (TObject)this.Transaction.Instantiate(objectId);
             }
         }
 
@@ -65,22 +65,22 @@ namespace Allors.Database.Domain
             where TObject : class, IObject
         {
             private readonly Cache<TKey, TObject> cache;
-            private readonly ISession session;
+            private readonly ITransaction transaction;
             private readonly IClass @class;
             private readonly IRoleType roleType;
 
             internal CacheMerger(Cache<TKey, TObject> cache)
             {
                 this.cache = cache;
-                this.session = cache.Session;
-                this.@class = (IClass)this.session.Database.ObjectFactory.GetObjectTypeForType(typeof(TObject));
+                this.transaction = cache.Transaction;
+                this.@class = (IClass)this.transaction.Database.ObjectFactory.GetObjectTypeForType(typeof(TObject));
                 this.roleType = this.cache.RoleType;
             }
 
             public Func<TKey, Action<TObject>, TObject> Action() =>
                 (id, action) =>
                 {
-                    var @object = this.cache[id] ?? (TObject)DefaultObjectBuilder.Build(this.session, this.@class);
+                    var @object = this.cache[id] ?? (TObject)DefaultObjectBuilder.Build(this.transaction, this.@class);
 
                     @object.Strategy.SetUnitRole(this.roleType, id);
                     action(@object);

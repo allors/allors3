@@ -31,22 +31,22 @@ namespace Allors.Database.Domain
             {
                 if (@this.ExistFrequency)
                 {
-                    if (!@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Session).Month) && !@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Session).Week))
+                    if (!@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Transaction).Month) && !@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Transaction).Week))
                     {
                         validation.AddError($"{@this} {this.M.RepeatingSalesInvoice.Frequency} {ErrorMessages.FrequencyNotSupported}");
                     }
 
-                    if (@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Session).Week) && !@this.ExistDayOfWeek)
+                    if (@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Transaction).Week) && !@this.ExistDayOfWeek)
                     {
                         validation.AssertExists(@this, this.M.RepeatingSalesInvoice.DayOfWeek);
                     }
 
-                    if (@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Session).Month) && @this.ExistDayOfWeek)
+                    if (@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Transaction).Month) && @this.ExistDayOfWeek)
                     {
                         validation.AssertNotExists(@this, this.M.RepeatingSalesInvoice.DayOfWeek);
                     }
 
-                    if (@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Session).Week)
+                    if (@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Transaction).Week)
                         && @this.ExistDayOfWeek
                         && @this.ExistNextExecutionDate)
                     {

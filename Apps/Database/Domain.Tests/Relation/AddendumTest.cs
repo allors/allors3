@@ -15,17 +15,17 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenAddendum_WhenDeriving_ThenDescriptionIsRequired()
         {
-            var builder = new AddendumBuilder(this.Session);
+            var builder = new AddendumBuilder(this.Transaction);
             var addendum = builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithDescription("addendum");
             addendum = builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
     }
 }

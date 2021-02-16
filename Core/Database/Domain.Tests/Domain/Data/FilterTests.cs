@@ -19,9 +19,9 @@ namespace Allors.Database.Domain.Tests
         public void Type()
         {
             var query = new Extent(this.M.Person.ObjectType);
-            var queryExtent = query.Build(this.Session);
+            var queryExtent = query.Build(this.Transaction);
 
-            var extent = this.Session.Extent(this.M.Person.ObjectType);
+            var extent = this.Transaction.Extent(this.M.Person.ObjectType);
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
         }
@@ -38,9 +38,9 @@ namespace Allors.Database.Domain.Tests
                 },
             };
 
-            var queryExtent = filter.Build(this.Session);
+            var queryExtent = filter.Build(this.Transaction);
 
-            var extent = this.Session.Extent(this.M.Person.ObjectType);
+            var extent = this.Transaction.Extent(this.M.Person.ObjectType);
             extent.Filter.AddEquals(this.M.Person.FirstName, "John");
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
@@ -70,9 +70,9 @@ namespace Allors.Database.Domain.Tests
                 },
             };
 
-            var queryExtent = filter.Build(this.Session);
+            var queryExtent = filter.Build(this.Transaction);
 
-            var extent = this.Session.Extent(this.M.Person.ObjectType);
+            var extent = this.Transaction.Extent(this.M.Person.ObjectType);
             var and = extent.Filter.AddAnd();
             and.AddEquals(this.M.Person.FirstName, "John");
             and.AddEquals(this.M.Person.LastName, "Doe");

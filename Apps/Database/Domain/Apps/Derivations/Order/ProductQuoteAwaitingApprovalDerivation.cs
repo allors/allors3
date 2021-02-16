@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
 
                 if (!openTasks.OfType<ProductQuoteApproval>().Any())
                 {
-                    new ProductQuoteApprovalBuilder(@this.Session()).WithProductQuote(@this).Build();
+                    new ProductQuoteApprovalBuilder(@this.Transaction()).WithProductQuote(@this).Build();
                 }
             }
         }

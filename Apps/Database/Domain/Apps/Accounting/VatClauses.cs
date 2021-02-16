@@ -30,12 +30,12 @@ namespace Allors.Database.Domain
 
         public VatClause BeArt14Par2 => this.Cache[BeArt14Par2Id];
 
-        private UniquelyIdentifiableCache<VatClause> Cache => this.cache ??= new UniquelyIdentifiableCache<VatClause>(this.Session);
+        private UniquelyIdentifiableCache<VatClause> Cache => this.cache ??= new UniquelyIdentifiableCache<VatClause>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {
-            var dutchLocale = new Locales(this.Session).DutchNetherlands;
-            var dutchBelgium = new Locales(this.Session).DutchBelgium;
+            var dutchLocale = new Locales(this.Transaction).DutchNetherlands;
+            var dutchBelgium = new Locales(this.Transaction).DutchBelgium;
 
             var merge = this.Cache.Merger().Action();
             var localisedName = new LocalisedTextAccessor(this.Meta.LocalisedNames);

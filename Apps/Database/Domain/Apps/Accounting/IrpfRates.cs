@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
 
         public IrpfRate nineteen => this.Cache[NineteenId];
 
-        private UniquelyIdentifiableCache<IrpfRate> Cache => this.cache ??= new UniquelyIdentifiableCache<IrpfRate>(this.Session);
+        private UniquelyIdentifiableCache<IrpfRate> Cache => this.cache ??= new UniquelyIdentifiableCache<IrpfRate>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
     {
         private Cache<string, Currency> currencyByCode;
 
-        public Cache<string, Currency> CurrencyByCode => this.currencyByCode ??= new Cache<string, Currency>(this.Session, this.Meta.IsoCode);
+        public Cache<string, Currency> CurrencyByCode => this.currencyByCode ??= new Cache<string, Currency>(this.Transaction, this.Meta.IsoCode);
 
         protected override void CoreSetup(Setup setup)
         {

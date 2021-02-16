@@ -30,11 +30,11 @@ namespace Allors.Database.Domain
 
         public InvoiceTermType Other => this.Cache[OtherId];
 
-        private UniquelyIdentifiableCache<InvoiceTermType> Cache => this.cache ??= new UniquelyIdentifiableCache<InvoiceTermType>(this.Session);
+        private UniquelyIdentifiableCache<InvoiceTermType> Cache => this.cache ??= new UniquelyIdentifiableCache<InvoiceTermType>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {
-            var dutchLocale = new Locales(this.Session).DutchNetherlands;
+            var dutchLocale = new Locales(this.Transaction).DutchNetherlands;
 
             var merge = this.Cache.Merger().Action();
             var localisedName = new LocalisedTextAccessor(this.Meta.LocalisedNames);

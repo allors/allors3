@@ -10,16 +10,16 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static RequestForQuoteBuilder WithSerializedDefaults(this RequestForQuoteBuilder @this, Organisation internalOrganisation)
         {
-            var faker = @this.Session.Faker();
+            var faker = @this.Transaction.Faker();
 
-            var requestItem = new RequestItemBuilder(@this.Session).WithSerializedDefaults(internalOrganisation).Build();
+            var requestItem = new RequestItemBuilder(@this.Transaction).WithSerializedDefaults(internalOrganisation).Build();
 
             @this.WithDescription(faker.Lorem.Sentence());
             @this.WithComment(faker.Lorem.Sentence());
             @this.WithInternalComment(faker.Lorem.Sentence());
             @this.WithRecipient(internalOrganisation);
-            @this.WithRequestDate(@this.Session.Now().AddDays(-2));
-            @this.WithRequiredResponseDate(@this.Session.Now().AddDays(2));
+            @this.WithRequestDate(@this.Transaction.Now().AddDays(-2));
+            @this.WithRequiredResponseDate(@this.Transaction.Now().AddDays(2));
             @this.WithRequestItem(requestItem);
             @this.WithEmailAddress(faker.Internet.Email());
             @this.WithTelephoneNumber(faker.Phone.PhoneNumber());
@@ -29,16 +29,16 @@ namespace Allors.Database.Domain.TestPopulation
 
         public static RequestForQuoteBuilder WithNonSerializedDefaults(this RequestForQuoteBuilder @this, Organisation internalOrganisation)
         {
-            var faker = @this.Session.Faker();
+            var faker = @this.Transaction.Faker();
 
-            var requestItem = new RequestItemBuilder(@this.Session).WithNonSerializedDefaults(internalOrganisation).Build();
+            var requestItem = new RequestItemBuilder(@this.Transaction).WithNonSerializedDefaults(internalOrganisation).Build();
 
             @this.WithDescription(faker.Lorem.Sentence());
             @this.WithComment(faker.Lorem.Sentence());
             @this.WithInternalComment(faker.Lorem.Sentence());
             @this.WithRecipient(internalOrganisation);
-            @this.WithRequestDate(@this.Session.Now().AddDays(-2));
-            @this.WithRequiredResponseDate(@this.Session.Now().AddDays(2));
+            @this.WithRequestDate(@this.Transaction.Now().AddDays(-2));
+            @this.WithRequiredResponseDate(@this.Transaction.Now().AddDays(2));
             @this.WithRequestItem(requestItem);
             @this.WithEmailAddress(faker.Internet.Email());
             @this.WithTelephoneNumber(faker.Phone.PhoneNumber());

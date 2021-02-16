@@ -97,7 +97,7 @@ namespace Allors.Database.Domain
 
         public void DeriveRelationships()
         {
-            var now = this.Session().Now();
+            var now = this.Transaction().Now();
 
             this.ActiveEmployees = this.EmploymentsWhereEmployer
                 .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))

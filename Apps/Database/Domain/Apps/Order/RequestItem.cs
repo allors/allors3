@@ -16,10 +16,10 @@ namespace Allors.Database.Domain
 
         internal bool IsDeletable =>
             this.ExistRequestItemState
-            && (this.RequestItemState.Equals(new RequestItemStates(this.Strategy.Session).Draft)
-                || this.RequestItemState.Equals(new RequestItemStates(this.Strategy.Session).Submitted)
-                || this.RequestItemState.Equals(new RequestItemStates(this.Strategy.Session).Rejected)
-                || this.RequestItemState.Equals(new RequestItemStates(this.Strategy.Session).Cancelled));
+            && (this.RequestItemState.Equals(new RequestItemStates(this.Strategy.Transaction).Draft)
+                || this.RequestItemState.Equals(new RequestItemStates(this.Strategy.Transaction).Submitted)
+                || this.RequestItemState.Equals(new RequestItemStates(this.Strategy.Transaction).Rejected)
+                || this.RequestItemState.Equals(new RequestItemStates(this.Strategy.Transaction).Cancelled));
 
         public void AppsDelegateAccess(DelegatedAccessControlledObjectDelegateAccess method)
         {
@@ -38,11 +38,11 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistRequestItemState)
             {
-                this.RequestItemState = new RequestItemStates(this.Strategy.Session).Draft;
+                this.RequestItemState = new RequestItemStates(this.Strategy.Transaction).Draft;
             }
         }
 
-        public void AppsCancel(RequestItemCancel method) => this.RequestItemState = new RequestItemStates(this.Strategy.Session).Cancelled;
+        public void AppsCancel(RequestItemCancel method) => this.RequestItemState = new RequestItemStates(this.Strategy.Transaction).Cancelled;
 
         public void Sync(Request request) => this.SyncedRequest = request;
     }

@@ -15,11 +15,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedCommunicationEventDeriveWorkItem()
         {
-            var task = new CommunicationTaskBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var task = new CommunicationTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            task.CommunicationEvent = new PhoneCommunicationBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            task.CommunicationEvent = new PhoneCommunicationBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.Equal(task.CommunicationEvent, task.WorkItem);
         }
@@ -27,14 +27,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedCommunicationEventWorkItemDescriptionDeriveTitle()
         {
-            var party = new PersonBuilder(this.Session).WithLastName("person").Build();
-            this.Session.Derive(false);
+            var party = new PersonBuilder(this.Transaction).WithLastName("person").Build();
+            this.Transaction.Derive(false);
 
-            var commEvent = new PhoneCommunicationBuilder(this.Session).WithScheduledStart(this.Session.Now()).WithToParty(party).WithSubject("subject").Build();
-            this.Session.Derive(false);
+            var commEvent = new PhoneCommunicationBuilder(this.Transaction).WithScheduledStart(this.Transaction.Now()).WithToParty(party).WithSubject("subject").Build();
+            this.Transaction.Derive(false);
 
             commEvent.Subject = "changed";
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(commEvent.WorkItemDescription, commEvent.CommunicationTasksWhereCommunicationEvent.First.Title);
         }
@@ -42,13 +42,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnCommunicationEventChangedActualEndDeriveCommunicationTaskDateClosed()
         {
-            var phoneComEvent = new PhoneCommunicationBuilder(this.Session).WithScheduledStart(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var phoneComEvent = new PhoneCommunicationBuilder(this.Transaction).WithScheduledStart(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
             var task = phoneComEvent.CommunicationTasksWhereCommunicationEvent[0];
 
-            phoneComEvent.ActualEnd = this.Session.Now();
-            this.Session.Derive(false);
+            phoneComEvent.ActualEnd = this.Transaction.Now();
+            this.Transaction.Derive(false);
 
             Assert.True(task.ExistDateClosed);
         }
@@ -62,15 +62,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedCommunicationEventDeriveParticipants()
         {
-            var communicationEvent = new PhoneCommunicationBuilder(this.Session)
+            var communicationEvent = new PhoneCommunicationBuilder(this.Transaction)
                 .WithFromParty(this.InternalOrganisation.CurrentContacts.First)
-                .WithScheduledStart(this.Session.Now()).Build();
-            this.Session.Derive(false);
+                .WithScheduledStart(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
             var task = communicationEvent.CommunicationTasksWhereCommunicationEvent.First;
 
-            communicationEvent.ActualEnd = this.Session.Now();
-            this.Session.Derive(false);
+            communicationEvent.ActualEnd = this.Transaction.Now();
+            this.Transaction.Derive(false);
 
             Assert.Empty(task.Participants);
         }
@@ -78,14 +78,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedCommunicationEventFromPartyDeriveParticipants()
         {
-            var communicationEvent = new PhoneCommunicationBuilder(this.Session)
-                .WithScheduledStart(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var communicationEvent = new PhoneCommunicationBuilder(this.Transaction)
+                .WithScheduledStart(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
             var task = communicationEvent.CommunicationTasksWhereCommunicationEvent.First;
 
             communicationEvent.FromParty = this.InternalOrganisation.CurrentContacts.First;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains(this.InternalOrganisation.CurrentContacts.First, task.Participants);
         }
@@ -93,14 +93,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedCommunicationEventToPartyDeriveParticipants()
         {
-            var communicationEvent = new PhoneCommunicationBuilder(this.Session)
-                .WithScheduledStart(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var communicationEvent = new PhoneCommunicationBuilder(this.Transaction)
+                .WithScheduledStart(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
             var task = communicationEvent.CommunicationTasksWhereCommunicationEvent.First;
 
             communicationEvent.ToParty = this.InternalOrganisation.CurrentContacts.First;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains(this.InternalOrganisation.CurrentContacts.First, task.Participants);
         }

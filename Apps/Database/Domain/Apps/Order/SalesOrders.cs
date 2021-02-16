@@ -14,17 +14,17 @@ namespace Allors.Database.Domain
 
         protected override void AppsSecure(Security config)
         {
-            var provisional = new SalesOrderStates(this.Session).Provisional;
-            var onHold = new SalesOrderStates(this.Session).OnHold;
-            var requestsApproval = new SalesOrderStates(this.Session).RequestsApproval;
-            var readyForPosting = new SalesOrderStates(this.Session).ReadyForPosting;
-            var awaitingAcceptance = new SalesOrderStates(this.Session).AwaitingAcceptance;
-            var inProcess = new SalesOrderStates(this.Session).InProcess;
-            var cancelled = new SalesOrderStates(this.Session).Cancelled;
-            var rejected = new SalesOrderStates(this.Session).Rejected;
-            var completed = new SalesOrderStates(this.Session).Completed;
-            var finished = new SalesOrderStates(this.Session).Finished;
-            var tranferred = new SalesOrderStates(this.Session).Transferred;
+            var provisional = new SalesOrderStates(this.Transaction).Provisional;
+            var onHold = new SalesOrderStates(this.Transaction).OnHold;
+            var requestsApproval = new SalesOrderStates(this.Transaction).RequestsApproval;
+            var readyForPosting = new SalesOrderStates(this.Transaction).ReadyForPosting;
+            var awaitingAcceptance = new SalesOrderStates(this.Transaction).AwaitingAcceptance;
+            var inProcess = new SalesOrderStates(this.Transaction).InProcess;
+            var cancelled = new SalesOrderStates(this.Transaction).Cancelled;
+            var rejected = new SalesOrderStates(this.Transaction).Rejected;
+            var completed = new SalesOrderStates(this.Transaction).Completed;
+            var finished = new SalesOrderStates(this.Transaction).Finished;
+            var tranferred = new SalesOrderStates(this.Transaction).Transferred;
 
             var setReadyForPosting = this.Meta.SetReadyForPosting;
             var post = this.Meta.Post;

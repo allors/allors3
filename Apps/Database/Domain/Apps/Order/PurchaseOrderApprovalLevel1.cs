@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
 
             if (!this.ExistApprovalNotification && this.PurchaseOrder.ExistCreatedBy)
             {
-                var now = this.Strategy.Session.Now();
+                var now = this.Strategy.Transaction.Now();
                 var workItemDescription = this.WorkItem.WorkItemDescription;
                 var performerName = this.Performer.UserName;
                 var comment = this.Comment ?? "N/A";
@@ -25,7 +25,7 @@ namespace Allors.Database.Domain
                                   $"<h3>Comment</h3>" +
                                   $"<p>{comment}</p>";
 
-                this.ApprovalNotification = new NotificationBuilder(this.Session())
+                this.ApprovalNotification = new NotificationBuilder(this.Transaction())
                     .WithTitle("PurchaseOrder approved")
                     .WithDescription(description)
                     .Build();
@@ -42,7 +42,7 @@ namespace Allors.Database.Domain
 
             if (!this.ExistRejectionNotification && this.PurchaseOrder.ExistCreatedBy)
             {
-                var now = this.Strategy.Session.Now();
+                var now = this.Strategy.Transaction.Now();
                 var workItemDescription = this.WorkItem.WorkItemDescription;
                 var performerName = this.Performer.UserName;
                 var comment = this.Comment ?? "N/A";
@@ -52,7 +52,7 @@ namespace Allors.Database.Domain
                                   $"<h3>Comment</h3>" +
                                   $"<p>{comment}</p>";
 
-                this.RejectionNotification = new NotificationBuilder(this.Session())
+                this.RejectionNotification = new NotificationBuilder(this.Transaction())
                     .WithTitle("Approval Rejected")
                     .WithDescription(description)
                     .Build();
@@ -65,7 +65,7 @@ namespace Allors.Database.Domain
         {
             if (!taskAssignment.ExistNotification)
             {
-                var notification = new NotificationBuilder(this.Strategy.Session).WithTitle(
+                var notification = new NotificationBuilder(this.Strategy.Transaction).WithTitle(
                         "Approval: " + this.WorkItem.WorkItemDescription)
                         .WithDescription("Approval: " + this.WorkItem.WorkItemDescription)
                         .WithTarget(this)

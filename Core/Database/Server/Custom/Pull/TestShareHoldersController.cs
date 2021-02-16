@@ -16,14 +16,14 @@ namespace Allors.Server.Controllers
 
     public class TestShareHoldersController : Controller
     {
-        public TestShareHoldersController(ISessionService sessionService, IWorkspaceService workspaceService)
+        public TestShareHoldersController(ITransactionService transactionService, IWorkspaceService workspaceService)
         {
             this.WorkspaceService = workspaceService;
-            this.Session = sessionService.Session;
-            this.TreeCache = this.Session.Database.Context().TreeCache;
+            this.Transaction = transactionService.Transaction;
+            this.TreeCache = this.Transaction.Database.Context().TreeCache;
         }
 
-        private ISession Session { get; }
+        private ITransaction Transaction { get; }
 
         public IWorkspaceService WorkspaceService { get; }
 
@@ -34,11 +34,11 @@ namespace Allors.Server.Controllers
         {
             try
             {
-                var api = new Api(this.Session, this.WorkspaceService.Name);
+                var api = new Api(this.Transaction, this.WorkspaceService.Name);
                 var response = api.CreatePullResponseBuilder();
 
-                var m = this.Session.Database.Context().M;
-                var organisation = new Organisations(this.Session).FindBy(m.Organisation.Owner, this.Session.Context().User);
+                var m = this.Transaction.Database.Context().M;
+                var organisation = new Organisations(this.Transaction).FindBy(m.Organisation.Owner, this.Transaction.Context().User);
                 response.AddObject("root", organisation,
                     new[] {
                                 new Node(m.Organisation.Shareholders)

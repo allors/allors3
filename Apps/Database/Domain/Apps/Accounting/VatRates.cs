@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
 
         public VatRate TwentyOne => this.Cache[TwentyOneId];
 
-        private UniquelyIdentifiableCache<VatRate> Cache => this.cache ??= new UniquelyIdentifiableCache<VatRate>(this.Session);
+        private UniquelyIdentifiableCache<VatRate> Cache => this.cache ??= new UniquelyIdentifiableCache<VatRate>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

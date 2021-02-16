@@ -20,23 +20,23 @@ namespace Allors.Database.Domain.Tests
         public void GivenWorkEffortAndTimeEntry_WhenDeriving_ThenWorkEffortPartyAssignmentSynced()
         {
             // Arrange
-            var customer = new OrganisationBuilder(this.Session).WithName("Org1").Build();
-            var internalOrganisation = new Organisations(this.Session).Extent().First(o => o.IsInternalOrganisation);
-            new CustomerRelationshipBuilder(this.Session).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
+            var customer = new OrganisationBuilder(this.Transaction).WithName("Org1").Build();
+            var internalOrganisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
+            new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
 
-            var workOrder = new WorkTaskBuilder(this.Session).WithName("Task").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
+            var workOrder = new WorkTaskBuilder(this.Transaction).WithName("Task").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
 
-            var employee = new PersonBuilder(this.Session).WithFirstName("Good").WithLastName("Worker").Build();
-            new EmploymentBuilder(this.Session).WithEmployee(employee).WithEmployer(internalOrganisation).Build();
+            var employee = new PersonBuilder(this.Transaction).WithFirstName("Good").WithLastName("Worker").Build();
+            new EmploymentBuilder(this.Transaction).WithEmployee(employee).WithEmployer(internalOrganisation).Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            var today = DateTimeFactory.CreateDateTime(this.Session.Now());
-            var tomorrow = DateTimeFactory.CreateDateTime(this.Session.Now().AddDays(1));
-            var hour = new TimeFrequencies(this.Session).Hour;
+            var today = DateTimeFactory.CreateDateTime(this.Transaction.Now());
+            var tomorrow = DateTimeFactory.CreateDateTime(this.Transaction.Now().AddDays(1));
+            var hour = new TimeFrequencies(this.Transaction).Hour;
 
-            var timeEntry = new TimeEntryBuilder(this.Session)
-                .WithRateType(new RateTypes(this.Session).StandardRate)
+            var timeEntry = new TimeEntryBuilder(this.Transaction)
+                .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithFromDate(today)
                 .WithThroughDate(tomorrow)
                 .WithTimeFrequency(hour)
@@ -46,7 +46,7 @@ namespace Allors.Database.Domain.Tests
             employee.TimeSheetWhereWorker.AddTimeEntry(timeEntry);
 
             // Act
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             // Assert
             var partyAssignment = workOrder.WorkEffortPartyAssignmentsWhereAssignment.First;
@@ -61,24 +61,24 @@ namespace Allors.Database.Domain.Tests
         public void GivenTimeEntryWithRequiredAssignmentOrganisation_WhenDeriving_ThenWorkEffortPartyAssignmentSynced()
         {
             // Arrange
-            var customer = new OrganisationBuilder(this.Session).WithName("Org1").Build();
-            var internalOrganisation = new Organisations(this.Session).Extent().First(o => o.IsInternalOrganisation);
-            new CustomerRelationshipBuilder(this.Session).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
+            var customer = new OrganisationBuilder(this.Transaction).WithName("Org1").Build();
+            var internalOrganisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
+            new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
 
-            var workOrder = new WorkTaskBuilder(this.Session).WithName("Task").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
+            var workOrder = new WorkTaskBuilder(this.Transaction).WithName("Task").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
 
-            var employee = new PersonBuilder(this.Session).WithFirstName("Good").WithLastName("Worker").Build();
-            new EmploymentBuilder(this.Session).WithEmployee(employee).WithEmployer(internalOrganisation).Build();
+            var employee = new PersonBuilder(this.Transaction).WithFirstName("Good").WithLastName("Worker").Build();
+            new EmploymentBuilder(this.Transaction).WithEmployee(employee).WithEmployer(internalOrganisation).Build();
 
             internalOrganisation.RequireExistingWorkEffortPartyAssignment = true;
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            var today = DateTimeFactory.CreateDateTime(this.Session.Now());
-            var tomorrow = DateTimeFactory.CreateDateTime(this.Session.Now().AddDays(1));
-            var hour = new TimeFrequencies(this.Session).Hour;
+            var today = DateTimeFactory.CreateDateTime(this.Transaction.Now());
+            var tomorrow = DateTimeFactory.CreateDateTime(this.Transaction.Now().AddDays(1));
+            var hour = new TimeFrequencies(this.Transaction).Hour;
 
-            var timeEntry = new TimeEntryBuilder(this.Session)
-                .WithRateType(new RateTypes(this.Session).StandardRate)
+            var timeEntry = new TimeEntryBuilder(this.Transaction)
+                .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithFromDate(today)
                 .WithThroughDate(tomorrow)
                 .WithTimeFrequency(hour)
@@ -87,13 +87,13 @@ namespace Allors.Database.Domain.Tests
 
             employee.TimeSheetWhereWorker.AddTimeEntry(timeEntry);
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains("No Work Effort Party Assignment matches Worker"));
 
             // Re-Arrange
             employee.TimeSheetWhereWorker.RemoveTimeEntries();
 
-            var assignment = new WorkEffortPartyAssignmentBuilder(this.Session)
+            var assignment = new WorkEffortPartyAssignmentBuilder(this.Transaction)
                 .WithAssignment(workOrder)
                 .WithParty(employee)
                 .Build();
@@ -101,7 +101,7 @@ namespace Allors.Database.Domain.Tests
             employee.TimeSheetWhereWorker.AddTimeEntry(timeEntry);
 
             // Act
-            errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
 
             // Assert
             Assert.Empty(errors);
@@ -110,32 +110,32 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenWorkEffort_WhenAddingRates_ThenRateForPartyIsNotAllowed()
         {
-            var customer = new OrganisationBuilder(this.Session).WithName("Org1").Build();
-            var internalOrganisation = new Organisations(this.Session).Extent().First(o => o.IsInternalOrganisation);
-            new CustomerRelationshipBuilder(this.Session).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
+            var customer = new OrganisationBuilder(this.Transaction).WithName("Org1").Build();
+            var internalOrganisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
+            new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
 
             // Calculating rates per party is not implemented yet
-            var workOrder = new WorkTaskBuilder(this.Session).WithName("Task").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
+            var workOrder = new WorkTaskBuilder(this.Transaction).WithName("Task").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
 
-            var employee = new PersonBuilder(this.Session).WithFirstName("Good").WithLastName("Worker").Build();
-            new EmploymentBuilder(this.Session).WithEmployee(employee).WithEmployer(internalOrganisation).Build();
+            var employee = new PersonBuilder(this.Transaction).WithFirstName("Good").WithLastName("Worker").Build();
+            new EmploymentBuilder(this.Transaction).WithEmployee(employee).WithEmployer(internalOrganisation).Build();
 
-            var workEffortPartyAssignment = new WorkEffortPartyAssignmentBuilder(this.Session).WithAssignment(workOrder).WithParty(employee).Build();
+            var workEffortPartyAssignment = new WorkEffortPartyAssignmentBuilder(this.Transaction).WithAssignment(workOrder).WithParty(employee).Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            var assignedRate = new WorkEffortAssignmentRateBuilder(this.Session)
+            var assignedRate = new WorkEffortAssignmentRateBuilder(this.Transaction)
                 .WithWorkEffort(workOrder)
                 .WithRate(1)
-                .WithRateType(new RateTypes(this.Session).StandardRate)
+                .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
             workEffortPartyAssignment.AddAssignmentRate(assignedRate);
 
             var expectedMessage = $"{workEffortPartyAssignment}, { this.M.WorkEffortPartyAssignment.AssignmentRates}, { ErrorMessages.WorkEffortRateError}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
     }

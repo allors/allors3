@@ -11,8 +11,8 @@ namespace Allors.Database.Domain
 
         protected override void AppsSecure(Security config)
         {
-            var closed = new BudgetStates(this.Session).Closed;
-            var opened = new BudgetStates(this.Session).Opened;
+            var closed = new BudgetStates(this.Transaction).Closed;
+            var opened = new BudgetStates(this.Transaction).Opened;
 
             config.Deny(this.ObjectType, closed, Operations.Write);
 

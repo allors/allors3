@@ -11,12 +11,12 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static TelecommunicationsNumberBuilder WithDefaults(this TelecommunicationsNumberBuilder @this)
         {
-            var faker = @this.Session.Faker();
+            var faker = @this.Transaction.Faker();
 
             @this.WithCountryCode(faker.Phone.PhoneNumber("####"));
             @this.WithContactNumber(faker.Phone.PhoneNumber("## ## ##"));
             @this.WithDescription(faker.Lorem.Sentence());
-            @this.WithContactMechanismType(faker.Random.ListItem(@this.Session.Extent<ContactMechanismType>()));
+            @this.WithContactMechanismType(faker.Random.ListItem(@this.Transaction.Extent<ContactMechanismType>()));
 
             return @this;
         }

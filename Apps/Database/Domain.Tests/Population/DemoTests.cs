@@ -15,23 +15,23 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void TestPopulate()
         {
-            var session = this.Session;
+            var transaction = this.Transaction;
 
             var config = new Config();
-            new Setup(session, config).Apply();
+            new Setup(transaction, config).Apply();
 
-            session.Derive();
-            session.Commit();
+            transaction.Derive();
+            transaction.Commit();
 
-            new Upgrade(session, null).Execute();
+            new Upgrade(transaction, null).Execute();
 
-            session.Derive();
-            session.Commit();
+            transaction.Derive();
+            transaction.Commit();
 
-            this.Session.GetSingleton().Full(config.DataPath, session.Faker());
+            this.Transaction.GetSingleton().Full(config.DataPath, transaction.Faker());
 
-            session.Derive();
-            session.Commit();
+            transaction.Derive();
+            transaction.Commit();
         }
     }
 }

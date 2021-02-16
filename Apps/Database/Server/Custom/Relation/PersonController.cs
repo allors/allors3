@@ -11,13 +11,13 @@ namespace Allors.Database.Server.Controllers
 
     public class PersonController : Controller
     {
-        public PersonController(ISessionService sessionService, IWorkspaceService workspaceService)
+        public PersonController(ITransactionService transactionService, IWorkspaceService workspaceService)
         {
-            this.SessionService = sessionService;
+            this.TransactionService = transactionService;
             this.WorkspaceService = workspaceService;
         }
 
-        public ISessionService SessionService { get; }
+        public ITransactionService TransactionService { get; }
 
         public IWorkspaceService WorkspaceService { get; }
 
@@ -25,10 +25,10 @@ namespace Allors.Database.Server.Controllers
         [HttpPost]
         public IActionResult Pull([FromBody] Model model)
         {
-            var api = new Api(this.SessionService.Session, this.WorkspaceService.Name);
+            var api = new Api(this.TransactionService.Transaction, this.WorkspaceService.Name);
             var response = api.CreatePullResponseBuilder();
 
-            var person = this.SessionService.Session.Instantiate(model.Id);
+            var person = this.TransactionService.Transaction.Instantiate(model.Id);
             response.AddObject("person", person);
 
             return this.Ok(response.Build());

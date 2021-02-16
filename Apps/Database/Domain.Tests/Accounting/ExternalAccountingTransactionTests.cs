@@ -15,51 +15,51 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenTaxDue_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var partyFrom = new OrganisationBuilder(this.Session).WithName("party from").Build();
-            var partyTo = new OrganisationBuilder(this.Session).WithName("party to").Build();
+            var partyFrom = new OrganisationBuilder(this.Transaction).WithName("party from").Build();
+            var partyTo = new OrganisationBuilder(this.Transaction).WithName("party to").Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var builder = new TaxDueBuilder(this.Session);
+            var builder = new TaxDueBuilder(this.Transaction);
             var taxDue = builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithDescription("taxdue");
             taxDue = builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            builder.WithEntryDate(this.Session.Now());
+            builder.WithEntryDate(this.Transaction.Now());
             taxDue = builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            builder.WithTransactionDate(this.Session.Now().AddYears(1));
+            builder.WithTransactionDate(this.Transaction.Now().AddYears(1));
             taxDue = builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithFromParty(partyFrom);
             taxDue = builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithToParty(partyTo);
             taxDue = builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
     }
 }

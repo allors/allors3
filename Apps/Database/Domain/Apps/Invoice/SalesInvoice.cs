@@ -12,7 +12,7 @@ namespace Allors.Database.Domain
     public partial class SalesInvoice
     {
         private bool IsDeletable =>
-                    this.SalesInvoiceState.Equals(new SalesInvoiceStates(this.Strategy.Session).ReadyForPosting) &&
+                    this.SalesInvoiceState.Equals(new SalesInvoiceStates(this.Strategy.Transaction).ReadyForPosting) &&
             this.SalesInvoiceItems.All(v => v.IsDeletable) &&
             !this.ExistSalesOrders &&
             !this.ExistPurchaseInvoice &&
@@ -32,7 +32,7 @@ namespace Allors.Database.Domain
                 {
                     foreach (AgreementTerm term in this.SalesTerms)
                     {
-                        if (term.TermType.Equals(new InvoiceTermTypes(this.Strategy.Session).PaymentNetDays))
+                        if (term.TermType.Equals(new InvoiceTermTypes(this.Strategy.Transaction).PaymentNetDays))
                         {
                             if (int.TryParse(term.TermValue, out var netDays))
                             {
@@ -42,7 +42,7 @@ namespace Allors.Database.Domain
                     }
                 }
 
-                var now = this.Session().Now();
+                var now = this.Transaction().Now();
                 var customerRelationship = this.BillToCustomer?.CustomerRelationshipsWhereCustomer
                     .FirstOrDefault(v => Equals(v.InternalOrganisation, this.BilledFrom)
                       && v.FromDate <= now
@@ -68,17 +68,17 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistSalesInvoiceState)
             {
-                this.SalesInvoiceState = new SalesInvoiceStates(this.Strategy.Session).ReadyForPosting;
+                this.SalesInvoiceState = new SalesInvoiceStates(this.Strategy.Transaction).ReadyForPosting;
             }
 
             if (!this.ExistEntryDate)
             {
-                this.EntryDate = this.Session().Now();
+                this.EntryDate = this.Transaction().Now();
             }
 
             if (!this.ExistInvoiceDate)
             {
-                this.InvoiceDate = this.Session().Now();
+                this.InvoiceDate = this.Transaction().Now();
             }
 
             if (this.ExistBillToCustomer)
@@ -88,13 +88,13 @@ namespace Allors.Database.Domain
 
             if (!this.ExistSalesInvoiceType)
             {
-                this.SalesInvoiceType = new SalesInvoiceTypes(this.Strategy.Session).SalesInvoice;
+                this.SalesInvoiceType = new SalesInvoiceTypes(this.Strategy.Transaction).SalesInvoice;
             }
         }
 
         public void AppsOnInit(ObjectOnInit method)
         {
-            var internalOrganisations = new Organisations(this.Session()).InternalOrganisations();
+            var internalOrganisations = new Organisations(this.Transaction()).InternalOrganisations();
 
             if (!this.ExistBilledFrom && internalOrganisations.Length == 1)
             {
@@ -104,10 +104,10 @@ namespace Allors.Database.Domain
 
         public void AppsSend(SalesInvoiceSend method)
         {
-            var singleton = this.Session().GetSingleton();
+            var singleton = this.Transaction().GetSingleton();
             var year = this.InvoiceDate.Year;
 
-            if (object.Equals(this.SalesInvoiceType, new SalesInvoiceTypes(this.Strategy.Session).SalesInvoice))
+            if (object.Equals(this.SalesInvoiceType, new SalesInvoiceTypes(this.Strategy.Transaction).SalesInvoice))
             {
                 this.InvoiceNumber = this.Store.NextSalesInvoiceNumber(this.InvoiceDate.Year);
 
@@ -116,7 +116,7 @@ namespace Allors.Database.Domain
                 this.SortableInvoiceNumber = singleton.SortableNumber(prefix, this.InvoiceNumber, year.ToString());
             }
 
-            if (object.Equals(this.SalesInvoiceType, new SalesInvoiceTypes(this.Strategy.Session).CreditNote))
+            if (object.Equals(this.SalesInvoiceType, new SalesInvoiceTypes(this.Strategy.Transaction).CreditNote))
             {
                 this.InvoiceNumber = this.Store.NextCreditNoteNumber(this.InvoiceDate.Year);
 
@@ -125,33 +125,33 @@ namespace Allors.Database.Domain
                 this.SortableInvoiceNumber = singleton.SortableNumber(prefix, this.InvoiceNumber, year.ToString());
             }
 
-            this.SalesInvoiceState = new SalesInvoiceStates(this.Strategy.Session).NotPaid;
+            this.SalesInvoiceState = new SalesInvoiceStates(this.Strategy.Transaction).NotPaid;
 
             foreach (SalesInvoiceItem salesInvoiceItem in this.SalesInvoiceItems)
             {
-                salesInvoiceItem.SalesInvoiceItemState = new SalesInvoiceItemStates(this.Strategy.Session).NotPaid;
+                salesInvoiceItem.SalesInvoiceItemState = new SalesInvoiceItemStates(this.Strategy.Transaction).NotPaid;
                 salesInvoiceItem.DerivationTrigger = Guid.NewGuid();
 
-                if (this.SalesInvoiceType.Equals(new SalesInvoiceTypes(this.Session()).SalesInvoice)
+                if (this.SalesInvoiceType.Equals(new SalesInvoiceTypes(this.Transaction()).SalesInvoice)
                     && salesInvoiceItem.ExistSerialisedItem
                     && (this.BillToCustomer as InternalOrganisation)?.IsInternalOrganisation == false
-                    && this.BilledFrom.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(this.Session()).SalesInvoiceSend)
-                    && salesInvoiceItem.NextSerialisedItemAvailability?.Equals(new SerialisedItemAvailabilities(this.Session()).Sold) == true)
+                    && this.BilledFrom.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(this.Transaction()).SalesInvoiceSend)
+                    && salesInvoiceItem.NextSerialisedItemAvailability?.Equals(new SerialisedItemAvailabilities(this.Transaction()).Sold) == true)
                 {
                     salesInvoiceItem.SerialisedItemVersionBeforeSale = salesInvoiceItem.SerialisedItem.CurrentVersion;
 
                     salesInvoiceItem.SerialisedItem.Seller = this.BilledFrom;
                     salesInvoiceItem.SerialisedItem.OwnedBy = this.BillToCustomer;
-                    salesInvoiceItem.SerialisedItem.Ownership = new Ownerships(this.Session()).ThirdParty;
+                    salesInvoiceItem.SerialisedItem.Ownership = new Ownerships(this.Transaction()).ThirdParty;
                     salesInvoiceItem.SerialisedItem.SerialisedItemAvailability = salesInvoiceItem.NextSerialisedItemAvailability;
                     salesInvoiceItem.SerialisedItem.AvailableForSale = false;
                 }
 
-                if (this.SalesInvoiceType.Equals(new SalesInvoiceTypes(this.Session()).CreditNote)
+                if (this.SalesInvoiceType.Equals(new SalesInvoiceTypes(this.Transaction()).CreditNote)
                     && salesInvoiceItem.ExistSerialisedItem
                     && salesInvoiceItem.ExistSerialisedItemVersionBeforeSale
                     && (this.BillToCustomer as InternalOrganisation)?.IsInternalOrganisation == false
-                    && this.BilledFrom.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(this.Session()).SalesInvoiceSend))
+                    && this.BilledFrom.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(this.Transaction()).SalesInvoiceSend))
                 {
                     salesInvoiceItem.SerialisedItem.Seller = salesInvoiceItem.SerialisedItemVersionBeforeSale.Seller;
                     salesInvoiceItem.SerialisedItem.OwnedBy = salesInvoiceItem.SerialisedItemVersionBeforeSale.OwnedBy;
@@ -163,7 +163,7 @@ namespace Allors.Database.Domain
 
             if (this.BillToCustomer is Organisation organisation && organisation.IsInternalOrganisation)
             {
-                var purchaseInvoice = new PurchaseInvoiceBuilder(this.Strategy.Session)
+                var purchaseInvoice = new PurchaseInvoiceBuilder(this.Strategy.Transaction)
                     .WithBilledFrom((Organisation)this.BilledFrom)
                     .WithBilledFromContactPerson(this.BilledFromContactPerson)
                     .WithBilledTo((InternalOrganisation)this.BillToCustomer)
@@ -179,8 +179,8 @@ namespace Allors.Database.Domain
                     .WithAssignedShipToEndCustomerAddress(this.DerivedShipToEndCustomerAddress)
                     .WithShipToEndCustomerContactPerson(this.ShipToEndCustomerContactPerson)
                     .WithDescription(this.Description)
-                    .WithInvoiceDate(this.Session().Now())
-                    .WithPurchaseInvoiceType(new PurchaseInvoiceTypes(this.Strategy.Session).PurchaseInvoice)
+                    .WithInvoiceDate(this.Transaction().Now())
+                    .WithPurchaseInvoiceType(new PurchaseInvoiceTypes(this.Strategy.Transaction).PurchaseInvoice)
                     .WithCustomerReference(this.CustomerReference)
                     .WithComment(this.Comment)
                     .WithInternalComment(this.InternalComment)
@@ -191,27 +191,27 @@ namespace Allors.Database.Domain
                     OrderAdjustment newAdjustment = null;
                     if (orderAdjustment.GetType().Name.Equals(typeof(DiscountAdjustment).Name))
                     {
-                        newAdjustment = new DiscountAdjustmentBuilder(this.Session()).Build();
+                        newAdjustment = new DiscountAdjustmentBuilder(this.Transaction()).Build();
                     }
 
                     if (orderAdjustment.GetType().Name.Equals(typeof(SurchargeAdjustment).Name))
                     {
-                        newAdjustment = new SurchargeAdjustmentBuilder(this.Session()).Build();
+                        newAdjustment = new SurchargeAdjustmentBuilder(this.Transaction()).Build();
                     }
 
                     if (orderAdjustment.GetType().Name.Equals(typeof(Fee).Name))
                     {
-                        newAdjustment = new FeeBuilder(this.Session()).Build();
+                        newAdjustment = new FeeBuilder(this.Transaction()).Build();
                     }
 
                     if (orderAdjustment.GetType().Name.Equals(typeof(ShippingAndHandlingCharge).Name))
                     {
-                        newAdjustment = new ShippingAndHandlingChargeBuilder(this.Session()).Build();
+                        newAdjustment = new ShippingAndHandlingChargeBuilder(this.Transaction()).Build();
                     }
 
                     if (orderAdjustment.GetType().Name.Equals(typeof(MiscellaneousCharge).Name))
                     {
-                        newAdjustment = new MiscellaneousChargeBuilder(this.Session()).Build();
+                        newAdjustment = new MiscellaneousChargeBuilder(this.Transaction()).Build();
                     }
 
                     newAdjustment.Amount ??= orderAdjustment.Amount;
@@ -221,7 +221,7 @@ namespace Allors.Database.Domain
 
                 foreach (SalesInvoiceItem salesInvoiceItem in this.SalesInvoiceItems)
                 {
-                    var invoiceItem = new PurchaseInvoiceItemBuilder(this.Strategy.Session)
+                    var invoiceItem = new PurchaseInvoiceItemBuilder(this.Strategy.Transaction)
                         .WithInvoiceItemType(salesInvoiceItem.InvoiceItemType)
                         .WithAssignedUnitPrice(salesInvoiceItem.AssignedUnitPrice)
                         .WithAssignedVatRegime(salesInvoiceItem.AssignedVatRegime)
@@ -239,15 +239,15 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void AppsWriteOff(SalesInvoiceWriteOff method) => this.SalesInvoiceState = new SalesInvoiceStates(this.Strategy.Session).WrittenOff;
+        public void AppsWriteOff(SalesInvoiceWriteOff method) => this.SalesInvoiceState = new SalesInvoiceStates(this.Strategy.Transaction).WrittenOff;
 
         public void AppsReopen(SalesInvoiceReopen method) => this.SalesInvoiceState = this.PreviousSalesInvoiceState;
 
-        public void AppsCancelInvoice(SalesInvoiceCancelInvoice method) => this.SalesInvoiceState = new SalesInvoiceStates(this.Strategy.Session).Cancelled;
+        public void AppsCancelInvoice(SalesInvoiceCancelInvoice method) => this.SalesInvoiceState = new SalesInvoiceStates(this.Strategy.Transaction).Cancelled;
 
         public SalesInvoice AppsCopy(SalesInvoiceCopy method)
         {
-            var salesInvoice = new SalesInvoiceBuilder(this.Strategy.Session)
+            var salesInvoice = new SalesInvoiceBuilder(this.Strategy.Transaction)
                 .WithPurchaseInvoice(this.PurchaseInvoice)
                 .WithBilledFrom(this.BilledFrom)
                 .WithAssignedBilledFromContactMechanism(this.DerivedBilledFromContactMechanism)
@@ -266,9 +266,9 @@ namespace Allors.Database.Domain
                 .WithShipToEndCustomerContactPerson(this.ShipToEndCustomerContactPerson)
                 .WithDescription(this.Description)
                 .WithStore(this.Store)
-                .WithInvoiceDate(this.Session().Now())
+                .WithInvoiceDate(this.Transaction().Now())
                 .WithSalesChannel(this.SalesChannel)
-                .WithSalesInvoiceType(new SalesInvoiceTypes(this.Strategy.Session).SalesInvoice)
+                .WithSalesInvoiceType(new SalesInvoiceTypes(this.Strategy.Transaction).SalesInvoice)
                 .WithAssignedVatRegime(this.AssignedVatRegime)
                 .WithAssignedIrpfRegime(this.AssignedIrpfRegime)
                 .WithCustomerReference(this.CustomerReference)
@@ -284,27 +284,27 @@ namespace Allors.Database.Domain
                 OrderAdjustment newAdjustment = null;
                 if (orderAdjustment.GetType().Name.Equals(typeof(DiscountAdjustment).Name))
                 {
-                    newAdjustment = new DiscountAdjustmentBuilder(this.Session()).Build();
+                    newAdjustment = new DiscountAdjustmentBuilder(this.Transaction()).Build();
                 }
 
                 if (orderAdjustment.GetType().Name.Equals(typeof(SurchargeAdjustment).Name))
                 {
-                    newAdjustment = new SurchargeAdjustmentBuilder(this.Session()).Build();
+                    newAdjustment = new SurchargeAdjustmentBuilder(this.Transaction()).Build();
                 }
 
                 if (orderAdjustment.GetType().Name.Equals(typeof(Fee).Name))
                 {
-                    newAdjustment = new FeeBuilder(this.Session()).Build();
+                    newAdjustment = new FeeBuilder(this.Transaction()).Build();
                 }
 
                 if (orderAdjustment.GetType().Name.Equals(typeof(ShippingAndHandlingCharge).Name))
                 {
-                    newAdjustment = new ShippingAndHandlingChargeBuilder(this.Session()).Build();
+                    newAdjustment = new ShippingAndHandlingChargeBuilder(this.Transaction()).Build();
                 }
 
                 if (orderAdjustment.GetType().Name.Equals(typeof(MiscellaneousCharge).Name))
                 {
-                    newAdjustment = new MiscellaneousChargeBuilder(this.Session()).Build();
+                    newAdjustment = new MiscellaneousChargeBuilder(this.Transaction()).Build();
                 }
 
                 newAdjustment.Amount ??= orderAdjustment.Amount;
@@ -314,7 +314,7 @@ namespace Allors.Database.Domain
 
             foreach (SalesInvoiceItem salesInvoiceItem in this.SalesInvoiceItems)
             {
-                var invoiceItem = new SalesInvoiceItemBuilder(this.Strategy.Session)
+                var invoiceItem = new SalesInvoiceItemBuilder(this.Strategy.Transaction)
                     .WithInvoiceItemType(salesInvoiceItem.InvoiceItemType)
                     .WithAssignedUnitPrice(salesInvoiceItem.AssignedUnitPrice)
                     .WithAssignedVatRegime(salesInvoiceItem.AssignedVatRegime)
@@ -337,7 +337,7 @@ namespace Allors.Database.Domain
                 {
                     if (salesTerm.GetType().Name == typeof(IncoTerm).Name)
                     {
-                        salesInvoiceItem.AddSalesTerm(new IncoTermBuilder(this.Strategy.Session)
+                        salesInvoiceItem.AddSalesTerm(new IncoTermBuilder(this.Strategy.Transaction)
                             .WithTermType(salesTerm.TermType)
                             .WithTermValue(salesTerm.TermValue)
                             .WithDescription(salesTerm.Description)
@@ -346,7 +346,7 @@ namespace Allors.Database.Domain
 
                     if (salesTerm.GetType().Name == typeof(InvoiceTerm).Name)
                     {
-                        salesInvoiceItem.AddSalesTerm(new InvoiceTermBuilder(this.Strategy.Session)
+                        salesInvoiceItem.AddSalesTerm(new InvoiceTermBuilder(this.Strategy.Transaction)
                             .WithTermType(salesTerm.TermType)
                             .WithTermValue(salesTerm.TermValue)
                             .WithDescription(salesTerm.Description)
@@ -355,7 +355,7 @@ namespace Allors.Database.Domain
 
                     if (salesTerm.GetType().Name == typeof(OrderTerm).Name)
                     {
-                        salesInvoiceItem.AddSalesTerm(new OrderTermBuilder(this.Strategy.Session)
+                        salesInvoiceItem.AddSalesTerm(new OrderTermBuilder(this.Strategy.Transaction)
                             .WithTermType(salesTerm.TermType)
                             .WithTermValue(salesTerm.TermValue)
                             .WithDescription(salesTerm.Description)
@@ -368,7 +368,7 @@ namespace Allors.Database.Domain
             {
                 if (salesTerm.GetType().Name == typeof(IncoTerm).Name)
                 {
-                    salesInvoice.AddSalesTerm(new IncoTermBuilder(this.Strategy.Session)
+                    salesInvoice.AddSalesTerm(new IncoTermBuilder(this.Strategy.Transaction)
                                                 .WithTermType(salesTerm.TermType)
                                                 .WithTermValue(salesTerm.TermValue)
                                                 .WithDescription(salesTerm.Description)
@@ -377,7 +377,7 @@ namespace Allors.Database.Domain
 
                 if (salesTerm.GetType().Name == typeof(InvoiceTerm).Name)
                 {
-                    salesInvoice.AddSalesTerm(new InvoiceTermBuilder(this.Strategy.Session)
+                    salesInvoice.AddSalesTerm(new InvoiceTermBuilder(this.Strategy.Transaction)
                         .WithTermType(salesTerm.TermType)
                         .WithTermValue(salesTerm.TermValue)
                         .WithDescription(salesTerm.Description)
@@ -386,7 +386,7 @@ namespace Allors.Database.Domain
 
                 if (salesTerm.GetType().Name == typeof(OrderTerm).Name)
                 {
-                    salesInvoice.AddSalesTerm(new OrderTermBuilder(this.Strategy.Session)
+                    salesInvoice.AddSalesTerm(new OrderTermBuilder(this.Strategy.Transaction)
                         .WithTermType(salesTerm.TermType)
                         .WithTermValue(salesTerm.TermValue)
                         .WithDescription(salesTerm.Description)
@@ -399,7 +399,7 @@ namespace Allors.Database.Domain
 
         public SalesInvoice BaseCredit(SalesInvoiceCredit method)
         {
-            var salesInvoice = new SalesInvoiceBuilder(this.Strategy.Session)
+            var salesInvoice = new SalesInvoiceBuilder(this.Strategy.Transaction)
                 .WithPurchaseInvoice(this.PurchaseInvoice)
                 .WithBilledFrom(this.BilledFrom)
                 .WithAssignedBilledFromContactMechanism(this.DerivedBilledFromContactMechanism)
@@ -418,9 +418,9 @@ namespace Allors.Database.Domain
                 .WithShipToEndCustomerContactPerson(this.ShipToEndCustomerContactPerson)
                 .WithDescription(this.Description)
                 .WithStore(this.Store)
-                .WithInvoiceDate(this.Session().Now())
+                .WithInvoiceDate(this.Transaction().Now())
                 .WithSalesChannel(this.SalesChannel)
-                .WithSalesInvoiceType(new SalesInvoiceTypes(this.Strategy.Session).CreditNote)
+                .WithSalesInvoiceType(new SalesInvoiceTypes(this.Strategy.Transaction).CreditNote)
                 .WithAssignedVatRegime(this.AssignedVatRegime)
                 .WithAssignedIrpfRegime(this.AssignedIrpfRegime)
                 .WithCustomerReference(this.CustomerReference)
@@ -433,27 +433,27 @@ namespace Allors.Database.Domain
                 OrderAdjustment newAdjustment = null;
                 if (orderAdjustment.GetType().Name.Equals(typeof(DiscountAdjustment).Name))
                 {
-                    newAdjustment = new DiscountAdjustmentBuilder(this.Session()).Build();
+                    newAdjustment = new DiscountAdjustmentBuilder(this.Transaction()).Build();
                 }
 
                 if (orderAdjustment.GetType().Name.Equals(typeof(SurchargeAdjustment).Name))
                 {
-                    newAdjustment = new SurchargeAdjustmentBuilder(this.Session()).Build();
+                    newAdjustment = new SurchargeAdjustmentBuilder(this.Transaction()).Build();
                 }
 
                 if (orderAdjustment.GetType().Name.Equals(typeof(Fee).Name))
                 {
-                    newAdjustment = new FeeBuilder(this.Session()).Build();
+                    newAdjustment = new FeeBuilder(this.Transaction()).Build();
                 }
 
                 if (orderAdjustment.GetType().Name.Equals(typeof(ShippingAndHandlingCharge).Name))
                 {
-                    newAdjustment = new ShippingAndHandlingChargeBuilder(this.Session()).Build();
+                    newAdjustment = new ShippingAndHandlingChargeBuilder(this.Transaction()).Build();
                 }
 
                 if (orderAdjustment.GetType().Name.Equals(typeof(MiscellaneousCharge).Name))
                 {
-                    newAdjustment = new MiscellaneousChargeBuilder(this.Session()).Build();
+                    newAdjustment = new MiscellaneousChargeBuilder(this.Transaction()).Build();
                 }
 
                 newAdjustment.Amount ??= orderAdjustment.Amount * -1;
@@ -462,7 +462,7 @@ namespace Allors.Database.Domain
 
             foreach (SalesInvoiceItem salesInvoiceItem in this.SalesInvoiceItems)
             {
-                var invoiceItem = new SalesInvoiceItemBuilder(this.Strategy.Session)
+                var invoiceItem = new SalesInvoiceItemBuilder(this.Strategy.Transaction)
                     .WithInvoiceItemType(salesInvoiceItem.InvoiceItemType)
                     .WithAssignedUnitPrice(salesInvoiceItem.UnitPrice)
                     .WithProduct(salesInvoiceItem.Product)
@@ -509,7 +509,7 @@ namespace Allors.Database.Domain
         {
             if (!method.IsPrinted)
             {
-                var singleton = this.Strategy.Session.GetSingleton();
+                var singleton = this.Strategy.Transaction.GetSingleton();
                 var logo = this.BilledFrom?.ExistLogoImage == true ?
                                this.BilledFrom.LogoImage.MediaContent.Data :
                                singleton.LogoImage.MediaContent.Data;
@@ -521,8 +521,8 @@ namespace Allors.Database.Domain
 
                 if (this.ExistInvoiceNumber)
                 {
-                    var session = this.Strategy.Session;
-                    var barcodeService = session.Database.Context().BarcodeGenerator;
+                    var transaction = this.Strategy.Transaction;
+                    var barcodeService = transaction.Database.Context().BarcodeGenerator;
                     var barcode = barcodeService.Generate(this.InvoiceNumber, BarcodeType.CODE_128, 320, 80, pure: true);
                     images.Add("Barcode", barcode);
                 }

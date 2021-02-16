@@ -34,17 +34,17 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistCreationDate)
             {
-                this.CreationDate = this.Session().Now();
+                this.CreationDate = this.Transaction().Now();
             }
 
             if (!this.ExistPickListState)
             {
-                this.PickListState = new PickListStates(this.Strategy.Session).Created;
+                this.PickListState = new PickListStates(this.Strategy.Transaction).Created;
             }
 
             if (!this.ExistStore)
             {
-                this.Store = this.Strategy.Session.Extent<Store>().First;
+                this.Store = this.Strategy.Transaction.Extent<Store>().First;
             }
         }
 
@@ -64,12 +64,12 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void AppsCancel(PickListCancel method) => this.PickListState = new PickListStates(this.Strategy.Session).Cancelled;
+        public void AppsCancel(PickListCancel method) => this.PickListState = new PickListStates(this.Strategy.Transaction).Cancelled;
 
-        public void AppsHold(PickListHold method) => this.PickListState = new PickListStates(this.Strategy.Session).OnHold;
+        public void AppsHold(PickListHold method) => this.PickListState = new PickListStates(this.Strategy.Transaction).OnHold;
 
         public void AppsContinue(PickListContinue method) => this.PickListState = this.PreviousPickListState;
 
-        public void AppsSetPicked(PickListSetPicked method) => this.PickListState = new PickListStates(this.Strategy.Session).Picked;
+        public void AppsSetPicked(PickListSetPicked method) => this.PickListState = new PickListStates(this.Strategy.Transaction).Picked;
     }
 }

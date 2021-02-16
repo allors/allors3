@@ -19,9 +19,9 @@ namespace Allors.Database.Domain
         public bool IsValid => !(this.PurchaseOrderItemState.IsCancelled || this.PurchaseOrderItemState.IsRejected);
 
         internal bool IsDeletable =>
-            (this.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(this.Strategy.Session).Created)
-                || this.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(this.Strategy.Session).Cancelled)
-                || this.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(this.Strategy.Session).Rejected))
+            (this.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(this.Strategy.Transaction).Created)
+                || this.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(this.Strategy.Transaction).Cancelled)
+                || this.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(this.Strategy.Transaction).Rejected))
             && !this.ExistOrderItemBillingsWhereOrderItem
             && !this.ExistOrderShipmentsWhereOrderItem
             && !this.ExistOrderRequirementCommitmentsWhereOrderItem
@@ -72,17 +72,17 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistPurchaseOrderItemState)
             {
-                this.PurchaseOrderItemState = new PurchaseOrderItemStates(this.Strategy.Session).Created;
+                this.PurchaseOrderItemState = new PurchaseOrderItemStates(this.Strategy.Transaction).Created;
             }
 
             if (!this.ExistPurchaseOrderItemPaymentState)
             {
-                this.PurchaseOrderItemPaymentState = new PurchaseOrderItemPaymentStates(this.Strategy.Session).NotPaid;
+                this.PurchaseOrderItemPaymentState = new PurchaseOrderItemPaymentStates(this.Strategy.Transaction).NotPaid;
             }
 
             if (this.ExistPart && !this.ExistInvoiceItemType)
             {
-                this.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Session).PartItem;
+                this.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Transaction).PartItem;
             }
 
             this.DerivationTrigger = Guid.NewGuid();
@@ -96,23 +96,23 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void AppsApprove(OrderItemApprove method) => this.PurchaseOrderItemState = new PurchaseOrderItemStates(this.Strategy.Session).InProcess;
+        public void AppsApprove(OrderItemApprove method) => this.PurchaseOrderItemState = new PurchaseOrderItemStates(this.Strategy.Transaction).InProcess;
 
         public void AppsQuickReceive(PurchaseOrderItemQuickReceive method)
         {
-            var session = this.Session();
+            var transaction = this.Transaction();
             var order = this.PurchaseOrderWherePurchaseOrderItem;
 
             if (this.ExistPart)
             {
-                var shipment = new PurchaseShipmentBuilder(session)
-                    .WithShipmentMethod(new ShipmentMethods(session).Ground)
+                var shipment = new PurchaseShipmentBuilder(transaction)
+                    .WithShipmentMethod(new ShipmentMethods(transaction).Ground)
                     .WithShipToParty(order.OrderedBy)
                     .WithShipFromParty(order.TakenViaSupplier)
                     .WithShipToFacility(order.StoredInFacility)
                     .Build();
 
-                var shipmentItem = new ShipmentItemBuilder(session)
+                var shipmentItem = new ShipmentItemBuilder(transaction)
                     .WithPart(this.Part)
                     .WithStoredInFacility(this.StoredInFacility)
                     .WithQuantity(this.QuantityOrdered)
@@ -122,7 +122,7 @@ namespace Allors.Database.Domain
 
                 shipment.AddShipmentItem(shipmentItem);
 
-                new OrderShipmentBuilder(session)
+                new OrderShipmentBuilder(transaction)
                     .WithOrderItem(this)
                     .WithShipmentItem(shipmentItem)
                     .WithQuantity(this.QuantityOrdered)
@@ -133,7 +133,7 @@ namespace Allors.Database.Domain
                     var serialisedItem = this.SerialisedItem;
                     if (!this.ExistSerialisedItem)
                     {
-                        serialisedItem = new SerialisedItemBuilder(session)
+                        serialisedItem = new SerialisedItemBuilder(transaction)
                             .WithSerialNumber(this.SerialNumber)
                             .Build();
 
@@ -157,9 +157,9 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void AppsCancel(OrderItemCancel method) => this.PurchaseOrderItemState = new PurchaseOrderItemStates(this.Strategy.Session).Cancelled;
+        public void AppsCancel(OrderItemCancel method) => this.PurchaseOrderItemState = new PurchaseOrderItemStates(this.Strategy.Transaction).Cancelled;
 
-        public void AppsReject(OrderItemReject method) => this.PurchaseOrderItemState = new PurchaseOrderItemStates(this.Strategy.Session).Rejected;
+        public void AppsReject(OrderItemReject method) => this.PurchaseOrderItemState = new PurchaseOrderItemStates(this.Strategy.Transaction).Rejected;
 
         public void AppsReopen(OrderItemReopen method) => this.PurchaseOrderItemState = this.PreviousPurchaseOrderItemState;
 
@@ -168,8 +168,8 @@ namespace Allors.Database.Domain
         //    if (!method.Result.HasValue)
         //    {
         //        this.IsReceivable = this.ExistPart
-        //            && (this.InvoiceItemType.Equals(new InvoiceItemTypes(this.Session()).PartItem)
-        //                || this.InvoiceItemType.Equals(new InvoiceItemTypes(this.Session()).ProductItem));
+        //            && (this.InvoiceItemType.Equals(new InvoiceItemTypes(this.Transaction()).PartItem)
+        //                || this.InvoiceItemType.Equals(new InvoiceItemTypes(this.Transaction()).ProductItem));
 
         //        method.Result = true;
         //    }

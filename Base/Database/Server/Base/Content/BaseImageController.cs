@@ -18,19 +18,18 @@ namespace Allors.Database.Server.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Net.Http.Headers;
     using SkiaSharp;
-    using ISession = ISession;
 
     public abstract partial class BaseImageController : Controller
     {
         protected const int OneYearInSeconds = 60 * 60 * 24 * 356;
 
-        protected BaseImageController(ISessionService sessionService)
+        protected BaseImageController(ITransactionService transactionService)
         {
-            this.Session = sessionService.Session;
+            this.Transaction = transactionService.Transaction;
             this.ETagByPath = new ConcurrentDictionary<string, string>();
         }
 
-        private ISession Session { get; }
+        private ITransaction Transaction { get; }
 
         private ConcurrentDictionary<string, string> ETagByPath { get; }
 
@@ -41,7 +40,7 @@ namespace Allors.Database.Server.Controllers
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = OneYearInSeconds)]
         public virtual IActionResult Get(string idString, string revisionString, string name, int? w, int? q, string t, string b, string o)
         {
-            var m = ((IDatabaseContext) this.Session.Database.Context()).M;
+            var m = ((IDatabaseContext) this.Transaction.Database.Context()).M;
 
             this.Request.Headers.TryGetValue(HeaderNames.IfNoneMatch, out var requestEtagValues);
             var requestEtag = requestEtagValues.FirstOrDefault();
@@ -57,7 +56,7 @@ namespace Allors.Database.Server.Controllers
             {
                 if (Guid.TryParse(revisionString, out var revision))
                 {
-                    var media = new Medias(this.Session).FindBy(m.Media.UniqueId, id);
+                    var media = new Medias(this.Transaction).FindBy(m.Media.UniqueId, id);
                     if (media != null)
                     {
                         if (media.Revision != revision)

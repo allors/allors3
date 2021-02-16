@@ -24,7 +24,7 @@ namespace Allors.Database.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            var session = cycle.Session;
+            var transaction = cycle.Transaction;
             var validation = cycle.Validation;
 
             foreach (var @this in matches.Cast<WorkTask>())
@@ -33,24 +33,24 @@ namespace Allors.Database.Domain
 
                 if (!@this.CanInvoice)
                 {
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, @this.Meta.Invoice));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get((Class)@this.Strategy.Class, @this.Meta.Invoice));
                 }
                 else
                 {
-                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, @this.Meta.Invoice));
+                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Transaction).Get((Class)@this.Strategy.Class, @this.Meta.Invoice));
                 }
 
-                var completePermission = new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, @this.Meta.Complete);
+                var completePermission = new Permissions(@this.Strategy.Transaction).Get((Class)@this.Strategy.Class, @this.Meta.Complete);
 
                 if (@this.ServiceEntriesWhereWorkEffort.Any(v => !v.ExistThroughDate))
                 {
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, @this.Meta.Complete));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get((Class)@this.Strategy.Class, @this.Meta.Complete));
                 }
                 else
                 {
                     if (@this.WorkEffortState.IsInProgress)
                     {
-                        @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, @this.Meta.Complete));
+                        @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Transaction).Get((Class)@this.Strategy.Class, @this.Meta.Complete));
                     }
                 }
 
@@ -58,7 +58,7 @@ namespace Allors.Database.Domain
                 {
                     if (@this.ExecutedBy.Equals(@this.Customer))
                     {
-                        @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, @this.Meta.Revise));
+                        @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Transaction).Get((Class)@this.Strategy.Class, @this.Meta.Revise));
                     }
                 }
             }

@@ -29,11 +29,11 @@ namespace Allors.Database.Domain
                 @this.PurchaseInvoice = @this.PurchaseInvoiceItemsWhereSerialisedItem
                     .LastOrDefault(v => v.ExistInvoiceWhereValidInvoiceItem
                                         && v.ExistInvoiceItemType
-                                        && (v.InvoiceItemType.Equals(new InvoiceItemTypes(@this.Session()).PartItem)
-                                            || v.InvoiceItemType.Equals(new InvoiceItemTypes(@this.Session()).ProductItem))
-                                        && (((PurchaseInvoice)v.InvoiceWhereValidInvoiceItem).PurchaseInvoiceState.Equals(new PurchaseInvoiceStates(@this.Session()).NotPaid)
-                                            || ((PurchaseInvoice)v.InvoiceWhereValidInvoiceItem).PurchaseInvoiceState.Equals(new PurchaseInvoiceStates(@this.Session()).PartiallyPaid)
-                                            || ((PurchaseInvoice)v.InvoiceWhereValidInvoiceItem).PurchaseInvoiceState.Equals(new PurchaseInvoiceStates(@this.Session()).Paid)))?
+                                        && (v.InvoiceItemType.Equals(new InvoiceItemTypes(@this.Transaction()).PartItem)
+                                            || v.InvoiceItemType.Equals(new InvoiceItemTypes(@this.Transaction()).ProductItem))
+                                        && (((PurchaseInvoice)v.InvoiceWhereValidInvoiceItem).PurchaseInvoiceState.Equals(new PurchaseInvoiceStates(@this.Transaction()).NotPaid)
+                                            || ((PurchaseInvoice)v.InvoiceWhereValidInvoiceItem).PurchaseInvoiceState.Equals(new PurchaseInvoiceStates(@this.Transaction()).PartiallyPaid)
+                                            || ((PurchaseInvoice)v.InvoiceWhereValidInvoiceItem).PurchaseInvoiceState.Equals(new PurchaseInvoiceStates(@this.Transaction()).Paid)))?
                     .PurchaseInvoiceWherePurchaseInvoiceItem;
             }
         }

@@ -12,11 +12,11 @@ namespace Allors.Database.Domain
 
     public static class DefaultObjectBuilder
     {
-        public static object Build(ISession session, IClass @class)
+        public static object Build(ITransaction transaction, IClass @class)
         {
-            var metaService = session.Database.Context().MetaCache;
+            var metaService = transaction.Database.Context().MetaCache;
             var builderType = metaService.GetBuilderType(@class);
-            object[] parameters = { session };
+            object[] parameters = { transaction };
             var builder = (IObjectBuilder)Activator.CreateInstance(builderType, parameters);
             return builder.DefaultBuild();
         }

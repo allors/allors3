@@ -24,10 +24,10 @@ namespace Allors.Database.Domain
         {
             if (!@this.ExistWorkEffortState)
             {
-                @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Session).Created;
+                @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Transaction).Created;
             }
 
-            if (!@this.ExistOwner && @this.Strategy.Session.Context().User is Person owner)
+            if (!@this.ExistOwner && @this.Strategy.Transaction.Context().User is Person owner)
             {
                 @this.Owner = owner;
             }
@@ -37,7 +37,7 @@ namespace Allors.Database.Domain
 
         public static void AppsOnInit(this WorkEffort @this, ObjectOnInit method)
         {
-            var internalOrganisations = new Organisations(@this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
+            var internalOrganisations = new Organisations(@this.Strategy.Transaction).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
 
             if (!@this.ExistTakenBy && internalOrganisations.Count() == 1)
             {
@@ -49,22 +49,22 @@ namespace Allors.Database.Domain
         {
             if (!method.Result.HasValue)
             {
-                @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Session).Completed;
+                @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Transaction).Completed;
                 method.Result = true;
             }
         }
 
-        public static void AppsCancel(this WorkEffort @this, WorkEffortCancel cancel) => @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Session).Cancelled;
+        public static void AppsCancel(this WorkEffort @this, WorkEffortCancel cancel) => @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Transaction).Cancelled;
 
         public static void AppsReopen(this WorkEffort @this, WorkEffortReopen reopen)
         {
             if (@this.ExistActualStart)
             {
-                @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Session).InProgress;
+                @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Transaction).InProgress;
             }
             else
             {
-                @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Session).Created;
+                @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Transaction).Created;
             }
         }
 
@@ -72,11 +72,11 @@ namespace Allors.Database.Domain
         {
             if (@this.ExistActualStart)
             {
-                @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Session).InProgress;
+                @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Transaction).InProgress;
             }
             else
             {
-                @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Session).Created;
+                @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Transaction).Created;
             }
         }
 
@@ -86,7 +86,7 @@ namespace Allors.Database.Domain
             {
                 if (@this.CanInvoice)
                 {
-                    @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Session).Finished;
+                    @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Transaction).Finished;
                     @this.InvoiceThis();
                     @this.CanInvoice = false;
                 }
@@ -97,12 +97,12 @@ namespace Allors.Database.Domain
 
         private static SalesInvoice InvoiceThis(this WorkEffort @this)
         {
-            var salesInvoice = new SalesInvoiceBuilder(@this.Strategy.Session)
+            var salesInvoice = new SalesInvoiceBuilder(@this.Strategy.Transaction)
                 .WithBilledFrom(@this.TakenBy)
                 .WithBillToCustomer(@this.Customer)
                 .WithBillToContactPerson(@this.ContactPerson)
-                .WithInvoiceDate(@this.Strategy.Session.Now())
-                .WithSalesInvoiceType(new SalesInvoiceTypes(@this.Strategy.Session).SalesInvoice)
+                .WithInvoiceDate(@this.Strategy.Transaction.Now())
+                .WithSalesInvoiceType(new SalesInvoiceTypes(@this.Strategy.Transaction).SalesInvoice)
                 .Build();
 
             CreateInvoiceItems(@this, salesInvoice);
@@ -116,7 +116,7 @@ namespace Allors.Database.Domain
 
         private static void CreateInvoiceItems(this WorkEffort @this, SalesInvoice salesInvoice)
         {
-            var session = @this.Strategy.Session;
+            var transaction = @this.Strategy.Transaction;
 
             var timeEntriesByBillingRate = @this.ServiceEntriesWhereWorkEffort.OfType<TimeEntry>()
                 .Where(v => (v.IsBillable && !v.BillableAmountOfTime.HasValue && v.AmountOfTime.HasValue) || v.BillableAmountOfTime.HasValue)
@@ -128,8 +128,8 @@ namespace Allors.Database.Domain
             {
                 var timeEntries = rateGroup.ToArray();
 
-                var invoiceItem = new SalesInvoiceItemBuilder(session)
-                    .WithInvoiceItemType(new InvoiceItemTypes(session).Time)
+                var invoiceItem = new SalesInvoiceItemBuilder(transaction)
+                    .WithInvoiceItemType(new InvoiceItemTypes(transaction).Time)
                     .WithAssignedUnitPrice(rateGroup.Key)
                     .WithQuantity(timeEntries.Sum(v => v.BillableAmountOfTime ?? v.AmountOfTime ?? 0.0m))
                     .Build();
@@ -138,7 +138,7 @@ namespace Allors.Database.Domain
 
                 foreach (var billableEntry in timeEntries)
                 {
-                    new TimeEntryBillingBuilder(session)
+                    new TimeEntryBillingBuilder(transaction)
                         .WithTimeEntry(billableEntry)
                         .WithInvoiceItem(invoiceItem)
                         .Build();
@@ -151,8 +151,8 @@ namespace Allors.Database.Domain
 
                 var quantity = workEffortInventoryAssignment.DerivedBillableQuantity != 0 ? workEffortInventoryAssignment.DerivedBillableQuantity : workEffortInventoryAssignment.Quantity;
 
-                var invoiceItem = new SalesInvoiceItemBuilder(session)
-                    .WithInvoiceItemType(new InvoiceItemTypes(session).PartItem)
+                var invoiceItem = new SalesInvoiceItemBuilder(transaction)
+                    .WithInvoiceItemType(new InvoiceItemTypes(transaction).PartItem)
                     .WithPart(part)
                     .WithAssignedUnitPrice(workEffortInventoryAssignment.UnitSellingPrice)
                     .WithQuantity(quantity)
@@ -161,7 +161,7 @@ namespace Allors.Database.Domain
 
                 salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-                new WorkEffortBillingBuilder(session)
+                new WorkEffortBillingBuilder(transaction)
                     .WithWorkEffort(@this)
                     .WithInvoiceItem(invoiceItem)
                     .Build();

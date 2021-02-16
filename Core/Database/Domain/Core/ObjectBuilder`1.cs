@@ -12,7 +12,7 @@ namespace Allors.Database.Domain
         private bool built;
         private Exception exception;
 
-        protected ObjectBuilder(ISession session) => this.Session = session;
+        protected ObjectBuilder(ITransaction transaction) => this.Transaction = transaction;
 
         ~ObjectBuilder()
         {
@@ -22,7 +22,7 @@ namespace Allors.Database.Domain
             }
         }
 
-        public ISession Session { get; }
+        public ITransaction Transaction { get; }
 
         public void Dispose() => this.Build();
 
@@ -36,7 +36,7 @@ namespace Allors.Database.Domain
 
             try
             {
-                var instance = this.Session.Create<T>();
+                var instance = this.Transaction.Create<T>();
                 this.OnBuild(instance);
 
                 instance.OnBuild(x => x.WithBuilder(this));

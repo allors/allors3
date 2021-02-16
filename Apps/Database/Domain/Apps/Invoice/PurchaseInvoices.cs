@@ -14,14 +14,14 @@ namespace Allors.Database.Domain
 
         protected override void AppsSecure(Security config)
         {
-            var created = new PurchaseInvoiceStates(this.Session).Created;
-            var awaitingApproval = new PurchaseInvoiceStates(this.Session).AwaitingApproval;
-            var notPaid = new PurchaseInvoiceStates(this.Session).NotPaid;
-            var partiallyPaid = new PurchaseInvoiceStates(this.Session).PartiallyPaid;
-            var paid = new PurchaseInvoiceStates(this.Session).Paid;
-            var cancelled = new PurchaseInvoiceStates(this.Session).Cancelled;
-            var rejected = new PurchaseInvoiceStates(this.Session).Rejected;
-            var revising = new PurchaseInvoiceStates(this.Session).Revising;
+            var created = new PurchaseInvoiceStates(this.Transaction).Created;
+            var awaitingApproval = new PurchaseInvoiceStates(this.Transaction).AwaitingApproval;
+            var notPaid = new PurchaseInvoiceStates(this.Transaction).NotPaid;
+            var partiallyPaid = new PurchaseInvoiceStates(this.Transaction).PartiallyPaid;
+            var paid = new PurchaseInvoiceStates(this.Transaction).Paid;
+            var cancelled = new PurchaseInvoiceStates(this.Transaction).Cancelled;
+            var rejected = new PurchaseInvoiceStates(this.Transaction).Rejected;
+            var revising = new PurchaseInvoiceStates(this.Transaction).Revising;
 
             var approve = this.Meta.Approve;
             var reject = this.Meta.Reject;

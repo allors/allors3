@@ -12,8 +12,8 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static SalesInvoiceItemBuilder WithDefaults(this SalesInvoiceItemBuilder @this)
         {
-            var faker = @this.Session.Faker();
-            var invoiceItemTypes = @this.Session.Extent<InvoiceItemType>().ToList();
+            var faker = @this.Transaction.Faker();
+            var invoiceItemTypes = @this.Transaction.Extent<InvoiceItemType>().ToList();
 
             var otherInvoiceItemTypes = invoiceItemTypes.Except(
                 invoiceItemTypes.Where(v => v.UniqueId.Equals(InvoiceItemTypes.ProductItemId) || v.UniqueId.Equals(InvoiceItemTypes.PartItemId)).ToList())
@@ -32,12 +32,12 @@ namespace Allors.Database.Domain.TestPopulation
 
         public static SalesInvoiceItemBuilder WithProductItemDefaults(this SalesInvoiceItemBuilder @this)
         {
-            var m = @this.Session.Database.Context().M;
-            var faker = @this.Session.Faker();
-            var invoiceItemType = @this.Session.Extent<InvoiceItemType>().Where(v => v.UniqueId.Equals(InvoiceItemTypes.ProductItemId)).FirstOrDefault();
+            var m = @this.Transaction.Database.Context().M;
+            var faker = @this.Transaction.Faker();
+            var invoiceItemType = @this.Transaction.Extent<InvoiceItemType>().Where(v => v.UniqueId.Equals(InvoiceItemTypes.ProductItemId)).FirstOrDefault();
 
-            var unifiedGoodExtent = @this.Session.Extent<UnifiedGood>();
-            unifiedGoodExtent.Filter.AddEquals(m.UnifiedGood.InventoryItemKind, new InventoryItemKinds(@this.Session).Serialised);
+            var unifiedGoodExtent = @this.Transaction.Extent<UnifiedGood>();
+            unifiedGoodExtent.Filter.AddEquals(m.UnifiedGood.InventoryItemKind, new InventoryItemKinds(@this.Transaction).Serialised);
             var serializedProduct = unifiedGoodExtent.First();
 
             @this.WithDescription(faker.Lorem.Sentences(2));
@@ -46,7 +46,7 @@ namespace Allors.Database.Domain.TestPopulation
             @this.WithInvoiceItemType(invoiceItemType);
             @this.WithProduct(serializedProduct);
             @this.WithSerialisedItem(serializedProduct.SerialisedItems.First);
-            @this.WithNextSerialisedItemAvailability(faker.Random.ListItem(@this.Session.Extent<SerialisedItemAvailability>()));
+            @this.WithNextSerialisedItemAvailability(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemAvailability>()));
             @this.WithMessage(faker.Lorem.Sentence());
             @this.WithQuantity(1);
             @this.WithAssignedUnitPrice(faker.Random.UInt(1, 100));
@@ -56,12 +56,12 @@ namespace Allors.Database.Domain.TestPopulation
 
         public static SalesInvoiceItemBuilder WithPartItemDefaults(this SalesInvoiceItemBuilder @this)
         {
-            var m = @this.Session.Database.Context().M;
-            var faker = @this.Session.Faker();
-            var invoiceItemType = @this.Session.Extent<InvoiceItemType>().Where(v => v.UniqueId.Equals(InvoiceItemTypes.ProductItemId)).FirstOrDefault();
+            var m = @this.Transaction.Database.Context().M;
+            var faker = @this.Transaction.Faker();
+            var invoiceItemType = @this.Transaction.Extent<InvoiceItemType>().Where(v => v.UniqueId.Equals(InvoiceItemTypes.ProductItemId)).FirstOrDefault();
 
-            var unifiedGoodExtent = @this.Session.Extent<UnifiedGood>();
-            unifiedGoodExtent.Filter.AddEquals(m.UnifiedGood.InventoryItemKind, new InventoryItemKinds(@this.Session).Serialised);
+            var unifiedGoodExtent = @this.Transaction.Extent<UnifiedGood>();
+            unifiedGoodExtent.Filter.AddEquals(m.UnifiedGood.InventoryItemKind, new InventoryItemKinds(@this.Transaction).Serialised);
             var serializedPart = unifiedGoodExtent.First();
 
             @this.WithDescription(faker.Lorem.Sentences(2));
@@ -70,7 +70,7 @@ namespace Allors.Database.Domain.TestPopulation
             @this.WithInvoiceItemType(invoiceItemType);
             @this.WithProduct(serializedPart);
             @this.WithSerialisedItem(serializedPart.SerialisedItems.First);
-            @this.WithNextSerialisedItemAvailability(faker.Random.ListItem(@this.Session.Extent<SerialisedItemAvailability>()));
+            @this.WithNextSerialisedItemAvailability(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemAvailability>()));
             @this.WithMessage(faker.Lorem.Sentence());
             @this.WithQuantity(1);
             @this.WithAssignedUnitPrice(faker.Random.UInt(1, 100));

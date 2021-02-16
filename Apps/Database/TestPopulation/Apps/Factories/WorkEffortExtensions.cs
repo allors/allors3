@@ -12,15 +12,15 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static WorkEffortInventoryAssignment CreateInventoryAssignment(this WorkEffort @this, Part part, int quantity)
         {
-            new InventoryItemTransactionBuilder(@this.Session())
+            new InventoryItemTransactionBuilder(@this.Transaction())
                 .WithPart(part)
-                .WithReason(new InventoryTransactionReasons(@this.Session()).IncomingShipment)
+                .WithReason(new InventoryTransactionReasons(@this.Transaction()).IncomingShipment)
                 .WithQuantity(quantity)
                 .Build();
 
-            @this.Session().Derive();
+            @this.Transaction().Derive();
 
-            return new WorkEffortInventoryAssignmentBuilder(@this.Session())
+            return new WorkEffortInventoryAssignmentBuilder(@this.Transaction())
                 .WithAssignment(@this)
                 .WithInventoryItem(part.InventoryItemsWherePart.First)
                 .WithQuantity(quantity)
@@ -28,7 +28,7 @@ namespace Allors.Database.Domain.TestPopulation
         }
 
         public static TimeEntry CreateTimeEntry(this WorkEffort @this, DateTime fromDate, DateTime throughDate, TimeFrequency frequency, RateType rateType) =>
-            new TimeEntryBuilder(@this.Session())
+            new TimeEntryBuilder(@this.Transaction())
                 .WithRateType(rateType)
                 .WithFromDate(fromDate)
                 .WithThroughDate(throughDate)

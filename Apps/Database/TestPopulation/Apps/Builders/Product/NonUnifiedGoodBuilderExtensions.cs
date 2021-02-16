@@ -10,27 +10,27 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static NonUnifiedGoodBuilder WithNonSerialisedDefaults(this NonUnifiedGoodBuilder @this, Organisation internalOrganisation)
         {
-            var m = @this.Session.Database.Context().M;
-            var faker = @this.Session.Faker();
+            var m = @this.Transaction.Database.Context().M;
+            var faker = @this.Transaction.Faker();
 
-            var dutchLocale = new Locales(@this.Session).DutchNetherlands;
+            var dutchLocale = new Locales(@this.Transaction).DutchNetherlands;
 
-            var nonSerialisedProductType = new ProductTypes(@this.Session).FindBy(m.ProductType.Name, "nonSerialisedProductType");
+            var nonSerialisedProductType = new ProductTypes(@this.Transaction).FindBy(m.ProductType.Name, "nonSerialisedProductType");
 
             if (nonSerialisedProductType == null)
             {
-                var size = new SerialisedItemCharacteristicTypeBuilder(@this.Session)
+                var size = new SerialisedItemCharacteristicTypeBuilder(@this.Transaction)
                     .WithName("Size")
-                    .WithLocalisedName(new LocalisedTextBuilder(@this.Session).WithText("Afmeting").WithLocale(dutchLocale).Build())
+                    .WithLocalisedName(new LocalisedTextBuilder(@this.Transaction).WithText("Afmeting").WithLocale(dutchLocale).Build())
                     .Build();
 
-                var weight = new SerialisedItemCharacteristicTypeBuilder(@this.Session)
+                var weight = new SerialisedItemCharacteristicTypeBuilder(@this.Transaction)
                     .WithName("Weight")
-                    .WithLocalisedName(new LocalisedTextBuilder(@this.Session).WithText("Gewicht").WithLocale(dutchLocale).Build())
-                    .WithUnitOfMeasure(new UnitsOfMeasure(@this.Session).Kilogram)
+                    .WithLocalisedName(new LocalisedTextBuilder(@this.Transaction).WithText("Gewicht").WithLocale(dutchLocale).Build())
+                    .WithUnitOfMeasure(new UnitsOfMeasure(@this.Transaction).Kilogram)
                     .Build();
 
-                nonSerialisedProductType = new ProductTypeBuilder(@this.Session)
+                nonSerialisedProductType = new ProductTypeBuilder(@this.Transaction)
                     .WithName("nonSerialisedProductType")
                     .WithSerialisedItemCharacteristicType(size)
                     .WithSerialisedItemCharacteristicType(weight)
@@ -38,32 +38,32 @@ namespace Allors.Database.Domain.TestPopulation
             }
 
             @this.WithName(faker.Commerce.ProductName());
-            @this.WithPart(new NonUnifiedPartBuilder(@this.Session).WithNonSerialisedDefaults(internalOrganisation).Build());
+            @this.WithPart(new NonUnifiedPartBuilder(@this.Transaction).WithNonSerialisedDefaults(internalOrganisation).Build());
             @this.WithDescription(faker.Lorem.Sentence());
             @this.WithComment(faker.Lorem.Sentence());
             @this.WithInternalComment(faker.Lorem.Sentence());
             @this.WithKeywords(faker.Lorem.Sentence());
-            @this.WithUnitOfMeasure(new UnitsOfMeasure(@this.Session).Piece);
-            @this.WithPrimaryPhoto(new MediaBuilder(@this.Session).WithInDataUri(faker.Image.DataUri(width: 200, height: 56)).Build());
-            @this.WithPhoto(new MediaBuilder(@this.Session).WithInDataUri(faker.Image.DataUri(width: 200, height: 56)).Build());
-            @this.WithPhoto(new MediaBuilder(@this.Session).WithInDataUri(faker.Image.DataUri(width: 200, height: 56)).Build());
-            @this.WithPublicElectronicDocument(new MediaBuilder(@this.Session).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
-            @this.WithPrivateElectronicDocument(new MediaBuilder(@this.Session).WithInFileName("doc2.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
-            @this.WithProductIdentification(new SkuIdentificationBuilder(@this.Session).WithDefaults().Build());
-            @this.WithProductIdentification(new EanIdentificationBuilder(@this.Session).WithDefaults().Build());
-            @this.WithProductIdentification(new ManufacturerIdentificationBuilder(@this.Session).WithDefaults().Build());
-            @this.WithVatRate(faker.Random.ListItem(@this.Session.Extent<VatRate>()));
+            @this.WithUnitOfMeasure(new UnitsOfMeasure(@this.Transaction).Piece);
+            @this.WithPrimaryPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 200, height: 56)).Build());
+            @this.WithPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 200, height: 56)).Build());
+            @this.WithPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 200, height: 56)).Build());
+            @this.WithPublicElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
+            @this.WithPrivateElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc2.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
+            @this.WithProductIdentification(new SkuIdentificationBuilder(@this.Transaction).WithDefaults().Build());
+            @this.WithProductIdentification(new EanIdentificationBuilder(@this.Transaction).WithDefaults().Build());
+            @this.WithProductIdentification(new ManufacturerIdentificationBuilder(@this.Transaction).WithDefaults().Build());
+            @this.WithVatRate(faker.Random.ListItem(@this.Transaction.Extent<VatRate>()));
 
-            foreach (Locale additionalLocale in @this.Session.GetSingleton().AdditionalLocales)
+            foreach (Locale additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
             {
-                @this.WithLocalisedName(new LocalisedTextBuilder(@this.Session).WithText(faker.Lorem.Word()).WithLocale(additionalLocale).Build());
-                @this.WithLocalisedDescription(new LocalisedTextBuilder(@this.Session).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
-                @this.WithLocalisedComment(new LocalisedTextBuilder(@this.Session).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
-                @this.WithLocalisedKeyword(new LocalisedTextBuilder(@this.Session).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
+                @this.WithLocalisedName(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Word()).WithLocale(additionalLocale).Build());
+                @this.WithLocalisedDescription(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
+                @this.WithLocalisedComment(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
+                @this.WithLocalisedKeyword(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
 
-                var localisedDocument = new MediaBuilder(@this.Session).WithInFileName($"doc1.{additionalLocale.Country.IsoCode}.pdf").WithInData(faker.Random.Bytes(1000)).Build();
-                @this.WithPublicLocalisedElectronicDocument(new LocalisedMediaBuilder(@this.Session).WithMedia(localisedDocument).WithLocale(additionalLocale).Build());
-                @this.WithPrivateLocalisedElectronicDocument(new LocalisedMediaBuilder(@this.Session).WithMedia(localisedDocument).WithLocale(additionalLocale).Build());
+                var localisedDocument = new MediaBuilder(@this.Transaction).WithInFileName($"doc1.{additionalLocale.Country.IsoCode}.pdf").WithInData(faker.Random.Bytes(1000)).Build();
+                @this.WithPublicLocalisedElectronicDocument(new LocalisedMediaBuilder(@this.Transaction).WithMedia(localisedDocument).WithLocale(additionalLocale).Build());
+                @this.WithPrivateLocalisedElectronicDocument(new LocalisedMediaBuilder(@this.Transaction).WithMedia(localisedDocument).WithLocale(additionalLocale).Build());
             }
 
             return @this;
@@ -71,27 +71,27 @@ namespace Allors.Database.Domain.TestPopulation
 
         public static NonUnifiedGoodBuilder WithSerialisedDefaults(this NonUnifiedGoodBuilder @this, Organisation internalOrganisation)
         {
-            var m = @this.Session.Database.Context().M;
-            var faker = @this.Session.Faker();
+            var m = @this.Transaction.Database.Context().M;
+            var faker = @this.Transaction.Faker();
 
-            var dutchLocale = new Locales(@this.Session).DutchNetherlands;
+            var dutchLocale = new Locales(@this.Transaction).DutchNetherlands;
 
-            var nonSerialisedProductType = new ProductTypes(@this.Session).FindBy(m.ProductType.Name, "nonSerialisedProductType");
+            var nonSerialisedProductType = new ProductTypes(@this.Transaction).FindBy(m.ProductType.Name, "nonSerialisedProductType");
 
             if (nonSerialisedProductType == null)
             {
-                var size = new SerialisedItemCharacteristicTypeBuilder(@this.Session)
+                var size = new SerialisedItemCharacteristicTypeBuilder(@this.Transaction)
                     .WithName("Size")
-                    .WithLocalisedName(new LocalisedTextBuilder(@this.Session).WithText("Afmeting").WithLocale(dutchLocale).Build())
+                    .WithLocalisedName(new LocalisedTextBuilder(@this.Transaction).WithText("Afmeting").WithLocale(dutchLocale).Build())
                     .Build();
 
-                var weight = new SerialisedItemCharacteristicTypeBuilder(@this.Session)
+                var weight = new SerialisedItemCharacteristicTypeBuilder(@this.Transaction)
                     .WithName("Weight")
-                    .WithLocalisedName(new LocalisedTextBuilder(@this.Session).WithText("Gewicht").WithLocale(dutchLocale).Build())
-                    .WithUnitOfMeasure(new UnitsOfMeasure(@this.Session).Kilogram)
+                    .WithLocalisedName(new LocalisedTextBuilder(@this.Transaction).WithText("Gewicht").WithLocale(dutchLocale).Build())
+                    .WithUnitOfMeasure(new UnitsOfMeasure(@this.Transaction).Kilogram)
                     .Build();
 
-                nonSerialisedProductType = new ProductTypeBuilder(@this.Session)
+                nonSerialisedProductType = new ProductTypeBuilder(@this.Transaction)
                     .WithName("serialisedProductType")
                     .WithSerialisedItemCharacteristicType(size)
                     .WithSerialisedItemCharacteristicType(weight)
@@ -99,32 +99,32 @@ namespace Allors.Database.Domain.TestPopulation
             }
 
             @this.WithName(faker.Commerce.ProductName());
-            @this.WithPart(new NonUnifiedPartBuilder(@this.Session).WithSerialisedDefaults(internalOrganisation, faker).Build());
+            @this.WithPart(new NonUnifiedPartBuilder(@this.Transaction).WithSerialisedDefaults(internalOrganisation, faker).Build());
             @this.WithDescription(faker.Lorem.Sentence());
             @this.WithComment(faker.Lorem.Sentence());
             @this.WithInternalComment(faker.Lorem.Sentence());
             @this.WithKeywords(faker.Lorem.Sentence());
-            @this.WithUnitOfMeasure(new UnitsOfMeasure(@this.Session).Piece);
-            @this.WithPrimaryPhoto(new MediaBuilder(@this.Session).WithInDataUri(faker.Image.DataUri(width: 200, height: 56)).Build());
-            @this.WithPhoto(new MediaBuilder(@this.Session).WithInDataUri(faker.Image.DataUri(width: 200, height: 56)).Build());
-            @this.WithPhoto(new MediaBuilder(@this.Session).WithInDataUri(faker.Image.DataUri(width: 200, height: 56)).Build());
-            @this.WithPublicElectronicDocument(new MediaBuilder(@this.Session).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
-            @this.WithPrivateElectronicDocument(new MediaBuilder(@this.Session).WithInFileName("doc2.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
-            @this.WithProductIdentification(new SkuIdentificationBuilder(@this.Session).WithDefaults().Build());
-            @this.WithProductIdentification(new EanIdentificationBuilder(@this.Session).WithDefaults().Build());
-            @this.WithProductIdentification(new ManufacturerIdentificationBuilder(@this.Session).WithDefaults().Build());
-            @this.WithVatRate(faker.Random.ListItem(@this.Session.Extent<VatRate>()));
+            @this.WithUnitOfMeasure(new UnitsOfMeasure(@this.Transaction).Piece);
+            @this.WithPrimaryPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 200, height: 56)).Build());
+            @this.WithPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 200, height: 56)).Build());
+            @this.WithPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 200, height: 56)).Build());
+            @this.WithPublicElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
+            @this.WithPrivateElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc2.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
+            @this.WithProductIdentification(new SkuIdentificationBuilder(@this.Transaction).WithDefaults().Build());
+            @this.WithProductIdentification(new EanIdentificationBuilder(@this.Transaction).WithDefaults().Build());
+            @this.WithProductIdentification(new ManufacturerIdentificationBuilder(@this.Transaction).WithDefaults().Build());
+            @this.WithVatRate(faker.Random.ListItem(@this.Transaction.Extent<VatRate>()));
 
-            foreach (Locale additionalLocale in @this.Session.GetSingleton().AdditionalLocales)
+            foreach (Locale additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
             {
-                @this.WithLocalisedName(new LocalisedTextBuilder(@this.Session).WithText(faker.Lorem.Word()).WithLocale(additionalLocale).Build());
-                @this.WithLocalisedDescription(new LocalisedTextBuilder(@this.Session).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
-                @this.WithLocalisedComment(new LocalisedTextBuilder(@this.Session).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
-                @this.WithLocalisedKeyword(new LocalisedTextBuilder(@this.Session).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
+                @this.WithLocalisedName(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Word()).WithLocale(additionalLocale).Build());
+                @this.WithLocalisedDescription(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
+                @this.WithLocalisedComment(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
+                @this.WithLocalisedKeyword(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
 
-                var localisedDocument = new MediaBuilder(@this.Session).WithInFileName($"doc1.{additionalLocale.Country.IsoCode}.pdf").WithInData(faker.Random.Bytes(1000)).Build();
-                @this.WithPublicLocalisedElectronicDocument(new LocalisedMediaBuilder(@this.Session).WithMedia(localisedDocument).WithLocale(additionalLocale).Build());
-                @this.WithPrivateLocalisedElectronicDocument(new LocalisedMediaBuilder(@this.Session).WithMedia(localisedDocument).WithLocale(additionalLocale).Build());
+                var localisedDocument = new MediaBuilder(@this.Transaction).WithInFileName($"doc1.{additionalLocale.Country.IsoCode}.pdf").WithInData(faker.Random.Bytes(1000)).Build();
+                @this.WithPublicLocalisedElectronicDocument(new LocalisedMediaBuilder(@this.Transaction).WithMedia(localisedDocument).WithLocale(additionalLocale).Build());
+                @this.WithPrivateLocalisedElectronicDocument(new LocalisedMediaBuilder(@this.Transaction).WithMedia(localisedDocument).WithLocale(additionalLocale).Build());
             }
 
             return @this;

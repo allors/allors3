@@ -15,13 +15,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedLocalisedNamesDeriveName()
         {
-            var defaultLocale = this.Session.GetSingleton().DefaultLocale;
+            var defaultLocale = this.Transaction.GetSingleton().DefaultLocale;
 
-            var characteristicType = new SerialisedItemCharacteristicTypeBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var characteristicType = new SerialisedItemCharacteristicTypeBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            characteristicType.AddLocalisedName(new LocalisedTextBuilder(this.Session).WithLocale(defaultLocale).WithText("defaultname").Build());
-            this.Session.Derive(false);
+            characteristicType.AddLocalisedName(new LocalisedTextBuilder(this.Transaction).WithLocale(defaultLocale).WithText("defaultname").Build());
+            this.Transaction.Derive(false);
 
             Assert.Equal("defaultname", characteristicType.Name);
         }

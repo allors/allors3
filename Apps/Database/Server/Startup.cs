@@ -41,7 +41,7 @@ namespace Allors.Database.Server.Controllers
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IPolicyService, PolicyService>();
             services.AddSingleton<IDatabaseService, DatabaseService>();
-            services.AddScoped<ISessionService, SessionService>();
+            services.AddScoped<ITransactionService, TransactionService>();
 
             services.AddCors(options =>
             {

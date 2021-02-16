@@ -18,13 +18,13 @@ namespace Allors.Database.Domain.Derivations.Default
 
         private Properties properties;
 
-        public DefaultDerivation(ISession session, DerivationConfig config = null)
+        public DefaultDerivation(ITransaction transaction, DerivationConfig config = null)
         {
             this.DerivaitonConfig = config ?? new DerivationConfig();
-            this.Session = session;
+            this.Transaction = transaction;
 
             this.Id = Guid.NewGuid();
-            this.TimeStamp = this.Session.Now();
+            this.TimeStamp = this.Transaction.Now();
 
             this.ChangeSet = new AccumulatedChangeSet();
             this.DerivedObjects = new HashSet<Object>();
@@ -35,7 +35,7 @@ namespace Allors.Database.Domain.Derivations.Default
             this.guard = false;
         }
 
-        public ISession Session { get; }
+        public ITransaction Transaction { get; }
 
         public DerivationConfig DerivaitonConfig { get; }
 

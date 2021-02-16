@@ -7,6 +7,6 @@ namespace Allors.Database.Domain
 {
     public partial class Counter
     {
-        public int NextElfProefValue() => Counters.NextElfProefValue(this.Strategy.Session, this.UniqueId);
+        public int NextElfProefValue() => Counters.NextElfProefValue(this.Strategy.Transaction, this.UniqueId);
     }
 }

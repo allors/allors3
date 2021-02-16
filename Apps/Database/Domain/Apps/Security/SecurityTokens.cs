@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
         {
             var merge = this.Cache.Merger().Action();
 
-            var accessControls = new AccessControls(this.Session);
+            var accessControls = new AccessControls(this.Transaction);
 
             merge(DefaultSecurityTokenId, v =>
             {

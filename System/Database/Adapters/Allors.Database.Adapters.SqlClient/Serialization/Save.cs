@@ -21,7 +21,7 @@ namespace Allors.Database.Adapters.SqlClient
             this.writer = writer;
         }
 
-        internal virtual void Execute(ManagementSession session)
+        internal virtual void Execute(ManagementTransaction transaction)
         {
             var writeDocument = false;
             if (this.writer.WriteState == WriteState.Start)
@@ -36,13 +36,13 @@ namespace Allors.Database.Adapters.SqlClient
 
             this.writer.WriteStartElement(Serialization.Objects);
             this.writer.WriteStartElement(Serialization.Database);
-            this.SaveObjects(session);
+            this.SaveObjects(transaction);
             this.writer.WriteEndElement();
             this.writer.WriteEndElement();
 
             this.writer.WriteStartElement(Serialization.Relations);
             this.writer.WriteStartElement(Serialization.Database);
-            this.SaveRelations(session);
+            this.SaveRelations(transaction);
             this.writer.WriteEndElement();
             this.writer.WriteEndElement();
 
@@ -55,7 +55,7 @@ namespace Allors.Database.Adapters.SqlClient
             }
         }
 
-        protected void SaveObjects(ManagementSession session)
+        protected void SaveObjects(ManagementTransaction transaction)
         {
             var concreteCompositeType = new List<IClass>(this.database.MetaPopulation.DatabaseClasses);
             concreteCompositeType.Sort();
@@ -68,7 +68,7 @@ namespace Allors.Database.Adapters.SqlClient
                 sql += "WHERE " + Mapping.ColumnNameForClass + "=" + Mapping.ParamNameForClass + "\n";
                 sql += "ORDER BY " + Mapping.ColumnNameForObject;
 
-                using (var command = session.Connection.CreateCommand())
+                using (var command = transaction.Connection.CreateCommand())
                 {
                     command.CommandText = sql;
                     command.AddInParameter(Mapping.ParamNameForClass, type.Id);
@@ -104,7 +104,7 @@ namespace Allors.Database.Adapters.SqlClient
             }
         }
 
-        protected void SaveRelations(ManagementSession session)
+        protected void SaveRelations(ManagementTransaction transaction)
         {
             var exclusiverRootClassesByObjectType = new Dictionary<IObjectType, HashSet<IObjectType>>();
 
@@ -181,7 +181,7 @@ namespace Allors.Database.Adapters.SqlClient
                         }
                     }
 
-                    using (var command = session.Connection.CreateCommand())
+                    using (var command = transaction.Connection.CreateCommand())
                     {
                         command.CommandText = sql;
                         using (var reader = command.ExecuteReader())

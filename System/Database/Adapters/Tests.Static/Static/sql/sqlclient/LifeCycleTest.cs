@@ -23,6 +23,6 @@ namespace Allors.Database.Adapters.SqlClient
 
         protected override IDatabase CreatePopulation() => this.profile.CreateDatabase();
 
-        protected override ISession CreateSession() => this.profile.CreateSession();
+        protected override ITransaction CreateTransaction() => this.profile.CreateTransaction();
     }
 }

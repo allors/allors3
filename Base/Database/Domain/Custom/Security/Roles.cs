@@ -24,9 +24,9 @@ namespace Allors.Database.Domain
         {
             base.CustomSetup(setup);
 
-            new RoleBuilder(this.Session).WithName("Operations").WithUniqueId(OperationsId).Build();
-            new RoleBuilder(this.Session).WithName("Procurement").WithUniqueId(ProcurementId).Build();
-            new RoleBuilder(this.Session).WithName("Sales").WithUniqueId(SalesId).Build();
+            new RoleBuilder(this.Transaction).WithName("Operations").WithUniqueId(OperationsId).Build();
+            new RoleBuilder(this.Transaction).WithName("Procurement").WithUniqueId(ProcurementId).Build();
+            new RoleBuilder(this.Transaction).WithName("Sales").WithUniqueId(SalesId).Build();
         }
     }
 }

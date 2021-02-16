@@ -11,7 +11,7 @@ namespace Allors.Database.Domain.Print.SalesOrderModel
     {
         public Model(SalesOrder order)
         {
-            var session = order.Strategy.Session;
+            var transaction = order.Strategy.Transaction;
 
             this.Order = new OrderModel(order);
 
@@ -22,20 +22,20 @@ namespace Allors.Database.Domain.Print.SalesOrderModel
             this.OrderItems = order.SalesOrderItems.Select(v => new OrderItemModel(v)).ToArray();
             this.OrderAdjustments = order.OrderAdjustments.Select(v => new OrderAdjustmentModel(v)).ToArray();
 
-            var paymentTerm = new InvoiceTermTypes(session).PaymentNetDays;
+            var paymentTerm = new InvoiceTermTypes(transaction).PaymentNetDays;
             this.SalesTerms = order.SalesTerms.Where(v => !v.TermType.Equals(paymentTerm)).Select(v => new SalesTermModel(v)).ToArray();
 
             string TakenByCountry = null;
-            if (order.TakenBy.PartyContactMechanisms?.FirstOrDefault(v => v.ContactPurposes.Any(p => Equals(p, new ContactMechanismPurposes(session).RegisteredOffice)))?.ContactMechanism is PostalAddress registeredOffice)
+            if (order.TakenBy.PartyContactMechanisms?.FirstOrDefault(v => v.ContactPurposes.Any(p => Equals(p, new ContactMechanismPurposes(transaction).RegisteredOffice)))?.ContactMechanism is PostalAddress registeredOffice)
             {
                 TakenByCountry = registeredOffice.Country.IsoCode;
             }
 
             if (TakenByCountry == "BE")
             {
-                this.VatClause = order.DerivedVatClause?.LocalisedClauses.FirstOrDefault(v => v.Locale.Equals(new Locales(session).DutchBelgium))?.Text;
+                this.VatClause = order.DerivedVatClause?.LocalisedClauses.FirstOrDefault(v => v.Locale.Equals(new Locales(transaction).DutchBelgium))?.Text;
 
-                if (this.VatClause != null && Equals(order.DerivedVatClause, new VatClauses(session).BeArt14Par2))
+                if (this.VatClause != null && Equals(order.DerivedVatClause, new VatClauses(transaction).BeArt14Par2))
                 {
                     var shipToCountry = order.DerivedShipToAddress?.Country?.Name;
                     this.VatClause = this.VatClause.Replace("{shipToCountry}", shipToCountry);

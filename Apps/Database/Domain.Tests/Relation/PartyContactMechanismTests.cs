@@ -17,37 +17,37 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPartyContactMechanism_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var contactMechanism = new TelecommunicationsNumberBuilder(this.Session).WithAreaCode("0495").WithContactNumber("493499").WithDescription("cellphone").Build();
-            this.Session.Derive();
-            this.Session.Commit();
+            var contactMechanism = new TelecommunicationsNumberBuilder(this.Transaction).WithAreaCode("0495").WithContactNumber("493499").WithDescription("cellphone").Build();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var builder = new PartyContactMechanismBuilder(this.Session);
+            var builder = new PartyContactMechanismBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithContactMechanism(contactMechanism);
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void GivenPartyContactMechanism_WhenPartyIsDeleted_ThenPartyContactMechanismIsDeleted()
         {
-            var contactMechanism = new TelecommunicationsNumberBuilder(this.Session).WithAreaCode("0495").WithContactNumber("493499").WithDescription("cellphone").Build();
-            var partyContactMechanism = new PartyContactMechanismBuilder(this.Session).WithContactMechanism(contactMechanism).Build();
-            var party = new PersonBuilder(this.Session).WithLastName("party").WithPartyContactMechanism(partyContactMechanism).Build();
+            var contactMechanism = new TelecommunicationsNumberBuilder(this.Transaction).WithAreaCode("0495").WithContactNumber("493499").WithDescription("cellphone").Build();
+            var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(contactMechanism).Build();
+            var party = new PersonBuilder(this.Transaction).WithLastName("party").WithPartyContactMechanism(partyContactMechanism).Build();
 
-            this.Session.Derive();
-            var countBefore = this.Session.Extent<PartyContactMechanism>().Count;
+            this.Transaction.Derive();
+            var countBefore = this.Transaction.Extent<PartyContactMechanism>().Count;
 
             party.Delete();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Equal(countBefore - 1, this.Session.Extent<PartyContactMechanism>().Count);
+            Assert.Equal(countBefore - 1, this.Transaction.Extent<PartyContactMechanism>().Count);
         }
     }
 
@@ -58,48 +58,48 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedUseAsDefaultThrowValidationError()
         {
-            var partyContactMechanism = new PartyContactMechanismBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             partyContactMechanism.UseAsDefault = true;
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals("AssertExists: PartyContactMechanism.ContactPurposes"));
         }
 
         [Fact]
         public void ChangedContactPurposesThrowValidationError()
         {
-            var partyContactMechanism = new PartyContactMechanismBuilder(this.Session).WithContactPurpose(new ContactMechanismPurposes(this.Session).SalesOffice).WithUseAsDefault(true).Build();
+            var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction).WithContactPurpose(new ContactMechanismPurposes(this.Transaction).SalesOffice).WithUseAsDefault(true).Build();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.DoesNotContain(errors, e => e.Message.Equals("AssertExists: PartyContactMechanism.ContactPurposes"));
 
             partyContactMechanism.RemoveContactPurposes();
 
-            errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals("AssertExists: PartyContactMechanism.ContactPurposes"));
         }
 
         [Fact]
         public void ChangedUseAsDefaultDeriveUseAsDefault()
         {
-            var party = new PersonBuilder(this.Session).Build();
-            var partyContactMechanism1 = new PartyContactMechanismBuilder(this.Session)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).SalesOffice)
-                .WithContactMechanism(new EmailAddressBuilder(this.Session).Build())
+            var party = new PersonBuilder(this.Transaction).Build();
+            var partyContactMechanism1 = new PartyContactMechanismBuilder(this.Transaction)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).SalesOffice)
+                .WithContactMechanism(new EmailAddressBuilder(this.Transaction).Build())
                 .WithUseAsDefault(true)
                 .Build();
             party.AddPartyContactMechanism(partyContactMechanism1);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var partyContactMechanism2 = new PartyContactMechanismBuilder(this.Session)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).SalesOffice)
-                .WithContactMechanism(new EmailAddressBuilder(this.Session).Build())
+            var partyContactMechanism2 = new PartyContactMechanismBuilder(this.Transaction)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).SalesOffice)
+                .WithContactMechanism(new EmailAddressBuilder(this.Transaction).Build())
                 .WithUseAsDefault(true)
                 .Build();
             party.AddPartyContactMechanism(partyContactMechanism2);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.False(partyContactMechanism1.UseAsDefault);
         }

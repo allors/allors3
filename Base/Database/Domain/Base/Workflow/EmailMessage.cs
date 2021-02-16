@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistDateCreated)
             {
-                this.DateCreated = this.Strategy.Session.Now();
+                this.DateCreated = this.Strategy.Transaction.Now();
             }
         }
     }

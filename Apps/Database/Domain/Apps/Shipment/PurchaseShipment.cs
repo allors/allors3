@@ -18,18 +18,18 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistShipmentState)
             {
-                this.ShipmentState = new ShipmentStates(this.Strategy.Session).Created;
+                this.ShipmentState = new ShipmentStates(this.Strategy.Transaction).Created;
             }
 
             if (!this.ExistEstimatedArrivalDate)
             {
-                this.EstimatedArrivalDate = this.Session().Now().Date;
+                this.EstimatedArrivalDate = this.Transaction().Now().Date;
             }
         }
 
         public void AppsOnInit(ObjectOnInit method)
         {
-            var internalOrganisations = new Organisations(this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
+            var internalOrganisations = new Organisations(this.Strategy.Transaction).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
 
             if (!this.ExistShipToParty && internalOrganisations.Count() == 1)
             {
@@ -46,18 +46,18 @@ namespace Allors.Database.Domain
 
         public void AppsReceive(PurchaseShipmentReceive method)
         {
-            this.ShipmentState = new ShipmentStates(this.Strategy.Session).Received;
-            this.EstimatedArrivalDate = this.Session().Now().Date;
+            this.ShipmentState = new ShipmentStates(this.Strategy.Transaction).Received;
+            this.EstimatedArrivalDate = this.Transaction().Now().Date;
 
             foreach (ShipmentItem shipmentItem in this.ShipmentItems)
             {
-                shipmentItem.ShipmentItemState = new ShipmentItemStates(this.Session()).Received;
+                shipmentItem.ShipmentItemState = new ShipmentItemStates(this.Transaction()).Received;
 
                 if (!shipmentItem.ExistShipmentReceiptWhereShipmentItem)
                 {
                     if (!shipmentItem.ExistOrderShipmentsWhereShipmentItem)
                     {
-                        new ShipmentReceiptBuilder(this.Session())
+                        new ShipmentReceiptBuilder(this.Transaction())
                             .WithQuantityAccepted(shipmentItem.Quantity)
                             .WithShipmentItem(shipmentItem)
                             .WithFacility(shipmentItem.StoredInFacility)
@@ -67,7 +67,7 @@ namespace Allors.Database.Domain
                     {
                         foreach (OrderShipment orderShipment in shipmentItem.OrderShipmentsWhereShipmentItem)
                         {
-                            new ShipmentReceiptBuilder(this.Session())
+                            new ShipmentReceiptBuilder(this.Transaction())
                                 .WithQuantityAccepted(orderShipment.Quantity)
                                 .WithOrderItem(orderShipment.OrderItem)
                                 .WithShipmentItem(shipmentItem)
@@ -79,34 +79,34 @@ namespace Allors.Database.Domain
 
                 if (shipmentItem.Part.InventoryItemKind.IsSerialised)
                 {
-                    new InventoryItemTransactionBuilder(this.Session())
+                    new InventoryItemTransactionBuilder(this.Transaction())
                         .WithPart(shipmentItem.Part)
                         .WithSerialisedItem(shipmentItem.SerialisedItem)
                         .WithUnitOfMeasure(shipmentItem.Part.UnitOfMeasure)
                         .WithFacility(shipmentItem.StoredInFacility)
-                        .WithReason(new InventoryTransactionReasons(this.Strategy.Session).IncomingShipment)
+                        .WithReason(new InventoryTransactionReasons(this.Strategy.Transaction).IncomingShipment)
                         .WithShipmentItem(shipmentItem)
-                        .WithSerialisedInventoryItemState(new SerialisedInventoryItemStates(this.Session()).Good)
+                        .WithSerialisedInventoryItemState(new SerialisedInventoryItemStates(this.Transaction()).Good)
                         .WithQuantity(1)
                         .Build();
 
-                    shipmentItem.SerialisedItem.SerialisedItemAvailability = new SerialisedItemAvailabilities(this.Session()).Available;
+                    shipmentItem.SerialisedItem.SerialisedItemAvailability = new SerialisedItemAvailabilities(this.Transaction()).Available;
                     shipmentItem.SerialisedItem.AvailableForSale = true;
 
-                    if ((this.ShipToParty as InternalOrganisation)?.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(this.Session()).PurchaseshipmentReceive) == true)
+                    if ((this.ShipToParty as InternalOrganisation)?.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(this.Transaction()).PurchaseshipmentReceive) == true)
                     {
                         shipmentItem.SerialisedItem.OwnedBy = this.ShipToParty;
-                        shipmentItem.SerialisedItem.Ownership = new Ownerships(this.Session()).Own;
+                        shipmentItem.SerialisedItem.Ownership = new Ownerships(this.Transaction()).Own;
                     }
                 }
                 else
                 {
-                    new InventoryItemTransactionBuilder(this.Session())
+                    new InventoryItemTransactionBuilder(this.Transaction())
                         .WithPart(shipmentItem.Part)
                         .WithUnitOfMeasure(shipmentItem.Part.UnitOfMeasure)
                         .WithFacility(shipmentItem.StoredInFacility)
-                        .WithReason(new InventoryTransactionReasons(this.Strategy.Session).IncomingShipment)
-                        .WithNonSerialisedInventoryItemState(new NonSerialisedInventoryItemStates(this.Session()).Good)
+                        .WithReason(new InventoryTransactionReasons(this.Strategy.Transaction).IncomingShipment)
+                        .WithNonSerialisedInventoryItemState(new NonSerialisedInventoryItemStates(this.Transaction()).Good)
                         .WithShipmentItem(shipmentItem)
                         .WithQuantity(shipmentItem.Quantity)
                         .WithCost(shipmentItem.UnitPurchasePrice)

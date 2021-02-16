@@ -12,7 +12,7 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static ProductQuoteBuilder WithDefaults(this ProductQuoteBuilder @this, Organisation internalOrganisation)
         {
-            var faker = @this.Session.Faker();
+            var faker = @this.Transaction.Faker();
 
             var customer = faker.Random.ListItem(internalOrganisation.ActiveCustomers);
 
@@ -21,10 +21,10 @@ namespace Allors.Database.Domain.TestPopulation
             @this.WithComment(faker.Lorem.Sentence());
             @this.WithInternalComment(faker.Lorem.Sentence());
             @this.WithIssuer(internalOrganisation);
-            @this.WithIssueDate(@this.Session.Now().AddDays(-2));
-            @this.WithValidFromDate(@this.Session.Now().AddDays(-2));
-            @this.WithValidThroughDate(@this.Session.Now().AddDays(2));
-            @this.WithRequiredResponseDate(@this.Session.Now().AddDays(2));
+            @this.WithIssueDate(@this.Transaction.Now().AddDays(-2));
+            @this.WithValidFromDate(@this.Transaction.Now().AddDays(-2));
+            @this.WithValidThroughDate(@this.Transaction.Now().AddDays(2));
+            @this.WithRequiredResponseDate(@this.Transaction.Now().AddDays(2));
             @this.WithReceiver(customer);
             @this.WithFullfillContactMechanism(customer.GeneralCorrespondence);
 

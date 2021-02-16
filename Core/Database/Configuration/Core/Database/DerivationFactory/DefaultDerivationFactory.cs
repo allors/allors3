@@ -11,6 +11,6 @@ namespace Allors.Database.Configuration
 
     public class DefaultDerivationFactory : IDerivationFactory
     {
-        public IDerivation CreateDerivation(ISession session) => new DefaultDerivation(session);
+        public IDerivation CreateDerivation(ITransaction transaction) => new DefaultDerivation(transaction);
     }
 }

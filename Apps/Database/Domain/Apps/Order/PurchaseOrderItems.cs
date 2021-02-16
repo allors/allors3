@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
 
         protected override void AppsSecure(Security config)
         {
-            var itemStates = new PurchaseOrderItemStates(this.Session);
+            var itemStates = new PurchaseOrderItemStates(this.Transaction);
             var created = itemStates.Created;
             var onHold = itemStates.OnHold;
             var cancelled = itemStates.Cancelled;

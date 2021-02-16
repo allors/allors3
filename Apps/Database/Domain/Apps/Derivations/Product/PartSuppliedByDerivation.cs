@@ -29,8 +29,8 @@ namespace Allors.Database.Domain
                 @this.RemoveSuppliedBy();
                 foreach (SupplierOffering supplierOffering in @this.SupplierOfferingsWherePart)
                 {
-                    if (supplierOffering.FromDate <= @this.Session().Now()
-                        && (!supplierOffering.ExistThroughDate || supplierOffering.ThroughDate >= @this.Session().Now()))
+                    if (supplierOffering.FromDate <= @this.Transaction().Now()
+                        && (!supplierOffering.ExistThroughDate || supplierOffering.ThroughDate >= @this.Transaction().Now()))
                     {
                         @this.AddSuppliedBy(supplierOffering.Supplier);
                     }

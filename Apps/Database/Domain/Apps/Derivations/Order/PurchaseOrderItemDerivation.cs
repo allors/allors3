@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
-            var session = cycle.Session;
+            var transaction = cycle.Transaction;
 
             foreach (var @this in matches.Cast<PurchaseOrderItem>())
             {
@@ -77,7 +77,7 @@ namespace Allors.Database.Domain
                     && @this.ExistPart
                     && !purchaseOrder.PurchaseOrderItemsByProduct.Any(v => v.UnifiedProduct.Equals(@this.Part)))
                 {
-                    purchaseOrder.AddPurchaseOrderItemsByProduct(new PurchaseOrderItemByProductBuilder(session).WithUnifiedProduct(@this.Part).Build());
+                    purchaseOrder.AddPurchaseOrderItemsByProduct(new PurchaseOrderItemByProductBuilder(transaction).WithUnifiedProduct(@this.Part).Build());
                 }
             }
         }

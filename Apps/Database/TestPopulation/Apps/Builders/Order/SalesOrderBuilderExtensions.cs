@@ -19,10 +19,10 @@ namespace Allors.Database.Domain.TestPopulation
          **/
         public static SalesOrderBuilder WithOrganisationInternalDefaults(this SalesOrderBuilder @this, Organisation sellerOrganisation)
         {
-            var m = @this.Session.Database.Context().M;
-            var faker = @this.Session.Faker();
+            var m = @this.Transaction.Database.Context().M;
+            var faker = @this.Transaction.Faker();
 
-            var internalOrganisations = @this.Session.Extent<Organisation>();
+            var internalOrganisations = @this.Transaction.Extent<Organisation>();
             // Organisation of type Internal Organisation
             internalOrganisations.Filter.AddEquals(m.Organisation.IsInternalOrganisation, true);
 
@@ -32,7 +32,7 @@ namespace Allors.Database.Domain.TestPopulation
             var endCustomer = faker.Random.ListItem(shipToCustomer.ActiveCustomers.Where(v => v.GetType().Name == "Organisation").ToList());
             var endContact = endCustomer is Person endContactPerson ? endContactPerson : endCustomer.CurrentContacts.FirstOrDefault();
             var shipToContact = shipToCustomer.CurrentContacts.FirstOrDefault();
-            var paymentMethod = faker.Random.ListItem(@this.Session.Extent<PaymentMethod>());
+            var paymentMethod = faker.Random.ListItem(@this.Transaction.Extent<PaymentMethod>());
 
             @this.WithPartiallyShip(true);
             @this.WithCustomerReference(faker.Random.Words(10));
@@ -56,9 +56,9 @@ namespace Allors.Database.Domain.TestPopulation
             @this.WithAssignedShipFromAddress(sellerOrganisation.ShippingAddress);
             @this.WithShipToContactPerson(shipToContact);
             @this.WithAssignedPaymentMethod(paymentMethod);
-            @this.WithSalesTerm(new IncoTermBuilder(@this.Session).WithDefaults().Build());
-            @this.WithSalesTerm(new InvoiceTermBuilder(@this.Session).WithDefaults().Build());
-            @this.WithSalesTerm(new OrderTermBuilder(@this.Session).WithDefaults().Build());
+            @this.WithSalesTerm(new IncoTermBuilder(@this.Transaction).WithDefaults().Build());
+            @this.WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaults().Build());
+            @this.WithSalesTerm(new OrderTermBuilder(@this.Transaction).WithDefaults().Build());
 
             return @this;
         }
@@ -71,12 +71,12 @@ namespace Allors.Database.Domain.TestPopulation
          **/
         public static SalesOrderBuilder WithOrganisationExternalDefaults(this SalesOrderBuilder @this, Organisation sellerOrganisation)
         {
-            var faker = @this.Session.Faker();
+            var faker = @this.Transaction.Faker();
 
             var shipToCustomer = faker.Random.ListItem(sellerOrganisation.ActiveCustomers.Where(v => v.GetType().Name == "Organisation").ToList());
             var billToCustomer = shipToCustomer;
             var shipToContact = shipToCustomer is Person shipToContactPerson ? shipToContactPerson : shipToCustomer.CurrentContacts.FirstOrDefault();
-            var paymentMethod = faker.Random.ListItem(@this.Session.Extent<PaymentMethod>());
+            var paymentMethod = faker.Random.ListItem(@this.Transaction.Extent<PaymentMethod>());
 
             @this.WithPartiallyShip(true);
             @this.WithCustomerReference(faker.Random.Words(10));
@@ -94,9 +94,9 @@ namespace Allors.Database.Domain.TestPopulation
             @this.WithAssignedShipFromAddress(sellerOrganisation.ShippingAddress);
             @this.WithShipToContactPerson(shipToContact);
             @this.WithAssignedPaymentMethod(paymentMethod);
-            @this.WithSalesTerm(new IncoTermBuilder(@this.Session).WithDefaults().Build());
-            @this.WithSalesTerm(new InvoiceTermBuilder(@this.Session).WithDefaults().Build());
-            @this.WithSalesTerm(new OrderTermBuilder(@this.Session).WithDefaults().Build());
+            @this.WithSalesTerm(new IncoTermBuilder(@this.Transaction).WithDefaults().Build());
+            @this.WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaults().Build());
+            @this.WithSalesTerm(new OrderTermBuilder(@this.Transaction).WithDefaults().Build());
 
             return @this;
         }
@@ -109,11 +109,11 @@ namespace Allors.Database.Domain.TestPopulation
          **/
         public static SalesOrderBuilder WithPersonExternalDefaults(this SalesOrderBuilder @this, Organisation sellerOrganisation)
         {
-            var faker = @this.Session.Faker();
+            var faker = @this.Transaction.Faker();
 
             var shipToCustomer = faker.Random.ListItem(sellerOrganisation.ActiveCustomers.Where(v => v.GetType().Name == "Person").ToList());
             var billToCustomer = shipToCustomer;
-            var paymentMethod = faker.Random.ListItem(@this.Session.Extent<PaymentMethod>());
+            var paymentMethod = faker.Random.ListItem(@this.Transaction.Extent<PaymentMethod>());
 
             @this.WithPartiallyShip(true);
             @this.WithCustomerReference(faker.Random.Words(16));
@@ -129,9 +129,9 @@ namespace Allors.Database.Domain.TestPopulation
             @this.WithAssignedShipToAddress(shipToCustomer.ShippingAddress);
             @this.WithAssignedShipFromAddress(sellerOrganisation.ShippingAddress);
             @this.WithAssignedPaymentMethod(paymentMethod);
-            @this.WithSalesTerm(new IncoTermBuilder(@this.Session).WithDefaults().Build());
-            @this.WithSalesTerm(new InvoiceTermBuilder(@this.Session).WithDefaults().Build());
-            @this.WithSalesTerm(new OrderTermBuilder(@this.Session).WithDefaults().Build());
+            @this.WithSalesTerm(new IncoTermBuilder(@this.Transaction).WithDefaults().Build());
+            @this.WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaults().Build());
+            @this.WithSalesTerm(new OrderTermBuilder(@this.Transaction).WithDefaults().Build());
 
             return @this;
         }

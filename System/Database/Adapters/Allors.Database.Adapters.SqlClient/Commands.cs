@@ -2,7 +2,6 @@
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
-// <summary>Defines the Session type.</summary>
 
 namespace Allors.Database.Adapters.SqlClient
 {
@@ -16,7 +15,7 @@ namespace Allors.Database.Adapters.SqlClient
 
     public sealed class Commands
     {
-        private readonly Session session;
+        private readonly Transaction transaction;
 
         private readonly Connection connection;
 
@@ -42,13 +41,13 @@ namespace Allors.Database.Adapters.SqlClient
         private Command getVersion;
         private Command updateVersions;
 
-        internal Commands(Session session, Connection connection)
+        internal Commands(Transaction transaction, Connection connection)
         {
-            this.session = session;
+            this.transaction = transaction;
             this.connection = connection;
         }
 
-        private Database Database => this.session.Database;
+        private Database Database => this.transaction.Database;
 
         internal void ResetCommands()
         {
@@ -316,7 +315,7 @@ namespace Allors.Database.Adapters.SqlClient
             }
             else
             {
-                var objectId = this.session.State.GetObjectIdForExistingObject(result.ToString());
+                var objectId = this.transaction.State.GetObjectIdForExistingObject(result.ToString());
                 // TODO: Should add to objectsToLoad
                 roles.CachedObject.SetValue(roleType, objectId);
             }
@@ -380,7 +379,7 @@ namespace Allors.Database.Adapters.SqlClient
             {
                 while (reader.Read())
                 {
-                    var id = this.session.State.GetObjectIdForExistingObject(reader[0].ToString());
+                    var id = this.transaction.State.GetObjectIdForExistingObject(reader[0].ToString());
                     objectIds.Add(id);
                 }
             }
@@ -477,11 +476,11 @@ namespace Allors.Database.Adapters.SqlClient
 
             if (result != null && result != DBNull.Value)
             {
-                var id = this.session.State.GetObjectIdForExistingObject(result.ToString());
+                var id = this.transaction.State.GetObjectIdForExistingObject(result.ToString());
 
                 associationObject = associationType.ObjectType.ExistExclusiveDatabaseClass ?
-                                        this.session.State.GetOrCreateReferenceForExistingObject(associationType.ObjectType.ExclusiveDatabaseClass, id, this.session) :
-                                        this.session.State.GetOrCreateReferenceForExistingObject(id, this.session);
+                                        this.transaction.State.GetOrCreateReferenceForExistingObject(associationType.ObjectType.ExclusiveDatabaseClass, id, this.transaction) :
+                                        this.transaction.State.GetOrCreateReferenceForExistingObject(id, this.transaction);
             }
 
             return associationObject;
@@ -511,7 +510,7 @@ namespace Allors.Database.Adapters.SqlClient
             {
                 while (reader.Read())
                 {
-                    var id = this.session.State.GetObjectIdForExistingObject(reader[0].ToString());
+                    var id = this.transaction.State.GetObjectIdForExistingObject(reader[0].ToString());
                     objectIds.Add(id);
                 }
             }
@@ -539,7 +538,7 @@ namespace Allors.Database.Adapters.SqlClient
 
             var result = command.ExecuteScalar();
             var objectId = long.Parse(result.ToString());
-            return this.session.State.CreateReferenceForNewObject(@class, objectId, this.session);
+            return this.transaction.State.CreateReferenceForNewObject(@class, objectId, this.transaction);
         }
 
         internal IList<Reference> CreateObjects(IClass @class, int count)
@@ -578,7 +577,7 @@ namespace Allors.Database.Adapters.SqlClient
             foreach (var id in objectIds)
             {
                 var objectId = long.Parse(id.ToString());
-                var strategySql = this.session.State.CreateReferenceForNewObject(@class, objectId, this.session);
+                var strategySql = this.transaction.State.CreateReferenceForNewObject(@class, objectId, this.transaction);
                 strategies.Add(strategySql);
             }
 
@@ -612,7 +611,7 @@ namespace Allors.Database.Adapters.SqlClient
                     var version = reader.GetInt64(1);
 
                     var type = (IClass)this.Database.MetaPopulation.Find(classId);
-                    return this.session.State.GetOrCreateReferenceForExistingObject(type, objectId, version, this.session);
+                    return this.transaction.State.GetOrCreateReferenceForExistingObject(type, objectId, version, this.transaction);
                 }
 
                 return null;
@@ -646,7 +645,7 @@ namespace Allors.Database.Adapters.SqlClient
 
                     var objectId = long.Parse(objectIdString);
                     var type = (IClass)this.Database.ObjectFactory.GetObjectTypeForType(classId);
-                    var reference = this.session.State.GetOrCreateReferenceForExistingObject(type, objectId, version, this.session);
+                    var reference = this.transaction.State.GetOrCreateReferenceForExistingObject(type, objectId, version, this.transaction);
 
                     yield return reference;
                 }

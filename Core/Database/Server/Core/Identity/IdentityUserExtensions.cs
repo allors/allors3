@@ -55,6 +55,6 @@ namespace Allors.Security
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public static User User(this IdentityUser @this, ISession session) => (User)session.Instantiate(@this.Id);
+        public static User User(this IdentityUser @this, ITransaction transaction) => (User)transaction.Instantiate(@this.Id);
     }
 }

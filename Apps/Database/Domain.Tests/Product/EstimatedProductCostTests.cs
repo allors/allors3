@@ -16,70 +16,70 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenEstimatedLaborCost_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var builder = new EstimatedLaborCostBuilder(this.Session);
+            var builder = new EstimatedLaborCostBuilder(this.Transaction);
             var laborCost = builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithCost(1);
             laborCost = builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            builder.WithCurrency(new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR"));
+            builder.WithCurrency(new Currencies(this.Transaction).FindBy(this.M.Currency.IsoCode, "EUR"));
             laborCost = builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void GivenEstimatedMaterialCost_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var builder = new EstimatedMaterialCostBuilder(this.Session);
+            var builder = new EstimatedMaterialCostBuilder(this.Transaction);
             var materialCost = builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithCost(1);
             materialCost = builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            builder.WithCurrency(new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR"));
+            builder.WithCurrency(new Currencies(this.Transaction).FindBy(this.M.Currency.IsoCode, "EUR"));
             materialCost = builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void GivenEstimatedOtherCost_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var builder = new EstimatedOtherCostBuilder(this.Session);
+            var builder = new EstimatedOtherCostBuilder(this.Transaction);
             var otherCost = builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithCost(1);
             otherCost = builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            builder.WithCurrency(new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR"));
+            builder.WithCurrency(new Currencies(this.Transaction).FindBy(this.M.Currency.IsoCode, "EUR"));
             otherCost = builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
     }
 }

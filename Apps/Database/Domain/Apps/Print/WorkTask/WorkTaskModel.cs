@@ -17,7 +17,7 @@ namespace Allors.Database.Domain.Print.WorkTaskModel
             this.Description = workTask.Description?.Split('\n');
             this.WorkDone = workTask.WorkDone?.Split('\n');
 
-            this.Date = (workTask.ThroughDate() ?? workTask.Strategy.Session.Now()).ToString("yyyy-MM-dd");
+            this.Date = (workTask.ThroughDate() ?? workTask.Strategy.Transaction.Now()).ToString("yyyy-MM-dd");
             this.Purpose = string.Join(", ", workTask.WorkEffortPurposes.Select(v => v.Name));
             this.Facility = workTask.Facility?.Name;
             this.ContactName = workTask.ContactPerson?.PartyName;

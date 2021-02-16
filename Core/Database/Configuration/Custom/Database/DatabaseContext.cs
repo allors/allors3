@@ -73,7 +73,7 @@ namespace Allors.Database.Configuration
 
         public IDerivationFactory DerivationFactory { get; protected set; }
 
-        public ISessionLifecycle CreateSessionInstance() => new DefaultSessionContext(this.httpContextAccessor);
+        public ITransactionLifecycle CreateTransactionInstance() => new DefaultTransactionContext(this.httpContextAccessor);
 
         public void Dispose()
         {

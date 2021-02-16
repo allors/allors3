@@ -23,27 +23,27 @@ namespace Allors.Database.Domain
 
         private void CustomOnPostSetup()
         {
-            var avatar = new Medias(this.session).Avatar;
+            var avatar = new Medias(this.transaction).Avatar;
 
-            var place = new PlaceBuilder(this.session).WithPostalCode("X").WithCity("London").WithCountry(new Countries(this.session).CountryByIsoCode["GB"]).Build();
-            var address = new HomeAddressBuilder(this.session).WithStreet("Main Street").WithHouseNumber("1").WithPlace(place).Build();
+            var place = new PlaceBuilder(this.transaction).WithPostalCode("X").WithCity("London").WithCountry(new Countries(this.transaction).CountryByIsoCode["GB"]).Build();
+            var address = new HomeAddressBuilder(this.transaction).WithStreet("Main Street").WithHouseNumber("1").WithPlace(place).Build();
 
-            var genders = new Genders(this.session);
+            var genders = new Genders(this.transaction);
 
-            var jane = new PersonBuilder(this.session).WithMainAddress(address).WithFirstName("Jane").WithLastName("Doe").WithUserName("jane@example.com").WithPhoto(avatar).WithGender(genders.Female).Build();
-            var john = new PersonBuilder(this.session).WithFirstName("John").WithLastName("Doe").WithUserName("john@example.com").WithPhoto(avatar).WithGender(genders.Male).Build();
-            var jenny = new PersonBuilder(this.session).WithFirstName("Jenny").WithLastName("Doe").WithUserName("jenny@example.com").WithPhoto(avatar).WithGender(genders.Other).Build();
+            var jane = new PersonBuilder(this.transaction).WithMainAddress(address).WithFirstName("Jane").WithLastName("Doe").WithUserName("jane@example.com").WithPhoto(avatar).WithGender(genders.Female).Build();
+            var john = new PersonBuilder(this.transaction).WithFirstName("John").WithLastName("Doe").WithUserName("john@example.com").WithPhoto(avatar).WithGender(genders.Male).Build();
+            var jenny = new PersonBuilder(this.transaction).WithFirstName("Jenny").WithLastName("Doe").WithUserName("jenny@example.com").WithPhoto(avatar).WithGender(genders.Other).Build();
 
             jane.SetPassword("jane");
             john.SetPassword("john");
             jenny.SetPassword("jenny");
 
-            new UserGroups(this.session).Administrators.AddMember(jane);
-            new UserGroups(this.session).Creators.AddMember(jane);
-            new UserGroups(this.session).Creators.AddMember(john);
-            new UserGroups(this.session).Creators.AddMember(jenny);
+            new UserGroups(this.transaction).Administrators.AddMember(jane);
+            new UserGroups(this.transaction).Creators.AddMember(jane);
+            new UserGroups(this.transaction).Creators.AddMember(john);
+            new UserGroups(this.transaction).Creators.AddMember(jenny);
 
-            var acme = new OrganisationBuilder(this.session)
+            var acme = new OrganisationBuilder(this.transaction)
                 .WithName("Acme")
                 .WithOwner(jane)
                 .WithEmployee(john)
@@ -52,7 +52,7 @@ namespace Allors.Database.Domain
 
             for (var i = 0; i < 100; i++)
             {
-                new OrganisationBuilder(this.session)
+                new OrganisationBuilder(this.transaction)
                     .WithName($"Organisation-{i}")
                     .WithOwner(john)
                     .WithEmployee(jenny)
@@ -61,11 +61,11 @@ namespace Allors.Database.Domain
             }
 
             // Create cycles between Organisation and Person
-            var cycleOrganisation1 = new OrganisationBuilder(this.session).WithName("Organisatin Cycle One").Build();
-            var cycleOrganisation2 = new OrganisationBuilder(this.session).WithName("Organisatin Cycle Two").Build();
+            var cycleOrganisation1 = new OrganisationBuilder(this.transaction).WithName("Organisatin Cycle One").Build();
+            var cycleOrganisation2 = new OrganisationBuilder(this.transaction).WithName("Organisatin Cycle Two").Build();
 
-            var cyclePerson1 = new PersonBuilder(this.session).WithFirstName("Person Cycle").WithLastName("One").WithUserName("cycle1@one.org").Build();
-            var cyclePerson2 = new PersonBuilder(this.session).WithFirstName("Person Cycle").WithLastName("Two").WithUserName("cycle2@one.org").Build();
+            var cyclePerson1 = new PersonBuilder(this.transaction).WithFirstName("Person Cycle").WithLastName("One").WithUserName("cycle1@one.org").Build();
+            var cyclePerson2 = new PersonBuilder(this.transaction).WithFirstName("Person Cycle").WithLastName("Two").WithUserName("cycle2@one.org").Build();
 
             // One
             cycleOrganisation1.CycleOne = cyclePerson1;
@@ -88,7 +88,7 @@ namespace Allors.Database.Domain
             cyclePerson2.AddCycleMany(cycleOrganisation2);
 
             // MediaTyped
-            var mediaTyped = new MediaTypedBuilder(this.session).WithMarkdown(@"
+            var mediaTyped = new MediaTypedBuilder(this.transaction).WithMarkdown(@"
 # Markdown
 1.  List item one.
 

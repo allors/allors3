@@ -15,16 +15,16 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenUnitOfMeasure_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var builder = new UnitOfMeasureBuilder(this.Session);
+            var builder = new UnitOfMeasureBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithName("Mt");
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
     }
 }

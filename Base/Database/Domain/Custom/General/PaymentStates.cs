@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
 
         private UniquelyIdentifiableCache<PaymentState> cache;
 
-        public Cache<Guid, PaymentState> Cache => this.cache ??= new UniquelyIdentifiableCache<PaymentState>(this.Session);
+        public Cache<Guid, PaymentState> Cache => this.cache ??= new UniquelyIdentifiableCache<PaymentState>(this.Transaction);
 
         public PaymentState Unpaid => this.Cache[UnpaidId];
 

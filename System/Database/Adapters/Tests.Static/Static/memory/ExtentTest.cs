@@ -15,6 +15,6 @@ namespace Allors.Database.Adapters.Memory
 
         public override void Dispose() => this.profile.Dispose();
 
-        protected override ISession CreateSession() => this.profile.CreateSession();
+        protected override ITransaction CreateTransaction() => this.profile.CreateTransaction();
     }
 }

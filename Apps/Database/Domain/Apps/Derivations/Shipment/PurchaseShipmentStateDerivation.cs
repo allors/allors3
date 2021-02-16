@@ -28,9 +28,9 @@ namespace Allors.Database.Domain
                 if (@this.ShipmentItems.Any()
                     && @this.ShipmentItems.All(v => v.ExistShipmentReceiptWhereShipmentItem
                     && v.ShipmentReceiptWhereShipmentItem.QuantityAccepted.Equals(v.ShipmentReceiptWhereShipmentItem.OrderItem?.QuantityOrdered))
-                    && @this.ShipmentItems.All(v => v.ShipmentItemState.Equals(new ShipmentItemStates(@this.Strategy.Session).Received)))
+                    && @this.ShipmentItems.All(v => v.ShipmentItemState.Equals(new ShipmentItemStates(@this.Strategy.Transaction).Received)))
                 {
-                    @this.ShipmentState = new ShipmentStates(@this.Strategy.Session).Received;
+                    @this.ShipmentState = new ShipmentStates(@this.Strategy.Transaction).Received;
                 }
             }
         }

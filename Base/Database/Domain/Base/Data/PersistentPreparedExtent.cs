@@ -19,7 +19,7 @@ namespace Allors.Database.Domain
             {
                 using TextReader reader = new StringReader(this.Content);
                 var protocolExtent = (Allors.Protocol.Json.Data.Extent)XmlSerializer.Deserialize(reader);
-                return protocolExtent.FromJson(this.Strategy.Session);
+                return protocolExtent.FromJson(this.Strategy.Transaction);
             }
 
             set

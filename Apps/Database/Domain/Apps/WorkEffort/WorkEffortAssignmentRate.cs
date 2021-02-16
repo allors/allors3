@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistFrequency)
             {
-                this.Frequency = new TimeFrequencies(this.Strategy.Session).Hour;
+                this.Frequency = new TimeFrequencies(this.Strategy.Transaction).Hour;
             }
         }
 

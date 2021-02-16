@@ -23,7 +23,7 @@ namespace Allors.Database.Domain
 
         public UserGroup Guests => this.Cache[GuestsId];
 
-        private UniquelyIdentifiableCache<UserGroup> Cache => this.cache ??= new UniquelyIdentifiableCache<UserGroup>(this.Session);
+        private UniquelyIdentifiableCache<UserGroup> Cache => this.cache ??= new UniquelyIdentifiableCache<UserGroup>(this.Transaction);
 
         protected override void CoreSetup(Setup setup)
         {

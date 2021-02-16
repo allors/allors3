@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
             Product product,
             DateTime date)
         {
-            var m = salesOrder.Strategy.Session.Database.Context().M;
+            var m = salesOrder.Strategy.Transaction.Database.Context().M;
 
             var productBasePrice = 0M;
             var productDiscount = 0M;
@@ -54,7 +54,7 @@ namespace Allors.Database.Domain
                 }
             }
 
-            var currentPriceComponents = new PriceComponents(product.Strategy.Session).CurrentPriceComponents(date);
+            var currentPriceComponents = new PriceComponents(product.Strategy.Transaction).CurrentPriceComponents(date);
             var priceComponents = product.GetPriceComponents(currentPriceComponents);
 
             foreach (var priceComponent in priceComponents)

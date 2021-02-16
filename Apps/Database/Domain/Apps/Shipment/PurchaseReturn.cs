@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistEstimatedShipDate)
             {
-                this.EstimatedShipDate = this.Session().Now().Date;
+                this.EstimatedShipDate = this.Transaction().Now().Date;
             }
         }
 
@@ -26,11 +26,11 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistShipmentState)
             {
-                this.ShipmentState = new ShipmentStates(this.Strategy.Session).Created;
+                this.ShipmentState = new ShipmentStates(this.Strategy.Transaction).Created;
 
                 if (!this.ExistShipFromParty)
                 {
-                    var internalOrganisations = new Organisations(this.Strategy.Session).InternalOrganisations();
+                    var internalOrganisations = new Organisations(this.Strategy.Transaction).InternalOrganisations();
                     if (internalOrganisations.Count() == 1)
                     {
                         this.ShipFromParty = internalOrganisations.First();
@@ -39,7 +39,7 @@ namespace Allors.Database.Domain
 
                 if (!this.ExistStore && this.ExistShipFromParty)
                 {
-                    var stores = new Stores(this.Strategy.Session).Extent();
+                    var stores = new Stores(this.Strategy.Transaction).Extent();
                     stores.Filter.AddEquals(this.M.Store.InternalOrganisation, this.ShipFromParty);
 
                     if (stores.Any())

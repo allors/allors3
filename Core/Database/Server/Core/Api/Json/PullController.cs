@@ -55,8 +55,8 @@ namespace Allors.Database.Protocol.Json
                 {
                     try
                     {
-                        using var session = this.DatabaseService.Database.CreateSession();
-                        var api = new Api(session, this.WorkspaceService.Name);
+                        using var transaction = this.DatabaseService.Database.CreateTransaction();
+                        var api = new Api(transaction, this.WorkspaceService.Name);
                         return api.Pull(request);
                     }
                     catch (Exception e)

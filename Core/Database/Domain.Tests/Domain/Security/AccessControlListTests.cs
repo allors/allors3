@@ -20,15 +20,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenAnAuthenticationPopulatonWhenCreatingAnAccessListForGuestThenPermissionIsDenied()
         {
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var sessions = new[] { this.Session };
+            var sessions = new[] { this.Transaction };
             foreach (var session in sessions)
             {
                 session.Commit();
 
-                var guest = new Users(this.Session).FindBy(this.M.User.UserName, "guest@example.com");
+                var guest = new Users(this.Transaction).FindBy(this.M.User.UserName, "guest@example.com");
                 var acls = new DatabaseAccessControlLists(guest);
                 foreach (Object aco in (IObject[])session.Extent(this.M.Organisation.ObjectType))
                 {
@@ -47,14 +47,14 @@ namespace Allors.Database.Domain.Tests
         public void GivenAUserAndAnAccessControlledObjectWhenGettingTheAccessListThenUserHasAccessToThePermissionsInTheRole()
         {
             var permission = this.FindPermission(this.M.Organisation.Name, Operations.Read);
-            var role = new RoleBuilder(this.Session).WithName("Role").WithPermission(permission).Build();
-            var person = new PersonBuilder(this.Session).WithFirstName("John").WithLastName("Doe").Build();
-            new AccessControlBuilder(this.Session).WithSubject(person).WithRole(role).Build();
+            var role = new RoleBuilder(this.Transaction).WithName("Role").WithPermission(permission).Build();
+            var person = new PersonBuilder(this.Transaction).WithFirstName("John").WithLastName("Doe").Build();
+            new AccessControlBuilder(this.Transaction).WithSubject(person).WithRole(role).Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var sessions = new[] { this.Session };
+            var sessions = new[] { this.Transaction };
             foreach (var session in sessions)
             {
                 session.Commit();
@@ -67,9 +67,9 @@ namespace Allors.Database.Domain.Tests
                 var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First);
                 token.AddAccessControl(accessControl);
 
-                this.Session.Derive();
+                this.Transaction.Derive();
 
-                Assert.False(this.Session.Derive(false).HasErrors);
+                Assert.False(this.Transaction.Derive(false).HasErrors);
 
                 var acl = new DatabaseAccessControlLists(person)[organisation];
 
@@ -83,16 +83,16 @@ namespace Allors.Database.Domain.Tests
         public void GivenAUserGroupAndAnAccessControlledObjectWhenGettingTheAccessListThenUserHasAccessToThePermissionsInTheRole()
         {
             var permission = this.FindPermission(this.M.Organisation.Name, Operations.Read);
-            var role = new RoleBuilder(this.Session).WithName("Role").WithPermission(permission).Build();
-            var person = new PersonBuilder(this.Session).WithFirstName("John").WithLastName("Doe").Build();
-            new UserGroupBuilder(this.Session).WithName("Group").WithMember(person).Build();
+            var role = new RoleBuilder(this.Transaction).WithName("Role").WithPermission(permission).Build();
+            var person = new PersonBuilder(this.Transaction).WithFirstName("John").WithLastName("Doe").Build();
+            new UserGroupBuilder(this.Transaction).WithName("Group").WithMember(person).Build();
 
-            new AccessControlBuilder(this.Session).WithSubject(person).WithRole(role).Build();
+            new AccessControlBuilder(this.Transaction).WithSubject(person).WithRole(role).Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var sessions = new[] { this.Session };
+            var sessions = new[] { this.Transaction };
             foreach (var session in sessions)
             {
                 session.Commit();
@@ -105,7 +105,7 @@ namespace Allors.Database.Domain.Tests
                 var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First);
                 token.AddAccessControl(accessControl);
 
-                Assert.False(this.Session.Derive(false).HasErrors);
+                Assert.False(this.Transaction.Derive(false).HasErrors);
 
                 var acl = new DatabaseAccessControlLists(person)[organisation];
 
@@ -119,20 +119,20 @@ namespace Allors.Database.Domain.Tests
         public void GivenAnotherUserAndAnAccessControlledObjectWhenGettingTheAccessListThenUserHasAccessToThePermissionsInTheRole()
         {
             var readOrganisationName = this.FindPermission(this.M.Organisation.Name, Operations.Read);
-            var databaseRole = new RoleBuilder(this.Session).WithName("Role").WithPermission(readOrganisationName).Build();
+            var databaseRole = new RoleBuilder(this.Transaction).WithName("Role").WithPermission(readOrganisationName).Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
-            var person = new PersonBuilder(this.Session).WithFirstName("John").WithLastName("Doe").Build();
-            var anotherPerson = new PersonBuilder(this.Session).WithFirstName("Jane").WithLastName("Doe").Build();
+            var person = new PersonBuilder(this.Transaction).WithFirstName("John").WithLastName("Doe").Build();
+            var anotherPerson = new PersonBuilder(this.Transaction).WithFirstName("Jane").WithLastName("Doe").Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            new AccessControlBuilder(this.Session).WithSubject(anotherPerson).WithRole(databaseRole).Build();
-            this.Session.Commit();
+            new AccessControlBuilder(this.Transaction).WithSubject(anotherPerson).WithRole(databaseRole).Build();
+            this.Transaction.Commit();
 
-            var sessions = new[] { this.Session };
+            var sessions = new[] { this.Transaction };
             foreach (var session in sessions)
             {
                 session.Commit();
@@ -142,11 +142,11 @@ namespace Allors.Database.Domain.Tests
                 var token = new SecurityTokenBuilder(session).Build();
                 organisation.AddSecurityToken(token);
 
-                var role = (Role)session.Instantiate(new Roles(this.Session).FindBy(this.M.Role.Name, "Role"));
+                var role = (Role)session.Instantiate(new Roles(this.Transaction).FindBy(this.M.Role.Name, "Role"));
                 var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First);
                 token.AddAccessControl(accessControl);
 
-                Assert.False(this.Session.Derive(false).HasErrors);
+                Assert.False(this.Transaction.Derive(false).HasErrors);
 
                 var acl = new DatabaseAccessControlLists(person)[organisation];
 
@@ -160,20 +160,20 @@ namespace Allors.Database.Domain.Tests
         public void GivenAnotherUserGroupAndAnAccessControlledObjectWhenGettingTheAccessListThenUserHasAccessToThePermissionsInTheRole()
         {
             var readOrganisationName = this.FindPermission(this.M.Organisation.Name, Operations.Read);
-            var databaseRole = new RoleBuilder(this.Session).WithName("Role").WithPermission(readOrganisationName).Build();
+            var databaseRole = new RoleBuilder(this.Transaction).WithName("Role").WithPermission(readOrganisationName).Build();
 
-            var person = new PersonBuilder(this.Session).WithFirstName("John").WithLastName("Doe").Build();
-            new UserGroupBuilder(this.Session).WithName("Group").WithMember(person).Build();
-            var anotherUserGroup = new UserGroupBuilder(this.Session).WithName("AnotherGroup").Build();
+            var person = new PersonBuilder(this.Transaction).WithFirstName("John").WithLastName("Doe").Build();
+            new UserGroupBuilder(this.Transaction).WithName("Group").WithMember(person).Build();
+            var anotherUserGroup = new UserGroupBuilder(this.Transaction).WithName("AnotherGroup").Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            new AccessControlBuilder(this.Session).WithSubjectGroup(anotherUserGroup).WithRole(databaseRole).Build();
+            new AccessControlBuilder(this.Transaction).WithSubjectGroup(anotherUserGroup).WithRole(databaseRole).Build();
 
-            this.Session.Commit();
+            this.Transaction.Commit();
 
-            var sessions = new[] { this.Session };
+            var sessions = new[] { this.Transaction };
             foreach (var session in sessions)
             {
                 session.Commit();
@@ -183,11 +183,11 @@ namespace Allors.Database.Domain.Tests
                 var token = new SecurityTokenBuilder(session).Build();
                 organisation.AddSecurityToken(token);
 
-                var role = (Role)session.Instantiate(new Roles(this.Session).FindBy(this.M.Role.Name, "Role"));
+                var role = (Role)session.Instantiate(new Roles(this.Transaction).FindBy(this.M.Role.Name, "Role"));
                 var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First);
                 token.AddAccessControl(accessControl);
 
-                Assert.False(this.Session.Derive(false).HasErrors);
+                Assert.False(this.Transaction.Derive(false).HasErrors);
 
                 var acl = new DatabaseAccessControlLists(person)[organisation];
 
@@ -201,15 +201,15 @@ namespace Allors.Database.Domain.Tests
         public void GivenAnAccessListWhenRemovingUserFromACLThenUserHasNoAccessToThePermissionsInTheRole()
         {
             var permission = this.FindPermission(this.M.Organisation.Name, Operations.Read);
-            var role = new RoleBuilder(this.Session).WithName("Role").WithPermission(permission).Build();
-            var person = new PersonBuilder(this.Session).WithFirstName("John").WithLastName("Doe").Build();
-            var person2 = new PersonBuilder(this.Session).WithFirstName("Jane").WithLastName("Doe").Build();
-            new AccessControlBuilder(this.Session).WithSubject(person).WithRole(role).Build();
+            var role = new RoleBuilder(this.Transaction).WithName("Role").WithPermission(permission).Build();
+            var person = new PersonBuilder(this.Transaction).WithFirstName("John").WithLastName("Doe").Build();
+            var person2 = new PersonBuilder(this.Transaction).WithFirstName("Jane").WithLastName("Doe").Build();
+            new AccessControlBuilder(this.Transaction).WithSubject(person).WithRole(role).Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var sessions = new[] { this.Session };
+            var sessions = new[] { this.Transaction };
             foreach (var session in sessions)
             {
                 session.Commit();
@@ -222,14 +222,14 @@ namespace Allors.Database.Domain.Tests
                 var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First);
                 token.AddAccessControl(accessControl);
 
-                this.Session.Derive();
+                this.Transaction.Derive();
 
                 var acl = new DatabaseAccessControlLists(person)[organisation];
 
                 accessControl.RemoveSubject(person);
                 accessControl.AddSubject(person2);
 
-                this.Session.Derive();
+                this.Transaction.Derive();
 
                 acl = new DatabaseAccessControlLists(person)[organisation];
 
@@ -243,14 +243,14 @@ namespace Allors.Database.Domain.Tests
         public void DeniedPermissions()
         {
             var readOrganisationName = this.FindPermission(this.M.Organisation.Name, Operations.Read);
-            var databaseRole = new RoleBuilder(this.Session).WithName("Role").WithPermission(readOrganisationName).Build();
-            var person = new PersonBuilder(this.Session).WithFirstName("John").WithLastName("Doe").Build();
-            new AccessControlBuilder(this.Session).WithRole(databaseRole).WithSubject(person).Build();
+            var databaseRole = new RoleBuilder(this.Transaction).WithName("Role").WithPermission(readOrganisationName).Build();
+            var person = new PersonBuilder(this.Transaction).WithFirstName("John").WithLastName("Doe").Build();
+            new AccessControlBuilder(this.Transaction).WithRole(databaseRole).WithSubject(person).Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var sessions = new[] { this.Session };
+            var sessions = new[] { this.Transaction };
             foreach (var session in sessions)
             {
                 session.Commit();
@@ -260,11 +260,11 @@ namespace Allors.Database.Domain.Tests
                 var token = new SecurityTokenBuilder(session).Build();
                 organisation.AddSecurityToken(token);
 
-                var role = (Role)session.Instantiate(new Roles(this.Session).FindBy(this.M.Role.Name, "Role"));
+                var role = (Role)session.Instantiate(new Roles(this.Transaction).FindBy(this.M.Role.Name, "Role"));
                 var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First);
                 token.AddAccessControl(accessControl);
 
-                Assert.False(this.Session.Derive(false).HasErrors);
+                Assert.False(this.Transaction.Derive(false).HasErrors);
 
                 var acl = new DatabaseAccessControlLists(person)[organisation];
 
@@ -283,7 +283,7 @@ namespace Allors.Database.Domain.Tests
         private Permission FindPermission(RoleType roleType, Operations operation)
         {
             var objectType = (Class)roleType.AssociationType.ObjectType;
-            return new Permissions(this.Session).Get(objectType, roleType, operation);
+            return new Permissions(this.Transaction).Get(objectType, roleType, operation);
         }
     }
 }

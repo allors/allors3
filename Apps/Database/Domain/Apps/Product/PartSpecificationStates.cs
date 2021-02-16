@@ -28,7 +28,7 @@ namespace Allors.Database.Domain
 
         public PartSpecificationState RequirementSpecified => this.Cache[RequirementSpecifiedId];
 
-        private UniquelyIdentifiableCache<PartSpecificationState> Cache => this.cache ??= new UniquelyIdentifiableCache<PartSpecificationState>(this.Session);
+        private UniquelyIdentifiableCache<PartSpecificationState> Cache => this.cache ??= new UniquelyIdentifiableCache<PartSpecificationState>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

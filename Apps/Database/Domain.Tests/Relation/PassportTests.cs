@@ -20,12 +20,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPartyWithOpenOrders_WhenDeriving_ThenOpenOrderAmountIsUpdated()
         {
-            new PassportBuilder(this.Session).WithNumber("1").Build();
-            this.Session.Derive(false);
+            new PassportBuilder(this.Transaction).WithNumber("1").Build();
+            this.Transaction.Derive(false);
 
-            new PassportBuilder(this.Session).WithNumber("1").Build();
+            new PassportBuilder(this.Transaction).WithNumber("1").Build();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals("Passport.Number is not unique"));
         }
     }

@@ -26,8 +26,8 @@ namespace Allors.Database.Adapters
 
     public abstract class Profile : IDisposable
     {
-        private ISession session;
-        private ISession session2;
+        private ITransaction transaction;
+        private ITransaction transaction2;
 
         protected Profile()
         {
@@ -51,22 +51,22 @@ namespace Allors.Database.Adapters
                 ObjectFactory = new ObjectFactory(this.MetaPopulation, typeof(C1)),
             });
 
-        public ISession CreateSession() => this.GetDatabase().CreateSession();
+        public ITransaction CreateTransaction() => this.GetDatabase().CreateTransaction();
 
-        public ISession CreateSession2() => this.GetDatabase2().CreateSession();
+        public ITransaction CreateTransaction2() => this.GetDatabase2().CreateTransaction();
 
         public virtual void Dispose()
         {
-            if (this.session != null)
+            if (this.transaction != null)
             {
-                this.session.Rollback();
-                this.session = null;
+                this.transaction.Rollback();
+                this.transaction = null;
             }
 
-            if (this.session2 != null)
+            if (this.transaction2 != null)
             {
-                this.session2.Rollback();
-                this.session2 = null;
+                this.transaction2.Rollback();
+                this.transaction2 = null;
             }
         }
 
@@ -74,9 +74,9 @@ namespace Allors.Database.Adapters
 
         public abstract IDatabase GetDatabase2();
 
-        public ISession GetSession() => this.session ??= this.GetDatabase().CreateSession();
+        public ITransaction GetTransaction() => this.transaction ??= this.GetDatabase().CreateTransaction();
 
-        public ISession GetSession2() => this.session2 ??= this.GetDatabase2().CreateSession();
+        public ITransaction GetTransaction2() => this.transaction2 ??= this.GetDatabase2().CreateTransaction();
 
         public abstract void Init();
 

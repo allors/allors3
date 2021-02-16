@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
 
         private UniquelyIdentifiableCache<OrderState> cache;
 
-        public Cache<Guid, OrderState> Cache => this.cache ??= new UniquelyIdentifiableCache<OrderState>(this.Session);
+        public Cache<Guid, OrderState> Cache => this.cache ??= new UniquelyIdentifiableCache<OrderState>(this.Transaction);
 
         public OrderState Initial => this.Cache[InitialId];
 

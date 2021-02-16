@@ -17,9 +17,9 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnCreatedThrowValidationError()
         {
-            var basePrice = new MaterialsUsageBuilder(this.Session).Build();
+            var basePrice = new MaterialsUsageBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.StartsWith("MaterialsUsage.WorkEffort, MaterialsUsage.EngagementItem at least one"));
         }
     }

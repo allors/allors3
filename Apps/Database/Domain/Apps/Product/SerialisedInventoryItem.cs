@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
         };
 
         public InventoryStrategy InventoryStrategy
-            => this.Strategy.Session.GetSingleton().Settings.InventoryStrategy;
+            => this.Strategy.Transaction.GetSingleton().Settings.InventoryStrategy;
 
         public int QuantityOnHand
             => this.InventoryStrategy.OnHandSerialisedStates.Contains(this.SerialisedInventoryItemState) ? this.Quantity : 0;
@@ -25,7 +25,7 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistSerialisedInventoryItemState)
             {
-                this.SerialisedInventoryItemState = new SerialisedInventoryItemStates(this.Strategy.Session).Good;
+                this.SerialisedInventoryItemState = new SerialisedInventoryItemStates(this.Strategy.Transaction).Good;
             }
         }
 

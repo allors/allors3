@@ -31,9 +31,9 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<PurchaseOrder>())
             {
-                var purchaseOrderShipmentStates = new PurchaseOrderShipmentStates(@this.Strategy.Session);
-                var purchaseOrderPaymentStates = new PurchaseOrderPaymentStates(@this.Strategy.Session);
-                var purchaseOrderItemStates = new PurchaseOrderItemStates(cycle.Session);
+                var purchaseOrderShipmentStates = new PurchaseOrderShipmentStates(@this.Strategy.Transaction);
+                var purchaseOrderPaymentStates = new PurchaseOrderPaymentStates(@this.Strategy.Transaction);
+                var purchaseOrderItemStates = new PurchaseOrderItemStates(cycle.Transaction);
 
                 // PurchaseOrder Shipment State
                 if (@this.ValidOrderItems.Any())
@@ -76,12 +76,12 @@ namespace Allors.Database.Domain
                     if (@this.PurchaseOrderState.IsSent
                         && (@this.PurchaseOrderShipmentState.IsReceived || @this.PurchaseOrderShipmentState.IsNa))
                     {
-                        @this.PurchaseOrderState = new PurchaseOrderStates(@this.Strategy.Session).Completed;
+                        @this.PurchaseOrderState = new PurchaseOrderStates(@this.Strategy.Transaction).Completed;
                     }
 
                     if (@this.PurchaseOrderState.IsCompleted && @this.PurchaseOrderPaymentState.IsPaid)
                     {
-                        @this.PurchaseOrderState = new PurchaseOrderStates(@this.Strategy.Session).Finished;
+                        @this.PurchaseOrderState = new PurchaseOrderStates(@this.Strategy.Transaction).Finished;
                     }
                 }
             }

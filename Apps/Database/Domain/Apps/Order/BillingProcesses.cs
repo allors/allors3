@@ -24,7 +24,7 @@ namespace Allors.Database.Domain
 
         public BillingProcess BillingForTimeEntries => this.Cache[BillingForTimeEntriesId];
 
-        private UniquelyIdentifiableCache<BillingProcess> Cache => this.cache ??= new UniquelyIdentifiableCache<BillingProcess>(this.Session);
+        private UniquelyIdentifiableCache<BillingProcess> Cache => this.cache ??= new UniquelyIdentifiableCache<BillingProcess>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

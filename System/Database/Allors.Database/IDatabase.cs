@@ -68,10 +68,10 @@ namespace Allors.Database
         void Init();
 
         /// <summary>
-        /// Creates a new database Session.
+        /// Creates a new database Transaction.
         /// </summary>
-        /// <returns>a newly created AllorsSession.</returns>
-        ISession CreateSession();
+        /// <returns>a newly created Transaction.</returns>
+        ITransaction CreateTransaction();
 
         /// <summary>
         /// Loads the population from the <see cref="XmlReader"/>.

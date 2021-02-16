@@ -35,13 +35,13 @@ namespace Allors.Database.Domain
 
         public AccountingTransactionType General => this.Cache[GeneralId];
 
-        private UniquelyIdentifiableCache<AccountingTransactionType> Cache => this.cache ??= new UniquelyIdentifiableCache<AccountingTransactionType>(this.Session);
+        private UniquelyIdentifiableCache<AccountingTransactionType> Cache => this.cache ??= new UniquelyIdentifiableCache<AccountingTransactionType>(this.Transaction);
 
         protected override void AppsPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.Locale);
 
         protected override void AppsSetup(Setup setup)
         {
-            var dutchLocale = new Locales(this.Session).DutchNetherlands;
+            var dutchLocale = new Locales(this.Transaction).DutchNetherlands;
 
             var merge = this.Cache.Merger().Action();
             var localisedName = new LocalisedTextAccessor(this.Meta.LocalisedNames);

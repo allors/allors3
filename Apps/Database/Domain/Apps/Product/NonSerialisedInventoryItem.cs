@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistNonSerialisedInventoryItemState)
             {
-                this.NonSerialisedInventoryItemState = new NonSerialisedInventoryItemStates(this.Strategy.Session).Good;
+                this.NonSerialisedInventoryItemState = new NonSerialisedInventoryItemStates(this.Strategy.Transaction).Good;
             }
         }
 
@@ -55,7 +55,7 @@ namespace Allors.Database.Domain
 
                 foreach (PickListItem pickListItem in this.PickListItemsWhereInventoryItem)
                 {
-                    if (pickListItem.PickListWherePickListItem.PickListState.Equals(new PickListStates(this.Strategy.Session).Picked))
+                    if (pickListItem.PickListWherePickListItem.PickListState.Equals(new PickListStates(this.Strategy.Transaction).Picked))
                     {
                         foreach (ItemIssuance itemIssuance in pickListItem.ItemIssuancesWherePickListItem)
                         {
@@ -91,7 +91,7 @@ namespace Allors.Database.Domain
 
             foreach (PickListItem pickListItem in this.PickListItemsWhereInventoryItem)
             {
-                if (pickListItem.PickListWherePickListItem.PickListState.Equals(new PickListStates(this.Strategy.Session).Picked))
+                if (pickListItem.PickListWherePickListItem.PickListState.Equals(new PickListStates(this.Strategy.Transaction).Picked))
                 {
                     foreach (ItemIssuance itemIssuance in pickListItem.ItemIssuancesWherePickListItem)
                     {

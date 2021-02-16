@@ -18,9 +18,9 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenNoRolesWhenCreatingARoleWithoutANameThenRoleIsInvalid()
         {
-            new RoleBuilder(this.Session).Build();
+            new RoleBuilder(this.Transaction).Build();
 
-            var validation = this.Session.Derive(false);
+            var validation = this.Transaction.Derive(false);
 
             Assert.True(validation.HasErrors);
             Assert.Single(validation.Errors);
@@ -35,15 +35,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenARoleWhenCreatingARoleWithTheSameNameThenRoleIsInvalid()
         {
-            new RoleBuilder(this.Session)
+            new RoleBuilder(this.Transaction)
                 .WithName("Same")
                 .Build();
 
-            new RoleBuilder(this.Session)
+            new RoleBuilder(this.Transaction)
                 .WithName("Same")
                 .Build();
 
-            var validation = this.Session.Derive(false);
+            var validation = this.Transaction.Derive(false);
 
             Assert.True(validation.HasErrors);
             Assert.Equal(2, validation.Errors.Length);
@@ -59,13 +59,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenNoRolesWhenCreatingARoleWithoutAUniqueIdThenRoleIsValid()
         {
-            var role = new RoleBuilder(this.Session)
+            var role = new RoleBuilder(this.Transaction)
                 .WithName("Role")
                 .Build();
 
             Assert.True(role.ExistUniqueId);
 
-            var validation = this.Session.Derive(false);
+            var validation = this.Transaction.Derive(false);
 
             Assert.False(validation.HasErrors);
         }

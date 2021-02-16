@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
         {
             if (!@this.ExistEffectiveDate)
             {
-                @this.EffectiveDate = @this.Strategy.Session.Now().Date;
+                @this.EffectiveDate = @this.Strategy.Transaction.Now().Date;
             }
         }
 

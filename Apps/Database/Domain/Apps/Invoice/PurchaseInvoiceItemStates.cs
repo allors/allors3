@@ -36,7 +36,7 @@ namespace Allors.Database.Domain
 
         public PurchaseInvoiceItemState Revising => this.Cache[RevisingId];
 
-        private UniquelyIdentifiableCache<PurchaseInvoiceItemState> Cache => this.cache ??= new UniquelyIdentifiableCache<PurchaseInvoiceItemState>(this.Session);
+        private UniquelyIdentifiableCache<PurchaseInvoiceItemState> Cache => this.cache ??= new UniquelyIdentifiableCache<PurchaseInvoiceItemState>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

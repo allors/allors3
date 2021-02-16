@@ -15,23 +15,23 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenChartOfAccounts_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var builder = new ChartOfAccountsBuilder(this.Session);
+            var builder = new ChartOfAccountsBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithName("ChartOfAccounts");
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void GivenChartOfAccounts_WhenDeriving_ThenPostBuildRelationsMustExist()
         {
-            var chartOfAccounts = new ChartOfAccountsBuilder(this.Session)
+            var chartOfAccounts = new ChartOfAccountsBuilder(this.Transaction)
                 .WithName("ChartOfAccounts")
                 .Build();
 

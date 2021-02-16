@@ -39,7 +39,7 @@ namespace Allors.Database.Domain
 
         public PurchaseOrderItemState Sent => this.Cache[SentId];
 
-        private UniquelyIdentifiableCache<PurchaseOrderItemState> Cache => this.cache ??= new UniquelyIdentifiableCache<PurchaseOrderItemState>(this.Session);
+        private UniquelyIdentifiableCache<PurchaseOrderItemState> Cache => this.cache ??= new UniquelyIdentifiableCache<PurchaseOrderItemState>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

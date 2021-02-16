@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistFromDate)
             {
-                this.FromDate = this.Session().Now();
+                this.FromDate = this.Transaction().Now();
             }
 
             if (!this.ExistUseAsDefault)

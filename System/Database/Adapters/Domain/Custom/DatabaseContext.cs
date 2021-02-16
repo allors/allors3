@@ -13,7 +13,7 @@ namespace Allors.Database
     {
         public void OnInit(IDatabase database) => this.M = new M((MetaPopulation)database.ObjectFactory.MetaPopulation);
 
-        public ISessionLifecycle CreateSessionInstance() => new SessionContext();
+        public ITransactionLifecycle CreateTransactionInstance() => new TransactionContext();
 
         public M M { get; set; }
         public void Dispose() { }

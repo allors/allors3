@@ -24,7 +24,7 @@ namespace Allors.Database.Domain
 
         public CommunicationEventState Cancelled => this.Cache[CancelledId];
 
-        private UniquelyIdentifiableCache<CommunicationEventState> Cache => this.cache ??= new UniquelyIdentifiableCache<CommunicationEventState>(this.Session);
+        private UniquelyIdentifiableCache<CommunicationEventState> Cache => this.cache ??= new UniquelyIdentifiableCache<CommunicationEventState>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

@@ -26,17 +26,17 @@ namespace Allors.Database.Configuration
         {
             if (!this.extentById.TryGetValue(id, out var extent))
             {
-                var session = this.DatabaseContext.Database.CreateSession();
+                var transaction = this.DatabaseContext.Database.CreateTransaction();
                 try
                 {
-                    var m = session.Database.Context().M;
+                    var m = transaction.Database.Context().M;
 
                     var filter = new Extent(m.PersistentPreparedExtent.Class)
                     {
                         Predicate = new Equals(m.PersistentPreparedExtent.UniqueId) { Value = id },
                     };
 
-                    var preparedExtent = (PersistentPreparedExtent)filter.Build(session).First;
+                    var preparedExtent = (PersistentPreparedExtent)filter.Build(transaction).First;
                     if (preparedExtent != null)
                     {
                         extent = preparedExtent.Extent;
@@ -47,7 +47,7 @@ namespace Allors.Database.Configuration
                 {
                     if (this.DatabaseContext.Database.IsShared)
                     {
-                        session.Dispose();
+                        transaction.Dispose();
                     }
                 }
             }

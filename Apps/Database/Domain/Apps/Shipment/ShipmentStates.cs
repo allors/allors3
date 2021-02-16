@@ -39,7 +39,7 @@ namespace Allors.Database.Domain
 
         public ShipmentState OnHold => this.Cache[OnHoldId];
 
-        private UniquelyIdentifiableCache<ShipmentState> Cache => this.cache ??= new UniquelyIdentifiableCache<ShipmentState>(this.Session);
+        private UniquelyIdentifiableCache<ShipmentState> Cache => this.cache ??= new UniquelyIdentifiableCache<ShipmentState>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

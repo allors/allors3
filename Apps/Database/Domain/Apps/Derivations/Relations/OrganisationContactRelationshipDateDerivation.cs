@@ -23,15 +23,15 @@ namespace Allors.Database.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            var session = cycle.Session;
+            var transaction = cycle.Transaction;
 
             foreach (var @this in matches.Cast<OrganisationContactRelationship>())
             {
                 if (@this.Organisation?.ContactsUserGroup != null)
                 {
-                    if (!(@this.FromDate <= session.Now()
+                    if (!(@this.FromDate <= transaction.Now()
                         && (!@this.ExistThroughDate
-                        || @this.ThroughDate >= session.Now())))
+                        || @this.ThroughDate >= transaction.Now())))
                     {
                         @this.Organisation.ContactsUserGroup
                             .RemoveMember(@this.Contact);

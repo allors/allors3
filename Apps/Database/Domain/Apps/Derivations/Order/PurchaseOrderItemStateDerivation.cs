@@ -25,12 +25,12 @@ namespace Allors.Database.Domain
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
-            var session = cycle.Session;
+            var transaction = cycle.Transaction;
 
             foreach (var @this in matches.Cast<PurchaseOrderItem>())
             {
                 var purchaseOrder = @this.PurchaseOrderWherePurchaseOrderItem;
-                var states = new PurchaseOrderItemStates(@this.Session());
+                var states = new PurchaseOrderItemStates(@this.Transaction());
                 var purchaseOrderState = @this.PurchaseOrderWherePurchaseOrderItem?.PurchaseOrderState;
 
                 if (purchaseOrderState != null)
@@ -67,9 +67,9 @@ namespace Allors.Database.Domain
                     }
                 }
 
-                var purchaseOrderItemShipmentStates = new PurchaseOrderItemShipmentStates(session);
-                var purchaseOrderItemPaymentStates = new PurchaseOrderItemPaymentStates(session);
-                var purchaseOrderItemStates = new PurchaseOrderItemStates(session);
+                var purchaseOrderItemShipmentStates = new PurchaseOrderItemShipmentStates(transaction);
+                var purchaseOrderItemPaymentStates = new PurchaseOrderItemPaymentStates(transaction);
+                var purchaseOrderItemStates = new PurchaseOrderItemStates(transaction);
 
                 if (@this.IsValid)
                 {
@@ -87,13 +87,13 @@ namespace Allors.Database.Domain
 
                     if (!@this.IsReceivable)
                     {
-                        @this.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(@this.Strategy.Session).Na;
+                        @this.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(@this.Strategy.Transaction).Na;
                     }
                     else
                     {
                         if (@this.QuantityReceived == 0 && @this.IsReceivable)
                         {
-                            @this.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(@this.Strategy.Session).NotReceived;
+                            @this.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(@this.Strategy.Transaction).NotReceived;
                         }
                         else
                         {

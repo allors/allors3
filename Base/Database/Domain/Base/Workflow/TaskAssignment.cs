@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
     {
         public void CoreOnDerive(ObjectOnDerive method)
         {
-            var defaultSecurityToken = new SecurityTokens(this.Session()).DefaultSecurityToken;
+            var defaultSecurityToken = new SecurityTokens(this.Transaction()).DefaultSecurityToken;
             this.SecurityTokens = new[] { defaultSecurityToken, this.User?.OwnerSecurityToken };
 
             //this.Task?.ManageNotification(this);

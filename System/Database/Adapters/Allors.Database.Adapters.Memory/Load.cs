@@ -18,12 +18,12 @@ namespace Allors.Database.Adapters.Memory
     {
         private static readonly byte[] emptyByteArray = new byte[0];
 
-        private readonly Session session;
+        private readonly Transaction transaction;
         private readonly XmlReader reader;
 
-        public Load(Session session, XmlReader reader)
+        public Load(Transaction transaction, XmlReader reader)
         {
-            this.session = session;
+            this.transaction = transaction;
             this.reader = reader;
         }
 
@@ -153,7 +153,7 @@ namespace Allors.Database.Adapters.Memory
                                 }
 
                                 var objectTypeId = new Guid(objectTypeIdString);
-                                var objectType = this.session.Database.ObjectFactory.GetObjectTypeForType(objectTypeId);
+                                var objectType = this.transaction.Database.ObjectFactory.GetObjectTypeForType(objectTypeId);
 
                                 var objectIdsString = this.reader.ReadElementContentAsString();
                                 var objectIdStringArray = objectIdsString.Split(Serialization.ObjectsSplitterCharArray);
@@ -169,11 +169,11 @@ namespace Allors.Database.Adapters.Memory
 
                                     if (objectType is IClass)
                                     {
-                                        this.session.InsertStrategy((IClass)objectType, objectId, objectVersion);
+                                        this.transaction.InsertStrategy((IClass)objectType, objectId, objectVersion);
                                     }
                                     else
                                     {
-                                        this.session.Database.OnObjectNotLoaded(objectTypeId, objectId);
+                                        this.transaction.Database.OnObjectNotLoaded(objectTypeId, objectId);
                                     }
                                 }
 
@@ -256,7 +256,7 @@ namespace Allors.Database.Adapters.Memory
                                 }
 
                                 var relationTypeId = new Guid(relationTypeIdString);
-                                var relationType = (IRelationType)this.session.Database.MetaPopulation.Find(relationTypeId);
+                                var relationType = (IRelationType)this.transaction.Database.MetaPopulation.Find(relationTypeId);
 
                                 if (this.reader.Name.Equals(Serialization.RelationTypeUnit))
                                 {
@@ -331,13 +331,13 @@ namespace Allors.Database.Adapters.Memory
 
                             if (strategy == null)
                             {
-                                this.session.Database.OnRelationNotLoaded(relationType.Id, associationId, value);
+                                this.transaction.Database.OnRelationNotLoaded(relationType.Id, associationId, value);
                             }
                             else
                             {
                                 try
                                 {
-                                    this.session.Database.UnitRoleChecks(strategy, relationType.RoleType);
+                                    this.transaction.Database.UnitRoleChecks(strategy, relationType.RoleType);
                                     if (this.reader.IsEmptyElement)
                                     {
                                         var unitType = (IUnit)relationType.RoleType.ObjectType;
@@ -363,7 +363,7 @@ namespace Allors.Database.Adapters.Memory
                                 }
                                 catch
                                 {
-                                    this.session.Database.OnRelationNotLoaded(relationType.Id, associationId, value);
+                                    this.transaction.Database.OnRelationNotLoaded(relationType.Id, associationId, value);
                                 }
                             }
                         }
@@ -415,13 +415,13 @@ namespace Allors.Database.Adapters.Memory
                                 var roleIdStringArray = roleIdsString.Split(Serialization.ObjectsSplitterCharArray);
 
                                 if (association == null ||
-                                    !this.session.Database.ContainsClass(
+                                    !this.transaction.Database.ContainsClass(
                                         relationType.AssociationType.ObjectType, association.UncheckedObjectType) ||
                                     (relationType.RoleType.IsOne && roleIdStringArray.Length != 1))
                                 {
                                     foreach (var roleId in roleIdStringArray)
                                     {
-                                        this.session.Database.OnRelationNotLoaded(relationType.Id, associationId, roleId);
+                                        this.transaction.Database.OnRelationNotLoaded(relationType.Id, associationId, roleId);
                                     }
                                 }
                                 else
@@ -430,9 +430,9 @@ namespace Allors.Database.Adapters.Memory
                                     {
                                         var roleIdString = long.Parse(roleIdStringArray[0]);
                                         var roleStrategy = this.LoadInstantiateStrategy(roleIdString);
-                                        if (roleStrategy == null || !this.session.Database.ContainsClass((IComposite)relationType.RoleType.ObjectType, roleStrategy.UncheckedObjectType))
+                                        if (roleStrategy == null || !this.transaction.Database.ContainsClass((IComposite)relationType.RoleType.ObjectType, roleStrategy.UncheckedObjectType))
                                         {
-                                            this.session.Database.OnRelationNotLoaded(relationType.Id, associationId, roleIdStringArray[0]);
+                                            this.transaction.Database.OnRelationNotLoaded(relationType.Id, associationId, roleIdStringArray[0]);
                                         }
                                         else
                                         {
@@ -454,11 +454,11 @@ namespace Allors.Database.Adapters.Memory
                                             var roleId = long.Parse(roleIdString);
                                             var role = this.LoadInstantiateStrategy(roleId);
                                             if (role == null ||
-                                                !this.session.Database.ContainsClass(
+                                                !this.transaction.Database.ContainsClass(
                                                     (IComposite)relationType.RoleType.ObjectType,
                                                     role.UncheckedObjectType))
                                             {
-                                                this.session.Database.OnRelationNotLoaded(relationType.Id, associationId, roleId.ToString());
+                                                this.transaction.Database.OnRelationNotLoaded(relationType.Id, associationId, roleId.ToString());
                                             }
                                             else
                                             {
@@ -498,7 +498,7 @@ namespace Allors.Database.Adapters.Memory
             }
         }
 
-        private Strategy LoadInstantiateStrategy(long id) => this.session.GetStrategy(id);
+        private Strategy LoadInstantiateStrategy(long id) => this.transaction.GetStrategy(id);
 
         private void CantLoadUnitRole(Guid relationTypeId)
         {
@@ -517,7 +517,7 @@ namespace Allors.Database.Adapters.Memory
                                 value = this.reader.ReadElementContentAsString();
                             }
 
-                            this.session.Database.OnRelationNotLoaded(relationTypeId, long.Parse(a), value);
+                            this.transaction.Database.OnRelationNotLoaded(relationTypeId, long.Parse(a), value);
                         }
 
                         break;
@@ -546,7 +546,7 @@ namespace Allors.Database.Adapters.Memory
 
                             if (this.reader.IsEmptyElement)
                             {
-                                this.session.Database.OnRelationNotLoaded(relationTypeId, associationId, null);
+                                this.transaction.Database.OnRelationNotLoaded(relationTypeId, associationId, null);
                             }
                             else
                             {
@@ -554,7 +554,7 @@ namespace Allors.Database.Adapters.Memory
                                 var rs = value.Split(Serialization.ObjectsSplitterCharArray);
                                 foreach (var r in rs)
                                 {
-                                    this.session.Database.OnRelationNotLoaded(relationTypeId, associationId, r);
+                                    this.transaction.Database.OnRelationNotLoaded(relationTypeId, associationId, r);
                                 }
                             }
                         }

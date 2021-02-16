@@ -25,9 +25,9 @@ namespace Allors.Database.Domain.Tests
             };
 
             var arguments = new Dictionary<string, string> { { "firstName", "John" } };
-            var queryExtent = filter.Build(this.Session, arguments);
+            var queryExtent = filter.Build(this.Transaction, arguments);
 
-            var extent = this.Session.Extent(this.M.Person.ObjectType);
+            var extent = this.Transaction.Extent(this.M.Person.ObjectType);
             extent.Filter.AddEquals(this.M.Person.FirstName, "John");
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
@@ -42,16 +42,16 @@ namespace Allors.Database.Domain.Tests
             };
 
             var arguments = new Dictionary<string, string>();
-            var queryExtent = filter.Build(this.Session, arguments);
+            var queryExtent = filter.Build(this.Transaction, arguments);
 
-            var extent = this.Session.Extent(this.M.Person.ObjectType);
+            var extent = this.Transaction.Extent(this.M.Person.ObjectType);
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
 
             arguments.Add("useFirstname", "x");
-            queryExtent = filter.Build(this.Session, arguments);
+            queryExtent = filter.Build(this.Transaction, arguments);
 
-            extent = this.Session.Extent(this.M.Person.ObjectType);
+            extent = this.Transaction.Extent(this.M.Person.ObjectType);
             extent.Filter.AddEquals(this.M.Person.FirstName, "John");
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
@@ -65,9 +65,9 @@ namespace Allors.Database.Domain.Tests
                 Predicate = new Equals { PropertyType = this.M.Person.FirstName, Parameter = "firstName" },
             };
 
-            var queryExtent = filter.Build(this.Session);
+            var queryExtent = filter.Build(this.Transaction);
 
-            var extent = this.Session.Extent(this.M.Person.ObjectType);
+            var extent = this.Transaction.Extent(this.M.Person.ObjectType);
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
         }
@@ -101,9 +101,9 @@ namespace Allors.Database.Domain.Tests
                                     { "firstName", "John" },
                                     { "lastName", "Doe" },
                                 };
-            var queryExtent = filter.Build(this.Session, arguments);
+            var queryExtent = filter.Build(this.Transaction, arguments);
 
-            var extent = this.Session.Extent(this.M.Person.ObjectType);
+            var extent = this.Transaction.Extent(this.M.Person.ObjectType);
             var and = extent.Filter.AddAnd();
             and.AddEquals(this.M.Person.FirstName, "John");
             and.AddEquals(this.M.Person.LastName, "Doe");
@@ -139,18 +139,18 @@ namespace Allors.Database.Domain.Tests
                                     {
                                         { "firstName", "John" },
                                     };
-                var queryExtent = filter.Build(this.Session, arguments);
+                var queryExtent = filter.Build(this.Transaction, arguments);
 
-                var extent = this.Session.Extent(this.M.Person.ObjectType);
+                var extent = this.Transaction.Extent(this.M.Person.ObjectType);
                 extent.Filter.AddEquals(this.M.Person.FirstName, "John");
 
                 Assert.Equal(extent.ToArray(), queryExtent.ToArray());
             }
 
             {
-                var queryExtent = filter.Build(this.Session);
+                var queryExtent = filter.Build(this.Transaction);
 
-                var extent = this.Session.Extent(this.M.Person.ObjectType);
+                var extent = this.Transaction.Extent(this.M.Person.ObjectType);
 
                 Assert.Equal(extent.ToArray(), queryExtent.ToArray());
             }
@@ -176,11 +176,11 @@ namespace Allors.Database.Domain.Tests
             };
 
             var arguments = new Dictionary<string, string> { { "nested", "c2B" } };
-            var queryExtent = filter.Build(this.Session, arguments);
+            var queryExtent = filter.Build(this.Transaction, arguments);
 
-            var c2s = this.Session.Extent(this.M.C2.ObjectType);
+            var c2s = this.Transaction.Extent(this.M.C2.ObjectType);
             c2s.Filter.AddEquals(this.M.C2.C2AllorsString, "c2B");
-            var extent = this.Session.Extent(this.M.C1.ObjectType);
+            var extent = this.Transaction.Extent(this.M.C1.ObjectType);
             extent.Filter.AddContainedIn(this.M.C1.C1C2One2One, c2s);
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
@@ -206,9 +206,9 @@ namespace Allors.Database.Domain.Tests
             };
 
             var arguments = new Dictionary<string, string>();
-            var queryExtent = filter.Build(this.Session, arguments);
+            var queryExtent = filter.Build(this.Transaction, arguments);
 
-            var extent = this.Session.Extent(this.M.C1.ObjectType);
+            var extent = this.Transaction.Extent(this.M.C1.ObjectType);
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
         }
@@ -239,9 +239,9 @@ namespace Allors.Database.Domain.Tests
             };
 
             var parameters = new Dictionary<string, string>();
-            var queryExtent = filter.Build(this.Session, parameters);
+            var queryExtent = filter.Build(this.Transaction, parameters);
 
-            var extent = this.Session.Extent(this.M.C1.ObjectType);
+            var extent = this.Transaction.Extent(this.M.C1.ObjectType);
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
         }
@@ -272,9 +272,9 @@ namespace Allors.Database.Domain.Tests
             };
 
             var arguments = new Dictionary<string, string>();
-            var queryExtent = filter.Build(this.Session, arguments);
+            var queryExtent = filter.Build(this.Transaction, arguments);
 
-            var extent = this.Session.Extent(this.M.C1.ObjectType);
+            var extent = this.Transaction.Extent(this.M.C1.ObjectType);
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
         }

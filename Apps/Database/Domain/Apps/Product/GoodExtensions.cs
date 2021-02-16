@@ -12,18 +12,18 @@ namespace Allors.Database.Domain
     {
         public static void AppsOnInit(this Good @this, ObjectOnInit method)
         {
-            var m = @this.Strategy.Session.Database.Context().M;
-            var settings = @this.Strategy.Session.GetSingleton().Settings;
+            var m = @this.Strategy.Transaction.Database.Context().M;
+            var settings = @this.Strategy.Transaction.GetSingleton().Settings;
 
             var identifications = @this.ProductIdentifications;
-            identifications.Filter.AddEquals(m.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(@this.Strategy.Session).Good);
+            identifications.Filter.AddEquals(m.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(@this.Strategy.Transaction).Good);
             var goodIdentification = identifications.FirstOrDefault();
 
             if (goodIdentification == null && settings.UseProductNumberCounter)
             {
-                goodIdentification = new ProductNumberBuilder(@this.Strategy.Session)
+                goodIdentification = new ProductNumberBuilder(@this.Strategy.Transaction)
                     .WithIdentification(settings.NextProductNumber())
-                    .WithProductIdentificationType(new ProductIdentificationTypes(@this.Strategy.Session).Good).Build();
+                    .WithProductIdentificationType(new ProductIdentificationTypes(@this.Strategy.Transaction).Good).Build();
 
                 @this.AddProductIdentification(goodIdentification);
             }
@@ -31,7 +31,7 @@ namespace Allors.Database.Domain
 
         public static void AppsOnPostDerive(this Good @this, ObjectOnPostDerive method)
         {
-            var m = @this.Strategy.Session.Database.Context().M;
+            var m = @this.Strategy.Transaction.Database.Context().M;
 
             if (!@this.ExistProductIdentifications)
             {

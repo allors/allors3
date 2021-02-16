@@ -20,7 +20,7 @@ namespace Allors.Database.Domain
             this.CoreSetup(setup);
             this.CustomSetup(setup);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
         }
 
         public void Secure(Security security)

@@ -13,14 +13,14 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static ShipmentItemBuilder WithSerializedUnifiedGoodDefaults(this ShipmentItemBuilder @this, Organisation internalOrganization)
         {
-            var faker = @this.Session.Faker();
+            var faker = @this.Transaction.Faker();
 
             var good = internalOrganization.CreateUnifiedWithGoodInventoryAvailableForSale(faker);
             var serializedItem = good.SerialisedItems.First(v => v.AvailableForSale.Equals(true));
 
             @this.WithGood(good);
             @this.WithSerialisedItem(serializedItem);
-            @this.WithNextSerialisedItemAvailability(faker.Random.ListItem(@this.Session.Extent<SerialisedItemAvailability>()));
+            @this.WithNextSerialisedItemAvailability(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemAvailability>()));
             @this.WithQuantity(1);
 
             return @this;

@@ -15,31 +15,31 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenOrderRequirementCommitment_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var shipToCustomer = new OrganisationBuilder(this.Session).WithName("shipToCustomer").Build();
-            var billToCustomer = new OrganisationBuilder(this.Session).WithName("billToCustomer").Build();
+            var shipToCustomer = new OrganisationBuilder(this.Transaction).WithName("shipToCustomer").Build();
+            var billToCustomer = new OrganisationBuilder(this.Transaction).WithName("billToCustomer").Build();
 
-            new CustomerRelationshipBuilder(this.Session)
+            new CustomerRelationshipBuilder(this.Transaction)
                 .WithCustomer(billToCustomer)
 
                 .Build();
 
-            new CustomerRelationshipBuilder(this.Session)
+            new CustomerRelationshipBuilder(this.Transaction)
                 .WithCustomer(shipToCustomer)
 
                 .Build();
 
-            var good = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
+            var good = new Goods(this.Transaction).FindBy(this.M.Good.Name, "good1");
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var salesOrder = new SalesOrderBuilder(this.Session)
+            var salesOrder = new SalesOrderBuilder(this.Transaction)
                 .WithShipToCustomer(shipToCustomer)
                 .WithBillToCustomer(billToCustomer)
-                .WithAssignedVatRegime(new VatRegimes(this.Session).Export)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Export)
                 .Build();
 
-            var goodOrderItem = new SalesOrderItemBuilder(this.Session)
-                .WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem)
+            var goodOrderItem = new SalesOrderItemBuilder(this.Transaction)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem)
                 .WithProduct(good)
                 .WithAssignedUnitPrice(1)
                 .WithQuantityOrdered(1)
@@ -47,29 +47,29 @@ namespace Allors.Database.Domain.Tests
 
             salesOrder.AddSalesOrderItem(goodOrderItem);
 
-            var customerRequirement = new RequirementBuilder(this.Session).WithDescription("100 gizmo's").Build();
+            var customerRequirement = new RequirementBuilder(this.Transaction).WithDescription("100 gizmo's").Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var builder = new OrderRequirementCommitmentBuilder(this.Session);
+            var builder = new OrderRequirementCommitmentBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithOrderItem(goodOrderItem);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithRequirement(customerRequirement);
             var tsts = builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
     }
 }

@@ -9,6 +9,6 @@ namespace Allors.Database.Domain
     {
         private Cache<string, City> cityByName;
 
-        public Cache<string, City> CityByName => this.cityByName ??= new Cache<string, City>(this.Session, this.M.City.Name);
+        public Cache<string, City> CityByName => this.cityByName ??= new Cache<string, City>(this.Transaction, this.M.City.Name);
     }
 }

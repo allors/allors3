@@ -12,9 +12,9 @@ namespace Allors.Database.Domain
     {
         public void Send()
         {
-            var session = this.Session;
+            var transaction = this.Transaction;
 
-            var mailService = session.Database.Context().Mailer;
+            var mailService = transaction.Database.Context().Mailer;
             var emailMessages = this.Extent();
             emailMessages.Filter.AddNot().AddExists(this.Meta.DateSending);
             emailMessages.Filter.AddNot().AddExists(this.Meta.DateSent);
@@ -23,21 +23,21 @@ namespace Allors.Database.Domain
             {
                 try
                 {
-                    emailMessage.DateSending = session.Now();
+                    emailMessage.DateSending = transaction.Now();
 
-                    session.Derive();
-                    session.Commit();
+                    transaction.Derive();
+                    transaction.Commit();
 
                     mailService.Send(emailMessage);
-                    emailMessage.DateSent = session.Now();
+                    emailMessage.DateSent = transaction.Now();
 
-                    session.Derive();
-                    session.Commit();
+                    transaction.Derive();
+                    transaction.Commit();
                 }
                 catch (Exception e)
                 {
                     Console.Error.WriteLine(e);
-                    session.Rollback();
+                    transaction.Rollback();
                     break;
                 }
             }

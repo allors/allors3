@@ -12,7 +12,7 @@ namespace Allors.Database.Domain
         {
             if (!@this.ExistNotificationList)
             {
-                @this.NotificationList = new NotificationListBuilder(@this.Strategy.Session).Build();
+                @this.NotificationList = new NotificationListBuilder(@this.Strategy.Transaction).Build();
             }
         }
 

@@ -42,284 +42,284 @@ namespace Allors.Database.Domain.Tests
 
         public SalesOrderItemTests(Fixture fixture) : base(fixture)
         {
-            var euro = new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR");
+            var euro = new Currencies(this.Transaction).FindBy(this.M.Currency.IsoCode, "EUR");
 
-            this.supplier = new OrganisationBuilder(this.Session).WithName("supplier").Build();
+            this.supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
 
-            this.vatRate21 = new VatRateBuilder(this.Session).WithRate(21).Build();
+            this.vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
 
-            var mechelen = new CityBuilder(this.Session).WithName("Mechelen").Build();
-            this.kiev = new CityBuilder(this.Session).WithName("Kiev").Build();
+            var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
+            this.kiev = new CityBuilder(this.Transaction).WithName("Kiev").Build();
 
-            this.shipToContactMechanismMechelen = new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
-            this.shipToContactMechanismKiev = new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(this.kiev).WithAddress1("Dnieper").Build();
-            this.shipToCustomer = new OrganisationBuilder(this.Session).WithName("shipToCustomer").Build();
-            this.shipToCustomer.AddPartyContactMechanism(new PartyContactMechanismBuilder(this.Session)
+            this.shipToContactMechanismMechelen = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
+            this.shipToContactMechanismKiev = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(this.kiev).WithAddress1("Dnieper").Build();
+            this.shipToCustomer = new OrganisationBuilder(this.Transaction).WithName("shipToCustomer").Build();
+            this.shipToCustomer.AddPartyContactMechanism(new PartyContactMechanismBuilder(this.Transaction)
                                                             .WithContactMechanism(this.shipToContactMechanismKiev)
-                                                            .WithContactPurpose(new ContactMechanismPurposes(this.Session).ShippingAddress)
+                                                            .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
                                                             .WithUseAsDefault(true)
                                                             .Build());
 
-            this.billToCustomer = new OrganisationBuilder(this.Session)
+            this.billToCustomer = new OrganisationBuilder(this.Transaction)
                 .WithName("billToCustomer")
                 .WithPreferredCurrency(euro)
 
                 .Build();
 
-            this.billToCustomer.AddPartyContactMechanism(new PartyContactMechanismBuilder(this.Session)
+            this.billToCustomer.AddPartyContactMechanism(new PartyContactMechanismBuilder(this.Transaction)
                                                             .WithContactMechanism(this.shipToContactMechanismKiev)
-                                                            .WithContactPurpose(new ContactMechanismPurposes(this.Session).BillingAddress)
+                                                            .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
                                                             .WithUseAsDefault(true)
                                                             .Build());
 
-            this.part = new NonUnifiedPartBuilder(this.Session)
-                .WithProductIdentification(new PartNumberBuilder(this.Session)
+            this.part = new NonUnifiedPartBuilder(this.Transaction)
+                .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                     .WithIdentification("1")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised)
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
                 .Build();
 
-            this.good = new NonUnifiedGoodBuilder(this.Session)
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+            this.good = new NonUnifiedGoodBuilder(this.Transaction)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("10101")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(this.vatRate21)
                 .WithName("good")
                 .WithPart(this.part)
-                .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
+                .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
                 .Build();
 
-            new SupplierRelationshipBuilder(this.Session)
+            new SupplierRelationshipBuilder(this.Transaction)
                 .WithSupplier(this.supplier)
-                .WithFromDate(this.Session.Now())
+                .WithFromDate(this.Transaction.Now())
                 .Build();
 
-            new CustomerRelationshipBuilder(this.Session).WithCustomer(this.billToCustomer).Build();
+            new CustomerRelationshipBuilder(this.Transaction).WithCustomer(this.billToCustomer).Build();
 
-            new CustomerRelationshipBuilder(this.Session).WithCustomer(this.shipToCustomer).Build();
+            new CustomerRelationshipBuilder(this.Transaction).WithCustomer(this.shipToCustomer).Build();
 
-            this.variantGood = new NonUnifiedGoodBuilder(this.Session)
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+            this.variantGood = new NonUnifiedGoodBuilder(this.Transaction)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("v10101")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(this.vatRate21)
                 .WithName("variant good")
-                .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                    .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                    .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                         .WithIdentification("2")
-                        .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                    .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build())
+                        .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                    .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build())
                 .Build();
 
-            this.variantGood2 = new NonUnifiedGoodBuilder(this.Session)
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+            this.variantGood2 = new NonUnifiedGoodBuilder(this.Transaction)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("v10102")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(this.vatRate21)
                 .WithName("variant good2")
-                .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                    .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                    .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                         .WithIdentification("3")
-                        .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                    .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build())
+                        .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                    .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build())
                 .Build();
 
-            this.virtualGood = new NonUnifiedGoodBuilder(this.Session)
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+            this.virtualGood = new NonUnifiedGoodBuilder(this.Transaction)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("v10103")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(this.vatRate21)
                 .WithName("virtual good")
                 .WithVariant(this.variantGood)
                 .WithVariant(this.variantGood2)
-                .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
+                .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
                 .Build();
 
-            this.ancestorProductCategory = new ProductCategoryBuilder(this.Session)
+            this.ancestorProductCategory = new ProductCategoryBuilder(this.Transaction)
                 .WithName("ancestor")
                 .Build();
 
-            this.parentProductCategory = new ProductCategoryBuilder(this.Session)
+            this.parentProductCategory = new ProductCategoryBuilder(this.Transaction)
                 .WithName("parent")
                 .WithPrimaryParent(this.ancestorProductCategory)
                 .Build();
 
-            this.productCategory = new ProductCategoryBuilder(this.Session)
+            this.productCategory = new ProductCategoryBuilder(this.Transaction)
                 .WithName("gizmo")
                 .Build();
 
             this.productCategory.AddSecondaryParent(this.parentProductCategory);
 
-            this.goodPurchasePrice = new SupplierOfferingBuilder(this.Session)
+            this.goodPurchasePrice = new SupplierOfferingBuilder(this.Transaction)
                 .WithPart(this.part)
                 .WithSupplier(this.supplier)
-                .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
-                .WithFromDate(this.Session.Now())
+                .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
+                .WithFromDate(this.Transaction.Now())
                 .WithPrice(7)
                 .WithCurrency(euro)
                 .Build();
 
-            this.virtualGoodPurchasePrice = new SupplierOfferingBuilder(this.Session)
+            this.virtualGoodPurchasePrice = new SupplierOfferingBuilder(this.Transaction)
                 .WithCurrency(euro)
-                .WithFromDate(this.Session.Now())
+                .WithFromDate(this.Transaction.Now())
                 .WithSupplier(this.supplier)
                 .WithPrice(8)
-                .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
+                .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
                 .Build();
 
-            this.feature1 = new ColourBuilder(this.Session)
+            this.feature1 = new ColourBuilder(this.Transaction)
                 .WithVatRate(this.vatRate21)
                 .WithName("white")
                 .Build();
 
-            this.feature2 = new ColourBuilder(this.Session)
+            this.feature2 = new ColourBuilder(this.Transaction)
                 .WithName("black")
                 .Build();
 
-            this.currentBasePriceGeoBoundary = new BasePriceBuilder(this.Session)
+            this.currentBasePriceGeoBoundary = new BasePriceBuilder(this.Transaction)
                 .WithDescription("current BasePriceGeoBoundary ")
                 .WithGeographicBoundary(mechelen)
                 .WithProduct(this.good)
                 .WithPrice(8)
-                .WithFromDate(this.Session.Now())
+                .WithFromDate(this.Transaction.Now())
                 .Build();
 
             // historic basePrice for good
-            new BasePriceBuilder(this.Session).WithDescription("previous good")
+            new BasePriceBuilder(this.Transaction).WithDescription("previous good")
                 .WithProduct(this.good)
                 .WithPrice(8)
-                .WithFromDate(this.Session.Now().AddYears(-1))
-                .WithThroughDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddYears(-1))
+                .WithThroughDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
             // future basePrice for good
-            new BasePriceBuilder(this.Session).WithDescription("future good")
+            new BasePriceBuilder(this.Transaction).WithDescription("future good")
                 .WithProduct(this.good)
                 .WithPrice(11)
-                .WithFromDate(this.Session.Now().AddYears(1))
+                .WithFromDate(this.Transaction.Now().AddYears(1))
                 .Build();
 
-            this.currentGoodBasePrice = new BasePriceBuilder(this.Session)
+            this.currentGoodBasePrice = new BasePriceBuilder(this.Transaction)
                 .WithDescription("current good")
                 .WithProduct(this.good)
                 .WithPrice(10)
-                .WithFromDate(this.Session.Now())
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now())
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
             // historic basePrice for feature1
-            new BasePriceBuilder(this.Session).WithDescription("previous feature1")
+            new BasePriceBuilder(this.Transaction).WithDescription("previous feature1")
                 .WithProductFeature(this.feature1)
                 .WithPrice(0.5M)
-                .WithFromDate(this.Session.Now().AddYears(-1))
-                .WithThroughDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddYears(-1))
+                .WithThroughDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
             // future basePrice for feature1
-            new BasePriceBuilder(this.Session).WithDescription("future feature1")
+            new BasePriceBuilder(this.Transaction).WithDescription("future feature1")
                 .WithProductFeature(this.feature1)
                 .WithPrice(2.5M)
-                .WithFromDate(this.Session.Now().AddYears(1))
+                .WithFromDate(this.Transaction.Now().AddYears(1))
                 .Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithDescription("current feature1")
                 .WithProductFeature(this.feature1)
                 .WithPrice(2)
-                .WithFromDate(this.Session.Now())
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now())
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
             // historic basePrice for feature2
-            new BasePriceBuilder(this.Session).WithDescription("previous feature2")
+            new BasePriceBuilder(this.Transaction).WithDescription("previous feature2")
                 .WithProductFeature(this.feature2)
                 .WithPrice(2)
-                .WithFromDate(this.Session.Now().AddYears(-1))
-                .WithThroughDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddYears(-1))
+                .WithThroughDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
             // future basePrice for feature2
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithDescription("future feature2")
                 .WithProductFeature(this.feature2)
                 .WithPrice(4)
-                .WithFromDate(this.Session.Now().AddYears(1))
+                .WithFromDate(this.Transaction.Now().AddYears(1))
                 .Build();
 
-            this.currentFeature2BasePrice = new BasePriceBuilder(this.Session)
+            this.currentFeature2BasePrice = new BasePriceBuilder(this.Transaction)
                 .WithDescription("current feature2")
                 .WithProductFeature(this.feature2)
                 .WithPrice(3)
-                .WithFromDate(this.Session.Now())
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now())
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
             // historic basePrice for good with feature1
-            new BasePriceBuilder(this.Session).WithDescription("previous good/feature1")
+            new BasePriceBuilder(this.Transaction).WithDescription("previous good/feature1")
                 .WithProduct(this.good)
                 .WithProductFeature(this.feature1)
                 .WithPrice(4)
-                .WithFromDate(this.Session.Now().AddYears(-1))
-                .WithThroughDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddYears(-1))
+                .WithThroughDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
             // future basePrice for good with feature1
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithDescription("future good/feature1")
                 .WithProduct(this.good)
                 .WithProductFeature(this.feature1)
                 .WithPrice(6)
-                .WithFromDate(this.Session.Now().AddYears(1))
+                .WithFromDate(this.Transaction.Now().AddYears(1))
                 .Build();
 
-            this.currentGood1Feature1BasePrice = new BasePriceBuilder(this.Session)
+            this.currentGood1Feature1BasePrice = new BasePriceBuilder(this.Transaction)
                 .WithDescription("current good/feature1")
                 .WithProduct(this.good)
                 .WithProductFeature(this.feature1)
                 .WithPrice(5)
-                .WithFromDate(this.Session.Now())
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now())
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithDescription("current variant good2")
                 .WithProduct(this.variantGood2)
                 .WithPrice(11)
-                .WithFromDate(this.Session.Now())
+                .WithFromDate(this.Transaction.Now())
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.order = new SalesOrderBuilder(this.Session)
+            this.order = new SalesOrderBuilder(this.Transaction)
                 .WithShipToCustomer(this.shipToCustomer)
                 .WithBillToCustomer(this.billToCustomer)
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
         }
 
         [Fact]
         public void GivenOrderItemWithoutVatRegime_WhenDeriving_ThenDerivedVatRegimeIsFromOrder()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var salesOrder = new SalesOrderBuilder(this.Session)
+            var salesOrder = new SalesOrderBuilder(this.Transaction)
                 .WithShipToCustomer(this.shipToCustomer)
                 .WithBillToCustomer(this.billToCustomer)
                 .WithAssignedShipToAddress(this.shipToContactMechanismMechelen)
-                .WithAssignedVatRegime(new VatRegimes(this.Session).Export)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Export)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithProduct(this.good).WithQuantityOrdered(1).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithProduct(this.good).WithQuantityOrdered(1).Build();
             salesOrder.AddSalesOrderItem(orderItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(salesOrder.AssignedVatRegime, orderItem.DerivedVatRegime);
         }
@@ -327,22 +327,22 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenOrderItemWithoutVatRate_WhenDeriving_ThenItemDerivedVatRateIsFromOrderVatRegime()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var expected = new VatRegimes(this.Session).Export.VatRate;
+            var expected = new VatRegimes(this.Transaction).Export.VatRate;
 
-            var salesOrder = new SalesOrderBuilder(this.Session)
+            var salesOrder = new SalesOrderBuilder(this.Transaction)
                 .WithBillToCustomer(this.billToCustomer)
                 .WithAssignedShipToAddress(this.shipToContactMechanismMechelen)
-                .WithAssignedVatRegime(new VatRegimes(this.Session).Export)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Export)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithProduct(this.good).WithQuantityOrdered(1).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithProduct(this.good).WithQuantityOrdered(1).Build();
             salesOrder.AddSalesOrderItem(orderItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(expected, orderItem.VatRate);
         }
@@ -350,26 +350,26 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenOrderItemWithAssignedDeliveryDate_WhenDeriving_ThenDeliveryDateIsOrderItemAssignedDeliveryDate()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var salesOrder = new SalesOrderBuilder(this.Session)
+            var salesOrder = new SalesOrderBuilder(this.Transaction)
                 .WithShipToCustomer(this.billToCustomer)
                 .WithBillToCustomer(this.billToCustomer)
                 .WithAssignedShipToAddress(this.shipToContactMechanismMechelen)
-                .WithAssignedVatRegime(new VatRegimes(this.Session).Export)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Export)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var orderItem = new SalesOrderItemBuilder(this.Session)
+            var orderItem = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(this.good)
                 .WithQuantityOrdered(1)
-                .WithAssignedDeliveryDate(this.Session.Now().AddMonths(1))
+                .WithAssignedDeliveryDate(this.Transaction.Now().AddMonths(1))
                 .Build();
 
             salesOrder.AddSalesOrderItem(orderItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(orderItem.DerivedDeliveryDate, orderItem.AssignedDeliveryDate);
         }
@@ -377,26 +377,26 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenOrderItemWithoutDeliveryDate_WhenDeriving_ThenDerivedDeliveryDateIsOrderDeliveryDate()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var salesOrder = new SalesOrderBuilder(this.Session)
+            var salesOrder = new SalesOrderBuilder(this.Transaction)
                 .WithShipToCustomer(this.billToCustomer)
                 .WithBillToCustomer(this.billToCustomer)
                 .WithAssignedShipToAddress(this.shipToContactMechanismMechelen)
-                .WithAssignedVatRegime(new VatRegimes(this.Session).Export)
-                .WithDeliveryDate(this.Session.Now().AddMonths(1))
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Export)
+                .WithDeliveryDate(this.Transaction.Now().AddMonths(1))
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var orderItem = new SalesOrderItemBuilder(this.Session)
+            var orderItem = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(this.good)
                 .WithQuantityOrdered(1)
                 .Build();
 
             salesOrder.AddSalesOrderItem(orderItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(orderItem.DerivedDeliveryDate, salesOrder.DeliveryDate);
         }
@@ -404,69 +404,69 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenOrderItem_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var builder = new SalesOrderItemBuilder(this.Session);
+            var builder = new SalesOrderItemBuilder(this.Transaction);
             var orderItem = builder.Build();
 
             this.order.AddSalesOrderItem(orderItem);
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithProduct(this.good);
             orderItem = builder.Build();
 
             this.order.AddSalesOrderItem(orderItem);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithQuantityOrdered(1);
             orderItem = builder.Build();
 
             this.order.AddSalesOrderItem(orderItem);
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
             builder.WithProductFeature(this.feature1);
             orderItem = builder.Build();
 
             this.order.AddSalesOrderItem(orderItem);
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void GivenOrderItem_WhenBuild_ThenPostBuildRelationsMustExist()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var item = new SalesOrderItemBuilder(this.Session).Build();
+            var item = new SalesOrderItemBuilder(this.Transaction).Build();
 
-            Assert.Equal(new SalesOrderItemStates(this.Session).Provisional, item.SalesOrderItemState);
+            Assert.Equal(new SalesOrderItemStates(this.Transaction).Provisional, item.SalesOrderItemState);
         }
 
         [Fact]
         public void GivenOrderItemWithOrderedWithFeature_WhenDeriving_ThenOrderedWithFeatureOrderItemMustBeForProductFeature()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var salesOrder = new SalesOrderBuilder(this.Session)
+            var salesOrder = new SalesOrderBuilder(this.Transaction)
                 .WithAssignedShipToAddress(this.shipToContactMechanismMechelen)
                 .WithBillToCustomer(this.billToCustomer)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var productOrderItem = new SalesOrderItemBuilder(this.Session)
+            var productOrderItem = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(this.good)
                 .WithQuantityOrdered(3)
                 .WithAssignedUnitPrice(5)
                 .Build();
 
-            var productFeatureOrderItem = new SalesOrderItemBuilder(this.Session)
-                .WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductFeatureItem)
+            var productFeatureOrderItem = new SalesOrderItemBuilder(this.Transaction)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductFeatureItem)
                 .WithProductFeature(this.feature1)
                 .WithQuantityOrdered(3)
                 .WithAssignedUnitPrice(5)
@@ -476,48 +476,48 @@ namespace Allors.Database.Domain.Tests
             salesOrder.AddSalesOrderItem(productOrderItem);
             salesOrder.AddSalesOrderItem(productFeatureOrderItem);
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
             productFeatureOrderItem.RemoveProductFeature();
             productFeatureOrderItem.Product = this.good;
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void GivenOrderItemWithoutCustomer_WhenDeriving_ShipToAddressIsNull()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var salesOrder = new SalesOrderBuilder(this.Session).WithBillToCustomer(this.billToCustomer).Build();
+            var salesOrder = new SalesOrderBuilder(this.Transaction).WithBillToCustomer(this.billToCustomer).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithProduct(this.good).WithQuantityOrdered(1).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithProduct(this.good).WithQuantityOrdered(1).Build();
             salesOrder.AddSalesOrderItem(orderItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Null(orderItem.DerivedShipToAddress);
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void GivenOrderItemWithoutShipFromAddress_WhenDeriving_ThenDerivedShipFromAddressIsFromOrder()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var salesOrder = new SalesOrderBuilder(this.Session)
+            var salesOrder = new SalesOrderBuilder(this.Transaction)
                 .WithAssignedShipFromAddress(this.shipToContactMechanismMechelen)
                 .WithBillToCustomer(this.billToCustomer)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithProduct(this.good).WithQuantityOrdered(1).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithProduct(this.good).WithQuantityOrdered(1).Build();
             salesOrder.AddSalesOrderItem(orderItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.shipToContactMechanismMechelen, orderItem.DerivedShipFromAddress);
         }
@@ -525,19 +525,19 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenOrderItemWithoutShipToAddress_WhenDeriving_ThenDerivedShipToAddressIsFromOrder()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var salesOrder = new SalesOrderBuilder(this.Session)
+            var salesOrder = new SalesOrderBuilder(this.Transaction)
                 .WithAssignedShipToAddress(this.shipToContactMechanismMechelen)
                 .WithBillToCustomer(this.billToCustomer)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithProduct(this.good).WithQuantityOrdered(1).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithProduct(this.good).WithQuantityOrdered(1).Build();
             salesOrder.AddSalesOrderItem(orderItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.shipToContactMechanismMechelen, orderItem.DerivedShipToAddress);
         }
@@ -545,19 +545,19 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenOrderItemWithoutShipToParty_WhenDeriving_ThenDerivedShipToPartyIsFromOrder()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var salesOrder = new SalesOrderBuilder(this.Session)
+            var salesOrder = new SalesOrderBuilder(this.Transaction)
                 .WithShipToCustomer(this.shipToCustomer)
                 .WithBillToCustomer(this.billToCustomer)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithProduct(this.good).WithQuantityOrdered(1).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithProduct(this.good).WithQuantityOrdered(1).Build();
             salesOrder.AddSalesOrderItem(orderItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.shipToCustomer, orderItem.DerivedShipToParty);
         }
@@ -565,32 +565,32 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenOrderItemForGoodWithoutSelectedInventoryItem_WhenConfirming_ThenReservedFromNonSerialisedInventoryItemIsFromDefaultFacility()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var good2 = new Goods(this.Session).FindBy(this.M.Good.Name, "good2");
+            var good2 = new Goods(this.Transaction).FindBy(this.M.Good.Name, "good2");
 
-            new SupplierRelationshipBuilder(this.Session)
+            new SupplierRelationshipBuilder(this.Transaction)
                 .WithSupplier(this.supplier)
-                .WithFromDate(this.Session.Now())
+                .WithFromDate(this.Transaction.Now())
                 .Build();
 
-            var good2PurchasePrice = new SupplierOfferingBuilder(this.Session)
+            var good2PurchasePrice = new SupplierOfferingBuilder(this.Transaction)
                 .WithPart(this.part)
                 .WithSupplier(this.supplier)
-                .WithCurrency(new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR"))
-                .WithFromDate(this.Session.Now())
+                .WithCurrency(new Currencies(this.Transaction).FindBy(this.M.Currency.IsoCode, "EUR"))
+                .WithFromDate(this.Transaction.Now())
                 .WithPrice(7)
-                .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
+                .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
                 .Build();
 
             //// good with part as inventory item
-            var item1 = new SalesOrderItemBuilder(this.Session)
+            var item1 = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(this.good)
                 .WithQuantityOrdered(3)
                 .WithAssignedUnitPrice(5)
                 .Build();
 
-            var item2 = new SalesOrderItemBuilder(this.Session)
+            var item2 = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(good2)
                 .WithQuantityOrdered(3)
                 .WithAssignedUnitPrice(5)
@@ -599,46 +599,46 @@ namespace Allors.Database.Domain.Tests
             this.order.AddSalesOrderItem(item1);
             this.order.AddSalesOrderItem(item2);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.SetReadyForPosting();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.Post();
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             this.order.Accept();
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            Assert.Equal(new Facilities(this.Session).FindBy(this.M.Facility.FacilityType, new FacilityTypes(this.Session).Warehouse), item1.ReservedFromNonSerialisedInventoryItem.Facility);
-            Assert.Equal(new Facilities(this.Session).FindBy(this.M.Facility.FacilityType, new FacilityTypes(this.Session).Warehouse), item2.ReservedFromNonSerialisedInventoryItem.Facility);
+            Assert.Equal(new Facilities(this.Transaction).FindBy(this.M.Facility.FacilityType, new FacilityTypes(this.Transaction).Warehouse), item1.ReservedFromNonSerialisedInventoryItem.Facility);
+            Assert.Equal(new Facilities(this.Transaction).FindBy(this.M.Facility.FacilityType, new FacilityTypes(this.Transaction).Warehouse), item2.ReservedFromNonSerialisedInventoryItem.Facility);
         }
 
         //[Fact]
         //public void GivenConfirmedOrderItemForGood_WhenReservedFromNonSerialisedInventoryItemChangesValue_ThenQuantitiesAreMovedFromOldToNewInventoryItem()
         //{
-        //    this.InstantiateObjects(this.Session);
+        //    this.InstantiateObjects(this.Transaction);
 
-        //    new InventoryItemTransactionBuilder(this.Session).WithQuantity(1).WithReason(new InventoryTransactionReasons(this.Session).Unknown).WithPart(this.part).Build();
+        //    new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(1).WithReason(new InventoryTransactionReasons(this.Transaction).Unknown).WithPart(this.part).Build();
 
-        //    this.Session.Derive();
+        //    this.Transaction.Derive();
 
-        //    var secondWarehouse = new FacilityBuilder(this.Session)
+        //    var secondWarehouse = new FacilityBuilder(this.Transaction)
         //        .WithName("affiliate warehouse")
-        //        .WithFacilityType(new FacilityTypes(this.Session).Warehouse)
+        //        .WithFacilityType(new FacilityTypes(this.Transaction).Warehouse)
         //        .WithOwner(this.InternalOrganisation)
         //        .Build();
 
-        //    var order1 = new SalesOrderBuilder(this.Session)
+        //    var order1 = new SalesOrderBuilder(this.Transaction)
         //        .WithShipToCustomer(this.shipToCustomer)
         //        .WithBillToCustomer(this.billToCustomer)
         //        .WithPartiallyShip(false)
         //        .Build();
 
-            //this.Session.Derive();
+            //this.Transaction.Derive();
 
-        //    var salesOrderItem = new SalesOrderItemBuilder(this.Session)
+        //    var salesOrderItem = new SalesOrderItemBuilder(this.Transaction)
         //        .WithProduct(this.good)
         //        .WithQuantityOrdered(3)
         //        .WithAssignedUnitPrice(5)
@@ -646,15 +646,15 @@ namespace Allors.Database.Domain.Tests
 
         //    order1.AddSalesOrderItem(salesOrderItem);
 
-        //    this.Session.Derive();
+        //    this.Transaction.Derive();
 
         //    order1.Confirm();
 
-        //    this.Session.Derive();
+        //    this.Transaction.Derive();
 
         //    order1.Send();
 
-        //    this.Session.Derive(true);
+        //    this.Transaction.Derive(true);
 
         //    Assert.Equal(3, salesOrderItem.QuantityOrdered);
         //    Assert.Equal(0, salesOrderItem.QuantityShipped);
@@ -668,15 +668,15 @@ namespace Allors.Database.Domain.Tests
 
         //    var previous = salesOrderItem.ReservedFromNonSerialisedInventoryItem;
 
-        //    var transaction = new InventoryItemTransactionBuilder(this.Session).WithFacility(secondWarehouse).WithPart(this.part).WithQuantity(1).WithReason(new InventoryTransactionReasons(this.Session).Unknown).Build();
+        //    var transaction = new InventoryItemTransactionBuilder(this.Transaction).WithFacility(secondWarehouse).WithPart(this.part).WithQuantity(1).WithReason(new InventoryTransactionReasons(this.Transaction).Unknown).Build();
 
-        //    this.Session.Derive();
+        //    this.Transaction.Derive();
 
         //    var current = transaction.InventoryItem as NonSerialisedInventoryItem;
 
         //    salesOrderItem.ReservedFromNonSerialisedInventoryItem = current;
 
-        //    this.Session.Derive();
+        //    this.Transaction.Derive();
 
         //    Assert.Equal(3, salesOrderItem.QuantityOrdered);
         //    Assert.Equal(0, salesOrderItem.QuantityShipped);
@@ -695,11 +695,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenConfirmedOrderItemForGood_WhenOrderItemIsCancelled_ThenNonSerialisedInventoryQuantitiesAreReleased()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            new InventoryItemTransactionBuilder(this.Session).WithQuantity(3).WithReason(new InventoryTransactionReasons(this.Session).Unknown).WithPart(this.part).Build();
+            new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(3).WithReason(new InventoryTransactionReasons(this.Transaction).Unknown).WithPart(this.part).Build();
 
-            var salesOrderItem = new SalesOrderItemBuilder(this.Session)
+            var salesOrderItem = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(this.good)
                 .WithQuantityOrdered(3)
                 .WithAssignedUnitPrice(5)
@@ -707,25 +707,25 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddSalesOrderItem(salesOrderItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.Post();
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             this.order.Accept();
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             Assert.Equal(salesOrderItem.QuantityOrdered, salesOrderItem.ReservedFromNonSerialisedInventoryItem.QuantityCommittedOut);
             Assert.Equal(0, salesOrderItem.ReservedFromNonSerialisedInventoryItem.AvailableToPromise);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             salesOrderItem.Cancel();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(0, salesOrderItem.ReservedFromNonSerialisedInventoryItem.QuantityCommittedOut);
             Assert.Equal(3, salesOrderItem.ReservedFromNonSerialisedInventoryItem.AvailableToPromise);
@@ -735,11 +735,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenConfirmedOrderItemForGood_WhenOrderItemIsRejected_ThenNonSerialisedInventoryQuantitiesAreReleased()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            new InventoryItemTransactionBuilder(this.Session).WithQuantity(3).WithReason(new InventoryTransactionReasons(this.Session).Unknown).WithPart(this.part).Build();
+            new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(3).WithReason(new InventoryTransactionReasons(this.Transaction).Unknown).WithPart(this.part).Build();
 
-            var salesOrderItem = new SalesOrderItemBuilder(this.Session)
+            var salesOrderItem = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(this.good)
                 .WithQuantityOrdered(3)
                 .WithAssignedUnitPrice(5)
@@ -747,25 +747,25 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddSalesOrderItem(salesOrderItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.Post();
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             this.order.Accept();
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             Assert.Equal(salesOrderItem.QuantityOrdered, salesOrderItem.ReservedFromNonSerialisedInventoryItem.QuantityCommittedOut);
             Assert.Equal(0, salesOrderItem.ReservedFromNonSerialisedInventoryItem.AvailableToPromise);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             salesOrderItem.Reject();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(0, salesOrderItem.ReservedFromNonSerialisedInventoryItem.QuantityCommittedOut);
             Assert.Equal(3, salesOrderItem.ReservedFromNonSerialisedInventoryItem.AvailableToPromise);
@@ -775,16 +775,16 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenOrderItemForGoodWithEnoughStockAvailable_WhenConfirming_ThenQuantitiesReservedAndRequestsShippingAreEqualToQuantityOrdered()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var store = this.Session.Extent<Store>().First;
+            var store = this.Transaction.Extent<Store>().First;
             store.IsImmediatelyPicked = false;
 
-            new InventoryItemTransactionBuilder(this.Session).WithQuantity(110).WithReason(new InventoryTransactionReasons(this.Session).Unknown).WithPart(this.part).Build();
+            new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(110).WithReason(new InventoryTransactionReasons(this.Transaction).Unknown).WithPart(this.part).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(this.good)
                 .WithQuantityOrdered(100)
                 .WithAssignedUnitPrice(5)
@@ -792,16 +792,16 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddSalesOrderItem(item);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(100, item.QuantityOrdered);
             Assert.Equal(0, item.QuantityShipped);
@@ -817,16 +817,16 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenOrderItemForGoodWithNotEnoughStockAvailable_WhenConfirming_ThenQuantitiesReservedAndRequestsShippingAreEqualToInventoryAvailableToPromise()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var store = this.Session.Extent<Store>().First;
+            var store = this.Transaction.Extent<Store>().First;
             store.IsImmediatelyPicked = false;
 
-            new InventoryItemTransactionBuilder(this.Session).WithQuantity(110).WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment).WithPart(this.part).Build();
+            new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(110).WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment).WithPart(this.part).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var item1 = new SalesOrderItemBuilder(this.Session)
+            var item1 = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(this.good)
                 .WithQuantityOrdered(120)
                 .WithAssignedUnitPrice(5)
@@ -834,16 +834,16 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddSalesOrderItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(120, item1.QuantityOrdered);
             Assert.Equal(0, item1.QuantityShipped);
@@ -855,23 +855,23 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(0, item1.ReservedFromNonSerialisedInventoryItem.AvailableToPromise);
             Assert.Equal(110, item1.ReservedFromNonSerialisedInventoryItem.QuantityOnHand);
 
-            var item2 = new SalesOrderItemBuilder(this.Session)
+            var item2 = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(this.good)
                 .WithQuantityOrdered(10)
                 .WithAssignedUnitPrice(5)
                 .Build();
 
             this.order.AddSalesOrderItem(item2);
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(120, item1.QuantityOrdered);
             Assert.Equal(0, item1.QuantityShipped);
@@ -894,16 +894,16 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenConfirmedOrderItemForGood_WhenShipmentIsCreated_ThenQuantitiesRequestsShippingIsSetToZero()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var store = this.Session.Extent<Store>().First;
+            var store = this.Transaction.Extent<Store>().First;
             store.IsImmediatelyPicked = false;
 
-            new InventoryItemTransactionBuilder(this.Session).WithQuantity(110).WithReason(new InventoryTransactionReasons(this.Session).Unknown).WithPart(this.part).Build();
+            new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(110).WithReason(new InventoryTransactionReasons(this.Transaction).Unknown).WithPart(this.part).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(this.good)
                 .WithQuantityOrdered(100)
                 .WithAssignedUnitPrice(5)
@@ -911,16 +911,16 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddSalesOrderItem(item);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(100, item.QuantityOrdered);
             Assert.Equal(0, item.QuantityShipped);
@@ -938,16 +938,16 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenConfirmedOrderItemForGood_WhenQuantityOrderedIsDecreased_ThenQuantitiesReservedAndRequestsShippingAndInventoryAvailableToPromiseDecreaseEqually()
         {
-            var store = this.Session.Extent<Store>().First;
+            var store = this.Transaction.Extent<Store>().First;
             store.AutoGenerateCustomerShipment = false;
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            new InventoryItemTransactionBuilder(this.Session).WithQuantity(110).WithReason(new InventoryTransactionReasons(this.Session).Unknown).WithPart(this.part).Build();
+            new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(110).WithReason(new InventoryTransactionReasons(this.Transaction).Unknown).WithPart(this.part).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(this.good)
                 .WithQuantityOrdered(100)
                 .WithAssignedUnitPrice(5)
@@ -955,22 +955,22 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddSalesOrderItem(item);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            this.Session.Commit();
+            this.Transaction.Commit();
 
             item.QuantityOrdered = 50;
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(50, item.QuantityOrdered);
             Assert.Equal(0, item.QuantityShipped);
@@ -986,15 +986,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenConfirmedOrderItemForGood_WhenQuantityOrderedIsDecreased_ThenQuantityMayNotBeLessThanQuantityShipped()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var manual = new OrderKindBuilder(this.Session).WithDescription("manual").WithScheduleManually(true).Build();
+            var manual = new OrderKindBuilder(this.Transaction).WithDescription("manual").WithScheduleManually(true).Build();
 
-            var good = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good1");
+            var good = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1");
 
-            new InventoryItemTransactionBuilder(this.Session).WithQuantity(110).WithReason(new InventoryTransactionReasons(this.Session).Unknown).WithPart(good.Part).Build();
+            new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(110).WithReason(new InventoryTransactionReasons(this.Transaction).Unknown).WithPart(good.Part).Build();
 
-            var orderItem = new SalesOrderItemBuilder(this.Session)
+            var orderItem = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(good)
                 .WithQuantityOrdered(120)
                 .WithAssignedUnitPrice(5)
@@ -1002,28 +1002,28 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddSalesOrderItem(orderItem);
             this.order.OrderKind = manual;
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var shipment = new CustomerShipmentBuilder(this.Session)
+            var shipment = new CustomerShipmentBuilder(this.Transaction)
                 .WithShipFromAddress(this.order.TakenBy.ShippingAddress)
                 .WithShipToParty(this.order.ShipToCustomer)
                 .WithShipToAddress(this.order.DerivedShipToAddress)
-                .WithShipmentPackage(new ShipmentPackageBuilder(this.Session).Build())
+                .WithShipmentPackage(new ShipmentPackageBuilder(this.Transaction).Build())
                 .WithShipmentMethod(this.order.DerivedShipmentMethod)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var shipmentItem = new ShipmentItemBuilder(this.Session)
+            var shipmentItem = new ShipmentItemBuilder(this.Transaction)
                 .WithGood(orderItem.Product as Good)
                 .WithQuantity(100)
                 .WithReservedFromInventoryItem(orderItem.ReservedFromNonSerialisedInventoryItem)
@@ -1031,40 +1031,40 @@ namespace Allors.Database.Domain.Tests
 
             shipment.AddShipmentItem(shipmentItem);
 
-            new OrderShipmentBuilder(this.Session)
+            new OrderShipmentBuilder(this.Transaction)
                 .WithOrderItem(orderItem)
                 .WithShipmentItem(shipment.ShipmentItems.First)
                 .WithQuantity(100)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             shipment.Pick();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var pickList = shipment.ShipmentItems[0].ItemIssuancesWhereShipmentItem[0].PickListItem.PickListWherePickListItem;
             pickList.Picker = this.OrderProcessor;
 
             pickList.SetPicked();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var package = new ShipmentPackageBuilder(this.Session).Build();
+            var package = new ShipmentPackageBuilder(this.Transaction).Build();
             shipment.AddShipmentPackage(package);
 
             foreach (ShipmentItem item in shipment.ShipmentItems)
             {
-                package.AddPackagingContent(new PackagingContentBuilder(this.Session).WithShipmentItem(item).WithQuantity(item.Quantity).Build());
+                package.AddPackagingContent(new PackagingContentBuilder(this.Transaction).WithShipmentItem(item).WithQuantity(item.Quantity).Build());
             }
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             shipment.Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(100, orderItem.QuantityShipped);
 
             orderItem.QuantityOrdered = 90;
-            var derivationLog = this.Session.Derive(false);
+            var derivationLog = this.Transaction.Derive(false);
 
             Assert.True(derivationLog.HasErrors);
         }
@@ -1072,13 +1072,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenOrderItemWithPendingShipmentAndItemsShortFalled_WhenQuantityOrderedIsDecreased_ThenItemsShortFalledIsDecreasedAndShipmentIsLeftUnchanged()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            new InventoryItemTransactionBuilder(this.Session).WithQuantity(10).WithReason(new InventoryTransactionReasons(this.Session).Unknown).WithPart(this.part).Build();
+            new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(10).WithReason(new InventoryTransactionReasons(this.Transaction).Unknown).WithPart(this.part).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(this.good)
                 .WithQuantityOrdered(30)
                 .WithAssignedUnitPrice(5)
@@ -1086,16 +1086,16 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddSalesOrderItem(item);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(20, item.QuantityShortFalled);
 
@@ -1103,14 +1103,14 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(10, shipment.ShipmentItems[0].Quantity);
 
             shipment.Pick();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var pickList = shipment.ShipmentItems[0].ItemIssuancesWhereShipmentItem[0].PickListItem.PickListWherePickListItem;
             Assert.Equal(10, pickList.PickListItems[0].Quantity);
 
             item.QuantityOrdered = 11;
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(1, item.QuantityShortFalled);
 
@@ -1119,7 +1119,7 @@ namespace Allors.Database.Domain.Tests
 
             item.QuantityOrdered = 10;
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(0, item.QuantityShortFalled);
 
@@ -1130,115 +1130,115 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenManuallyScheduledOrderItem_WhenScheduled_ThenQuantityCannotExceedInventoryAvailableToPromise()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            new InventoryItemTransactionBuilder(this.Session).WithQuantity(3).WithReason(new InventoryTransactionReasons(this.Session).Unknown).WithPart(this.part).Build();
+            new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(3).WithReason(new InventoryTransactionReasons(this.Transaction).Unknown).WithPart(this.part).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var manual = new OrderKindBuilder(this.Session).WithDescription("manual").WithScheduleManually(true).Build();
+            var manual = new OrderKindBuilder(this.Transaction).WithDescription("manual").WithScheduleManually(true).Build();
 
-            var order1 = new SalesOrderBuilder(this.Session)
+            var order1 = new SalesOrderBuilder(this.Transaction)
                 .WithShipToCustomer(this.shipToCustomer)
                 .WithBillToCustomer(this.billToCustomer)
                 .WithAssignedShipToAddress(this.shipToContactMechanismMechelen)
                 .WithOrderKind(manual)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var orderItem = new SalesOrderItemBuilder(this.Session)
+            var orderItem = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(this.good)
                 .WithQuantityOrdered(5)
                 .WithAssignedUnitPrice(5)
                 .Build();
 
             order1.AddSalesOrderItem(orderItem);
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order1.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order1.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order1.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var shipment = new CustomerShipmentBuilder(this.Session)
+            var shipment = new CustomerShipmentBuilder(this.Transaction)
                 .WithShipFromAddress(this.order.TakenBy.ShippingAddress)
                 .WithShipToParty(this.order.ShipToCustomer)
                 .WithShipToAddress(this.order.DerivedShipToAddress)
-                .WithShipmentPackage(new ShipmentPackageBuilder(this.Session).Build())
+                .WithShipmentPackage(new ShipmentPackageBuilder(this.Transaction).Build())
                 .WithShipmentMethod(this.order.DerivedShipmentMethod)
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var shipmentItem = new ShipmentItemBuilder(this.Session)
+            var shipmentItem = new ShipmentItemBuilder(this.Transaction)
                 .WithGood(orderItem.Product as Good)
                 .WithQuantity(5)
                 .Build();
 
             shipment.AddShipmentItem(shipmentItem);
 
-            var orderShipment = new OrderShipmentBuilder(this.Session)
+            var orderShipment = new OrderShipmentBuilder(this.Transaction)
                 .WithOrderItem(orderItem)
                 .WithShipmentItem(shipment.ShipmentItems.First)
                 .WithQuantity(5)
                 .Build();
 
             var expectedMessage = $"{orderShipment}, {this.M.OrderShipment.Quantity}, {ErrorMessages.SalesOrderItemQuantityToShipNowNotAvailable}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            shipmentItem = new ShipmentItemBuilder(this.Session)
+            shipmentItem = new ShipmentItemBuilder(this.Transaction)
                 .WithGood(orderItem.Product as Good)
                 .WithQuantity(3)
                 .Build();
 
             shipment.AddShipmentItem(shipmentItem);
 
-            new OrderShipmentBuilder(this.Session)
+            new OrderShipmentBuilder(this.Transaction)
                 .WithOrderItem(orderItem)
                 .WithShipmentItem(shipment.ShipmentItems.First)
                 .WithQuantity(3)
                 .Build();
 
-            var derivationLog = this.Session.Derive();
+            var derivationLog = this.Transaction.Derive();
 
             Assert.False(derivationLog.HasErrors);
             Assert.Equal(3, orderItem.QuantityPendingShipment);
         }
 
-        private void InstantiateObjects(ISession session)
+        private void InstantiateObjects(ITransaction transaction)
         {
-            this.productCategory = (ProductCategory)session.Instantiate(this.productCategory);
-            this.parentProductCategory = (ProductCategory)session.Instantiate(this.parentProductCategory);
-            this.ancestorProductCategory = (ProductCategory)session.Instantiate(this.ancestorProductCategory);
-            this.part = (Part)session.Instantiate(this.part);
-            this.virtualGood = (Good)session.Instantiate(this.virtualGood);
-            this.good = (Good)session.Instantiate(this.good);
-            this.feature1 = (Colour)session.Instantiate(this.feature1);
-            this.feature2 = (Colour)session.Instantiate(this.feature2);
-            this.shipToCustomer = (Organisation)session.Instantiate(this.shipToCustomer);
-            this.billToCustomer = (Organisation)session.Instantiate(this.billToCustomer);
-            this.supplier = (Organisation)session.Instantiate(this.supplier);
-            this.kiev = (City)session.Instantiate(this.kiev);
-            this.shipToContactMechanismMechelen = (PostalAddress)session.Instantiate(this.shipToContactMechanismMechelen);
-            this.shipToContactMechanismKiev = (PostalAddress)session.Instantiate(this.shipToContactMechanismKiev);
-            this.currentBasePriceGeoBoundary = (BasePrice)session.Instantiate(this.currentBasePriceGeoBoundary);
-            this.currentGoodBasePrice = (BasePrice)session.Instantiate(this.currentGoodBasePrice);
-            this.currentGood1Feature1BasePrice = (BasePrice)session.Instantiate(this.currentGood1Feature1BasePrice);
-            this.currentFeature2BasePrice = (BasePrice)session.Instantiate(this.currentFeature2BasePrice);
-            this.goodPurchasePrice = (SupplierOffering)session.Instantiate(this.goodPurchasePrice);
-            this.virtualGoodPurchasePrice = (SupplierOffering)session.Instantiate(this.virtualGoodPurchasePrice);
-            this.currentGoodBasePrice = (BasePrice)session.Instantiate(this.currentGoodBasePrice);
-            this.order = (SalesOrder)session.Instantiate(this.order);
-            this.vatRate21 = (VatRate)session.Instantiate(this.vatRate21);
+            this.productCategory = (ProductCategory)transaction.Instantiate(this.productCategory);
+            this.parentProductCategory = (ProductCategory)transaction.Instantiate(this.parentProductCategory);
+            this.ancestorProductCategory = (ProductCategory)transaction.Instantiate(this.ancestorProductCategory);
+            this.part = (Part)transaction.Instantiate(this.part);
+            this.virtualGood = (Good)transaction.Instantiate(this.virtualGood);
+            this.good = (Good)transaction.Instantiate(this.good);
+            this.feature1 = (Colour)transaction.Instantiate(this.feature1);
+            this.feature2 = (Colour)transaction.Instantiate(this.feature2);
+            this.shipToCustomer = (Organisation)transaction.Instantiate(this.shipToCustomer);
+            this.billToCustomer = (Organisation)transaction.Instantiate(this.billToCustomer);
+            this.supplier = (Organisation)transaction.Instantiate(this.supplier);
+            this.kiev = (City)transaction.Instantiate(this.kiev);
+            this.shipToContactMechanismMechelen = (PostalAddress)transaction.Instantiate(this.shipToContactMechanismMechelen);
+            this.shipToContactMechanismKiev = (PostalAddress)transaction.Instantiate(this.shipToContactMechanismKiev);
+            this.currentBasePriceGeoBoundary = (BasePrice)transaction.Instantiate(this.currentBasePriceGeoBoundary);
+            this.currentGoodBasePrice = (BasePrice)transaction.Instantiate(this.currentGoodBasePrice);
+            this.currentGood1Feature1BasePrice = (BasePrice)transaction.Instantiate(this.currentGood1Feature1BasePrice);
+            this.currentFeature2BasePrice = (BasePrice)transaction.Instantiate(this.currentFeature2BasePrice);
+            this.goodPurchasePrice = (SupplierOffering)transaction.Instantiate(this.goodPurchasePrice);
+            this.virtualGoodPurchasePrice = (SupplierOffering)transaction.Instantiate(this.virtualGoodPurchasePrice);
+            this.currentGoodBasePrice = (BasePrice)transaction.Instantiate(this.currentGoodBasePrice);
+            this.order = (SalesOrder)transaction.Instantiate(this.order);
+            this.vatRate21 = (VatRate)transaction.Instantiate(this.vatRate21);
         }
     }
 
@@ -1249,9 +1249,9 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void DeriveSalesOrderItemState()
         {
-            var order = new SalesOrderItemBuilder(this.Session).Build();
+            var order = new SalesOrderItemBuilder(this.Transaction).Build();
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(order.ExistSalesOrderItemState);
         }
@@ -1259,9 +1259,9 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void DeriveSalesOrderItemShipmentState()
         {
-            var order = new SalesOrderItemBuilder(this.Session).Build();
+            var order = new SalesOrderItemBuilder(this.Transaction).Build();
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(order.ExistSalesOrderItemShipmentState);
         }
@@ -1269,9 +1269,9 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void DeriveSalesOrderIteminvoiceState()
         {
-            var order = new SalesOrderItemBuilder(this.Session).Build();
+            var order = new SalesOrderItemBuilder(this.Transaction).Build();
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(order.ExistSalesOrderItemInvoiceState);
         }
@@ -1279,9 +1279,9 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void DeriveSalesOrderItemPaymentState()
         {
-            var order = new SalesOrderItemBuilder(this.Session).Build();
+            var order = new SalesOrderItemBuilder(this.Transaction).Build();
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(order.ExistSalesOrderItemPaymentState);
         }
@@ -1289,11 +1289,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void DeriveInvoiceItemType()
         {
-            var order = new SalesOrderItemBuilder(this.Session)
-                .WithProduct(new UnifiedGoodBuilder(this.Session).Build())
+            var order = new SalesOrderItemBuilder(this.Transaction)
+                .WithProduct(new UnifiedGoodBuilder(this.Transaction).Build())
                 .Build();
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(order.ExistInvoiceItemType);
         }
@@ -1306,12 +1306,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesOrderSalesOrderItemsDeriveDerivedShipFromAddress()
         {
-            var order = new SalesOrderBuilder(this.Session).WithAssignedShipFromAddress(new PostalAddressBuilder(this.Session).Build()).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).WithAssignedShipFromAddress(new PostalAddressBuilder(this.Transaction).Build()).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(orderItem.DerivedShipFromAddress, order.AssignedShipFromAddress);
         }
@@ -1319,12 +1319,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedAssignedShipFromAddressDeriveDerivedShipFromAddress()
         {
-            var order = new SalesOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithAssignedShipFromAddress(new PostalAddressBuilder(this.Session).Build()).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithAssignedShipFromAddress(new PostalAddressBuilder(this.Transaction).Build()).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(orderItem.DerivedShipFromAddress, orderItem.AssignedShipFromAddress);
         }
@@ -1332,15 +1332,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedsalesOrderDerivedShipFromAddressDeriveDerivedShipFromAddress()
         {
-            var order = new SalesOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            order.AssignedShipFromAddress = new PostalAddressBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            order.AssignedShipFromAddress = new PostalAddressBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.Equal(orderItem.DerivedShipFromAddress, order.DerivedShipFromAddress);
         }
@@ -1348,12 +1348,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedAssignedShipToAddressDeriveDerivedShipToAddress()
         {
-            var order = new SalesOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithAssignedShipToAddress(new PostalAddressBuilder(this.Session).Build()).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithAssignedShipToAddress(new PostalAddressBuilder(this.Transaction).Build()).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(orderItem.DerivedShipToAddress, orderItem.AssignedShipToAddress);
         }
@@ -1361,16 +1361,16 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipToPartyShippingAddressDeriveDerivedShipToAddress()
         {
-            var order = new SalesOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             var customer = this.InternalOrganisation.ActiveCustomers.First;
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithAssignedShipToParty(customer).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithAssignedShipToParty(customer).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            customer.ShippingAddress = new PostalAddressBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            customer.ShippingAddress = new PostalAddressBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.Equal(orderItem.DerivedShipToAddress, customer.ShippingAddress);
         }
@@ -1378,15 +1378,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedsalesOrderDerivedShipToAddressDeriveDerivedShipToAddress()
         {
-            var order = new SalesOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            order.AssignedShipToAddress = new PostalAddressBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            order.AssignedShipToAddress = new PostalAddressBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.Equal(orderItem.DerivedShipToAddress, order.DerivedShipToAddress);
         }
@@ -1394,12 +1394,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedAssignedDeliveryDateDeriveDerivedDeliveryDate()
         {
-            var order = new SalesOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithAssignedDeliveryDate(this.Session.Now().Date).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithAssignedDeliveryDate(this.Transaction.Now().Date).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(orderItem.DerivedDeliveryDate, orderItem.AssignedDeliveryDate);
         }
@@ -1407,15 +1407,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedsalesOrderDerivedDeliveryDateDeriveDerivedDeliveryDate()
         {
-            var order = new SalesOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            order.DeliveryDate = this.Session.Now().Date;
-            this.Session.Derive(false);
+            order.DeliveryDate = this.Transaction.Now().Date;
+            this.Transaction.Derive(false);
 
             Assert.Equal(orderItem.DerivedDeliveryDate, order.DeliveryDate);
         }
@@ -1423,12 +1423,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedAssignedVatRegimeDeriveDerivedVatRegime()
         {
-            var order = new SalesOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithAssignedVatRegime(new VatRegimes(this.Session).Assessable10).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithAssignedVatRegime(new VatRegimes(this.Transaction).Assessable10).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(orderItem.DerivedVatRegime, orderItem.AssignedVatRegime);
         }
@@ -1436,15 +1436,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedsalesOrderDerivedVatRegimeDeriveDerivedVatRegime()
         {
-            var order = new SalesOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            order.AssignedVatRegime = new VatRegimes(this.Session).Assessable10;
-            this.Session.Derive(false);
+            order.AssignedVatRegime = new VatRegimes(this.Transaction).Assessable10;
+            this.Transaction.Derive(false);
 
             Assert.Equal(orderItem.DerivedVatRegime, order.AssignedVatRegime);
         }
@@ -1452,15 +1452,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedDerivedVatRegimeDeriveVatRate()
         {
-            var order = new SalesOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            order.AssignedVatRegime = new VatRegimes(this.Session).Assessable10;
-            this.Session.Derive(false);
+            order.AssignedVatRegime = new VatRegimes(this.Transaction).Assessable10;
+            this.Transaction.Derive(false);
 
             Assert.Equal(orderItem.VatRate, order.AssignedVatRegime.VatRate);
         }
@@ -1468,12 +1468,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedAssignedIrpfRegimeDeriveDerivedIrpfRegime()
         {
-            var order = new SalesOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithAssignedIrpfRegime(new IrpfRegimes(this.Session).Assessable15).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithAssignedIrpfRegime(new IrpfRegimes(this.Transaction).Assessable15).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(orderItem.DerivedIrpfRegime, orderItem.AssignedIrpfRegime);
         }
@@ -1481,15 +1481,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedsalesOrderDerivedIrpfRegimeDeriveDerivedIrpfRegime()
         {
-            var order = new SalesOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            order.AssignedIrpfRegime = new IrpfRegimes(this.Session).Assessable15;
-            this.Session.Derive(false);
+            order.AssignedIrpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
+            this.Transaction.Derive(false);
 
             Assert.Equal(orderItem.DerivedIrpfRegime, order.AssignedIrpfRegime);
         }
@@ -1497,15 +1497,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedDerivedIrpfRegimeDeriveIrpfRate()
         {
-            var order = new SalesOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            order.AssignedIrpfRegime = new IrpfRegimes(this.Session).Assessable15;
-            this.Session.Derive(false);
+            order.AssignedIrpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
+            this.Transaction.Derive(false);
 
             Assert.Equal(orderItem.IrpfRate, order.AssignedIrpfRegime.IrpfRate);
         }
@@ -1518,220 +1518,220 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedProductDeriveInvoiceItemType()
         {
-            var item = new SalesOrderItemBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var item = new SalesOrderItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            item.Product = new UnifiedGoodBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            item.Product = new UnifiedGoodBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            Assert.Equal(new InvoiceItemTypes(this.Session).ProductItem, item.InvoiceItemType);
+            Assert.Equal(new InvoiceItemTypes(this.Transaction).ProductItem, item.InvoiceItemType);
         }
 
         [Fact]
         public void ChangedInvoiceItemTypeDeriveInvoiceItemType()
         {
-            var item = new SalesOrderItemBuilder(this.Session)
-                .WithProduct(new UnifiedGoodBuilder(this.Session).Build())
-                .WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem)
+            var item = new SalesOrderItemBuilder(this.Transaction)
+                .WithProduct(new UnifiedGoodBuilder(this.Transaction).Build())
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             item.RemoveInvoiceItemType();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            Assert.Equal(new InvoiceItemTypes(this.Session).ProductItem, item.InvoiceItemType);
+            Assert.Equal(new InvoiceItemTypes(this.Transaction).ProductItem, item.InvoiceItemType);
         }
 
         [Fact]
         public void ChangedSerialisedItemValidationError()
         {
-            var item = new SalesOrderItemBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var item = new SalesOrderItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            item.SerialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            item.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Single(errors.FindAll(e => e.Message.Equals("AssertExists: SalesOrderItem.NextSerialisedItemAvailability")));
         }
 
         [Fact]
         public void ChangedNextSerialisedItemAvailabilityValidationError()
         {
-            var item = new SalesOrderItemBuilder(this.Session)
-                .WithSerialisedItem(new SerialisedItemBuilder(this.Session).Build())
-                .WithNextSerialisedItemAvailability(new SerialisedItemAvailabilities(this.Session).Available)
+            var item = new SalesOrderItemBuilder(this.Transaction)
+                .WithSerialisedItem(new SerialisedItemBuilder(this.Transaction).Build())
+                .WithNextSerialisedItemAvailability(new SerialisedItemAvailabilities(this.Transaction).Available)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             item.RemoveNextSerialisedItemAvailability();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Single(errors.FindAll(e => e.Message.Equals("AssertExists: SalesOrderItem.NextSerialisedItemAvailability")));
         }
 
         [Fact]
         public void ChangedProductWhenSerialisedValidationError()
         {
-            var product = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised).Build();
+            var product = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).Build();
 
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithQuantityOrdered(2)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             item.Product = product;
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
         }
 
         [Fact]
         public void ChangedQuantityOrderedWhenSerialisedValidationError()
         {
-            var product = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised).Build();
+            var product = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).Build();
 
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(product)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             item.QuantityOrdered = 2;
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
         }
 
         [Fact]
         public void ChangedProductWhenNonSerialisedValidationError()
         {
-            var product = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
+            var product = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
 
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithQuantityOrdered(0)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             item.Product = product;
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
         }
 
         [Fact]
         public void ChangedQuantityOrderedWhenNonSerialisedValidationError()
         {
-            var product = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised).Build();
+            var product = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).Build();
 
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(product)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             item.QuantityOrdered = 2;
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
         }
 
         [Fact]
         public void ChangedQuantityOrderedValidationError()
         {
-            var item = new SalesOrderItemBuilder(this.Session)
-                .WithInvoiceItemType(new InvoiceItemTypes(this.Session).Service)
+            var item = new SalesOrderItemBuilder(this.Transaction)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).Service)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             item.QuantityOrdered = 2;
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
         }
 
         [Fact]
         public void ChangedQuantityOrderedValidationErrorRequired()
         {
-            var product = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised).Build();
+            var product = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).Build();
 
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(product)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             item.QuantityOrdered = 0;
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains("QuantityOrdered is Required"));
         }
 
         [Fact]
         public void ChangedAssignedUnitPriceValidationErrorRequired()
         {
-            var item = new SalesOrderItemBuilder(this.Session)
-                .WithInvoiceItemType(new InvoiceItemTypes(this.Session).Service)
+            var item = new SalesOrderItemBuilder(this.Transaction)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).Service)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             item.AssignedUnitPrice = 0;
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains("Price is Required"));
         }
 
         [Fact]
         public void ChangedProductValidationError()
         {
-            var product1 = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
-            var product2 = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
+            var product1 = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
+            var product2 = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
 
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(product1)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             item.Product = product2;
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.SalesOrderItemProductChangeNotAllowed));
         }
 
         [Fact]
         public void SalesOrderItemWhereOrderedWithFeatureValidationErrorProductFeature()
         {
-            var product = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
+            var product = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
 
-            var item = new SalesOrderItemBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var item = new SalesOrderItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            item.AddOrderedWithFeature(new SalesOrderItemBuilder(this.Session).Build());
+            item.AddOrderedWithFeature(new SalesOrderItemBuilder(this.Transaction).Build());
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Single(errors.FindAll(e => e.Message.Equals("AssertExists: SalesOrderItem.ProductFeature")));
         }
 
         [Fact]
         public void SalesOrderItemWhereOrderedWithFeatureValidationErrorProduct()
         {
-            var product = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
+            var product = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
 
-            var item = new SalesOrderItemBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var item = new SalesOrderItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            item.AddOrderedWithFeature(new SalesOrderItemBuilder(this.Session).WithProduct(product).Build());
+            item.AddOrderedWithFeature(new SalesOrderItemBuilder(this.Transaction).WithProduct(product).Build());
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Single(errors.FindAll(e => e.Message.Equals("AssertNotExists: SalesOrderItem.Product")));
         }
 
         [Fact]
         public void ChangedProductFeatureValidationError()
         {
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            item.ProductFeature = new ColourBuilder(this.Session).Build();
+            item.ProductFeature = new ColourBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Single(errors.FindAll(e => e.Message.Equals("AssertNotExists: SalesOrderItem.ProductFeature")));
         }
 
@@ -1743,299 +1743,299 @@ namespace Allors.Database.Domain.Tests
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPicked = true;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPacked = true;
 
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
             order.PartiallyShip = true;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithQuantity(item.QuantityOrdered)
-                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).Unknown)
                 .WithPart(item.Part)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var shipment = item.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem;
             ((CustomerShipment)shipment).Pick();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             ((CustomerShipment)shipment).Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(item.QuantityShipped > 0);
 
             item.QuantityOrdered = item.QuantityShipped - 1;
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.SalesOrderItemLessThanAlreadeyShipped));
         }
 
         [Fact]
         public void ChangedProductFeatureValidationErrorAtMostOne()
         {
-            var product = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised).Build();
+            var product = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).Build();
 
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(product)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            item.ProductFeature = new ColourBuilder(this.Session).Build();
+            item.ProductFeature = new ColourBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SalesOrderItem.Product\nSalesOrderItem.ProductFeature"));
         }
 
         [Fact]
         public void ChangedProductValidationErrorAtMostOne()
         {
-            var product = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised).Build();
+            var product = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).Build();
 
-            var item = new SalesOrderItemBuilder(this.Session)
-                .WithProductFeature(new ColourBuilder(this.Session).Build())
+            var item = new SalesOrderItemBuilder(this.Transaction)
+                .WithProductFeature(new ColourBuilder(this.Transaction).Build())
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             item.Product = product;
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SalesOrderItem.Product\nSalesOrderItem.ProductFeature"));
         }
 
         [Fact]
         public void ChangedSerialisedItemValidationErrorAtMostOne()
         {
-            var product = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised).Build();
+            var product = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).Build();
 
-            var item = new SalesOrderItemBuilder(this.Session)
-                .WithProductFeature(new ColourBuilder(this.Session).Build())
+            var item = new SalesOrderItemBuilder(this.Transaction)
+                .WithProductFeature(new ColourBuilder(this.Transaction).Build())
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            item.SerialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            item.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SalesOrderItem.SerialisedItem\nSalesOrderItem.ProductFeature"));
         }
 
         [Fact]
         public void ChangedSerialisedItemValidationErrorAtMostOne_2()
         {
-            var product = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised).Build();
+            var product = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).Build();
 
-            var item = new SalesOrderItemBuilder(this.Session)
-                .WithSerialisedItem(new SerialisedItemBuilder(this.Session).Build())
+            var item = new SalesOrderItemBuilder(this.Transaction)
+                .WithSerialisedItem(new SerialisedItemBuilder(this.Transaction).Build())
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            item.ProductFeature = new ColourBuilder(this.Session).Build();
+            item.ProductFeature = new ColourBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SalesOrderItem.SerialisedItem\nSalesOrderItem.ProductFeature"));
         }
 
         [Fact]
         public void ChangedReservedFromNonSerialisedInventoryItemValidationErrorAtMostOne()
         {
-            var serialisedGood = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised).Build();
-            var nonSerialisedGood = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
-            this.Session.Derive(false);
+            var serialisedGood = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).Build();
+            var nonSerialisedGood = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
+            this.Transaction.Derive(false);
 
-            var serialisedInventoryItem = new SerialisedInventoryItemBuilder(this.Session)
+            var serialisedInventoryItem = new SerialisedInventoryItemBuilder(this.Transaction)
                 .WithPart(serialisedGood)
                 .Build();
-            var nonSerialisedInventoryItem = new NonSerialisedInventoryItemBuilder(this.Session)
+            var nonSerialisedInventoryItem = new NonSerialisedInventoryItemBuilder(this.Transaction)
                 .WithPart(nonSerialisedGood)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithReservedFromSerialisedInventoryItem(serialisedInventoryItem)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             item.ReservedFromNonSerialisedInventoryItem = nonSerialisedInventoryItem;
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SalesOrderItem.ReservedFromSerialisedInventoryItem\nSalesOrderItem.ReservedFromNonSerialisedInventoryItem"));
         }
 
         [Fact]
         public void ChangedReservedFromSerialisedInventoryItemValidationErrorAtMostOne()
         {
-            var serialisedGood = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised).Build();
-            var nonSerialisedGood = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
-            this.Session.Derive(false);
+            var serialisedGood = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).Build();
+            var nonSerialisedGood = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
+            this.Transaction.Derive(false);
 
-            var serialisedInventoryItem = new SerialisedInventoryItemBuilder(this.Session)
+            var serialisedInventoryItem = new SerialisedInventoryItemBuilder(this.Transaction)
                 .WithPart(serialisedGood)
                 .Build();
-            var nonSerialisedInventoryItem = new NonSerialisedInventoryItemBuilder(this.Session)
+            var nonSerialisedInventoryItem = new NonSerialisedInventoryItemBuilder(this.Transaction)
                 .WithPart(nonSerialisedGood)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithReservedFromNonSerialisedInventoryItem(nonSerialisedInventoryItem)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             item.ReservedFromSerialisedInventoryItem = serialisedInventoryItem;
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SalesOrderItem.ReservedFromSerialisedInventoryItem\nSalesOrderItem.ReservedFromNonSerialisedInventoryItem"));
         }
 
         [Fact]
         public void ChangedDiscountAdjustmentsValidationErrorAtMostOne()
         {
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithAssignedUnitPrice(1)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            item.AddDiscountAdjustment(new DiscountAdjustmentBuilder(this.Session).Build());
+            item.AddDiscountAdjustment(new DiscountAdjustmentBuilder(this.Transaction).Build());
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SalesOrderItem.AssignedUnitPrice\nSalesOrderItem.DiscountAdjustments\nSalesOrderItem.SurchargeAdjustments"));
         }
 
         [Fact]
         public void ChangedSurchargeAdjustmentsValidationErrorAtMostOne()
         {
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithAssignedUnitPrice(1)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            item.AddSurchargeAdjustment(new SurchargeAdjustmentBuilder(this.Session).Build());
+            item.AddSurchargeAdjustment(new SurchargeAdjustmentBuilder(this.Transaction).Build());
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SalesOrderItem.AssignedUnitPrice\nSalesOrderItem.DiscountAdjustments\nSalesOrderItem.SurchargeAdjustments"));
         }
 
         [Fact]
         public void ChangedAssignedUnitPriceValidationErrorAtMostOne()
         {
-            var item = new SalesOrderItemBuilder(this.Session)
-                .WithSurchargeAdjustment(new SurchargeAdjustmentBuilder(this.Session).Build())
+            var item = new SalesOrderItemBuilder(this.Transaction)
+                .WithSurchargeAdjustment(new SurchargeAdjustmentBuilder(this.Transaction).Build())
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             item.AssignedUnitPrice = 1;
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SalesOrderItem.AssignedUnitPrice\nSalesOrderItem.DiscountAdjustments\nSalesOrderItem.SurchargeAdjustments"));
         }
 
         [Fact]
         public void ChangedReservedFromSerialisedInventoryItemValidationError()
         {
-            var nonSerialisedGood = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
-            var anotherNonSerialisedGood = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
-            this.Session.Derive(false);
+            var nonSerialisedGood = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
+            var anotherNonSerialisedGood = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
+            this.Transaction.Derive(false);
 
-            var nonSerialisedInventoryItem = new NonSerialisedInventoryItemBuilder(this.Session)
+            var nonSerialisedInventoryItem = new NonSerialisedInventoryItemBuilder(this.Transaction)
                 .WithPart(nonSerialisedGood)
                 .Build();
-            var anotherNonSerialisedInventoryItem = new NonSerialisedInventoryItemBuilder(this.Session)
+            var anotherNonSerialisedInventoryItem = new NonSerialisedInventoryItemBuilder(this.Transaction)
                 .WithPart(anotherNonSerialisedGood)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var order = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
+            this.Transaction.Derive(false);
 
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithReservedFromNonSerialisedInventoryItem(nonSerialisedInventoryItem)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.AddSalesOrderItem(item);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.SetReadyForPosting();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.Post();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.Accept();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             item.ReservedFromNonSerialisedInventoryItem = anotherNonSerialisedInventoryItem;
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.ReservedFromNonSerialisedInventoryItem));
         }
 
         [Fact]
         public void ChangedQuantityOrderedValidationErrorSerializedItemQuantity()
         {
-            var item = new SalesOrderItemBuilder(this.Session)
-                .WithSerialisedItem(new SerialisedItemBuilder(this.Session).Build())
+            var item = new SalesOrderItemBuilder(this.Transaction)
+                .WithSerialisedItem(new SerialisedItemBuilder(this.Transaction).Build())
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             item.QuantityOrdered = 2;
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.SerializedItemQuantity));
         }
 
         [Fact]
         public void ChangedSerialisedItemValidationErrorSerializedItemQuantity()
         {
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithQuantityOrdered(2)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            item.SerialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            item.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.SerializedItemQuantity));
         }
 
         [Fact]
         public void ChangedSerialisedInventoryItemQuantityDeriveReservedFromSerialisedInventoryItem()
         {
-            var serialisedGood = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised).Build();
-            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            var serialisedGood = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             serialisedGood.AddSerialisedItem(serialisedItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var order = new SalesOrderBuilder(this.Session).WithTakenBy(this.InternalOrganisation).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).WithTakenBy(this.InternalOrganisation).Build();
+            this.Transaction.Derive(false);
 
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(serialisedGood)
                 .WithSerialisedItem(serialisedItem)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.AddSalesOrderItem(item);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithQuantity(1)
-                .WithReason(new InventoryTransactionReasons(this.Session).PhysicalCount)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).PhysicalCount)
                 .WithSerialisedItem(serialisedItem)
                 .WithFacility(this.InternalOrganisation.FacilitiesWhereOwner.First)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(item.ReservedFromSerialisedInventoryItem, serialisedItem.SerialisedInventoryItemsWhereSerialisedItem.FirstOrDefault(v => v.Quantity == 1));
         }
@@ -2043,27 +2043,27 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedInventoryItemTransactionPartDeriveReservedFromNonSerialisedInventoryItem()
         {
-            var nonSerialisedGood = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
-            this.Session.Derive(false);
+            var nonSerialisedGood = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
+            this.Transaction.Derive(false);
 
-            var order = new SalesOrderBuilder(this.Session).WithTakenBy(this.InternalOrganisation).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).WithTakenBy(this.InternalOrganisation).Build();
+            this.Transaction.Derive(false);
 
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(nonSerialisedGood)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.AddSalesOrderItem(item);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithQuantity(1)
-                .WithReason(new InventoryTransactionReasons(this.Session).PhysicalCount)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).PhysicalCount)
                 .WithPart(nonSerialisedGood)
                 .WithFacility(this.InternalOrganisation.FacilitiesWhereOwner.First)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(item.ReservedFromNonSerialisedInventoryItem, nonSerialisedGood.InventoryItemsWherePart.First);
         }
@@ -2071,14 +2071,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedProductDeriveSalesOrderSalesOrderItemsByProduct()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithProduct(product).WithQuantityOrdered(1).WithAssignedUnitPrice(1).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithProduct(product).WithQuantityOrdered(1).WithAssignedUnitPrice(1).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(product, order.SalesOrderItemsByProduct.First.Product);
         }
@@ -2093,29 +2093,29 @@ namespace Allors.Database.Domain.Tests
         {
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
 
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
             order.PartiallyShip = true;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithQuantity(item.QuantityOrdered)
-                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).Unknown)
                 .WithPart(item.Part)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.SetReadyForPosting();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.Post();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.Accept();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.Ship();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(item.QuantityOrdered, item.QuantityPendingShipment);
         }
@@ -2128,36 +2128,36 @@ namespace Allors.Database.Domain.Tests
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPicked = true;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPacked = true;
 
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
             order.PartiallyShip = true;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithQuantity(item.QuantityOrdered)
-                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).Unknown)
                 .WithPart(item.Part)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.SetReadyForPosting();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.Post();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.Accept();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.Ship();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             var shipment = item.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem;
             ((CustomerShipment)shipment).Pick();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             ((CustomerShipment)shipment).Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(item.QuantityOrdered, item.QuantityShipped);
         }
@@ -2167,33 +2167,33 @@ namespace Allors.Database.Domain.Tests
         {
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
 
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
             order.PartiallyShip = true;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithQuantity(item.QuantityOrdered)
-                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).Unknown)
                 .WithPart(item.Part)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.SetReadyForPosting();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.Post();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.Accept();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.Ship();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             item.QuantityOrdered -= 1;
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.SalesOrderItemQuantityToShipNowIsLargerThanQuantityRemaining));
         }
 
@@ -2205,40 +2205,40 @@ namespace Allors.Database.Domain.Tests
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPicked = true;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPacked = true;
 
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
             order.PartiallyShip = true;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithQuantity(item.QuantityOrdered)
-                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).Unknown)
                 .WithPart(item.Part)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.SetReadyForPosting();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.Post();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.Accept();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.Ship();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             var shipment = item.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem;
             ((CustomerShipment)shipment).Pick();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             ((CustomerShipment)shipment).Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             item.QuantityOrdered -= 1;
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.SalesOrderItemQuantityToShipNowIsLargerThanQuantityRemaining));
         }
     }
@@ -2250,17 +2250,17 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesOrderSalesOrderStateDeriveSalesOrderItemStateProvisional()
         {
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
-            this.Session.Derive(false);
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
+            this.Transaction.Derive(false);
 
             order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var item = order.SalesOrderItems.First;
             Assert.True(item.SalesOrderItemState.IsReadyForPosting);
 
             order.Revise();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(item.SalesOrderItemState.IsProvisional);
         }
@@ -2268,11 +2268,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesOrderSalesOrderStateDeriveSalesOrderItemStateReadyForPosting()
         {
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
-            this.Session.Derive(false);
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
+            this.Transaction.Derive(false);
 
             order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var item = order.SalesOrderItems.First;
             Assert.True(item.SalesOrderItemState.IsReadyForPosting);
@@ -2281,13 +2281,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesOrderSalesOrderStateDeriveSalesOrderItemStateRequestsApproval()
         {
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
-            this.Session.Derive(false);
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
+            this.Transaction.Derive(false);
 
             this.InternalOrganisation.StoresWhereInternalOrganisation.First.OrderThreshold = order.TotalExVat + 1;
 
             order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var item = order.SalesOrderItems.First;
             Assert.True(item.SalesOrderItemState.IsRequestsApproval);
@@ -2296,14 +2296,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesOrderSalesOrderStateDeriveSalesOrderItemStateAwaitingAcceptance()
         {
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
-            this.Session.Derive(false);
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
+            this.Transaction.Derive(false);
 
             order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var item = order.SalesOrderItems.First;
             Assert.True(item.SalesOrderItemState.IsAwaitingAcceptance);
@@ -2312,17 +2312,17 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesOrderSalesOrderStateDeriveSalesOrderItemStateInProcess()
         {
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
-            this.Session.Derive(false);
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
+            this.Transaction.Derive(false);
 
             order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var item = order.SalesOrderItems.First;
             Assert.True(item.SalesOrderItemState.IsInProcess);
@@ -2331,20 +2331,20 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesOrderSalesOrderStateDeriveSalesOrderItemStateOnHold()
         {
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
-            this.Session.Derive(false);
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
+            this.Transaction.Derive(false);
 
             order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Hold();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var item = order.SalesOrderItems.First;
             Assert.True(item.SalesOrderItemState.IsOnHold);
@@ -2353,11 +2353,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesOrderSalesOrderStateDeriveSalesOrderItemStateCancelled()
         {
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
-            this.Session.Derive(false);
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
+            this.Transaction.Derive(false);
 
             order.Cancel();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var item = order.SalesOrderItems.First;
             Assert.True(item.SalesOrderItemState.IsCancelled);
@@ -2366,11 +2366,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesOrderSalesOrderStateDeriveSalesOrderItemStateRejected()
         {
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
-            this.Session.Derive(false);
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
+            this.Transaction.Derive(false);
 
             order.Reject();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var item = order.SalesOrderItems.First;
             Assert.True(item.SalesOrderItemState.IsRejected);
@@ -2379,61 +2379,61 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesOrderSalesOrderStateDeriveSalesOrderItemStateFinished()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.BillingProcess = new BillingProcesses(this.Session).BillingForOrderItems;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.BillingProcess = new BillingProcesses(this.Transaction).BillingForOrderItems;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateShipmentPackage = true;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPicked = true;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPacked = true;
 
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
             order.PartiallyShip = true;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             var item = order.SalesOrderItems.First;
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithQuantity(item.QuantityOrdered)
-                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).Unknown)
                 .WithPart(item.Part)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.SetReadyForPosting();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.Post();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.Accept();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.Ship();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             var shipment = item.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem;
             ((CustomerShipment)shipment).Pick();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             ((CustomerShipment)shipment).Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Invoice();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             var invoice = order.SalesInvoicesWhereSalesOrder.First;
             invoice.Send();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var paymentApplication = new PaymentApplicationBuilder(this.Session)
+            var paymentApplication = new PaymentApplicationBuilder(this.Transaction)
                 .WithInvoice(invoice)
                 .WithAmountApplied(invoice.TotalIncVat)
                 .Build();
 
-            new ReceiptBuilder(this.Session)
+            new ReceiptBuilder(this.Transaction)
                 .WithAmount(paymentApplication.AmountApplied)
                 .WithPaymentApplication(paymentApplication)
-                .WithEffectiveDate(this.Session.Now())
+                .WithEffectiveDate(this.Transaction.Now())
                 .Build();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(item.SalesOrderItemState.IsFinished);
         }
@@ -2441,12 +2441,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void SalesOrderAddSalesOrderItemDeriveSalesOrderItemShipmentStateIsNotShipped()
         {
-            var order = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
+            this.Transaction.Derive(false);
 
-            var item = new SalesOrderItemBuilder(this.Session).Build();
+            var item = new SalesOrderItemBuilder(this.Transaction).Build();
             order.AddSalesOrderItem(item);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(item.SalesOrderItemShipmentState.IsNotShipped);
         }
@@ -2454,29 +2454,29 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedQuantityPendingShipmentDeriveSalesOrderItemShipmentStateIsInProgress()
         {
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
             order.PartiallyShip = false;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithQuantity(item.QuantityOrdered)
-                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).Unknown)
                 .WithPart(item.Part)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(order.SalesOrderItems.First.SalesOrderItemShipmentState.IsInProgress);
         }
@@ -2489,36 +2489,36 @@ namespace Allors.Database.Domain.Tests
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPicked = true;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPacked = true;
 
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
             order.PartiallyShip = true;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithQuantity(item.QuantityOrdered - 1)
-                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).Unknown)
                 .WithPart(item.Part)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var shipment = item.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem;
             ((CustomerShipment)shipment).Pick();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             ((CustomerShipment)shipment).Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(order.SalesOrderItems.First.SalesOrderItemShipmentState.IsPartiallyShipped);
         }
@@ -2531,36 +2531,36 @@ namespace Allors.Database.Domain.Tests
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPicked = true;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPacked = true;
 
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
             order.PartiallyShip = true;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithQuantity(item.QuantityOrdered)
-                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).Unknown)
                 .WithPart(item.Part)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var shipment = item.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem;
             ((CustomerShipment)shipment).Pick();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             ((CustomerShipment)shipment).Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(order.SalesOrderItems.First.SalesOrderItemShipmentState.IsShipped);
         }
@@ -2568,12 +2568,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void SalesOrderAddSalesOrderItemDeriveSalesOrderItemPaymentStateIsNotPaid()
         {
-            var order = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
+            this.Transaction.Derive(false);
 
-            var item = new SalesOrderItemBuilder(this.Session).Build();
+            var item = new SalesOrderItemBuilder(this.Transaction).Build();
             order.AddSalesOrderItem(item);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(order.SalesOrderItems.First.SalesOrderItemPaymentState.IsNotPaid);
         }
@@ -2581,42 +2581,42 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedOrderItemBillingOrderItemDeriveSalesOrderItemPaymentStateIsPartiallyPaid()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First().BillingProcess = new BillingProcesses(this.Session).BillingForOrderItems;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().BillingProcess = new BillingProcesses(this.Transaction).BillingForOrderItems;
 
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
             order.PartiallyShip = false;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
 
             order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Invoice();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var invoice = order.SalesInvoicesWhereSalesOrder.First;
             var invoiceItem = invoice.InvoiceItems.First();
 
             invoice.Send();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var paymentApplication = new PaymentApplicationBuilder(this.Session)
+            var paymentApplication = new PaymentApplicationBuilder(this.Transaction)
                 .WithInvoiceItem(invoiceItem)
                 .WithAmountApplied(invoiceItem.TotalIncVat - 1)
                 .Build();
-            new ReceiptBuilder(this.Session)
+            new ReceiptBuilder(this.Transaction)
                 .WithAmount(paymentApplication.AmountApplied)
                 .WithPaymentApplication(paymentApplication)
-                .WithEffectiveDate(this.Session.Now())
+                .WithEffectiveDate(this.Transaction.Now())
                 .Build();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(order.SalesOrderItems.First.SalesOrderItemPaymentState.IsPartiallyPaid);
         }
@@ -2624,42 +2624,42 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedOrderItemBillingOrderItemDeriveSalesOrderItemPaymentStateIsPaid()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First().BillingProcess = new BillingProcesses(this.Session).BillingForOrderItems;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().BillingProcess = new BillingProcesses(this.Transaction).BillingForOrderItems;
 
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
             order.PartiallyShip = false;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
 
             order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Invoice();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var invoice = order.SalesInvoicesWhereSalesOrder.First;
             var invoiceItem = invoice.InvoiceItems.First();
 
             invoice.Send();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var paymentApplication = new PaymentApplicationBuilder(this.Session)
+            var paymentApplication = new PaymentApplicationBuilder(this.Transaction)
                 .WithInvoiceItem(invoiceItem)
                 .WithAmountApplied(invoiceItem.TotalIncVat)
                 .Build();
-            new ReceiptBuilder(this.Session)
+            new ReceiptBuilder(this.Transaction)
                 .WithAmount(paymentApplication.AmountApplied)
                 .WithPaymentApplication(paymentApplication)
-                .WithEffectiveDate(this.Session.Now())
+                .WithEffectiveDate(this.Transaction.Now())
                 .Build();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(order.SalesOrderItems.First.SalesOrderItemPaymentState.IsPaid);
         }
@@ -2667,62 +2667,62 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedOrderShipmentDeriveSalesOrderItemPaymentStateIsPartiallyPaid()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First().BillingProcess = new BillingProcesses(this.Session).BillingForShipmentItems;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().BillingProcess = new BillingProcesses(this.Transaction).BillingForShipmentItems;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateShipmentPackage = true;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPicked = true;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPacked = true;
 
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
             order.PartiallyShip = true;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithQuantity(item.QuantityOrdered - 1)
-                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).Unknown)
                 .WithPart(item.Part)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var shipment = item.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem;
             ((CustomerShipment)shipment).Pick();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             ((CustomerShipment)shipment).Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             shipment.Invoice();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var invoice = order.SalesInvoicesWhereSalesOrder.First;
             var invoiceItem = invoice.InvoiceItems.First();
 
             invoice.Send();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var paymentApplication = new PaymentApplicationBuilder(this.Session)
+            var paymentApplication = new PaymentApplicationBuilder(this.Transaction)
                 .WithInvoiceItem(invoiceItem)
                 .WithAmountApplied(invoiceItem.TotalIncVat - 1)
                 .Build();
-            new ReceiptBuilder(this.Session)
+            new ReceiptBuilder(this.Transaction)
                 .WithAmount(paymentApplication.AmountApplied)
                 .WithPaymentApplication(paymentApplication)
-                .WithEffectiveDate(this.Session.Now())
+                .WithEffectiveDate(this.Transaction.Now())
                 .Build();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(order.SalesOrderItems.First.SalesOrderItemPaymentState.IsPartiallyPaid);
         }
@@ -2730,62 +2730,62 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedOrderShipmentDeriveSalesOrderItemPaymentStateIsPaid()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First().BillingProcess = new BillingProcesses(this.Session).BillingForShipmentItems;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().BillingProcess = new BillingProcesses(this.Transaction).BillingForShipmentItems;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateShipmentPackage = true;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPicked = true;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPacked = true;
 
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
             order.PartiallyShip = true;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithQuantity(item.QuantityOrdered)
-                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).Unknown)
                 .WithPart(item.Part)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var shipment = item.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem;
             ((CustomerShipment)shipment).Pick();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             ((CustomerShipment)shipment).Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             shipment.Invoice();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var invoice = order.SalesInvoicesWhereSalesOrder.First;
             var invoiceItem = invoice.InvoiceItems.First();
 
             invoice.Send();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var paymentApplication = new PaymentApplicationBuilder(this.Session)
+            var paymentApplication = new PaymentApplicationBuilder(this.Transaction)
                 .WithInvoiceItem(invoiceItem)
                 .WithAmountApplied(invoiceItem.TotalIncVat)
                 .Build();
-            new ReceiptBuilder(this.Session)
+            new ReceiptBuilder(this.Transaction)
                 .WithAmount(paymentApplication.AmountApplied)
                 .WithPaymentApplication(paymentApplication)
-                .WithEffectiveDate(this.Session.Now())
+                .WithEffectiveDate(this.Transaction.Now())
                 .Build();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(order.SalesOrderItems.First.SalesOrderItemPaymentState.IsPaid);
         }
@@ -2793,12 +2793,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void SalesOrderAddSalesOrderItemDeriveSalesOrderItemInvoiceStateIsNotInvoiced()
         {
-            var order = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
+            this.Transaction.Derive(false);
 
-            var item = new SalesOrderItemBuilder(this.Session).Build();
+            var item = new SalesOrderItemBuilder(this.Transaction).Build();
             order.AddSalesOrderItem(item);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(order.SalesOrderItems.First.SalesOrderItemInvoiceState.IsNotInvoiced);
         }
@@ -2806,28 +2806,28 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedOrderItemBillingOrderItemDeriveSalesOrderItemInvoiceStateIsPartiallyInvoiced()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First().BillingProcess = new BillingProcesses(this.Session).BillingForOrderItems;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().BillingProcess = new BillingProcesses(this.Transaction).BillingForOrderItems;
 
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
             order.PartiallyShip = false;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
 
             order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Invoice();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             item.AssignedUnitPrice += 1;
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(order.SalesOrderItems.First.SalesOrderItemInvoiceState.IsPartiallyInvoiced);
         }
@@ -2835,25 +2835,25 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedOrderItemBillingOrderItemDeriveSalesOrderItemInvoiceStateIsInvoiced()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First().BillingProcess = new BillingProcesses(this.Session).BillingForOrderItems;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().BillingProcess = new BillingProcesses(this.Transaction).BillingForOrderItems;
 
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
             order.PartiallyShip = false;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
 
             order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Invoice();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(order.SalesOrderItems.First.SalesOrderItemInvoiceState.IsInvoiced);
         }
@@ -2866,19 +2866,19 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedQuantityOrderedCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithProduct(product).WithQuantityOrdered(1).WithAssignedUnitPrice(1).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithProduct(product).WithQuantityOrdered(1).WithAssignedUnitPrice(1).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, order.TotalIncVat);
 
             orderItem.QuantityOrdered = 2;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(2, order.TotalIncVat);
         }
@@ -2886,19 +2886,19 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedAssignedUnitPriceCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithProduct(product).WithQuantityOrdered(1).WithAssignedUnitPrice(1).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithProduct(product).WithQuantityOrdered(1).WithAssignedUnitPrice(1).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, order.TotalIncVat);
 
             orderItem.AssignedUnitPrice = 3;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(3, order.TotalIncVat);
         }
@@ -2906,32 +2906,32 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedProductCalculatePrice()
         {
-            var product1 = new NonUnifiedGoodBuilder(this.Session).Build();
-            var product2 = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product1 = new NonUnifiedGoodBuilder(this.Transaction).Build();
+            var product2 = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithProduct(product1)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithProduct(product2)
                 .WithPrice(2)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product1).WithQuantityOrdered(1).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product1).WithQuantityOrdered(1).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, order.TotalIncVat);
 
             orderItem.Product = product2;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(2, order.TotalIncVat);
         }
@@ -2939,40 +2939,40 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedProductFeatureCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithPricedBy(this.InternalOrganisation)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantityOrdered(1).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantityOrdered(1).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var productFeature = new ColourBuilder(this.Session)
+            var productFeature = new ColourBuilder(this.Transaction)
                 .WithName("a colour")
                 .Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithPricedBy(this.InternalOrganisation)
                 .WithProduct(product)
                 .WithProductFeature(productFeature)
                 .WithPrice(0.1M)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var orderFeatureItem = new SalesOrderItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductFeatureItem).WithProductFeature(productFeature).WithQuantityOrdered(1).Build();
+            var orderFeatureItem = new SalesOrderItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductFeatureItem).WithProductFeature(productFeature).WithQuantityOrdered(1).Build();
             orderItem.AddOrderedWithFeature(orderFeatureItem);
             order.AddSalesOrderItem(orderFeatureItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.1M, order.TotalIncVat);
         }
@@ -2980,26 +2980,26 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedDiscountAdjustmentsCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantityOrdered(1).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantityOrdered(1).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, order.TotalIncVat);
 
-            var discount = new DiscountAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            var discount = new DiscountAdjustmentBuilder(this.Transaction).WithPercentage(10).Build();
             orderItem.AddDiscountAdjustment(discount);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0.9M, order.TotalIncVat);
         }
@@ -3007,31 +3007,31 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedDiscountAdjustmentPercentageCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantityOrdered(1).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantityOrdered(1).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, order.TotalIncVat);
 
-            var discount = new DiscountAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            var discount = new DiscountAdjustmentBuilder(this.Transaction).WithPercentage(10).Build();
             orderItem.AddDiscountAdjustment(discount);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0.9M, order.TotalIncVat);
 
             discount.Percentage = 20M;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0.8M, order.TotalIncVat);
         }
@@ -3039,31 +3039,31 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedDiscountAdjustmentAmountCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantityOrdered(1).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantityOrdered(1).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, order.TotalIncVat);
 
-            var discount = new DiscountAdjustmentBuilder(this.Session).WithAmount(0.5M).Build();
+            var discount = new DiscountAdjustmentBuilder(this.Transaction).WithAmount(0.5M).Build();
             orderItem.AddDiscountAdjustment(discount);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0.5M, order.TotalIncVat);
 
             discount.Amount = 0.4M;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0.6M, order.TotalIncVat);
         }
@@ -3071,26 +3071,26 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSurchargeAdjustmentsCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantityOrdered(1).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantityOrdered(1).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, order.TotalIncVat);
 
-            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            var surcharge = new SurchargeAdjustmentBuilder(this.Transaction).WithPercentage(10).Build();
             orderItem.AddSurchargeAdjustment(surcharge);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.1M, order.TotalIncVat);
         }
@@ -3098,31 +3098,31 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSurchargeAdjustmentPercentageCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantityOrdered(1).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantityOrdered(1).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, order.TotalIncVat);
 
-            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            var surcharge = new SurchargeAdjustmentBuilder(this.Transaction).WithPercentage(10).Build();
             orderItem.AddSurchargeAdjustment(surcharge);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.1M, order.TotalIncVat);
 
             surcharge.Percentage = 20M;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.2M, order.TotalIncVat);
         }
@@ -3130,31 +3130,31 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSurchargeAdjustmentAmountCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantityOrdered(1).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantityOrdered(1).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, order.TotalIncVat);
 
-            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithAmount(0.5M).Build();
+            var surcharge = new SurchargeAdjustmentBuilder(this.Transaction).WithAmount(0.5M).Build();
             orderItem.AddSurchargeAdjustment(surcharge);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.5M, order.TotalIncVat);
 
             surcharge.Amount = 0.4M;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.4M, order.TotalIncVat);
         }
@@ -3162,9 +3162,9 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesOrderBillToCustomerCalculatePrice()
         {
-            var theGood = new CustomOrganisationClassificationBuilder(this.Session).WithName("good customer").Build();
-            var theBad = new CustomOrganisationClassificationBuilder(this.Session).WithName("bad customer").Build();
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var theGood = new CustomOrganisationClassificationBuilder(this.Transaction).WithName("good customer").Build();
+            var theBad = new CustomOrganisationClassificationBuilder(this.Transaction).WithName("bad customer").Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
             var customer1 = this.InternalOrganisation.ActiveCustomers.First;
             customer1.AddPartyClassification(theGood);
@@ -3172,33 +3172,33 @@ namespace Allors.Database.Domain.Tests
             var customer2 = this.InternalOrganisation.ActiveCustomers.Last();
             customer2.AddPartyClassification(theBad);
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithPartyClassification(theGood)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithProduct(product)
                 .WithPartyClassification(theBad)
                 .WithPrice(2)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer1).WithOrderDate(this.Session.Now()).WithAssignedVatRegime(new VatRegimes(this.Session).Exempt).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).WithBillToCustomer(customer1).WithOrderDate(this.Transaction.Now()).WithAssignedVatRegime(new VatRegimes(this.Transaction).Exempt).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantityOrdered(1).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantityOrdered(1).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, order.TotalIncVat);
 
             order.BillToCustomer = customer2;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(2, order.TotalIncVat);
         }
@@ -3206,33 +3206,33 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesOrderOrderDateCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
-            var baseprice = new BasePriceBuilder(this.Session)
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
+            var baseprice = new BasePriceBuilder(this.Transaction)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddDays(-2))
+                .WithFromDate(this.Transaction.Now().AddDays(-2))
                 .Build();
             
-            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now().AddDays(-1)).WithAssignedVatRegime(new VatRegimes(this.Session).Exempt).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).WithOrderDate(this.Transaction.Now().AddDays(-1)).WithAssignedVatRegime(new VatRegimes(this.Transaction).Exempt).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantityOrdered(1).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantityOrdered(1).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, order.TotalIncVat);
 
-            baseprice.ThroughDate = this.Session.Now().AddDays(-2);
+            baseprice.ThroughDate = this.Transaction.Now().AddDays(-2);
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithProduct(product)
                 .WithPrice(2)
-                .WithFromDate(this.Session.Now().AddSeconds(-1))
+                .WithFromDate(this.Transaction.Now().AddSeconds(-1))
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            order.OrderDate = this.Session.Now();
-            this.Session.Derive(false);
+            order.OrderDate = this.Transaction.Now();
+            this.Transaction.Derive(false);
 
             Assert.Equal(2, order.TotalIncVat);
         }
@@ -3240,28 +3240,28 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesOrderDerivationTriggerCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            var basePrice = new BasePriceBuilder(this.Session)
+            var basePrice = new BasePriceBuilder(this.Transaction)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddDays(1))
+                .WithFromDate(this.Transaction.Now().AddDays(1))
                 .Build();
 
-            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithProduct(product).WithQuantityOrdered(1).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithProduct(product).WithQuantityOrdered(1).Build();
             order.AddSalesOrderItem(orderItem);
 
             var expectedMessage = $"{orderItem}, {this.M.SalesOrderItem.UnitBasePrice} No BasePrice with a Price";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
 
             Assert.Equal(0, order.TotalExVat);
 
-            basePrice.FromDate = this.Session.Now().AddMinutes(-1);
-            this.Session.Derive(false);
+            basePrice.FromDate = this.Transaction.Now().AddMinutes(-1);
+            this.Transaction.Derive(false);
 
             Assert.Equal(basePrice.Price, order.TotalExVat);
         }
@@ -3269,37 +3269,37 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedDerivationTriggerCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
-            var break1 = new OrderQuantityBreakBuilder(this.Session).WithFromAmount(50).WithThroughAmount(99).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
+            var break1 = new OrderQuantityBreakBuilder(this.Transaction).WithFromAmount(50).WithThroughAmount(99).Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithProduct(product)
                 .WithPrice(10)
-                .WithFromDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
-            new DiscountComponentBuilder(this.Session)
+            new DiscountComponentBuilder(this.Transaction)
                 .WithDescription("discount good for quantity break 1")
                 .WithOrderQuantityBreak(break1)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var item1 = new SalesOrderItemBuilder(this.Session).WithProduct(product).WithQuantityOrdered(1).Build();
+            var item1 = new SalesOrderItemBuilder(this.Transaction).WithProduct(product).WithQuantityOrdered(1).Build();
             order.AddSalesOrderItem(item1);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0, item1.UnitDiscount);
 
-            var item2 = new SalesOrderItemBuilder(this.Session).WithProduct(product).WithQuantityOrdered(49).Build();
+            var item2 = new SalesOrderItemBuilder(this.Transaction).WithProduct(product).WithQuantityOrdered(49).Build();
             order.AddSalesOrderItem(item2);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, item1.UnitDiscount);
         }
@@ -3312,25 +3312,25 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesOrderItemInventoryAssignmentsDeriveQuantityCommittedOut()
         {
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
-            this.Session.Derive(false);
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
+            this.Transaction.Derive(false);
 
             var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithQuantity(item.QuantityOrdered)
-                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).Unknown)
                 .WithPart(item.Part)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(item.QuantityOrdered, item.QuantityCommittedOut);
         }
@@ -3340,26 +3340,26 @@ namespace Allors.Database.Domain.Tests
         {
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
 
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
-            this.Session.Derive(false);
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
+            this.Transaction.Derive(false);
 
             var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
 
             order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithQuantity(item.QuantityOrdered)
-                .WithReason(new InventoryTransactionReasons(this.Session).PhysicalCount)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).PhysicalCount)
                 .WithPart(item.Part)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(item.QuantityOrdered, item.QuantityRequestsShipping);
         }
@@ -3369,41 +3369,41 @@ namespace Allors.Database.Domain.Tests
         {
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
 
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
-            this.Session.Derive(false);
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
+            this.Transaction.Derive(false);
 
             var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
 
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithQuantity(item.QuantityOrdered)
-                .WithReason(new InventoryTransactionReasons(this.Session).PhysicalCount)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).PhysicalCount)
                 .WithPart(item.Part)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Revise();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             item.QuantityOrdered -= 1;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Accept(); // set to processing with adjusted quantity ordered
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(item.QuantityOrdered, item.QuantityRequestsShipping);
         }
@@ -3413,30 +3413,30 @@ namespace Allors.Database.Domain.Tests
         {
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
 
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
-            this.Session.Derive(false);
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
+            this.Transaction.Derive(false);
 
             var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
 
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithQuantity(item.QuantityOrdered)
-                .WithReason(new InventoryTransactionReasons(this.Session).PhysicalCount)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).PhysicalCount)
                 .WithPart(item.Part)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var shipment = new CustomerShipmentBuilder(this.Session).Build();
+            var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
 
-            var shipmentItem = new ShipmentItemBuilder(this.Session)
+            var shipmentItem = new ShipmentItemBuilder(this.Transaction)
                 .WithGood(item.Product as Good)
                 .WithQuantity(1)
                 .WithReservedFromInventoryItem(item.ReservedFromNonSerialisedInventoryItem)
@@ -3444,13 +3444,13 @@ namespace Allors.Database.Domain.Tests
 
             shipment.AddShipmentItem(shipmentItem);
 
-            new OrderShipmentBuilder(this.Session)
+            new OrderShipmentBuilder(this.Transaction)
                 .WithOrderItem(item)
                 .WithShipmentItem(shipmentItem)
                 .WithQuantity(1)
                 .Build();
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(item.QuantityOrdered - 1, item.QuantityRequestsShipping);
         }
@@ -3471,49 +3471,49 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedSalesOrderItemStateProvisionalDeriveDeletePermission()
         {
-            var item = new SalesOrderItemBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var item = new SalesOrderItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var deletePermission = new Permissions(this.Session).Get(this.M.SalesOrderItem.ObjectType, this.M.SalesOrderItem.Delete);
+            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrderItem.ObjectType, this.M.SalesOrderItem.Delete);
             Assert.DoesNotContain(deletePermission, item.DeniedPermissions);
         }
 
         [Fact]
         public void OnChangedSalesOrderItemStateCancelledDeriveDeletePermission()
         {
-            var item = new SalesOrderItemBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var item = new SalesOrderItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            item.SalesOrderItemState = new SalesOrderItemStates(this.Session).RequestsApproval;
-            this.Session.Derive(false);
+            item.SalesOrderItemState = new SalesOrderItemStates(this.Transaction).RequestsApproval;
+            this.Transaction.Derive(false);
 
-            var deletePermission = new Permissions(this.Session).Get(this.M.SalesOrderItem.ObjectType, this.M.SalesOrderItem.Delete);
+            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrderItem.ObjectType, this.M.SalesOrderItem.Delete);
             Assert.Contains(deletePermission, item.DeniedPermissions);
         }
 
         [Fact]
         public void OnChangedSalesOrderItemInvoiceStateInvoicedDeriveDeniablePermission()
         {
-            var item = new SalesOrderItemBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var item = new SalesOrderItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            item.SalesOrderItemInvoiceState = new SalesOrderItemInvoiceStates(this.Session).Invoiced;
-            this.Session.Derive(false);
+            item.SalesOrderItemInvoiceState = new SalesOrderItemInvoiceStates(this.Transaction).Invoiced;
+            this.Transaction.Derive(false);
 
-            var deniablePermission = new Permissions(this.Session).Get(this.M.SalesOrderItem.ObjectType, this.M.SalesOrderItem.Cancel);
+            var deniablePermission = new Permissions(this.Transaction).Get(this.M.SalesOrderItem.ObjectType, this.M.SalesOrderItem.Cancel);
             Assert.Contains(deniablePermission, item.DeniedPermissions);
         }
 
         [Fact]
         public void OnChangedSalesOrderItemShipmentStateInvoicedDeriveDeniablePermission()
         {
-            var item = new SalesOrderItemBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var item = new SalesOrderItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            item.SalesOrderItemShipmentState = new SalesOrderItemShipmentStates(this.Session).Shipped;
-            this.Session.Derive(false);
+            item.SalesOrderItemShipmentState = new SalesOrderItemShipmentStates(this.Transaction).Shipped;
+            this.Transaction.Derive(false);
 
-            var deniablePermission = new Permissions(this.Session).Get(this.M.SalesOrderItem.ObjectType, this.M.SalesOrderItem.Cancel);
+            var deniablePermission = new Permissions(this.Transaction).Get(this.M.SalesOrderItem.ObjectType, this.M.SalesOrderItem.Cancel);
             Assert.Contains(deniablePermission, item.DeniedPermissions);
         }
     }
@@ -3550,282 +3550,282 @@ namespace Allors.Database.Domain.Tests
 
         public SalesOrderItemSecurityTests(Fixture fixture) : base(fixture)
         {
-            var euro = new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR");
+            var euro = new Currencies(this.Transaction).FindBy(this.M.Currency.IsoCode, "EUR");
 
-            this.supplier = new OrganisationBuilder(this.Session).WithName("supplier").Build();
+            this.supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
 
-            this.vatRate21 = new VatRateBuilder(this.Session).WithRate(21).Build();
+            this.vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
 
-            var mechelen = new CityBuilder(this.Session).WithName("Mechelen").Build();
-            this.kiev = new CityBuilder(this.Session).WithName("Kiev").Build();
+            var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
+            this.kiev = new CityBuilder(this.Transaction).WithName("Kiev").Build();
 
-            this.shipToContactMechanismMechelen = new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
-            this.shipToContactMechanismKiev = new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(this.kiev).WithAddress1("Dnieper").Build();
-            this.shipToCustomer = new OrganisationBuilder(this.Session).WithName("shipToCustomer").Build();
-            this.shipToCustomer.AddPartyContactMechanism(new PartyContactMechanismBuilder(this.Session)
+            this.shipToContactMechanismMechelen = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
+            this.shipToContactMechanismKiev = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(this.kiev).WithAddress1("Dnieper").Build();
+            this.shipToCustomer = new OrganisationBuilder(this.Transaction).WithName("shipToCustomer").Build();
+            this.shipToCustomer.AddPartyContactMechanism(new PartyContactMechanismBuilder(this.Transaction)
                                                             .WithContactMechanism(this.shipToContactMechanismKiev)
-                                                            .WithContactPurpose(new ContactMechanismPurposes(this.Session).ShippingAddress)
+                                                            .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
                                                             .WithUseAsDefault(true)
                                                             .Build());
 
-            this.billToCustomer = new OrganisationBuilder(this.Session)
+            this.billToCustomer = new OrganisationBuilder(this.Transaction)
                 .WithName("billToCustomer")
                 .WithPreferredCurrency(euro)
 
                 .Build();
 
-            this.billToCustomer.AddPartyContactMechanism(new PartyContactMechanismBuilder(this.Session)
+            this.billToCustomer.AddPartyContactMechanism(new PartyContactMechanismBuilder(this.Transaction)
                                                             .WithContactMechanism(this.shipToContactMechanismKiev)
-                                                            .WithContactPurpose(new ContactMechanismPurposes(this.Session).BillingAddress)
+                                                            .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
                                                             .WithUseAsDefault(true)
                                                             .Build());
 
-            this.part = new NonUnifiedPartBuilder(this.Session)
-                .WithProductIdentification(new PartNumberBuilder(this.Session)
+            this.part = new NonUnifiedPartBuilder(this.Transaction)
+                .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                     .WithIdentification("1")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised)
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
                 .Build();
 
-            this.good = new NonUnifiedGoodBuilder(this.Session)
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+            this.good = new NonUnifiedGoodBuilder(this.Transaction)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("10101")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(this.vatRate21)
                 .WithName("good")
                 .WithPart(this.part)
-                .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
+                .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
                 .Build();
 
-            new SupplierRelationshipBuilder(this.Session)
+            new SupplierRelationshipBuilder(this.Transaction)
                 .WithSupplier(this.supplier)
-                .WithFromDate(this.Session.Now())
+                .WithFromDate(this.Transaction.Now())
                 .Build();
 
-            new CustomerRelationshipBuilder(this.Session).WithCustomer(this.billToCustomer).Build();
+            new CustomerRelationshipBuilder(this.Transaction).WithCustomer(this.billToCustomer).Build();
 
-            new CustomerRelationshipBuilder(this.Session).WithCustomer(this.shipToCustomer).Build();
+            new CustomerRelationshipBuilder(this.Transaction).WithCustomer(this.shipToCustomer).Build();
 
-            this.variantGood = new NonUnifiedGoodBuilder(this.Session)
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+            this.variantGood = new NonUnifiedGoodBuilder(this.Transaction)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("v10101")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(this.vatRate21)
                 .WithName("variant good")
-                .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                    .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                    .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                         .WithIdentification("2")
-                        .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                    .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build())
+                        .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                    .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build())
                 .Build();
 
-            this.variantGood2 = new NonUnifiedGoodBuilder(this.Session)
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+            this.variantGood2 = new NonUnifiedGoodBuilder(this.Transaction)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("v10102")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(this.vatRate21)
                 .WithName("variant good2")
-                .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                    .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                    .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                         .WithIdentification("3")
-                        .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                    .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build())
+                        .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                    .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build())
                 .Build();
 
-            this.virtualGood = new NonUnifiedGoodBuilder(this.Session)
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+            this.virtualGood = new NonUnifiedGoodBuilder(this.Transaction)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("v10103")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(this.vatRate21)
                 .WithName("virtual good")
                 .WithVariant(this.variantGood)
                 .WithVariant(this.variantGood2)
-                .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
+                .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
                 .Build();
 
-            this.ancestorProductCategory = new ProductCategoryBuilder(this.Session)
+            this.ancestorProductCategory = new ProductCategoryBuilder(this.Transaction)
                 .WithName("ancestor")
                 .Build();
 
-            this.parentProductCategory = new ProductCategoryBuilder(this.Session)
+            this.parentProductCategory = new ProductCategoryBuilder(this.Transaction)
                 .WithName("parent")
                 .WithPrimaryParent(this.ancestorProductCategory)
                 .Build();
 
-            this.productCategory = new ProductCategoryBuilder(this.Session)
+            this.productCategory = new ProductCategoryBuilder(this.Transaction)
                 .WithName("gizmo")
                 .Build();
 
             this.productCategory.AddSecondaryParent(this.parentProductCategory);
 
-            this.goodPurchasePrice = new SupplierOfferingBuilder(this.Session)
+            this.goodPurchasePrice = new SupplierOfferingBuilder(this.Transaction)
                 .WithPart(this.part)
                 .WithSupplier(this.supplier)
-                .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
-                .WithFromDate(this.Session.Now())
+                .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
+                .WithFromDate(this.Transaction.Now())
                 .WithPrice(7)
                 .WithCurrency(euro)
                 .Build();
 
-            this.virtualGoodPurchasePrice = new SupplierOfferingBuilder(this.Session)
+            this.virtualGoodPurchasePrice = new SupplierOfferingBuilder(this.Transaction)
                 .WithCurrency(euro)
-                .WithFromDate(this.Session.Now())
+                .WithFromDate(this.Transaction.Now())
                 .WithSupplier(this.supplier)
                 .WithPrice(8)
-                .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
+                .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
                 .Build();
 
-            this.feature1 = new ColourBuilder(this.Session)
+            this.feature1 = new ColourBuilder(this.Transaction)
                 .WithVatRate(this.vatRate21)
                 .WithName("white")
                 .Build();
 
-            this.feature2 = new ColourBuilder(this.Session)
+            this.feature2 = new ColourBuilder(this.Transaction)
                 .WithName("black")
                 .Build();
 
-            this.currentBasePriceGeoBoundary = new BasePriceBuilder(this.Session)
+            this.currentBasePriceGeoBoundary = new BasePriceBuilder(this.Transaction)
                 .WithDescription("current BasePriceGeoBoundary ")
                 .WithGeographicBoundary(mechelen)
                 .WithProduct(this.good)
                 .WithPrice(8)
-                .WithFromDate(this.Session.Now())
+                .WithFromDate(this.Transaction.Now())
                 .Build();
 
             // historic basePrice for good
-            new BasePriceBuilder(this.Session).WithDescription("previous good")
+            new BasePriceBuilder(this.Transaction).WithDescription("previous good")
                 .WithProduct(this.good)
                 .WithPrice(8)
-                .WithFromDate(this.Session.Now().AddYears(-1))
-                .WithThroughDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddYears(-1))
+                .WithThroughDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
             // future basePrice for good
-            new BasePriceBuilder(this.Session).WithDescription("future good")
+            new BasePriceBuilder(this.Transaction).WithDescription("future good")
                 .WithProduct(this.good)
                 .WithPrice(11)
-                .WithFromDate(this.Session.Now().AddYears(1))
+                .WithFromDate(this.Transaction.Now().AddYears(1))
                 .Build();
 
-            this.currentGoodBasePrice = new BasePriceBuilder(this.Session)
+            this.currentGoodBasePrice = new BasePriceBuilder(this.Transaction)
                 .WithDescription("current good")
                 .WithProduct(this.good)
                 .WithPrice(10)
-                .WithFromDate(this.Session.Now())
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now())
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
             // historic basePrice for feature1
-            new BasePriceBuilder(this.Session).WithDescription("previous feature1")
+            new BasePriceBuilder(this.Transaction).WithDescription("previous feature1")
                 .WithProductFeature(this.feature1)
                 .WithPrice(0.5M)
-                .WithFromDate(this.Session.Now().AddYears(-1))
-                .WithThroughDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddYears(-1))
+                .WithThroughDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
             // future basePrice for feature1
-            new BasePriceBuilder(this.Session).WithDescription("future feature1")
+            new BasePriceBuilder(this.Transaction).WithDescription("future feature1")
                 .WithProductFeature(this.feature1)
                 .WithPrice(2.5M)
-                .WithFromDate(this.Session.Now().AddYears(1))
+                .WithFromDate(this.Transaction.Now().AddYears(1))
                 .Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithDescription("current feature1")
                 .WithProductFeature(this.feature1)
                 .WithPrice(2)
-                .WithFromDate(this.Session.Now())
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now())
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
             // historic basePrice for feature2
-            new BasePriceBuilder(this.Session).WithDescription("previous feature2")
+            new BasePriceBuilder(this.Transaction).WithDescription("previous feature2")
                 .WithProductFeature(this.feature2)
                 .WithPrice(2)
-                .WithFromDate(this.Session.Now().AddYears(-1))
-                .WithThroughDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddYears(-1))
+                .WithThroughDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
             // future basePrice for feature2
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithDescription("future feature2")
                 .WithProductFeature(this.feature2)
                 .WithPrice(4)
-                .WithFromDate(this.Session.Now().AddYears(1))
+                .WithFromDate(this.Transaction.Now().AddYears(1))
                 .Build();
 
-            this.currentFeature2BasePrice = new BasePriceBuilder(this.Session)
+            this.currentFeature2BasePrice = new BasePriceBuilder(this.Transaction)
                 .WithDescription("current feature2")
                 .WithProductFeature(this.feature2)
                 .WithPrice(3)
-                .WithFromDate(this.Session.Now())
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now())
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
             // historic basePrice for good with feature1
-            new BasePriceBuilder(this.Session).WithDescription("previous good/feature1")
+            new BasePriceBuilder(this.Transaction).WithDescription("previous good/feature1")
                 .WithProduct(this.good)
                 .WithProductFeature(this.feature1)
                 .WithPrice(4)
-                .WithFromDate(this.Session.Now().AddYears(-1))
-                .WithThroughDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddYears(-1))
+                .WithThroughDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
             // future basePrice for good with feature1
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithDescription("future good/feature1")
                 .WithProduct(this.good)
                 .WithProductFeature(this.feature1)
                 .WithPrice(6)
-                .WithFromDate(this.Session.Now().AddYears(1))
+                .WithFromDate(this.Transaction.Now().AddYears(1))
                 .Build();
 
-            this.currentGood1Feature1BasePrice = new BasePriceBuilder(this.Session)
+            this.currentGood1Feature1BasePrice = new BasePriceBuilder(this.Transaction)
                 .WithDescription("current good/feature1")
                 .WithProduct(this.good)
                 .WithProductFeature(this.feature1)
                 .WithPrice(5)
-                .WithFromDate(this.Session.Now())
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now())
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithDescription("current variant good2")
                 .WithProduct(this.variantGood2)
                 .WithPrice(11)
-                .WithFromDate(this.Session.Now())
+                .WithFromDate(this.Transaction.Now())
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.order = new SalesOrderBuilder(this.Session)
+            this.order = new SalesOrderBuilder(this.Transaction)
                 .WithShipToCustomer(this.shipToCustomer)
                 .WithBillToCustomer(this.billToCustomer)
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
         }
 
         [Fact]
         public void GivenOrderItem_WhenObjectStateIsCreated_ThenItemMayBeDeletedCancelledOrRejected()
         {
-            var administrator = new PersonBuilder(this.Session).WithFirstName("Koen").WithUserName("admin").Build();
-            var administrators = new UserGroups(this.Session).Administrators;
+            var administrator = new PersonBuilder(this.Transaction).WithFirstName("Koen").WithUserName("admin").Build();
+            var administrators = new UserGroups(this.Transaction).Administrators;
             administrators.AddMember(administrator);
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
             User user = this.Administrator;
-            this.Session.SetUser(user);
+            this.Transaction.SetUser(user);
 
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(this.good)
                 .WithQuantityOrdered(3)
                 .WithAssignedUnitPrice(5)
@@ -3833,11 +3833,11 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddSalesOrderItem(item);
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            Assert.Equal(new SalesOrderItemStates(this.Session).Provisional, item.SalesOrderItemState);
-            var acl = new DatabaseAccessControlLists(this.Session.GetUser())[item];
+            Assert.Equal(new SalesOrderItemStates(this.Transaction).Provisional, item.SalesOrderItemState);
+            var acl = new DatabaseAccessControlLists(this.Transaction.GetUser())[item];
             Assert.True(acl.CanExecute(this.M.SalesOrderItem.Delete));
             Assert.True(acl.CanExecute(this.M.SalesOrderItem.Cancel));
             Assert.True(acl.CanExecute(this.M.SalesOrderItem.Reject));
@@ -3846,19 +3846,19 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenOrderItem_WhenObjectStateIsConfirmed_ThenItemMayBeCancelledOrRejectedButNotDeleted()
         {
-            var administrator = new PersonBuilder(this.Session).WithFirstName("Koen").WithUserName("admin").Build();
-            var administrators = new UserGroups(this.Session).Administrators;
+            var administrator = new PersonBuilder(this.Transaction).WithFirstName("Koen").WithUserName("admin").Build();
+            var administrators = new UserGroups(this.Transaction).Administrators;
             administrators.AddMember(administrator);
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
             User user = this.Administrator;
-            this.Session.SetUser(user);
+            this.Transaction.SetUser(user);
 
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(this.good)
                 .WithQuantityOrdered(3)
                 .WithAssignedUnitPrice(5)
@@ -3868,17 +3868,17 @@ namespace Allors.Database.Domain.Tests
 
             this.order.SetReadyForPosting();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
             this.order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Equal(new SalesOrderItemStates(this.Session).InProcess, item.SalesOrderItemState);
-            var acl = new DatabaseAccessControlLists(this.Session.GetUser())[item];
+            Assert.Equal(new SalesOrderItemStates(this.Transaction).InProcess, item.SalesOrderItemState);
+            var acl = new DatabaseAccessControlLists(this.Transaction.GetUser())[item];
             Assert.True(acl.CanExecute(this.M.SalesOrderItem.Cancel));
             Assert.True(acl.CanExecute(this.M.SalesOrderItem.Reject));
             Assert.False(acl.CanExecute(this.M.SalesOrderItem.Delete));
@@ -3887,23 +3887,23 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenOrderItem_WhenObjectStateIsPartiallyShipped_ThenItemMayNotBeCancelledOrRejectedOrDeleted()
         {
-            var administrator = new PersonBuilder(this.Session).WithFirstName("Koen").WithUserName("admin").Build();
-            var administrators = new UserGroups(this.Session).Administrators;
+            var administrator = new PersonBuilder(this.Transaction).WithFirstName("Koen").WithUserName("admin").Build();
+            var administrators = new UserGroups(this.Transaction).Administrators;
             administrators.AddMember(administrator);
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
             User user = this.Administrator;
-            this.Session.SetUser(user);
+            this.Transaction.SetUser(user);
 
-            new InventoryItemTransactionBuilder(this.Session).WithQuantity(1).WithReason(new InventoryTransactionReasons(this.Session).Unknown).WithPart(this.part).Build();
+            new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(1).WithReason(new InventoryTransactionReasons(this.Transaction).Unknown).WithPart(this.part).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(this.good)
                 .WithQuantityOrdered(3)
                 .WithAssignedUnitPrice(5)
@@ -3911,43 +3911,43 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddSalesOrderItem(item);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var shipment = (CustomerShipment)this.order.DerivedShipToAddress.ShipmentsWhereShipToAddress[0];
 
             shipment.Pick();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var pickList = shipment.ShipmentItems[0].ItemIssuancesWhereShipmentItem[0].PickListItem.PickListWherePickListItem;
             pickList.Picker = this.OrderProcessor;
 
             pickList.SetPicked();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var package = new ShipmentPackageBuilder(this.Session).Build();
+            var package = new ShipmentPackageBuilder(this.Transaction).Build();
             shipment.AddShipmentPackage(package);
 
             foreach (ShipmentItem shipmentItem in shipment.ShipmentItems)
             {
-                package.AddPackagingContent(new PackagingContentBuilder(this.Session).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
+                package.AddPackagingContent(new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
             }
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             shipment.Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Equal(new SalesOrderItemShipmentStates(this.Session).PartiallyShipped, item.SalesOrderItemShipmentState);
-            var acl = new DatabaseAccessControlLists(this.Session.GetUser())[item];
+            Assert.Equal(new SalesOrderItemShipmentStates(this.Transaction).PartiallyShipped, item.SalesOrderItemShipmentState);
+            var acl = new DatabaseAccessControlLists(this.Transaction.GetUser())[item];
             Assert.False(acl.CanExecute(this.M.SalesOrderItem.Cancel));
             Assert.False(acl.CanExecute(this.M.SalesOrderItem.Reject));
             Assert.False(acl.CanExecute(this.M.SalesOrderItem.Delete));
@@ -3956,19 +3956,19 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenOrderItem_WhenObjectStateIsCancelled_ThenItemMayNotBeCancelledOrRejected()
         {
-            var administrator = new PersonBuilder(this.Session).WithFirstName("Koen").WithUserName("admin").Build();
-            var administrators = new UserGroups(this.Session).Administrators;
+            var administrator = new PersonBuilder(this.Transaction).WithFirstName("Koen").WithUserName("admin").Build();
+            var administrators = new UserGroups(this.Transaction).Administrators;
             administrators.AddMember(administrator);
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
             User user = this.Administrator;
-            this.Session.SetUser(user);
+            this.Transaction.SetUser(user);
 
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(this.good)
                 .WithQuantityOrdered(3)
                 .WithAssignedUnitPrice(5)
@@ -3976,14 +3976,14 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddSalesOrderItem(item);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             item.Cancel();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Equal(new SalesOrderItemStates(this.Session).Cancelled, item.SalesOrderItemState);
-            var acl = new DatabaseAccessControlLists(this.Session.GetUser())[item];
+            Assert.Equal(new SalesOrderItemStates(this.Transaction).Cancelled, item.SalesOrderItemState);
+            var acl = new DatabaseAccessControlLists(this.Transaction.GetUser())[item];
             Assert.False(acl.CanExecute(this.M.SalesOrderItem.Cancel));
             Assert.False(acl.CanExecute(this.M.SalesOrderItem.Reject));
         }
@@ -3991,19 +3991,19 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenOrderItem_WhenObjectStateIsCancelled_ThenItemCanBeDeleted()
         {
-            var administrator = new PersonBuilder(this.Session).WithFirstName("Koen").WithUserName("admin").Build();
-            var administrators = new UserGroups(this.Session).Administrators;
+            var administrator = new PersonBuilder(this.Transaction).WithFirstName("Koen").WithUserName("admin").Build();
+            var administrators = new UserGroups(this.Transaction).Administrators;
             administrators.AddMember(administrator);
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
             User user = this.Administrator;
-            this.Session.SetUser(user);
+            this.Transaction.SetUser(user);
 
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(this.good)
                 .WithQuantityOrdered(3)
                 .WithAssignedUnitPrice(5)
@@ -4011,33 +4011,33 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddSalesOrderItem(item);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             item.Cancel();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Equal(new SalesOrderItemStates(this.Session).Cancelled, item.SalesOrderItemState);
-            var acl = new DatabaseAccessControlLists(this.Session.GetUser())[item];
+            Assert.Equal(new SalesOrderItemStates(this.Transaction).Cancelled, item.SalesOrderItemState);
+            var acl = new DatabaseAccessControlLists(this.Transaction.GetUser())[item];
             Assert.True(acl.CanExecute(this.M.SalesOrderItem.Delete));
         }
 
         [Fact]
         public void GivenOrderItem_WhenObjectStateIsRejected_ThenItemMayNotBeCancelledOrRejected()
         {
-            var administrator = new PersonBuilder(this.Session).WithFirstName("Koen").WithUserName("admin").Build();
-            var administrators = new UserGroups(this.Session).Administrators;
+            var administrator = new PersonBuilder(this.Transaction).WithFirstName("Koen").WithUserName("admin").Build();
+            var administrators = new UserGroups(this.Transaction).Administrators;
             administrators.AddMember(administrator);
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
             User user = this.Administrator;
-            this.Session.SetUser(user);
+            this.Transaction.SetUser(user);
 
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(this.good)
                 .WithQuantityOrdered(3)
                 .WithAssignedUnitPrice(5)
@@ -4045,14 +4045,14 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddSalesOrderItem(item);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             item.Reject();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Equal(new SalesOrderItemStates(this.Session).Rejected, item.SalesOrderItemState);
-            var acl = new DatabaseAccessControlLists(this.Session.GetUser())[item];
+            Assert.Equal(new SalesOrderItemStates(this.Transaction).Rejected, item.SalesOrderItemState);
+            var acl = new DatabaseAccessControlLists(this.Transaction.GetUser())[item];
             Assert.False(acl.CanExecute(this.M.SalesOrderItem.Cancel));
             Assert.False(acl.CanExecute(this.M.SalesOrderItem.Reject));
         }
@@ -4060,19 +4060,19 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenOrderItem_WhenObjectStateIsRejected_ThenCanBeDeleted()
         {
-            var administrator = new PersonBuilder(this.Session).WithFirstName("Koen").WithUserName("admin").Build();
-            var administrators = new UserGroups(this.Session).Administrators;
+            var administrator = new PersonBuilder(this.Transaction).WithFirstName("Koen").WithUserName("admin").Build();
+            var administrators = new UserGroups(this.Transaction).Administrators;
             administrators.AddMember(administrator);
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
             User user = this.Administrator;
-            this.Session.SetUser(user);
+            this.Transaction.SetUser(user);
 
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(this.good)
                 .WithQuantityOrdered(3)
                 .WithAssignedUnitPrice(5)
@@ -4080,37 +4080,37 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddSalesOrderItem(item);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             item.Reject();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Equal(new SalesOrderItemStates(this.Session).Rejected, item.SalesOrderItemState);
-            var acl = new DatabaseAccessControlLists(this.Session.GetUser())[item];
+            Assert.Equal(new SalesOrderItemStates(this.Transaction).Rejected, item.SalesOrderItemState);
+            var acl = new DatabaseAccessControlLists(this.Transaction.GetUser())[item];
             Assert.True(acl.CanExecute(this.M.SalesOrderItem.Delete));
         }
 
         [Fact]
         public void GivenOrderItem_WhenObjectStateIsCompleted_ThenItemMayNotBeCancelledOrRejectedOrDeleted()
         {
-            var administrator = new PersonBuilder(this.Session).WithFirstName("Koen").WithUserName("admin").Build();
-            var administrators = new UserGroups(this.Session).Administrators;
+            var administrator = new PersonBuilder(this.Transaction).WithFirstName("Koen").WithUserName("admin").Build();
+            var administrators = new UserGroups(this.Transaction).Administrators;
             administrators.AddMember(administrator);
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
             User user = this.Administrator;
-            this.Session.SetUser(user);
+            this.Transaction.SetUser(user);
 
-            new InventoryItemTransactionBuilder(this.Session).WithQuantity(110).WithReason(new InventoryTransactionReasons(this.Session).Unknown).WithPart(this.part).Build();
+            new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(110).WithReason(new InventoryTransactionReasons(this.Transaction).Unknown).WithPart(this.part).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(this.good)
                 .WithQuantityOrdered(3)
                 .WithAssignedUnitPrice(5)
@@ -4118,56 +4118,56 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddSalesOrderItem(item);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.Ship();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var shipment = (CustomerShipment)this.order.DerivedShipToAddress.ShipmentsWhereShipToAddress[0];
 
             shipment.Pick();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var pickList = shipment.ShipmentItems[0].ItemIssuancesWhereShipmentItem[0].PickListItem.PickListWherePickListItem;
             pickList.Picker = this.OrderProcessor;
             pickList.SetPicked();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var package = new ShipmentPackageBuilder(this.Session).Build();
+            var package = new ShipmentPackageBuilder(this.Transaction).Build();
             shipment.AddShipmentPackage(package);
 
             foreach (ShipmentItem shipmentItem in shipment.ShipmentItems)
             {
-                package.AddPackagingContent(new PackagingContentBuilder(this.Session).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
+                package.AddPackagingContent(new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
             }
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             shipment.Ship();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             shipment.Invoice();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             ((SalesInvoiceItem)shipment.ShipmentItems[0].ShipmentItemBillingsWhereShipmentItem[0].InvoiceItem).SalesInvoiceWhereSalesInvoiceItem.Send();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Equal(new SalesOrderItemStates(this.Session).Completed, item.SalesOrderItemState);
-            var acl = new DatabaseAccessControlLists(this.Session.GetUser())[item];
+            Assert.Equal(new SalesOrderItemStates(this.Transaction).Completed, item.SalesOrderItemState);
+            var acl = new DatabaseAccessControlLists(this.Transaction.GetUser())[item];
             Assert.False(acl.CanExecute(this.M.SalesOrderItem.Cancel));
             Assert.False(acl.CanExecute(this.M.SalesOrderItem.Reject));
         }
@@ -4175,19 +4175,19 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenOrderItem_WhenObjectStateIsFinished_ThenItemMayNotBeCancelledOrRejectedOrDeleted()
         {
-            var administrator = new PersonBuilder(this.Session).WithFirstName("Koen").WithUserName("admin").Build();
-            var administrators = new UserGroups(this.Session).Administrators;
+            var administrator = new PersonBuilder(this.Transaction).WithFirstName("Koen").WithUserName("admin").Build();
+            var administrators = new UserGroups(this.Transaction).Administrators;
             administrators.AddMember(administrator);
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
             User user = this.Administrator;
-            this.Session.SetUser(user);
+            this.Transaction.SetUser(user);
 
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(this.good)
                 .WithQuantityOrdered(3)
                 .WithAssignedUnitPrice(5)
@@ -4195,14 +4195,14 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddSalesOrderItem(item);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            this.order.SalesOrderState = new SalesOrderStates(this.Session).Finished;
+            this.order.SalesOrderState = new SalesOrderStates(this.Transaction).Finished;
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Equal(new SalesOrderItemStates(this.Session).Finished, item.SalesOrderItemState);
-            var acl = new DatabaseAccessControlLists(this.Session.GetUser())[item];
+            Assert.Equal(new SalesOrderItemStates(this.Transaction).Finished, item.SalesOrderItemState);
+            var acl = new DatabaseAccessControlLists(this.Transaction.GetUser())[item];
             Assert.False(acl.CanExecute(this.M.SalesOrderItem.Cancel));
             Assert.False(acl.CanExecute(this.M.SalesOrderItem.Reject));
         }
@@ -4210,23 +4210,23 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenOrderItem_WhenObjectStateIsPartiallyShipped_ThenProductChangeIsNotAllowed()
         {
-            var administrator = new PersonBuilder(this.Session).WithFirstName("Koen").WithUserName("admin").Build();
-            var administrators = new UserGroups(this.Session).Administrators;
+            var administrator = new PersonBuilder(this.Transaction).WithFirstName("Koen").WithUserName("admin").Build();
+            var administrators = new UserGroups(this.Transaction).Administrators;
             administrators.AddMember(administrator);
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
             User user = this.Administrator;
-            this.Session.SetUser(user);
+            this.Transaction.SetUser(user);
 
-            new InventoryItemTransactionBuilder(this.Session).WithQuantity(1).WithReason(new InventoryTransactionReasons(this.Session).Unknown).WithPart(this.part).Build();
+            new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(1).WithReason(new InventoryTransactionReasons(this.Transaction).Unknown).WithPart(this.part).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(this.good)
                 .WithQuantityOrdered(3)
                 .WithAssignedUnitPrice(5)
@@ -4234,66 +4234,66 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddSalesOrderItem(item);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var shipment = (CustomerShipment)this.order.DerivedShipToAddress.ShipmentsWhereShipToAddress[0];
 
             shipment.Pick();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var pickList = shipment.ShipmentItems[0].ItemIssuancesWhereShipmentItem[0].PickListItem.PickListWherePickListItem;
             pickList.Picker = this.OrderProcessor;
 
             pickList.SetPicked();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var package = new ShipmentPackageBuilder(this.Session).Build();
+            var package = new ShipmentPackageBuilder(this.Transaction).Build();
             shipment.AddShipmentPackage(package);
 
             foreach (ShipmentItem shipmentItem in shipment.ShipmentItems)
             {
-                package.AddPackagingContent(new PackagingContentBuilder(this.Session).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
+                package.AddPackagingContent(new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
             }
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             shipment.Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Equal(new SalesOrderItemShipmentStates(this.Session).PartiallyShipped, item.SalesOrderItemShipmentState);
-            var acl = new DatabaseAccessControlLists(this.Session.GetUser())[item];
+            Assert.Equal(new SalesOrderItemShipmentStates(this.Transaction).PartiallyShipped, item.SalesOrderItemShipmentState);
+            var acl = new DatabaseAccessControlLists(this.Transaction.GetUser())[item];
             Assert.False(acl.CanWrite(this.M.SalesOrderItem.Product));
         }
 
         [Fact]
         public void GivenOrderItem_WhenShippingInProgress_ThenCancelIsNotAllowed()
         {
-            var administrator = new PersonBuilder(this.Session).WithFirstName("Koen").WithUserName("admin").Build();
-            var administrators = new UserGroups(this.Session).Administrators;
+            var administrator = new PersonBuilder(this.Transaction).WithFirstName("Koen").WithUserName("admin").Build();
+            var administrators = new UserGroups(this.Transaction).Administrators;
             administrators.AddMember(administrator);
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
             User user = this.Administrator;
-            this.Session.SetUser(user);
+            this.Transaction.SetUser(user);
 
-            new InventoryItemTransactionBuilder(this.Session).WithQuantity(1).WithReason(new InventoryTransactionReasons(this.Session).Unknown).WithPart(this.part).Build();
+            new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(1).WithReason(new InventoryTransactionReasons(this.Transaction).Unknown).WithPart(this.part).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var item = new SalesOrderItemBuilder(this.Session)
+            var item = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(this.good)
                 .WithQuantityOrdered(3)
                 .WithAssignedUnitPrice(5)
@@ -4301,47 +4301,47 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddSalesOrderItem(item);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Equal(new SalesOrderItemShipmentStates(this.Session).InProgress, item.SalesOrderItemShipmentState);
-            var acl = new DatabaseAccessControlLists(this.Session.GetUser())[item];
+            Assert.Equal(new SalesOrderItemShipmentStates(this.Transaction).InProgress, item.SalesOrderItemShipmentState);
+            var acl = new DatabaseAccessControlLists(this.Transaction.GetUser())[item];
             Assert.False(acl.CanExecute(this.M.SalesOrderItem.Cancel));
         }
 
-        private void InstantiateObjects(ISession session)
+        private void InstantiateObjects(ITransaction transaction)
         {
-            this.productCategory = (ProductCategory)session.Instantiate(this.productCategory);
-            this.parentProductCategory = (ProductCategory)session.Instantiate(this.parentProductCategory);
-            this.ancestorProductCategory = (ProductCategory)session.Instantiate(this.ancestorProductCategory);
-            this.part = (Part)session.Instantiate(this.part);
-            this.virtualGood = (Good)session.Instantiate(this.virtualGood);
-            this.good = (Good)session.Instantiate(this.good);
-            this.feature1 = (Colour)session.Instantiate(this.feature1);
-            this.feature2 = (Colour)session.Instantiate(this.feature2);
-            this.shipToCustomer = (Organisation)session.Instantiate(this.shipToCustomer);
-            this.billToCustomer = (Organisation)session.Instantiate(this.billToCustomer);
-            this.supplier = (Organisation)session.Instantiate(this.supplier);
-            this.kiev = (City)session.Instantiate(this.kiev);
-            this.shipToContactMechanismMechelen = (PostalAddress)session.Instantiate(this.shipToContactMechanismMechelen);
-            this.shipToContactMechanismKiev = (PostalAddress)session.Instantiate(this.shipToContactMechanismKiev);
-            this.currentBasePriceGeoBoundary = (BasePrice)session.Instantiate(this.currentBasePriceGeoBoundary);
-            this.currentGoodBasePrice = (BasePrice)session.Instantiate(this.currentGoodBasePrice);
-            this.currentGood1Feature1BasePrice = (BasePrice)session.Instantiate(this.currentGood1Feature1BasePrice);
-            this.currentFeature2BasePrice = (BasePrice)session.Instantiate(this.currentFeature2BasePrice);
-            this.goodPurchasePrice = (SupplierOffering)session.Instantiate(this.goodPurchasePrice);
-            this.virtualGoodPurchasePrice = (SupplierOffering)session.Instantiate(this.virtualGoodPurchasePrice);
-            this.currentGoodBasePrice = (BasePrice)session.Instantiate(this.currentGoodBasePrice);
-            this.order = (SalesOrder)session.Instantiate(this.order);
-            this.vatRate21 = (VatRate)session.Instantiate(this.vatRate21);
+            this.productCategory = (ProductCategory)transaction.Instantiate(this.productCategory);
+            this.parentProductCategory = (ProductCategory)transaction.Instantiate(this.parentProductCategory);
+            this.ancestorProductCategory = (ProductCategory)transaction.Instantiate(this.ancestorProductCategory);
+            this.part = (Part)transaction.Instantiate(this.part);
+            this.virtualGood = (Good)transaction.Instantiate(this.virtualGood);
+            this.good = (Good)transaction.Instantiate(this.good);
+            this.feature1 = (Colour)transaction.Instantiate(this.feature1);
+            this.feature2 = (Colour)transaction.Instantiate(this.feature2);
+            this.shipToCustomer = (Organisation)transaction.Instantiate(this.shipToCustomer);
+            this.billToCustomer = (Organisation)transaction.Instantiate(this.billToCustomer);
+            this.supplier = (Organisation)transaction.Instantiate(this.supplier);
+            this.kiev = (City)transaction.Instantiate(this.kiev);
+            this.shipToContactMechanismMechelen = (PostalAddress)transaction.Instantiate(this.shipToContactMechanismMechelen);
+            this.shipToContactMechanismKiev = (PostalAddress)transaction.Instantiate(this.shipToContactMechanismKiev);
+            this.currentBasePriceGeoBoundary = (BasePrice)transaction.Instantiate(this.currentBasePriceGeoBoundary);
+            this.currentGoodBasePrice = (BasePrice)transaction.Instantiate(this.currentGoodBasePrice);
+            this.currentGood1Feature1BasePrice = (BasePrice)transaction.Instantiate(this.currentGood1Feature1BasePrice);
+            this.currentFeature2BasePrice = (BasePrice)transaction.Instantiate(this.currentFeature2BasePrice);
+            this.goodPurchasePrice = (SupplierOffering)transaction.Instantiate(this.goodPurchasePrice);
+            this.virtualGoodPurchasePrice = (SupplierOffering)transaction.Instantiate(this.virtualGoodPurchasePrice);
+            this.currentGoodBasePrice = (BasePrice)transaction.Instantiate(this.currentGoodBasePrice);
+            this.order = (SalesOrder)transaction.Instantiate(this.order);
+            this.vatRate21 = (VatRate)transaction.Instantiate(this.vatRate21);
         }
     }
 }

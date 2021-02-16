@@ -49,7 +49,7 @@ namespace Allors.Database.Adapters
 
                                 for (var objectCount = 1; objectCount < 100 * 10; objectCount = objectCount + 100)
                                 {
-                                    var allorsObjects = this.GetSession().Create(testType, objectCount);
+                                    var allorsObjects = this.GetTransaction().Create(testType, objectCount);
 
                                     Assert.Equal(objectCount, allorsObjects.Count());
 
@@ -89,7 +89,7 @@ namespace Allors.Database.Adapters
 
                                 for (var objectCount = 1; objectCount < 5; objectCount = objectCount + 1000)
                                 {
-                                    var allorsObjects = this.GetSession().Create(testType, objectCount);
+                                    var allorsObjects = this.GetTransaction().Create(testType, objectCount);
                                     var ids = new string[objectCount];
                                     for (var i = 0; i < objectCount; i++)
                                     {
@@ -99,9 +99,9 @@ namespace Allors.Database.Adapters
 
                                     Assert.Equal(objectCount, allorsObjects.Count());
 
-                                    this.GetSession().Rollback();
+                                    this.GetTransaction().Rollback();
 
-                                    allorsObjects = this.GetSession().Instantiate(ids);
+                                    allorsObjects = this.GetTransaction().Instantiate(ids);
 
                                     Assert.Empty(allorsObjects);
                                 }
@@ -150,7 +150,7 @@ namespace Allors.Database.Adapters
                                             {
                                                 var testType = this.GetTestTypes()[iTestType];
 
-                                                var allorsObject = this.GetSession().Create(testType);
+                                                var allorsObject = this.GetTransaction().Create(testType);
                                                 for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                                 {
                                                     Assert.False(allorsObject.Strategy.IsDeleted);
@@ -173,12 +173,12 @@ namespace Allors.Database.Adapters
                                                     }
                                                 }
 
-                                                allorsObject = this.GetSession().Create(testType);
+                                                allorsObject = this.GetTransaction().Create(testType);
                                                 string id = allorsObject.Strategy.ObjectId.ToString();
                                                 this.Commit(secondTransactionFlag);
                                                 allorsObject.Strategy.Delete();
                                                 this.Commit(thirdTransactionFlag);
-                                                allorsObject = this.GetSession().Instantiate(id);
+                                                allorsObject = this.GetTransaction().Instantiate(id);
                                                 this.Commit(fourthTransactionFlag);
 
                                                 for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -194,10 +194,10 @@ namespace Allors.Database.Adapters
                                                     }
                                                 }
 
-                                                IObject proxy = this.GetSession().Create(testType);
+                                                IObject proxy = this.GetTransaction().Create(testType);
                                                 id = proxy.Strategy.ObjectId.ToString();
                                                 this.Commit(secondTransactionFlag);
-                                                IObject subject = this.GetSession().Instantiate(id);
+                                                IObject subject = this.GetTransaction().Instantiate(id);
                                                 subject.Strategy.Delete();
                                                 this.Commit(thirdTransactionFlag);
 
@@ -214,15 +214,15 @@ namespace Allors.Database.Adapters
                                                     }
                                                 }
 
-                                                allorsObject = this.GetSession().Create(testType);
-                                                IObject[] beforeExtent = this.GetSession().Extent(testType);
+                                                allorsObject = this.GetTransaction().Create(testType);
+                                                IObject[] beforeExtent = this.GetTransaction().Extent(testType);
                                                 this.Commit(secondTransactionFlag);
                                                 allorsObject.Strategy.Delete();
                                                 this.Commit(thirdTransactionFlag);
 
                                                 for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                                 {
-                                                    IObject[] afterExtent = this.GetSession().Extent(testType);
+                                                    IObject[] afterExtent = this.GetTransaction().Extent(testType);
                                                     Assert.Equal(beforeExtent.Count(), afterExtent.Count() + 1);
                                                     if (useRollbackFlag)
                                                     {
@@ -244,7 +244,7 @@ namespace Allors.Database.Adapters
                                                     {
                                                         bool useCachingFlag = this.GetBooleanFlags()[useCachingFlagIndex];
 
-                                                        allorsObject = this.GetSession().Create(testType);
+                                                        allorsObject = this.GetTransaction().Create(testType);
                                                         if (useCachingFlag)
                                                         {
                                                             try
@@ -309,8 +309,8 @@ namespace Allors.Database.Adapters
                                                                 var roleType = roleTypes[iRoleType];
 
                                                                 // delete association
-                                                                var association = this.GetSession().Create(associationType);
-                                                                var role = this.GetSession().Create(roleType);
+                                                                var association = this.GetTransaction().Create(associationType);
+                                                                var role = this.GetTransaction().Create(roleType);
 
                                                                 if (useRoleCachingFlag)
                                                                 {
@@ -355,8 +355,8 @@ namespace Allors.Database.Adapters
                                                                 }
 
                                                                 // delete role
-                                                                association = this.GetSession().Create(associationType);
-                                                                role = this.GetSession().Create(roleType);
+                                                                association = this.GetTransaction().Create(associationType);
+                                                                role = this.GetTransaction().Create(roleType);
 
                                                                 if (useRoleCachingFlag)
                                                                 {
@@ -400,8 +400,8 @@ namespace Allors.Database.Adapters
                                                                 }
 
                                                                 // reuse
-                                                                association = this.GetSession().Create(associationType);
-                                                                role = this.GetSession().Create(roleType);
+                                                                association = this.GetTransaction().Create(associationType);
+                                                                role = this.GetTransaction().Create(roleType);
 
                                                                 this.Commit(secondTransactionFlag);
                                                                 role.Strategy.Delete();
@@ -422,8 +422,8 @@ namespace Allors.Database.Adapters
                                                                     Assert.True(exceptionThrown);
                                                                 }
 
-                                                                association = this.GetSession().Create(associationType);
-                                                                role = this.GetSession().Create(roleType);
+                                                                association = this.GetTransaction().Create(associationType);
+                                                                role = this.GetTransaction().Create(roleType);
 
                                                                 this.Commit(secondTransactionFlag);
                                                                 association.Strategy.Delete();
@@ -473,13 +473,13 @@ namespace Allors.Database.Adapters
 
                                                                 // AssociationType
                                                                 IObject[] associations = this.CreateArray(relationType.AssociationType.ObjectType, 3);
-                                                                associations[0] = this.GetSession().Create(associationType);
-                                                                associations[1] = this.GetSession().Create(associationType);
-                                                                associations[2] = this.GetSession().Create(associationType);
+                                                                associations[0] = this.GetTransaction().Create(associationType);
+                                                                associations[1] = this.GetTransaction().Create(associationType);
+                                                                associations[2] = this.GetTransaction().Create(associationType);
                                                                 IObject[] roles = this.CreateArray(relationType.RoleType.ObjectType, 2);
-                                                                roles[0] = this.GetSession().Create(roleType);
+                                                                roles[0] = this.GetTransaction().Create(roleType);
 
-                                                                roles[1] = this.GetSession().Create(roleType);
+                                                                roles[1] = this.GetTransaction().Create(roleType);
 
                                                                 if (useRoleCachingFlag)
                                                                 {
@@ -545,13 +545,13 @@ namespace Allors.Database.Adapters
 
                                                                 // Role
                                                                 associations = this.CreateArray(relationType.AssociationType.ObjectType, 3);
-                                                                associations[0] = this.GetSession().Create(associationType);
-                                                                associations[1] = this.GetSession().Create(associationType);
-                                                                associations[2] = this.GetSession().Create(associationType);
+                                                                associations[0] = this.GetTransaction().Create(associationType);
+                                                                associations[1] = this.GetTransaction().Create(associationType);
+                                                                associations[2] = this.GetTransaction().Create(associationType);
                                                                 roles = this.CreateArray(relationType.RoleType.ObjectType, 2);
-                                                                roles[0] = this.GetSession().Create(roleType);
+                                                                roles[0] = this.GetTransaction().Create(roleType);
 
-                                                                roles[1] = this.GetSession().Create(roleType);
+                                                                roles[1] = this.GetTransaction().Create(roleType);
 
                                                                 if (useRoleCachingFlag)
                                                                 {
@@ -606,8 +606,8 @@ namespace Allors.Database.Adapters
                                                                 }
 
                                                                 // reuse
-                                                                var association = this.GetSession().Create(associationType);
-                                                                var role = this.GetSession().Create(roleType);
+                                                                var association = this.GetTransaction().Create(associationType);
+                                                                var role = this.GetTransaction().Create(roleType);
 
                                                                 this.Commit(secondTransactionFlag);
                                                                 role.Strategy.Delete();
@@ -628,8 +628,8 @@ namespace Allors.Database.Adapters
                                                                     Assert.True(exceptionThrown);
                                                                 }
 
-                                                                association = this.GetSession().Create(associationType);
-                                                                role = this.GetSession().Create(roleType);
+                                                                association = this.GetTransaction().Create(associationType);
+                                                                role = this.GetTransaction().Create(roleType);
 
                                                                 this.Commit(secondTransactionFlag);
                                                                 association.Strategy.Delete();
@@ -678,14 +678,14 @@ namespace Allors.Database.Adapters
 
                                                                 // AssociationType
                                                                 IObject[] associations = this.CreateArray(relationType.AssociationType.ObjectType, 2);
-                                                                associations[0] = this.GetSession().Create(associationType);
-                                                                associations[1] = this.GetSession().Create(associationType);
+                                                                associations[0] = this.GetTransaction().Create(associationType);
+                                                                associations[1] = this.GetTransaction().Create(associationType);
                                                                 IObject[] roles = this.CreateArray(relationType.RoleType.ObjectType, 3);
-                                                                roles[0] = this.GetSession().Create(roleType);
+                                                                roles[0] = this.GetTransaction().Create(roleType);
 
-                                                                roles[1] = this.GetSession().Create(roleType);
+                                                                roles[1] = this.GetTransaction().Create(roleType);
 
-                                                                roles[2] = this.GetSession().Create(roleType);
+                                                                roles[2] = this.GetTransaction().Create(roleType);
 
                                                                 if (useRoleCachingFlag)
                                                                 {
@@ -742,14 +742,14 @@ namespace Allors.Database.Adapters
 
                                                                 // Role
                                                                 associations = this.CreateArray(relationType.AssociationType.ObjectType, 2);
-                                                                associations[0] = this.GetSession().Create(associationType);
-                                                                associations[1] = this.GetSession().Create(associationType);
+                                                                associations[0] = this.GetTransaction().Create(associationType);
+                                                                associations[1] = this.GetTransaction().Create(associationType);
                                                                 roles = this.CreateArray(relationType.RoleType.ObjectType, 3);
-                                                                roles[0] = this.GetSession().Create(roleType);
+                                                                roles[0] = this.GetTransaction().Create(roleType);
 
-                                                                roles[1] = this.GetSession().Create(roleType);
+                                                                roles[1] = this.GetTransaction().Create(roleType);
 
-                                                                roles[2] = this.GetSession().Create(roleType);
+                                                                roles[2] = this.GetTransaction().Create(roleType);
 
                                                                 if (useRoleCachingFlag)
                                                                 {
@@ -803,8 +803,8 @@ namespace Allors.Database.Adapters
                                                                 }
 
                                                                 // reuse
-                                                                var association = this.GetSession().Create(associationType);
-                                                                var role = this.GetSession().Create(roleType);
+                                                                var association = this.GetTransaction().Create(associationType);
+                                                                var role = this.GetTransaction().Create(roleType);
 
                                                                 this.Commit(secondTransactionFlag);
                                                                 role.Strategy.Delete();
@@ -825,8 +825,8 @@ namespace Allors.Database.Adapters
                                                                     Assert.True(exceptionThrown);
                                                                 }
 
-                                                                association = this.GetSession().Create(associationType);
-                                                                role = this.GetSession().Create(roleType);
+                                                                association = this.GetTransaction().Create(associationType);
+                                                                role = this.GetTransaction().Create(roleType);
 
                                                                 this.Commit(secondTransactionFlag);
                                                                 association.Strategy.Delete();
@@ -875,14 +875,14 @@ namespace Allors.Database.Adapters
 
                                                                 // AssociationType
                                                                 IObject[] associations = this.CreateArray(relationType.AssociationType.ObjectType, 2);
-                                                                associations[0] = this.GetSession().Create(associationType);
-                                                                associations[1] = this.GetSession().Create(associationType);
+                                                                associations[0] = this.GetTransaction().Create(associationType);
+                                                                associations[1] = this.GetTransaction().Create(associationType);
                                                                 IObject[] roles = this.CreateArray(relationType.RoleType.ObjectType, 3);
-                                                                roles[0] = this.GetSession().Create(roleType);
+                                                                roles[0] = this.GetTransaction().Create(roleType);
 
-                                                                roles[1] = this.GetSession().Create(roleType);
+                                                                roles[1] = this.GetTransaction().Create(roleType);
 
-                                                                roles[2] = this.GetSession().Create(roleType);
+                                                                roles[2] = this.GetTransaction().Create(roleType);
 
                                                                 if (useRoleCachingFlag)
                                                                 {
@@ -942,12 +942,12 @@ namespace Allors.Database.Adapters
 
                                                                 // Role
                                                                 associations = this.CreateArray(relationType.AssociationType.ObjectType, 2);
-                                                                associations[0] = this.GetSession().Create(associationType);
-                                                                associations[1] = this.GetSession().Create(associationType);
+                                                                associations[0] = this.GetTransaction().Create(associationType);
+                                                                associations[1] = this.GetTransaction().Create(associationType);
                                                                 roles = this.CreateArray(relationType.RoleType.ObjectType, 3);
-                                                                roles[0] = this.GetSession().Create(roleType);
-                                                                roles[1] = this.GetSession().Create(roleType);
-                                                                roles[2] = this.GetSession().Create(roleType);
+                                                                roles[0] = this.GetTransaction().Create(roleType);
+                                                                roles[1] = this.GetTransaction().Create(roleType);
+                                                                roles[2] = this.GetTransaction().Create(roleType);
 
                                                                 if (useRoleCachingFlag)
                                                                 {
@@ -1011,8 +1011,8 @@ namespace Allors.Database.Adapters
                                                                 }
 
                                                                 // reuse
-                                                                var association = this.GetSession().Create(associationType);
-                                                                var role = this.GetSession().Create(roleType);
+                                                                var association = this.GetTransaction().Create(associationType);
+                                                                var role = this.GetTransaction().Create(roleType);
 
                                                                 this.Commit(secondTransactionFlag);
                                                                 role.Strategy.Delete();
@@ -1033,8 +1033,8 @@ namespace Allors.Database.Adapters
                                                                     Assert.True(exceptionThrown);
                                                                 }
 
-                                                                association = this.GetSession().Create(associationType);
-                                                                role = this.GetSession().Create(roleType);
+                                                                association = this.GetTransaction().Create(associationType);
+                                                                role = this.GetTransaction().Create(roleType);
 
                                                                 this.Commit(secondTransactionFlag);
                                                                 association.Strategy.Delete();
@@ -1094,9 +1094,9 @@ namespace Allors.Database.Adapters
                                             var secondTransactionFlag = this.GetBooleanFlags()[secondTransactionFlagIndex];
 
                                             // Rollback
-                                            var allorsObject = this.GetSession().Create(testType);
+                                            var allorsObject = this.GetTransaction().Create(testType);
                                             allorsObject.Strategy.Delete();
-                                            this.GetSession().Rollback();
+                                            this.GetTransaction().Rollback();
 
                                             for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                             {
@@ -1111,11 +1111,11 @@ namespace Allors.Database.Adapters
                                                 }
                                             }
 
-                                            allorsObject = this.GetSession().Create(testType);
+                                            allorsObject = this.GetTransaction().Create(testType);
                                             string id = allorsObject.Strategy.ObjectId.ToString();
                                             allorsObject.Strategy.Delete();
-                                            this.GetSession().Rollback();
-                                            allorsObject = this.GetSession().Instantiate(id);
+                                            this.GetTransaction().Rollback();
+                                            allorsObject = this.GetTransaction().Instantiate(id);
                                             this.Commit(secondTransactionFlag);
 
                                             for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -1132,10 +1132,10 @@ namespace Allors.Database.Adapters
                                             }
 
                                             // Commit + Rollback
-                                            allorsObject = this.GetSession().Create(testType);
-                                            this.GetSession().Commit();
+                                            allorsObject = this.GetTransaction().Create(testType);
+                                            this.GetTransaction().Commit();
                                             allorsObject.Strategy.Delete();
-                                            this.GetSession().Rollback();
+                                            this.GetTransaction().Rollback();
 
                                             for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                             {
@@ -1150,12 +1150,12 @@ namespace Allors.Database.Adapters
                                                 }
                                             }
 
-                                            allorsObject = this.GetSession().Create(testType);
+                                            allorsObject = this.GetTransaction().Create(testType);
                                             id = allorsObject.Strategy.ObjectId.ToString();
-                                            this.GetSession().Commit();
+                                            this.GetTransaction().Commit();
                                             allorsObject.Strategy.Delete();
-                                            this.GetSession().Rollback();
-                                            allorsObject = this.GetSession().Instantiate(id);
+                                            this.GetTransaction().Rollback();
+                                            allorsObject = this.GetTransaction().Instantiate(id);
                                             this.Commit(secondTransactionFlag);
 
                                             for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -1171,12 +1171,12 @@ namespace Allors.Database.Adapters
                                                 }
                                             }
 
-                                            IObject proxy = this.GetSession().Create(testType);
+                                            IObject proxy = this.GetTransaction().Create(testType);
                                             id = proxy.Strategy.ObjectId.ToString();
-                                            this.GetSession().Commit();
-                                            IObject subject = this.GetSession().Instantiate(id);
+                                            this.GetTransaction().Commit();
+                                            IObject subject = this.GetTransaction().Instantiate(id);
                                             subject.Strategy.Delete();
-                                            this.GetSession().Rollback();
+                                            this.GetTransaction().Rollback();
 
                                             for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                             {
@@ -1191,18 +1191,18 @@ namespace Allors.Database.Adapters
                                                 }
                                             }
 
-                                            allorsObject = this.GetSession().Create(testType);
-                                            IObject[] beforeExtent = this.GetSession().Extent(testType);
+                                            allorsObject = this.GetTransaction().Create(testType);
+                                            IObject[] beforeExtent = this.GetTransaction().Extent(testType);
                                             id = allorsObject.Strategy.ObjectId.ToString();
-                                            this.GetSession().Commit();
+                                            this.GetTransaction().Commit();
                                             allorsObject.Strategy.Delete();
-                                            this.GetSession().Rollback();
-                                            this.GetSession().Instantiate(id);
+                                            this.GetTransaction().Rollback();
+                                            this.GetTransaction().Instantiate(id);
                                             this.Commit(secondTransactionFlag);
 
                                             for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                             {
-                                                IObject[] afterExtent = this.GetSession().Extent(testType);
+                                                IObject[] afterExtent = this.GetTransaction().Extent(testType);
                                                 Assert.Equal(beforeExtent.Count(), afterExtent.Count());
                                                 if (useRollbackFlag)
                                                 {
@@ -1215,8 +1215,8 @@ namespace Allors.Database.Adapters
                                             }
 
                                             // Rollback + Rollback
-                                            allorsObject = this.GetSession().Create(testType);
-                                            this.GetSession().Rollback();
+                                            allorsObject = this.GetTransaction().Create(testType);
+                                            this.GetTransaction().Rollback();
                                             var exceptionThrown = false;
                                             try
                                             {
@@ -1240,7 +1240,7 @@ namespace Allors.Database.Adapters
                                                     bool useCachingFlag = this.GetBooleanFlags()[useCachingFlagIndex];
 
                                                     // Rollback
-                                                    allorsObject = this.GetSession().Create(testType);
+                                                    allorsObject = this.GetTransaction().Create(testType);
                                                     if (useCachingFlag)
                                                     {
                                                         this.GetUnit(allorsObject, testRoleType, Units.Dummy);
@@ -1248,7 +1248,7 @@ namespace Allors.Database.Adapters
 
                                                     this.SetUnit(allorsObject, testRoleType, beforeValues);
                                                     allorsObject.Strategy.Delete();
-                                                    this.GetSession().Rollback();
+                                                    this.GetTransaction().Rollback();
 
                                                     for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                                     {
@@ -1274,16 +1274,16 @@ namespace Allors.Database.Adapters
                                                     }
 
                                                     // Commit + Rollback
-                                                    allorsObject = this.GetSession().Create(testType);
+                                                    allorsObject = this.GetTransaction().Create(testType);
                                                     if (useCachingFlag)
                                                     {
                                                         this.GetUnit(allorsObject, testRoleType, Units.Dummy);
                                                     }
 
                                                     this.SetUnit(allorsObject, testRoleType, beforeValues);
-                                                    this.GetSession().Commit();
+                                                    this.GetTransaction().Commit();
                                                     allorsObject.Strategy.Delete();
-                                                    this.GetSession().Rollback();
+                                                    this.GetTransaction().Rollback();
 
                                                     for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                                     {
@@ -1322,8 +1322,8 @@ namespace Allors.Database.Adapters
                                                         {
                                                             var roleType = roleTypes[iRoleType];
 
-                                                            var association = this.GetSession().Create(associationType);
-                                                            var role = this.GetSession().Create(roleType);
+                                                            var association = this.GetTransaction().Create(associationType);
+                                                            var role = this.GetTransaction().Create(roleType);
 
                                                             if (useRoleCachingFlag)
                                                             {
@@ -1336,11 +1336,11 @@ namespace Allors.Database.Adapters
                                                             }
 
                                                             association.Strategy.SetCompositeRole(relationType.RoleType, role);
-                                                            this.GetSession().Commit();
+                                                            this.GetTransaction().Commit();
 
                                                             // delete association
                                                             association.Strategy.Delete();
-                                                            this.GetSession().Rollback();
+                                                            this.GetTransaction().Rollback();
 
                                                             for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                                             {
@@ -1359,7 +1359,7 @@ namespace Allors.Database.Adapters
 
                                                             // delete role
                                                             role.Strategy.Delete();
-                                                            this.GetSession().Rollback();
+                                                            this.GetTransaction().Rollback();
 
                                                             for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                                             {
@@ -1377,17 +1377,17 @@ namespace Allors.Database.Adapters
                                                             }
 
                                                             // reuse
-                                                            association = this.GetSession().Create(associationType);
-                                                            role = this.GetSession().Create(roleType);
+                                                            association = this.GetTransaction().Create(associationType);
+                                                            role = this.GetTransaction().Create(roleType);
 
-                                                            this.GetSession().Commit();
+                                                            this.GetTransaction().Commit();
 
                                                             role.Strategy.Delete();
-                                                            this.GetSession().Rollback();
+                                                            this.GetTransaction().Rollback();
                                                             association.Strategy.SetCompositeRole(relationType.RoleType, role);
 
                                                             association.Strategy.Delete();
-                                                            this.GetSession().Rollback();
+                                                            this.GetTransaction().Rollback();
                                                             association.Strategy.SetCompositeRole(relationType.RoleType, role);
                                                         }
                                                     }
@@ -1419,13 +1419,13 @@ namespace Allors.Database.Adapters
 
                                                             // AssociationType
                                                             IObject[] associations = this.CreateArray(relationType.AssociationType.ObjectType, 3);
-                                                            associations[0] = this.GetSession().Create(associationType);
-                                                            associations[1] = this.GetSession().Create(associationType);
-                                                            associations[2] = this.GetSession().Create(associationType);
+                                                            associations[0] = this.GetTransaction().Create(associationType);
+                                                            associations[1] = this.GetTransaction().Create(associationType);
+                                                            associations[2] = this.GetTransaction().Create(associationType);
                                                             IObject[] roles = this.CreateArray(relationType.RoleType.ObjectType, 2);
-                                                            roles[0] = this.GetSession().Create(roleType);
+                                                            roles[0] = this.GetTransaction().Create(roleType);
 
-                                                            roles[1] = this.GetSession().Create(roleType);
+                                                            roles[1] = this.GetTransaction().Create(roleType);
 
                                                             if (useRoleCachingFlag)
                                                             {
@@ -1443,10 +1443,10 @@ namespace Allors.Database.Adapters
                                                             associations[0].Strategy.SetCompositeRole(relationType.RoleType, roles[0]);
                                                             associations[1].Strategy.SetCompositeRole(relationType.RoleType, roles[1]);
                                                             associations[2].Strategy.SetCompositeRole(relationType.RoleType, roles[1]);
-                                                            this.GetSession().Commit();
+                                                            this.GetTransaction().Commit();
                                                             associations[0].Strategy.Delete();
                                                             associations[1].Strategy.Delete();
-                                                            this.GetSession().Rollback();
+                                                            this.GetTransaction().Rollback();
 
                                                             for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                                             {
@@ -1472,13 +1472,13 @@ namespace Allors.Database.Adapters
 
                                                             // Role
                                                             associations = this.CreateArray(relationType.AssociationType.ObjectType, 3);
-                                                            associations[0] = this.GetSession().Create(associationType);
-                                                            associations[1] = this.GetSession().Create(associationType);
-                                                            associations[2] = this.GetSession().Create(associationType);
+                                                            associations[0] = this.GetTransaction().Create(associationType);
+                                                            associations[1] = this.GetTransaction().Create(associationType);
+                                                            associations[2] = this.GetTransaction().Create(associationType);
                                                             roles = this.CreateArray(relationType.RoleType.ObjectType, 2);
-                                                            roles[0] = this.GetSession().Create(roleType);
+                                                            roles[0] = this.GetTransaction().Create(roleType);
 
-                                                            roles[1] = this.GetSession().Create(roleType);
+                                                            roles[1] = this.GetTransaction().Create(roleType);
 
                                                             if (useRoleCachingFlag)
                                                             {
@@ -1496,9 +1496,9 @@ namespace Allors.Database.Adapters
                                                             associations[0].Strategy.SetCompositeRole(relationType.RoleType, roles[0]);
                                                             associations[1].Strategy.SetCompositeRole(relationType.RoleType, roles[1]);
                                                             associations[2].Strategy.SetCompositeRole(relationType.RoleType, roles[1]);
-                                                            this.GetSession().Commit();
+                                                            this.GetTransaction().Commit();
                                                             roles[0].Strategy.Delete();
-                                                            this.GetSession().Rollback();
+                                                            this.GetTransaction().Rollback();
 
                                                             for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                                             {
@@ -1523,17 +1523,17 @@ namespace Allors.Database.Adapters
                                                             }
 
                                                             // reuse
-                                                            var association = this.GetSession().Create(associationType);
-                                                            var role = this.GetSession().Create(roleType);
+                                                            var association = this.GetTransaction().Create(associationType);
+                                                            var role = this.GetTransaction().Create(roleType);
 
-                                                            this.GetSession().Commit();
+                                                            this.GetTransaction().Commit();
 
                                                             role.Strategy.Delete();
-                                                            this.GetSession().Rollback();
+                                                            this.GetTransaction().Rollback();
                                                             association.Strategy.SetCompositeRole(relationType.RoleType, role);
 
                                                             association.Strategy.Delete();
-                                                            this.GetSession().Rollback();
+                                                            this.GetTransaction().Rollback();
                                                             association.Strategy.SetCompositeRole(relationType.RoleType, role);
                                                         }
                                                     }
@@ -1564,14 +1564,14 @@ namespace Allors.Database.Adapters
 
                                                             // AssociationType
                                                             IObject[] associations = this.CreateArray(relationType.AssociationType.ObjectType, 2);
-                                                            associations[0] = this.GetSession().Create(associationType);
-                                                            associations[1] = this.GetSession().Create(associationType);
+                                                            associations[0] = this.GetTransaction().Create(associationType);
+                                                            associations[1] = this.GetTransaction().Create(associationType);
                                                             IObject[] roles = this.CreateArray(relationType.RoleType.ObjectType, 3);
-                                                            roles[0] = this.GetSession().Create(roleType);
+                                                            roles[0] = this.GetTransaction().Create(roleType);
 
-                                                            roles[1] = this.GetSession().Create(roleType);
+                                                            roles[1] = this.GetTransaction().Create(roleType);
 
-                                                            roles[2] = this.GetSession().Create(roleType);
+                                                            roles[2] = this.GetTransaction().Create(roleType);
 
                                                             if (useRoleCachingFlag)
                                                             {
@@ -1589,9 +1589,9 @@ namespace Allors.Database.Adapters
                                                             associations[0].Strategy.AddCompositeRole(relationType.RoleType, roles[0]);
                                                             associations[0].Strategy.AddCompositeRole(relationType.RoleType, roles[1]);
                                                             associations[1].Strategy.AddCompositeRole(relationType.RoleType, roles[2]);
-                                                            this.GetSession().Commit();
+                                                            this.GetTransaction().Commit();
                                                             associations[0].Strategy.Delete();
-                                                            this.GetSession().Rollback();
+                                                            this.GetTransaction().Rollback();
 
                                                             for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                                             {
@@ -1620,14 +1620,14 @@ namespace Allors.Database.Adapters
 
                                                             // Role
                                                             associations = this.CreateArray(relationType.AssociationType.ObjectType, 2);
-                                                            associations[0] = this.GetSession().Create(associationType);
-                                                            associations[1] = this.GetSession().Create(associationType);
+                                                            associations[0] = this.GetTransaction().Create(associationType);
+                                                            associations[1] = this.GetTransaction().Create(associationType);
                                                             roles = this.CreateArray(relationType.RoleType.ObjectType, 3);
-                                                            roles[0] = this.GetSession().Create(roleType);
+                                                            roles[0] = this.GetTransaction().Create(roleType);
 
-                                                            roles[1] = this.GetSession().Create(roleType);
+                                                            roles[1] = this.GetTransaction().Create(roleType);
 
-                                                            roles[2] = this.GetSession().Create(roleType);
+                                                            roles[2] = this.GetTransaction().Create(roleType);
 
                                                             if (useRoleCachingFlag)
                                                             {
@@ -1645,9 +1645,9 @@ namespace Allors.Database.Adapters
                                                             associations[0].Strategy.AddCompositeRole(relationType.RoleType, roles[0]);
                                                             associations[0].Strategy.AddCompositeRole(relationType.RoleType, roles[1]);
                                                             associations[1].Strategy.AddCompositeRole(relationType.RoleType, roles[2]);
-                                                            this.GetSession().Commit();
+                                                            this.GetTransaction().Commit();
                                                             roles[2].Strategy.Delete();
-                                                            this.GetSession().Rollback();
+                                                            this.GetTransaction().Rollback();
 
                                                             for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                                             {
@@ -1666,17 +1666,17 @@ namespace Allors.Database.Adapters
                                                             }
 
                                                             // reuse
-                                                            var association = this.GetSession().Create(associationType);
-                                                            var role = this.GetSession().Create(roleType);
+                                                            var association = this.GetTransaction().Create(associationType);
+                                                            var role = this.GetTransaction().Create(roleType);
 
-                                                            this.GetSession().Commit();
+                                                            this.GetTransaction().Commit();
 
                                                             role.Strategy.Delete();
-                                                            this.GetSession().Rollback();
+                                                            this.GetTransaction().Rollback();
                                                             association.Strategy.AddCompositeRole(relationType.RoleType, role);
 
                                                             association.Strategy.Delete();
-                                                            this.GetSession().Rollback();
+                                                            this.GetTransaction().Rollback();
                                                             association.Strategy.AddCompositeRole(relationType.RoleType, role);
                                                         }
                                                     }
@@ -1707,14 +1707,14 @@ namespace Allors.Database.Adapters
 
                                                             // AssociationType
                                                             IObject[] associations = this.CreateArray(relationType.AssociationType.ObjectType, 2);
-                                                            associations[0] = this.GetSession().Create(associationType);
-                                                            associations[1] = this.GetSession().Create(associationType);
+                                                            associations[0] = this.GetTransaction().Create(associationType);
+                                                            associations[1] = this.GetTransaction().Create(associationType);
                                                             IObject[] roles = this.CreateArray(relationType.RoleType.ObjectType, 3);
-                                                            roles[0] = this.GetSession().Create(roleType);
+                                                            roles[0] = this.GetTransaction().Create(roleType);
 
-                                                            roles[1] = this.GetSession().Create(roleType);
+                                                            roles[1] = this.GetTransaction().Create(roleType);
 
-                                                            roles[2] = this.GetSession().Create(roleType);
+                                                            roles[2] = this.GetTransaction().Create(roleType);
 
                                                             if (useRoleCachingFlag)
                                                             {
@@ -1733,9 +1733,9 @@ namespace Allors.Database.Adapters
                                                             associations[0].Strategy.AddCompositeRole(relationType.RoleType, roles[1]);
                                                             associations[1].Strategy.AddCompositeRole(relationType.RoleType, roles[1]);
                                                             associations[1].Strategy.AddCompositeRole(relationType.RoleType, roles[2]);
-                                                            this.GetSession().Commit();
+                                                            this.GetTransaction().Commit();
                                                             associations[0].Strategy.Delete();
-                                                            this.GetSession().Rollback();
+                                                            this.GetTransaction().Rollback();
 
                                                             for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                                             {
@@ -1772,12 +1772,12 @@ namespace Allors.Database.Adapters
 
                                                             // Role
                                                             associations = this.CreateArray(relationType.AssociationType.ObjectType, 2);
-                                                            associations[0] = this.GetSession().Create(associationType);
-                                                            associations[1] = this.GetSession().Create(associationType);
+                                                            associations[0] = this.GetTransaction().Create(associationType);
+                                                            associations[1] = this.GetTransaction().Create(associationType);
                                                             roles = this.CreateArray(relationType.RoleType.ObjectType, 3);
-                                                            roles[0] = this.GetSession().Create(roleType);
-                                                            roles[1] = this.GetSession().Create(roleType);
-                                                            roles[2] = this.GetSession().Create(roleType);
+                                                            roles[0] = this.GetTransaction().Create(roleType);
+                                                            roles[1] = this.GetTransaction().Create(roleType);
+                                                            roles[2] = this.GetTransaction().Create(roleType);
 
                                                             if (useRoleCachingFlag)
                                                             {
@@ -1796,9 +1796,9 @@ namespace Allors.Database.Adapters
                                                             associations[0].Strategy.AddCompositeRole(relationType.RoleType, roles[1]);
                                                             associations[1].Strategy.AddCompositeRole(relationType.RoleType, roles[1]);
                                                             associations[1].Strategy.AddCompositeRole(relationType.RoleType, roles[2]);
-                                                            this.GetSession().Commit();
+                                                            this.GetTransaction().Commit();
                                                             roles[0].Strategy.Delete();
-                                                            this.GetSession().Rollback();
+                                                            this.GetTransaction().Rollback();
 
                                                             for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                                             {
@@ -1825,17 +1825,17 @@ namespace Allors.Database.Adapters
                                                             }
 
                                                             // reuse
-                                                            var association = this.GetSession().Create(associationType);
-                                                            var role = this.GetSession().Create(roleType);
+                                                            var association = this.GetTransaction().Create(associationType);
+                                                            var role = this.GetTransaction().Create(roleType);
 
-                                                            this.GetSession().Commit();
+                                                            this.GetTransaction().Commit();
 
                                                             role.Strategy.Delete();
-                                                            this.GetSession().Rollback();
+                                                            this.GetTransaction().Rollback();
                                                             association.Strategy.AddCompositeRole(relationType.RoleType, role);
 
                                                             association.Strategy.Delete();
-                                                            this.GetSession().Rollback();
+                                                            this.GetTransaction().Rollback();
                                                             association.Strategy.AddCompositeRole(relationType.RoleType, role);
                                                         }
                                                     }
@@ -1885,13 +1885,13 @@ namespace Allors.Database.Adapters
                                             {
                                                 var testType = this.GetTestTypes()[iTestType];
 
-                                                var anObject = this.GetSession().Create(testType);
+                                                var anObject = this.GetTransaction().Create(testType);
                                                 var anId = anObject.Strategy.ObjectId.ToString();
-                                                var aProxy = this.GetSession().Instantiate(anId);
+                                                var aProxy = this.GetTransaction().Instantiate(anId);
 
-                                                var anotherObject = this.GetSession().Create(testType);
+                                                var anotherObject = this.GetTransaction().Create(testType);
                                                 var anotherId = anotherObject.Strategy.ObjectId.ToString();
-                                                var anotherProxy = this.GetSession().Instantiate(anotherId);
+                                                var anotherProxy = this.GetTransaction().Instantiate(anotherId);
 
                                                 this.Commit(secondTransactionFlag);
                                                 for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -1913,18 +1913,18 @@ namespace Allors.Database.Adapters
                                                     }
                                                 }
 
-                                                anObject = this.GetSession().Create(testType);
+                                                anObject = this.GetTransaction().Create(testType);
                                                 anId = anObject.Strategy.ObjectId.ToString();
 
-                                                anotherObject = this.GetSession().Create(testType);
+                                                anotherObject = this.GetTransaction().Create(testType);
                                                 anotherId = anotherObject.Strategy.ObjectId.ToString();
 
                                                 this.Commit(secondTransactionFlag);
 
-                                                anObject = this.GetSession().Instantiate(anId);
-                                                aProxy = this.GetSession().Instantiate(anId);
-                                                anotherObject = this.GetSession().Instantiate(anotherId);
-                                                anotherProxy = this.GetSession().Instantiate(anotherId);
+                                                anObject = this.GetTransaction().Instantiate(anId);
+                                                aProxy = this.GetTransaction().Instantiate(anId);
+                                                anotherObject = this.GetTransaction().Instantiate(anotherId);
+                                                anotherProxy = this.GetTransaction().Instantiate(anotherId);
 
                                                 for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                                 {
@@ -1977,15 +1977,15 @@ namespace Allors.Database.Adapters
 
                                         for (var secondTransactionFlagIndex = 0; secondTransactionFlagIndex < this.GetBooleanFlags().Length; secondTransactionFlagIndex++)
                                         {
-                                            var anObject = this.GetSession().Create(testType);
+                                            var anObject = this.GetTransaction().Create(testType);
                                             var anId = anObject.Strategy.ObjectId.ToString();
-                                            var aProxy = this.GetSession().Instantiate(anId);
+                                            var aProxy = this.GetTransaction().Instantiate(anId);
 
-                                            var anotherObject = this.GetSession().Create(testType);
+                                            var anotherObject = this.GetTransaction().Create(testType);
                                             var anotherId = anotherObject.Strategy.ObjectId.ToString();
-                                            var anotherProxy = this.GetSession().Instantiate(anotherId);
+                                            var anotherProxy = this.GetTransaction().Instantiate(anotherId);
 
-                                            this.GetSession().Rollback();
+                                            this.GetTransaction().Rollback();
                                             for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                             {
                                                 Assert.Equal(anObject, aProxy);
@@ -2005,21 +2005,21 @@ namespace Allors.Database.Adapters
                                                 }
                                             }
 
-                                            anObject = this.GetSession().Create(testType);
+                                            anObject = this.GetTransaction().Create(testType);
                                             anId = anObject.Strategy.ObjectId.ToString();
-                                            this.GetSession().Instantiate(anId); // aProxy
+                                            this.GetTransaction().Instantiate(anId); // aProxy
 
-                                            anotherObject = this.GetSession().Create(testType);
+                                            anotherObject = this.GetTransaction().Create(testType);
                                             anotherId = anotherObject.Strategy.ObjectId.ToString();
-                                            this.GetSession().Instantiate(anotherId); // anotherProxy
+                                            this.GetTransaction().Instantiate(anotherId); // anotherProxy
 
-                                            this.GetSession().Rollback();
+                                            this.GetTransaction().Rollback();
 
-                                            anObject = this.GetSession().Instantiate(anId);
-                                            aProxy = this.GetSession().Instantiate(anId);
+                                            anObject = this.GetTransaction().Instantiate(anId);
+                                            aProxy = this.GetTransaction().Instantiate(anId);
 
-                                            anotherObject = this.GetSession().Instantiate(anotherId);
-                                            anotherProxy = this.GetSession().Instantiate(anotherId);
+                                            anotherObject = this.GetTransaction().Instantiate(anotherId);
+                                            anotherProxy = this.GetTransaction().Instantiate(anotherId);
 
                                             for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                             {
@@ -2081,7 +2081,7 @@ namespace Allors.Database.Adapters
 
                                     {
                                         // Equality & Id's
-                                        var anObject = this.GetSession().Create(testType);
+                                        var anObject = this.GetTransaction().Create(testType);
                                         var id = int.Parse(anObject.Strategy.ObjectId.ToString());
                                         IObject sameObject = this.Instantiate(id, manyFlag);
 
@@ -2122,7 +2122,7 @@ namespace Allors.Database.Adapters
 
                                     {
                                         // String RelationTypes
-                                        IObject subject = this.GetSession().Create(testType);
+                                        IObject subject = this.GetTransaction().Create(testType);
                                         var id = int.Parse(subject.Strategy.ObjectId.ToString());
                                         var testRoleTypes = this.GetStringRoles(testType);
 
@@ -2224,8 +2224,8 @@ namespace Allors.Database.Adapters
                                             for (var iRoleType = 0; iRoleType < roleTypes.Count(); iRoleType++)
                                             {
                                                 var roleType = roleTypes[iRoleType];
-                                                var association = this.GetSession().Create(associationType);
-                                                var role = this.GetSession().Create(roleType);
+                                                var association = this.GetTransaction().Create(associationType);
+                                                var role = this.GetTransaction().Create(roleType);
                                                 var associationId = int.Parse(association.Strategy.ObjectId.ToString());
                                                 var roleId = int.Parse(role.Strategy.ObjectId.ToString());
                                                 var associationProxy = this.Instantiate(associationId, manyFlag);
@@ -2412,8 +2412,8 @@ namespace Allors.Database.Adapters
                                             for (var iRoleType = 0; iRoleType < roleTypes.Count(); iRoleType++)
                                             {
                                                 var roleType = roleTypes[iRoleType];
-                                                var association = this.GetSession().Create(associationType);
-                                                var role = this.GetSession().Create(roleType);
+                                                var association = this.GetTransaction().Create(associationType);
+                                                var role = this.GetTransaction().Create(roleType);
                                                 var associationId = int.Parse(association.Strategy.ObjectId.ToString());
                                                 var roleId = int.Parse(role.Strategy.ObjectId.ToString());
                                                 var associationProxy = this.Instantiate(associationId, manyFlag);
@@ -2593,8 +2593,8 @@ namespace Allors.Database.Adapters
                                             for (var iRoleType = 0; iRoleType < roleTypes.Count(); iRoleType++)
                                             {
                                                 var roleType = roleTypes[iRoleType];
-                                                var association = this.GetSession().Create(associationType);
-                                                var role = this.GetSession().Create(roleType);
+                                                var association = this.GetTransaction().Create(associationType);
+                                                var role = this.GetTransaction().Create(roleType);
                                                 var associationId = int.Parse(association.Strategy.ObjectId.ToString());
                                                 var roleId = int.Parse(role.Strategy.ObjectId.ToString());
                                                 var associationProxy = this.Instantiate(associationId, manyFlag);
@@ -2780,8 +2780,8 @@ namespace Allors.Database.Adapters
                                             for (var iRoleType = 0; iRoleType < roleTypes.Count(); iRoleType++)
                                             {
                                                 var roleType = roleTypes[iRoleType];
-                                                var association = this.GetSession().Create(associationType);
-                                                var role = this.GetSession().Create(roleType);
+                                                var association = this.GetTransaction().Create(associationType);
+                                                var role = this.GetTransaction().Create(roleType);
                                                 var associationId = int.Parse(association.Strategy.ObjectId.ToString());
                                                 var roleId = int.Parse(role.Strategy.ObjectId.ToString());
                                                 var associationProxy = this.Instantiate(associationId, manyFlag);
@@ -2975,10 +2975,10 @@ namespace Allors.Database.Adapters
                                     var testType = this.GetTestTypes()[iTestType];
                                     {
                                         // Equality & Id's
-                                        var anObject = this.GetSession().Create(testType);
+                                        var anObject = this.GetTransaction().Create(testType);
                                         var id = int.Parse(anObject.Strategy.ObjectId.ToString());
                                         this.Instantiate(id, manyFlag);
-                                        this.GetSession().Commit();
+                                        this.GetTransaction().Commit();
 
                                         for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
@@ -2992,7 +2992,7 @@ namespace Allors.Database.Adapters
                                                 Assert.Equal(anObject.Strategy.ObjectId, sameObject.Strategy.ObjectId);
                                             }
 
-                                            this.GetSession().Rollback();
+                                            this.GetTransaction().Rollback();
 
                                             anObject = this.Instantiate(id, manyFlag);
 
@@ -3004,16 +3004,16 @@ namespace Allors.Database.Adapters
                                                 Assert.Equal(anObject.Strategy.ObjectId, sameObject.Strategy.ObjectId);
                                             }
 
-                                            this.GetSession().Rollback();
+                                            this.GetTransaction().Rollback();
                                         }
                                     }
 
                                     {
                                         // String RelationTypes
-                                        IObject subject = this.GetSession().Create(testType);
+                                        IObject subject = this.GetTransaction().Create(testType);
                                         var id = int.Parse(subject.Strategy.ObjectId.ToString());
                                         this.Instantiate(id, manyFlag);
-                                        this.GetSession().Commit();
+                                        this.GetTransaction().Commit();
 
                                         string valueA = this.ValueGenerator.GenerateString(100);
                                         string valueB = this.ValueGenerator.GenerateString(100);
@@ -3029,30 +3029,30 @@ namespace Allors.Database.Adapters
                                             subject.Strategy.SetUnitRole(testRoleType.RoleType, valueA);
                                             IObject proxy = this.Instantiate(id, manyFlag);
 
-                                            this.GetSession().Rollback();
+                                            this.GetTransaction().Rollback();
 
                                             Assert.False(subject.Strategy.ExistRole(testRoleType.RoleType));
                                             Assert.False(proxy.Strategy.ExistRole(testRoleType.RoleType));
 
-                                            this.GetSession().Commit();
+                                            this.GetTransaction().Commit();
 
                                             // set subject, instantiate proxy
                                             subject.Strategy.SetUnitRole(testRoleType.RoleType, valueA);
                                             proxy = this.Instantiate(id, manyFlag);
 
-                                            this.GetSession().Rollback();
+                                            this.GetTransaction().Rollback();
 
                                             Assert.False(subject.Strategy.ExistRole(testRoleType.RoleType));
                                             Assert.False(proxy.Strategy.ExistRole(testRoleType.RoleType));
 
-                                            this.GetSession().Commit();
+                                            this.GetTransaction().Commit();
 
                                             // instantiate both , set subject 
                                             subject = this.Instantiate(id, manyFlag);
                                             proxy = this.Instantiate(id, manyFlag);
                                             subject.Strategy.SetUnitRole(testRoleType.RoleType, valueA);
 
-                                            this.GetSession().Rollback();
+                                            this.GetTransaction().Rollback();
 
                                             Assert.False(subject.Strategy.ExistRole(testRoleType.RoleType));
                                             Assert.False(proxy.Strategy.ExistRole(testRoleType.RoleType));
@@ -3062,7 +3062,7 @@ namespace Allors.Database.Adapters
                                             proxy = this.Instantiate(id, manyFlag);
                                             proxy.Strategy.SetUnitRole(testRoleType.RoleType, valueB);
 
-                                            this.GetSession().Rollback();
+                                            this.GetTransaction().Rollback();
 
                                             Assert.False(subject.Strategy.ExistRole(testRoleType.RoleType));
                                             Assert.False(proxy.Strategy.ExistRole(testRoleType.RoleType));
@@ -3073,7 +3073,7 @@ namespace Allors.Database.Adapters
                                             subject.Strategy.SetUnitRole(testRoleType.RoleType, valueA);
                                             proxy.Strategy.SetUnitRole(testRoleType.RoleType, valueB);
 
-                                            this.GetSession().Rollback();
+                                            this.GetTransaction().Rollback();
 
                                             Assert.False(subject.Strategy.ExistRole(testRoleType.RoleType));
                                             Assert.False(proxy.Strategy.ExistRole(testRoleType.RoleType));
@@ -3084,7 +3084,7 @@ namespace Allors.Database.Adapters
                                             proxy.Strategy.SetUnitRole(testRoleType.RoleType, valueB);
                                             subject.Strategy.SetUnitRole(testRoleType.RoleType, valueA);
 
-                                            this.GetSession().Rollback();
+                                            this.GetTransaction().Rollback();
 
                                             Assert.False(subject.Strategy.ExistRole(testRoleType.RoleType));
                                             Assert.False(proxy.Strategy.ExistRole(testRoleType.RoleType));
@@ -3106,19 +3106,19 @@ namespace Allors.Database.Adapters
                                             for (var iRoleType = 0; iRoleType < roleTypes.Count(); iRoleType++)
                                             {
                                                 var roleType = roleTypes[iRoleType];
-                                                var association = this.GetSession().Create(associationType);
-                                                var role = this.GetSession().Create(roleType);
+                                                var association = this.GetTransaction().Create(associationType);
+                                                var role = this.GetTransaction().Create(roleType);
                                                 var associationId = int.Parse(association.Strategy.ObjectId.ToString());
                                                 var roleId = int.Parse(role.Strategy.ObjectId.ToString());
                                                 var associationProxy = this.Instantiate(associationId, manyFlag);
                                                 var roleProxy = this.Instantiate(roleId, manyFlag);
-                                                this.GetSession().Commit();
+                                                this.GetTransaction().Commit();
 
                                                 for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                                 {
                                                     // set association
                                                     association.Strategy.SetCompositeRole(relationType.RoleType, role);
-                                                    this.GetSession().Rollback();
+                                                    this.GetTransaction().Rollback();
 
                                                     for (var testRepeatIndex = 0;
                                                          testRepeatIndex < testRepeat;
@@ -3130,7 +3130,7 @@ namespace Allors.Database.Adapters
                                                         Assert.Null(roleProxy.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                     }
 
-                                                    this.GetSession().Commit();
+                                                    this.GetTransaction().Commit();
 
                                                     // instantiate all, set association with role
                                                     association = this.Instantiate(associationId, manyFlag);
@@ -3138,7 +3138,7 @@ namespace Allors.Database.Adapters
                                                     role = this.Instantiate(roleId, manyFlag);
                                                     roleProxy = this.Instantiate(roleId, manyFlag);
                                                     association.Strategy.SetCompositeRole(relationType.RoleType, role);
-                                                    this.GetSession().Rollback();
+                                                    this.GetTransaction().Rollback();
 
                                                     for (var testRepeatIndex = 0;
                                                          testRepeatIndex < testRepeat;
@@ -3150,7 +3150,7 @@ namespace Allors.Database.Adapters
                                                         Assert.Null(roleProxy.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                     }
 
-                                                    this.GetSession().Commit();
+                                                    this.GetTransaction().Commit();
 
                                                     // instantiate all, set association with roleProxy
                                                     association = this.Instantiate(associationId, manyFlag);
@@ -3158,7 +3158,7 @@ namespace Allors.Database.Adapters
                                                     role = this.Instantiate(roleId, manyFlag);
                                                     roleProxy = this.Instantiate(roleId, manyFlag);
                                                     association.Strategy.SetCompositeRole(relationType.RoleType, roleProxy);
-                                                    this.GetSession().Rollback();
+                                                    this.GetTransaction().Rollback();
 
                                                     for (var testRepeatIndex = 0;
                                                          testRepeatIndex < testRepeat;
@@ -3170,7 +3170,7 @@ namespace Allors.Database.Adapters
                                                         Assert.Null(roleProxy.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                     }
 
-                                                    this.GetSession().Commit();
+                                                    this.GetTransaction().Commit();
 
                                                     // instantiate all, set associationProxy with role
                                                     association = this.Instantiate(associationId, manyFlag);
@@ -3178,7 +3178,7 @@ namespace Allors.Database.Adapters
                                                     role = this.Instantiate(roleId, manyFlag);
                                                     roleProxy = this.Instantiate(roleId, manyFlag);
                                                     association.Strategy.SetCompositeRole(relationType.RoleType, role);
-                                                    this.GetSession().Rollback();
+                                                    this.GetTransaction().Rollback();
 
                                                     for (var testRepeatIndex = 0;
                                                          testRepeatIndex < testRepeat;
@@ -3190,7 +3190,7 @@ namespace Allors.Database.Adapters
                                                         Assert.Null(roleProxy.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                     }
 
-                                                    this.GetSession().Commit();
+                                                    this.GetTransaction().Commit();
 
                                                     // instantiate all, set associationProxy with roleProxy
                                                     association = this.Instantiate(associationId, manyFlag);
@@ -3198,7 +3198,7 @@ namespace Allors.Database.Adapters
                                                     role = this.Instantiate(roleId, manyFlag);
                                                     roleProxy = this.Instantiate(roleId, manyFlag);
                                                     association.Strategy.SetCompositeRole(relationType.RoleType, roleProxy);
-                                                    this.GetSession().Rollback();
+                                                    this.GetTransaction().Rollback();
 
                                                     for (var testRepeatIndex = 0;
                                                          testRepeatIndex < testRepeat;
@@ -3210,7 +3210,7 @@ namespace Allors.Database.Adapters
                                                         Assert.Null(roleProxy.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                     }
 
-                                                    this.GetSession().Commit();
+                                                    this.GetTransaction().Commit();
                                                 }
                                             }
                                         }
@@ -3234,19 +3234,19 @@ namespace Allors.Database.Adapters
                                             for (var iRoleType = 0; iRoleType < roleTypes.Count(); iRoleType++)
                                             {
                                                 var roleType = roleTypes[iRoleType];
-                                                var association = this.GetSession().Create(associationType);
-                                                var role = this.GetSession().Create(roleType);
+                                                var association = this.GetTransaction().Create(associationType);
+                                                var role = this.GetTransaction().Create(roleType);
                                                 var associationId = int.Parse(association.Strategy.ObjectId.ToString());
                                                 var roleId = int.Parse(role.Strategy.ObjectId.ToString());
                                                 var associationProxy = this.Instantiate(associationId, manyFlag);
                                                 var roleProxy = this.Instantiate(roleId, manyFlag);
-                                                this.GetSession().Commit();
+                                                this.GetTransaction().Commit();
 
                                                 for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                                 {
                                                     // set association
                                                     association.Strategy.AddCompositeRole(relationType.RoleType, role);
-                                                    this.GetSession().Rollback();
+                                                    this.GetTransaction().Rollback();
 
                                                     for (var testRepeatIndex = 0;
                                                          testRepeatIndex < testRepeat;
@@ -3258,7 +3258,7 @@ namespace Allors.Database.Adapters
                                                         Assert.Null(roleProxy.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                     }
 
-                                                    this.GetSession().Commit();
+                                                    this.GetTransaction().Commit();
 
                                                     // instantiate all, set association with role
                                                     association = this.Instantiate(associationId, manyFlag);
@@ -3266,7 +3266,7 @@ namespace Allors.Database.Adapters
                                                     role = this.Instantiate(roleId, manyFlag);
                                                     roleProxy = this.Instantiate(roleId, manyFlag);
                                                     association.Strategy.AddCompositeRole(relationType.RoleType, role);
-                                                    this.GetSession().Rollback();
+                                                    this.GetTransaction().Rollback();
 
                                                     for (var testRepeatIndex = 0;
                                                          testRepeatIndex < testRepeat;
@@ -3278,7 +3278,7 @@ namespace Allors.Database.Adapters
                                                         Assert.Null(roleProxy.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                     }
 
-                                                    this.GetSession().Commit();
+                                                    this.GetTransaction().Commit();
 
                                                     // instantiate all, set association with roleProxy
                                                     association = this.Instantiate(associationId, manyFlag);
@@ -3286,7 +3286,7 @@ namespace Allors.Database.Adapters
                                                     role = this.Instantiate(roleId, manyFlag);
                                                     roleProxy = this.Instantiate(roleId, manyFlag);
                                                     association.Strategy.AddCompositeRole(relationType.RoleType, roleProxy);
-                                                    this.GetSession().Rollback();
+                                                    this.GetTransaction().Rollback();
 
                                                     for (var testRepeatIndex = 0;
                                                          testRepeatIndex < testRepeat;
@@ -3298,7 +3298,7 @@ namespace Allors.Database.Adapters
                                                         Assert.Null(roleProxy.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                     }
 
-                                                    this.GetSession().Commit();
+                                                    this.GetTransaction().Commit();
 
                                                     // instantiate all, set associationProxy with role
                                                     association = this.Instantiate(associationId, manyFlag);
@@ -3306,7 +3306,7 @@ namespace Allors.Database.Adapters
                                                     role = this.Instantiate(roleId, manyFlag);
                                                     roleProxy = this.Instantiate(roleId, manyFlag);
                                                     associationProxy.Strategy.AddCompositeRole(relationType.RoleType, role);
-                                                    this.GetSession().Rollback();
+                                                    this.GetTransaction().Rollback();
 
                                                     for (var testRepeatIndex = 0;
                                                          testRepeatIndex < testRepeat;
@@ -3318,7 +3318,7 @@ namespace Allors.Database.Adapters
                                                         Assert.Null(roleProxy.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                     }
 
-                                                    this.GetSession().Commit();
+                                                    this.GetTransaction().Commit();
 
                                                     // instantiate all, set associationProxy with roleProxy
                                                     association = this.Instantiate(associationId, manyFlag);
@@ -3326,7 +3326,7 @@ namespace Allors.Database.Adapters
                                                     role = this.Instantiate(roleId, manyFlag);
                                                     roleProxy = this.Instantiate(roleId, manyFlag);
                                                     associationProxy.Strategy.AddCompositeRole(relationType.RoleType, roleProxy);
-                                                    this.GetSession().Rollback();
+                                                    this.GetTransaction().Rollback();
 
                                                     for (var testRepeatIndex = 0;
                                                          testRepeatIndex < testRepeat;
@@ -3338,7 +3338,7 @@ namespace Allors.Database.Adapters
                                                         Assert.Null(roleProxy.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                     }
 
-                                                    this.GetSession().Commit();
+                                                    this.GetTransaction().Commit();
                                                 }
                                             }
                                         }
@@ -3359,19 +3359,19 @@ namespace Allors.Database.Adapters
                                             for (var iRoleType = 0; iRoleType < roleTypes.Count(); iRoleType++)
                                             {
                                                 var roleType = roleTypes[iRoleType];
-                                                var association = this.GetSession().Create(associationType);
-                                                var role = this.GetSession().Create(roleType);
+                                                var association = this.GetTransaction().Create(associationType);
+                                                var role = this.GetTransaction().Create(roleType);
                                                 var associationId = int.Parse(association.Strategy.ObjectId.ToString());
                                                 var roleId = int.Parse(role.Strategy.ObjectId.ToString());
                                                 var associationProxy = this.Instantiate(associationId, manyFlag);
                                                 var roleProxy = this.Instantiate(roleId, manyFlag);
-                                                this.GetSession().Commit();
+                                                this.GetTransaction().Commit();
 
                                                 for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                                 {
                                                     // set association
                                                     association.Strategy.SetCompositeRole(relationType.RoleType, role);
-                                                    this.GetSession().Rollback();
+                                                    this.GetTransaction().Rollback();
 
                                                     for (var testRepeatIndex = 0;
                                                          testRepeatIndex < testRepeat;
@@ -3383,7 +3383,7 @@ namespace Allors.Database.Adapters
                                                         Assert.Empty(((IObject[])roleProxy.Strategy.GetCompositeAssociations(relationType.AssociationType)));
                                                     }
 
-                                                    this.GetSession().Commit();
+                                                    this.GetTransaction().Commit();
 
                                                     // instantiate all, set association with role
                                                     association = this.Instantiate(associationId, manyFlag);
@@ -3391,7 +3391,7 @@ namespace Allors.Database.Adapters
                                                     role = this.Instantiate(roleId, manyFlag);
                                                     roleProxy = this.Instantiate(roleId, manyFlag);
                                                     association.Strategy.SetCompositeRole(relationType.RoleType, role);
-                                                    this.GetSession().Rollback();
+                                                    this.GetTransaction().Rollback();
 
                                                     for (var testRepeatIndex = 0;
                                                          testRepeatIndex < testRepeat;
@@ -3403,7 +3403,7 @@ namespace Allors.Database.Adapters
                                                         Assert.Empty(((IObject[])roleProxy.Strategy.GetCompositeAssociations(relationType.AssociationType)));
                                                     }
 
-                                                    this.GetSession().Commit();
+                                                    this.GetTransaction().Commit();
 
                                                     // instantiate all, set association with roleProxy
                                                     association = this.Instantiate(associationId, manyFlag);
@@ -3411,7 +3411,7 @@ namespace Allors.Database.Adapters
                                                     role = this.Instantiate(roleId, manyFlag);
                                                     roleProxy = this.Instantiate(roleId, manyFlag);
                                                     association.Strategy.SetCompositeRole(relationType.RoleType, roleProxy);
-                                                    this.GetSession().Rollback();
+                                                    this.GetTransaction().Rollback();
 
                                                     for (var testRepeatIndex = 0;
                                                          testRepeatIndex < testRepeat;
@@ -3423,7 +3423,7 @@ namespace Allors.Database.Adapters
                                                         Assert.Empty(((IObject[])roleProxy.Strategy.GetCompositeAssociations(relationType.AssociationType)));
                                                     }
 
-                                                    this.GetSession().Commit();
+                                                    this.GetTransaction().Commit();
 
                                                     // instantiate all, set associationProxy with role
                                                     association = this.Instantiate(associationId, manyFlag);
@@ -3431,7 +3431,7 @@ namespace Allors.Database.Adapters
                                                     role = this.Instantiate(roleId, manyFlag);
                                                     roleProxy = this.Instantiate(roleId, manyFlag);
                                                     association.Strategy.SetCompositeRole(relationType.RoleType, role);
-                                                    this.GetSession().Rollback();
+                                                    this.GetTransaction().Rollback();
 
                                                     for (var testRepeatIndex = 0;
                                                          testRepeatIndex < testRepeat;
@@ -3443,7 +3443,7 @@ namespace Allors.Database.Adapters
                                                         Assert.Empty(((IObject[])roleProxy.Strategy.GetCompositeAssociations(relationType.AssociationType)));
                                                     }
 
-                                                    this.GetSession().Commit();
+                                                    this.GetTransaction().Commit();
 
                                                     // instantiate all, set associationProxy with roleProxy
                                                     association = this.Instantiate(associationId, manyFlag);
@@ -3451,7 +3451,7 @@ namespace Allors.Database.Adapters
                                                     role = this.Instantiate(roleId, manyFlag);
                                                     roleProxy = this.Instantiate(roleId, manyFlag);
                                                     association.Strategy.SetCompositeRole(relationType.RoleType, roleProxy);
-                                                    this.GetSession().Rollback();
+                                                    this.GetTransaction().Rollback();
 
                                                     for (var testRepeatIndex = 0;
                                                          testRepeatIndex < testRepeat;
@@ -3463,7 +3463,7 @@ namespace Allors.Database.Adapters
                                                         Assert.Empty(((IObject[])roleProxy.Strategy.GetCompositeAssociations(relationType.AssociationType)));
                                                     }
 
-                                                    this.GetSession().Commit();
+                                                    this.GetTransaction().Commit();
                                                 }
                                             }
                                         }
@@ -3484,19 +3484,19 @@ namespace Allors.Database.Adapters
                                             for (var iRoleType = 0; iRoleType < roleTypes.Count(); iRoleType++)
                                             {
                                                 var roleType = roleTypes[iRoleType];
-                                                var association = this.GetSession().Create(associationType);
-                                                var role = this.GetSession().Create(roleType);
+                                                var association = this.GetTransaction().Create(associationType);
+                                                var role = this.GetTransaction().Create(roleType);
                                                 var associationId = int.Parse(association.Strategy.ObjectId.ToString());
                                                 var roleId = int.Parse(role.Strategy.ObjectId.ToString());
                                                 var associationProxy = this.Instantiate(associationId, manyFlag);
                                                 var roleProxy = this.Instantiate(roleId, manyFlag);
-                                                this.GetSession().Commit();
+                                                this.GetTransaction().Commit();
 
                                                 for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                                 {
                                                     // set association
                                                     association.Strategy.AddCompositeRole(relationType.RoleType, role);
-                                                    this.GetSession().Rollback();
+                                                    this.GetTransaction().Rollback();
 
                                                     for (var testRepeatIndex = 0;
                                                          testRepeatIndex < testRepeat;
@@ -3508,7 +3508,7 @@ namespace Allors.Database.Adapters
                                                         Assert.Empty(((IObject[])roleProxy.Strategy.GetCompositeAssociations(relationType.AssociationType)));
                                                     }
 
-                                                    this.GetSession().Commit();
+                                                    this.GetTransaction().Commit();
 
                                                     // instantiate all, set association with role
                                                     association = this.Instantiate(associationId, manyFlag);
@@ -3516,7 +3516,7 @@ namespace Allors.Database.Adapters
                                                     role = this.Instantiate(roleId, manyFlag);
                                                     roleProxy = this.Instantiate(roleId, manyFlag);
                                                     association.Strategy.AddCompositeRole(relationType.RoleType, role);
-                                                    this.GetSession().Rollback();
+                                                    this.GetTransaction().Rollback();
 
                                                     for (var testRepeatIndex = 0;
                                                          testRepeatIndex < testRepeat;
@@ -3528,7 +3528,7 @@ namespace Allors.Database.Adapters
                                                         Assert.Empty(((IObject[])roleProxy.Strategy.GetCompositeAssociations(relationType.AssociationType)));
                                                     }
 
-                                                    this.GetSession().Commit();
+                                                    this.GetTransaction().Commit();
 
                                                     // instantiate all, set association with roleProxy
                                                     association = this.Instantiate(associationId, manyFlag);
@@ -3536,7 +3536,7 @@ namespace Allors.Database.Adapters
                                                     role = this.Instantiate(roleId, manyFlag);
                                                     roleProxy = this.Instantiate(roleId, manyFlag);
                                                     association.Strategy.AddCompositeRole(relationType.RoleType, roleProxy);
-                                                    this.GetSession().Rollback();
+                                                    this.GetTransaction().Rollback();
 
                                                     for (var testRepeatIndex = 0;
                                                          testRepeatIndex < testRepeat;
@@ -3548,7 +3548,7 @@ namespace Allors.Database.Adapters
                                                         Assert.Empty(((IObject[])roleProxy.Strategy.GetCompositeAssociations(relationType.AssociationType)));
                                                     }
 
-                                                    this.GetSession().Commit();
+                                                    this.GetTransaction().Commit();
 
                                                     // instantiate all, set associationProxy with role
                                                     association = this.Instantiate(associationId, manyFlag);
@@ -3556,7 +3556,7 @@ namespace Allors.Database.Adapters
                                                     role = this.Instantiate(roleId, manyFlag);
                                                     roleProxy = this.Instantiate(roleId, manyFlag);
                                                     associationProxy.Strategy.AddCompositeRole(relationType.RoleType, role);
-                                                    this.GetSession().Rollback();
+                                                    this.GetTransaction().Rollback();
 
                                                     for (var testRepeatIndex = 0;
                                                          testRepeatIndex < testRepeat;
@@ -3568,7 +3568,7 @@ namespace Allors.Database.Adapters
                                                         Assert.Empty(((IObject[])roleProxy.Strategy.GetCompositeAssociations(relationType.AssociationType)));
                                                     }
 
-                                                    this.GetSession().Commit();
+                                                    this.GetTransaction().Commit();
 
                                                     // instantiate all, set associationProxy with roleProxy
                                                     association = this.Instantiate(associationId, manyFlag);
@@ -3576,7 +3576,7 @@ namespace Allors.Database.Adapters
                                                     role = this.Instantiate(roleId, manyFlag);
                                                     roleProxy = this.Instantiate(roleId, manyFlag);
                                                     associationProxy.Strategy.AddCompositeRole(relationType.RoleType, roleProxy);
-                                                    this.GetSession().Rollback();
+                                                    this.GetTransaction().Rollback();
 
                                                     for (var testRepeatIndex = 0;
                                                          testRepeatIndex < testRepeat;
@@ -3588,7 +3588,7 @@ namespace Allors.Database.Adapters
                                                         Assert.Empty(((IObject[])roleProxy.Strategy.GetCompositeAssociations(relationType.AssociationType)));
                                                     }
 
-                                                    this.GetSession().Commit();
+                                                    this.GetTransaction().Commit();
                                                 }
                                             }
                                         }
@@ -3623,13 +3623,13 @@ namespace Allors.Database.Adapters
                                 var ids = new string[10];
                                 for (var i = 0; i < 10; i++)
                                 {
-                                    var anObject = this.GetSession().Create(testType);
+                                    var anObject = this.GetTransaction().Create(testType);
                                     ids[i] = anObject.Strategy.ObjectId.ToString();
                                 }
 
                                 for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                 {
-                                    var allorsObjects = this.GetSession().Instantiate(ids);
+                                    var allorsObjects = this.GetTransaction().Instantiate(ids);
 
                                     for (var iAllorsType = 0; iAllorsType < allorsObjects.Count(); iAllorsType++)
                                     {
@@ -3643,7 +3643,7 @@ namespace Allors.Database.Adapters
                                 ids = new string[0];
                                 for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                 {
-                                    var allorsObjects = this.GetSession().Instantiate(ids);
+                                    var allorsObjects = this.GetTransaction().Instantiate(ids);
                                     Assert.Empty(allorsObjects);
                                     this.Commit(transactionFlag);
                                 }
@@ -3651,7 +3651,7 @@ namespace Allors.Database.Adapters
                                 ids = new[] { (int.MaxValue - 1).ToString() };
                                 for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                 {
-                                    var allorsObjects = this.GetSession().Instantiate(ids);
+                                    var allorsObjects = this.GetTransaction().Instantiate(ids);
                                     Assert.Empty(allorsObjects);
                                     this.Commit(transactionFlag);
                                 }
@@ -3677,15 +3677,15 @@ namespace Allors.Database.Adapters
                                 var ids = new string[10];
                                 for (var i = 0; i < 10; i++)
                                 {
-                                    var anObject = this.GetSession().Create(testType);
+                                    var anObject = this.GetTransaction().Create(testType);
                                     ids[i] = anObject.Strategy.ObjectId.ToString();
                                 }
 
-                                this.GetSession().Rollback();
+                                this.GetTransaction().Rollback();
 
                                 for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                 {
-                                    var allorsObjects = this.GetSession().Instantiate(ids);
+                                    var allorsObjects = this.GetTransaction().Instantiate(ids);
 
                                     for (var iAllorsType = 0; iAllorsType < allorsObjects.Count(); iAllorsType++)
                                     {
@@ -3734,7 +3734,7 @@ namespace Allors.Database.Adapters
                                                 var testType = this.GetTestTypes()[iTestType];
 
                                                 // Without delete
-                                                var allorsObject = this.GetSession().Create(testType);
+                                                var allorsObject = this.GetTransaction().Create(testType);
                                                 for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                                 {
                                                     Assert.False(allorsObject.Strategy.IsDeleted);
@@ -3754,10 +3754,10 @@ namespace Allors.Database.Adapters
                                                     }
                                                 }
 
-                                                allorsObject = this.GetSession().Create(testType);
+                                                allorsObject = this.GetTransaction().Create(testType);
                                                 string id = allorsObject.Strategy.ObjectId.ToString();
                                                 this.Commit(secondTransactionFlag);
-                                                allorsObject = this.GetSession().Instantiate(id);
+                                                allorsObject = this.GetTransaction().Instantiate(id);
 
                                                 for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                                 {
@@ -3772,10 +3772,10 @@ namespace Allors.Database.Adapters
                                                     }
                                                 }
 
-                                                IObject proxy = this.GetSession().Create(testType);
+                                                IObject proxy = this.GetTransaction().Create(testType);
                                                 this.Commit(secondTransactionFlag);
 
-                                                // AllorsObject subject = GetSession().instantiate( testType, id);
+                                                // AllorsObject subject = GetTransaction().instantiate( testType, id);
                                                 for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                                 {
                                                     Assert.False(proxy.Strategy.IsDeleted);
@@ -3822,13 +3822,13 @@ namespace Allors.Database.Adapters
                                         for (var secondTransactionFlagIndex = 0; secondTransactionFlagIndex < this.GetBooleanFlags().Length; secondTransactionFlagIndex++)
                                         {
                                             // Without delete
-                                            var allorsObject = this.GetSession().Create(testType);
+                                            var allorsObject = this.GetTransaction().Create(testType);
                                             for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                             {
                                                 Assert.False(allorsObject.Strategy.IsDeleted);
                                             }
 
-                                            this.GetSession().Rollback();
+                                            this.GetTransaction().Rollback();
                                             for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                             {
                                                 Assert.True(allorsObject.Strategy.IsDeleted);
@@ -3842,10 +3842,10 @@ namespace Allors.Database.Adapters
                                                 }
                                             }
 
-                                            allorsObject = this.GetSession().Create(testType);
+                                            allorsObject = this.GetTransaction().Create(testType);
                                             string id = allorsObject.Strategy.ObjectId.ToString();
-                                            this.GetSession().Rollback();
-                                            allorsObject = this.GetSession().Instantiate(id);
+                                            this.GetTransaction().Rollback();
+                                            allorsObject = this.GetTransaction().Instantiate(id);
 
                                             for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                             {
@@ -3860,10 +3860,10 @@ namespace Allors.Database.Adapters
                                                 }
                                             }
 
-                                            IObject proxy = this.GetSession().Create(testType);
+                                            IObject proxy = this.GetTransaction().Create(testType);
                                             id = proxy.Strategy.ObjectId.ToString();
-                                            this.GetSession().Rollback();
-                                            this.GetSession().Instantiate(id);
+                                            this.GetTransaction().Rollback();
+                                            this.GetTransaction().Instantiate(id);
 
                                             for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                             {
@@ -3973,7 +3973,7 @@ namespace Allors.Database.Adapters
             if (many)
             {
                 string[] ids = { id.ToString(CultureInfo.InvariantCulture) };
-                var results = this.GetSession().Instantiate(ids);
+                var results = this.GetTransaction().Instantiate(ids);
                 if (results.Count() > 0)
                 {
                     return results[0];
@@ -3982,7 +3982,7 @@ namespace Allors.Database.Adapters
                 return null;
             }
 
-            return this.GetSession().Instantiate(id.ToString(CultureInfo.InvariantCulture));
+            return this.GetTransaction().Instantiate(id.ToString(CultureInfo.InvariantCulture));
         }
     }
 }

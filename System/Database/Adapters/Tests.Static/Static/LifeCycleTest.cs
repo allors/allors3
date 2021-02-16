@@ -21,7 +21,7 @@ namespace Allors.Database.Adapters
 
         protected abstract IProfile Profile { get; }
 
-        protected ISession Session => this.Profile.Session;
+        protected ITransaction Transaction => this.Profile.Transaction;
 
         protected Action[] Markers => this.Profile.Markers;
 
@@ -35,13 +35,13 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var c1 = this.Session.Create<C1>();
+                var c1 = this.Transaction.Create<C1>();
                 var strategy = c1.Strategy;
                 var id = long.Parse(strategy.ObjectId.ToString());
 
-                var nextId = long.Parse(this.Session.Create<C1>().Strategy.ObjectId.ToString());
+                var nextId = long.Parse(this.Transaction.Create<C1>().Strategy.ObjectId.ToString());
 
                 Assert.Equal(id + 1, nextId);
             }
@@ -53,14 +53,14 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 int[] runs = { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048 };
 
                 var total = 0;
                 foreach (var run in runs)
                 {
-                    var allorsObjects = this.Session.Create(m.C1.ObjectType, run);
+                    var allorsObjects = this.Transaction.Create(m.C1.ObjectType, run);
 
                     Assert.Equal(run, allorsObjects.Length);
 
@@ -78,16 +78,16 @@ namespace Allors.Database.Adapters
 
                     Assert.Equal(run, ids.Count);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    allorsObjects = this.Session.Instantiate((long[])ids.ToArray(typeof(long)));
+                    allorsObjects = this.Transaction.Instantiate((long[])ids.ToArray(typeof(long)));
                     foreach (C1 allorsObject in allorsObjects)
                     {
                         Assert.Equal(m.C1.ObjectType, allorsObject.Strategy.Class);
                         allorsObject.C1AllorsString = "CreateMany";
                     }
 
-                    var c2s = (C2[])this.Session.Create(m.C2.ObjectType, run);
+                    var c2s = (C2[])this.Transaction.Create(m.C2.ObjectType, run);
                     Assert.Equal(run, c2s.Length);
                 }
             }
@@ -99,19 +99,19 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var c1A = C1.Create(this.Session);
+                var c1A = C1.Create(this.Transaction);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 c1A.C1AllorsString = "1";
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 c1A.C1AllorsString = "2";
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 Assert.Equal("1", c1A.C1AllorsString);
             }
@@ -123,22 +123,22 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var c1A = C1.Create(this.Session);
+                var c1A = C1.Create(this.Transaction);
 
-                var c2A = C2.Create(this.Session);
-                var c2B = C2.Create(this.Session);
+                var c2A = C2.Create(this.Transaction);
+                var c2B = C2.Create(this.Transaction);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 c1A.C1C2one2one = c2A;
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 c1A.C1C2one2one = c2B;
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 Assert.Equal(c2A, c1A.C1C2one2one);
             }
@@ -150,22 +150,22 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var c1A = C1.Create(this.Session);
+                var c1A = C1.Create(this.Transaction);
 
-                var c2A = C2.Create(this.Session);
-                var c2B = C2.Create(this.Session);
+                var c2A = C2.Create(this.Transaction);
+                var c2B = C2.Create(this.Transaction);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 c1A.AddC1C2one2many(c2A);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 c1A.AddC1C2one2many(c2B);
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 Assert.Single(c1A.C1C2one2manies);
                 Assert.Equal(c2A, c1A.C1C2one2manies[0]);
@@ -178,536 +178,536 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Object
-                var anObject = C1.Create(this.Session);
+                var anObject = C1.Create(this.Transaction);
 
                 anObject.Strategy.Delete();
                 Assert.True(anObject.Strategy.IsDeleted);
-                anObject = (C1)this.Session.Instantiate(anObject.Strategy.ObjectId);
+                anObject = (C1)this.Transaction.Instantiate(anObject.Strategy.ObjectId);
                 Assert.Null(anObject);
 
                 //// Commit & Rollback
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 anObject.Strategy.Delete();
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
                 Assert.True(anObject.Strategy.IsDeleted);
 
                 // instantiate
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 var id = anObject.Strategy.ObjectId;
                 anObject.Strategy.Delete();
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Commit();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Commit();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.Null(anObject);
 
-                this.Session.Commit();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Commit();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.Null(anObject);
 
                 //// Commit + Commit + Commit
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 anObject.Strategy.Delete();
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
                 Assert.True(anObject.Strategy.IsDeleted);
 
                 // instantiate
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 id = anObject.Strategy.ObjectId;
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 anObject.Strategy.Delete();
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Commit();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Commit();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.Null(anObject);
 
-                this.Session.Commit();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Commit();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.Null(anObject);
 
                 //// Nothing + Commit + Rollback
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
 
                 anObject.Strategy.Delete();
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
                 Assert.True(anObject.Strategy.IsDeleted);
 
                 // instantiate
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 id = anObject.Strategy.ObjectId;
 
                 anObject.Strategy.Delete();
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Commit();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Commit();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.Null(anObject);
 
-                this.Session.Rollback();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Rollback();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.Null(anObject);
 
                 //// Commit + Commit + Rollback
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 anObject.Strategy.Delete();
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
                 Assert.True(anObject.Strategy.IsDeleted);
 
                 // instantiate
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 id = anObject.Strategy.ObjectId;
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 anObject.Strategy.Delete();
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Commit();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Commit();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.Null(anObject);
 
-                this.Session.Rollback();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Rollback();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.Null(anObject);
 
                 //// Nothing + Rollback + Rollback
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 anObject.Strategy.Delete();
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
                 Assert.True(anObject.Strategy.IsDeleted);
 
                 // instantiate
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 id = anObject.Strategy.ObjectId;
 
                 anObject.Strategy.Delete();
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Rollback();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Rollback();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.Null(anObject);
 
-                this.Session.Rollback();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Rollback();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.Null(anObject);
 
                 //// Commit + Rollback + Rollback
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 anObject.Strategy.Delete();
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
                 Assert.False(anObject.Strategy.IsDeleted);
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
                 Assert.False(anObject.Strategy.IsDeleted);
 
                 // instantiate
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 id = anObject.Strategy.ObjectId;
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 anObject.Strategy.Delete();
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Rollback();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Rollback();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.False(anObject.Strategy.IsDeleted);
 
-                this.Session.Rollback();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Rollback();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.False(anObject.Strategy.IsDeleted);
 
                 //// Nothing + Rollback + Commit
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
 
                 anObject.Strategy.Delete();
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
                 Assert.True(anObject.Strategy.IsDeleted);
 
                 // instantiate
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 id = anObject.Strategy.ObjectId;
 
                 anObject.Strategy.Delete();
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Rollback();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Rollback();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.Null(anObject);
 
-                this.Session.Rollback();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Rollback();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.Null(anObject);
 
                 //// Commit + Rollback + Commit
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 anObject.Strategy.Delete();
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
                 Assert.False(anObject.Strategy.IsDeleted);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
                 Assert.False(anObject.Strategy.IsDeleted);
 
                 // instantiate
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 id = anObject.Strategy.ObjectId;
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 anObject.Strategy.Delete();
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Rollback();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Rollback();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.False(anObject.Strategy.IsDeleted);
 
-                this.Session.Rollback();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Rollback();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.False(anObject.Strategy.IsDeleted);
 
                 // Clean up
-                this.Session.Commit();
+                this.Transaction.Commit();
                 foreach (C1 removeObject in this.GetExtent(m.C1.ObjectType))
                 {
                     removeObject.Strategy.Delete();
                 }
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 // Strategy
-                if (this.Session is ISession databaseSession)
+                if (this.Transaction is ITransaction databaseTransaction)
                 {
-                    var aStrategy = C1.Create(this.Session).Strategy;
+                    var aStrategy = C1.Create(this.Transaction).Strategy;
 
                     aStrategy.Delete();
                     Assert.True(aStrategy.IsDeleted);
-                    aStrategy = databaseSession.InstantiateStrategy(aStrategy.ObjectId);
+                    aStrategy = databaseTransaction.InstantiateStrategy(aStrategy.ObjectId);
                     Assert.Null(aStrategy);
 
                     //// Commit & Rollback
 
-                    aStrategy = C1.Create(databaseSession).Strategy;
+                    aStrategy = C1.Create(databaseTransaction).Strategy;
                     aStrategy.Delete();
                     Assert.True(aStrategy.IsDeleted);
 
-                    databaseSession.Commit();
+                    databaseTransaction.Commit();
                     Assert.True(aStrategy.IsDeleted);
 
-                    databaseSession.Commit();
+                    databaseTransaction.Commit();
                     Assert.True(aStrategy.IsDeleted);
 
                     // instantiate
-                    aStrategy = C1.Create(databaseSession).Strategy;
+                    aStrategy = C1.Create(databaseTransaction).Strategy;
                     id = aStrategy.ObjectId;
                     aStrategy.Delete();
                     Assert.True(aStrategy.IsDeleted);
 
-                    databaseSession.Commit();
-                    aStrategy = databaseSession.InstantiateStrategy(id);
+                    databaseTransaction.Commit();
+                    aStrategy = databaseTransaction.InstantiateStrategy(id);
                     Assert.Null(aStrategy);
 
-                    databaseSession.Commit();
-                    aStrategy = databaseSession.InstantiateStrategy(id);
+                    databaseTransaction.Commit();
+                    aStrategy = databaseTransaction.InstantiateStrategy(id);
                     Assert.Null(aStrategy);
 
                     //// Commit + Commit + Commit
 
-                    aStrategy = C1.Create(databaseSession).Strategy;
+                    aStrategy = C1.Create(databaseTransaction).Strategy;
 
-                    databaseSession.Commit();
+                    databaseTransaction.Commit();
 
                     aStrategy.Delete();
                     Assert.True(aStrategy.IsDeleted);
 
-                    databaseSession.Commit();
+                    databaseTransaction.Commit();
                     Assert.True(aStrategy.IsDeleted);
 
-                    databaseSession.Commit();
+                    databaseTransaction.Commit();
                     Assert.True(aStrategy.IsDeleted);
 
                     // instantiate
-                    aStrategy = C1.Create(databaseSession).Strategy;
+                    aStrategy = C1.Create(databaseTransaction).Strategy;
                     id = aStrategy.ObjectId;
 
-                    databaseSession.Commit();
+                    databaseTransaction.Commit();
 
                     aStrategy.Delete();
                     Assert.True(aStrategy.IsDeleted);
 
-                    databaseSession.Commit();
-                    aStrategy = databaseSession.InstantiateStrategy(id);
+                    databaseTransaction.Commit();
+                    aStrategy = databaseTransaction.InstantiateStrategy(id);
                     Assert.Null(aStrategy);
 
-                    databaseSession.Commit();
-                    aStrategy = databaseSession.InstantiateStrategy(id);
+                    databaseTransaction.Commit();
+                    aStrategy = databaseTransaction.InstantiateStrategy(id);
                     Assert.Null(aStrategy);
 
                     //// Nothing + Commit + Rollback
 
-                    aStrategy = C1.Create(databaseSession).Strategy;
+                    aStrategy = C1.Create(databaseTransaction).Strategy;
 
                     aStrategy.Delete();
                     Assert.True(aStrategy.IsDeleted);
 
-                    databaseSession.Commit();
+                    databaseTransaction.Commit();
                     Assert.True(aStrategy.IsDeleted);
 
-                    databaseSession.Rollback();
+                    databaseTransaction.Rollback();
                     Assert.True(aStrategy.IsDeleted);
 
                     // instantiate
-                    aStrategy = C1.Create(databaseSession).Strategy;
+                    aStrategy = C1.Create(databaseTransaction).Strategy;
                     id = aStrategy.ObjectId;
 
                     aStrategy.Delete();
                     Assert.True(aStrategy.IsDeleted);
 
-                    databaseSession.Commit();
-                    aStrategy = databaseSession.InstantiateStrategy(id);
+                    databaseTransaction.Commit();
+                    aStrategy = databaseTransaction.InstantiateStrategy(id);
                     Assert.Null(aStrategy);
 
-                    databaseSession.Rollback();
-                    aStrategy = databaseSession.InstantiateStrategy(id);
+                    databaseTransaction.Rollback();
+                    aStrategy = databaseTransaction.InstantiateStrategy(id);
                     Assert.Null(aStrategy);
 
                     //// Commit + Commit + Rollback
 
-                    aStrategy = C1.Create(databaseSession).Strategy;
+                    aStrategy = C1.Create(databaseTransaction).Strategy;
 
-                    databaseSession.Commit();
+                    databaseTransaction.Commit();
 
                     aStrategy.Delete();
                     Assert.True(aStrategy.IsDeleted);
 
-                    databaseSession.Commit();
+                    databaseTransaction.Commit();
                     Assert.True(aStrategy.IsDeleted);
 
-                    databaseSession.Rollback();
+                    databaseTransaction.Rollback();
                     Assert.True(aStrategy.IsDeleted);
 
                     // instantiate
-                    aStrategy = C1.Create(databaseSession).Strategy;
+                    aStrategy = C1.Create(databaseTransaction).Strategy;
                     id = aStrategy.ObjectId;
 
-                    databaseSession.Commit();
+                    databaseTransaction.Commit();
 
                     aStrategy.Delete();
                     Assert.True(aStrategy.IsDeleted);
 
-                    databaseSession.Commit();
-                    aStrategy = databaseSession.InstantiateStrategy(id);
+                    databaseTransaction.Commit();
+                    aStrategy = databaseTransaction.InstantiateStrategy(id);
                     Assert.Null(aStrategy);
 
-                    databaseSession.Rollback();
-                    aStrategy = databaseSession.InstantiateStrategy(id);
+                    databaseTransaction.Rollback();
+                    aStrategy = databaseTransaction.InstantiateStrategy(id);
                     Assert.Null(aStrategy);
 
                     //// Nothing + Rollback + Rollback
 
-                    aStrategy = C1.Create(databaseSession).Strategy;
+                    aStrategy = C1.Create(databaseTransaction).Strategy;
                     aStrategy.Delete();
                     Assert.True(aStrategy.IsDeleted);
 
-                    databaseSession.Rollback();
+                    databaseTransaction.Rollback();
                     Assert.True(aStrategy.IsDeleted);
 
-                    databaseSession.Rollback();
+                    databaseTransaction.Rollback();
                     Assert.True(aStrategy.IsDeleted);
 
                     // instantiate
-                    aStrategy = C1.Create(databaseSession).Strategy;
+                    aStrategy = C1.Create(databaseTransaction).Strategy;
                     id = aStrategy.ObjectId;
 
                     aStrategy.Delete();
                     Assert.True(aStrategy.IsDeleted);
 
-                    databaseSession.Rollback();
-                    aStrategy = databaseSession.InstantiateStrategy(id);
+                    databaseTransaction.Rollback();
+                    aStrategy = databaseTransaction.InstantiateStrategy(id);
                     Assert.Null(aStrategy);
 
-                    databaseSession.Rollback();
-                    aStrategy = databaseSession.InstantiateStrategy(id);
+                    databaseTransaction.Rollback();
+                    aStrategy = databaseTransaction.InstantiateStrategy(id);
                     Assert.Null(aStrategy);
 
                     //// Commit + Rollback + Rollback
 
-                    aStrategy = C1.Create(databaseSession).Strategy;
+                    aStrategy = C1.Create(databaseTransaction).Strategy;
 
-                    databaseSession.Commit();
+                    databaseTransaction.Commit();
 
                     aStrategy.Delete();
                     Assert.True(aStrategy.IsDeleted);
 
-                    databaseSession.Rollback();
+                    databaseTransaction.Rollback();
                     Assert.False(aStrategy.IsDeleted);
 
-                    databaseSession.Rollback();
+                    databaseTransaction.Rollback();
                     Assert.False(aStrategy.IsDeleted);
 
                     // instantiate
-                    aStrategy = C1.Create(databaseSession).Strategy;
+                    aStrategy = C1.Create(databaseTransaction).Strategy;
                     id = aStrategy.ObjectId;
 
-                    databaseSession.Commit();
+                    databaseTransaction.Commit();
 
                     aStrategy.Delete();
                     Assert.True(aStrategy.IsDeleted);
 
-                    databaseSession.Rollback();
-                    aStrategy = databaseSession.InstantiateStrategy(id);
+                    databaseTransaction.Rollback();
+                    aStrategy = databaseTransaction.InstantiateStrategy(id);
                     Assert.False(aStrategy.IsDeleted);
 
-                    databaseSession.Rollback();
-                    aStrategy = databaseSession.InstantiateStrategy(id);
+                    databaseTransaction.Rollback();
+                    aStrategy = databaseTransaction.InstantiateStrategy(id);
                     Assert.False(aStrategy.IsDeleted);
 
                     //// Nothing + Rollback + Commit
 
-                    aStrategy = C1.Create(databaseSession).Strategy;
+                    aStrategy = C1.Create(databaseTransaction).Strategy;
 
                     aStrategy.Delete();
                     Assert.True(aStrategy.IsDeleted);
 
-                    databaseSession.Rollback();
+                    databaseTransaction.Rollback();
                     Assert.True(aStrategy.IsDeleted);
 
-                    databaseSession.Commit();
+                    databaseTransaction.Commit();
                     Assert.True(aStrategy.IsDeleted);
 
                     // instantiate
-                    aStrategy = C1.Create(databaseSession).Strategy;
+                    aStrategy = C1.Create(databaseTransaction).Strategy;
                     id = aStrategy.ObjectId;
 
                     aStrategy.Delete();
                     Assert.True(aStrategy.IsDeleted);
 
-                    databaseSession.Rollback();
-                    aStrategy = databaseSession.InstantiateStrategy(id);
+                    databaseTransaction.Rollback();
+                    aStrategy = databaseTransaction.InstantiateStrategy(id);
                     Assert.Null(aStrategy);
 
-                    databaseSession.Rollback();
-                    aStrategy = databaseSession.InstantiateStrategy(id);
+                    databaseTransaction.Rollback();
+                    aStrategy = databaseTransaction.InstantiateStrategy(id);
                     Assert.Null(aStrategy);
 
                     //// Commit + Rollback + Commit
 
-                    aStrategy = C1.Create(databaseSession).Strategy;
+                    aStrategy = C1.Create(databaseTransaction).Strategy;
 
-                    databaseSession.Commit();
+                    databaseTransaction.Commit();
 
                     aStrategy.Delete();
                     Assert.True(aStrategy.IsDeleted);
 
-                    databaseSession.Rollback();
+                    databaseTransaction.Rollback();
                     Assert.False(aStrategy.IsDeleted);
 
-                    databaseSession.Commit();
+                    databaseTransaction.Commit();
                     Assert.False(aStrategy.IsDeleted);
 
                     // instantiate
-                    aStrategy = C1.Create(databaseSession).Strategy;
+                    aStrategy = C1.Create(databaseTransaction).Strategy;
                     id = aStrategy.ObjectId;
 
-                    databaseSession.Commit();
+                    databaseTransaction.Commit();
 
                     aStrategy.Delete();
                     Assert.True(aStrategy.IsDeleted);
 
-                    databaseSession.Rollback();
-                    aStrategy = databaseSession.InstantiateStrategy(id);
+                    databaseTransaction.Rollback();
+                    aStrategy = databaseTransaction.InstantiateStrategy(id);
                     Assert.False(aStrategy.IsDeleted);
 
-                    databaseSession.Rollback();
-                    aStrategy = databaseSession.InstantiateStrategy(id);
+                    databaseTransaction.Rollback();
+                    aStrategy = databaseTransaction.InstantiateStrategy(id);
                     Assert.False(aStrategy.IsDeleted);
 
                     // Clean up
-                    databaseSession.Commit();
+                    databaseTransaction.Commit();
                     foreach (C1 removeObject in this.GetExtent(m.C1.ObjectType))
                     {
                         removeObject.Strategy.Delete();
                     }
 
-                    databaseSession.Commit();
+                    databaseTransaction.Commit();
                 }
 
                 //// Units
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 anObject.C1AllorsString = "a";
                 anObject.Strategy.Delete();
 
                 StrategyAssert.RoleExistHasException(anObject, m.C1.C1AllorsString);
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 anObject.C1AllorsString = "a";
                 anObject.Strategy.Delete();
 
                 StrategyAssert.RoleGetHasException(anObject, m.C1.C1AllorsString);
 
-                var secondObject = C1.Create(this.Session);
+                var secondObject = C1.Create(this.Transaction);
                 secondObject.C1AllorsString = "b";
-                var thirdObject = C1.Create(this.Session);
+                var thirdObject = C1.Create(this.Transaction);
                 thirdObject.C1AllorsString = "c";
 
                 Assert.Equal(2, this.GetExtent(m.C1.ObjectType).Length);
@@ -720,7 +720,7 @@ namespace Allors.Database.Adapters
 
                 //// Cached
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 anObject.C1AllorsString = "a";
 
                 AllorsTestUtils.ForceRoleCaching(anObject);
@@ -729,7 +729,7 @@ namespace Allors.Database.Adapters
 
                 StrategyAssert.RoleExistHasException(anObject, m.C1.C1AllorsString);
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 anObject.C1AllorsString = "a";
 
                 AllorsTestUtils.ForceRoleCaching(anObject);
@@ -738,9 +738,9 @@ namespace Allors.Database.Adapters
 
                 StrategyAssert.RoleGetHasException(anObject, m.C1.C1AllorsString);
 
-                secondObject = C1.Create(this.Session);
+                secondObject = C1.Create(this.Transaction);
                 secondObject.C1AllorsString = "b";
-                thirdObject = C1.Create(this.Session);
+                thirdObject = C1.Create(this.Transaction);
                 thirdObject.C1AllorsString = "c";
 
                 Assert.Equal(2, this.GetExtent(m.C1.ObjectType).Length);
@@ -757,64 +757,64 @@ namespace Allors.Database.Adapters
 
                 //// Commit
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 anObject.C1AllorsString = "a";
                 anObject.Strategy.Delete();
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 StrategyAssert.RoleExistHasException(anObject, m.C1.C1AllorsString);
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 anObject.C1AllorsString = "a";
                 anObject.Strategy.Delete();
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 StrategyAssert.RoleGetHasException(anObject, m.C1.C1AllorsString);
 
-                secondObject = C1.Create(this.Session);
+                secondObject = C1.Create(this.Transaction);
                 secondObject.C1AllorsString = "b";
-                thirdObject = C1.Create(this.Session);
+                thirdObject = C1.Create(this.Transaction);
                 thirdObject.C1AllorsString = "c";
 
                 Assert.Equal(2, this.GetExtent(m.C1.ObjectType).Length);
                 thirdObject.Strategy.Delete();
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 Assert.Single(this.GetExtent(m.C1.ObjectType));
                 Assert.Equal("b", ((C1)this.GetExtent(m.C1.ObjectType)[0]).C1AllorsString);
 
                 secondObject.Strategy.Delete();
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 //// Cached
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 anObject.C1AllorsString = "a";
 
                 AllorsTestUtils.ForceRoleCaching(anObject);
 
                 anObject.Strategy.Delete();
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 StrategyAssert.RoleExistHasException(anObject, m.C1.C1AllorsString);
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 anObject.C1AllorsString = "a";
 
                 AllorsTestUtils.ForceRoleCaching(anObject);
 
                 anObject.Strategy.Delete();
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 StrategyAssert.RoleGetHasException(anObject, m.C1.C1AllorsString);
 
-                secondObject = C1.Create(this.Session);
+                secondObject = C1.Create(this.Transaction);
                 secondObject.C1AllorsString = "b";
-                thirdObject = C1.Create(this.Session);
+                thirdObject = C1.Create(this.Transaction);
                 thirdObject.C1AllorsString = "c";
 
                 Assert.Equal(2, this.GetExtent(m.C1.ObjectType).Length);
@@ -823,61 +823,61 @@ namespace Allors.Database.Adapters
                 AllorsTestUtils.ForceRoleCaching(thirdObject);
 
                 thirdObject.Strategy.Delete();
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 Assert.Single(this.GetExtent(m.C1.ObjectType));
                 Assert.Equal("b", ((C1)this.GetExtent(m.C1.ObjectType)[0]).C1AllorsString);
 
                 secondObject.Strategy.Delete();
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 //// Rollback
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 anObject.C1AllorsString = "a";
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 anObject.Strategy.Delete();
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 Assert.Single(this.GetExtent(m.C1.ObjectType));
                 Assert.Equal("a", ((C1)this.GetExtent(m.C1.ObjectType)[0]).C1AllorsString);
 
-                secondObject = C1.Create(this.Session);
+                secondObject = C1.Create(this.Transaction);
                 secondObject.C1AllorsString = "b";
-                thirdObject = C1.Create(this.Session);
+                thirdObject = C1.Create(this.Transaction);
                 thirdObject.C1AllorsString = "c";
 
                 Assert.Equal(3, this.GetExtent(m.C1.ObjectType).Length);
                 thirdObject.Strategy.Delete();
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 Assert.Single(this.GetExtent(m.C1.ObjectType));
                 Assert.Equal("a", ((C1)this.GetExtent(m.C1.ObjectType)[0]).C1AllorsString);
 
                 anObject.Strategy.Delete();
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 //// Cached
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 anObject.C1AllorsString = "a";
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 AllorsTestUtils.ForceRoleCaching(anObject);
 
                 anObject.Strategy.Delete();
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 Assert.Single(this.GetExtent(m.C1.ObjectType));
                 Assert.Equal("a", ((C1)this.GetExtent(m.C1.ObjectType)[0]).C1AllorsString);
 
-                secondObject = C1.Create(this.Session);
+                secondObject = C1.Create(this.Transaction);
                 secondObject.C1AllorsString = "b";
-                thirdObject = C1.Create(this.Session);
+                thirdObject = C1.Create(this.Transaction);
                 thirdObject.C1AllorsString = "c";
 
                 Assert.Equal(3, this.GetExtent(m.C1.ObjectType).Length);
@@ -886,32 +886,32 @@ namespace Allors.Database.Adapters
                 AllorsTestUtils.ForceRoleCaching(thirdObject);
 
                 thirdObject.Strategy.Delete();
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 Assert.Single(this.GetExtent(m.C1.ObjectType));
                 Assert.Equal("a", ((C1)this.GetExtent(m.C1.ObjectType)[0]).C1AllorsString);
 
                 anObject.Strategy.Delete();
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 //// IComposite
 
                 //// Role
 
-                var fromC1a = C1.Create(this.Session);
-                var fromC1b = C1.Create(this.Session);
-                var fromC1c = C1.Create(this.Session);
-                var fromC1d = C1.Create(this.Session);
+                var fromC1a = C1.Create(this.Transaction);
+                var fromC1b = C1.Create(this.Transaction);
+                var fromC1c = C1.Create(this.Transaction);
+                var fromC1d = C1.Create(this.Transaction);
 
-                var toC1a = C1.Create(this.Session);
-                var toC1b = C1.Create(this.Session);
-                var toC1c = C1.Create(this.Session);
-                var toC1d = C1.Create(this.Session);
+                var toC1a = C1.Create(this.Transaction);
+                var toC1b = C1.Create(this.Transaction);
+                var toC1c = C1.Create(this.Transaction);
+                var toC1d = C1.Create(this.Transaction);
 
-                var toC2a = C2.Create(this.Session);
-                var toC2b = C2.Create(this.Session);
-                var toC2c = C2.Create(this.Session);
-                var toC2d = C2.Create(this.Session);
+                var toC2a = C2.Create(this.Transaction);
+                var toC2b = C2.Create(this.Transaction);
+                var toC2c = C2.Create(this.Transaction);
+                var toC2d = C2.Create(this.Transaction);
 
                 //// C1 <-> C1
 
@@ -970,7 +970,7 @@ namespace Allors.Database.Adapters
                 Assert.Equal(toC1c, fromC1b.C1C1many2one);
                 Assert.Equal(2, fromC1b.C1C1many2manies.Count);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 //// C1 <-> C2
 
@@ -1029,19 +1029,19 @@ namespace Allors.Database.Adapters
                 Assert.Equal(toC2c, fromC1b.C1C2many2one);
                 Assert.Equal(2, fromC1b.C1C2many2manies.Count);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 //// Commit
 
                 //// C1 <-> C1
 
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
 
-                toC1a = C1.Create(this.Session);
-                toC1b = C1.Create(this.Session);
-                toC1c = C1.Create(this.Session);
-                toC1d = C1.Create(this.Session);
+                toC1a = C1.Create(this.Transaction);
+                toC1b = C1.Create(this.Transaction);
+                toC1c = C1.Create(this.Transaction);
+                toC1d = C1.Create(this.Transaction);
 
                 fromC1a.C1C1one2one = toC1a;
                 fromC1b.C1C1one2one = toC1c;
@@ -1062,7 +1062,7 @@ namespace Allors.Database.Adapters
                 toC1a.Strategy.Delete();
                 toC1b.Strategy.Delete();
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 StrategyAssert.AssociationGetHasException(toC1a, m.C1.C1WhereC1C1one2one);
                 StrategyAssert.AssociationGetHasException(toC1a, m.C1.C1WhereC1C1one2many);
@@ -1102,13 +1102,13 @@ namespace Allors.Database.Adapters
 
                 //// C1 <-> C2
 
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
 
-                toC2a = C2.Create(this.Session);
-                toC2b = C2.Create(this.Session);
-                toC2c = C2.Create(this.Session);
-                toC2d = C2.Create(this.Session);
+                toC2a = C2.Create(this.Transaction);
+                toC2b = C2.Create(this.Transaction);
+                toC2c = C2.Create(this.Transaction);
+                toC2d = C2.Create(this.Transaction);
 
                 fromC1a.C1C2one2one = toC2a;
                 fromC1b.C1C2one2one = toC2c;
@@ -1129,7 +1129,7 @@ namespace Allors.Database.Adapters
                 toC2a.Strategy.Delete();
                 toC2b.Strategy.Delete();
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 StrategyAssert.AssociationGetHasException(toC2a, m.C2.C1WhereC1C2one2one);
                 StrategyAssert.AssociationGetHasException(toC2a, m.C2.C1WhereC1C2one2many);
@@ -1171,15 +1171,15 @@ namespace Allors.Database.Adapters
 
                 //// C1 <-> C1
 
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
-                fromC1c = C1.Create(this.Session);
-                fromC1d = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
+                fromC1c = C1.Create(this.Transaction);
+                fromC1d = C1.Create(this.Transaction);
 
-                toC1a = C1.Create(this.Session);
-                toC1b = C1.Create(this.Session);
-                toC1c = C1.Create(this.Session);
-                toC1d = C1.Create(this.Session);
+                toC1a = C1.Create(this.Transaction);
+                toC1b = C1.Create(this.Transaction);
+                toC1c = C1.Create(this.Transaction);
+                toC1d = C1.Create(this.Transaction);
 
                 fromC1a.C1C1one2one = toC1a;
                 fromC1b.C1C1one2one = toC1c;
@@ -1200,7 +1200,7 @@ namespace Allors.Database.Adapters
                 toC1a.Strategy.Delete();
                 toC1b.Strategy.Delete();
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 Assert.True(fromC1a.Strategy.IsDeleted);
                 Assert.True(fromC1b.Strategy.IsDeleted);
@@ -1213,15 +1213,15 @@ namespace Allors.Database.Adapters
                 Assert.True(toC1d.Strategy.IsDeleted);
 
                 // Commit + Rollback
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
-                fromC1c = C1.Create(this.Session);
-                fromC1d = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
+                fromC1c = C1.Create(this.Transaction);
+                fromC1d = C1.Create(this.Transaction);
 
-                toC1a = C1.Create(this.Session);
-                toC1b = C1.Create(this.Session);
-                toC1c = C1.Create(this.Session);
-                toC1d = C1.Create(this.Session);
+                toC1a = C1.Create(this.Transaction);
+                toC1b = C1.Create(this.Transaction);
+                toC1c = C1.Create(this.Transaction);
+                toC1d = C1.Create(this.Transaction);
 
                 fromC1a.C1C1one2one = toC1a;
                 fromC1b.C1C1one2one = toC1c;
@@ -1239,12 +1239,12 @@ namespace Allors.Database.Adapters
                 fromC1b.AddC1C1many2many(toC1c);
                 fromC1b.AddC1C1many2many(toC1d);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 toC1a.Strategy.Delete();
                 toC1b.Strategy.Delete();
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 Assert.False(fromC1a.Strategy.IsDeleted);
                 Assert.False(fromC1b.Strategy.IsDeleted);
@@ -1264,15 +1264,15 @@ namespace Allors.Database.Adapters
 
                 //// C1 <-> C2
 
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
-                fromC1c = C1.Create(this.Session);
-                fromC1d = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
+                fromC1c = C1.Create(this.Transaction);
+                fromC1d = C1.Create(this.Transaction);
 
-                toC2a = C2.Create(this.Session);
-                toC2b = C2.Create(this.Session);
-                toC2c = C2.Create(this.Session);
-                toC2d = C2.Create(this.Session);
+                toC2a = C2.Create(this.Transaction);
+                toC2b = C2.Create(this.Transaction);
+                toC2c = C2.Create(this.Transaction);
+                toC2d = C2.Create(this.Transaction);
 
                 fromC1a.C1C2one2one = toC2a;
                 fromC1b.C1C2one2one = toC2c;
@@ -1293,7 +1293,7 @@ namespace Allors.Database.Adapters
                 toC2a.Strategy.Delete();
                 toC2b.Strategy.Delete();
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 Assert.True(fromC1a.Strategy.IsDeleted);
                 Assert.True(fromC1b.Strategy.IsDeleted);
@@ -1306,15 +1306,15 @@ namespace Allors.Database.Adapters
                 Assert.True(toC2d.Strategy.IsDeleted);
 
                 // Commit + Rollback
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
-                fromC1c = C1.Create(this.Session);
-                fromC1d = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
+                fromC1c = C1.Create(this.Transaction);
+                fromC1d = C1.Create(this.Transaction);
 
-                toC2a = C2.Create(this.Session);
-                toC2b = C2.Create(this.Session);
-                toC2c = C2.Create(this.Session);
-                toC2d = C2.Create(this.Session);
+                toC2a = C2.Create(this.Transaction);
+                toC2b = C2.Create(this.Transaction);
+                toC2c = C2.Create(this.Transaction);
+                toC2d = C2.Create(this.Transaction);
 
                 fromC1a.C1C2one2one = toC2a;
                 fromC1b.C1C2one2one = toC2c;
@@ -1332,12 +1332,12 @@ namespace Allors.Database.Adapters
                 fromC1b.AddC1C2many2many(toC2c);
                 fromC1b.AddC1C2many2many(toC2d);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 toC2a.Strategy.Delete();
                 toC2b.Strategy.Delete();
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 Assert.False(fromC1a.Strategy.IsDeleted);
                 Assert.False(fromC1b.Strategy.IsDeleted);
@@ -1359,13 +1359,13 @@ namespace Allors.Database.Adapters
 
                 //// C1 <-> C1
 
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
 
-                toC1a = C1.Create(this.Session);
-                toC1b = C1.Create(this.Session);
-                toC1c = C1.Create(this.Session);
-                toC1d = C1.Create(this.Session);
+                toC1a = C1.Create(this.Transaction);
+                toC1b = C1.Create(this.Transaction);
+                toC1c = C1.Create(this.Transaction);
+                toC1d = C1.Create(this.Transaction);
 
                 fromC1a.C1C1one2one = toC1a;
                 fromC1b.C1C1one2one = toC1c;
@@ -1425,17 +1425,17 @@ namespace Allors.Database.Adapters
                 Assert.Equal(toC1c, fromC1b.C1C1many2one);
                 Assert.Equal(2, fromC1b.C1C1many2manies.Count);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 //// Commit
 
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
 
-                toC1a = C1.Create(this.Session);
-                toC1b = C1.Create(this.Session);
-                toC1c = C1.Create(this.Session);
-                toC1d = C1.Create(this.Session);
+                toC1a = C1.Create(this.Transaction);
+                toC1b = C1.Create(this.Transaction);
+                toC1c = C1.Create(this.Transaction);
+                toC1d = C1.Create(this.Transaction);
 
                 fromC1a.C1C1one2one = toC1a;
                 fromC1b.C1C1one2one = toC1c;
@@ -1459,7 +1459,7 @@ namespace Allors.Database.Adapters
                 toC1a.Strategy.Delete();
                 toC1b.Strategy.Delete();
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 StrategyAssert.AssociationGetHasException(toC1a, m.C1.C1WhereC1C1one2one);
                 StrategyAssert.AssociationGetHasException(toC1a, m.C1.C1WhereC1C1one2many);
@@ -1497,19 +1497,19 @@ namespace Allors.Database.Adapters
                 Assert.Equal(toC1c, fromC1b.C1C1many2one);
                 Assert.Equal(2, fromC1b.C1C1many2manies.Count);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 //// Rollback
 
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
-                fromC1c = C1.Create(this.Session);
-                fromC1d = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
+                fromC1c = C1.Create(this.Transaction);
+                fromC1d = C1.Create(this.Transaction);
 
-                toC1a = C1.Create(this.Session);
-                toC1b = C1.Create(this.Session);
-                toC1c = C1.Create(this.Session);
-                toC1d = C1.Create(this.Session);
+                toC1a = C1.Create(this.Transaction);
+                toC1b = C1.Create(this.Transaction);
+                toC1c = C1.Create(this.Transaction);
+                toC1d = C1.Create(this.Transaction);
 
                 fromC1a.C1C1one2one = toC1a;
                 fromC1b.C1C1one2one = toC1c;
@@ -1533,7 +1533,7 @@ namespace Allors.Database.Adapters
                 toC1a.Strategy.Delete();
                 toC1b.Strategy.Delete();
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 Assert.True(fromC1a.Strategy.IsDeleted);
                 Assert.True(fromC1b.Strategy.IsDeleted);
@@ -1547,15 +1547,15 @@ namespace Allors.Database.Adapters
 
                 //// Commit + Rollback
 
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
-                fromC1c = C1.Create(this.Session);
-                fromC1d = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
+                fromC1c = C1.Create(this.Transaction);
+                fromC1d = C1.Create(this.Transaction);
 
-                toC1a = C1.Create(this.Session);
-                toC1b = C1.Create(this.Session);
-                toC1c = C1.Create(this.Session);
-                toC1d = C1.Create(this.Session);
+                toC1a = C1.Create(this.Transaction);
+                toC1b = C1.Create(this.Transaction);
+                toC1c = C1.Create(this.Transaction);
+                toC1d = C1.Create(this.Transaction);
 
                 fromC1a.C1C1one2one = toC1a;
                 fromC1b.C1C1one2one = toC1c;
@@ -1576,12 +1576,12 @@ namespace Allors.Database.Adapters
                 AllorsTestUtils.ForceRoleCaching(fromC1a);
                 AllorsTestUtils.ForceRoleCaching(fromC1b);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 toC1a.Strategy.Delete();
                 toC1b.Strategy.Delete();
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 Assert.False(fromC1a.Strategy.IsDeleted);
                 Assert.False(fromC1b.Strategy.IsDeleted);
@@ -1601,13 +1601,13 @@ namespace Allors.Database.Adapters
 
                 //// C1 <-> C2
 
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
 
-                toC2a = C2.Create(this.Session);
-                toC2b = C2.Create(this.Session);
-                toC2c = C2.Create(this.Session);
-                toC2d = C2.Create(this.Session);
+                toC2a = C2.Create(this.Transaction);
+                toC2b = C2.Create(this.Transaction);
+                toC2c = C2.Create(this.Transaction);
+                toC2d = C2.Create(this.Transaction);
 
                 fromC1a.C1C2one2one = toC2a;
                 fromC1b.C1C2one2one = toC2c;
@@ -1667,17 +1667,17 @@ namespace Allors.Database.Adapters
                 Assert.Equal(toC2c, fromC1b.C1C2many2one);
                 Assert.Equal(2, fromC1b.C1C2many2manies.Count);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 //// Commit
 
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
 
-                toC2a = C2.Create(this.Session);
-                toC2b = C2.Create(this.Session);
-                toC2c = C2.Create(this.Session);
-                toC2d = C2.Create(this.Session);
+                toC2a = C2.Create(this.Transaction);
+                toC2b = C2.Create(this.Transaction);
+                toC2c = C2.Create(this.Transaction);
+                toC2d = C2.Create(this.Transaction);
 
                 fromC1a.C1C2one2one = toC2a;
                 fromC1b.C1C2one2one = toC2c;
@@ -1701,7 +1701,7 @@ namespace Allors.Database.Adapters
                 toC2a.Strategy.Delete();
                 toC2b.Strategy.Delete();
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 StrategyAssert.AssociationGetHasException(toC2a, m.C2.C1WhereC1C2one2one);
                 StrategyAssert.AssociationGetHasException(toC2a, m.C2.C1WhereC1C2one2many);
@@ -1739,19 +1739,19 @@ namespace Allors.Database.Adapters
                 Assert.Equal(toC2c, fromC1b.C1C2many2one);
                 Assert.Equal(2, fromC1b.C1C2many2manies.Count);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 //// Rollback
 
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
-                fromC1c = C1.Create(this.Session);
-                fromC1d = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
+                fromC1c = C1.Create(this.Transaction);
+                fromC1d = C1.Create(this.Transaction);
 
-                toC2a = C2.Create(this.Session);
-                toC2b = C2.Create(this.Session);
-                toC2c = C2.Create(this.Session);
-                toC2d = C2.Create(this.Session);
+                toC2a = C2.Create(this.Transaction);
+                toC2b = C2.Create(this.Transaction);
+                toC2c = C2.Create(this.Transaction);
+                toC2d = C2.Create(this.Transaction);
 
                 fromC1a.C1C2one2one = toC2a;
                 fromC1b.C1C2one2one = toC2c;
@@ -1775,7 +1775,7 @@ namespace Allors.Database.Adapters
                 toC2a.Strategy.Delete();
                 toC2b.Strategy.Delete();
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 Assert.True(fromC1a.Strategy.IsDeleted);
                 Assert.True(fromC1b.Strategy.IsDeleted);
@@ -1788,15 +1788,15 @@ namespace Allors.Database.Adapters
                 Assert.True(toC2d.Strategy.IsDeleted);
 
                 // Commit + Rollback
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
-                fromC1c = C1.Create(this.Session);
-                fromC1d = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
+                fromC1c = C1.Create(this.Transaction);
+                fromC1d = C1.Create(this.Transaction);
 
-                toC2a = C2.Create(this.Session);
-                toC2b = C2.Create(this.Session);
-                toC2c = C2.Create(this.Session);
-                toC2d = C2.Create(this.Session);
+                toC2a = C2.Create(this.Transaction);
+                toC2b = C2.Create(this.Transaction);
+                toC2c = C2.Create(this.Transaction);
+                toC2d = C2.Create(this.Transaction);
 
                 fromC1a.C1C2one2one = toC2a;
                 fromC1b.C1C2one2one = toC2c;
@@ -1817,12 +1817,12 @@ namespace Allors.Database.Adapters
                 AllorsTestUtils.ForceRoleCaching(fromC1a);
                 AllorsTestUtils.ForceRoleCaching(fromC1b);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 toC2a.Strategy.Delete();
                 toC2b.Strategy.Delete();
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 Assert.False(fromC1a.Strategy.IsDeleted);
                 Assert.False(fromC1b.Strategy.IsDeleted);
@@ -1844,13 +1844,13 @@ namespace Allors.Database.Adapters
 
                 //// C1 <-> C1
 
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
 
-                toC1a = C1.Create(this.Session);
-                toC1b = C1.Create(this.Session);
-                toC1c = C1.Create(this.Session);
-                toC1d = C1.Create(this.Session);
+                toC1a = C1.Create(this.Transaction);
+                toC1b = C1.Create(this.Transaction);
+                toC1c = C1.Create(this.Transaction);
+                toC1d = C1.Create(this.Transaction);
 
                 fromC1a.C1C1one2one = toC1a;
                 fromC1a.AddC1C1one2many(toC1a);
@@ -1891,13 +1891,13 @@ namespace Allors.Database.Adapters
 
                 //// C1 <-> C2
 
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
 
-                toC2a = C2.Create(this.Session);
-                toC2b = C2.Create(this.Session);
-                toC2c = C2.Create(this.Session);
-                toC2d = C2.Create(this.Session);
+                toC2a = C2.Create(this.Transaction);
+                toC2b = C2.Create(this.Transaction);
+                toC2c = C2.Create(this.Transaction);
+                toC2d = C2.Create(this.Transaction);
 
                 fromC1a.C1C2one2one = toC2a;
                 fromC1a.AddC1C2one2many(toC2a);
@@ -1940,13 +1940,13 @@ namespace Allors.Database.Adapters
 
                 //// C1 <-> C1
 
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
 
-                toC1a = C1.Create(this.Session);
-                toC1b = C1.Create(this.Session);
-                toC1c = C1.Create(this.Session);
-                toC1d = C1.Create(this.Session);
+                toC1a = C1.Create(this.Transaction);
+                toC1b = C1.Create(this.Transaction);
+                toC1c = C1.Create(this.Transaction);
+                toC1d = C1.Create(this.Transaction);
 
                 fromC1a.C1C1one2one = toC1a;
                 fromC1a.AddC1C1one2many(toC1a);
@@ -1964,7 +1964,7 @@ namespace Allors.Database.Adapters
 
                 fromC1a.Strategy.Delete();
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 StrategyAssert.RoleGetHasException(fromC1a, m.C1.C1C1one2one);
                 StrategyAssert.RoleExistHasException(fromC1a, m.C1.C1C1one2one);
@@ -1980,13 +1980,13 @@ namespace Allors.Database.Adapters
 
                 //// C1 <-> C2
 
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
 
-                toC2a = C2.Create(this.Session);
-                toC2b = C2.Create(this.Session);
-                toC2c = C2.Create(this.Session);
-                toC2d = C2.Create(this.Session);
+                toC2a = C2.Create(this.Transaction);
+                toC2b = C2.Create(this.Transaction);
+                toC2c = C2.Create(this.Transaction);
+                toC2d = C2.Create(this.Transaction);
 
                 fromC1a.C1C2one2one = toC2a;
                 fromC1a.AddC1C2one2many(toC2a);
@@ -2004,7 +2004,7 @@ namespace Allors.Database.Adapters
 
                 fromC1a.Strategy.Delete();
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 StrategyAssert.RoleGetHasException(fromC1a, m.C1.C1C2one2one);
                 StrategyAssert.RoleExistHasException(fromC1a, m.C1.C1C2one2one);
@@ -2022,15 +2022,15 @@ namespace Allors.Database.Adapters
 
                 //// C1 <-> C1
 
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
-                fromC1c = C1.Create(this.Session);
-                fromC1d = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
+                fromC1c = C1.Create(this.Transaction);
+                fromC1d = C1.Create(this.Transaction);
 
-                toC1a = C1.Create(this.Session);
-                toC1b = C1.Create(this.Session);
-                toC1c = C1.Create(this.Session);
-                toC1d = C1.Create(this.Session);
+                toC1a = C1.Create(this.Transaction);
+                toC1b = C1.Create(this.Transaction);
+                toC1c = C1.Create(this.Transaction);
+                toC1d = C1.Create(this.Transaction);
 
                 fromC1a.C1C1one2one = toC1a;
                 fromC1a.AddC1C1one2many(toC1a);
@@ -2048,7 +2048,7 @@ namespace Allors.Database.Adapters
 
                 fromC1a.Strategy.Delete();
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 StrategyAssert.RoleGetHasException(fromC1a, m.C1.C1C1one2one);
                 StrategyAssert.RoleGetHasException(fromC1a, m.C1.C1C1one2manies);
@@ -2080,15 +2080,15 @@ namespace Allors.Database.Adapters
                 Assert.True(toC1d.Strategy.IsDeleted);
 
                 // Commit + Rollback
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
-                fromC1c = C1.Create(this.Session);
-                fromC1d = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
+                fromC1c = C1.Create(this.Transaction);
+                fromC1d = C1.Create(this.Transaction);
 
-                toC1a = C1.Create(this.Session);
-                toC1b = C1.Create(this.Session);
-                toC1c = C1.Create(this.Session);
-                toC1d = C1.Create(this.Session);
+                toC1a = C1.Create(this.Transaction);
+                toC1b = C1.Create(this.Transaction);
+                toC1c = C1.Create(this.Transaction);
+                toC1d = C1.Create(this.Transaction);
 
                 fromC1a.C1C1one2one = toC1a;
                 fromC1a.AddC1C1one2many(toC1a);
@@ -2104,11 +2104,11 @@ namespace Allors.Database.Adapters
                 fromC1b.AddC1C1many2many(toC1c);
                 fromC1b.AddC1C1many2many(toC1d);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 fromC1a.Strategy.Delete();
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 Assert.False(fromC1a.Strategy.IsDeleted);
                 Assert.False(fromC1b.Strategy.IsDeleted);
@@ -2127,15 +2127,15 @@ namespace Allors.Database.Adapters
 
                 //// C1 <-> C2
 
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
-                fromC1c = C1.Create(this.Session);
-                fromC1d = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
+                fromC1c = C1.Create(this.Transaction);
+                fromC1d = C1.Create(this.Transaction);
 
-                toC2a = C2.Create(this.Session);
-                toC2b = C2.Create(this.Session);
-                toC2c = C2.Create(this.Session);
-                toC2d = C2.Create(this.Session);
+                toC2a = C2.Create(this.Transaction);
+                toC2b = C2.Create(this.Transaction);
+                toC2c = C2.Create(this.Transaction);
+                toC2d = C2.Create(this.Transaction);
 
                 fromC1a.C1C2one2one = toC2a;
                 fromC1a.AddC1C2one2many(toC2a);
@@ -2153,7 +2153,7 @@ namespace Allors.Database.Adapters
 
                 fromC1a.Strategy.Delete();
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 StrategyAssert.RoleGetHasException(fromC1a, m.C1.C1C2one2one);
                 StrategyAssert.RoleGetHasException(fromC1a, m.C1.C1C2one2manies);
@@ -2185,15 +2185,15 @@ namespace Allors.Database.Adapters
                 Assert.True(toC2d.Strategy.IsDeleted);
 
                 // Commit + Rollback
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
-                fromC1c = C1.Create(this.Session);
-                fromC1d = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
+                fromC1c = C1.Create(this.Transaction);
+                fromC1d = C1.Create(this.Transaction);
 
-                toC2a = C2.Create(this.Session);
-                toC2b = C2.Create(this.Session);
-                toC2c = C2.Create(this.Session);
-                toC2d = C2.Create(this.Session);
+                toC2a = C2.Create(this.Transaction);
+                toC2b = C2.Create(this.Transaction);
+                toC2c = C2.Create(this.Transaction);
+                toC2d = C2.Create(this.Transaction);
 
                 fromC1a.C1C2one2one = toC2a;
                 fromC1a.AddC1C2one2many(toC2a);
@@ -2209,11 +2209,11 @@ namespace Allors.Database.Adapters
                 fromC1b.AddC1C2many2many(toC2c);
                 fromC1b.AddC1C2many2many(toC2d);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 fromC1a.Strategy.Delete();
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 Assert.False(fromC1a.Strategy.IsDeleted);
                 Assert.False(fromC1b.Strategy.IsDeleted);
@@ -2234,13 +2234,13 @@ namespace Allors.Database.Adapters
 
                 //// C1 <-> C1
 
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
 
-                toC1a = C1.Create(this.Session);
-                toC1b = C1.Create(this.Session);
-                toC1c = C1.Create(this.Session);
-                toC1d = C1.Create(this.Session);
+                toC1a = C1.Create(this.Transaction);
+                toC1b = C1.Create(this.Transaction);
+                toC1c = C1.Create(this.Transaction);
+                toC1d = C1.Create(this.Transaction);
 
                 fromC1a.C1C1one2one = toC1a;
                 fromC1a.AddC1C1one2many(toC1a);
@@ -2286,13 +2286,13 @@ namespace Allors.Database.Adapters
 
                 //// Commit
 
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
 
-                toC1a = C1.Create(this.Session);
-                toC1b = C1.Create(this.Session);
-                toC1c = C1.Create(this.Session);
-                toC1d = C1.Create(this.Session);
+                toC1a = C1.Create(this.Transaction);
+                toC1b = C1.Create(this.Transaction);
+                toC1c = C1.Create(this.Transaction);
+                toC1d = C1.Create(this.Transaction);
 
                 fromC1a.C1C1one2one = toC1a;
                 fromC1a.AddC1C1one2many(toC1a);
@@ -2313,7 +2313,7 @@ namespace Allors.Database.Adapters
 
                 fromC1a.Strategy.Delete();
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 StrategyAssert.RoleGetHasException(fromC1a, m.C1.C1C1one2one);
                 StrategyAssert.RoleExistHasException(fromC1a, m.C1.C1C1one2one);
@@ -2329,15 +2329,15 @@ namespace Allors.Database.Adapters
 
                 //// Rollback
 
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
-                fromC1c = C1.Create(this.Session);
-                fromC1d = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
+                fromC1c = C1.Create(this.Transaction);
+                fromC1d = C1.Create(this.Transaction);
 
-                toC1a = C1.Create(this.Session);
-                toC1b = C1.Create(this.Session);
-                toC1c = C1.Create(this.Session);
-                toC1d = C1.Create(this.Session);
+                toC1a = C1.Create(this.Transaction);
+                toC1b = C1.Create(this.Transaction);
+                toC1c = C1.Create(this.Transaction);
+                toC1d = C1.Create(this.Transaction);
 
                 fromC1a.C1C1one2one = toC1a;
                 fromC1a.AddC1C1one2many(toC1a);
@@ -2358,7 +2358,7 @@ namespace Allors.Database.Adapters
 
                 fromC1a.Strategy.Delete();
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 StrategyAssert.RoleGetHasException(fromC1a, m.C1.C1C1one2one);
                 StrategyAssert.RoleGetHasException(fromC1a, m.C1.C1C1one2manies);
@@ -2391,15 +2391,15 @@ namespace Allors.Database.Adapters
 
                 //// Commit + Rollback
 
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
-                fromC1c = C1.Create(this.Session);
-                fromC1d = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
+                fromC1c = C1.Create(this.Transaction);
+                fromC1d = C1.Create(this.Transaction);
 
-                toC1a = C1.Create(this.Session);
-                toC1b = C1.Create(this.Session);
-                toC1c = C1.Create(this.Session);
-                toC1d = C1.Create(this.Session);
+                toC1a = C1.Create(this.Transaction);
+                toC1b = C1.Create(this.Transaction);
+                toC1c = C1.Create(this.Transaction);
+                toC1d = C1.Create(this.Transaction);
 
                 fromC1a.C1C1one2one = toC1a;
                 fromC1a.AddC1C1one2many(toC1a);
@@ -2418,11 +2418,11 @@ namespace Allors.Database.Adapters
                 AllorsTestUtils.ForceRoleCaching(fromC1a);
                 AllorsTestUtils.ForceRoleCaching(fromC1b);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 fromC1a.Strategy.Delete();
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 Assert.False(fromC1a.Strategy.IsDeleted);
                 Assert.False(fromC1b.Strategy.IsDeleted);
@@ -2441,13 +2441,13 @@ namespace Allors.Database.Adapters
 
                 //// C1 <-> C2
 
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
 
-                toC2a = C2.Create(this.Session);
-                toC2b = C2.Create(this.Session);
-                toC2c = C2.Create(this.Session);
-                toC2d = C2.Create(this.Session);
+                toC2a = C2.Create(this.Transaction);
+                toC2b = C2.Create(this.Transaction);
+                toC2c = C2.Create(this.Transaction);
+                toC2d = C2.Create(this.Transaction);
 
                 fromC1a.C1C2one2one = toC2a;
                 fromC1a.AddC1C2one2many(toC2a);
@@ -2493,13 +2493,13 @@ namespace Allors.Database.Adapters
 
                 //// Commit
 
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
 
-                toC2a = C2.Create(this.Session);
-                toC2b = C2.Create(this.Session);
-                toC2c = C2.Create(this.Session);
-                toC2d = C2.Create(this.Session);
+                toC2a = C2.Create(this.Transaction);
+                toC2b = C2.Create(this.Transaction);
+                toC2c = C2.Create(this.Transaction);
+                toC2d = C2.Create(this.Transaction);
 
                 fromC1a.C1C2one2one = toC2a;
                 fromC1a.AddC1C2one2many(toC2a);
@@ -2520,7 +2520,7 @@ namespace Allors.Database.Adapters
 
                 fromC1a.Strategy.Delete();
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 StrategyAssert.RoleGetHasException(fromC1a, m.C1.C1C2one2one);
                 StrategyAssert.RoleExistHasException(fromC1a, m.C1.C1C2one2one);
@@ -2536,15 +2536,15 @@ namespace Allors.Database.Adapters
 
                 //// Rollback
 
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
-                fromC1c = C1.Create(this.Session);
-                fromC1d = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
+                fromC1c = C1.Create(this.Transaction);
+                fromC1d = C1.Create(this.Transaction);
 
-                toC2a = C2.Create(this.Session);
-                toC2b = C2.Create(this.Session);
-                toC2c = C2.Create(this.Session);
-                toC2d = C2.Create(this.Session);
+                toC2a = C2.Create(this.Transaction);
+                toC2b = C2.Create(this.Transaction);
+                toC2c = C2.Create(this.Transaction);
+                toC2d = C2.Create(this.Transaction);
 
                 fromC1a.C1C2one2one = toC2a;
                 fromC1a.AddC1C2one2many(toC2a);
@@ -2565,7 +2565,7 @@ namespace Allors.Database.Adapters
 
                 fromC1a.Strategy.Delete();
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 StrategyAssert.RoleGetHasException(fromC1a, m.C1.C1C2one2one);
                 StrategyAssert.RoleGetHasException(fromC1a, m.C1.C1C2one2manies);
@@ -2598,15 +2598,15 @@ namespace Allors.Database.Adapters
 
                 //// Commit + Rollback
 
-                fromC1a = C1.Create(this.Session);
-                fromC1b = C1.Create(this.Session);
-                fromC1c = C1.Create(this.Session);
-                fromC1d = C1.Create(this.Session);
+                fromC1a = C1.Create(this.Transaction);
+                fromC1b = C1.Create(this.Transaction);
+                fromC1c = C1.Create(this.Transaction);
+                fromC1d = C1.Create(this.Transaction);
 
-                toC2a = C2.Create(this.Session);
-                toC2b = C2.Create(this.Session);
-                toC2c = C2.Create(this.Session);
-                toC2d = C2.Create(this.Session);
+                toC2a = C2.Create(this.Transaction);
+                toC2b = C2.Create(this.Transaction);
+                toC2c = C2.Create(this.Transaction);
+                toC2d = C2.Create(this.Transaction);
 
                 fromC1a.C1C2one2one = toC2a;
                 fromC1a.AddC1C2one2many(toC2a);
@@ -2625,11 +2625,11 @@ namespace Allors.Database.Adapters
                 AllorsTestUtils.ForceRoleCaching(fromC1a);
                 AllorsTestUtils.ForceRoleCaching(fromC1b);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 fromC1a.Strategy.Delete();
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 Assert.False(fromC1a.Strategy.IsDeleted);
                 Assert.False(fromC1b.Strategy.IsDeleted);
@@ -2648,8 +2648,8 @@ namespace Allors.Database.Adapters
 
                 //// Assignment
 
-                anObject = C1.Create(this.Session);
-                var c1Removed = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
+                var c1Removed = C1.Create(this.Transaction);
                 c1Removed.Strategy.Delete();
                 C1[] c1RemovedArray = { c1Removed };
 
@@ -2719,13 +2719,13 @@ namespace Allors.Database.Adapters
 
                 //// Commit
 
-                anObject = C1.Create(this.Session);
-                c1Removed = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
+                c1Removed = C1.Create(this.Transaction);
                 c1Removed.Strategy.Delete();
                 c1RemovedArray = new C1[1];
                 c1RemovedArray[0] = c1Removed;
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 error = false;
                 try
@@ -2793,14 +2793,14 @@ namespace Allors.Database.Adapters
 
                 //// Rollback
 
-                anObject = C1.Create(this.Session);
-                c1Removed = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
+                c1Removed = C1.Create(this.Transaction);
                 c1RemovedArray = new C1[1];
                 c1RemovedArray[0] = c1Removed;
 
                 c1Removed.Strategy.Delete();
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 error = false;
                 try
@@ -2863,16 +2863,16 @@ namespace Allors.Database.Adapters
                 Assert.True(error);
 
                 // Commit + Rollback
-                anObject = C1.Create(this.Session);
-                c1Removed = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
+                c1Removed = C1.Create(this.Transaction);
                 c1RemovedArray = new C1[1];
                 c1RemovedArray[0] = c1Removed;
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 c1Removed.Strategy.Delete();
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 anObject.C1C1one2one = c1Removed;
                 Assert.Equal(c1Removed, anObject.C1C1one2one);
@@ -2891,113 +2891,113 @@ namespace Allors.Database.Adapters
 
                 //// Proxy
 
-                var proxy = C1.Create(this.Session);
+                var proxy = C1.Create(this.Transaction);
                 id = proxy.Strategy.ObjectId;
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                var subject = C1.Instantiate(this.Session, id);
+                var subject = C1.Instantiate(this.Transaction, id);
                 subject.Strategy.Delete();
                 StrategyAssert.RoleExistHasException(proxy, m.C1.C1AllorsString);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                proxy = C1.Create(this.Session);
+                proxy = C1.Create(this.Transaction);
                 id = proxy.Strategy.ObjectId;
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                subject = C1.Instantiate(this.Session, id);
+                subject = C1.Instantiate(this.Transaction, id);
                 subject.Strategy.Delete();
                 StrategyAssert.RoleGetHasException(proxy, m.C1.C1AllorsString);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 //// Commit
 
-                proxy = C1.Create(this.Session);
+                proxy = C1.Create(this.Transaction);
                 id = proxy.Strategy.ObjectId;
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                subject = C1.Instantiate(this.Session, id);
+                subject = C1.Instantiate(this.Transaction, id);
                 subject.Strategy.Delete();
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                subject = C1.Instantiate(this.Session, id);
+                subject = C1.Instantiate(this.Transaction, id);
                 StrategyAssert.RoleExistHasException(proxy, m.C1.C1AllorsString);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                proxy = C1.Create(this.Session);
+                proxy = C1.Create(this.Transaction);
                 id = proxy.Strategy.ObjectId;
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                subject = C1.Instantiate(this.Session, id);
+                subject = C1.Instantiate(this.Transaction, id);
                 subject.Strategy.Delete();
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                subject = C1.Instantiate(this.Session, id);
+                subject = C1.Instantiate(this.Transaction, id);
                 StrategyAssert.RoleGetHasException(proxy, m.C1.C1AllorsString);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 //// Rollback
 
-                proxy = C1.Create(this.Session);
+                proxy = C1.Create(this.Transaction);
                 id = proxy.Strategy.ObjectId;
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                subject = C1.Instantiate(this.Session, id);
+                subject = C1.Instantiate(this.Transaction, id);
                 subject.Strategy.Delete();
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
-                subject = C1.Instantiate(this.Session, id);
+                subject = C1.Instantiate(this.Transaction, id);
                 Assert.False(proxy.Strategy.IsDeleted);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 //// unit roles
 
-                anObject = C1.Create(this.Session);
-                var anotherObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
+                var anotherObject = C1.Create(this.Transaction);
                 anotherObject.C1AllorsString = "value";
                 anObject.Strategy.Delete();
                 Assert.Equal("value", anotherObject.C1AllorsString);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 Assert.Equal("value", anotherObject.C1AllorsString);
 
-                anObject = C1.Create(this.Session);
-                anotherObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
+                anotherObject = C1.Create(this.Transaction);
                 anotherObject.C1AllorsString = "value";
                 anObject.Strategy.Delete();
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 Assert.Equal("value", anotherObject.C1AllorsString);
             }
         }
 
         [Fact]
-        public virtual void DifferentSessions()
+        public virtual void DifferentTransactions()
         {
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var secondSession = this.CreateSession();
+                var secondTransaction = this.CreateTransaction();
 
                 try
                 {
-                    var c1a = C1.Create(this.Session);
-                    var c1b = C1.Create(this.Session);
+                    var c1a = C1.Create(this.Transaction);
+                    var c1b = C1.Create(this.Transaction);
 
-                    var c2a = C2.Create(secondSession);
-                    var c2b = C2.Create(secondSession);
+                    var c2a = C2.Create(secondTransaction);
+                    var c2b = C2.Create(secondTransaction);
                     C2[] c2Array = { c2a, c2b };
 
-                    this.Session.Commit();
-                    secondSession.Commit();
+                    this.Transaction.Commit();
+                    secondTransaction.Commit();
 
                     var exceptionThrown = false;
                     try
@@ -3073,7 +3073,7 @@ namespace Allors.Database.Adapters
                 }
                 finally
                 {
-                    secondSession.Commit();
+                    secondTransaction.Commit();
                 }
             }
         }
@@ -3084,15 +3084,15 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var anObject = C1.Create(this.Session);
+                var anObject = C1.Create(this.Transaction);
                 var id = anObject.Strategy.ObjectId;
-                var proxy = C1.Instantiate(this.Session, id);
+                var proxy = C1.Instantiate(this.Transaction, id);
 
-                var anotherObject = C1.Create(this.Session);
+                var anotherObject = C1.Create(this.Transaction);
                 var anotherId = anotherObject.Strategy.ObjectId;
-                var anotherProxy = C1.Instantiate(this.Session, anotherId);
+                var anotherProxy = C1.Instantiate(this.Transaction, anotherId);
 
                 Assert.Equal(anObject, proxy);
                 Assert.Equal(anotherObject, anotherProxy);
@@ -3101,17 +3101,17 @@ namespace Allors.Database.Adapters
                 Assert.NotEqual(proxy, anotherObject);
                 Assert.NotEqual(proxy, anotherProxy);
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 id = anObject.Strategy.ObjectId;
-                proxy = C1.Instantiate(this.Session, id);
+                proxy = C1.Instantiate(this.Transaction, id);
 
-                anotherObject = C1.Create(this.Session);
+                anotherObject = C1.Create(this.Transaction);
                 anotherId = anotherObject.Strategy.ObjectId;
-                anotherProxy = C1.Instantiate(this.Session, anotherId);
+                anotherProxy = C1.Instantiate(this.Transaction, anotherId);
 
-                this.Session.Commit();
-                anObject = C1.Instantiate(this.Session, id);
-                anotherObject = C1.Instantiate(this.Session, anotherId);
+                this.Transaction.Commit();
+                anObject = C1.Instantiate(this.Transaction, id);
+                anotherObject = C1.Instantiate(this.Transaction, anotherId);
 
                 Assert.Equal(anObject, proxy);
                 Assert.Equal(anotherObject, anotherProxy);
@@ -3122,15 +3122,15 @@ namespace Allors.Database.Adapters
 
                 //// Rollback
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 id = anObject.Strategy.ObjectId;
-                proxy = C1.Instantiate(this.Session, id);
+                proxy = C1.Instantiate(this.Transaction, id);
 
-                anotherObject = C1.Create(this.Session);
+                anotherObject = C1.Create(this.Transaction);
                 anotherId = anotherObject.Strategy.ObjectId;
-                anotherProxy = C1.Instantiate(this.Session, anotherId);
+                anotherProxy = C1.Instantiate(this.Transaction, anotherId);
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 Assert.Equal(anObject, proxy);
                 Assert.Equal(anotherObject, anotherProxy);
@@ -3147,41 +3147,41 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var anObject = C1.Create(this.Session);
+                var anObject = C1.Create(this.Transaction);
                 var id = anObject.Strategy.ObjectId;
-                var sameObject = (C1)this.Session.Instantiate(id);
+                var sameObject = (C1)this.Transaction.Instantiate(id);
 
                 Assert.True(anObject.Equals(sameObject));
                 Assert.True(anObject.Strategy.ObjectId.Equals(sameObject.Strategy.ObjectId));
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                sameObject = (C1)this.Session.Instantiate(id);
-
-                Assert.True(anObject.Equals(sameObject));
-                Assert.True(anObject.Strategy.ObjectId.Equals(sameObject.Strategy.ObjectId));
-
-                this.Session.Commit();
-
-                sameObject = (C1)this.Session.Instantiate(id);
-                sameObject = (C1)this.Session.Instantiate(id);
+                sameObject = (C1)this.Transaction.Instantiate(id);
 
                 Assert.True(anObject.Equals(sameObject));
                 Assert.True(anObject.Strategy.ObjectId.Equals(sameObject.Strategy.ObjectId));
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                sameObject = (C1)this.Session.Instantiate(id);
+                sameObject = (C1)this.Transaction.Instantiate(id);
+                sameObject = (C1)this.Transaction.Instantiate(id);
 
                 Assert.True(anObject.Equals(sameObject));
                 Assert.True(anObject.Strategy.ObjectId.Equals(sameObject.Strategy.ObjectId));
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                sameObject = (C1)this.Session.Instantiate(id);
-                sameObject = (C1)this.Session.Instantiate(id);
+                sameObject = (C1)this.Transaction.Instantiate(id);
+
+                Assert.True(anObject.Equals(sameObject));
+                Assert.True(anObject.Strategy.ObjectId.Equals(sameObject.Strategy.ObjectId));
+
+                this.Transaction.Commit();
+
+                sameObject = (C1)this.Transaction.Instantiate(id);
+                sameObject = (C1)this.Transaction.Instantiate(id);
 
                 Assert.True(anObject.Equals(sameObject));
                 Assert.True(anObject.Strategy.ObjectId.Equals(sameObject.Strategy.ObjectId));
@@ -3190,84 +3190,84 @@ namespace Allors.Database.Adapters
 
                 //// Unit
 
-                var subject = C1.Create(this.Session);
+                var subject = C1.Create(this.Transaction);
                 id = subject.Strategy.ObjectId;
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 subject.C1AllorsString = "a";
-                var proxy = C1.Instantiate(this.Session, id);
+                var proxy = C1.Instantiate(this.Transaction, id);
                 proxy.C1AllorsString = "b";
                 Assert.Equal("b", subject.C1AllorsString);
                 Assert.Equal("b", proxy.C1AllorsString);
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 subject.C1AllorsString = "c";
-                proxy = C1.Instantiate(this.Session, id);
+                proxy = C1.Instantiate(this.Transaction, id);
                 proxy.C1AllorsString = "d";
                 Assert.Equal("d", proxy.C1AllorsString);
                 Assert.Equal("d", subject.C1AllorsString);
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 subject.C1AllorsString = "a";
-                proxy = C1.Instantiate(this.Session, id);
+                proxy = C1.Instantiate(this.Transaction, id);
                 proxy.C1AllorsString = "b";
-                this.Session.Commit();
+                this.Transaction.Commit();
                 Assert.Equal("b", subject.C1AllorsString);
                 Assert.Equal("b", proxy.C1AllorsString);
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 subject.C1AllorsString = "c";
-                proxy = C1.Instantiate(this.Session, id);
+                proxy = C1.Instantiate(this.Transaction, id);
                 proxy.C1AllorsString = "d";
-                this.Session.Commit();
+                this.Transaction.Commit();
                 Assert.Equal("d", proxy.C1AllorsString);
                 Assert.Equal("d", subject.C1AllorsString);
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 subject.C1AllorsString = "a";
-                proxy = C1.Instantiate(this.Session, id);
+                proxy = C1.Instantiate(this.Transaction, id);
                 proxy.C1AllorsString = "b";
                 Assert.Equal("b", subject.C1AllorsString);
-                this.Session.Commit();
+                this.Transaction.Commit();
                 Assert.Equal("b", proxy.C1AllorsString);
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 subject.C1AllorsString = "c";
-                proxy = C1.Instantiate(this.Session, id);
+                proxy = C1.Instantiate(this.Transaction, id);
                 proxy.C1AllorsString = "d";
                 Assert.Equal("d", proxy.C1AllorsString);
-                this.Session.Commit();
+                this.Transaction.Commit();
                 Assert.Equal("d", subject.C1AllorsString);
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 subject.C1AllorsString = "a";
-                proxy = C1.Instantiate(this.Session, id);
+                proxy = C1.Instantiate(this.Transaction, id);
                 proxy.C1AllorsString = "b";
-                this.Session.Commit();
+                this.Transaction.Commit();
                 Assert.Equal("b", subject.C1AllorsString);
-                this.Session.Commit();
+                this.Transaction.Commit();
                 Assert.Equal("b", proxy.C1AllorsString);
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 subject.C1AllorsString = "c";
-                proxy = C1.Instantiate(this.Session, id);
+                proxy = C1.Instantiate(this.Transaction, id);
                 proxy.C1AllorsString = "d";
-                this.Session.Commit();
+                this.Transaction.Commit();
                 Assert.Equal("d", proxy.C1AllorsString);
-                this.Session.Commit();
+                this.Transaction.Commit();
                 Assert.Equal("d", subject.C1AllorsString);
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 //// IComposite
 
-                var fromProxy = C1.Create(this.Session);
-                var toProxy = C1.Create(this.Session);
+                var fromProxy = C1.Create(this.Transaction);
+                var toProxy = C1.Create(this.Transaction);
                 var fromId = fromProxy.Strategy.ObjectId;
                 var toId = toProxy.Strategy.ObjectId;
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                var from = C1.Instantiate(this.Session, fromId);
-                var to = C1.Instantiate(this.Session, toId);
+                var from = C1.Instantiate(this.Transaction, fromId);
+                var to = C1.Instantiate(this.Transaction, toId);
                 from.C1AllorsString = "a";
                 from.C1C1one2one = to;
                 from.C1C1many2one = to;
@@ -3306,7 +3306,7 @@ namespace Allors.Database.Adapters
                 from.C1C1one2manies = null;
                 from.C1C1many2manies = null;
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 Assert.Null(from.C1AllorsString);
                 Assert.Null(from.C1C1one2one);
@@ -3326,42 +3326,42 @@ namespace Allors.Database.Adapters
                 StrategyAssert.RolesExistExclusive(fromProxy);
                 StrategyAssert.AssociationsExistExclusive(toProxy);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 //// Rollback
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 id = anObject.Strategy.ObjectId;
-                sameObject = (C1)this.Session.Instantiate(id);
+                sameObject = (C1)this.Transaction.Instantiate(id);
 
                 Assert.True(anObject.Equals(sameObject));
                 Assert.True(anObject.Strategy.ObjectId.Equals(sameObject.Strategy.ObjectId));
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                sameObject = (C1)this.Session.Instantiate(id);
-
-                Assert.True(anObject.Equals(sameObject));
-                Assert.True(anObject.Strategy.ObjectId.Equals(sameObject.Strategy.ObjectId));
-
-                this.Session.Rollback();
-
-                sameObject = (C1)this.Session.Instantiate(id);
-                sameObject = (C1)this.Session.Instantiate(id);
+                sameObject = (C1)this.Transaction.Instantiate(id);
 
                 Assert.True(anObject.Equals(sameObject));
                 Assert.True(anObject.Strategy.ObjectId.Equals(sameObject.Strategy.ObjectId));
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
-                sameObject = (C1)this.Session.Instantiate(id);
+                sameObject = (C1)this.Transaction.Instantiate(id);
+                sameObject = (C1)this.Transaction.Instantiate(id);
 
                 Assert.True(anObject.Equals(sameObject));
                 Assert.True(anObject.Strategy.ObjectId.Equals(sameObject.Strategy.ObjectId));
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
-                sameObject = (C1)this.Session.Instantiate(id);
-                sameObject = (C1)this.Session.Instantiate(id);
+                sameObject = (C1)this.Transaction.Instantiate(id);
+
+                Assert.True(anObject.Equals(sameObject));
+                Assert.True(anObject.Strategy.ObjectId.Equals(sameObject.Strategy.ObjectId));
+
+                this.Transaction.Rollback();
+
+                sameObject = (C1)this.Transaction.Instantiate(id);
+                sameObject = (C1)this.Transaction.Instantiate(id);
 
                 Assert.True(anObject.Equals(sameObject));
                 Assert.True(anObject.Strategy.ObjectId.Equals(sameObject.Strategy.ObjectId));
@@ -3370,78 +3370,78 @@ namespace Allors.Database.Adapters
 
                 //// Unit
 
-                subject = C1.Create(this.Session);
+                subject = C1.Create(this.Transaction);
                 id = subject.Strategy.ObjectId;
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 subject.C1AllorsString = "a";
-                proxy = C1.Instantiate(this.Session, id);
+                proxy = C1.Instantiate(this.Transaction, id);
                 proxy.C1AllorsString = "b";
                 Assert.Equal("b", subject.C1AllorsString);
                 Assert.Equal("b", proxy.C1AllorsString);
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 subject.C1AllorsString = "c";
-                proxy = C1.Instantiate(this.Session, id);
+                proxy = C1.Instantiate(this.Transaction, id);
                 proxy.C1AllorsString = "d";
                 Assert.Equal("d", proxy.C1AllorsString);
                 Assert.Equal("d", subject.C1AllorsString);
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 subject.C1AllorsString = "a";
-                proxy = C1.Instantiate(this.Session, id);
+                proxy = C1.Instantiate(this.Transaction, id);
                 proxy.C1AllorsString = "b";
-                this.Session.Rollback();
+                this.Transaction.Rollback();
                 Assert.False(subject.ExistC1AllorsString);
                 Assert.False(proxy.ExistC1AllorsString);
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 subject.C1AllorsString = "c";
-                proxy = C1.Instantiate(this.Session, id);
+                proxy = C1.Instantiate(this.Transaction, id);
                 proxy.C1AllorsString = "d";
-                this.Session.Rollback();
+                this.Transaction.Rollback();
                 Assert.False(proxy.ExistC1AllorsString);
                 Assert.False(subject.ExistC1AllorsString);
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 subject.C1AllorsString = "a";
-                proxy = C1.Instantiate(this.Session, id);
+                proxy = C1.Instantiate(this.Transaction, id);
                 proxy.C1AllorsString = "b";
                 Assert.Equal("b", subject.C1AllorsString);
-                this.Session.Rollback();
+                this.Transaction.Rollback();
                 Assert.False(proxy.ExistC1AllorsString);
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 subject.C1AllorsString = "c";
-                proxy = C1.Instantiate(this.Session, id);
+                proxy = C1.Instantiate(this.Transaction, id);
                 proxy.C1AllorsString = "d";
                 Assert.Equal("d", proxy.C1AllorsString);
-                this.Session.Rollback();
+                this.Transaction.Rollback();
                 Assert.False(subject.ExistC1AllorsString);
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 subject.C1AllorsString = "a";
-                proxy = C1.Instantiate(this.Session, id);
+                proxy = C1.Instantiate(this.Transaction, id);
                 proxy.C1AllorsString = "b";
-                this.Session.Rollback();
+                this.Transaction.Rollback();
                 Assert.False(subject.ExistC1AllorsString);
-                this.Session.Rollback();
+                this.Transaction.Rollback();
                 Assert.False(proxy.ExistC1AllorsString);
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 subject.C1AllorsString = "c";
-                proxy = C1.Instantiate(this.Session, id);
+                proxy = C1.Instantiate(this.Transaction, id);
                 proxy.C1AllorsString = "d";
-                this.Session.Rollback();
+                this.Transaction.Rollback();
                 Assert.False(proxy.ExistC1AllorsString);
-                this.Session.Rollback();
+                this.Transaction.Rollback();
                 Assert.False(subject.ExistC1AllorsString);
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 //// IComposite
 
-                from = C1.Instantiate(this.Session, fromId);
-                to = C1.Instantiate(this.Session, toId);
+                from = C1.Instantiate(this.Transaction, fromId);
+                to = C1.Instantiate(this.Transaction, toId);
                 from.C1AllorsString = "a";
                 from.C1C1one2one = to;
                 from.C1C1many2one = to;
@@ -3474,7 +3474,7 @@ namespace Allors.Database.Adapters
                 Assert.Equal(fromProxy, toProxy.C1WhereC1C1one2many);
                 Assert.Contains(fromProxy, (C1[])toProxy.C1sWhereC1C1many2many);
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 Assert.Null(from.C1AllorsString);
                 Assert.Null(from.C1C1one2one);
@@ -3494,21 +3494,21 @@ namespace Allors.Database.Adapters
                 StrategyAssert.RolesExistExclusive(fromProxy);
                 StrategyAssert.AssociationsExistExclusive(toProxy);
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
-                var unexistingObject = (C1)this.Session.Instantiate("1000000");
+                var unexistingObject = (C1)this.Transaction.Instantiate("1000000");
                 Assert.Null(unexistingObject);
 
-                unexistingObject = (C1)this.Session.Instantiate("");
+                unexistingObject = (C1)this.Transaction.Instantiate("");
                 Assert.Null(unexistingObject);
 
-                unexistingObject = (C1)this.Session.Instantiate(" ");
+                unexistingObject = (C1)this.Transaction.Instantiate(" ");
                 Assert.Null(unexistingObject);
 
-                unexistingObject = (C1)this.Session.Instantiate("\t");
+                unexistingObject = (C1)this.Transaction.Instantiate("\t");
                 Assert.Null(unexistingObject);
 
-                unexistingObject = (C1)this.Session.Instantiate("blah blah blah");
+                unexistingObject = (C1)this.Transaction.Instantiate("blah blah blah");
                 Assert.Null(unexistingObject);
             }
         }
@@ -3519,7 +3519,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 int[] runs = { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048 };
 
@@ -3527,15 +3527,15 @@ namespace Allors.Database.Adapters
                 {
                     // Empty arrays
                     long[] nullObjectIdArray = null;
-                    var allorsObjects = this.Session.Instantiate(nullObjectIdArray);
+                    var allorsObjects = this.Transaction.Instantiate(nullObjectIdArray);
                     Assert.Empty(allorsObjects);
 
                     string[] nullStringArray = null;
-                    allorsObjects = this.Session.Instantiate(nullStringArray);
+                    allorsObjects = this.Transaction.Instantiate(nullStringArray);
                     Assert.Empty(allorsObjects);
 
                     IObject[] nullObjectArray = null;
-                    allorsObjects = this.Session.Instantiate(nullObjectArray);
+                    allorsObjects = this.Transaction.Instantiate(nullObjectArray);
                     Assert.Empty(allorsObjects);
 
                     var objects = new IObject[run];
@@ -3543,23 +3543,15 @@ namespace Allors.Database.Adapters
                     var ids = new long[run];
                     for (var i = 0; i < run; i++)
                     {
-                        var anObject = C1.Create(this.Session);
+                        var anObject = C1.Create(this.Transaction);
                         objects[i] = anObject;
                         idStrings[i] = anObject.Strategy.ObjectId.ToString();
                         ids[i] = anObject.Strategy.ObjectId;
                     }
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    allorsObjects = this.Session.Instantiate(objects);
-
-                    Assert.Equal(run, allorsObjects.Length);
-                    for (var i = 0; i < allorsObjects.Length; i++)
-                    {
-                        Assert.Equal(allorsObjects[i].Id, ids[i]);
-                    }
-
-                    allorsObjects = this.Session.Instantiate(idStrings);
+                    allorsObjects = this.Transaction.Instantiate(objects);
 
                     Assert.Equal(run, allorsObjects.Length);
                     for (var i = 0; i < allorsObjects.Length; i++)
@@ -3567,7 +3559,7 @@ namespace Allors.Database.Adapters
                         Assert.Equal(allorsObjects[i].Id, ids[i]);
                     }
 
-                    allorsObjects = this.Session.Instantiate(ids);
+                    allorsObjects = this.Transaction.Instantiate(idStrings);
 
                     Assert.Equal(run, allorsObjects.Length);
                     for (var i = 0; i < allorsObjects.Length; i++)
@@ -3575,9 +3567,7 @@ namespace Allors.Database.Adapters
                         Assert.Equal(allorsObjects[i].Id, ids[i]);
                     }
 
-                    this.Session.Commit();
-
-                    allorsObjects = this.Session.Instantiate(objects);
+                    allorsObjects = this.Transaction.Instantiate(ids);
 
                     Assert.Equal(run, allorsObjects.Length);
                     for (var i = 0; i < allorsObjects.Length; i++)
@@ -3585,19 +3575,9 @@ namespace Allors.Database.Adapters
                         Assert.Equal(allorsObjects[i].Id, ids[i]);
                     }
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    allorsObjects = this.Session.Instantiate(idStrings);
-
-                    Assert.Equal(run, allorsObjects.Length);
-                    for (var i = 0; i < allorsObjects.Length; i++)
-                    {
-                        Assert.Equal(allorsObjects[i].Id, ids[i]);
-                    }
-
-                    this.Session.Commit();
-
-                    allorsObjects = this.Session.Instantiate(ids);
+                    allorsObjects = this.Transaction.Instantiate(objects);
 
                     Assert.Equal(run, allorsObjects.Length);
                     for (var i = 0; i < allorsObjects.Length; i++)
@@ -3605,19 +3585,9 @@ namespace Allors.Database.Adapters
                         Assert.Equal(allorsObjects[i].Id, ids[i]);
                     }
 
-                    this.Session.Rollback();
+                    this.Transaction.Commit();
 
-                    allorsObjects = this.Session.Instantiate(objects);
-
-                    Assert.Equal(run, allorsObjects.Length);
-                    for (var i = 0; i < allorsObjects.Length; i++)
-                    {
-                        Assert.Equal(allorsObjects[i].Id, ids[i]);
-                    }
-
-                    this.Session.Rollback();
-
-                    allorsObjects = this.Session.Instantiate(idStrings);
+                    allorsObjects = this.Transaction.Instantiate(idStrings);
 
                     Assert.Equal(run, allorsObjects.Length);
                     for (var i = 0; i < allorsObjects.Length; i++)
@@ -3625,9 +3595,9 @@ namespace Allors.Database.Adapters
                         Assert.Equal(allorsObjects[i].Id, ids[i]);
                     }
 
-                    this.Session.Rollback();
+                    this.Transaction.Commit();
 
-                    allorsObjects = this.Session.Instantiate(ids);
+                    allorsObjects = this.Transaction.Instantiate(ids);
 
                     Assert.Equal(run, allorsObjects.Length);
                     for (var i = 0; i < allorsObjects.Length; i++)
@@ -3635,48 +3605,78 @@ namespace Allors.Database.Adapters
                         Assert.Equal(allorsObjects[i].Id, ids[i]);
                     }
 
-                    this.Session.Commit();
+                    this.Transaction.Rollback();
+
+                    allorsObjects = this.Transaction.Instantiate(objects);
+
+                    Assert.Equal(run, allorsObjects.Length);
+                    for (var i = 0; i < allorsObjects.Length; i++)
+                    {
+                        Assert.Equal(allorsObjects[i].Id, ids[i]);
+                    }
+
+                    this.Transaction.Rollback();
+
+                    allorsObjects = this.Transaction.Instantiate(idStrings);
+
+                    Assert.Equal(run, allorsObjects.Length);
+                    for (var i = 0; i < allorsObjects.Length; i++)
+                    {
+                        Assert.Equal(allorsObjects[i].Id, ids[i]);
+                    }
+
+                    this.Transaction.Rollback();
+
+                    allorsObjects = this.Transaction.Instantiate(ids);
+
+                    Assert.Equal(run, allorsObjects.Length);
+                    for (var i = 0; i < allorsObjects.Length; i++)
+                    {
+                        Assert.Equal(allorsObjects[i].Id, ids[i]);
+                    }
+
+                    this.Transaction.Commit();
 
                     // Caching in Sql
                     this.SwitchDatabase();
                     var minusOne = new List<long>(ids);
                     minusOne.RemoveAt(0);
-                    allorsObjects = this.Session.Instantiate(minusOne.ToArray());
+                    allorsObjects = this.Transaction.Instantiate(minusOne.ToArray());
 
-                    allorsObjects = this.Session.Instantiate(ids);
+                    allorsObjects = this.Transaction.Instantiate(ids);
                     Assert.Equal(run, allorsObjects.Length);
                     for (var i = 0; i < allorsObjects.Length; i++)
                     {
                         Assert.Contains(allorsObjects[i].Id, ids);
                     }
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    Assert.Empty(this.Session.Instantiate(new IObject[0]));
+                    Assert.Empty(this.Transaction.Instantiate(new IObject[0]));
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    Assert.Empty(this.Session.Instantiate(new string[0]));
+                    Assert.Empty(this.Transaction.Instantiate(new string[0]));
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    Assert.Empty(this.Session.Instantiate(new long[0]));
+                    Assert.Empty(this.Transaction.Instantiate(new long[0]));
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
                     var doesntExistIds = new[] { (1000 * 1000 * 1000).ToString() };
 
-                    Assert.Empty(this.Session.Instantiate(doesntExistIds));
+                    Assert.Empty(this.Transaction.Instantiate(doesntExistIds));
 
                     // Preserve order
-                    var c1A = C1.Create(this.Session);
-                    var c1B = C1.Create(this.Session);
-                    var c1C = C1.Create(this.Session);
-                    var c1D = C1.Create(this.Session);
+                    var c1A = C1.Create(this.Transaction);
+                    var c1B = C1.Create(this.Transaction);
+                    var c1C = C1.Create(this.Transaction);
+                    var c1D = C1.Create(this.Transaction);
 
                     var objectIds = new[] { c1A.Id, c1B.Id, c1C.Id, c1D.Id };
 
-                    var instantiatedObjects = this.Session.Instantiate(objectIds);
+                    var instantiatedObjects = this.Transaction.Instantiate(objectIds);
 
                     Assert.Equal(4, instantiatedObjects.Length);
                     Assert.Equal(c1A, instantiatedObjects[0]);
@@ -3684,13 +3684,13 @@ namespace Allors.Database.Adapters
                     Assert.Equal(c1C, instantiatedObjects[2]);
                     Assert.Equal(c1D, instantiatedObjects[3]);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    using (var session2 = this.CreateSession())
+                    using (var transaction2 = this.CreateTransaction())
                     {
-                        c1C = (C1)session2.Instantiate(objectIds[2]);
+                        c1C = (C1)transaction2.Instantiate(objectIds[2]);
 
-                        instantiatedObjects = session2.Instantiate(objectIds);
+                        instantiatedObjects = transaction2.Instantiate(objectIds);
 
                         Assert.Equal(4, instantiatedObjects.Length);
                         Assert.Equal(c1A, instantiatedObjects[0]);
@@ -3708,112 +3708,112 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 //// Commit + Commit
 
-                var anObject = C1.Create(this.Session);
+                var anObject = C1.Create(this.Transaction);
                 Assert.False(anObject.Strategy.IsDeleted);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
                 Assert.False(anObject.Strategy.IsDeleted);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
                 Assert.False(anObject.Strategy.IsDeleted);
 
                 //// Commit + Rollback
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 Assert.False(anObject.Strategy.IsDeleted);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
                 Assert.False(anObject.Strategy.IsDeleted);
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
                 Assert.False(anObject.Strategy.IsDeleted);
 
                 //// Rollback + Commit
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 Assert.False(anObject.Strategy.IsDeleted);
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
                 Assert.True(anObject.Strategy.IsDeleted);
 
                 //// Rollback + Rollback
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 Assert.False(anObject.Strategy.IsDeleted);
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
                 Assert.True(anObject.Strategy.IsDeleted);
 
                 //// With Delete
 
                 //// Commit + Commit
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 Assert.False(anObject.Strategy.IsDeleted);
 
                 anObject.Strategy.Delete();
 
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
                 Assert.True(anObject.Strategy.IsDeleted);
 
                 //// Commit + Rollback
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 Assert.False(anObject.Strategy.IsDeleted);
 
                 anObject.Strategy.Delete();
 
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
                 Assert.True(anObject.Strategy.IsDeleted);
 
                 //// Rollback + Commit
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 Assert.False(anObject.Strategy.IsDeleted);
 
                 anObject.Strategy.Delete();
 
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
                 Assert.True(anObject.Strategy.IsDeleted);
 
                 //// Rollback + Rollback
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 Assert.False(anObject.Strategy.IsDeleted);
 
                 anObject.Strategy.Delete();
 
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
                 Assert.True(anObject.Strategy.IsDeleted);
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
                 Assert.True(anObject.Strategy.IsDeleted);
 
                 //// Proxy
@@ -3822,71 +3822,71 @@ namespace Allors.Database.Adapters
 
                 //// Commit + Commit
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 var id = anObject.Strategy.ObjectId;
-                var proxy = C1.Instantiate(this.Session, id);
+                var proxy = C1.Instantiate(this.Transaction, id);
                 Assert.False(proxy.Strategy.IsDeleted);
 
-                this.Session.Commit();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Commit();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.False(proxy.Strategy.IsDeleted);
 
-                this.Session.Commit();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Commit();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.False(proxy.Strategy.IsDeleted);
 
                 //// Commit + Rollback
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 id = anObject.Strategy.ObjectId;
-                proxy = C1.Instantiate(this.Session, id);
+                proxy = C1.Instantiate(this.Transaction, id);
                 Assert.False(proxy.Strategy.IsDeleted);
 
-                this.Session.Commit();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Commit();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.False(proxy.Strategy.IsDeleted);
 
-                this.Session.Rollback();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Rollback();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.False(proxy.Strategy.IsDeleted);
 
                 //// Rollback + Commit
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 id = anObject.Strategy.ObjectId;
-                proxy = C1.Instantiate(this.Session, id);
+                proxy = C1.Instantiate(this.Transaction, id);
                 Assert.False(proxy.Strategy.IsDeleted);
 
-                this.Session.Rollback();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Rollback();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.True(proxy.Strategy.IsDeleted);
 
-                this.Session.Commit();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Commit();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.True(proxy.Strategy.IsDeleted);
 
                 //// Rollback + Rollback
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 id = anObject.Strategy.ObjectId;
-                proxy = C1.Instantiate(this.Session, id);
+                proxy = C1.Instantiate(this.Transaction, id);
                 Assert.False(proxy.Strategy.IsDeleted);
 
-                this.Session.Rollback();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Rollback();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.True(proxy.Strategy.IsDeleted);
 
-                this.Session.Rollback();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Rollback();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.True(proxy.Strategy.IsDeleted);
 
                 //// With Delete
 
                 //// Commit + Commit
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 id = anObject.Strategy.ObjectId;
-                proxy = C1.Instantiate(this.Session, id);
+                proxy = C1.Instantiate(this.Transaction, id);
 
                 Assert.False(proxy.Strategy.IsDeleted);
 
@@ -3894,19 +3894,19 @@ namespace Allors.Database.Adapters
 
                 Assert.True(proxy.Strategy.IsDeleted);
 
-                this.Session.Commit();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Commit();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.True(proxy.Strategy.IsDeleted);
 
-                this.Session.Commit();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Commit();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.True(proxy.Strategy.IsDeleted);
 
                 //// Commit + Rollback
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 id = anObject.Strategy.ObjectId;
-                proxy = C1.Instantiate(this.Session, id);
+                proxy = C1.Instantiate(this.Transaction, id);
 
                 Assert.False(proxy.Strategy.IsDeleted);
 
@@ -3914,18 +3914,18 @@ namespace Allors.Database.Adapters
 
                 Assert.True(proxy.Strategy.IsDeleted);
 
-                this.Session.Commit();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Commit();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.True(proxy.Strategy.IsDeleted);
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
                 Assert.True(proxy.Strategy.IsDeleted);
 
                 //// Rollback + Commit
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 id = anObject.Strategy.ObjectId;
-                proxy = C1.Instantiate(this.Session, id);
+                proxy = C1.Instantiate(this.Transaction, id);
 
                 Assert.False(proxy.Strategy.IsDeleted);
 
@@ -3933,19 +3933,19 @@ namespace Allors.Database.Adapters
 
                 Assert.True(proxy.Strategy.IsDeleted);
 
-                this.Session.Rollback();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Rollback();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.True(proxy.Strategy.IsDeleted);
 
-                this.Session.Commit();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Commit();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.True(proxy.Strategy.IsDeleted);
 
                 //// Rollback + Rollback
 
-                anObject = C1.Create(this.Session);
+                anObject = C1.Create(this.Transaction);
                 id = anObject.Strategy.ObjectId;
-                proxy = C1.Instantiate(this.Session, id);
+                proxy = C1.Instantiate(this.Transaction, id);
 
                 Assert.False(proxy.Strategy.IsDeleted);
 
@@ -3953,12 +3953,12 @@ namespace Allors.Database.Adapters
 
                 Assert.True(proxy.Strategy.IsDeleted);
 
-                this.Session.Rollback();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Rollback();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.True(proxy.Strategy.IsDeleted);
 
-                this.Session.Rollback();
-                anObject = C1.Instantiate(this.Session, id);
+                this.Transaction.Rollback();
+                anObject = C1.Instantiate(this.Transaction, id);
                 Assert.True(proxy.Strategy.IsDeleted);
             }
         }
@@ -3975,10 +3975,10 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 const int ObjectCount = 10;
-                var allorsObjects = this.Session.Create(m.Company.ObjectType, ObjectCount);
+                var allorsObjects = this.Transaction.Create(m.Company.ObjectType, ObjectCount);
                 var ids = new string[ObjectCount];
                 for (var i = 0; i < ObjectCount; i++)
                 {
@@ -3988,9 +3988,9 @@ namespace Allors.Database.Adapters
 
                 Assert.Equal(ObjectCount, allorsObjects.Length);
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
-                allorsObjects = this.Session.Instantiate(ids);
+                allorsObjects = this.Transaction.Instantiate(ids);
 
                 Assert.Empty(allorsObjects);
             }
@@ -4002,17 +4002,17 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var obj = this.Session.Create<C1>();
+                var obj = this.Transaction.Create<C1>();
 
                 Assert.Equal(1, obj.Strategy.ObjectVersion);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                using (var session2 = this.CreateSession())
+                using (var transaction2 = this.CreateTransaction())
                 {
-                    Assert.Equal(1, session2.Instantiate(obj).Strategy.ObjectVersion);
+                    Assert.Equal(1, transaction2.Instantiate(obj).Strategy.ObjectVersion);
                 }
 
                 Assert.Equal(1, obj.Strategy.ObjectVersion);
@@ -4021,19 +4021,19 @@ namespace Allors.Database.Adapters
 
                 Assert.Equal(1, obj.Strategy.ObjectVersion);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                using (var session2 = this.CreateSession())
+                using (var transaction2 = this.CreateTransaction())
                 {
-                    var session2Object = (C1)session2.Instantiate(obj);
-                    Assert.Equal(2, session2Object.Strategy.ObjectVersion);
-                    session2Object.C1AllorsString = "Session 2 changed";
-                    session2.Commit();
+                    var transaction2Object = (C1)transaction2.Instantiate(obj);
+                    Assert.Equal(2, transaction2Object.Strategy.ObjectVersion);
+                    transaction2Object.C1AllorsString = "Transaction 2 changed";
+                    transaction2.Commit();
 
-                    Assert.Equal(3, session2Object.Strategy.ObjectVersion);
+                    Assert.Equal(3, transaction2Object.Strategy.ObjectVersion);
                 }
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 Assert.Equal(3, obj.Strategy.ObjectVersion);
 
@@ -4041,11 +4041,11 @@ namespace Allors.Database.Adapters
 
                 Assert.Equal(3, obj.Strategy.ObjectVersion);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                using (var session2 = this.CreateSession())
+                using (var transaction2 = this.CreateTransaction())
                 {
-                    Assert.Equal(4, session2.Instantiate(obj).Strategy.ObjectVersion);
+                    Assert.Equal(4, transaction2.Instantiate(obj).Strategy.ObjectVersion);
                 }
 
                 Assert.Equal(4, obj.Strategy.ObjectVersion);
@@ -4054,11 +4054,11 @@ namespace Allors.Database.Adapters
 
                 Assert.Equal(4, obj.Strategy.ObjectVersion);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                using (var session2 = this.CreateSession())
+                using (var transaction2 = this.CreateTransaction())
                 {
-                    Assert.Equal(5, session2.Instantiate(obj).Strategy.ObjectVersion);
+                    Assert.Equal(5, transaction2.Instantiate(obj).Strategy.ObjectVersion);
                 }
 
                 Assert.Equal(5, obj.Strategy.ObjectVersion);
@@ -4071,15 +4071,15 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // TODO: Move to other tests
-                var withoutValueRoles = ClassWithoutUnitRoles.Create(this.Session);
+                var withoutValueRoles = ClassWithoutUnitRoles.Create(this.Transaction);
                 var withoutValueRolesClone = (ClassWithoutUnitRoles)this.GetExtent(m.ClassWithoutUnitRoles.ObjectType)[0];
 
                 Assert.Equal(withoutValueRoles, withoutValueRolesClone);
 
-                var withoutRoles = ClassWithoutRoles.Create(this.Session);
+                var withoutRoles = ClassWithoutRoles.Create(this.Transaction);
                 var withoutRolesClone = (ClassWithoutRoles)this.GetExtent(m.ClassWithoutRoles.ObjectType)[0];
 
                 Assert.Equal(withoutRoles, withoutRolesClone);
@@ -4092,12 +4092,12 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var c1A = C1.Create(this.Session);
-                var c2A = C2.Create(this.Session);
-                var c2B = C2.Create(this.Session);
-                var c2C = C2.Create(this.Session);
+                var c1A = C1.Create(this.Transaction);
+                var c2A = C2.Create(this.Transaction);
+                var c2B = C2.Create(this.Transaction);
+                var c2C = C2.Create(this.Transaction);
 
                 var c1aId = c1A.Id.ToString();
 
@@ -4105,11 +4105,11 @@ namespace Allors.Database.Adapters
                 c1A.AddC1I12one2many(c2B);
                 c1A.AddC1I12one2many(c2C);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 this.SwitchDatabase();
 
-                var switchC1A = (C1)this.Session.Instantiate(c1A.Id.ToString());
+                var switchC1A = (C1)this.Transaction.Instantiate(c1A.Id.ToString());
 
                 Assert.Equal(m.C1.ObjectType, switchC1A.Strategy.Class);
 
@@ -4122,31 +4122,31 @@ namespace Allors.Database.Adapters
                 Assert.Equal(m.C2.ObjectType, switchC2BC[0].Strategy.Class);
                 Assert.Equal(m.C2.ObjectType, switchC2BC[1].Strategy.Class);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 this.SwitchDatabase();
 
                 long[] objectIds = { c1A.Id, c2A.Id };
-                var switchC1aC2a = this.Session.Instantiate(objectIds);
+                var switchC1aC2a = this.Transaction.Instantiate(objectIds);
 
                 Assert.Equal(2, switchC1aC2a.Length);
-                Assert.Contains(this.Session.Instantiate(c1A.Id), switchC1aC2a);
-                Assert.Contains(this.Session.Instantiate(c2A.Id), switchC1aC2a);
+                Assert.Contains(this.Transaction.Instantiate(c1A.Id), switchC1aC2a);
+                Assert.Contains(this.Transaction.Instantiate(c2A.Id), switchC1aC2a);
             }
         }
 
         [Fact]
-        public void SwitchSession()
+        public void SwitchTransaction()
         {
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                if (this.Session is ISession)
+                if (this.Transaction is ITransaction)
                 {
-                    var c1A = C1.Create(this.Session);
-                    var c2A = C2.Create(this.Session);
+                    var c1A = C1.Create(this.Transaction);
+                    var c2A = C2.Create(this.Transaction);
 
                     var c1AObjectId = c1A.Id;
                     var c2AObjectId = c2A.Id;
@@ -4156,60 +4156,60 @@ namespace Allors.Database.Adapters
                     c1A.AddC1C2one2many(c2A);
                     c1A.AddC1C2many2many(c2A);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    using (var session2 = this.CreateSession())
+                    using (var transaction2 = this.CreateTransaction())
                     {
-                        c2A = (C2)session2.Instantiate(c2AObjectId);
+                        c2A = (C2)transaction2.Instantiate(c2AObjectId);
 
                         Assert.True(c2A.ExistC1WhereC1C2one2one);
                     }
 
-                    using (var session2 = this.CreateSession())
+                    using (var transaction2 = this.CreateTransaction())
                     {
-                        c2A = (C2)session2.Instantiate(c2AObjectId);
+                        c2A = (C2)transaction2.Instantiate(c2AObjectId);
 
                         Assert.True(c2A.ExistC1sWhereC1C2many2one);
                     }
 
-                    using (var session2 = this.CreateSession())
+                    using (var transaction2 = this.CreateTransaction())
                     {
-                        c2A = (C2)session2.Instantiate(c2AObjectId);
+                        c2A = (C2)transaction2.Instantiate(c2AObjectId);
 
                         Assert.True(c2A.ExistC1WhereC1C2one2many);
                     }
 
-                    using (var session2 = this.CreateSession())
+                    using (var transaction2 = this.CreateTransaction())
                     {
-                        c2A = (C2)session2.Instantiate(c2AObjectId);
+                        c2A = (C2)transaction2.Instantiate(c2AObjectId);
 
                         Assert.True(c2A.ExistC1sWhereC1C2many2many);
                     }
 
-                    using (var session2 = this.CreateSession())
+                    using (var transaction2 = this.CreateTransaction())
                     {
-                        c1A = (C1)session2.Instantiate(c1AObjectId);
+                        c1A = (C1)transaction2.Instantiate(c1AObjectId);
 
                         Assert.True(c1A.ExistC1C2one2one);
                     }
 
-                    using (var session2 = this.CreateSession())
+                    using (var transaction2 = this.CreateTransaction())
                     {
-                        c1A = (C1)session2.Instantiate(c1AObjectId);
+                        c1A = (C1)transaction2.Instantiate(c1AObjectId);
 
                         Assert.True(c1A.ExistC1C2many2one);
                     }
 
-                    using (var session2 = this.CreateSession())
+                    using (var transaction2 = this.CreateTransaction())
                     {
-                        c1A = (C1)session2.Instantiate(c1AObjectId);
+                        c1A = (C1)transaction2.Instantiate(c1AObjectId);
 
                         Assert.True(c1A.ExistC1C2one2manies);
                     }
 
-                    using (var session2 = this.CreateSession())
+                    using (var transaction2 = this.CreateTransaction())
                     {
-                        c1A = (C1)session2.Instantiate(c1AObjectId);
+                        c1A = (C1)transaction2.Instantiate(c1AObjectId);
 
                         Assert.True(c1A.ExistC1C2many2manies);
                     }
@@ -4223,7 +4223,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // don't garbage collect populations
                 var populations = new List<IDatabase>();
@@ -4232,18 +4232,18 @@ namespace Allors.Database.Adapters
                 {
                     var population1 = this.CreatePopulation();
                     populations.Add(population1);
-                    var session1 = population1.CreateSession();
+                    var transaction1 = population1.CreateTransaction();
 
-                    var c1 = session1.Create<C1>();
+                    var c1 = transaction1.Create<C1>();
 
                     var population2 = this.CreatePopulation();
                     populations.Add(population2);
-                    var session2 = population2.CreateSession();
+                    var transaction2 = population2.CreateTransaction();
 
-                    var c2 = session2.Create<C2>();
+                    var c2 = transaction2.Create<C2>();
 
-                    session1.Commit();
-                    session2.Commit();
+                    transaction1.Commit();
+                    transaction2.Commit();
                 }
             }
         }
@@ -4254,18 +4254,18 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var c1a = this.Session.Create(m.C1.ObjectType);
+                var c1a = this.Transaction.Create(m.C1.ObjectType);
                 Assert.Equal(m.C1.ObjectType, c1a.Strategy.Class);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 Assert.Equal(m.C1.ObjectType, c1a.Strategy.Class);
 
-                var c1b = this.Session.Create(m.C1.ObjectType);
+                var c1b = this.Transaction.Create(m.C1.ObjectType);
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 var exceptionThrown = false;
 
@@ -4280,10 +4280,10 @@ namespace Allors.Database.Adapters
 
                 Assert.True(exceptionThrown);
 
-                var c2a = this.Session.Create(m.C2.ObjectType);
+                var c2a = this.Transaction.Create(m.C2.ObjectType);
                 Assert.Equal(m.C2.ObjectType, c2a.Strategy.Class);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 Assert.Equal(m.C2.ObjectType, c2a.Strategy.Class);
             }
@@ -4297,17 +4297,17 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Database.Context().M;
+                    var m = this.Transaction.Database.Context().M;
 
-                    var c1A = C1.Create(this.Session);
+                    var c1A = C1.Create(this.Transaction);
                     c1A.C1AllorsString = "1";
 
                     var prefetchPolicy = new PrefetchPolicyBuilder().Build();
 
-                    this.Session.Prefetch(prefetchPolicy, new[] { c1A.Strategy.ObjectId });
+                    this.Transaction.Prefetch(prefetchPolicy, new[] { c1A.Strategy.ObjectId });
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C1.C1AllorsString }, new[] { c1A.Strategy.ObjectId });
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1AllorsString }, new[] { c1A.Strategy.ObjectId });
                     }
                 }
             }
@@ -4321,56 +4321,56 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Database.Context().M;
+                    var m = this.Transaction.Database.Context().M;
 
-                    var c1A = C1.Create(this.Session);
+                    var c1A = C1.Create(this.Transaction);
                     c1A.C1AllorsString = "1";
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C1.C1AllorsString }, new[] { c1A.Strategy.ObjectId });
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1AllorsString }, new[] { c1A.Strategy.ObjectId });
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C1.C1AllorsString }, new[] { c1A.Strategy.ObjectId });
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1AllorsString }, new[] { c1A.Strategy.ObjectId });
                     }
 
                     Assert.Equal("1", c1A.C1AllorsString);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
                     Assert.Equal("1", c1A.C1AllorsString);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C1.C1AllorsString }, new[] { c1A.Strategy.ObjectId });
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1AllorsString }, new[] { c1A.Strategy.ObjectId });
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C1.C1AllorsString }, new[] { c1A.Strategy.ObjectId });
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1AllorsString }, new[] { c1A.Strategy.ObjectId });
                     }
 
                     Assert.Equal("1", c1A.C1AllorsString);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
                     c1A.C1AllorsString = "2";
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C1.C1AllorsString }, new[] { c1A.Strategy.ObjectId });
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1AllorsString }, new[] { c1A.Strategy.ObjectId });
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C1.C1AllorsString }, new[] { c1A.Strategy.ObjectId });
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1AllorsString }, new[] { c1A.Strategy.ObjectId });
                     }
 
                     Assert.Equal("2", c1A.C1AllorsString);
 
-                    this.Session.Rollback();
+                    this.Transaction.Rollback();
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C1.C1AllorsString }, new[] { c1A.Strategy.ObjectId });
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1AllorsString }, new[] { c1A.Strategy.ObjectId });
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C1.C1AllorsString }, new[] { c1A.Strategy.ObjectId });
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1AllorsString }, new[] { c1A.Strategy.ObjectId });
                     }
 
                     Assert.Equal("1", c1A.C1AllorsString);
 
-                    this.Session.Rollback();
+                    this.Transaction.Rollback();
 
                     Assert.Equal("1", c1A.C1AllorsString);
                 }
@@ -4385,59 +4385,59 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Database.Context().M;
+                    var m = this.Transaction.Database.Context().M;
 
-                    var c1A = C1.Create(this.Session);
-                    var c2A = C2.Create(this.Session);
-                    var c2b = C2.Create(this.Session);
+                    var c1A = C1.Create(this.Transaction);
+                    var c2A = C2.Create(this.Transaction);
+                    var c2b = C2.Create(this.Transaction);
 
                     c1A.C1C2one2one = c2A;
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2one2one }, new[] { c1A.Strategy.ObjectId });
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2one2one }, new[] { c1A.Strategy.ObjectId });
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2one2one }, new[] { c1A.Strategy.ObjectId });
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2one2one }, new[] { c1A.Strategy.ObjectId });
                     }
 
                     Assert.Equal(c2A, c1A.C1C2one2one);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
                     Assert.Equal(c2A, c1A.C1C2one2one);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2one2one }, new[] { c1A.Strategy.ObjectId });
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2one2one }, new[] { c1A.Strategy.ObjectId });
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2one2one }, new[] { c1A.Strategy.ObjectId });
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2one2one }, new[] { c1A.Strategy.ObjectId });
                     }
 
                     Assert.Equal(c2A, c1A.C1C2one2one);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
                     c1A.C1C2one2one = c2b;
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2one2one }, new[] { c1A.Strategy.ObjectId });
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2one2one }, new[] { c1A.Strategy.ObjectId });
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2one2one }, new[] { c1A.Strategy.ObjectId });
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2one2one }, new[] { c1A.Strategy.ObjectId });
                     }
 
                     Assert.Equal(c2b, c1A.C1C2one2one);
 
-                    this.Session.Rollback();
+                    this.Transaction.Rollback();
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2one2one }, new[] { c1A.Strategy.ObjectId });
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2one2one }, new[] { c1A.Strategy.ObjectId });
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2one2one }, new[] { c1A.Strategy.ObjectId });
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2one2one }, new[] { c1A.Strategy.ObjectId });
                     }
 
                     Assert.Equal(c2A, c1A.C1C2one2one);
 
-                    this.Session.Rollback();
+                    this.Transaction.Rollback();
 
                     Assert.Equal(c2A, c1A.C1C2one2one);
                 }
@@ -4452,62 +4452,62 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Database.Context().M;
+                    var m = this.Transaction.Database.Context().M;
 
                     var prefetchPolicy = new PrefetchPolicyBuilder()
                         .WithRule(m.C1.C1C2one2one, new IPropertyType[] { m.C2.C2AllorsString })
                         .Build();
 
-                    var c1a = C1.Create(this.Session);
-                    var c2a = C2.Create(this.Session);
-                    var c2b = C2.Create(this.Session);
+                    var c1a = C1.Create(this.Transaction);
+                    var c2a = C2.Create(this.Transaction);
+                    var c2b = C2.Create(this.Transaction);
 
                     c2a.C2AllorsString = "c2a";
                     c2b.C2AllorsString = "c2b";
 
                     c1a.C1C2one2one = c2a;
 
-                    this.Session.Prefetch(prefetchPolicy, c1a);
+                    this.Transaction.Prefetch(prefetchPolicy, c1a);
                     if (twice)
                     {
-                        this.Session.Prefetch(prefetchPolicy, c1a);
+                        this.Transaction.Prefetch(prefetchPolicy, c1a);
                     }
 
                     Assert.Equal(c2a, c1a.C1C2one2one);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
                     Assert.Equal(c2a, c1a.C1C2one2one);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    this.Session.Prefetch(prefetchPolicy, c1a);
+                    this.Transaction.Prefetch(prefetchPolicy, c1a);
                     if (twice)
                     {
-                        this.Session.Prefetch(prefetchPolicy, c1a);
+                        this.Transaction.Prefetch(prefetchPolicy, c1a);
                     }
 
                     Assert.Equal(c2a, c1a.C1C2one2one);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
                     c1a.C1C2one2one = c2b;
 
-                    this.Session.Prefetch(prefetchPolicy, c1a);
+                    this.Transaction.Prefetch(prefetchPolicy, c1a);
 
                     Assert.Equal(c2b, c1a.C1C2one2one);
 
-                    this.Session.Rollback();
+                    this.Transaction.Rollback();
 
-                    this.Session.Prefetch(prefetchPolicy, c1a);
+                    this.Transaction.Prefetch(prefetchPolicy, c1a);
                     if (twice)
                     {
-                        this.Session.Prefetch(prefetchPolicy, c1a);
+                        this.Transaction.Prefetch(prefetchPolicy, c1a);
                     }
 
                     Assert.Equal(c2a, c1a.C1C2one2one);
 
-                    this.Session.Rollback();
+                    this.Transaction.Rollback();
 
                     Assert.Equal(c2a, c1a.C1C2one2one);
                 }
@@ -4522,30 +4522,30 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Database.Context().M;
+                    var m = this.Transaction.Database.Context().M;
 
                     var prefetchPolicy = new PrefetchPolicyBuilder()
                         .WithRule(m.C1.C1C2one2one, new IPropertyType[] { m.C2.C2AllorsString })
                         .Build();
 
-                    var c1A = C1.Create(this.Session);
+                    var c1A = C1.Create(this.Transaction);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    this.Session.Prefetch(prefetchPolicy, c1A);
+                    this.Transaction.Prefetch(prefetchPolicy, c1A);
                     if (twice)
                     {
-                        this.Session.Prefetch(prefetchPolicy, c1A);
+                        this.Transaction.Prefetch(prefetchPolicy, c1A);
                     }
 
                     Assert.Empty(c1A.C1C2one2manies);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    this.Session.Prefetch(prefetchPolicy, c1A);
+                    this.Transaction.Prefetch(prefetchPolicy, c1A);
                     if (twice)
                     {
-                        this.Session.Prefetch(prefetchPolicy, c1A);
+                        this.Transaction.Prefetch(prefetchPolicy, c1A);
                     }
 
                     Assert.Empty(c1A.C1C2one2manies);
@@ -4561,55 +4561,55 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Database.Context().M;
+                    var m = this.Transaction.Database.Context().M;
 
-                    var c1A = C1.Create(this.Session);
-                    var c2A = C2.Create(this.Session);
-                    var c2b = C2.Create(this.Session);
+                    var c1A = C1.Create(this.Transaction);
+                    var c2A = C2.Create(this.Transaction);
+                    var c2b = C2.Create(this.Transaction);
                     c1A.AddC1C2one2many(c2A);
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2one2manies }, new[] { c1A.Strategy.ObjectId });
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2one2manies }, new[] { c1A.Strategy.ObjectId });
 
                     Assert.Contains(c2A, c1A.C1C2one2manies);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
                     Assert.Contains(c2A, c1A.C1C2one2manies);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2one2manies }, new[] { c1A.Strategy.ObjectId });
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2one2manies }, new[] { c1A.Strategy.ObjectId });
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2one2manies }, new[] { c1A.Strategy.ObjectId });
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2one2manies }, new[] { c1A.Strategy.ObjectId });
                     }
 
                     Assert.Contains(c2A, c1A.C1C2one2manies);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
                     c1A.RemoveC1C2one2many(c2A);
                     c1A.AddC1C2one2many(c2b);
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2one2manies }, new[] { c1A.Strategy.ObjectId });
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2one2manies }, new[] { c1A.Strategy.ObjectId });
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2one2manies }, new[] { c1A.Strategy.ObjectId });
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2one2manies }, new[] { c1A.Strategy.ObjectId });
                     }
 
                     Assert.Contains(c2b, c1A.C1C2one2manies);
 
-                    this.Session.Rollback();
+                    this.Transaction.Rollback();
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2one2manies }, new[] { c1A.Strategy.ObjectId });
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2one2manies }, new[] { c1A.Strategy.ObjectId });
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2one2manies }, new[] { c1A.Strategy.ObjectId });
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2one2manies }, new[] { c1A.Strategy.ObjectId });
                     }
 
                     Assert.Contains(c2A, c1A.C1C2one2manies);
 
-                    this.Session.Rollback();
+                    this.Transaction.Rollback();
 
                     Assert.Contains(c2A, c1A.C1C2one2manies);
                 }
@@ -4624,26 +4624,26 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Database.Context().M;
+                    var m = this.Transaction.Database.Context().M;
 
-                    var c1A = C1.Create(this.Session);
+                    var c1A = C1.Create(this.Transaction);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2one2manies }, c1A);
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2one2manies }, c1A);
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2one2manies }, c1A);
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2one2manies }, c1A);
                     }
 
                     Assert.Empty(c1A.C1C2one2manies);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2one2manies }, c1A);
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2one2manies }, c1A);
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2one2manies }, c1A);
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2one2manies }, c1A);
                     }
 
                     Assert.Empty(c1A.C1C2one2manies);
@@ -4660,28 +4660,28 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Database.Context().M;
+                    var m = this.Transaction.Database.Context().M;
 
                     var prefetchPolicy = new PrefetchPolicyBuilder()
                         .WithRule(m.C1.C1C2one2manies, new IPropertyType[] { m.C2.C2AllorsString })
                         .Build();
 
-                    var c1A = C1.Create(this.Session);
+                    var c1A = C1.Create(this.Transaction);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    this.Session.Prefetch(prefetchPolicy, c1A);
+                    this.Transaction.Prefetch(prefetchPolicy, c1A);
                     if (twice)
                     {
-                        this.Session.Prefetch(prefetchPolicy, c1A);
+                        this.Transaction.Prefetch(prefetchPolicy, c1A);
                     }
 
                     Assert.Empty(c1A.C1C2one2manies);
 
-                    this.Session.Prefetch(prefetchPolicy, c1A);
+                    this.Transaction.Prefetch(prefetchPolicy, c1A);
                     if (twice)
                     {
-                        this.Session.Prefetch(prefetchPolicy, c1A);
+                        this.Transaction.Prefetch(prefetchPolicy, c1A);
                     }
 
                     Assert.Empty(c1A.C1C2one2manies);
@@ -4697,59 +4697,59 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Database.Context().M;
+                    var m = this.Transaction.Database.Context().M;
 
-                    var c1A = C1.Create(this.Session);
-                    var c2A = C2.Create(this.Session);
-                    var c2b = C2.Create(this.Session);
+                    var c1A = C1.Create(this.Transaction);
+                    var c2A = C2.Create(this.Transaction);
+                    var c2b = C2.Create(this.Transaction);
                     c1A.AddC1C2many2many(c2A);
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2many2manies }, new[] { c1A.Strategy.ObjectId });
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2many2manies }, new[] { c1A.Strategy.ObjectId });
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2many2manies }, new[] { c1A.Strategy.ObjectId });
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2many2manies }, new[] { c1A.Strategy.ObjectId });
                     }
 
                     Assert.Contains(c2A, c1A.C1C2many2manies);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
                     Assert.Contains(c2A, c1A.C1C2many2manies);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2many2manies }, new[] { c1A.Strategy.ObjectId });
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2many2manies }, new[] { c1A.Strategy.ObjectId });
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2many2manies }, new[] { c1A.Strategy.ObjectId });
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2many2manies }, new[] { c1A.Strategy.ObjectId });
                     }
 
                     Assert.Contains(c2A, c1A.C1C2many2manies);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
                     c1A.RemoveC1C2many2many(c2A);
                     c1A.AddC1C2many2many(c2b);
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2many2manies }, new[] { c1A.Strategy.ObjectId });
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2many2manies }, new[] { c1A.Strategy.ObjectId });
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2many2manies }, new[] { c1A.Strategy.ObjectId });
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2many2manies }, new[] { c1A.Strategy.ObjectId });
                     }
 
                     Assert.Contains(c2b, c1A.C1C2many2manies);
 
-                    this.Session.Rollback();
+                    this.Transaction.Rollback();
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2many2manies }, new[] { c1A.Strategy.ObjectId });
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2many2manies }, new[] { c1A.Strategy.ObjectId });
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2many2manies }, new[] { c1A.Strategy.ObjectId });
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2many2manies }, new[] { c1A.Strategy.ObjectId });
                     }
 
                     Assert.Contains(c2A, c1A.C1C2many2manies);
 
-                    this.Session.Rollback();
+                    this.Transaction.Rollback();
 
                     Assert.Contains(c2A, c1A.C1C2many2manies);
                 }
@@ -4764,26 +4764,26 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Database.Context().M;
+                    var m = this.Transaction.Database.Context().M;
 
-                    var c1A = C1.Create(this.Session);
+                    var c1A = C1.Create(this.Transaction);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2many2manies }, c1A);
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2many2manies }, c1A);
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2many2manies }, c1A);
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2many2manies }, c1A);
                     }
 
                     Assert.Empty(c1A.C1C2many2manies);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2many2manies }, c1A);
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2many2manies }, c1A);
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C1.C1C2many2manies }, c1A);
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C1.C1C2many2manies }, c1A);
                     }
 
                     Assert.Empty(c1A.C1C2many2manies);
@@ -4799,30 +4799,30 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Database.Context().M;
+                    var m = this.Transaction.Database.Context().M;
 
                     var prefetchPolicy = new PrefetchPolicyBuilder()
                         .WithRule(m.C1.C1C2many2manies, new IPropertyType[] { m.C2.C2AllorsString })
                         .Build();
 
-                    var c1A = C1.Create(this.Session);
+                    var c1A = C1.Create(this.Transaction);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    this.Session.Prefetch(prefetchPolicy, c1A);
+                    this.Transaction.Prefetch(prefetchPolicy, c1A);
                     if (twice)
                     {
-                        this.Session.Prefetch(prefetchPolicy, c1A);
+                        this.Transaction.Prefetch(prefetchPolicy, c1A);
                     }
 
                     Assert.Empty(c1A.C1C2many2manies);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    this.Session.Prefetch(prefetchPolicy, c1A);
+                    this.Transaction.Prefetch(prefetchPolicy, c1A);
                     if (twice)
                     {
-                        this.Session.Prefetch(prefetchPolicy, c1A);
+                        this.Transaction.Prefetch(prefetchPolicy, c1A);
                     }
 
                     Assert.Empty(c1A.C1C2many2manies);
@@ -4838,54 +4838,54 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Database.Context().M;
+                    var m = this.Transaction.Database.Context().M;
 
-                    var c1a = C1.Create(this.Session);
-                    var c1b = C1.Create(this.Session);
-                    var c2a = C2.Create(this.Session);
+                    var c1a = C1.Create(this.Transaction);
+                    var c1b = C1.Create(this.Transaction);
+                    var c2a = C2.Create(this.Transaction);
                     c1a.C1C2one2one = c2a;
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C2.C1WhereC1C2one2one }, new[] { c2a.Strategy.ObjectId });
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C2.C1WhereC1C2one2one }, new[] { c2a.Strategy.ObjectId });
 
                     Assert.Equal(c1a, c2a.C1WhereC1C2one2one);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
                     Assert.Equal(c1a, c2a.C1WhereC1C2one2one);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C2.C1WhereC1C2one2one }, new[] { c2a.Strategy.ObjectId });
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C2.C1WhereC1C2one2one }, new[] { c2a.Strategy.ObjectId });
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C2.C1WhereC1C2one2one }, new[] { c2a.Strategy.ObjectId });
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C2.C1WhereC1C2one2one }, new[] { c2a.Strategy.ObjectId });
                     }
 
                     Assert.Equal(c1a, c2a.C1WhereC1C2one2one);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
                     c1b.C1C2one2one = c2a;
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C2.C1WhereC1C2one2one }, new[] { c2a.Strategy.ObjectId });
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C2.C1WhereC1C2one2one }, new[] { c2a.Strategy.ObjectId });
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C2.C1WhereC1C2one2one }, new[] { c2a.Strategy.ObjectId });
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C2.C1WhereC1C2one2one }, new[] { c2a.Strategy.ObjectId });
                     }
 
                     Assert.Equal(c1b, c2a.C1WhereC1C2one2one);
 
-                    this.Session.Rollback();
+                    this.Transaction.Rollback();
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C2.C1WhereC1C2one2one }, new[] { c2a.Strategy.ObjectId });
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C2.C1WhereC1C2one2one }, new[] { c2a.Strategy.ObjectId });
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C2.C1WhereC1C2one2one }, new[] { c2a.Strategy.ObjectId });
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C2.C1WhereC1C2one2one }, new[] { c2a.Strategy.ObjectId });
                     }
 
                     Assert.Equal(c1a, c2a.C1WhereC1C2one2one);
 
-                    this.Session.Rollback();
+                    this.Transaction.Rollback();
 
                     Assert.Equal(c1a, c2a.C1WhereC1C2one2one);
                 }
@@ -4900,26 +4900,26 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Database.Context().M;
+                    var m = this.Transaction.Database.Context().M;
 
-                    var c2A = C2.Create(this.Session);
+                    var c2A = C2.Create(this.Transaction);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C2.C1WhereC1C2one2one }, c2A);
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C2.C1WhereC1C2one2one }, c2A);
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C2.C1WhereC1C2one2one }, c2A);
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C2.C1WhereC1C2one2one }, c2A);
                     }
 
                     Assert.Empty(c2A.C1sWhereC1C2many2many);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C2.C1WhereC1C2one2one }, c2A);
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C2.C1WhereC1C2one2one }, c2A);
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C2.C1WhereC1C2one2one }, c2A);
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C2.C1WhereC1C2one2one }, c2A);
                     }
 
                     Assert.Empty(c2A.C1sWhereC1C2many2many);
@@ -4935,28 +4935,28 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Database.Context().M;
+                    var m = this.Transaction.Database.Context().M;
 
                     var prefetchPolicy = new PrefetchPolicyBuilder().WithRule(m.C2.C1WhereC1C2one2one.RoleType, new IPropertyType[] { m.C1.C1AllorsString }).Build();
 
-                    var c2A = C2.Create(this.Session);
+                    var c2A = C2.Create(this.Transaction);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    this.Session.Prefetch(prefetchPolicy, c2A);
+                    this.Transaction.Prefetch(prefetchPolicy, c2A);
                     if (twice)
                     {
-                        this.Session.Prefetch(prefetchPolicy, c2A);
+                        this.Transaction.Prefetch(prefetchPolicy, c2A);
                     }
 
                     Assert.Empty(c2A.C1sWhereC1C2many2many);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    this.Session.Prefetch(prefetchPolicy, c2A);
+                    this.Transaction.Prefetch(prefetchPolicy, c2A);
                     if (twice)
                     {
-                        this.Session.Prefetch(prefetchPolicy, c2A);
+                        this.Transaction.Prefetch(prefetchPolicy, c2A);
                     }
 
                     Assert.Empty(c2A.C1sWhereC1C2many2many);
@@ -4972,44 +4972,44 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Database.Context().M;
+                    var m = this.Transaction.Database.Context().M;
 
-                    var c1a = C1.Create(this.Session);
-                    var c1b = C1.Create(this.Session);
-                    var c2a = C2.Create(this.Session);
+                    var c1a = C1.Create(this.Transaction);
+                    var c1b = C1.Create(this.Transaction);
+                    var c2a = C2.Create(this.Transaction);
                     c1a.AddC1C2many2many(c2a);
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2many }, new[] { c2a.Strategy.ObjectId });
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2many }, new[] { c2a.Strategy.ObjectId });
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2many }, new[] { c2a.Strategy.ObjectId });
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2many }, new[] { c2a.Strategy.ObjectId });
                     }
 
                     Assert.Contains(c1a, c2a.C1sWhereC1C2many2many);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
                     Assert.Contains(c1a, c2a.C1sWhereC1C2many2many);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2many }, new[] { c2a.Strategy.ObjectId });
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2many }, new[] { c2a.Strategy.ObjectId });
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2many }, new[] { c2a.Strategy.ObjectId });
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2many }, new[] { c2a.Strategy.ObjectId });
                     }
 
                     Assert.Contains(c1a, c2a.C1sWhereC1C2many2many);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
                     c1a.RemoveC1C2many2many(c2a);
                     c1b.AddC1C2many2many(c2a);
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2many }, new[] { c2a.Strategy.ObjectId });
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2many }, new[] { c2a.Strategy.ObjectId });
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2many }, new[] { c2a.Strategy.ObjectId });
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2many }, new[] { c2a.Strategy.ObjectId });
                     }
 
                     var b = c1b.Strategy.ObjectId;
@@ -5017,17 +5017,17 @@ namespace Allors.Database.Adapters
 
                     Assert.Contains(c1b, c2a.C1sWhereC1C2many2many);
 
-                    this.Session.Rollback();
+                    this.Transaction.Rollback();
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2many }, new[] { c2a.Strategy.ObjectId });
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2many }, new[] { c2a.Strategy.ObjectId });
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2many }, new[] { c2a.Strategy.ObjectId });
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2many }, new[] { c2a.Strategy.ObjectId });
                     }
 
                     Assert.Contains(c1a, c2a.C1sWhereC1C2many2many);
 
-                    this.Session.Rollback();
+                    this.Transaction.Rollback();
 
                     Assert.Contains(c1a, c2a.C1sWhereC1C2many2many);
                 }
@@ -5042,26 +5042,26 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Database.Context().M;
+                    var m = this.Transaction.Database.Context().M;
 
-                    var c2A = C2.Create(this.Session);
+                    var c2A = C2.Create(this.Transaction);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2many }, c2A);
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2many }, c2A);
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2many }, c2A);
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2many }, c2A);
                     }
 
                     Assert.Empty(c2A.C1sWhereC1C2many2many);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2many }, c2A);
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2many }, c2A);
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2many }, c2A);
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2many }, c2A);
                     }
 
                     Assert.Empty(c2A.C1sWhereC1C2many2many);
@@ -5077,28 +5077,28 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Database.Context().M;
+                    var m = this.Transaction.Database.Context().M;
 
                     var prefetchPolicy = new PrefetchPolicyBuilder().WithRule(m.C2.C1sWhereC1C2many2many, new IPropertyType[] { m.C1.C1AllorsString }).Build();
 
-                    var c2A = C2.Create(this.Session);
+                    var c2A = C2.Create(this.Transaction);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    this.Session.Prefetch(prefetchPolicy, c2A);
+                    this.Transaction.Prefetch(prefetchPolicy, c2A);
                     if (twice)
                     {
-                        this.Session.Prefetch(prefetchPolicy, c2A);
+                        this.Transaction.Prefetch(prefetchPolicy, c2A);
                     }
 
                     Assert.Empty(c2A.C1sWhereC1C2many2many);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    this.Session.Prefetch(prefetchPolicy, c2A);
+                    this.Transaction.Prefetch(prefetchPolicy, c2A);
                     if (twice)
                     {
-                        this.Session.Prefetch(prefetchPolicy, c2A);
+                        this.Transaction.Prefetch(prefetchPolicy, c2A);
                     }
 
                     Assert.Empty(c2A.C1sWhereC1C2many2many);
@@ -5114,26 +5114,26 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Database.Context().M;
+                    var m = this.Transaction.Database.Context().M;
 
-                    var c2A = C2.Create(this.Session);
+                    var c2A = C2.Create(this.Transaction);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2one }, c2A);
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2one }, c2A);
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2one }, c2A);
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2one }, c2A);
                     }
 
                     Assert.Empty(c2A.C1sWhereC1C2many2one);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    this.Session.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2one }, c2A);
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2one }, c2A);
                     if (twice)
                     {
-                        this.Session.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2one }, c2A);
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C2.C1sWhereC1C2many2one }, c2A);
                     }
 
                     Assert.Empty(c2A.C1sWhereC1C2many2one);
@@ -5150,30 +5150,30 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Database.Context().M;
+                    var m = this.Transaction.Database.Context().M;
 
                     var prefetchPolicy = new PrefetchPolicyBuilder()
                         .WithRule(m.C2.C1sWhereC1C2many2one, new IPropertyType[] { m.C1.C1AllorsString })
                         .Build();
 
-                    var c2A = C2.Create(this.Session);
+                    var c2A = C2.Create(this.Transaction);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    this.Session.Prefetch(prefetchPolicy, c2A);
+                    this.Transaction.Prefetch(prefetchPolicy, c2A);
                     if (twice)
                     {
-                        this.Session.Prefetch(prefetchPolicy, c2A);
+                        this.Transaction.Prefetch(prefetchPolicy, c2A);
                     }
 
                     Assert.Empty(c2A.C1sWhereC1C2many2one);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
-                    this.Session.Prefetch(prefetchPolicy, c2A);
+                    this.Transaction.Prefetch(prefetchPolicy, c2A);
                     if (twice)
                     {
-                        this.Session.Prefetch(prefetchPolicy, c2A);
+                        this.Transaction.Prefetch(prefetchPolicy, c2A);
                     }
 
                     Assert.Empty(c2A.C1sWhereC1C2many2one);
@@ -5185,8 +5185,8 @@ namespace Allors.Database.Adapters
 
         protected abstract IDatabase CreatePopulation();
 
-        protected abstract ISession CreateSession();
+        protected abstract ITransaction CreateTransaction();
 
-        private IObject[] GetExtent(IComposite objectType) => this.Session.Extent(objectType);
+        private IObject[] GetExtent(IComposite objectType) => this.Transaction.Extent(objectType);
     }
 }

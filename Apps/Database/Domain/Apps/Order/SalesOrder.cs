@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
                 {
                     foreach (AgreementTerm term in this.SalesTerms)
                     {
-                        if (term.TermType.Equals(new InvoiceTermTypes(this.Strategy.Session).PaymentNetDays))
+                        if (term.TermType.Equals(new InvoiceTermTypes(this.Strategy.Transaction).PaymentNetDays))
                         {
                             if (int.TryParse(term.TermValue, out var netDays))
                             {
@@ -37,7 +37,7 @@ namespace Allors.Database.Domain
                     }
                 }
 
-                var now = this.Session().Now();
+                var now = this.Transaction().Now();
                 var customerRelationship = this.BillToCustomer.CustomerRelationshipsWhereCustomer
                     .FirstOrDefault(v => Equals(v.InternalOrganisation, this.TakenBy)
                       && v.FromDate <= now
@@ -58,10 +58,10 @@ namespace Allors.Database.Domain
         }
 
         public bool IsDeletable =>
-            (this.SalesOrderState.Equals(new SalesOrderStates(this.Strategy.Session).Provisional)
-                || this.SalesOrderState.Equals(new SalesOrderStates(this.Strategy.Session).ReadyForPosting)
-                || this.SalesOrderState.Equals(new SalesOrderStates(this.Strategy.Session).Cancelled)
-                || this.SalesOrderState.Equals(new SalesOrderStates(this.Strategy.Session).Rejected))
+            (this.SalesOrderState.Equals(new SalesOrderStates(this.Strategy.Transaction).Provisional)
+                || this.SalesOrderState.Equals(new SalesOrderStates(this.Strategy.Transaction).ReadyForPosting)
+                || this.SalesOrderState.Equals(new SalesOrderStates(this.Strategy.Transaction).Cancelled)
+                || this.SalesOrderState.Equals(new SalesOrderStates(this.Strategy.Transaction).Rejected))
             && !this.ExistQuote
             && this.SalesOrderItems.All(v => v.IsDeletable);
 
@@ -69,32 +69,32 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistSalesOrderState)
             {
-                this.SalesOrderState = new SalesOrderStates(this.Strategy.Session).Provisional;
+                this.SalesOrderState = new SalesOrderStates(this.Strategy.Transaction).Provisional;
             }
 
             if (!this.ExistSalesOrderShipmentState)
             {
-                this.SalesOrderShipmentState = new SalesOrderShipmentStates(this.Strategy.Session).NotShipped;
+                this.SalesOrderShipmentState = new SalesOrderShipmentStates(this.Strategy.Transaction).NotShipped;
             }
 
             if (!this.ExistSalesOrderInvoiceState)
             {
-                this.SalesOrderInvoiceState = new SalesOrderInvoiceStates(this.Strategy.Session).NotInvoiced;
+                this.SalesOrderInvoiceState = new SalesOrderInvoiceStates(this.Strategy.Transaction).NotInvoiced;
             }
 
             if (!this.ExistSalesOrderPaymentState)
             {
-                this.SalesOrderPaymentState = new SalesOrderPaymentStates(this.Strategy.Session).NotPaid;
+                this.SalesOrderPaymentState = new SalesOrderPaymentStates(this.Strategy.Transaction).NotPaid;
             }
 
             if (!this.ExistOrderDate)
             {
-                this.OrderDate = this.Session().Now();
+                this.OrderDate = this.Transaction().Now();
             }
 
             if (!this.ExistEntryDate)
             {
-                this.EntryDate = this.Session().Now();
+                this.EntryDate = this.Transaction().Now();
             }
 
             if (!this.ExistPartiallyShip)
@@ -104,7 +104,7 @@ namespace Allors.Database.Domain
 
             if (!this.ExistTakenBy)
             {
-                var internalOrganisations = new Organisations(this.Strategy.Session).InternalOrganisations();
+                var internalOrganisations = new Organisations(this.Strategy.Transaction).InternalOrganisations();
                 if (internalOrganisations.Count() == 1)
                 {
                     this.TakenBy = internalOrganisations.First();
@@ -113,7 +113,7 @@ namespace Allors.Database.Domain
 
             if (!this.ExistStore && this.ExistTakenBy)
             {
-                var stores = new Stores(this.Strategy.Session).Extent();
+                var stores = new Stores(this.Strategy.Transaction).Extent();
                 stores.Filter.AddEquals(this.M.Store.InternalOrganisation, this.TakenBy);
 
                 if (stores.Any())
@@ -124,7 +124,7 @@ namespace Allors.Database.Domain
 
             if (!this.ExistOriginFacility)
             {
-                this.OriginFacility = this.ExistStore ? this.Store.DefaultFacility : this.Strategy.Session.GetSingleton().Settings.DefaultFacility;
+                this.OriginFacility = this.ExistStore ? this.Store.DefaultFacility : this.Strategy.Transaction.GetSingleton().Settings.DefaultFacility;
             }
         }
 
@@ -149,7 +149,7 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void AppsCancel(OrderCancel method) => this.SalesOrderState = new SalesOrderStates(this.Strategy.Session).Cancelled;
+        public void AppsCancel(OrderCancel method) => this.SalesOrderState = new SalesOrderStates(this.Strategy.Transaction).Cancelled;
 
         public void AppsSetReadyForPosting(SalesOrderSetReadyForPosting method)
         {
@@ -161,31 +161,31 @@ namespace Allors.Database.Domain
 
             if (amountOverDue > creditLimit || this.TotalExVat < orderThreshold) // Theshold is minimum order amount required.
             {
-                this.SalesOrderState = new SalesOrderStates(this.Strategy.Session).RequestsApproval;
+                this.SalesOrderState = new SalesOrderStates(this.Strategy.Transaction).RequestsApproval;
             }
             else
             {
-                this.SalesOrderState = new SalesOrderStates(this.Strategy.Session).ReadyForPosting;
+                this.SalesOrderState = new SalesOrderStates(this.Strategy.Transaction).ReadyForPosting;
             }
         }
 
-        public void AppsPost(SalesOrderPost method) => this.SalesOrderState = new SalesOrderStates(this.Strategy.Session).AwaitingAcceptance;
+        public void AppsPost(SalesOrderPost method) => this.SalesOrderState = new SalesOrderStates(this.Strategy.Transaction).AwaitingAcceptance;
 
-        public void AppsReject(OrderReject method) => this.SalesOrderState = new SalesOrderStates(this.Strategy.Session).Rejected;
+        public void AppsReject(OrderReject method) => this.SalesOrderState = new SalesOrderStates(this.Strategy.Transaction).Rejected;
 
         public void AppsReopen(OrderReopen method) => this.SalesOrderState = this.PreviousSalesOrderState;
 
-        public void AppsHold(OrderHold method) => this.SalesOrderState = new SalesOrderStates(this.Strategy.Session).OnHold;
+        public void AppsHold(OrderHold method) => this.SalesOrderState = new SalesOrderStates(this.Strategy.Transaction).OnHold;
 
-        public void AppsApprove(OrderApprove method) => this.SalesOrderState = new SalesOrderStates(this.Strategy.Session).ReadyForPosting;
+        public void AppsApprove(OrderApprove method) => this.SalesOrderState = new SalesOrderStates(this.Strategy.Transaction).ReadyForPosting;
 
-        public void AppsAccept(SalesOrderAccept method) => this.SalesOrderState = new SalesOrderStates(this.Strategy.Session).InProcess;
+        public void AppsAccept(SalesOrderAccept method) => this.SalesOrderState = new SalesOrderStates(this.Strategy.Transaction).InProcess;
 
-        public void AppsRevise(OrderRevise method) => this.SalesOrderState = new SalesOrderStates(this.Strategy.Session).Provisional;
+        public void AppsRevise(OrderRevise method) => this.SalesOrderState = new SalesOrderStates(this.Strategy.Transaction).Provisional;
 
         public void AppsContinue(OrderContinue method) => this.SalesOrderState = this.PreviousSalesOrderState;
 
-        public void AppsComplete(OrderComplete method) => this.SalesOrderState = new SalesOrderStates(this.Strategy.Session).Completed;
+        public void AppsComplete(OrderComplete method) => this.SalesOrderState = new SalesOrderStates(this.Strategy.Transaction).Completed;
 
         public void AppsShip(SalesOrderShip method)
         {
@@ -201,7 +201,7 @@ namespace Allors.Database.Domain
 
                         if (pendingShipment == null)
                         {
-                            pendingShipment = new CustomerShipmentBuilder(this.Strategy.Session)
+                            pendingShipment = new CustomerShipmentBuilder(this.Strategy.Transaction)
                                 .WithShipFromParty(this.TakenBy)
                                 .WithShipFromAddress(this.DerivedShipFromAddress)
                                 .WithShipToAddress(address.Key)
@@ -213,7 +213,7 @@ namespace Allors.Database.Domain
 
                             if (this.Store.AutoGenerateShipmentPackage)
                             {
-                                pendingShipment.AddShipmentPackage(new ShipmentPackageBuilder(this.Strategy.Session).Build());
+                                pendingShipment.AddShipmentPackage(new ShipmentPackageBuilder(this.Strategy.Transaction).Build());
                             }
                         }
 
@@ -233,9 +233,9 @@ namespace Allors.Database.Domain
                                 foreach (ShipmentItem item in pendingShipment.ShipmentItems)
                                 {
                                     if (inventoryItemKind != null
-                                        && inventoryItemKind.Equals(new InventoryItemKinds(this.Session()).NonSerialised)
+                                        && inventoryItemKind.Equals(new InventoryItemKinds(this.Transaction()).NonSerialised)
                                         && item.Good.Equals(good)
-                                        && !item.ItemIssuancesWhereShipmentItem.Any(v => v.PickListItem.PickListWherePickListItem.PickListState.Equals(new PickListStates(this.Session()).Picked)))
+                                        && !item.ItemIssuancesWhereShipmentItem.Any(v => v.PickListItem.PickListWherePickListItem.PickListState.Equals(new PickListStates(this.Transaction()).Picked)))
                                     {
                                         shipmentItem = item;
                                         break;
@@ -248,7 +248,7 @@ namespace Allors.Database.Domain
                                 }
                                 else
                                 {
-                                    shipmentItem = new ShipmentItemBuilder(this.Strategy.Session)
+                                    shipmentItem = new ShipmentItemBuilder(this.Strategy.Transaction)
                                         .WithGood(good)
                                         .WithContentsDescription($"{orderItem.QuantityRequestsShipping} * {good}")
                                         .Build();
@@ -281,7 +281,7 @@ namespace Allors.Database.Domain
                                     shipmentItem.AddProductFeature(featureItem.ProductFeature);
                                 }
 
-                                new OrderShipmentBuilder(this.Strategy.Session)
+                                new OrderShipmentBuilder(this.Strategy.Transaction)
                                     .WithOrderItem(orderItem)
                                     .WithShipmentItem(shipmentItem)
                                     .WithQuantity(orderItem.QuantityRequestsShipping)
@@ -296,7 +296,7 @@ namespace Allors.Database.Domain
                         }
 
                         shipments.Add(pendingShipment);
-                        this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Ship));
+                        this.AddDeniedPermission(new Permissions(this.Strategy.Transaction).Get(this.Meta.Class, this.Meta.Ship));
                     }
                 }
             }
@@ -306,7 +306,7 @@ namespace Allors.Database.Domain
         {
             if (this.CanInvoice)
             {
-                var salesInvoice = new SalesInvoiceBuilder(this.Strategy.Session)
+                var salesInvoice = new SalesInvoiceBuilder(this.Strategy.Transaction)
                     .WithBilledFrom(this.TakenBy)
                     .WithAssignedBilledFromContactMechanism(this.DerivedTakenByContactMechanism)
                     .WithBilledFromContactPerson(this.TakenByContactPerson)
@@ -324,9 +324,9 @@ namespace Allors.Database.Domain
                     .WithShipToEndCustomerContactPerson(this.ShipToEndCustomerContactPerson)
                     .WithDescription(this.Description)
                     .WithStore(this.Store)
-                    .WithInvoiceDate(this.Session().Now())
+                    .WithInvoiceDate(this.Transaction().Now())
                     .WithSalesChannel(this.SalesChannel)
-                    .WithSalesInvoiceType(new SalesInvoiceTypes(this.Strategy.Session).SalesInvoice)
+                    .WithSalesInvoiceType(new SalesInvoiceTypes(this.Strategy.Transaction).SalesInvoice)
                     .WithAssignedVatRegime(this.DerivedVatRegime)
                     .WithAssignedIrpfRegime(this.DerivedIrpfRegime)
                     .WithAssignedVatClause(this.DerivedVatClause)
@@ -341,27 +341,27 @@ namespace Allors.Database.Domain
                     OrderAdjustment newAdjustment = null;
                     if (orderAdjustment.GetType().Name.Equals(typeof(DiscountAdjustment).Name))
                     {
-                        newAdjustment = new DiscountAdjustmentBuilder(this.Session()).Build();
+                        newAdjustment = new DiscountAdjustmentBuilder(this.Transaction()).Build();
                     }
 
                     if (orderAdjustment.GetType().Name.Equals(typeof(SurchargeAdjustment).Name))
                     {
-                        newAdjustment = new SurchargeAdjustmentBuilder(this.Session()).Build();
+                        newAdjustment = new SurchargeAdjustmentBuilder(this.Transaction()).Build();
                     }
 
                     if (orderAdjustment.GetType().Name.Equals(typeof(Fee).Name))
                     {
-                        newAdjustment = new FeeBuilder(this.Session()).Build();
+                        newAdjustment = new FeeBuilder(this.Transaction()).Build();
                     }
 
                     if (orderAdjustment.GetType().Name.Equals(typeof(ShippingAndHandlingCharge).Name))
                     {
-                        newAdjustment = new ShippingAndHandlingChargeBuilder(this.Session()).Build();
+                        newAdjustment = new ShippingAndHandlingChargeBuilder(this.Transaction()).Build();
                     }
 
                     if (orderAdjustment.GetType().Name.Equals(typeof(MiscellaneousCharge).Name))
                     {
-                        newAdjustment = new MiscellaneousChargeBuilder(this.Session()).Build();
+                        newAdjustment = new MiscellaneousChargeBuilder(this.Transaction()).Build();
                     }
 
                     newAdjustment.Amount ??= orderAdjustment.Amount;
@@ -377,7 +377,7 @@ namespace Allors.Database.Domain
 
                     if (leftToInvoice != 0)
                     {
-                        var invoiceItem = new SalesInvoiceItemBuilder(this.Strategy.Session)
+                        var invoiceItem = new SalesInvoiceItemBuilder(this.Strategy.Transaction)
                             .WithInvoiceItemType(orderItem.InvoiceItemType)
                             .WithAssignedUnitPrice(orderItem.UnitPrice)
                             .WithProduct(orderItem.Product)
@@ -398,7 +398,7 @@ namespace Allors.Database.Domain
 
                         salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-                        new OrderItemBillingBuilder(this.Strategy.Session)
+                        new OrderItemBillingBuilder(this.Strategy.Transaction)
                             .WithQuantity(orderItem.QuantityOrdered)
                             .WithAmount(leftToInvoice)
                             .WithOrderItem(orderItem)
@@ -411,7 +411,7 @@ namespace Allors.Database.Domain
                 {
                     if (salesTerm.GetType().Name == typeof(IncoTerm).Name)
                     {
-                        salesInvoice.AddSalesTerm(new IncoTermBuilder(this.Strategy.Session)
+                        salesInvoice.AddSalesTerm(new IncoTermBuilder(this.Strategy.Transaction)
                             .WithTermType(salesTerm.TermType)
                             .WithTermValue(salesTerm.TermValue)
                             .WithDescription(salesTerm.Description)
@@ -420,7 +420,7 @@ namespace Allors.Database.Domain
 
                     if (salesTerm.GetType().Name == typeof(InvoiceTerm).Name)
                     {
-                        salesInvoice.AddSalesTerm(new InvoiceTermBuilder(this.Strategy.Session)
+                        salesInvoice.AddSalesTerm(new InvoiceTermBuilder(this.Strategy.Transaction)
                             .WithTermType(salesTerm.TermType)
                             .WithTermValue(salesTerm.TermValue)
                             .WithDescription(salesTerm.Description)
@@ -429,7 +429,7 @@ namespace Allors.Database.Domain
 
                     if (salesTerm.GetType().Name == typeof(OrderTerm).Name)
                     {
-                        salesInvoice.AddSalesTerm(new OrderTermBuilder(this.Strategy.Session)
+                        salesInvoice.AddSalesTerm(new OrderTermBuilder(this.Strategy.Transaction)
                             .WithTermType(salesTerm.TermType)
                             .WithTermValue(salesTerm.TermValue)
                             .WithDescription(salesTerm.Description)
@@ -443,7 +443,7 @@ namespace Allors.Database.Domain
         {
             if (!method.IsPrinted)
             {
-                var singleton = this.Strategy.Session.GetSingleton();
+                var singleton = this.Strategy.Transaction.GetSingleton();
                 var logo = this.TakenBy?.ExistLogoImage == true ?
                                this.TakenBy.LogoImage.MediaContent.Data :
                                singleton.LogoImage.MediaContent.Data;
@@ -455,8 +455,8 @@ namespace Allors.Database.Domain
 
                 if (this.ExistOrderNumber)
                 {
-                    var session = this.Strategy.Session;
-                    var barcodeService = session.Database.Context().BarcodeGenerator;
+                    var transaction = this.Strategy.Transaction;
+                    var barcodeService = transaction.Database.Context().BarcodeGenerator;
                     var barcode = barcodeService.Generate(this.OrderNumber, BarcodeType.CODE_128, 320, 80, pure: true);
                     images.Add("Barcode", barcode);
                 }

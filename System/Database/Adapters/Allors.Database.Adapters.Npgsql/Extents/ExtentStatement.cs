@@ -26,11 +26,11 @@ namespace Allors.Database.Adapters.Npgsql
             this.referenceAssociationInstances = new List<IAssociationType>();
         }
 
-        internal Mapping Mapping => this.Session.Database.Mapping;
+        internal Mapping Mapping => this.Transaction.Database.Mapping;
 
         internal ExtentSort Sorter => this.Extent.Sorter;
 
-        protected Session Session => this.Extent.Session;
+        protected Transaction Transaction => this.Extent.Transaction;
 
         internal SqlExtent Extent { get; }
 

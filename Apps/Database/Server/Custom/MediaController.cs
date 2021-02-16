@@ -9,8 +9,8 @@ namespace Allors.Database.Server.Controllers
 
     public class MediaController : BaseMediaController
     {
-        public MediaController(ISessionService sessionService)
-            : base(sessionService)
+        public MediaController(ITransactionService transactionService)
+            : base(transactionService)
         {
         }
     }

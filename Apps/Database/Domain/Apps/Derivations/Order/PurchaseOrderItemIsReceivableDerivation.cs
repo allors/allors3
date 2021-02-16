@@ -25,8 +25,8 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<PurchaseOrderItem>())
             {
                 @this.IsReceivable = @this.ExistPart
-                    && (@this.InvoiceItemType.Equals(new InvoiceItemTypes(@this.Session()).PartItem)
-                        || @this.InvoiceItemType.Equals(new InvoiceItemTypes(@this.Session()).ProductItem));
+                    && (@this.InvoiceItemType.Equals(new InvoiceItemTypes(@this.Transaction()).PartItem)
+                        || @this.InvoiceItemType.Equals(new InvoiceItemTypes(@this.Transaction()).ProductItem));
             }
         }
     }

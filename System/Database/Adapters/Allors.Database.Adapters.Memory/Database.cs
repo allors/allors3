@@ -15,7 +15,7 @@ namespace Allors.Database.Adapters.Memory
     public class Database : IDatabase
     {
         private readonly Dictionary<IObjectType, object> concreteClassesByObjectType;
-        private Session session;
+        private Transaction transaction;
 
         public Database(IDatabaseLifecycle state, Configuration configuration)
         {
@@ -58,13 +58,13 @@ namespace Allors.Database.Adapters.Memory
 
         internal bool IsLoading { get; private set; }
 
-        protected virtual Session Session => this.session ??= new Session(this, this.StateLifecycle.CreateSessionInstance());
+        protected virtual Transaction Transaction => this.transaction ??= new Transaction(this, this.StateLifecycle.CreateTransactionInstance());
 
-        public ISession CreateSession() => this.CreateDatabaseSession();
+        public ITransaction CreateTransaction() => this.CreateDatabaseTransaction();
 
-        ISession IDatabase.CreateSession() => this.CreateDatabaseSession();
+        ITransaction IDatabase.CreateTransaction() => this.CreateDatabaseTransaction();
 
-        public ISession CreateDatabaseSession() => this.Session;
+        public ITransaction CreateDatabaseTransaction() => this.Transaction;
 
         public void AddDerivation(IDomainDerivation derivation) => this.Derivations = new List<IDomainDerivation>(this.Derivations) { derivation }.ToArray();
 
@@ -76,10 +76,10 @@ namespace Allors.Database.Adapters.Memory
             {
                 this.IsLoading = true;
 
-                var load = new Load(this.Session, reader);
+                var load = new Load(this.Transaction, reader);
                 load.Execute();
 
-                this.Session.Commit();
+                this.Transaction.Commit();
             }
             finally
             {
@@ -87,7 +87,7 @@ namespace Allors.Database.Adapters.Memory
             }
         }
 
-        public void Save(XmlWriter writer) => this.Session.Save(writer);
+        public void Save(XmlWriter writer) => this.Transaction.Save(writer);
 
         public bool ContainsClass(IComposite objectType, IObjectType concreteClass)
         {
@@ -151,9 +151,9 @@ namespace Allors.Database.Adapters.Memory
 
         public virtual void Init()
         {
-            this.Session.Init();
+            this.Transaction.Init();
 
-            this.session = null;
+            this.transaction = null;
 
             this.StateLifecycle.OnInit(this);
         }
@@ -193,9 +193,9 @@ namespace Allors.Database.Adapters.Memory
 
             if (roleStrategy != null)
             {
-                if (!strategy.Session.Equals(roleStrategy.Session))
+                if (!strategy.Transaction.Equals(roleStrategy.Transaction))
                 {
-                    throw new ArgumentException(roleStrategy + " is from different session");
+                    throw new ArgumentException(roleStrategy + " is from different transaction");
                 }
 
                 if (roleStrategy.IsDeleted)

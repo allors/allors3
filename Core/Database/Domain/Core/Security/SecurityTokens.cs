@@ -22,7 +22,7 @@ namespace Allors.Database.Domain
 
         public SecurityToken AdministratorSecurityToken => this.Cache[AdministratorSecurityTokenId];
 
-        private UniquelyIdentifiableCache<SecurityToken> Cache => this.cache ??= new UniquelyIdentifiableCache<SecurityToken>(this.Session);
+        private UniquelyIdentifiableCache<SecurityToken> Cache => this.cache ??= new UniquelyIdentifiableCache<SecurityToken>(this.Transaction);
 
         protected override void CorePrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.AccessControl.ObjectType);
 
@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
         {
             var merge = this.Cache.Merger().Action();
 
-            var accessControls = new AccessControls(this.Session);
+            var accessControls = new AccessControls(this.Transaction);
 
             merge(InitialSecurityTokenId, v =>
             {

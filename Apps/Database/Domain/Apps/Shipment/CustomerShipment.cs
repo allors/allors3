@@ -19,14 +19,14 @@ namespace Allors.Database.Domain
         {
             get
             {
-                if (!this.ShipmentState.Equals(new ShipmentStates(this.Strategy.Session).Packed))
+                if (!this.ShipmentState.Equals(new ShipmentStates(this.Strategy.Transaction).Packed))
                 {
                     return false;
                 }
 
                 var picklists = this.ShipToParty?.PickListsWhereShipToParty;
                 picklists?.Filter.AddEquals(this.M.PickList.Store, this.Store);
-                picklists?.Filter.AddNot().AddEquals(this.M.PickList.PickListState, new PickListStates(this.Strategy.Session).Picked);
+                picklists?.Filter.AddNot().AddEquals(this.M.PickList.PickListState, new PickListStates(this.Strategy.Transaction).Picked);
                 if (picklists?.First != null)
                 {
                     return false;
@@ -37,7 +37,7 @@ namespace Allors.Database.Domain
                     foreach (OrderShipment orderShipment in shipmentItem.OrderShipmentsWhereShipmentItem)
                     {
                         if (orderShipment.OrderItem is SalesOrderItem salesOrderItem
-                            && salesOrderItem.SalesOrderWhereSalesOrderItem.SalesOrderState.Equals(new SalesOrderStates(this.Strategy.Session).OnHold))
+                            && salesOrderItem.SalesOrderWhereSalesOrderItem.SalesOrderState.Equals(new SalesOrderStates(this.Strategy.Transaction).OnHold))
                         {
                             return false;
                         }
@@ -56,7 +56,7 @@ namespace Allors.Database.Domain
             {
                 var pickLists = this.ShipToParty.PickListsWhereShipToParty;
                 pickLists.Filter.AddEquals(this.M.PickList.Store, this.Store);
-                pickLists.Filter.AddNot().AddEquals(this.M.PickList.PickListState, new PickListStates(this.Session()).Picked);
+                pickLists.Filter.AddNot().AddEquals(this.M.PickList.PickListState, new PickListStates(this.Transaction()).Picked);
 
                 return pickLists.FirstOrDefault();
             }
@@ -66,7 +66,7 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistShipmentState)
             {
-                this.ShipmentState = new ShipmentStates(this.Strategy.Session).Created;
+                this.ShipmentState = new ShipmentStates(this.Strategy.Transaction).Created;
             }
 
             if (!this.ExistReleasedManually)
@@ -90,7 +90,7 @@ namespace Allors.Database.Domain
 
             if (!this.ExistShipFromParty)
             {
-                var internalOrganisations = new Organisations(this.Strategy.Session).InternalOrganisations();
+                var internalOrganisations = new Organisations(this.Strategy.Transaction).InternalOrganisations();
                 if (internalOrganisations.Count() == 1)
                 {
                     this.ShipFromParty = internalOrganisations.First();
@@ -99,7 +99,7 @@ namespace Allors.Database.Domain
 
             if (!this.ExistStore && this.ExistShipFromParty)
             {
-                var stores = new Stores(this.Strategy.Session).Extent();
+                var stores = new Stores(this.Strategy.Transaction).Extent();
                 stores.Filter.AddEquals(this.M.Store.InternalOrganisation, this.ShipFromParty);
 
                 if (stores.Any())
@@ -115,7 +115,7 @@ namespace Allors.Database.Domain
 
             if (!this.ExistEstimatedShipDate)
             {
-                this.EstimatedShipDate = this.Session().Now().Date;
+                this.EstimatedShipDate = this.Transaction().Now().Date;
             }
 
             if (!this.ExistCarrier && this.ExistStore)
@@ -126,7 +126,7 @@ namespace Allors.Database.Domain
 
         public void AppsOnPostDerive(ObjectOnPostDerive method) => method.Derivation.Validation.AssertExists(this, this.M.CustomerShipment.ShipToParty);
 
-        public void AppsCancel(CustomerShipmentCancel method) => this.ShipmentState = new ShipmentStates(this.Strategy.Session).Cancelled;
+        public void AppsCancel(CustomerShipmentCancel method) => this.ShipmentState = new ShipmentStates(this.Strategy.Transaction).Cancelled;
 
         public void AppsPick(CustomerShipmentPick method)
         {
@@ -136,10 +136,10 @@ namespace Allors.Database.Domain
 
                 foreach (ShipmentItem shipmentItem in this.ShipmentItems)
                 {
-                    shipmentItem.ShipmentItemState = new ShipmentItemStates(this.Session()).Picking;
+                    shipmentItem.ShipmentItemState = new ShipmentItemStates(this.Transaction()).Picking;
                 }
 
-                this.ShipmentState = new ShipmentStates(this.Strategy.Session).Picking;
+                this.ShipmentState = new ShipmentStates(this.Strategy.Transaction).Picking;
             }
         }
 
@@ -149,7 +149,7 @@ namespace Allors.Database.Domain
             this.PutOnHold();
         }
 
-        public void AppsPutOnHold(CustomerShipmentPutOnHold method) => this.ShipmentState = new ShipmentStates(this.Strategy.Session).OnHold;
+        public void AppsPutOnHold(CustomerShipmentPutOnHold method) => this.ShipmentState = new ShipmentStates(this.Strategy.Transaction).OnHold;
 
         public void AppsContinue(CustomerShipmentContinue method)
         {
@@ -157,22 +157,22 @@ namespace Allors.Database.Domain
             this.ProcessOnContinue();
         }
 
-        public void AppsProcessOnContinue(CustomerShipmentProcessOnContinue method) => this.ShipmentState = this.ExistPreviousShipmentState ? this.PreviousShipmentState : new ShipmentStates(this.Strategy.Session).Created;
+        public void AppsProcessOnContinue(CustomerShipmentProcessOnContinue method) => this.ShipmentState = this.ExistPreviousShipmentState ? this.PreviousShipmentState : new ShipmentStates(this.Strategy.Transaction).Created;
 
-        public void AppsSetPicked(CustomerShipmentSetPicked method) => this.ShipmentState = new ShipmentStates(this.Strategy.Session).Picked;
+        public void AppsSetPicked(CustomerShipmentSetPicked method) => this.ShipmentState = new ShipmentStates(this.Strategy.Transaction).Picked;
 
-        public void AppsSetPacked(CustomerShipmentSetPacked method) => this.ShipmentState = new ShipmentStates(this.Strategy.Session).Packed;
+        public void AppsSetPacked(CustomerShipmentSetPacked method) => this.ShipmentState = new ShipmentStates(this.Strategy.Transaction).Packed;
 
         public void AppsShip(CustomerShipmentShip method)
         {
             if (this.CanShip)
             {
-                this.ShipmentState = new ShipmentStates(this.Strategy.Session).Shipped;
-                this.EstimatedShipDate = this.Session().Now().Date;
+                this.ShipmentState = new ShipmentStates(this.Strategy.Transaction).Shipped;
+                this.EstimatedShipDate = this.Transaction().Now().Date;
 
                 foreach (ShipmentItem shipmentItem in this.ShipmentItems)
                 {
-                    shipmentItem.ShipmentItemState = new ShipmentItemStates(this.Session()).Shipped;
+                    shipmentItem.ShipmentItemState = new ShipmentItemStates(this.Transaction()).Shipped;
 
                     foreach (OrderShipment orderShipment in shipmentItem.OrderShipmentsWhereShipmentItem)
                     {
@@ -187,23 +187,23 @@ namespace Allors.Database.Domain
                     {
                         if (inventoryItem.Part.InventoryItemKind.IsSerialised)
                         {
-                            new InventoryItemTransactionBuilder(this.Session())
+                            new InventoryItemTransactionBuilder(this.Transaction())
                                 .WithPart(shipmentItem.Part)
                                 .WithSerialisedItem(shipmentItem.SerialisedItem)
                                 .WithUnitOfMeasure(inventoryItem.Part.UnitOfMeasure)
                                 .WithFacility(inventoryItem.Facility)
-                                .WithReason(new InventoryTransactionReasons(this.Strategy.Session).OutgoingShipment)
-                                .WithSerialisedInventoryItemState(new SerialisedInventoryItemStates(this.Session()).Good)
+                                .WithReason(new InventoryTransactionReasons(this.Strategy.Transaction).OutgoingShipment)
+                                .WithSerialisedInventoryItemState(new SerialisedInventoryItemStates(this.Transaction()).Good)
                                 .WithQuantity(1)
                                 .Build();
                         }
                         else
                         {
-                            new InventoryItemTransactionBuilder(this.Session())
+                            new InventoryItemTransactionBuilder(this.Transaction())
                                 .WithPart(inventoryItem.Part)
                                 .WithUnitOfMeasure(inventoryItem.Part.UnitOfMeasure)
                                 .WithFacility(inventoryItem.Facility)
-                                .WithReason(new InventoryTransactionReasons(this.Strategy.Session).OutgoingShipment)
+                                .WithReason(new InventoryTransactionReasons(this.Strategy.Transaction).OutgoingShipment)
                                 .WithQuantity(shipmentItem.Quantity)
                                 .WithCost(inventoryItem.Part.PartWeightedAverage.AverageCost)
                                 .Build();
@@ -215,8 +215,8 @@ namespace Allors.Database.Domain
 
         public void AppsInvoice(CustomerShipmentInvoice method)
         {
-            if (this.ShipmentState.Equals(new ShipmentStates(this.Strategy.Session).Shipped) &&
-                   Equals(this.Store.BillingProcess, new BillingProcesses(this.Strategy.Session).BillingForShipmentItems))
+            if (this.ShipmentState.Equals(new ShipmentStates(this.Strategy.Transaction).Shipped) &&
+                   Equals(this.Store.BillingProcess, new BillingProcesses(this.Strategy.Transaction).BillingForShipmentItems))
             {
                 var invoiceByOrder = new Dictionary<SalesOrder, SalesInvoice>();
                 var costsInvoiced = false;
@@ -229,7 +229,7 @@ namespace Allors.Database.Domain
 
                         if (!invoiceByOrder.TryGetValue(salesOrder, out var salesInvoice))
                         {
-                            salesInvoice = new SalesInvoiceBuilder(this.Strategy.Session)
+                            salesInvoice = new SalesInvoiceBuilder(this.Strategy.Transaction)
                                 .WithStore(salesOrder.Store)
                                 .WithBilledFrom(salesOrder.TakenBy)
                                 .WithAssignedBilledFromContactMechanism(salesOrder.DerivedTakenByContactMechanism)
@@ -246,9 +246,9 @@ namespace Allors.Database.Domain
                                 .WithShipToEndCustomer(salesOrder.ShipToEndCustomer)
                                 .WithAssignedShipToEndCustomerAddress(salesOrder.DerivedShipToEndCustomerAddress)
                                 .WithShipToEndCustomerContactPerson(salesOrder.ShipToEndCustomerContactPerson)
-                                .WithInvoiceDate(this.Session().Now())
+                                .WithInvoiceDate(this.Transaction().Now())
                                 .WithSalesChannel(salesOrder.SalesChannel)
-                                .WithSalesInvoiceType(new SalesInvoiceTypes(this.Strategy.Session).SalesInvoice)
+                                .WithSalesInvoiceType(new SalesInvoiceTypes(this.Strategy.Transaction).SalesInvoice)
                                 .WithAssignedVatRegime(salesOrder.DerivedVatRegime)
                                 .WithAssignedIrpfRegime(salesOrder.DerivedIrpfRegime)
                                 .WithCustomerReference(salesOrder.CustomerReference)
@@ -262,27 +262,27 @@ namespace Allors.Database.Domain
                                 OrderAdjustment newAdjustment = null;
                                 if (orderAdjustment.GetType().Name.Equals(typeof(DiscountAdjustment).Name))
                                 {
-                                    newAdjustment = new DiscountAdjustmentBuilder(this.Session()).Build();
+                                    newAdjustment = new DiscountAdjustmentBuilder(this.Transaction()).Build();
                                 }
 
                                 if (orderAdjustment.GetType().Name.Equals(typeof(SurchargeAdjustment).Name))
                                 {
-                                    newAdjustment = new SurchargeAdjustmentBuilder(this.Session()).Build();
+                                    newAdjustment = new SurchargeAdjustmentBuilder(this.Transaction()).Build();
                                 }
 
                                 if (orderAdjustment.GetType().Name.Equals(typeof(Fee).Name))
                                 {
-                                    newAdjustment = new FeeBuilder(this.Session()).Build();
+                                    newAdjustment = new FeeBuilder(this.Transaction()).Build();
                                 }
 
                                 if (orderAdjustment.GetType().Name.Equals(typeof(ShippingAndHandlingCharge).Name))
                                 {
-                                    newAdjustment = new ShippingAndHandlingChargeBuilder(this.Session()).Build();
+                                    newAdjustment = new ShippingAndHandlingChargeBuilder(this.Transaction()).Build();
                                 }
 
                                 if (orderAdjustment.GetType().Name.Equals(typeof(MiscellaneousCharge).Name))
                                 {
-                                    newAdjustment = new MiscellaneousChargeBuilder(this.Session()).Build();
+                                    newAdjustment = new MiscellaneousChargeBuilder(this.Transaction()).Build();
                                 }
 
                                 newAdjustment.Amount ??= orderAdjustment.Amount;
@@ -295,7 +295,7 @@ namespace Allors.Database.Domain
                                 var costs = this.AppsOnDeriveShippingAndHandlingCharges();
                                 if (costs > 0)
                                 {
-                                    salesInvoice.AddOrderAdjustment(new ShippingAndHandlingChargeBuilder(this.Strategy.Session).WithAmount(costs).Build());
+                                    salesInvoice.AddOrderAdjustment(new ShippingAndHandlingChargeBuilder(this.Strategy.Transaction).WithAmount(costs).Build());
                                     costsInvoiced = true;
                                 }
                             }
@@ -304,7 +304,7 @@ namespace Allors.Database.Domain
                             {
                                 if (salesTerm.GetType().Name == typeof(IncoTerm).Name)
                                 {
-                                    salesInvoice.AddSalesTerm(new IncoTermBuilder(this.Strategy.Session)
+                                    salesInvoice.AddSalesTerm(new IncoTermBuilder(this.Strategy.Transaction)
                                         .WithTermType(salesTerm.TermType)
                                         .WithTermValue(salesTerm.TermValue)
                                         .WithDescription(salesTerm.Description)
@@ -313,7 +313,7 @@ namespace Allors.Database.Domain
 
                                 if (salesTerm.GetType().Name == typeof(InvoiceTerm).Name)
                                 {
-                                    salesInvoice.AddSalesTerm(new InvoiceTermBuilder(this.Strategy.Session)
+                                    salesInvoice.AddSalesTerm(new InvoiceTermBuilder(this.Strategy.Transaction)
                                         .WithTermType(salesTerm.TermType)
                                         .WithTermValue(salesTerm.TermValue)
                                         .WithDescription(salesTerm.Description)
@@ -322,7 +322,7 @@ namespace Allors.Database.Domain
 
                                 if (salesTerm.GetType().Name == typeof(OrderTerm).Name)
                                 {
-                                    salesInvoice.AddSalesTerm(new OrderTermBuilder(this.Strategy.Session)
+                                    salesInvoice.AddSalesTerm(new OrderTermBuilder(this.Strategy.Transaction)
                                         .WithTermType(salesTerm.TermType)
                                         .WithTermValue(salesTerm.TermValue)
                                         .WithDescription(salesTerm.Description)
@@ -338,8 +338,8 @@ namespace Allors.Database.Domain
                         {
                             if (orderShipment.OrderItem is SalesOrderItem salesOrderItem)
                             {
-                                var invoiceItem = new SalesInvoiceItemBuilder(this.Strategy.Session)
-                                    .WithInvoiceItemType(new InvoiceItemTypes(this.Strategy.Session).ProductItem)
+                                var invoiceItem = new SalesInvoiceItemBuilder(this.Strategy.Transaction)
+                                    .WithInvoiceItemType(new InvoiceItemTypes(this.Strategy.Transaction).ProductItem)
                                     .WithProduct(salesOrderItem.Product)
                                     .WithQuantity(orderShipment.Quantity)
                                     .WithAssignedUnitPrice(salesOrderItem.UnitPrice)
@@ -351,7 +351,7 @@ namespace Allors.Database.Domain
 
                                 salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-                                new ShipmentItemBillingBuilder(this.Strategy.Session)
+                                new ShipmentItemBillingBuilder(this.Strategy.Transaction)
                                     .WithQuantity(shipmentItem.Quantity)
                                     .WithAmount(leftToInvoice)
                                     .WithShipmentItem(shipmentItem)
@@ -381,9 +381,9 @@ namespace Allors.Database.Domain
         public void AppsOnDeriveCurrentObjectState(IDerivation derivation)
         {
             //if (this.ExistShipmentState && !this.ShipmentState.Equals(this.LastShipmentState) &&
-            //    this.ShipmentState.Equals(new ShipmentStates(this.Strategy.Session).Shipped))
+            //    this.ShipmentState.Equals(new ShipmentStates(this.Strategy.Transaction).Shipped))
             //{
-            //    if (Equals(this.Store.BillingProcess, new BillingProcesses(this.Strategy.Session).BillingForShipmentItems))
+            //    if (Equals(this.Store.BillingProcess, new BillingProcesses(this.Strategy.Transaction).BillingForShipmentItems))
             //    {
             //        this.Invoice();
             //    }
@@ -476,11 +476,11 @@ namespace Allors.Database.Domain
         {
             if (this.ExistShipmentItems && this.ExistShipToParty)
             {
-                var pickList = new PickListBuilder(this.Strategy.Session).WithShipToParty(this.ShipToParty).WithStore(this.Store).Build();
+                var pickList = new PickListBuilder(this.Strategy.Transaction).WithShipToParty(this.ShipToParty).WithStore(this.Store).Build();
 
                 foreach (var shipmentItem in this.ShipmentItems
-                    .Where(v => v.ShipmentItemState.Equals(new ShipmentItemStates(this.Session()).Created)
-                                || v.ShipmentItemState.Equals(new ShipmentItemStates(this.Session()).Picking)))
+                    .Where(v => v.ShipmentItemState.Equals(new ShipmentItemStates(this.Transaction()).Created)
+                                || v.ShipmentItemState.Equals(new ShipmentItemStates(this.Transaction()).Picking)))
                 {
                     var quantityIssued = 0M;
                     foreach (ItemIssuance itemIssuance in shipmentItem.ItemIssuancesWhereShipmentItem)
@@ -496,7 +496,7 @@ namespace Allors.Database.Domain
 
                     var unifiedGood = shipmentItem.Good as UnifiedGood;
                     var nonUnifiedGood = shipmentItem.Good as NonUnifiedGood;
-                    var serialized = unifiedGood?.InventoryItemKind.Equals(new InventoryItemKinds(this.Session()).Serialised);
+                    var serialized = unifiedGood?.InventoryItemKind.Equals(new InventoryItemKinds(this.Transaction()).Serialised);
                     var part = unifiedGood ?? nonUnifiedGood?.Part;
 
                     var facilities = ((InternalOrganisation)this.ShipFromParty).FacilitiesWhereOwner;
@@ -507,12 +507,12 @@ namespace Allors.Database.Domain
                     {
                         // shipment item originates from sales order. Sales order item has only 1 ReservedFromInventoryItem.
                         // Foreach loop wil execute once.
-                        var pickListItem = new PickListItemBuilder(this.Strategy.Session)
+                        var pickListItem = new PickListItemBuilder(this.Strategy.Transaction)
                             .WithInventoryItem(inventoryItem)
                             .WithQuantity(quantityToIssue)
                             .Build();
 
-                        new ItemIssuanceBuilder(this.Strategy.Session)
+                        new ItemIssuanceBuilder(this.Strategy.Transaction)
                             .WithInventoryItem(pickListItem.InventoryItem)
                             .WithShipmentItem(shipmentItem)
                             .WithQuantity(pickListItem.Quantity)
@@ -538,12 +538,12 @@ namespace Allors.Database.Domain
                                 var serializedInventoryItem = (SerialisedInventoryItem)inventoryItem;
                                 if (serializedInventoryItem.AvailableToPromise == 1)
                                 {
-                                    var pickListItem = new PickListItemBuilder(this.Strategy.Session)
+                                    var pickListItem = new PickListItemBuilder(this.Strategy.Transaction)
                                         .WithInventoryItem(inventoryItem)
                                         .WithQuantity(quantityLeftToIssue)
                                         .Build();
 
-                                    new ItemIssuanceBuilder(this.Strategy.Session)
+                                    new ItemIssuanceBuilder(this.Strategy.Transaction)
                                         .WithInventoryItem(inventoryItem)
                                         .WithShipmentItem(shipmentItem)
                                         .WithQuantity(pickListItem.Quantity)
@@ -564,12 +564,12 @@ namespace Allors.Database.Domain
 
                                 if (quantity > 0)
                                 {
-                                    var pickListItem = new PickListItemBuilder(this.Strategy.Session)
+                                    var pickListItem = new PickListItemBuilder(this.Strategy.Transaction)
                                         .WithInventoryItem(inventoryItem)
                                         .WithQuantity(quantity)
                                         .Build();
 
-                                    new ItemIssuanceBuilder(this.Strategy.Session)
+                                    new ItemIssuanceBuilder(this.Strategy.Transaction)
                                         .WithInventoryItem(inventoryItem)
                                         .WithShipmentItem(shipmentItem)
                                         .WithQuantity(pickListItem.Quantity)
@@ -594,10 +594,10 @@ namespace Allors.Database.Domain
 
             if (!this.WithoutCharges)
             {
-                foreach (ShippingAndHandlingComponent shippingAndHandlingComponent in new ShippingAndHandlingComponents(this.Strategy.Session).Extent())
+                foreach (ShippingAndHandlingComponent shippingAndHandlingComponent in new ShippingAndHandlingComponents(this.Strategy.Transaction).Extent())
                 {
-                    if (shippingAndHandlingComponent.FromDate <= this.Session().Now() &&
-                        (!shippingAndHandlingComponent.ExistThroughDate || shippingAndHandlingComponent.ThroughDate >= this.Session().Now()))
+                    if (shippingAndHandlingComponent.FromDate <= this.Transaction().Now() &&
+                        (!shippingAndHandlingComponent.ExistThroughDate || shippingAndHandlingComponent.ThroughDate >= this.Transaction().Now()))
                     {
                         if (ShippingAndHandlingComponents.AppsIsEligible(shippingAndHandlingComponent, this))
                         {

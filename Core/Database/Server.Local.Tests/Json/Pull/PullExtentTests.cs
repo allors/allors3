@@ -23,9 +23,9 @@ namespace Tests
             var m = this.M;
             this.SetUser("jane@example.com");
 
-            var x1 = new WorkspaceXObject1Builder(this.Session).Build();
+            var x1 = new WorkspaceXObject1Builder(this.Transaction).Build();
 
-            this.Session.Commit();
+            this.Transaction.Commit();
 
             var pull = new Pull { Extent = new Extent(m.WorkspaceXObject1.ObjectType) };
             var pullRequest = new PullRequest
@@ -36,7 +36,7 @@ namespace Tests
                 },
             };
 
-            var api = new Api(this.Session, "X");
+            var api = new Api(this.Transaction, "X");
             var pullResponse = api.Pull(pullRequest);
             var wx1s = pullResponse.NamedCollections["WorkspaceXObject1s"];
 
@@ -53,9 +53,9 @@ namespace Tests
             var m = this.M;
             this.SetUser("jane@example.com");
 
-            var x1 = new WorkspaceXObject1Builder(this.Session).Build();
+            var x1 = new WorkspaceXObject1Builder(this.Transaction).Build();
 
-            this.Session.Commit();
+            this.Transaction.Commit();
 
             var pull = new Pull
             {
@@ -70,7 +70,7 @@ namespace Tests
                 }
             };
 
-            var api = new Api(this.Session, "Y");
+            var api = new Api(this.Transaction, "Y");
             var pullResponse = api.Pull(pullRequest);
             var wx1s = pullResponse.NamedCollections["WorkspaceXObject1s"];
 
@@ -83,9 +83,9 @@ namespace Tests
             var m = this.M;
             this.SetUser("jane@example.com");
 
-            var x1 = new WorkspaceXObject1Builder(this.Session).Build();
+            var x1 = new WorkspaceXObject1Builder(this.Transaction).Build();
 
-            this.Session.Commit();
+            this.Transaction.Commit();
 
             var pull = new Pull
             {
@@ -99,7 +99,7 @@ namespace Tests
                 },
             };
 
-            var api = new Api(this.Session, "None");
+            var api = new Api(this.Transaction, "None");
             var pullResponse = api.Pull(pullRequest);
 
             var wx1s = pullResponse.NamedCollections["WorkspaceXObject1s"];

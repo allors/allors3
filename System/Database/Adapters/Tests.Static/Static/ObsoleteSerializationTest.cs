@@ -50,7 +50,7 @@ namespace Allors.Database.Adapters
 
         protected IDatabase Population => this.Profile.Database;
 
-        protected ISession Session => this.Profile.Session;
+        protected ITransaction Transaction => this.Profile.Transaction;
 
         protected Action[] Markers => this.Profile.Markers;
 
@@ -64,13 +64,13 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 var otherPopulation = this.CreatePopulation();
-                using (var otherSession = otherPopulation.CreateSession())
+                using (var otherTransaction = otherPopulation.CreateTransaction())
                 {
-                    this.Populate(otherSession);
-                    otherSession.Commit();
+                    this.Populate(otherTransaction);
+                    otherTransaction.Commit();
 
                     var stringWriter = new StringWriter();
                     using (var writer = XmlWriter.Create(stringWriter))
@@ -177,13 +177,13 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Database.Context().M;
+                    var m = this.Transaction.Database.Context().M;
 
                     var otherPopulation = this.CreatePopulation();
-                    using (var otherSession = otherPopulation.CreateSession())
+                    using (var otherTransaction = otherPopulation.CreateTransaction())
                     {
-                        this.Populate(otherSession);
-                        otherSession.Commit();
+                        this.Populate(otherTransaction);
+                        otherTransaction.Commit();
 
                         var stringWriter = new StringWriter();
                         var xmlWriterSettings = new XmlWriterSettings { Indent = indentation };
@@ -201,12 +201,12 @@ namespace Allors.Database.Adapters
                             this.Population.Load(reader);
                         }
 
-                        using (var session = this.Population.CreateSession())
+                        using (var transaction = this.Population.CreateTransaction())
                         {
-                            var x = (C1)session.Instantiate(1);
+                            var x = (C1)transaction.Instantiate(1);
                             var str = x.C1AllorsString;
 
-                            this.AssertPopulation(session);
+                            this.AssertPopulation(transaction);
                         }
                     }
                 }
@@ -219,24 +219,24 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 var otherPopulation = this.CreatePopulation();
-                using (var otherSession = otherPopulation.CreateSession())
+                using (var otherTransaction = otherPopulation.CreateTransaction())
                 {
                     // Initial
-                    var otherC1 = otherSession.Create<C1>();
+                    var otherC1 = otherTransaction.Create<C1>();
 
-                    otherSession.Commit();
+                    otherTransaction.Commit();
 
                     var initialObjectVersion = otherC1.Strategy.ObjectVersion;
 
                     var xml = DoSave(otherPopulation);
                     DoLoad(this.Population, xml);
 
-                    using (var session = this.Population.CreateSession())
+                    using (var transaction = this.Population.CreateTransaction())
                     {
-                        var c1 = session.Instantiate(otherC1.Id);
+                        var c1 = transaction.Instantiate(otherC1.Id);
 
                         Assert.Equal(otherC1.Strategy.ObjectVersion, c1.Strategy.ObjectVersion);
                     }
@@ -244,16 +244,16 @@ namespace Allors.Database.Adapters
                     // Change
                     otherC1.C1AllorsString = "Changed";
 
-                    otherSession.Commit();
+                    otherTransaction.Commit();
 
                     var changedObjectVersion = otherC1.Strategy.ObjectVersion;
 
                     xml = DoSave(otherPopulation);
                     DoLoad(this.Population, xml);
 
-                    using (var session = this.Population.CreateSession())
+                    using (var transaction = this.Population.CreateTransaction())
                     {
-                        var c1 = session.Instantiate(otherC1.Id);
+                        var c1 = transaction.Instantiate(otherC1.Id);
 
                         Assert.Equal(otherC1.Strategy.ObjectVersion, c1.Strategy.ObjectVersion);
                         Assert.NotEqual(initialObjectVersion, c1.Strategy.ObjectVersion);
@@ -262,14 +262,14 @@ namespace Allors.Database.Adapters
                     // Change again
                     otherC1.C1AllorsString = "Changed again";
 
-                    otherSession.Commit();
+                    otherTransaction.Commit();
 
                     xml = DoSave(otherPopulation);
                     DoLoad(this.Population, xml);
 
-                    using (var session = this.Population.CreateSession())
+                    using (var transaction = this.Population.CreateTransaction())
                     {
-                        var c1 = session.Instantiate(otherC1.Id);
+                        var c1 = transaction.Instantiate(otherC1.Id);
 
                         Assert.Equal(otherC1.Strategy.ObjectVersion, c1.Strategy.ObjectVersion);
                         Assert.NotEqual(initialObjectVersion, c1.Strategy.ObjectVersion);
@@ -285,13 +285,13 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 var otherPopulation = this.CreatePopulation();
-                using (var otherSession = otherPopulation.CreateSession())
+                using (var otherTransaction = otherPopulation.CreateTransaction())
                 {
-                    this.Populate(otherSession);
-                    otherSession.Commit();
+                    this.Populate(otherTransaction);
+                    otherTransaction.Commit();
 
                     var stringWriter = new StringWriter();
                     using (var writer = XmlWriter.Create(stringWriter))
@@ -307,11 +307,11 @@ namespace Allors.Database.Adapters
                         this.Population.Load(reader);
                     }
 
-                    using (var session = this.Population.CreateSession())
+                    using (var transaction = this.Population.CreateTransaction())
                     {
-                        session.Rollback();
+                        transaction.Rollback();
 
-                        this.AssertPopulation(session);
+                        this.AssertPopulation(transaction);
                     }
                 }
             }
@@ -323,15 +323,15 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 var population = this.CreatePopulation();
-                var session = population.CreateSession();
+                var transaction = population.CreateTransaction();
 
                 try
                 {
-                    this.Populate(session);
-                    session.Commit();
+                    this.Populate(transaction);
+                    transaction.Commit();
 
                     var stringWriter = new StringWriter();
                     using (var writer = XmlWriter.Create(stringWriter))
@@ -355,7 +355,7 @@ namespace Allors.Database.Adapters
                 }
                 finally
                 {
-                    session.Commit();
+                    transaction.Commit();
                 }
             }
         }
@@ -366,7 +366,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 var writeCultureInfo = new CultureInfo("en-US");
                 var readCultureInfo = new CultureInfo("en-GB");
@@ -375,13 +375,13 @@ namespace Allors.Database.Adapters
                 CultureInfo.CurrentUICulture = writeCultureInfo;
 
                 var loadPopulation = this.CreatePopulation();
-                var loadSession = loadPopulation.CreateSession();
-                this.Populate(loadSession);
+                var loadTransaction = loadPopulation.CreateTransaction();
+                this.Populate(loadTransaction);
 
                 var stringWriter = new StringWriter();
                 using (var writer = XmlWriter.Create(stringWriter))
                 {
-                    loadSession.Database.Save(writer);
+                    loadTransaction.Database.Save(writer);
                 }
 
                 CultureInfo.CurrentCulture = readCultureInfo;
@@ -394,12 +394,12 @@ namespace Allors.Database.Adapters
                     this.Population.Load(reader);
                 }
 
-                using (var session = this.Population.CreateSession())
+                using (var transaction = this.Population.CreateTransaction())
                 {
-                    this.AssertPopulation(session);
+                    this.AssertPopulation(transaction);
                 }
 
-                loadSession.Rollback();
+                loadTransaction.Rollback();
             }
         }
 
@@ -409,15 +409,15 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 var population = this.CreatePopulation();
-                var session = population.CreateSession();
+                var transaction = population.CreateTransaction();
 
                 try
                 {
-                    this.Populate(session);
-                    session.Commit();
+                    this.Populate(transaction);
+                    transaction.Commit();
 
                     var stringWriter = new StringWriter();
                     using (var writer = XmlWriter.Create(stringWriter))
@@ -446,7 +446,7 @@ namespace Allors.Database.Adapters
                 }
                 finally
                 {
-                    session.Commit();
+                    transaction.Commit();
                 }
             }
         }
@@ -457,22 +457,22 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 var savePopulation = this.CreatePopulation();
-                var saveSession = savePopulation.CreateSession();
+                var saveTransaction = savePopulation.CreateTransaction();
 
                 try
                 {
-                    this.c1A = C1.Create(saveSession);
+                    this.c1A = C1.Create(saveTransaction);
                     this.c1A.C1AllorsString = "> <";
                     this.c1A.I12AllorsString = "< >";
                     this.c1A.I1AllorsString = "& &&";
                     this.c1A.S1AllorsString = "' \" ''";
 
-                    this.c1Empty = C1.Create(saveSession);
+                    this.c1Empty = C1.Create(saveTransaction);
 
-                    saveSession.Commit();
+                    saveTransaction.Commit();
 
                     var stringWriter = new StringWriter();
                     using (var writer = XmlWriter.Create(stringWriter))
@@ -481,7 +481,7 @@ namespace Allors.Database.Adapters
                     }
 
                     // writer = XmlWriter.Create(@"population.xml", Encoding.UTF8);
-                    // saveSession.Population.Save(writer);
+                    // saveTransaction.Population.Save(writer);
                     // writer.Close();
                     var stringReader = new StringReader(stringWriter.ToString());
                     using (var reader = XmlReader.Create(stringReader))
@@ -489,22 +489,22 @@ namespace Allors.Database.Adapters
                         this.Population.Load(reader);
                     }
 
-                    using (var session = this.Population.CreateSession())
+                    using (var transaction = this.Population.CreateTransaction())
                     {
-                        var copyValues = C1.Instantiate(session, this.c1A.Strategy.ObjectId);
+                        var copyValues = C1.Instantiate(transaction, this.c1A.Strategy.ObjectId);
 
                         Assert.Equal(this.c1A.C1AllorsString, copyValues.C1AllorsString);
                         Assert.Equal(this.c1A.I12AllorsString, copyValues.I12AllorsString);
                         Assert.Equal(this.c1A.I1AllorsString, copyValues.I1AllorsString);
                         Assert.Equal(this.c1A.S1AllorsString, copyValues.S1AllorsString);
 
-                        var c1EmptyLoaded = C1.Instantiate(session, this.c1Empty.Strategy.ObjectId);
+                        var c1EmptyLoaded = C1.Instantiate(transaction, this.c1Empty.Strategy.ObjectId);
                         Assert.NotNull(c1EmptyLoaded);
                     }
                 }
                 finally
                 {
-                    saveSession.Rollback();
+                    saveTransaction.Rollback();
                 }
             }
         }
@@ -515,11 +515,11 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                using (var session = this.Population.CreateSession())
+                using (var transaction = this.Population.CreateTransaction())
                 {
-                    this.Populate(session);
+                    this.Populate(transaction);
 
                     var stringWriter = new StringWriter();
                     using (var writer = XmlWriter.Create(stringWriter))
@@ -541,9 +541,9 @@ namespace Allors.Database.Adapters
                         var savePopulation = this.CreatePopulation();
                         savePopulation.Load(reader);
 
-                        using (var saveSession = savePopulation.CreateSession())
+                        using (var saveTransaction = savePopulation.CreateTransaction())
                         {
-                            this.AssertPopulation(saveSession);
+                            this.AssertPopulation(saveTransaction);
                         }
                     }
                 }
@@ -556,14 +556,14 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                using (var session = this.Population.CreateSession())
+                using (var transaction = this.Population.CreateTransaction())
                 {
                     // Initial
-                    var c1 = session.Create<C1>();
+                    var c1 = transaction.Create<C1>();
 
-                    session.Commit();
+                    transaction.Commit();
 
                     var initialObjectVersion = c1.Strategy.ObjectVersion;
 
@@ -572,9 +572,9 @@ namespace Allors.Database.Adapters
                     var otherPopulation = this.CreatePopulation();
                     DoLoad(otherPopulation, xml);
 
-                    using (var otherSession = otherPopulation.CreateSession())
+                    using (var otherTransaction = otherPopulation.CreateTransaction())
                     {
-                        var otherC1 = otherSession.Instantiate(c1.Id);
+                        var otherC1 = otherTransaction.Instantiate(c1.Id);
 
                         Assert.Equal(c1.Strategy.ObjectVersion, otherC1.Strategy.ObjectVersion);
                     }
@@ -582,7 +582,7 @@ namespace Allors.Database.Adapters
                     // Change
                     c1.C1AllorsString = "Changed";
 
-                    session.Commit();
+                    transaction.Commit();
 
                     var changedObjectVersion = c1.Strategy.ObjectVersion;
 
@@ -591,9 +591,9 @@ namespace Allors.Database.Adapters
                     otherPopulation = this.CreatePopulation();
                     DoLoad(otherPopulation, xml);
 
-                    using (var otherSession = otherPopulation.CreateSession())
+                    using (var otherTransaction = otherPopulation.CreateTransaction())
                     {
-                        var otherC1 = otherSession.Instantiate(c1.Id);
+                        var otherC1 = otherTransaction.Instantiate(c1.Id);
 
                         Assert.Equal(c1.Strategy.ObjectVersion, otherC1.Strategy.ObjectVersion);
                         Assert.NotEqual(initialObjectVersion, otherC1.Strategy.ObjectVersion);
@@ -602,16 +602,16 @@ namespace Allors.Database.Adapters
                     // Change again
                     c1.C1AllorsString = "Changed again";
 
-                    session.Commit();
+                    transaction.Commit();
 
                     xml = DoSave(this.Population);
 
                     otherPopulation = this.CreatePopulation();
                     DoLoad(otherPopulation, xml);
 
-                    using (var otherSession = otherPopulation.CreateSession())
+                    using (var otherTransaction = otherPopulation.CreateTransaction())
                     {
-                        var otherC1 = otherSession.Instantiate(c1.Id);
+                        var otherC1 = otherTransaction.Instantiate(c1.Id);
 
                         Assert.Equal(c1.Strategy.ObjectVersion, otherC1.Strategy.ObjectVersion);
                         Assert.NotEqual(initialObjectVersion, otherC1.Strategy.ObjectVersion);
@@ -627,7 +627,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 var writeCultureInfo = new CultureInfo("en-US");
                 var readCultureInfo = new CultureInfo("en-GB");
@@ -635,14 +635,14 @@ namespace Allors.Database.Adapters
                 CultureInfo.CurrentCulture = writeCultureInfo;
                 CultureInfo.CurrentUICulture = writeCultureInfo;
 
-                using (var session = this.CreatePopulation().CreateSession())
+                using (var transaction = this.CreatePopulation().CreateTransaction())
                 {
-                    this.Populate(session);
+                    this.Populate(transaction);
 
                     var stringWriter = new StringWriter();
                     using (var writer = XmlWriter.Create(stringWriter))
                     {
-                        session.Database.Save(writer);
+                        transaction.Database.Save(writer);
                     }
 
                     CultureInfo.CurrentCulture = readCultureInfo;
@@ -654,11 +654,11 @@ namespace Allors.Database.Adapters
                         var savePopulation = this.CreatePopulation();
                         savePopulation.Load(reader);
 
-                        var saveSession = savePopulation.CreateSession();
+                        var saveTransaction = savePopulation.CreateTransaction();
 
-                        this.AssertPopulation(saveSession);
+                        this.AssertPopulation(saveTransaction);
 
-                        saveSession.Rollback();
+                        saveTransaction.Rollback();
                     }
                 }
             }
@@ -670,22 +670,22 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 var otherPopulation = this.CreatePopulation();
-                var otherSession = otherPopulation.CreateSession();
+                var otherTransaction = otherPopulation.CreateTransaction();
 
                 try
                 {
-                    this.c1A = C1.Create(otherSession);
-                    this.c1B = C1.Create(otherSession);
-                    this.c1C = C1.Create(otherSession);
+                    this.c1A = C1.Create(otherTransaction);
+                    this.c1B = C1.Create(otherTransaction);
+                    this.c1C = C1.Create(otherTransaction);
 
                     this.c1A.C1AllorsBinary = new byte[0];
                     this.c1B.C1AllorsBinary = new byte[] { 1, 2, 3, 4 };
                     this.c1C.C1AllorsBinary = null;
 
-                    otherSession.Commit();
+                    otherTransaction.Commit();
 
                     var stringWriter = new StringWriter();
                     using (var writer = XmlWriter.Create(stringWriter))
@@ -701,11 +701,11 @@ namespace Allors.Database.Adapters
                         this.Population.Load(reader);
                     }
 
-                    using (var session = this.Population.CreateSession())
+                    using (var transaction = this.Population.CreateTransaction())
                     {
-                        var c1ACopy = C1.Instantiate(session, this.c1A.Strategy.ObjectId);
-                        var c1BCopy = C1.Instantiate(session, this.c1B.Strategy.ObjectId);
-                        var c1CCopy = C1.Instantiate(session, this.c1C.Strategy.ObjectId);
+                        var c1ACopy = C1.Instantiate(transaction, this.c1A.Strategy.ObjectId);
+                        var c1BCopy = C1.Instantiate(transaction, this.c1B.Strategy.ObjectId);
+                        var c1CCopy = C1.Instantiate(transaction, this.c1C.Strategy.ObjectId);
 
                         Assert.Equal(this.c1A.C1AllorsBinary, c1ACopy.C1AllorsBinary);
                         Assert.Equal(this.c1B.C1AllorsBinary, c1BCopy.C1AllorsBinary);
@@ -714,7 +714,7 @@ namespace Allors.Database.Adapters
                 }
                 finally
                 {
-                    otherSession.Commit();
+                    otherTransaction.Commit();
                 }
             }
         }
@@ -725,7 +725,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 var xml =
 @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -755,10 +755,10 @@ namespace Allors.Database.Adapters
                 Assert.Equal(3, notLoadedEventArg.ObjectId);
                 Assert.Equal(new Guid("71000000000000000000000000000000"), notLoadedEventArg.ObjectTypeId);
 
-                using (var session = this.Population.CreateSession())
+                using (var transaction = this.Population.CreateTransaction())
                 {
-                    this.c1A = (C1)session.Instantiate(1);
-                    this.c2A = (C2)session.Instantiate(2);
+                    this.c1A = (C1)transaction.Instantiate(1);
+                    this.c2A = (C2)transaction.Instantiate(2);
 
                     Assert.NotNull(this.c1A);
                     Assert.NotNull(this.c2A);
@@ -772,7 +772,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 var xml =
 @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -819,10 +819,10 @@ namespace Allors.Database.Adapters
                 Assert.Equal(new Guid("40000000000000000000000000000000"), notLoadedEventArg.RelationTypeId);
                 Assert.Equal("Oops", notLoadedEventArg.RoleContents);
 
-                using (var session = this.Population.CreateSession())
+                using (var transaction = this.Population.CreateTransaction())
                 {
-                    this.c1A = (C1)session.Instantiate(1);
-                    this.c1C = (C1)session.Instantiate(3);
+                    this.c1A = (C1)transaction.Instantiate(1);
+                    this.c1C = (C1)transaction.Instantiate(3);
 
                     Assert.Equal("A String", this.c1A.C1AllorsString);
                     Assert.Equal(true, this.c1C.C1AllorsBoolean);
@@ -837,7 +837,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 var xml =
 @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -884,9 +884,9 @@ namespace Allors.Database.Adapters
                 Assert.Equal(new Guid("87eb0d1973a74aaeaeed66dc9163233c"), notLoadedEventArg.RelationTypeId);
                 Assert.Equal("1.1", notLoadedEventArg.RoleContents);
 
-                using (var session = this.Population.CreateSession())
+                using (var transaction = this.Population.CreateTransaction())
                 {
-                    this.c1A = (C1)session.Instantiate(1);
+                    this.c1A = (C1)transaction.Instantiate(1);
 
                     Assert.Equal("A String", this.c1A.C1AllorsString);
                     Assert.Equal(true, this.c1A.C1AllorsBoolean);
@@ -901,7 +901,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 var xml =
 @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -948,12 +948,12 @@ namespace Allors.Database.Adapters
                 Assert.Equal(new Guid("30000000000000000000000000000000"), notLoadedEventArg.RelationTypeId);
                 Assert.Equal("3", notLoadedEventArg.RoleContents);
 
-                using (var session = this.Population.CreateSession())
+                using (var transaction = this.Population.CreateTransaction())
                 {
-                    this.c1A = (C1)session.Instantiate(1);
-                    this.c1B = (C1)session.Instantiate(2);
-                    this.c1C = (C1)session.Instantiate(3);
-                    this.c1D = (C1)session.Instantiate(4);
+                    this.c1A = (C1)transaction.Instantiate(1);
+                    this.c1B = (C1)transaction.Instantiate(2);
+                    this.c1C = (C1)transaction.Instantiate(3);
+                    this.c1D = (C1)transaction.Instantiate(4);
 
                     Assert.Single(this.c1A.C1C1many2manies);
                     Assert.Contains(this.c1B, this.c1A.C1C1many2manies);
@@ -970,7 +970,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 var xml =
 @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -1017,12 +1017,12 @@ namespace Allors.Database.Adapters
                 Assert.Equal(new Guid("2cd8b843-f1f5-413d-9d6d-0d2b9b3c5cf6"), notLoadedEventArg.RelationTypeId);
                 Assert.Equal("3", notLoadedEventArg.RoleContents);
 
-                using (var session = this.Population.CreateSession())
+                using (var transaction = this.Population.CreateTransaction())
                 {
-                    this.c1A = (C1)session.Instantiate(1);
-                    this.c1B = (C1)session.Instantiate(2);
-                    this.c1C = (C1)session.Instantiate(3);
-                    this.c1D = (C1)session.Instantiate(4);
+                    this.c1A = (C1)transaction.Instantiate(1);
+                    this.c1B = (C1)transaction.Instantiate(2);
+                    this.c1C = (C1)transaction.Instantiate(3);
+                    this.c1D = (C1)transaction.Instantiate(4);
 
                     Assert.Single(this.c1A.C1C1many2manies);
                     Assert.Contains(this.c1B, this.c1A.C1C1many2manies);
@@ -1055,31 +1055,31 @@ namespace Allors.Database.Adapters
             }
         }
 
-        private void AssertPopulation(ISession session)
+        private void AssertPopulation(ITransaction transaction)
         {
-            var m = session.Database.Context().M;
+            var m = transaction.Database.Context().M;
 
-            Assert.Equal(4, this.GetExtent(session, m.C1.ObjectType).Length);
-            Assert.Equal(4, this.GetExtent(session, m.C2.ObjectType).Length);
-            Assert.Equal(4, this.GetExtent(session, m.C3.ObjectType).Length);
-            Assert.Equal(4, this.GetExtent(session, m.C4.ObjectType).Length);
+            Assert.Equal(4, this.GetExtent(transaction, m.C1.ObjectType).Length);
+            Assert.Equal(4, this.GetExtent(transaction, m.C2.ObjectType).Length);
+            Assert.Equal(4, this.GetExtent(transaction, m.C3.ObjectType).Length);
+            Assert.Equal(4, this.GetExtent(transaction, m.C4.ObjectType).Length);
 
-            var c1ACopy = C1.Instantiate(session, this.c1A.Strategy.ObjectId);
-            var c1BCopy = C1.Instantiate(session, this.c1B.Strategy.ObjectId);
-            var c1CCopy = C1.Instantiate(session, this.c1C.Strategy.ObjectId);
-            var c1DCopy = C1.Instantiate(session, this.c1D.Strategy.ObjectId);
-            var c2ACopy = C2.Instantiate(session, this.c2A.Strategy.ObjectId);
-            var c2BCopy = C2.Instantiate(session, this.c2B.Strategy.ObjectId);
-            var c2CCopy = C2.Instantiate(session, this.c2C.Strategy.ObjectId);
-            var c2DCopy = C2.Instantiate(session, this.c2D.Strategy.ObjectId);
-            var c3ACopy = C3.Instantiate(session, this.c3A.Strategy.ObjectId);
-            var c3BCopy = C3.Instantiate(session, this.c3B.Strategy.ObjectId);
-            var c3CCopy = C3.Instantiate(session, this.c3C.Strategy.ObjectId);
-            var c3DCopy = C3.Instantiate(session, this.c3D.Strategy.ObjectId);
-            var c4ACopy = C4.Instantiate(session, this.c4A.Strategy.ObjectId);
-            var c4BCopy = C4.Instantiate(session, this.c4B.Strategy.ObjectId);
-            var c4CCopy = C4.Instantiate(session, this.c4C.Strategy.ObjectId);
-            var c4DCopy = C4.Instantiate(session, this.c4D.Strategy.ObjectId);
+            var c1ACopy = C1.Instantiate(transaction, this.c1A.Strategy.ObjectId);
+            var c1BCopy = C1.Instantiate(transaction, this.c1B.Strategy.ObjectId);
+            var c1CCopy = C1.Instantiate(transaction, this.c1C.Strategy.ObjectId);
+            var c1DCopy = C1.Instantiate(transaction, this.c1D.Strategy.ObjectId);
+            var c2ACopy = C2.Instantiate(transaction, this.c2A.Strategy.ObjectId);
+            var c2BCopy = C2.Instantiate(transaction, this.c2B.Strategy.ObjectId);
+            var c2CCopy = C2.Instantiate(transaction, this.c2C.Strategy.ObjectId);
+            var c2DCopy = C2.Instantiate(transaction, this.c2D.Strategy.ObjectId);
+            var c3ACopy = C3.Instantiate(transaction, this.c3A.Strategy.ObjectId);
+            var c3BCopy = C3.Instantiate(transaction, this.c3B.Strategy.ObjectId);
+            var c3CCopy = C3.Instantiate(transaction, this.c3C.Strategy.ObjectId);
+            var c3DCopy = C3.Instantiate(transaction, this.c3D.Strategy.ObjectId);
+            var c4ACopy = C4.Instantiate(transaction, this.c4A.Strategy.ObjectId);
+            var c4BCopy = C4.Instantiate(transaction, this.c4B.Strategy.ObjectId);
+            var c4CCopy = C4.Instantiate(transaction, this.c4C.Strategy.ObjectId);
+            var c4DCopy = C4.Instantiate(transaction, this.c4D.Strategy.ObjectId);
 
             IObject[] everyC1 = { c1ACopy, c1BCopy, c1CCopy, c1DCopy };
             IObject[] everyC2 = { c2ACopy, c2BCopy, c2CCopy, c2DCopy };
@@ -1139,24 +1139,24 @@ namespace Allors.Database.Adapters
             }
         }
 
-        private void Populate(ISession session)
+        private void Populate(ITransaction transaction)
         {
-            this.c1A = C1.Create(session);
-            this.c1B = C1.Create(session);
-            this.c1C = C1.Create(session);
-            this.c1D = C1.Create(session);
-            this.c2A = C2.Create(session);
-            this.c2B = C2.Create(session);
-            this.c2C = C2.Create(session);
-            this.c2D = C2.Create(session);
-            this.c3A = C3.Create(session);
-            this.c3B = C3.Create(session);
-            this.c3C = C3.Create(session);
-            this.c3D = C3.Create(session);
-            this.c4A = C4.Create(session);
-            this.c4B = C4.Create(session);
-            this.c4C = C4.Create(session);
-            this.c4D = C4.Create(session);
+            this.c1A = C1.Create(transaction);
+            this.c1B = C1.Create(transaction);
+            this.c1C = C1.Create(transaction);
+            this.c1D = C1.Create(transaction);
+            this.c2A = C2.Create(transaction);
+            this.c2B = C2.Create(transaction);
+            this.c2C = C2.Create(transaction);
+            this.c2D = C2.Create(transaction);
+            this.c3A = C3.Create(transaction);
+            this.c3B = C3.Create(transaction);
+            this.c3C = C3.Create(transaction);
+            this.c3D = C3.Create(transaction);
+            this.c4A = C4.Create(transaction);
+            this.c4B = C4.Create(transaction);
+            this.c4C = C4.Create(transaction);
+            this.c4D = C4.Create(transaction);
 
             IObject[] allObjects =
                                    {
@@ -1201,7 +1201,7 @@ namespace Allors.Database.Adapters
                 }
             }
 
-            session.Commit();
+            transaction.Commit();
         }
 
         private static void Dump(IDatabase population)
@@ -1215,6 +1215,6 @@ namespace Allors.Database.Adapters
             }
         }
 
-        private IObject[] GetExtent(ISession session, IComposite objectType) => session.Extent(objectType);
+        private IObject[] GetExtent(ITransaction transaction, IComposite objectType) => transaction.Extent(objectType);
     }
 }

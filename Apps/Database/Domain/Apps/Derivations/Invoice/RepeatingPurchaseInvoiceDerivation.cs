@@ -29,22 +29,22 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<RepeatingPurchaseInvoice>())
             {
-                if (!@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Session).Month) && !@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Session).Week))
+                if (!@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Transaction).Month) && !@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Transaction).Week))
                 {
                     validation.AddError($"{@this} {this.M.RepeatingPurchaseInvoice.Frequency} {ErrorMessages.FrequencyNotSupported}");
                 }
 
-                if (@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Session).Week) && !@this.ExistDayOfWeek)
+                if (@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Transaction).Week) && !@this.ExistDayOfWeek)
                 {
                     validation.AssertExists(@this, this.M.RepeatingPurchaseInvoice.DayOfWeek);
                 }
 
-                if (@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Session).Month) && @this.ExistDayOfWeek)
+                if (@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Transaction).Month) && @this.ExistDayOfWeek)
                 {
                     validation.AssertNotExists(@this, this.M.RepeatingPurchaseInvoice.DayOfWeek);
                 }
 
-                if (@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Session).Week) && @this.ExistDayOfWeek && @this.ExistNextExecutionDate)
+                if (@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Transaction).Week) && @this.ExistDayOfWeek && @this.ExistNextExecutionDate)
                 {
                     if (!@this.NextExecutionDate.DayOfWeek.ToString().Equals(@this.DayOfWeek.Name))
                     {

@@ -12,13 +12,13 @@ namespace Allors.Workspace.Protocol.Direct
 
     public class ToDatabaseVisitor
     {
-        private readonly ISession session;
+        private readonly ITransaction transaction;
         private readonly IMetaPopulation metaPopulation;
 
-        public ToDatabaseVisitor(Database.ISession session)
+        public ToDatabaseVisitor(Database.ITransaction transaction)
         {
-            this.session = session;
-            this.metaPopulation = session.Database.MetaPopulation;
+            this.transaction = transaction;
+            this.metaPopulation = transaction.Database.MetaPopulation;
         }
 
         public Database.Data.Pull Visit(Data.Pull ws) =>

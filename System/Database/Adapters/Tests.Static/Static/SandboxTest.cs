@@ -15,7 +15,7 @@ namespace Allors.Database.Adapters
 
     public abstract class SandboxTest : IDisposable
     {
-        protected ISession Session => this.Profile.Session;
+        protected ITransaction Transaction => this.Profile.Transaction;
 
         protected Action[] Markers => this.Profile.Markers;
 
@@ -33,15 +33,15 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var user = User.Create(this.Session);
+                var user = User.Create(this.Transaction);
                 user.From = "Nowhere";
                 Assert.Equal("Nowhere", user.From);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                user = (User)this.Session.Instantiate(user.Id);
+                user = (User)this.Transaction.Instantiate(user.Id);
                 Assert.Equal("Nowhere", user.From);
             }
         }
@@ -52,7 +52,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 if (this.Population is IDatabase database)
                 {
@@ -70,10 +70,10 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var c1A = C1.Create(this.Session);
-                var c1B = C1.Create(this.Session);
+                var c1A = C1.Create(this.Transaction);
+                var c1B = C1.Create(this.Transaction);
                 c1A.C1C1many2one = c1B;
 
                 foreach (C1 c in c1B.C1sWhereC1C1many2one)
@@ -91,16 +91,16 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var population = new TestPopulation(this.Session);
+                var population = new TestPopulation(this.Transaction);
 
                 var extent = new Extent(m.C1.ObjectType)
                 {
                     Predicate = new Equals(m.C1.C1AllorsString) { Parameter = "pString" },
                 };
 
-                var objects = this.Session.Resolve<C1>(extent, new Dictionary<string, string> { { "pString", "ᴀbra" } });
+                var objects = this.Transaction.Resolve<C1>(extent, new Dictionary<string, string> { { "pString", "ᴀbra" } });
 
                 Assert.Single(objects);
             }
@@ -112,16 +112,16 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var population = new TestPopulation(this.Session);
+                var population = new TestPopulation(this.Transaction);
 
                 var extent = new Extent(m.C1.ObjectType)
                 {
                     Predicate = new Equals(m.C1.C1AllorsString) { Parameter = "pString" },
                 };
 
-                var objects = this.Session.Resolve<C1>(extent);
+                var objects = this.Transaction.Resolve<C1>(extent);
 
                 Assert.Equal(4, objects.Length);
             }
@@ -134,8 +134,8 @@ namespace Allors.Database.Adapters
         //    foreach (var init in this.Inits)
         //    {
         //        init();
-        //        var m = this.Session.Database.State().M;
-        //        var population = new TestPopulation(this.Session);
+        //        var m = this.Transaction.Database.State().M;
+        //        var population = new TestPopulation(this.Transaction);
 
         //        var schemaExtent = new Protocol.Data.Extent
         //        {
@@ -149,9 +149,9 @@ namespace Allors.Database.Adapters
         //            },
         //        };
 
-        //        var extent = schemaExtent.Load(this.Session);
+        //        var extent = schemaExtent.Load(this.Transaction);
 
-        //        var objects = this.Session.Resolve<C1>(extent);
+        //        var objects = this.Transaction.Resolve<C1>(extent);
 
         //        Assert.Single(objects);
         //    }
@@ -164,8 +164,8 @@ namespace Allors.Database.Adapters
         //    foreach (var init in this.Inits)
         //    {
         //        init();
-        //        var m = this.Session.Database.State().M;
-        //        var population = new TestPopulation(this.Session);
+        //        var m = this.Transaction.Database.State().M;
+        //        var population = new TestPopulation(this.Transaction);
 
         //        var extent = new Extent(m.C1.ObjectType)
         //        {
@@ -193,17 +193,17 @@ namespace Allors.Database.Adapters
             {
                 init();
 
-                var c1 = this.Session.Create<C1>();
-                var c2a = this.Session.Create<C2>();
-                var c2b = this.Session.Create<C2>();
+                var c1 = this.Transaction.Create<C1>();
+                var c2a = this.Transaction.Create<C2>();
+                var c2b = this.Transaction.Create<C2>();
 
                 c1.I1I12one2one = c2a;
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 c1.I1I12one2one = c2b;
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 Assert.Null(c2a.I1WhereI1I12one2one);
                 Assert.Equal(c1, c2b.I1WhereI1I12one2one);

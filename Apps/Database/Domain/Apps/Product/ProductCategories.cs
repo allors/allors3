@@ -13,12 +13,12 @@ namespace Allors.Database.Domain
         {
             get
             {
-                var extent = this.Session.Extent(this.ObjectType);
+                var extent = this.Transaction.Extent(this.ObjectType);
                 extent.Filter.AddNot().AddExists(this.Meta.PrimaryParent);
                 return extent;
             }
         }
 
-        private UniquelyIdentifiableCache<ProductCategory> Cache => this.cache ??= new UniquelyIdentifiableCache<ProductCategory>(this.Session);
+        private UniquelyIdentifiableCache<ProductCategory> Cache => this.cache ??= new UniquelyIdentifiableCache<ProductCategory>(this.Transaction);
     }
 }

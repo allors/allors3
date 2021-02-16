@@ -13,7 +13,7 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static PurchaseShipmentBuilder WithDefaults(this PurchaseShipmentBuilder @this, Organisation internalOrganisation)
         {
-            var faker = @this.Session.Faker();
+            var faker = @this.Transaction.Faker();
 
             var supplier = faker.Random.ListItem(internalOrganisation.ActiveSuppliers);
 
@@ -21,18 +21,18 @@ namespace Allors.Database.Domain.TestPopulation
             @this.WithShipFromContactPerson(supplier.CurrentContacts.FirstOrDefault());
             @this.WithShipToParty(internalOrganisation);
             @this.WithShipToContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault());
-            @this.WithShipmentMethod(faker.Random.ListItem(@this.Session.Extent<ShipmentMethod>()));
-            @this.WithCarrier(faker.Random.ListItem(@this.Session.Extent<Carrier>()));
-            @this.WithEstimatedShipDate(faker.Date.Between(start: @this.Session.Now(), end: @this.Session.Now().AddDays(5)));
-            @this.WithEstimatedArrivalDate(faker.Date.Between(start: @this.Session.Now().AddDays(6), end: @this.Session.Now().AddDays(10)));
+            @this.WithShipmentMethod(faker.Random.ListItem(@this.Transaction.Extent<ShipmentMethod>()));
+            @this.WithCarrier(faker.Random.ListItem(@this.Transaction.Extent<Carrier>()));
+            @this.WithEstimatedShipDate(faker.Date.Between(start: @this.Transaction.Now(), end: @this.Transaction.Now().AddDays(5)));
+            @this.WithEstimatedArrivalDate(faker.Date.Between(start: @this.Transaction.Now().AddDays(6), end: @this.Transaction.Now().AddDays(10)));
 
-            @this.WithElectronicDocument(new MediaBuilder(@this.Session).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
+            @this.WithElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
             @this.WithEstimatedShipCost(faker.Finance.Amount(100, 1000, 2));
             @this.WithComment(faker.Lorem.Sentence());
 
-            foreach (Locale additionalLocale in @this.Session.GetSingleton().AdditionalLocales)
+            foreach (Locale additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
             {
-                @this.WithLocalisedComment(new LocalisedTextBuilder(@this.Session).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
+                @this.WithLocalisedComment(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
             }
 
             return @this;

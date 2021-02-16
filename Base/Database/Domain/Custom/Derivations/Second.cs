@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
     {
         public void CustomOnDerive(ObjectOnDerive method)
         {
-            this.Third = new ThirdBuilder(this.Strategy.Session).Build();
+            this.Third = new ThirdBuilder(this.Strategy.Transaction).Build();
 
             this.IsDerived = true;
         }

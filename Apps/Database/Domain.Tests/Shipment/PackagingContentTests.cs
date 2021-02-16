@@ -18,124 +18,124 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPackingingContent_WhenDeriving_ThenAssertQuantityPackedIsNotGreaterThanQuantityShipped()
         {
-            var mechelen = new CityBuilder(this.Session).WithName("Mechelen").Build();
-            var mechelenAddress = new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
-            var shipToMechelen = new PartyContactMechanismBuilder(this.Session)
+            var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
+            var mechelenAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
+            var shipToMechelen = new PartyContactMechanismBuilder(this.Transaction)
                 .WithContactMechanism(mechelenAddress)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).ShippingAddress)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
                 .WithUseAsDefault(true)
                 .Build();
 
-            var customer = new PersonBuilder(this.Session).WithLastName("customer").WithPartyContactMechanism(shipToMechelen).Build();
-            new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(customer).Build();
+            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").WithPartyContactMechanism(shipToMechelen).Build();
+            new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).Build();
 
-            var good1 = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good1");
-            var good2 = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good2");
+            var good1 = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1");
+            var good2 = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good2");
 
-            new InventoryItemTransactionBuilder(this.Session).WithQuantity(100).WithReason(new InventoryTransactionReasons(this.Session).Unknown).WithPart(good1.Part).Build();
-            new InventoryItemTransactionBuilder(this.Session).WithQuantity(100).WithReason(new InventoryTransactionReasons(this.Session).Unknown).WithPart(good2.Part).Build();
+            new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(100).WithReason(new InventoryTransactionReasons(this.Transaction).Unknown).WithPart(good1.Part).Build();
+            new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(100).WithReason(new InventoryTransactionReasons(this.Transaction).Unknown).WithPart(good2.Part).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var order = new SalesOrderBuilder(this.Session)
+            var order = new SalesOrderBuilder(this.Transaction)
                 .WithBillToCustomer(customer)
                 .WithShipToCustomer(customer)
                 .Build();
 
-            var item1 = new SalesOrderItemBuilder(this.Session).WithProduct(good1).WithQuantityOrdered(1).WithAssignedUnitPrice(15).Build();
-            var item2 = new SalesOrderItemBuilder(this.Session).WithProduct(good1).WithQuantityOrdered(2).WithAssignedUnitPrice(15).Build();
-            var item3 = new SalesOrderItemBuilder(this.Session).WithProduct(good2).WithQuantityOrdered(5).WithAssignedUnitPrice(15).Build();
+            var item1 = new SalesOrderItemBuilder(this.Transaction).WithProduct(good1).WithQuantityOrdered(1).WithAssignedUnitPrice(15).Build();
+            var item2 = new SalesOrderItemBuilder(this.Transaction).WithProduct(good1).WithQuantityOrdered(2).WithAssignedUnitPrice(15).Build();
+            var item3 = new SalesOrderItemBuilder(this.Transaction).WithProduct(good2).WithQuantityOrdered(5).WithAssignedUnitPrice(15).Build();
             order.AddSalesOrderItem(item1);
             order.AddSalesOrderItem(item2);
             order.AddSalesOrderItem(item3);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var shipment = (CustomerShipment)mechelenAddress.ShipmentsWhereShipToAddress[0];
 
-            var package = new ShipmentPackageBuilder(this.Session).Build();
+            var package = new ShipmentPackageBuilder(this.Transaction).Build();
             shipment.AddShipmentPackage(package);
-            package.AddPackagingContent(new PackagingContentBuilder(this.Session)
+            package.AddPackagingContent(new PackagingContentBuilder(this.Transaction)
                                             .WithShipmentItem(shipment.ShipmentItems[0])
                                             .WithQuantity(shipment.ShipmentItems[0].Quantity + 1)
                                             .Build());
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void GivenPackingingContent_WhenDerived_ThenShipmentItemsQuantityPackedIsSet()
         {
-            var mechelen = new CityBuilder(this.Session).WithName("Mechelen").Build();
-            var mechelenAddress = new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
-            var shipToMechelen = new PartyContactMechanismBuilder(this.Session)
+            var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
+            var mechelenAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
+            var shipToMechelen = new PartyContactMechanismBuilder(this.Transaction)
                 .WithContactMechanism(mechelenAddress)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).ShippingAddress)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
                 .WithUseAsDefault(true)
                 .Build();
 
-            var customer = new PersonBuilder(this.Session).WithLastName("customer").WithPartyContactMechanism(shipToMechelen).Build();
-            new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(customer).Build();
+            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").WithPartyContactMechanism(shipToMechelen).Build();
+            new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).Build();
 
-            var good1 = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good1");
-            var good2 = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good2");
+            var good1 = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1");
+            var good2 = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good2");
 
-            new InventoryItemTransactionBuilder(this.Session).WithQuantity(100).WithReason(new InventoryTransactionReasons(this.Session).Unknown).WithPart(good1.Part).Build();
-            new InventoryItemTransactionBuilder(this.Session).WithQuantity(100).WithReason(new InventoryTransactionReasons(this.Session).Unknown).WithPart(good1.Part).Build();
+            new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(100).WithReason(new InventoryTransactionReasons(this.Transaction).Unknown).WithPart(good1.Part).Build();
+            new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(100).WithReason(new InventoryTransactionReasons(this.Transaction).Unknown).WithPart(good1.Part).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var order = new SalesOrderBuilder(this.Session)
+            var order = new SalesOrderBuilder(this.Transaction)
                 .WithBillToCustomer(customer)
                 .WithShipToCustomer(customer)
                 .Build();
 
-            var item1 = new SalesOrderItemBuilder(this.Session).WithProduct(good1).WithQuantityOrdered(1).WithAssignedUnitPrice(15).Build();
-            var item2 = new SalesOrderItemBuilder(this.Session).WithProduct(good1).WithQuantityOrdered(2).WithAssignedUnitPrice(15).Build();
-            var item3 = new SalesOrderItemBuilder(this.Session).WithProduct(good2).WithQuantityOrdered(5).WithAssignedUnitPrice(15).Build();
+            var item1 = new SalesOrderItemBuilder(this.Transaction).WithProduct(good1).WithQuantityOrdered(1).WithAssignedUnitPrice(15).Build();
+            var item2 = new SalesOrderItemBuilder(this.Transaction).WithProduct(good1).WithQuantityOrdered(2).WithAssignedUnitPrice(15).Build();
+            var item3 = new SalesOrderItemBuilder(this.Transaction).WithProduct(good2).WithQuantityOrdered(5).WithAssignedUnitPrice(15).Build();
             order.AddSalesOrderItem(item1);
             order.AddSalesOrderItem(item2);
             order.AddSalesOrderItem(item3);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var shipment = (CustomerShipment)mechelenAddress.ShipmentsWhereShipToAddress[0];
             shipment.Pick();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var pickList = shipment.ShipmentItems[0].ItemIssuancesWhereShipmentItem[0].PickListItem.PickListWherePickListItem;
             pickList.Picker = this.OrderProcessor;
             pickList.SetPicked();
 
-            var package = new ShipmentPackageBuilder(this.Session).Build();
+            var package = new ShipmentPackageBuilder(this.Transaction).Build();
             shipment.AddShipmentPackage(package);
             foreach (ShipmentItem shipmentItem in shipment.ShipmentItems)
             {
-                package.AddPackagingContent(new PackagingContentBuilder(this.Session).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
+                package.AddPackagingContent(new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
             }
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             shipment.Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             foreach (ShipmentItem shipmentItem in shipment.ShipmentItems)
             {
@@ -151,60 +151,60 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPackagingContentShipmentItemThrowValidationError()
         {
-            var shipment = new CustomerShipmentBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var shipmentItem = new ShipmentItemBuilder(this.Session).WithQuantity(10).Build();
+            var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(10).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var packagingContent = new PackagingContentBuilder(this.Session).WithQuantity(11).Build();
-            this.Session.Derive(false);
+            var packagingContent = new PackagingContentBuilder(this.Transaction).WithQuantity(11).Build();
+            this.Transaction.Derive(false);
 
             packagingContent.ShipmentItem = shipmentItem;
 
             var expectedMessage = $"{packagingContent}, { this.M.PackagingContent.Quantity}, { ErrorMessages.PackagingContentMaximum}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
 
         [Fact]
         public void ChangedShipmentItemQuantityThrowValidationError()
         {
-            var shipment = new CustomerShipmentBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var shipmentItem = new ShipmentItemBuilder(this.Session).WithQuantity(10).Build();
+            var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(10).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var packagingContent = new PackagingContentBuilder(this.Session).WithShipmentItem(shipmentItem).WithQuantity(10).Build();
-            this.Session.Derive(false);
+            var packagingContent = new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(10).Build();
+            this.Transaction.Derive(false);
 
             shipmentItem.Quantity = 9;
 
             var expectedMessage = $"{packagingContent}, { this.M.PackagingContent.Quantity}, { ErrorMessages.PackagingContentMaximum}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
 
         [Fact]
         public void ChangedShipmentItemQuantityShippedThrowValidationError()
         {
-            var shipment = new CustomerShipmentBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var shipmentItem = new ShipmentItemBuilder(this.Session).WithQuantity(10).Build();
+            var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(10).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var packagingContent = new PackagingContentBuilder(this.Session).WithShipmentItem(shipmentItem).WithQuantity(10).Build();
-            this.Session.Derive(false);
+            var packagingContent = new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(10).Build();
+            this.Transaction.Derive(false);
 
             shipmentItem.QuantityShipped = 1;
 
             var expectedMessage = $"{packagingContent}, { this.M.PackagingContent.Quantity}, { ErrorMessages.PackagingContentMaximum}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
     }

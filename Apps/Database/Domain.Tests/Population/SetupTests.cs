@@ -17,22 +17,22 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void Twice()
         {
-            var session = this.Session;
+            var transaction = this.Transaction;
 
             var config = new Config();
-            new Setup(session, config).Apply();
+            new Setup(transaction, config).Apply();
 
-            session.Derive();
-            session.Commit();
+            transaction.Derive();
+            transaction.Commit();
 
-            var objects1 = new Objects(session).Extent().ToArray();
+            var objects1 = new Objects(transaction).Extent().ToArray();
 
-            new Setup(session, config).Apply();
+            new Setup(transaction, config).Apply();
 
-            session.Derive();
-            session.Commit();
+            transaction.Derive();
+            transaction.Commit();
 
-            var objects2 = new Objects(session).Extent().ToArray();
+            var objects2 = new Objects(transaction).Extent().ToArray();
 
             var diff = objects2.Except(objects1).ToArray();
 

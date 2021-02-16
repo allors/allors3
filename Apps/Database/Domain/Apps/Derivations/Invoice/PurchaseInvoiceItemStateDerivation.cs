@@ -28,7 +28,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<PurchaseInvoiceItem>())
             {
-                var purchaseInvoiceItemStates = new PurchaseInvoiceItemStates(@this.Strategy.Session);
+                var purchaseInvoiceItemStates = new PurchaseInvoiceItemStates(@this.Strategy.Transaction);
 
                 if (@this.ExistPurchaseInvoiceWherePurchaseInvoiceItem
                     && @this.PurchaseInvoiceWherePurchaseInvoiceItem.ExistPurchaseInvoiceState

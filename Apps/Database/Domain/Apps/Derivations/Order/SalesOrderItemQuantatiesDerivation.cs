@@ -26,12 +26,12 @@ namespace Allors.Database.Domain
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
-            var session = cycle.Session;
+            var transaction = cycle.Transaction;
 
             foreach (var @this in matches.Cast<SalesOrderItem>().Where(v => v.SalesOrderItemState.IsInProcess && !v.SalesOrderItemShipmentState.IsShipped))
             {
                 var salesOrder = @this.SalesOrderWhereSalesOrderItem;
-                var settings = @this.Strategy.Session.GetSingleton().Settings;
+                var settings = @this.Strategy.Transaction.GetSingleton().Settings;
 
                 if (@this.ExistReservedFromNonSerialisedInventoryItem)
                 {
@@ -53,7 +53,7 @@ namespace Allors.Database.Domain
 
                         var quantityCommittedOut = @this.SalesOrderItemInventoryAssignments
                             .SelectMany(v => v.InventoryItemTransactions)
-                            .Where(t => t.Reason.Equals(new InventoryTransactionReasons(session).Reservation))
+                            .Where(t => t.Reason.Equals(new InventoryTransactionReasons(transaction).Reservation))
                             .Sum(v => v.Quantity);
 
                         if (quantityCommittedOut < 0)
@@ -96,7 +96,7 @@ namespace Allors.Database.Domain
                         {
                             if (inventoryAssignment == null)
                             {
-                                var salesOrderItemInventoryAssignment = new SalesOrderItemInventoryAssignmentBuilder(session)
+                                var salesOrderItemInventoryAssignment = new SalesOrderItemInventoryAssignmentBuilder(transaction)
                                     .WithInventoryItem(@this.ReservedFromNonSerialisedInventoryItem)
                                     .WithQuantity(wantToShip + availableFromInventory)
                                     .Build();
@@ -144,7 +144,7 @@ namespace Allors.Database.Domain
                     var inventoryAssignment = @this.SalesOrderItemInventoryAssignments.FirstOrDefault(v => v.InventoryItem.Equals(@this.ReservedFromSerialisedInventoryItem));
                     if (inventoryAssignment == null)
                     {
-                        var salesOrderItemInventoryAssignment = new SalesOrderItemInventoryAssignmentBuilder(session)
+                        var salesOrderItemInventoryAssignment = new SalesOrderItemInventoryAssignmentBuilder(transaction)
                                 .WithInventoryItem(@this.ReservedFromSerialisedInventoryItem)
                                 .WithQuantity(1)
                                 .Build();

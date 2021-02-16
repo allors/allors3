@@ -21,19 +21,19 @@ namespace Allors.Database.Domain.Tests
         // [Fact]
         // public void SyncMethod()
         // {
-        //    var domain = (Domain)this.DatabaseSession.Population.MetaPopulation.Find(new Guid("AB41FD0C-C887-4A1D-BEDA-CED69527E69A"));
+        //    var domain = (Domain)this.DatabaseTransaction.Population.MetaPopulation.Find(new Guid("AB41FD0C-C887-4A1D-BEDA-CED69527E69A"));
 
         // var methodType = new MethodTypeBuilder(domain, Guid.NewGuid()).Build();
         //    methodType.ObjectType = M.Organisation.ObjectType;
         //    methodType.Name = "Method";
 
-        // var count = new Permissions(this.DatabaseSession).Extent().Count;
+        // var count = new Permissions(this.DatabaseTransaction).Extent().Count;
 
-        // new Permissions(this.DatabaseSession).Sync();
+        // new Permissions(this.DatabaseTransaction).Sync();
 
-        // Assert.Equal(count + 1, new Permissions(this.DatabaseSession).Extent().Count);
+        // Assert.Equal(count + 1, new Permissions(this.DatabaseTransaction).Extent().Count);
 
-        // var methodPermission = new Permissions(this.DatabaseSession).FindBy(M.Permission.OperandTypePointer, methodType.Id);
+        // var methodPermission = new Permissions(this.DatabaseTransaction).FindBy(M.Permission.OperandTypePointer, methodType.Id);
         //    Assert.NotNull(methodPermission);
         //    Assert.Equal(Operation.Execute, methodPermission.Operation);
         // }
@@ -41,9 +41,9 @@ namespace Allors.Database.Domain.Tests
         // [Fact]
         // public void SyncRelation()
         // {
-        //    var domain = (Domain)this.DatabaseSession.Population.MetaPopulation.Find(new Guid("AB41FD0C-C887-4A1D-BEDA-CED69527E69A"));
+        //    var domain = (Domain)this.DatabaseTransaction.Population.MetaPopulation.Find(new Guid("AB41FD0C-C887-4A1D-BEDA-CED69527E69A"));
 
-        // var count = new Permissions(this.DatabaseSession).Extent().Count;
+        // var count = new Permissions(this.DatabaseTransaction).Extent().Count;
 
         // var relationType = new RelationTypeBuilder(domain, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid()).Build();
 
@@ -52,17 +52,17 @@ namespace Allors.Database.Domain.Tests
         //    relationType.RoleType.AssignedSingularName = "Relation";
         //    relationType.RoleType.AssignedPluralName = "Relations";
 
-        // new Permissions(this.DatabaseSession).Sync();
+        // new Permissions(this.DatabaseTransaction).Sync();
 
-        // this.DatabaseSession.Derive(true);
+        // this.DatabaseTransaction.Derive(true);
 
-        // Assert.Equal(count + 3, new Permissions(this.DatabaseSession).Extent().Count);
+        // Assert.Equal(count + 3, new Permissions(this.DatabaseTransaction).Extent().Count);
 
-        // var roleTypePermissions = new Permissions(this.DatabaseSession).Extent();
+        // var roleTypePermissions = new Permissions(this.DatabaseTransaction).Extent();
         //    roleTypePermissions.Filter.AddEquals(M.Permission.OperandTypePointer, relationType.RoleType.Id);
         //    Assert.Equal(2, roleTypePermissions.Count);
 
-        // var associationTypePermissions = new Permissions(this.DatabaseSession).Extent();
+        // var associationTypePermissions = new Permissions(this.DatabaseTransaction).Extent();
         //    associationTypePermissions.Filter.AddEquals(M.Permission.OperandTypePointer, relationType.AssociationType.Id);
         //    Assert.Equal(1, associationTypePermissions.Count);
         // }
@@ -70,8 +70,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void NoPermissionsForAssociationsWhenUnitType()
         {
-            new Permissions(this.Session).Sync();
-            var permissions = new Permissions(this.Session).Extent().ToArray();
+            new Permissions(this.Transaction).Sync();
+            var permissions = new Permissions(this.Transaction).Extent().ToArray();
 
             Assert.Empty(permissions.Where(v => v.OperandType is AssociationType associationType && associationType.RoleType.ObjectType.IsUnit));
         }
@@ -79,23 +79,23 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void WhenSyncingPermissionsThenObsolotePermissionsAreDeleted()
         {
-            var domain = (Domain)this.Session.Database.MetaPopulation.Find(new Guid("AB41FD0C-C887-4A1D-BEDA-CED69527E69A"));
+            var domain = (Domain)this.Transaction.Database.MetaPopulation.Find(new Guid("AB41FD0C-C887-4A1D-BEDA-CED69527E69A"));
 
-            var count = new Permissions(this.Session).Extent().Count;
+            var count = new Permissions(this.Transaction).Extent().Count;
 
-            var permission = new ExecutePermissionBuilder(this.Session).WithClassPointer(new Guid()).WithMethodTypePointer(new Guid()).Build();
+            var permission = new ExecutePermissionBuilder(this.Transaction).WithClassPointer(new Guid()).WithMethodTypePointer(new Guid()).Build();
 
-            new Permissions(this.Session).Sync();
+            new Permissions(this.Transaction).Sync();
 
-            Assert.Equal(count, new Permissions(this.Session).Extent().Count);
+            Assert.Equal(count, new Permissions(this.Transaction).Extent().Count);
         }
 
         [Fact]
         public void WhenSyncingPermissionsThenDanglingPermissionsAreDeleted()
         {
-            var permission = new ReadPermissionBuilder(this.Session).Build();
+            var permission = new ReadPermissionBuilder(this.Transaction).Build();
 
-            new Permissions(this.Session).Sync();
+            new Permissions(this.Transaction).Sync();
 
             Assert.True(permission.Strategy.IsDeleted);
         }
@@ -104,10 +104,10 @@ namespace Allors.Database.Domain.Tests
         public void GivenSyncedPermissionsWhenRemovingAnOperationThenThatPermissionIsInvalid()
         {
             // TODO: Permission members should be write once
-            // var permission = (Permission)this.DatabaseSession.Extent<Permission>().First;
+            // var permission = (Permission)this.DatabaseTransaction.Extent<Permission>().First;
             // permission.RemoveOperationEnum();
 
-            // var validation = this.DatabaseSession.Derive(false);
+            // var validation = this.DatabaseTransaction.Derive(false);
 
             // Assert.True(validation.HasErrors);
             // Assert.Equal(1, validation.Errors.Length);
@@ -123,10 +123,10 @@ namespace Allors.Database.Domain.Tests
         public void GivenSyncedPermissionsWhenRemovingAnAccessControlledMemberThenThatPermissionIsInvalid()
         {
             // TODO: Permission members should be write once
-            // var permission = this.DatabaseSession.Extent<Permission>().First;
+            // var permission = this.DatabaseTransaction.Extent<Permission>().First;
             // permission.RemoveOperandTypePointer();
 
-            // var validation = this.DatabaseSession.Derive(false);
+            // var validation = this.DatabaseTransaction.Derive(false);
 
             // Assert.True(validation.HasErrors);
             // Assert.Equal(1, validation.Errors.Length);

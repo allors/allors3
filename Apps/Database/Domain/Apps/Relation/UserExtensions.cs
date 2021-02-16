@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
         {
             if (@this.ExistUserName && !@this.ExistUserProfile)
             {
-                @this.UserProfile = new UserProfileBuilder(@this.Strategy.Session).Build();
+                @this.UserProfile = new UserProfileBuilder(@this.Strategy.Transaction).Build();
             }
         }
 

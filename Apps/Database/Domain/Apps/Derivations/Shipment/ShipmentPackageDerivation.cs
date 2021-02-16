@@ -29,7 +29,7 @@ namespace Allors.Database.Domain
                 if (!@this.ExistDocuments)
                 {
                     var name = $"Package {(@this.ExistSequenceNumber ? @this.SequenceNumber.ToString(CultureInfo.InvariantCulture) : string.Empty)}";
-                    @this.AddDocument(new PackagingSlipBuilder(@this.Strategy.Session).WithName(name).Build());
+                    @this.AddDocument(new PackagingSlipBuilder(@this.Strategy.Transaction).WithName(name).Build());
                 }
 
                 var shipment = @this.ShipmentWhereShipmentPackage as CustomerShipment;
@@ -44,7 +44,7 @@ namespace Allors.Database.Domain
                                 && @this.PackagingContents.FirstOrDefault(v => v.ShipmentItem.Equals(itemIssuance.ShipmentItem)) == null)
                             {
                                 @this.AddPackagingContent(
-                                    new PackagingContentBuilder(@this.Strategy.Session)
+                                    new PackagingContentBuilder(@this.Strategy.Transaction)
                                         .WithShipmentItem(itemIssuance.ShipmentItem)
                                         .WithQuantity(itemIssuance.Quantity)
                                         .Build());

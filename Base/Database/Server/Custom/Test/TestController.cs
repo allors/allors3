@@ -57,7 +57,7 @@ namespace Allors.Database.Server.Controllers
                 var database = this.Database;
                 database.Init();
 
-                using (var session = database.CreateSession())
+                using (var session = database.CreateTransaction())
                 {
                     var config = new Config();
                     new Setup(session, config).Apply();

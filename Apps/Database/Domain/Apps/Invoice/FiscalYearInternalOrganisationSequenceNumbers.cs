@@ -11,42 +11,42 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistPurchaseOrderNumberCounter)
             {
-                this.PurchaseOrderNumberCounter = new CounterBuilder(this.Session()).Build();
+                this.PurchaseOrderNumberCounter = new CounterBuilder(this.Transaction()).Build();
             }
 
             if (!this.ExistPurchaseInvoiceNumberCounter)
             {
-                this.PurchaseInvoiceNumberCounter = new CounterBuilder(this.Session()).Build();
+                this.PurchaseInvoiceNumberCounter = new CounterBuilder(this.Transaction()).Build();
             }
 
             if (!this.ExistRequestNumberCounter)
             {
-                this.RequestNumberCounter = new CounterBuilder(this.Session()).Build();
+                this.RequestNumberCounter = new CounterBuilder(this.Transaction()).Build();
             }
 
             if (!this.ExistQuoteNumberCounter)
             {
-                this.QuoteNumberCounter = new CounterBuilder(this.Session()).Build();
+                this.QuoteNumberCounter = new CounterBuilder(this.Transaction()).Build();
             }
 
             if (!this.ExistPurchaseShipmentNumberCounter)
             {
-                this.PurchaseShipmentNumberCounter = new CounterBuilder(this.Session()).Build();
+                this.PurchaseShipmentNumberCounter = new CounterBuilder(this.Transaction()).Build();
             }
 
             if (!this.ExistCustomerReturnNumberCounter)
             {
-                this.CustomerReturnNumberCounter = new CounterBuilder(this.Session()).Build();
+                this.CustomerReturnNumberCounter = new CounterBuilder(this.Transaction()).Build();
             }
 
             if (!this.ExistIncomingTransferNumberCounter)
             {
-                this.IncomingTransferNumberCounter = new CounterBuilder(this.Session()).Build();
+                this.IncomingTransferNumberCounter = new CounterBuilder(this.Transaction()).Build();
             }
 
             if (!this.ExistWorkEffortNumberCounter)
             {
-                this.WorkEffortNumberCounter = new CounterBuilder(this.Session()).Build();
+                this.WorkEffortNumberCounter = new CounterBuilder(this.Transaction()).Build();
             }
         }
 

@@ -18,18 +18,18 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void WorkTask_StateCreated()
         {
-            var customer = new OrganisationBuilder(this.Session).WithName("Org1").Build();
-            var internalOrganisation = new Organisations(this.Session).Extent().First(o => o.IsInternalOrganisation);
-            new CustomerRelationshipBuilder(this.Session).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
+            var customer = new OrganisationBuilder(this.Transaction).WithName("Org1").Build();
+            var internalOrganisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
+            new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
 
-            var workTask = new WorkTaskBuilder(this.Session).WithName("Activity").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
+            var workTask = new WorkTaskBuilder(this.Transaction).WithName("Activity").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Equal(new WorkEffortStates(this.Session).Created, workTask.WorkEffortState);
+            Assert.Equal(new WorkEffortStates(this.Transaction).Created, workTask.WorkEffortState);
 
             User user = this.Administrator;
-            this.Session.SetUser(user);
+            this.Transaction.SetUser(user);
 
             var acl = new DatabaseAccessControlLists(this.Administrator)[workTask];
             Assert.True(acl.CanExecute(this.M.WorkEffort.Cancel));
@@ -41,22 +41,22 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void WorkTask_StateCompleted()
         {
-            var customer = new OrganisationBuilder(this.Session).WithName("Org1").Build();
-            var internalOrganisation = new Organisations(this.Session).Extent().First(o => o.IsInternalOrganisation);
-            new CustomerRelationshipBuilder(this.Session).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
+            var customer = new OrganisationBuilder(this.Transaction).WithName("Org1").Build();
+            var internalOrganisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
+            new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
 
-            var workTask = new WorkTaskBuilder(this.Session).WithName("Activity").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
+            var workTask = new WorkTaskBuilder(this.Transaction).WithName("Activity").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             workTask.Complete();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Equal(new WorkEffortStates(this.Session).Completed, workTask.WorkEffortState);
+            Assert.Equal(new WorkEffortStates(this.Transaction).Completed, workTask.WorkEffortState);
 
             User user = this.Administrator;
-            this.Session.SetUser(user);
+            this.Transaction.SetUser(user);
 
             var acl = new DatabaseAccessControlLists(this.Administrator)[workTask];
             Assert.True(acl.CanExecute(this.M.WorkEffort.Invoice));
@@ -68,50 +68,50 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void WorkTask_StateFinished()
         {
-            var mechelen = new CityBuilder(this.Session).WithName("Mechelen").Build();
-            var mechelenAddress = new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
+            var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
+            var mechelenAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
 
-            var billToMechelen = new PartyContactMechanismBuilder(this.Session)
+            var billToMechelen = new PartyContactMechanismBuilder(this.Transaction)
                 .WithContactMechanism(mechelenAddress)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).BillingAddress)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
                 .WithUseAsDefault(true)
                 .Build();
 
-            var customer = new OrganisationBuilder(this.Session).WithName("Org1").WithPartyContactMechanism(billToMechelen).Build();
-            var internalOrganisation = new Organisations(this.Session).Extent().First(o => o.IsInternalOrganisation);
-            new CustomerRelationshipBuilder(this.Session).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
+            var customer = new OrganisationBuilder(this.Transaction).WithName("Org1").WithPartyContactMechanism(billToMechelen).Build();
+            var internalOrganisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
+            new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
 
-            var employee = new PersonBuilder(this.Session).WithFirstName("Good").WithLastName("Worker").Build();
-            new EmploymentBuilder(this.Session).WithEmployee(employee).WithEmployer(internalOrganisation).Build();
+            var employee = new PersonBuilder(this.Transaction).WithFirstName("Good").WithLastName("Worker").Build();
+            new EmploymentBuilder(this.Transaction).WithEmployee(employee).WithEmployer(internalOrganisation).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var workTask = new WorkTaskBuilder(this.Session).WithName("Activity").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
+            var workTask = new WorkTaskBuilder(this.Transaction).WithName("Activity").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
 
-            var timeEntry = new TimeEntryBuilder(this.Session)
-                .WithRateType(new RateTypes(this.Session).StandardRate)
-                .WithFromDate(DateTimeFactory.CreateDateTime(this.Session.Now()))
-                .WithThroughDate(DateTimeFactory.CreateDateTime(this.Session.Now().AddHours(1)))
-                .WithTimeFrequency(new TimeFrequencies(this.Session).Hour)
+            var timeEntry = new TimeEntryBuilder(this.Transaction)
+                .WithRateType(new RateTypes(this.Transaction).StandardRate)
+                .WithFromDate(DateTimeFactory.CreateDateTime(this.Transaction.Now()))
+                .WithThroughDate(DateTimeFactory.CreateDateTime(this.Transaction.Now().AddHours(1)))
+                .WithTimeFrequency(new TimeFrequencies(this.Transaction).Hour)
                 .WithWorkEffort(workTask)
                 .Build();
 
             employee.TimeSheetWhereWorker.AddTimeEntry(timeEntry);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             workTask.Complete();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             workTask.Invoice();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Equal(new WorkEffortStates(this.Session).Finished, workTask.WorkEffortState);
+            Assert.Equal(new WorkEffortStates(this.Transaction).Finished, workTask.WorkEffortState);
 
             User user = this.Administrator;
-            this.Session.SetUser(user);
+            this.Transaction.SetUser(user);
 
             var acl = new DatabaseAccessControlLists(this.Administrator)[workTask];
             Assert.False(acl.CanExecute(this.M.WorkEffort.Invoice));
@@ -123,38 +123,38 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void WorkTask_StateCancelled_TimeEntry()
         {
-            var customer = new OrganisationBuilder(this.Session).WithName("Org1").Build();
-            var internalOrganisation = new Organisations(this.Session).Extent().First(o => o.IsInternalOrganisation);
-            new CustomerRelationshipBuilder(this.Session).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
+            var customer = new OrganisationBuilder(this.Transaction).WithName("Org1").Build();
+            var internalOrganisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
+            new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
 
-            var workTask = new WorkTaskBuilder(this.Session).WithName("Activity").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
+            var workTask = new WorkTaskBuilder(this.Transaction).WithName("Activity").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var employee = new PersonBuilder(this.Session).WithFirstName("Good").WithLastName("Worker").Build();
-            new EmploymentBuilder(this.Session).WithEmployee(employee).WithEmployer(internalOrganisation).Build();
+            var employee = new PersonBuilder(this.Transaction).WithFirstName("Good").WithLastName("Worker").Build();
+            new EmploymentBuilder(this.Transaction).WithEmployee(employee).WithEmployer(internalOrganisation).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var timeEntry = new TimeEntryBuilder(this.Session)
-                .WithRateType(new RateTypes(this.Session).StandardRate)
-                .WithFromDate(DateTimeFactory.CreateDateTime(this.Session.Now()))
-                .WithTimeFrequency(new TimeFrequencies(this.Session).Hour)
+            var timeEntry = new TimeEntryBuilder(this.Transaction)
+                .WithRateType(new RateTypes(this.Transaction).StandardRate)
+                .WithFromDate(DateTimeFactory.CreateDateTime(this.Transaction.Now()))
+                .WithTimeFrequency(new TimeFrequencies(this.Transaction).Hour)
                 .WithWorkEffort(workTask)
                 .Build();
 
             employee.TimeSheetWhereWorker.AddTimeEntry(timeEntry);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             workTask.Cancel();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Equal(new WorkEffortStates(this.Session).Cancelled, workTask.WorkEffortState);
+            Assert.Equal(new WorkEffortStates(this.Transaction).Cancelled, workTask.WorkEffortState);
 
             User user = this.Administrator;
-            this.Session.SetUser(user);
+            this.Transaction.SetUser(user);
 
             var acl = new DatabaseAccessControlLists(this.Administrator)[timeEntry];
             Assert.False(acl.CanWrite(this.M.TimeEntry.AmountOfTime));
@@ -167,8 +167,8 @@ namespace Allors.Database.Domain.Tests
     {
         public WorkEffortDeniedPermissionDerivationTests(Fixture fixture) : base(fixture)
         {
-            this.invoicePermission = new Permissions(this.Session).Get(this.M.WorkTask.ObjectType, this.M.WorkTask.Invoice);
-            this.completePermission = new Permissions(this.Session).Get(this.M.WorkTask.ObjectType, this.M.WorkTask.Complete);
+            this.invoicePermission = new Permissions(this.Transaction).Get(this.M.WorkTask.ObjectType, this.M.WorkTask.Invoice);
+            this.completePermission = new Permissions(this.Transaction).Get(this.M.WorkTask.ObjectType, this.M.WorkTask.Complete);
         }
 
         public override Config Config => new Config { SetupSecurity = true };
@@ -179,8 +179,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedWorkTaskDeriveInvoicePermission()
         {
-            var workEffort = new WorkTaskBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.Contains(this.invoicePermission, workEffort.DeniedPermissions);
         }
@@ -188,11 +188,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedWorkTaskStateCompletedDeriveInvoicePermission()
         {
-            var workEffort = new WorkTaskBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             workEffort.Complete();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.DoesNotContain(this.invoicePermission, workEffort.DeniedPermissions);
         }
@@ -200,8 +200,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedWorkTaskDeriveCompletePermission()
         {
-            var workEffort = new WorkTaskBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.Contains(this.completePermission, workEffort.DeniedPermissions);
         }
@@ -209,14 +209,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedWorkTaskServiceEntriesWhereWorkEffortDeriveCompletePermission()
         {
-            var workEffort = new WorkTaskBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             workEffort.Complete();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var serviceEntrie = new ExpenseEntryBuilder(this.Session).WithWorkEffort(workEffort).Build();
-            this.Session.Derive(false);
+            var serviceEntrie = new ExpenseEntryBuilder(this.Transaction).WithWorkEffort(workEffort).Build();
+            this.Transaction.Derive(false);
 
             Assert.Contains(this.completePermission, workEffort.DeniedPermissions);
         }
@@ -224,11 +224,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedWorkTaskWorkEffortExistThroughDateNotInProgressStateDeriveCompletePermission()
         {
-            var workEffort = new WorkTaskBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var serviceEntrie = new ExpenseEntryBuilder(this.Session).WithWorkEffort(workEffort).WithThroughDate(this.Session.Now().AddDays(1)).Build();
-            this.Session.Derive(false);
+            var serviceEntrie = new ExpenseEntryBuilder(this.Transaction).WithWorkEffort(workEffort).WithThroughDate(this.Transaction.Now().AddDays(1)).Build();
+            this.Transaction.Derive(false);
 
             Assert.Contains(this.completePermission, workEffort.DeniedPermissions);
         }
@@ -236,11 +236,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedWorkTaskWorkEffortExistThroughDateInProgressStateDeriveCompletePermission()
         {
-            var workEffort = new WorkTaskBuilder(this.Session).WithActualStart(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var workEffort = new WorkTaskBuilder(this.Transaction).WithActualStart(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var serviceEntrie = new ExpenseEntryBuilder(this.Session).WithWorkEffort(workEffort).WithThroughDate(this.Session.Now().AddDays(1)).Build();
-            this.Session.Derive(false);
+            var serviceEntrie = new ExpenseEntryBuilder(this.Transaction).WithWorkEffort(workEffort).WithThroughDate(this.Transaction.Now().AddDays(1)).Build();
+            this.Transaction.Derive(false);
             // HOW TO IN PROGRESS
 
             Assert.DoesNotContain(this.completePermission, workEffort.DeniedPermissions);

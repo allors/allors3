@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
 
         private UniquelyIdentifiableCache<AccessControl> cache;
 
-        public UniquelyIdentifiableCache<AccessControl> Cache => this.cache ??= new UniquelyIdentifiableCache<AccessControl>(this.Session);
+        public UniquelyIdentifiableCache<AccessControl> Cache => this.cache ??= new UniquelyIdentifiableCache<AccessControl>(this.Transaction);
 
         public AccessControl Creators => this.Cache[CreatorsId];
 
@@ -40,8 +40,8 @@ namespace Allors.Database.Domain
             {
                 var merge = this.Cache.Merger().Action();
 
-                var roles = new Roles(this.Session);
-                var userGroups = new UserGroups(this.Session);
+                var roles = new Roles(this.Transaction);
+                var userGroups = new UserGroups(this.Transaction);
 
                 merge(CreatorsId, v =>
                 {

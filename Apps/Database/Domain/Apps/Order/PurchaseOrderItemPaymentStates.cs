@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
 
         public PurchaseOrderItemPaymentState PartiallyPaid => this.Cache[PartiallyPaidId];
 
-        private UniquelyIdentifiableCache<PurchaseOrderItemPaymentState> Cache => this.cache ??= new UniquelyIdentifiableCache<PurchaseOrderItemPaymentState>(this.Session);
+        private UniquelyIdentifiableCache<PurchaseOrderItemPaymentState> Cache => this.cache ??= new UniquelyIdentifiableCache<PurchaseOrderItemPaymentState>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

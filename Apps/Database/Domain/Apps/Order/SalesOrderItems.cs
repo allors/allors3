@@ -13,14 +13,14 @@ namespace Allors.Database.Domain
 
         protected override void AppsSecure(Security config)
         {
-            var provisional = new SalesOrderItemStates(this.Session).Provisional;
-            var readyForPosting = new SalesOrderItemStates(this.Session).ReadyForPosting;
-            var awaitingAcceptance = new SalesOrderItemStates(this.Session).AwaitingAcceptance;
-            var inProcess = new SalesOrderItemStates(this.Session).InProcess;
-            var cancelled = new SalesOrderItemStates(this.Session).Cancelled;
-            var rejected = new SalesOrderItemStates(this.Session).Rejected;
-            var completed = new SalesOrderItemStates(this.Session).Completed;
-            var finished = new SalesOrderItemStates(this.Session).Finished;
+            var provisional = new SalesOrderItemStates(this.Transaction).Provisional;
+            var readyForPosting = new SalesOrderItemStates(this.Transaction).ReadyForPosting;
+            var awaitingAcceptance = new SalesOrderItemStates(this.Transaction).AwaitingAcceptance;
+            var inProcess = new SalesOrderItemStates(this.Transaction).InProcess;
+            var cancelled = new SalesOrderItemStates(this.Transaction).Cancelled;
+            var rejected = new SalesOrderItemStates(this.Transaction).Rejected;
+            var completed = new SalesOrderItemStates(this.Transaction).Completed;
+            var finished = new SalesOrderItemStates(this.Transaction).Finished;
 
             var cancel = this.Meta.Cancel;
             var reject = this.Meta.Reject;

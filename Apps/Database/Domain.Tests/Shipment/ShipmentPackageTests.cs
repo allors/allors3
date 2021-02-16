@@ -15,7 +15,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenShipmentPackageBuilder_WhenBuild_ThenPostBuildRelationsMustExist()
         {
-            var package = new ShipmentPackageBuilder(this.Session).Build();
+            var package = new ShipmentPackageBuilder(this.Transaction).Build();
 
             Assert.True(package.ExistCreationDate);
         }
@@ -23,16 +23,16 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenShipmentPackage_WhenCreated_ThenSequenceNumberIsDerived()
         {
-            var shipment = new CustomerShipmentBuilder(this.Session).Build();
-            var package = new ShipmentPackageBuilder(this.Session).Build();
+            var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
+            var package = new ShipmentPackageBuilder(this.Transaction).Build();
             shipment.AddShipmentPackage(package);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, package.SequenceNumber);
 
-            var secondPackage = new ShipmentPackageBuilder(this.Session).Build();
+            var secondPackage = new ShipmentPackageBuilder(this.Transaction).Build();
             shipment.AddShipmentPackage(secondPackage);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(2, secondPackage.SequenceNumber);
         }
@@ -45,10 +45,10 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSequenceNumberDeriveDocuments()
         {
-            var shipment = new CustomerShipmentBuilder(this.Session).Build();
-            var package = new ShipmentPackageBuilder(this.Session).Build();
+            var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
+            var package = new ShipmentPackageBuilder(this.Transaction).Build();
             shipment.AddShipmentPackage(package);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(package.ExistDocuments);
         }
@@ -58,28 +58,28 @@ namespace Allors.Database.Domain.Tests
         {
             this.InternalOrganisation.StoresWhereInternalOrganisation.First.AutoGenerateShipmentPackage = true;
 
-            var shipment = new CustomerShipmentBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var shipmentItem = new ShipmentItemBuilder(this.Session).Build();
+            var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var pickList = new PickListBuilder(this.Session)
-                .WithPickListState(new PickListStates(this.Session).Picked)
+            var pickList = new PickListBuilder(this.Transaction)
+                .WithPickListState(new PickListStates(this.Transaction).Picked)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var pickListItem = new PickListItemBuilder(this.Session).Build();
+            var pickListItem = new PickListItemBuilder(this.Transaction).Build();
             pickList.AddPickListItem(pickListItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var package = new ShipmentPackageBuilder(this.Session).Build();
+            var package = new ShipmentPackageBuilder(this.Transaction).Build();
             shipment.AddShipmentPackage(package);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            new ItemIssuanceBuilder(this.Session).WithShipmentItem(shipmentItem).WithPickListItem(pickListItem).Build();
-            this.Session.Derive(false);
+            new ItemIssuanceBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithPickListItem(pickListItem).Build();
+            this.Transaction.Derive(false);
 
             Assert.True(package.ExistPackagingContents);
         }
@@ -89,29 +89,29 @@ namespace Allors.Database.Domain.Tests
         {
             this.InternalOrganisation.StoresWhereInternalOrganisation.First.AutoGenerateShipmentPackage = true;
 
-            var shipment = new CustomerShipmentBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var shipmentItem = new ShipmentItemBuilder(this.Session).Build();
+            var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var pickList = new PickListBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var pickList = new PickListBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var pickListItem = new PickListItemBuilder(this.Session).Build();
+            var pickListItem = new PickListItemBuilder(this.Transaction).Build();
             pickList.AddPickListItem(pickListItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var package = new ShipmentPackageBuilder(this.Session).Build();
+            var package = new ShipmentPackageBuilder(this.Transaction).Build();
             shipment.AddShipmentPackage(package);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            new ItemIssuanceBuilder(this.Session).WithShipmentItem(shipmentItem).WithPickListItem(pickListItem).Build();
-            this.Session.Derive(false);
+            new ItemIssuanceBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithPickListItem(pickListItem).Build();
+            this.Transaction.Derive(false);
 
-            pickList.PickListState = new PickListStates(this.Session).Picked;
-            this.Session.Derive(false);
+            pickList.PickListState = new PickListStates(this.Transaction).Picked;
+            this.Transaction.Derive(false);
 
             Assert.True(package.ExistPackagingContents);
         }

@@ -13,37 +13,37 @@ namespace Allors.Database.Server.Controllers
     public class OrganisationContactRelationshipController : Controller
     {
 
-        public OrganisationContactRelationshipController(ISessionService sessionService, IWorkspaceService workspaceService)
+        public OrganisationContactRelationshipController(ITransactionService transactionService, IWorkspaceService workspaceService)
         {
-            this.SessionService = sessionService;
+            this.TransactionService = transactionService;
             this.WorkspaceService = workspaceService;
         }
 
-        public ISessionService SessionService { get; }
+        public ITransactionService TransactionService { get; }
 
         public IWorkspaceService WorkspaceService { get; }
 
         [HttpPost]
         public IActionResult Pull([FromBody] Model model)
         {
-            var api = new Api(this.SessionService.Session, this.WorkspaceService.Name);
+            var api = new Api(this.TransactionService.Transaction, this.WorkspaceService.Name);
             var response = api.CreatePullResponseBuilder();
 
-            var organisationContactRelationship = (OrganisationContactRelationship)this.SessionService.Session.Instantiate(model.Id);
+            var organisationContactRelationship = (OrganisationContactRelationship)this.TransactionService.Transaction.Instantiate(model.Id);
             response.AddObject("organisationContactRelationship", organisationContactRelationship);
 
             response.AddObject("contact", organisationContactRelationship.Contact);
 
-            var locales = new Locales(this.SessionService.Session).Extent();
+            var locales = new Locales(this.TransactionService.Transaction).Extent();
             response.AddCollection("locales", locales);
 
-            var genders = new GenderTypes(this.SessionService.Session).Extent();
+            var genders = new GenderTypes(this.TransactionService.Transaction).Extent();
             response.AddCollection("genders", genders);
 
-            var salutations = new Salutations(this.SessionService.Session).Extent();
+            var salutations = new Salutations(this.TransactionService.Transaction).Extent();
             response.AddCollection("salutations", salutations);
 
-            var contactKinds = new OrganisationContactKinds(this.SessionService.Session).Extent();
+            var contactKinds = new OrganisationContactKinds(this.TransactionService.Transaction).Extent();
             response.AddCollection("organisationContactKinds", contactKinds);
 
             return this.Ok(response.Build());

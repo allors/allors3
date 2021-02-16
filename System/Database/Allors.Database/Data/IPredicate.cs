@@ -11,7 +11,7 @@ namespace Allors.Database.Data
     {
         string[] Dependencies { get; }
 
-        void Build(ISession session, IDictionary<string, string> parameters, Database.ICompositePredicate compositePredicate);
+        void Build(ITransaction transaction, IDictionary<string, string> parameters, Database.ICompositePredicate compositePredicate);
 
         bool ShouldTreeShake(IDictionary<string, string> parameters);
 

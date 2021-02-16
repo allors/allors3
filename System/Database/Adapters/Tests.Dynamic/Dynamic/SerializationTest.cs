@@ -42,26 +42,26 @@ namespace Allors.Database.Adapters
 
             foreach (var stringLength in stringLengths)
             {
-                var sessionPairs = new ISession[2][];
-                sessionPairs[0] = new ISession[2];
-                sessionPairs[1] = new ISession[2];
+                var transactionPairs = new ITransaction[2][];
+                transactionPairs[0] = new ITransaction[2];
+                transactionPairs[1] = new ITransaction[2];
 
                 // From/To same population type
-                sessionPairs[0][0] = this.GetSession();
-                sessionPairs[0][1] = this.GetSession2();
+                transactionPairs[0][0] = this.GetTransaction();
+                transactionPairs[0][1] = this.GetTransaction2();
 
                 // From Memory Population
-                sessionPairs[1][0] = this.CreateMemoryPopulation().CreateSession();
-                sessionPairs[1][1] = this.GetSession2();
+                transactionPairs[1][0] = this.CreateMemoryPopulation().CreateTransaction();
+                transactionPairs[1][1] = this.GetTransaction2();
 
                 // To Memory Population
-                sessionPairs[1][0] = this.GetSession();
-                sessionPairs[1][1] = this.CreateMemoryPopulation().CreateSession();
+                transactionPairs[1][0] = this.GetTransaction();
+                transactionPairs[1][1] = this.CreateMemoryPopulation().CreateTransaction();
 
-                foreach (var sessionPair in sessionPairs)
+                foreach (var transactionPair in transactionPairs)
                 {
-                    var saveSession = sessionPair[0];
-                    var loadSession = sessionPair[1];
+                    var saveTransaction = transactionPair[0];
+                    var loadTransaction = transactionPair[1];
 
                     var concreteClasses = this.GetTestTypes();
 
@@ -75,7 +75,7 @@ namespace Allors.Database.Adapters
                     {
                         foreach (var concreteClass in concreteClasses)
                         {
-                            ((ArrayList)objectsByMetaType[concreteClass]).Add(saveSession.Create(concreteClass));
+                            ((ArrayList)objectsByMetaType[concreteClass]).Add(saveTransaction.Create(concreteClass));
                         }
                     }
 
@@ -84,14 +84,14 @@ namespace Allors.Database.Adapters
                         for (var j = 0; j < this.ObjectsPerClass; j++)
                         {
                             var concreteClass = t;
-                            ((ArrayList)objectsByMetaType[concreteClass]).Add(saveSession.Create(concreteClass));
+                            ((ArrayList)objectsByMetaType[concreteClass]).Add(saveTransaction.Create(concreteClass));
                         }
                     }
 
                     // Unit Role
                     foreach (var concreteClass in concreteClasses)
                     {
-                        IObject[] extent = saveSession.Extent(concreteClass);
+                        IObject[] extent = saveTransaction.Extent(concreteClass);
 
                         foreach (var allorsObject in extent)
                         {
@@ -344,30 +344,30 @@ namespace Allors.Database.Adapters
                         }
                     }
 
-                    saveSession.Commit();
+                    saveTransaction.Commit();
 
-                    var xml = this.Save(saveSession);
+                    var xml = this.Save(saveTransaction);
 
                     // File.WriteAllText("Population.xml", xml);
                     AssertSchema(xml);
 
-                    this.Load(loadSession, xml);
+                    this.Load(loadTransaction, xml);
 
                     // Use diff
                     foreach (var concreteClass in concreteClasses)
                     {
-                        IObject[] saveExtent = saveSession.Extent(concreteClass);
+                        IObject[] saveExtent = saveTransaction.Extent(concreteClass);
 
                         foreach (var saveObject in saveExtent)
                         {
-                            var loadObject = loadSession.Instantiate(saveObject.Strategy.ObjectId);
+                            var loadObject = loadTransaction.Instantiate(saveObject.Strategy.ObjectId);
 
                             // TODO: Resurrect Diff
                             //Assert.False(Diff.Execute(saveObject, loadObject).Count() > 0);
                         }
                     }
 
-                    loadSession.Commit();
+                    loadTransaction.Commit();
                 }
             }
         }

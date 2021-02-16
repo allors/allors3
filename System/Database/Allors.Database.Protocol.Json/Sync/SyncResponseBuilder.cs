@@ -18,13 +18,13 @@ namespace Allors.Database.Protocol.Json
         private readonly AccessControlsWriter accessControlsWriter;
         private readonly PermissionsWriter permissionsWriter;
 
-        private readonly ISession session;
+        private readonly ITransaction transaction;
         private readonly ISet<IClass> allowedClasses;
         private readonly Action<IEnumerable<IObject>> prefetch;
 
-        public SyncResponseBuilder(ISession session, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, Action<IEnumerable<IObject>> prefetch)
+        public SyncResponseBuilder(ITransaction transaction, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, Action<IEnumerable<IObject>> prefetch)
         {
-            this.session = session;
+            this.transaction = transaction;
             this.allowedClasses = allowedClasses;
             this.prefetch = prefetch;
 
@@ -38,7 +38,7 @@ namespace Allors.Database.Protocol.Json
 
         public SyncResponse Build(SyncRequest syncRequest)
         {
-            var objects = this.session.Instantiate(syncRequest.Objects)
+            var objects = this.transaction.Instantiate(syncRequest.Objects)
                 .Where(v => this.allowedClasses?.Contains(v.Strategy.Class) == true)
                 .ToArray();
 

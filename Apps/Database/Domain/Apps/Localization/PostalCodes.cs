@@ -9,6 +9,6 @@ namespace Allors.Database.Domain
     {
         private Cache<string, PostalCode> postalCodeByCode;
 
-        public Cache<string, PostalCode> PostalCodeByCode => this.postalCodeByCode ??= new Cache<string, PostalCode>(this.Session, this.M.PostalCode.Code);
+        public Cache<string, PostalCode> PostalCodeByCode => this.postalCodeByCode ??= new Cache<string, PostalCode>(this.Transaction, this.M.PostalCode.Code);
     }
 }

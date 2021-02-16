@@ -16,20 +16,20 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedIssuerThrowValidationError()
         {
-            var quote = new StatementOfWorkBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var quote = new StatementOfWorkBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            quote.Issuer = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+            quote.Issuer = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
 
             var expectedError = $"{quote} {this.M.ProductQuote.Issuer} {ErrorMessages.InternalOrganisationChanged}";
-            Assert.Equal(expectedError, this.Session.Derive(false).Errors[0].Message);
+            Assert.Equal(expectedError, this.Transaction.Derive(false).Errors[0].Message);
         }
     }
 
     [Trait("Category", "Security")]
     public class StatementOfWorkDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public StatementOfWorkDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.StatementOfWork.ObjectType, this.M.StatementOfWork.Delete);
+        public StatementOfWorkDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.StatementOfWork.ObjectType, this.M.StatementOfWork.Delete);
 
         public override Config Config => new Config { SetupSecurity = true };
 
@@ -38,8 +38,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedRequestForStatementOfWorkStateCreatedDeriveDeletePermission()
         {
-            var statementOfWork = new StatementOfWorkBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var statementOfWork = new StatementOfWorkBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.DoesNotContain(this.deletePermission, statementOfWork.DeniedPermissions);
         }
@@ -47,11 +47,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedRequestForProposalStateDeriveDeletePermission()
         {
-            var statementOfWork = new StatementOfWorkBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var statementOfWork = new StatementOfWorkBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             statementOfWork.Send();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, statementOfWork.DeniedPermissions);
         }

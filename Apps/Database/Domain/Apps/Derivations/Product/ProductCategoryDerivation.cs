@@ -36,7 +36,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<ProductCategory>())
             {
-                var defaultLocale = @this.Strategy.Session.GetSingleton().DefaultLocale;
+                var defaultLocale = @this.Strategy.Transaction.GetSingleton().DefaultLocale;
 
                 @this.DisplayName = @this.Name;
 
@@ -55,7 +55,7 @@ namespace Allors.Database.Domain
                 if (!@this.ExistCategoryImage)
                 {
                     @this.CategoryImage =
-                        @this.Strategy.Session.GetSingleton().Settings.NoImageAvailableImage;
+                        @this.Strategy.Transaction.GetSingleton().Settings.NoImageAvailableImage;
                 }
 
                 {

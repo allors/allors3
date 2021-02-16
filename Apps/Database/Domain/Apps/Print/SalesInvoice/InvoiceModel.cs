@@ -12,10 +12,10 @@ namespace Allors.Database.Domain.Print.SalesInvoiceModel
     {
         public InvoiceModel(SalesInvoice invoice)
         {
-            var session = invoice.Strategy.Session;
+            var transaction = invoice.Strategy.Transaction;
             var currencyIsoCode = invoice.DerivedCurrency.IsoCode;
 
-            this.Title = invoice.SalesInvoiceType.Equals(new SalesInvoiceTypes(session).CreditNote) ? "CREDIT NOTE" : "INVOICE";
+            this.Title = invoice.SalesInvoiceType.Equals(new SalesInvoiceTypes(transaction).CreditNote) ? "CREDIT NOTE" : "INVOICE";
             this.Description = invoice.Description;
             this.Currency = invoice.DerivedCurrency.IsoCode;
             this.Number = invoice.InvoiceNumber;
@@ -44,16 +44,16 @@ namespace Allors.Database.Domain.Print.SalesInvoiceModel
             this.PaymentNetDays = invoice.PaymentNetDays;
 
             string TakenByCountry = null;
-            if (invoice.BilledFrom.PartyContactMechanisms?.FirstOrDefault(v => v.ContactPurposes.Any(p => Equals(p, new ContactMechanismPurposes(session).RegisteredOffice)))?.ContactMechanism is PostalAddress registeredOffice)
+            if (invoice.BilledFrom.PartyContactMechanisms?.FirstOrDefault(v => v.ContactPurposes.Any(p => Equals(p, new ContactMechanismPurposes(transaction).RegisteredOffice)))?.ContactMechanism is PostalAddress registeredOffice)
             {
                 TakenByCountry = registeredOffice.Country.IsoCode;
             }
 
             if (TakenByCountry == "BE")
             {
-                this.VatClause = invoice.DerivedVatClause?.LocalisedClauses.FirstOrDefault(v => v.Locale.Equals(new Locales(session).DutchBelgium))?.Text;
+                this.VatClause = invoice.DerivedVatClause?.LocalisedClauses.FirstOrDefault(v => v.Locale.Equals(new Locales(transaction).DutchBelgium))?.Text;
 
-                if (this.VatClause != null && Equals(invoice.DerivedVatClause, new VatClauses(session).BeArt14Par2))
+                if (this.VatClause != null && Equals(invoice.DerivedVatClause, new VatClauses(transaction).BeArt14Par2))
                 {
                     var shipToCountry = invoice.DerivedShipToAddress?.Country?.Name;
                     this.VatClause = this.VatClause.Replace("{shipToCountry}", shipToCountry);

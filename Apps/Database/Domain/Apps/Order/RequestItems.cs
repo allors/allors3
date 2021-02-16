@@ -9,11 +9,11 @@ namespace Allors.Database.Domain
     {
         protected override void AppsSecure(Security config)
         {
-            var draft = new RequestItemStates(this.Session).Draft;
-            var cancelled = new RequestItemStates(this.Session).Cancelled;
-            var rejected = new RequestItemStates(this.Session).Rejected;
-            var submitted = new RequestItemStates(this.Session).Submitted;
-            var quoted = new RequestItemStates(this.Session).Quoted;
+            var draft = new RequestItemStates(this.Transaction).Draft;
+            var cancelled = new RequestItemStates(this.Transaction).Cancelled;
+            var rejected = new RequestItemStates(this.Transaction).Rejected;
+            var submitted = new RequestItemStates(this.Transaction).Submitted;
+            var quoted = new RequestItemStates(this.Transaction).Quoted;
 
             var cancel = this.Meta.Cancel;
             var hold = this.Meta.Hold;

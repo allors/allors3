@@ -61,9 +61,9 @@ namespace Allors.Database.Adapters
 
             if (role != null)
             {
-                if (!strategy.Session.Equals(role.Strategy.Session))
+                if (!strategy.Transaction.Equals(role.Strategy.Transaction))
                 {
-                    throw new ArgumentException(role + " is from different session");
+                    throw new ArgumentException(role + " is from different transaction");
                 }
 
                 if (role.Strategy.IsDeleted)

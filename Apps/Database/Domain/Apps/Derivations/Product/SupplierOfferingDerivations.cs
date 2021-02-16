@@ -25,7 +25,7 @@ namespace Allors.Database.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            var m = cycle.Session.Database.Context().M;
+            var m = cycle.Transaction.Database.Context().M;
             foreach (var @this in matches.Cast<SupplierOffering>())
             {
                 if (@this.ExistSupplier)
@@ -43,14 +43,14 @@ namespace Allors.Database.Domain
 
                 if (!@this.ExistCurrency)
                 {
-                    @this.Currency = @this.Session().GetSingleton().Settings.PreferredCurrency;
+                    @this.Currency = @this.Transaction().GetSingleton().Settings.PreferredCurrency;
                 }
 
                 if (@this.ExistPart && @this.Part.ExistInventoryItemKind &&
-                    @this.Part.InventoryItemKind.Equals(new InventoryItemKinds(@this.Strategy.Session).NonSerialised))
+                    @this.Part.InventoryItemKind.Equals(new InventoryItemKinds(@this.Strategy.Transaction).NonSerialised))
                 {
-                    var warehouses = @this.Strategy.Session.Extent<Facility>();
-                    warehouses.Filter.AddEquals(this.M.Facility.FacilityType, new FacilityTypes(@this.Session()).Warehouse);
+                    var warehouses = @this.Strategy.Transaction.Extent<Facility>();
+                    warehouses.Filter.AddEquals(this.M.Facility.FacilityType, new FacilityTypes(@this.Transaction()).Warehouse);
 
                     foreach (Facility facility in warehouses)
                     {
@@ -60,7 +60,7 @@ namespace Allors.Database.Domain
 
                         if (inventoryItem == null)
                         {
-                            new NonSerialisedInventoryItemBuilder(@this.Strategy.Session).WithPart(@this.Part).WithFacility(facility).WithUnitOfMeasure(@this.Part.UnitOfMeasure).Build();
+                            new NonSerialisedInventoryItemBuilder(@this.Strategy.Transaction).WithPart(@this.Part).WithFacility(facility).WithUnitOfMeasure(@this.Part.UnitOfMeasure).Build();
                         }
                     }
                 }

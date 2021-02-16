@@ -47,7 +47,7 @@ namespace Allors.Server
             services.AddSingleton<IDatabaseService, DatabaseService>();
             services.AddSingleton(workspaceConfig);
             // Allors Scoped
-            services.AddScoped<ISessionService, SessionService>();
+            services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<IWorkspaceService, WorkspaceService>();
 
             services.AddCors(options =>

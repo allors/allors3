@@ -7,10 +7,10 @@ namespace Allors.Database.Domain
 {
     public partial class SerialisedItemAvailability
     {
-        public bool IsAvailable => this.Equals(new SerialisedItemAvailabilities(this.Strategy.Session).Available);
+        public bool IsAvailable => this.Equals(new SerialisedItemAvailabilities(this.Strategy.Transaction).Available);
 
-        public bool IsSold => this.Equals(new SerialisedItemAvailabilities(this.Strategy.Session).Sold);
+        public bool IsSold => this.Equals(new SerialisedItemAvailabilities(this.Strategy.Transaction).Sold);
 
-        public bool IsInRent => this.Equals(new SerialisedItemAvailabilities(this.Strategy.Session).InRent);
+        public bool IsInRent => this.Equals(new SerialisedItemAvailabilities(this.Strategy.Transaction).InRent);
     }
 }

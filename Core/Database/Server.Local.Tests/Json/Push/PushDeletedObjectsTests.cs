@@ -21,14 +21,14 @@ namespace Tests
         {
             this.SetUser("jane@example.com");
 
-            var organisation = new OrganisationBuilder(this.Session).Build();
-            this.Session.Commit();
+            var organisation = new OrganisationBuilder(this.Transaction).Build();
+            this.Transaction.Commit();
 
             var organisationId = organisation.Id.ToString();
             var organisationVersion = organisation.Strategy.ObjectVersion.ToString();
 
             organisation.Delete();
-            this.Session.Commit();
+            this.Transaction.Commit();
 
             var uri = new Uri(@"allors/push", UriKind.Relative);
 
@@ -52,7 +52,7 @@ namespace Tests
                 },
             };
 
-            var api = new Api(this.Session, "Default");
+            var api = new Api(this.Transaction, "Default");
             var pushResponse = api.Push(pushRequest);
 
             Assert.True(pushResponse.HasErrors);

@@ -38,7 +38,7 @@ namespace Allors.Database.Adapters.SqlClient
                 var markers = new List<Action>
                 {
                     () => { },
-                    () => this.Session.Commit(),
+                    () => this.Transaction.Commit(),
                 };
 
                 if (Settings.ExtraMarkers)
@@ -46,10 +46,10 @@ namespace Allors.Database.Adapters.SqlClient
                     markers.Add(
                         () =>
                         {
-                            foreach (var @class in this.Session.Database.MetaPopulation.DatabaseClasses)
+                            foreach (var @class in this.Transaction.Database.MetaPopulation.DatabaseClasses)
                             {
                                 var prefetchPolicy = this.prefetchers[@class];
-                                this.Session.Prefetch(prefetchPolicy, this.Session.Extent(@class).ToArray());
+                                this.Transaction.Prefetch(prefetchPolicy, this.Transaction.Extent(@class).ToArray());
                             }
                         });
                 }

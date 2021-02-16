@@ -55,13 +55,13 @@ namespace Allors.Database.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            var session = cycle.Session;
+            var transaction = cycle.Transaction;
             var validation = cycle.Validation;
 
             foreach (var @this in matches.Cast<TimeEntry>())
             {
                 var useInternalRate = @this.WorkEffort?.Customer is Organisation organisation && organisation.IsInternalOrganisation;
-                var rateType = useInternalRate ? new RateTypes(@this.Session()).InternalRate : @this.RateType;
+                var rateType = useInternalRate ? new RateTypes(@this.Transaction()).InternalRate : @this.RateType;
 
                 if (@this.ExistTimeSheetWhereTimeEntry)
                 {
@@ -152,7 +152,7 @@ namespace Allors.Database.Domain
 
                 if (useInternalRate && !Equals(@this.WorkEffort.Customer, @this.WorkEffort.ExecutedBy))
                 {
-                    billingRate = Math.Round(billingRate * (1 + session.GetSingleton().Settings.InternalLabourSurchargePercentage / 100), 2);
+                    billingRate = Math.Round(billingRate * (1 + transaction.GetSingleton().Settings.InternalLabourSurchargePercentage / 100), 2);
                 }
 
                 @this.BillingRate = billingRate;
@@ -163,7 +163,7 @@ namespace Allors.Database.Domain
                 }
 
                 // calculate AmountOfTime Or ThroughDate
-                var frequencies = new TimeFrequencies(@this.Strategy.Session);
+                var frequencies = new TimeFrequencies(@this.Strategy.Transaction);
                 @this.AmountOfTime = null;
 
                 if (@this.ThroughDate != null)
@@ -192,7 +192,7 @@ namespace Allors.Database.Domain
                 }
                 else
                 {
-                    var timeSpan = @this.Session().Now() - @this.FromDate;
+                    var timeSpan = @this.Transaction().Now() - @this.FromDate;
                     @this.AmountOfTimeInMinutes = (decimal)timeSpan.TotalMinutes;
                     var amount = frequencies.Minute.ConvertToFrequency(@this.AmountOfTimeInMinutes, @this.TimeFrequency);
 

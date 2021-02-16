@@ -42,7 +42,7 @@ namespace Allors.Database.Adapters.SqlClient
 #pragma warning restore IDE1006
         #endregion
 
-        protected ISession Session => this.Profile.Session;
+        protected ITransaction Transaction => this.Profile.Transaction;
 
         protected Action[] Markers => this.Profile.Markers;
 
@@ -54,14 +54,14 @@ namespace Allors.Database.Adapters.SqlClient
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 var count = Settings.LargeArraySize;
 
-                using (var session = this.CreateSession())
+                using (var transaction = this.CreateTransaction())
                 {
-                    var c1s = (Extent<C1>)session.Create(m.C1.ObjectType, count);
-                    var c2s = (Extent<C2>)session.Create(m.C2.ObjectType, count);
+                    var c1s = (Extent<C1>)transaction.Create(m.C1.ObjectType, count);
+                    var c2s = (Extent<C2>)transaction.Create(m.C2.ObjectType, count);
 
                     for (var i = 0; i < count; i++)
                     {
@@ -76,7 +76,7 @@ namespace Allors.Database.Adapters.SqlClient
                         }
                     }
 
-                    session.Commit();
+                    transaction.Commit();
                 }
             }
         }
@@ -87,7 +87,7 @@ namespace Allors.Database.Adapters.SqlClient
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 var c2PrefetchPolicy = new PrefetchPolicyBuilder()
                     .WithRule(m.C2.C3Many2Manies)
@@ -99,21 +99,21 @@ namespace Allors.Database.Adapters.SqlClient
 
                 this.Populate();
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                var c1s = this.Session.Extent<C1>().ToArray();
-                this.Session.Prefetch(c1PrefetchPolicy, c1s);
+                var c1s = this.Transaction.Extent<C1>().ToArray();
+                this.Transaction.Prefetch(c1PrefetchPolicy, c1s);
 
-                foreach (C2 c2 in this.Session.Extent<C2>())
+                foreach (C2 c2 in this.Transaction.Extent<C2>())
                 {
                     c2.Strategy.Delete();
 
-                    foreach (C3 c3 in this.Session.Extent<C3>())
+                    foreach (C3 c3 in this.Transaction.Extent<C3>())
                     {
                         c3.Strategy.Delete();
 
-                        c1s = this.Session.Extent<C1>().ToArray();
-                        this.Session.Prefetch(c1PrefetchPolicy, c1s);
+                        c1s = this.Transaction.Extent<C1>().ToArray();
+                        this.Transaction.Prefetch(c1PrefetchPolicy, c1s);
                     }
                 }
             }
@@ -121,7 +121,7 @@ namespace Allors.Database.Adapters.SqlClient
 
         protected void Populate()
         {
-            var population = new TestPopulation(this.Session);
+            var population = new TestPopulation(this.Transaction);
 
             this.c1A = population.C1A;
             this.c1B = population.C1B;
@@ -144,6 +144,6 @@ namespace Allors.Database.Adapters.SqlClient
             this.c4D = population.C4D;
         }
 
-        protected ISession CreateSession() => this.Profile.Database.CreateSession();
+        protected ITransaction CreateTransaction() => this.Profile.Database.CreateTransaction();
     }
 }

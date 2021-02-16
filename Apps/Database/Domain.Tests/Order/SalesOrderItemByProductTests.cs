@@ -15,14 +15,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesOrderItemProductDeriveQuantityOrdered()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithProduct(product).WithQuantityOrdered(1).WithAssignedUnitPrice(1).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithProduct(product).WithQuantityOrdered(1).WithAssignedUnitPrice(1).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, order.SalesOrderItemsByProduct.First.QuantityOrdered);
         }
@@ -30,14 +30,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesOrderItemProductDeriveValueOrdered()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithProduct(product).WithQuantityOrdered(1).WithAssignedUnitPrice(1).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithProduct(product).WithQuantityOrdered(1).WithAssignedUnitPrice(1).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, order.SalesOrderItemsByProduct.First.ValueOrdered);
         }
@@ -45,18 +45,18 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesOrderItemVersionProductDeriveValueOrdered()
         {
-            var product1 = new NonUnifiedGoodBuilder(this.Session).Build();
-            var product2 = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product1 = new NonUnifiedGoodBuilder(this.Transaction).Build();
+            var product2 = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var order = new SalesOrderBuilder(this.Transaction).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new SalesOrderItemBuilder(this.Session).WithProduct(product1).WithQuantityOrdered(1).WithAssignedUnitPrice(1).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).WithProduct(product1).WithQuantityOrdered(1).WithAssignedUnitPrice(1).Build();
             order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             orderItem.Product = product2;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0, product1.SalesOrderItemByProductsWhereProduct.First.ValueOrdered);
         }

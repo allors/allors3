@@ -1,4 +1,4 @@
-// <copyright file="SessionContext.cs" company="Allors bvba">
+// <copyright file="TransactionContext.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -7,9 +7,9 @@
 
 namespace Allors.Database
 {
-    public class SessionContext : ISessionContext
+    public class TransactionContext : ITransactionContext
     {
-        public void OnInit(ISession session)
+        public void OnInit(ITransaction transaction)
         {
         }
 

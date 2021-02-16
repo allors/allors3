@@ -23,14 +23,14 @@ namespace Allors.Database.Data
 
         void IPredicateContainer.AddPredicate(IPredicate predicate) => this.Operands = this.Operands.Append(predicate).ToArray();
 
-        void IPredicate.Build(ISession session, IDictionary<string, string> parameters, Database.ICompositePredicate compositePredicate)
+        void IPredicate.Build(ITransaction transaction, IDictionary<string, string> parameters, Database.ICompositePredicate compositePredicate)
         {
             var or = compositePredicate.AddOr();
             foreach (var predicate in this.Operands)
             {
                 if (!predicate.ShouldTreeShake(parameters))
                 {
-                    predicate.Build(session, parameters, or);
+                    predicate.Build(transaction, parameters, or);
                 }
             }
         }

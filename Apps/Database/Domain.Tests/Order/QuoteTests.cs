@@ -20,9 +20,9 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void DeriveSalesOrderState()
         {
-            var quote = new ProductQuoteBuilder(this.Session).Build();
+            var quote = new ProductQuoteBuilder(this.Transaction).Build();
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(quote.ExistQuoteState);
         }
@@ -35,19 +35,19 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedReceiverDeriveDerivedLocaleFromReceiverLocale()
         {
-            var swedishLocale = new LocaleBuilder(this.Session)
-               .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
-               .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
+            var swedishLocale = new LocaleBuilder(this.Transaction)
+               .WithCountry(new Countries(this.Transaction).FindBy(this.M.Country.IsoCode, "SE"))
+               .WithLanguage(new Languages(this.Transaction).FindBy(this.M.Language.IsoCode, "sv"))
                .Build();
 
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             customer.Locale = swedishLocale;
 
-            var quote = new ProductQuoteBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             quote.Receiver = customer;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(quote.DerivedLocale, customer.Locale);
         }
@@ -55,9 +55,9 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedReceiverDeriveDerivedLocaleFromIssuerLocale()
         {
-            var swedishLocale = new LocaleBuilder(this.Session)
-               .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
-               .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
+            var swedishLocale = new LocaleBuilder(this.Transaction)
+               .WithCountry(new Countries(this.Transaction).FindBy(this.M.Country.IsoCode, "SE"))
+               .WithLanguage(new Languages(this.Transaction).FindBy(this.M.Language.IsoCode, "sv"))
                .Build();
 
             this.InternalOrganisation.Locale = swedishLocale;
@@ -65,11 +65,11 @@ namespace Allors.Database.Domain.Tests
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             customer.RemoveLocale();
 
-            var quote = new ProductQuoteBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             quote.Receiver = customer;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.False(customer.ExistLocale);
             Assert.Equal(quote.DerivedLocale, swedishLocale);
@@ -78,16 +78,16 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedLocaleDeriveDerivedLocaleFromLocale()
         {
-            var swedishLocale = new LocaleBuilder(this.Session)
-               .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
-               .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
+            var swedishLocale = new LocaleBuilder(this.Transaction)
+               .WithCountry(new Countries(this.Transaction).FindBy(this.M.Country.IsoCode, "SE"))
+               .WithLanguage(new Languages(this.Transaction).FindBy(this.M.Language.IsoCode, "sv"))
                .Build();
 
-            var quote = new ProductQuoteBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             quote.Locale = swedishLocale;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(quote.DerivedLocale, swedishLocale);
         }
@@ -95,11 +95,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedAssignedVatRegimeDeriveDerivedVatRegime()
         {
-            var quote = new ProductQuoteBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            quote.AssignedVatRegime = new VatRegimes(this.Session).ServiceB2B;
-            this.Session.Derive(false);
+            quote.AssignedVatRegime = new VatRegimes(this.Transaction).ServiceB2B;
+            this.Transaction.Derive(false);
 
             Assert.Equal(quote.DerivedVatRegime, quote.AssignedVatRegime);
         }
@@ -108,16 +108,16 @@ namespace Allors.Database.Domain.Tests
         public void ChangedReceiverDeriveDerivedVatRegime()
         {
             var customer1 = this.InternalOrganisation.ActiveCustomers.First;
-            customer1.VatRegime = new VatRegimes(this.Session).Assessable10;
+            customer1.VatRegime = new VatRegimes(this.Transaction).Assessable10;
 
-            var customer2 = this.InternalOrganisation.CreateB2BCustomer(this.Session.Faker());
-            customer2.VatRegime = new VatRegimes(this.Session).Assessable21;
+            var customer2 = this.InternalOrganisation.CreateB2BCustomer(this.Transaction.Faker());
+            customer2.VatRegime = new VatRegimes(this.Transaction).Assessable21;
 
-            var quote = new ProductQuoteBuilder(this.Session).WithReceiver(customer1).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithReceiver(customer1).Build();
+            this.Transaction.Derive(false);
 
             quote.Receiver = customer2;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(quote.DerivedVatRegime, customer2.VatRegime);
         }
@@ -127,11 +127,11 @@ namespace Allors.Database.Domain.Tests
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
 
-            var quote = new ProductQuoteBuilder(this.Session).WithReceiver(customer).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithReceiver(customer).Build();
+            this.Transaction.Derive(false);
 
-            customer.VatRegime = new VatRegimes(this.Session).Assessable10;
-            this.Session.Derive(false);
+            customer.VatRegime = new VatRegimes(this.Transaction).Assessable10;
+            this.Transaction.Derive(false);
 
             Assert.Equal(quote.DerivedVatRegime, customer.VatRegime);
         }
@@ -139,11 +139,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedAssignedIrpfRegimeDeriveDerivedIrpfRegime()
         {
-            var quote = new ProductQuoteBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            quote.AssignedIrpfRegime = new IrpfRegimes(this.Session).Assessable15;
-            this.Session.Derive(false);
+            quote.AssignedIrpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
+            this.Transaction.Derive(false);
 
             Assert.Equal(quote.DerivedIrpfRegime, quote.AssignedIrpfRegime);
         }
@@ -152,16 +152,16 @@ namespace Allors.Database.Domain.Tests
         public void ChangedReceiverDeriveDerivedIrpfRegime()
         {
             var customer1 = this.InternalOrganisation.ActiveCustomers.First;
-            customer1.IrpfRegime = new IrpfRegimes(this.Session).Assessable15;
+            customer1.IrpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
 
-            var customer2 = this.InternalOrganisation.CreateB2BCustomer(this.Session.Faker());
-            customer2.IrpfRegime = new IrpfRegimes(this.Session).Assessable19;
+            var customer2 = this.InternalOrganisation.CreateB2BCustomer(this.Transaction.Faker());
+            customer2.IrpfRegime = new IrpfRegimes(this.Transaction).Assessable19;
 
-            var quote = new ProductQuoteBuilder(this.Session).WithReceiver(customer1).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithReceiver(customer1).Build();
+            this.Transaction.Derive(false);
 
             quote.Receiver = customer2;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(quote.DerivedVatRegime, customer2.VatRegime);
         }
@@ -171,11 +171,11 @@ namespace Allors.Database.Domain.Tests
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
 
-            var quote = new ProductQuoteBuilder(this.Session).WithReceiver(customer).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithReceiver(customer).Build();
+            this.Transaction.Derive(false);
 
-            customer.IrpfRegime = new IrpfRegimes(this.Session).Assessable15;
-            this.Session.Derive(false);
+            customer.IrpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
+            this.Transaction.Derive(false);
 
             Assert.Equal(quote.DerivedIrpfRegime, customer.IrpfRegime);
         }
@@ -183,12 +183,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedAssignedCurrencyDeriveDerivedCurrency()
         {
-            var quote = new ProductQuoteBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var swedishKrona = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "SEK");
+            var swedishKrona = new Currencies(this.Transaction).FindBy(M.Currency.IsoCode, "SEK");
             quote.AssignedCurrency = swedishKrona;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(quote.DerivedCurrency, quote.AssignedCurrency);
         }
@@ -198,8 +198,8 @@ namespace Allors.Database.Domain.Tests
         {
             Assert.True(this.InternalOrganisation.ExistPreferredCurrency);
 
-            var quote = new ProductQuoteBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.Equal(quote.DerivedCurrency, this.InternalOrganisation.PreferredCurrency);
         }
@@ -207,20 +207,20 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedReceiverLocaleDeriveDerivedCurrency()
         {
-            var se = new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE");
-            var newLocale = new LocaleBuilder(this.Session)
+            var se = new Countries(this.Transaction).FindBy(this.M.Country.IsoCode, "SE");
+            var newLocale = new LocaleBuilder(this.Transaction)
                 .WithCountry(se)
-                .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
+                .WithLanguage(new Languages(this.Transaction).FindBy(this.M.Language.IsoCode, "sv"))
                 .Build();
 
             var customer = this.InternalOrganisation.ActiveCustomers.First;
 
-            var quote = new ProductQuoteBuilder(this.Session).WithReceiver(customer).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithReceiver(customer).Build();
+            this.Transaction.Derive(false);
 
             customer.RemovePreferredCurrency();
             customer.Locale = newLocale;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(quote.DerivedCurrency, se.Currency);
         }
@@ -232,12 +232,12 @@ namespace Allors.Database.Domain.Tests
             customer.RemoveLocale();
             customer.RemovePreferredCurrency();
 
-            var quote = new ProductQuoteBuilder(this.Session).WithReceiver(customer).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithReceiver(customer).Build();
+            this.Transaction.Derive(false);
 
-            var swedishKrona = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "SEK");
+            var swedishKrona = new Currencies(this.Transaction).FindBy(M.Currency.IsoCode, "SEK");
             customer.PreferredCurrency = swedishKrona;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(quote.DerivedCurrency, swedishKrona);
         }
@@ -245,20 +245,20 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedReceiverDeriveCurrencyFromReceiverLocale()
         {
-            var newLocale = new LocaleBuilder(this.Session)
-                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
-                .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
+            var newLocale = new LocaleBuilder(this.Transaction)
+                .WithCountry(new Countries(this.Transaction).FindBy(this.M.Country.IsoCode, "SE"))
+                .WithLanguage(new Languages(this.Transaction).FindBy(this.M.Language.IsoCode, "sv"))
                 .Build();
 
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             customer.Locale = newLocale;
             customer.RemovePreferredCurrency();
 
-            var quote = new ProductQuoteBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             quote.Receiver = customer;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(quote.DerivedCurrency, newLocale.Country.Currency);
         }
@@ -274,8 +274,8 @@ namespace Allors.Database.Domain.Tests
             this.InternalOrganisation.RemoveQuoteNumberPrefix();
             var number = this.InternalOrganisation.QuoteNumberCounter.Value;
 
-            var quote = new ProductQuoteBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.Equal(quote.QuoteNumber, (number + 1).ToString());
         }
@@ -285,8 +285,8 @@ namespace Allors.Database.Domain.Tests
         {
             var number = this.InternalOrganisation.QuoteNumberCounter.Value;
 
-            var quote = new ProductQuoteBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.Equal(quote.SortableQuoteNumber.Value, number + 1);
         }
@@ -294,12 +294,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedQuoteItemsDeriveValidQuoteItems()
         {
-            var quote = new ProductQuoteBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var quoteItem = new QuoteItemBuilder(this.Session).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains(quoteItem, quote.ValidQuoteItems);
         }
@@ -307,15 +307,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedQuoteItemQuoteItemStateDeriveValidQuoteItems()
         {
-            var quote = new ProductQuoteBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var quoteItem = new QuoteItemBuilder(this.Session).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             quoteItem.Cancel();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.DoesNotContain(quoteItem, quote.ValidQuoteItems);
         }
@@ -323,12 +323,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedQuoteItemsDeriveQuoteItemSyncedQuote()
         {
-            var quote = new ProductQuoteBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var quoteItem = new QuoteItemBuilder(this.Session).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(quoteItem.SyncedQuote, quote);
         }
@@ -341,14 +341,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedValidQuoteItemsCalculatePrice()
         {
-            var quote = this.InternalOrganisation.CreateB2BProductQuoteWithSerialisedItem(this.Session.Faker());
-            this.Session.Derive();
+            var quote = this.InternalOrganisation.CreateB2BProductQuoteWithSerialisedItem(this.Transaction.Faker());
+            this.Transaction.Derive();
 
             Assert.True(quote.TotalIncVat > 0);
             var totalIncVatBefore = quote.TotalIncVat;
 
             quote.QuoteItems.First.Cancel();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(quote.TotalIncVat, totalIncVatBefore - quote.QuoteItems.First.TotalIncVat);
         }
@@ -356,38 +356,38 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedQuoteItemsCalculatePriceForProductFeature()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithPricedBy(this.InternalOrganisation)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var productFeature = new ColourBuilder(this.Session)
+            var productFeature = new ColourBuilder(this.Transaction)
                 .WithName("a colour")
                 .Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithPricedBy(this.InternalOrganisation)
                 .WithProductFeature(productFeature)
                 .WithPrice(0.2M)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var featureItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductFeatureItem).WithProductFeature(productFeature).WithQuantity(1).Build();
+            var featureItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductFeatureItem).WithProductFeature(productFeature).WithQuantity(1).Build();
             quoteItem.AddQuotedWithFeature(featureItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.2M, quote.TotalExVat);
         }
@@ -395,28 +395,28 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedDerivationTriggerTriggeredByPriceComponentFromDateCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            var basePrice = new BasePriceBuilder(this.Session)
+            var basePrice = new BasePriceBuilder(this.Transaction)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddDays(1))
+                .WithFromDate(this.Transaction.Now().AddDays(1))
                 .Build();
 
-            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var quoteItem = new QuoteItemBuilder(this.Session).WithProduct(product).WithQuantity(1).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
 
             var expectedMessage = $"{quoteItem}, {this.M.QuoteItem.UnitBasePrice} No BasePrice with a Price";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
 
             Assert.Equal(0, quote.TotalIncVat);
 
-            basePrice.FromDate = this.Session.Now().AddMinutes(-1);
-            this.Session.Derive(false);
+            basePrice.FromDate = this.Transaction.Now().AddMinutes(-1);
+            this.Transaction.Derive(false);
 
             Assert.Equal(basePrice.Price, quote.TotalIncVat);
         }
@@ -424,30 +424,30 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedDerivationTriggerTriggeredByDiscountComponentPercentageCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, quote.TotalIncVat);
 
-            new DiscountComponentBuilder(this.Session)
+            new DiscountComponentBuilder(this.Transaction)
                 .WithProduct(product)
                 .WithPrice(0.1M)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0.9M, quote.TotalIncVat);
         }
@@ -455,30 +455,30 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedDerivationTriggerTriggeredBySurchargeComponentPercentageCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, quote.TotalIncVat);
 
-            new SurchargeComponentBuilder(this.Session)
+            new SurchargeComponentBuilder(this.Transaction)
                 .WithProduct(product)
                 .WithPrice(0.1M)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.1M, quote.TotalIncVat);
         }
@@ -486,19 +486,19 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedQuoteItemQuantityCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var quoteItem = new QuoteItemBuilder(this.Session).WithProduct(product).WithQuantity(1).WithAssignedUnitPrice(1).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).WithProduct(product).WithQuantity(1).WithAssignedUnitPrice(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, quote.TotalIncVat);
 
             quoteItem.Quantity = 2;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(2, quote.TotalIncVat);
         }
@@ -506,19 +506,19 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedQuoteItemAssignedUnitPriceCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var quoteItem = new QuoteItemBuilder(this.Session).WithProduct(product).WithQuantity(1).WithAssignedUnitPrice(1).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).WithProduct(product).WithQuantity(1).WithAssignedUnitPrice(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, quote.TotalIncVat);
 
             quoteItem.AssignedUnitPrice = 3;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(3, quote.TotalIncVat);
         }
@@ -526,32 +526,32 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedQuoteItemProductCalculatePrice()
         {
-            var product1 = new NonUnifiedGoodBuilder(this.Session).Build();
-            var product2 = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product1 = new NonUnifiedGoodBuilder(this.Transaction).Build();
+            var product2 = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithProduct(product1)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithProduct(product2)
                 .WithPrice(2)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product1).WithQuantity(1).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product1).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, quote.TotalIncVat);
 
             quoteItem.Product = product2;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(2, quote.TotalIncVat);
         }
@@ -559,39 +559,39 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedQuoteItemProductFeatureCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithPricedBy(this.InternalOrganisation)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var productFeature = new ColourBuilder(this.Session)
+            var productFeature = new ColourBuilder(this.Transaction)
                 .WithName("a colour")
                 .Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithPricedBy(this.InternalOrganisation)
                 .WithProduct(product)
                 .WithProductFeature(productFeature)
                 .WithPrice(0.1M)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var orderFeatureItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductFeatureItem).WithProductFeature(productFeature).WithQuantity(1).Build();
+            var orderFeatureItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductFeatureItem).WithProductFeature(productFeature).WithQuantity(1).Build();
             quoteItem.AddQuotedWithFeature(orderFeatureItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.1M, quote.TotalExVat);
         }
@@ -599,9 +599,9 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedReceiverCalculatePrice()
         {
-            var theGood = new CustomOrganisationClassificationBuilder(this.Session).WithName("good customer").Build();
-            var theBad = new CustomOrganisationClassificationBuilder(this.Session).WithName("bad customer").Build();
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var theGood = new CustomOrganisationClassificationBuilder(this.Transaction).WithName("good customer").Build();
+            var theBad = new CustomOrganisationClassificationBuilder(this.Transaction).WithName("bad customer").Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
             var customer1 = this.InternalOrganisation.ActiveCustomers.First;
             customer1.AddPartyClassification(theGood);
@@ -609,35 +609,35 @@ namespace Allors.Database.Domain.Tests
             var customer2 = this.InternalOrganisation.ActiveCustomers.Last();
             customer2.AddPartyClassification(theBad);
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.NotEqual(customer1, customer2);
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithPartyClassification(theGood)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithPartyClassification(theBad)
                 .WithProduct(product)
                 .WithPrice(2)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            var quote = new ProductQuoteBuilder(this.Session).WithReceiver(customer1).WithIssueDate(this.Session.Now()).WithAssignedVatRegime(new VatRegimes(this.Session).Exempt).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithReceiver(customer1).WithIssueDate(this.Transaction.Now()).WithAssignedVatRegime(new VatRegimes(this.Transaction).Exempt).Build();
+            this.Transaction.Derive(false);
 
-            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, quote.TotalIncVat);
 
             quote.Receiver = customer2;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(2, quote.TotalIncVat);
         }
@@ -645,26 +645,26 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedQuoteItemDiscountAdjustmentsCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, quote.TotalIncVat);
 
-            var discount = new DiscountAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            var discount = new DiscountAdjustmentBuilder(this.Transaction).WithPercentage(10).Build();
             quoteItem.AddDiscountAdjustment(discount);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0.9M, quote.TotalIncVat);
         }
@@ -672,31 +672,31 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedQuoteItemDiscountAdjustmentPercentageCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, quote.TotalIncVat);
 
-            var discount = new DiscountAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            var discount = new DiscountAdjustmentBuilder(this.Transaction).WithPercentage(10).Build();
             quoteItem.AddDiscountAdjustment(discount);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0.9M, quote.TotalIncVat);
 
             discount.Percentage = 20M;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0.8M, quote.TotalIncVat);
         }
@@ -704,31 +704,31 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedQuoteItemDiscountAdjustmentAmountCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, quote.TotalIncVat);
 
-            var discount = new DiscountAdjustmentBuilder(this.Session).WithAmount(0.5M).Build();
+            var discount = new DiscountAdjustmentBuilder(this.Transaction).WithAmount(0.5M).Build();
             quoteItem.AddDiscountAdjustment(discount);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0.5M, quote.TotalIncVat);
 
             discount.Amount = 0.4M;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0.6M, quote.TotalIncVat);
         }
@@ -736,26 +736,26 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedQuoteItemSurchargeAdjustmentsCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, quote.TotalIncVat);
 
-            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            var surcharge = new SurchargeAdjustmentBuilder(this.Transaction).WithPercentage(10).Build();
             quoteItem.AddSurchargeAdjustment(surcharge);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.1M, quote.TotalIncVat);
         }
@@ -763,31 +763,31 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedQuoteItemSurchargeAdjustmentPercentageCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, quote.TotalIncVat);
 
-            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            var surcharge = new SurchargeAdjustmentBuilder(this.Transaction).WithPercentage(10).Build();
             quoteItem.AddSurchargeAdjustment(surcharge);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.1M, quote.TotalIncVat);
 
             surcharge.Percentage = 20M;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.2M, quote.TotalIncVat);
         }
@@ -795,31 +795,31 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedQuoteItemSurchargeAdjustmentAmountCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, quote.TotalIncVat);
 
-            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithAmount(0.5M).Build();
+            var surcharge = new SurchargeAdjustmentBuilder(this.Transaction).WithAmount(0.5M).Build();
             quoteItem.AddSurchargeAdjustment(surcharge);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.5M, quote.TotalIncVat);
 
             surcharge.Amount = 0.4M;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.4M, quote.TotalIncVat);
         }
@@ -827,26 +827,26 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedDiscountAdjustmentsCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, quote.TotalIncVat);
 
-            var discount = new DiscountAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            var discount = new DiscountAdjustmentBuilder(this.Transaction).WithPercentage(10).Build();
             quote.AddOrderAdjustment(discount);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0.9M, quote.TotalIncVat);
         }
@@ -854,31 +854,31 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedDiscountAdjustmentPercentageCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, quote.TotalIncVat);
 
-            var discount = new DiscountAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            var discount = new DiscountAdjustmentBuilder(this.Transaction).WithPercentage(10).Build();
             quote.AddOrderAdjustment(discount);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0.9M, quote.TotalIncVat);
 
             discount.Percentage = 20M;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0.8M, quote.TotalIncVat);
         }
@@ -886,31 +886,31 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedDiscountAdjustmentAmountCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, quote.TotalIncVat);
 
-            var discount = new DiscountAdjustmentBuilder(this.Session).WithAmount(0.5M).Build();
+            var discount = new DiscountAdjustmentBuilder(this.Transaction).WithAmount(0.5M).Build();
             quote.AddOrderAdjustment(discount);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0.5M, quote.TotalIncVat);
 
             discount.Amount = 0.4M;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0.6M, quote.TotalIncVat);
         }
@@ -918,26 +918,26 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedSurchargeAdjustmentsCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, quote.TotalIncVat);
 
-            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            var surcharge = new SurchargeAdjustmentBuilder(this.Transaction).WithPercentage(10).Build();
             quote.AddOrderAdjustment(surcharge);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.1M, quote.TotalIncVat);
         }
@@ -945,31 +945,31 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedSurchargeAdjustmentPercentageCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, quote.TotalIncVat);
 
-            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            var surcharge = new SurchargeAdjustmentBuilder(this.Transaction).WithPercentage(10).Build();
             quote.AddOrderAdjustment(surcharge);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.1M, quote.TotalIncVat);
 
             surcharge.Percentage = 20M;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.2M, quote.TotalIncVat);
         }
@@ -977,31 +977,31 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedSurchargeAdjustmentAmountCalculatePrice()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, quote.TotalIncVat);
 
-            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithAmount(0.5M).Build();
+            var surcharge = new SurchargeAdjustmentBuilder(this.Transaction).WithAmount(0.5M).Build();
             quote.AddOrderAdjustment(surcharge);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.5M, quote.TotalIncVat);
 
             surcharge.Amount = 0.4M;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.4M, quote.TotalIncVat);
         }

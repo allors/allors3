@@ -14,24 +14,24 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenCountryWhenValidatingThenRequiredRelationsMustExist()
         {
-            var builder = new CountryBuilder(this.Session);
+            var builder = new CountryBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithName("name");
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithIsoCode("nm");
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
     }
 
@@ -42,11 +42,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedIsoCodeDeriveEuMemberState()
         {
-            var country = new CountryBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var country = new CountryBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             country.IsoCode = "NL";
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(country.EuMemberState);
         }
@@ -54,11 +54,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedIsoCodeDeriveIbanLength()
         {
-            var country = new CountryBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var country = new CountryBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             country.IsoCode = "NL";
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(18, country.IbanLength);
         }
@@ -66,11 +66,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedIsoCodeDeriveIbanRegex()
         {
-            var country = new CountryBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var country = new CountryBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             country.IsoCode = "NL";
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(@"[A-Z]{4}\d{10}", country.IbanRegex);
         }

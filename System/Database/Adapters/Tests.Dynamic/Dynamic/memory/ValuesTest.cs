@@ -45,9 +45,9 @@ namespace Allors.Database.Adapters.Memory
 
         public override IDatabase GetPopulation2() => this.profile.GetDatabase2();
 
-        public override ISession GetSession() => this.profile.GetSession();
+        public override ITransaction GetTransaction() => this.profile.GetTransaction();
 
-        public override ISession GetSession2() => this.profile.GetSession2();
+        public override ITransaction GetTransaction2() => this.profile.GetTransaction2();
 
         public override bool IsRollbackSupported() => this.profile.IsRollbackSupported();
     }

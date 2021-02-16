@@ -59,7 +59,7 @@ namespace Allors.Database.Domain
                         validation.AddError($"{@this}, {@this.Meta.Iban}, {ErrorMessages.IbanCheckDigitsError}");
                     }
 
-                    var country = new Countries(@this.Strategy.Session).FindBy(this.M.Country.IsoCode, @this.Iban.Substring(0, 2));
+                    var country = new Countries(@this.Strategy.Transaction).FindBy(this.M.Country.IsoCode, @this.Iban.Substring(0, 2));
 
                     if (country == null || !country.ExistIbanRegex || !country.ExistIbanLength)
                     {

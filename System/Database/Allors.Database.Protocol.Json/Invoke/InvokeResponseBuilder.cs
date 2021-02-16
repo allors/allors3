@@ -15,14 +15,14 @@ namespace Allors.Database.Protocol.Json
 
     public class InvokeResponseBuilder
     {
-        private readonly ISession session;
+        private readonly ITransaction transaction;
         private readonly Func<IDerivationResult> derive;
         private readonly IAccessControlLists accessControlLists;
         private readonly ISet<IClass> allowedClasses;
 
-        public InvokeResponseBuilder(ISession session, Func<IDerivationResult> derive, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses)
+        public InvokeResponseBuilder(ITransaction transaction, Func<IDerivationResult> derive, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses)
         {
-            this.session = session;
+            this.transaction = transaction;
             this.derive = derive;
             this.accessControlLists = accessControlLists;
             this.allowedClasses = allowedClasses;
@@ -52,7 +52,7 @@ namespace Allors.Database.Protocol.Json
 
                     if (error)
                     {
-                        this.session.Rollback();
+                        this.transaction.Rollback();
                         if (!continueOnError)
                         {
                             break;
@@ -60,7 +60,7 @@ namespace Allors.Database.Protocol.Json
                     }
                     else
                     {
-                        this.session.Commit();
+                        this.transaction.Commit();
                     }
                 }
             }
@@ -78,11 +78,11 @@ namespace Allors.Database.Protocol.Json
 
                 if (error)
                 {
-                    this.session.Rollback();
+                    this.transaction.Rollback();
                 }
                 else
                 {
-                    this.session.Commit();
+                    this.transaction.Commit();
                 }
             }
 
@@ -97,7 +97,7 @@ namespace Allors.Database.Protocol.Json
                 throw new ArgumentException();
             }
 
-            var obj = this.session.Instantiate(invocation.Id);
+            var obj = this.transaction.Instantiate(invocation.Id);
             if (obj == null)
             {
                 invokeResponse.AddMissingError(invocation.Id);

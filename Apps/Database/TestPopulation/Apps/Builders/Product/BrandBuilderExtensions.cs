@@ -11,13 +11,13 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static BrandBuilder WithDefaults(this BrandBuilder @this)
         {
-            var faker = @this.Session.Faker();
+            var faker = @this.Transaction.Faker();
 
             @this.WithName(string.Join(" ", faker.Lorem.Words(3)));
-            @this.WithLogoImage(new MediaBuilder(@this.Session).WithInDataUri(faker.Image.DataUri(width: 200, height: 56)).Build());
-            @this.WithModel(new ModelBuilder(@this.Session).WithName(faker.Lorem.Word()).Build());
-            @this.WithModel(new ModelBuilder(@this.Session).WithName(faker.Lorem.Word()).Build());
-            @this.WithModel(new ModelBuilder(@this.Session).WithName(faker.Lorem.Word()).Build());
+            @this.WithLogoImage(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 200, height: 56)).Build());
+            @this.WithModel(new ModelBuilder(@this.Transaction).WithName(faker.Lorem.Word()).Build());
+            @this.WithModel(new ModelBuilder(@this.Transaction).WithName(faker.Lorem.Word()).Build());
+            @this.WithModel(new ModelBuilder(@this.Transaction).WithName(faker.Lorem.Word()).Build());
 
             return @this;
         }

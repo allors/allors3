@@ -12,9 +12,9 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static FacilityBuilder WithDefaults(this FacilityBuilder @this, Organisation internalOrganisation)
         {
-            var faker = @this.Session.Faker();
+            var faker = @this.Transaction.Faker();
             var customer = faker.Random.ListItem(internalOrganisation.ActiveCustomers);
-            var postalAddress = new PostalAddressBuilder(@this.Session).WithDefaults().Build();
+            var postalAddress = new PostalAddressBuilder(@this.Transaction).WithDefaults().Build();
 
             @this.WithName(faker.Name.FullName());
             @this.WithDescription(faker.Lorem.Sentence());
@@ -22,7 +22,7 @@ namespace Allors.Database.Domain.TestPopulation
             @this.WithLongitude(faker.Address.Longitude());
             @this.WithOwner(internalOrganisation);
             @this.WithSquareFootage(faker.Random.Decimal(100, 10000));
-            @this.WithFacilityType(faker.Random.ListItem(@this.Session.Extent<FacilityType>()));
+            @this.WithFacilityType(faker.Random.ListItem(@this.Transaction.Extent<FacilityType>()));
             @this.WithFacilityContactMechanism(customer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
 
             return @this;

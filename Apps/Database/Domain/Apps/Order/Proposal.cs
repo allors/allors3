@@ -8,9 +8,9 @@ namespace Allors.Database.Domain
     public partial class Proposal
     {
         public bool IsDeletable =>
-         (this.QuoteState.Equals(new QuoteStates(this.Strategy.Session).Created)
-             || this.QuoteState.Equals(new QuoteStates(this.Strategy.Session).Cancelled)
-             || this.QuoteState.Equals(new QuoteStates(this.Strategy.Session).Rejected));
+         (this.QuoteState.Equals(new QuoteStates(this.Strategy.Transaction).Created)
+             || this.QuoteState.Equals(new QuoteStates(this.Strategy.Transaction).Cancelled)
+             || this.QuoteState.Equals(new QuoteStates(this.Strategy.Transaction).Rejected));
 
         // TODO: Cache
         public TransitionalConfiguration[] TransitionalConfigurations => new[] {

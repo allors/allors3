@@ -21,21 +21,21 @@ namespace Allors.Database.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            var session = cycle.Session;
+            var transaction = cycle.Transaction;
 
             foreach (var @this in matches.Cast<Request>().Where(v => v.RequestState.IsAnonymous))
             {
                 if (@this.ExistOriginator)
                 {
-                    @this.RequestState = new RequestStates(session).Submitted;
+                    @this.RequestState = new RequestStates(transaction).Submitted;
 
                     if (@this.ExistEmailAddress
                         && @this.Originator.PartyContactMechanisms.Where(v => v.ContactMechanism.GetType().Name == typeof(EmailAddress).Name).FirstOrDefault(v => ((EmailAddress)v.ContactMechanism).ElectronicAddressString.Equals(@this.EmailAddress)) == null)
                     {
                         @this.Originator.AddPartyContactMechanism(
-                            new PartyContactMechanismBuilder(session)
-                                .WithContactMechanism(new EmailAddressBuilder(session).WithElectronicAddressString(@this.EmailAddress).Build())
-                                .WithContactPurpose(new ContactMechanismPurposes(session).GeneralEmail)
+                            new PartyContactMechanismBuilder(transaction)
+                                .WithContactMechanism(new EmailAddressBuilder(transaction).WithElectronicAddressString(@this.EmailAddress).Build())
+                                .WithContactPurpose(new ContactMechanismPurposes(transaction).GeneralEmail)
                                 .Build());
                     }
 
@@ -43,9 +43,9 @@ namespace Allors.Database.Domain
                         && @this.Originator.PartyContactMechanisms.Where(v => v.ContactMechanism.GetType().Name == typeof(TelecommunicationsNumber).Name).FirstOrDefault(v => ((TelecommunicationsNumber)v.ContactMechanism).ContactNumber.Equals(@this.TelephoneNumber)) == null)
                     {
                         @this.Originator.AddPartyContactMechanism(
-                            new PartyContactMechanismBuilder(session)
-                                .WithContactMechanism(new TelecommunicationsNumberBuilder(session).WithContactNumber(@this.TelephoneNumber).WithCountryCode(@this.TelephoneCountryCode).Build())
-                                .WithContactPurpose(new ContactMechanismPurposes(session).GeneralPhoneNumber)
+                            new PartyContactMechanismBuilder(transaction)
+                                .WithContactMechanism(new TelecommunicationsNumberBuilder(transaction).WithContactNumber(@this.TelephoneNumber).WithCountryCode(@this.TelephoneCountryCode).Build())
+                                .WithContactPurpose(new ContactMechanismPurposes(transaction).GeneralPhoneNumber)
                                 .Build());
                     }
                 }

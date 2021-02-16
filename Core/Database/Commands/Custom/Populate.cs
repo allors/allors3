@@ -26,7 +26,7 @@ namespace Commands
 
             database.Init();
 
-            using (var session = database.CreateSession())
+            using (var session = database.CreateTransaction())
             {
                 var config = new Config { DataPath = this.Parent.DataPath };
                 new Setup(session, config).Apply();

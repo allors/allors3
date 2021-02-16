@@ -2,7 +2,6 @@
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
-// <summary>Defines the ISessionExtension type.</summary>
 
 namespace Allors.Database.Protocol.Json
 {
@@ -16,14 +15,14 @@ namespace Allors.Database.Protocol.Json
 
     public class PullInstantiate
     {
-        private readonly ISession session;
+        private readonly ITransaction transaction;
         private readonly Pull pull;
         private readonly IAccessControlLists acls;
         private readonly IPreparedFetches preparedFetches;
 
-        public PullInstantiate(ISession session, Pull pull, IAccessControlLists acls, IPreparedFetches preparedFetches)
+        public PullInstantiate(ITransaction transaction, Pull pull, IAccessControlLists acls, IPreparedFetches preparedFetches)
         {
-            this.session = session;
+            this.transaction = transaction;
             this.pull = pull;
             this.acls = acls;
             this.preparedFetches = preparedFetches;
@@ -31,7 +30,7 @@ namespace Allors.Database.Protocol.Json
 
         public void Execute(PullResponseBuilder response)
         {
-            var @object = this.session.Instantiate(this.pull.Object);
+            var @object = this.transaction.Instantiate(this.pull.Object);
 
             var @class = @object.Strategy?.Class;
 

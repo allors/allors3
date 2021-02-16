@@ -32,7 +32,7 @@ namespace Allors.Database.Domain
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
-            var session = cycle.Session;
+            var transaction = cycle.Transaction;
 
             foreach (var @this in matches.Cast<QuoteItem>())
             {
@@ -67,14 +67,14 @@ namespace Allors.Database.Domain
 
                 if (!@this.ExistUnitOfMeasure)
                 {
-                    @this.UnitOfMeasure = new UnitsOfMeasure(@this.Strategy.Session).Piece;
+                    @this.UnitOfMeasure = new UnitsOfMeasure(@this.Strategy.Transaction).Piece;
                 }
 
                 if (@this.QuoteWhereQuoteItem is ProductQuote productQuote
                     && @this.ExistProduct
                     && !productQuote.ProductQuoteItemsByProduct.Any(v => v.Product.Equals(@this.Product)))
                 {
-                    productQuote.AddProductQuoteItemsByProduct(new ProductQuoteItemByProductBuilder(session).WithProduct(@this.Product).Build());
+                    productQuote.AddProductQuoteItemsByProduct(new ProductQuoteItemByProductBuilder(transaction).WithProduct(@this.Product).Build());
                 }
             }
         }

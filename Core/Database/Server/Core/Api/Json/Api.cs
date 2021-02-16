@@ -2,7 +2,7 @@
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
-// <summary>Defines the ISessionExtension type.</summary>
+
 
 namespace Allors.Database.Protocol.Json
 {
@@ -21,26 +21,26 @@ namespace Allors.Database.Protocol.Json
     
     public class Api
     {
-        public Api(ISession session, string workspaceName)
+        public Api(ITransaction transaction, string workspaceName)
         {
-            this.Session = session;
+            this.Transaction = transaction;
 
-            var sessionContext = session.Context();
-            var databaseContext = session.Database.Context();
+            var transactionContext = transaction.Context();
+            var databaseContext = transaction.Database.Context();
             var metaCache = databaseContext.MetaCache;
 
-            this.User = sessionContext.User;
+            this.User = transactionContext.User;
             this.AccessControlLists = new WorkspaceAccessControlLists(workspaceName, this.User);
             this.AllowedClasses = metaCache.GetWorkspaceClasses(workspaceName);
             this.M = databaseContext.M;
             this.MetaPopulation = databaseContext.MetaPopulation;
             this.PreparedFetches = databaseContext.PreparedFetches;
             this.PreparedExtents = databaseContext.PreparedExtents;
-            this.Build = @class => (IObject)DefaultObjectBuilder.Build(session, @class);
-            this.Derive = () => this.Session.Derive(false);
+            this.Build = @class => (IObject)DefaultObjectBuilder.Build(transaction, @class);
+            this.Derive = () => this.Transaction.Derive(false);
         }
 
-        public ISession Session { get; }
+        public ITransaction Transaction { get; }
 
         public User User { get; }
 
@@ -60,11 +60,11 @@ namespace Allors.Database.Protocol.Json
 
         public Func<IDerivationResult> Derive { get; }
 
-        public PullResponseBuilder CreatePullResponseBuilder() => new PullResponseBuilder(this.Session, this.AccessControlLists, this.AllowedClasses, this.PreparedFetches, this.PreparedExtents);
+        public PullResponseBuilder CreatePullResponseBuilder() => new PullResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, this.PreparedFetches, this.PreparedExtents);
 
         public InvokeResponse Invoke(InvokeRequest invokeRequest)
         {
-            var invokeResponseBuilder = new InvokeResponseBuilder(this.Session, this.Derive, this.AccessControlLists, this.AllowedClasses);
+            var invokeResponseBuilder = new InvokeResponseBuilder(this.Transaction, this.Derive, this.AccessControlLists, this.AllowedClasses);
             return invokeResponseBuilder.Build(invokeRequest);
         }
 
@@ -76,7 +76,7 @@ namespace Allors.Database.Protocol.Json
 
         public PushResponse Push(PushRequest pushRequest)
         {
-            var responseBuilder = new PushResponseBuilder(this.Session, this.Derive, this.MetaPopulation, this.AccessControlLists, this.AllowedClasses, this.Build);
+            var responseBuilder = new PushResponseBuilder(this.Transaction, this.Derive, this.MetaPopulation, this.AccessControlLists, this.AllowedClasses, this.Build);
             return responseBuilder.Build(pushRequest);
         }
 
@@ -96,17 +96,17 @@ namespace Allors.Database.Protocol.Json
 
                     var prefetcher = prefetchPolicyBuilder.Build();
 
-                    this.Session.Prefetch(prefetcher, prefetchObjects);
+                    this.Transaction.Prefetch(prefetcher, prefetchObjects);
                 }
             }
 
-            var responseBuilder = new SyncResponseBuilder(this.Session, this.AccessControlLists, this.AllowedClasses, Prefetch);
+            var responseBuilder = new SyncResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, Prefetch);
             return responseBuilder.Build(syncRequest);
         }
 
         public SecurityResponse Security(SecurityRequest securityRequest)
         {
-            var responseBuilder = new SecurityResponseBuilder(this.Session, this.AccessControlLists, this.AllowedClasses);
+            var responseBuilder = new SecurityResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses);
             return responseBuilder.Build(securityRequest);
         }
     }

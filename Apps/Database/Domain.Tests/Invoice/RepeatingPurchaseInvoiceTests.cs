@@ -19,57 +19,57 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedFrequencyThrowValidationError()
         {
-            var repeatingInvoice = new RepeatingPurchaseInvoiceBuilder(this.Session)
-                .WithFrequency(new TimeFrequencies(this.Session).Hour)
+            var repeatingInvoice = new RepeatingPurchaseInvoiceBuilder(this.Transaction)
+                .WithFrequency(new TimeFrequencies(this.Transaction).Hour)
                 .Build();
 
             var expectedMessage = $"{repeatingInvoice} { this.M.RepeatingPurchaseInvoice.Frequency} { ErrorMessages.FrequencyNotSupported}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
 
         [Fact]
         public void ChangedDayOfWeekThrowValidationErrorAssertExistsDayOfWeek()
         {
-            var repeatingInvoice = new RepeatingPurchaseInvoiceBuilder(this.Session)
-                .WithFrequency(new TimeFrequencies(this.Session).Week)
-                .WithDayOfWeek(new DaysOfWeek(this.Session).Monday)
+            var repeatingInvoice = new RepeatingPurchaseInvoiceBuilder(this.Transaction)
+                .WithFrequency(new TimeFrequencies(this.Transaction).Week)
+                .WithDayOfWeek(new DaysOfWeek(this.Transaction).Monday)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             repeatingInvoice.RemoveDayOfWeek();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals("AssertExists: RepeatingPurchaseInvoice.DayOfWeek"));
         }
 
         [Fact]
         public void ChangedDayOfWeekThrowValidationErrorAssertnotExistsDayOfWeek()
         {
-            var repeatingInvoice = new RepeatingPurchaseInvoiceBuilder(this.Session)
-                .WithFrequency(new TimeFrequencies(this.Session).Month)
+            var repeatingInvoice = new RepeatingPurchaseInvoiceBuilder(this.Transaction)
+                .WithFrequency(new TimeFrequencies(this.Transaction).Month)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            repeatingInvoice.DayOfWeek = new DaysOfWeek(this.Session).Monday;
+            repeatingInvoice.DayOfWeek = new DaysOfWeek(this.Transaction).Monday;
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals("AssertNotExists: RepeatingPurchaseInvoice.DayOfWeek"));
         }
 
         [Fact]
         public void ChangedNextExecutionDateThrowValidationError()
         {
-            var repeatingInvoice = new RepeatingPurchaseInvoiceBuilder(this.Session)
-                .WithFrequency(new TimeFrequencies(this.Session).Week)
-                .WithDayOfWeek(new DaysOfWeek(this.Session).Monday)
+            var repeatingInvoice = new RepeatingPurchaseInvoiceBuilder(this.Transaction)
+                .WithFrequency(new TimeFrequencies(this.Transaction).Week)
+                .WithDayOfWeek(new DaysOfWeek(this.Transaction).Monday)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             repeatingInvoice.NextExecutionDate = new DateTime(2021, 01, 06, 12, 0, 0, DateTimeKind.Utc);
 
             var expectedMessage = $"{repeatingInvoice} { this.M.RepeatingPurchaseInvoice.DayOfWeek} { ErrorMessages.DateDayOfWeek}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
     }

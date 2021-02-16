@@ -16,20 +16,20 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedIssuerThrowValidationError()
         {
-            var quote = new ProposalBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var quote = new ProposalBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            quote.Issuer = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+            quote.Issuer = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
 
             var expectedError = $"{quote} {this.M.ProductQuote.Issuer} {ErrorMessages.InternalOrganisationChanged}";
-            Assert.Equal(expectedError, this.Session.Derive(false).Errors[0].Message);
+            Assert.Equal(expectedError, this.Transaction.Derive(false).Errors[0].Message);
         }
     }
 
     [Trait("Category", "Security")]
     public class ProposalDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public ProposalDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.Proposal.ObjectType, this.M.Proposal.Delete);
+        public ProposalDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.Proposal.ObjectType, this.M.Proposal.Delete);
 
         public override Config Config => new Config { SetupSecurity = true };
 
@@ -39,9 +39,9 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedProposalStateCreatedDeriveDeletePermission()
         {
-            var proposal = new ProposalBuilder(this.Session).Build();
+            var proposal = new ProposalBuilder(this.Transaction).Build();
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.DoesNotContain(this.deletePermission, proposal.DeniedPermissions);
         }
@@ -49,11 +49,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedProposalStateZDeriveDeletePermission()
         {
-            var proposal = new ProposalBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var proposal = new ProposalBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             proposal.Accept();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, proposal.DeniedPermissions);
         }

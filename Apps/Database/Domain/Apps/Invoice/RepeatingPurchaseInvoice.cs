@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
     {
         public void AppsOnInit(ObjectOnInit method)
         {
-            var internalOrganisations = new Organisations(this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
+            var internalOrganisations = new Organisations(this.Strategy.Transaction).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
 
             if (!this.ExistInternalOrganisation && internalOrganisations.Count() == 1)
             {
@@ -23,9 +23,9 @@ namespace Allors.Database.Domain
 
         public void Repeat()
         {
-            var now = this.Strategy.Session.Now().Date;
-            var monthly = new TimeFrequencies(this.Strategy.Session).Month;
-            var weekly = new TimeFrequencies(this.Strategy.Session).Week;
+            var now = this.Strategy.Transaction.Now().Date;
+            var monthly = new TimeFrequencies(this.Strategy.Transaction).Month;
+            var weekly = new TimeFrequencies(this.Strategy.Transaction).Week;
 
             if (this.Frequency.Equals(monthly))
             {
@@ -67,16 +67,16 @@ namespace Allors.Database.Domain
 
             if (orderItemsToBill.Any())
             {
-                var purchaseInvoice = new PurchaseInvoiceBuilder(this.Strategy.Session)
+                var purchaseInvoice = new PurchaseInvoiceBuilder(this.Strategy.Transaction)
                     .WithBilledFrom(this.Supplier)
                     .WithBilledTo(this.InternalOrganisation)
-                    .WithInvoiceDate(this.Session().Now())
-                    .WithPurchaseInvoiceType(new PurchaseInvoiceTypes(this.Session()).PurchaseInvoice)
+                    .WithInvoiceDate(this.Transaction().Now())
+                    .WithPurchaseInvoiceType(new PurchaseInvoiceTypes(this.Transaction()).PurchaseInvoice)
                     .Build();
 
                 foreach (var orderItem in orderItemsToBill)
                 {
-                    var invoiceItem = new PurchaseInvoiceItemBuilder(this.Strategy.Session)
+                    var invoiceItem = new PurchaseInvoiceItemBuilder(this.Strategy.Transaction)
                         .WithAssignedUnitPrice(orderItem.UnitPrice)
                         .WithPart(orderItem.Part)
                         .WithQuantity(orderItem.QuantityOrdered)
@@ -89,16 +89,16 @@ namespace Allors.Database.Domain
 
                     if (invoiceItem.ExistPart)
                     {
-                        invoiceItem.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Session).PartItem;
+                        invoiceItem.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Transaction).PartItem;
                     }
                     else
                     {
-                        invoiceItem.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Session).Service;
+                        invoiceItem.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Transaction).Service;
                     }
 
                     purchaseInvoice.AddPurchaseInvoiceItem(invoiceItem);
 
-                    new OrderItemBillingBuilder(this.Strategy.Session)
+                    new OrderItemBillingBuilder(this.Strategy.Transaction)
                         .WithQuantity(orderItem.QuantityOrdered)
                         .WithAmount(orderItem.TotalBasePrice)
                         .WithOrderItem(orderItem)

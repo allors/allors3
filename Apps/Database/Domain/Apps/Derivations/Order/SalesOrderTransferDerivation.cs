@@ -25,7 +25,7 @@ namespace Allors.Database.Domain
             {
                 if (@this.ExistFrom && @this.ExistInternalOrganisation && !@this.ExistTo)
                 {
-                    var acl = new DatabaseAccessControlLists(cycle.Session.Context().User)[@this.From];
+                    var acl = new DatabaseAccessControlLists(cycle.Transaction.Context().User)[@this.From];
                     if (!acl.CanExecute(this.M.SalesOrder.DoTransfer))
                     {
                         cycle.Validation.AddError($"{@this} {@this.Meta.To} No rights to transfer salesorder");
@@ -38,7 +38,7 @@ namespace Allors.Database.Domain
                         // TODO: Make sure 'from' customer is also a customer in 'to' internal organisation
                         if (!@this.To.TakenBy.ActiveCustomers.Contains(@this.To.BillToCustomer))
                         {
-                            new CustomerRelationshipBuilder(@this.Strategy.Session)
+                            new CustomerRelationshipBuilder(@this.Strategy.Transaction)
                                 .WithInternalOrganisation(@this.To.TakenBy)
                                 .WithCustomer(@this.To.BillToCustomer)
                                 .Build();
@@ -46,7 +46,7 @@ namespace Allors.Database.Domain
 
                         //TODO: ShipToCustomer
 
-                        @this.From.SalesOrderState = new SalesOrderStates(@this.Strategy.Session).Transferred;
+                        @this.From.SalesOrderState = new SalesOrderStates(@this.Strategy.Transaction).Transferred;
                     }
                 }
             }

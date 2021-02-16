@@ -15,33 +15,33 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenDesiredProductFeature_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var vatRate21 = new VatRateBuilder(this.Session).WithRate(21).Build();
-            var softwareFeature = new SoftwareFeatureBuilder(this.Session)
+            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
+            var softwareFeature = new SoftwareFeatureBuilder(this.Transaction)
                 .WithVatRate(vatRate21)
                 .WithName("Tutorial")
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var builder = new DesiredProductFeatureBuilder(this.Session);
+            var builder = new DesiredProductFeatureBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithRequired(false);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithProductFeature(softwareFeature);
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
     }
 }

@@ -20,95 +20,95 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPurchaseOrderBuilder_WhenBuild_ThenPostBuildRelationsMustExist()
         {
-            var supplier = new OrganisationBuilder(this.Session).WithName("supplier").Build();
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
             var internalOrganisation = this.InternalOrganisation;
-            new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithSupplier(supplier).Build();
 
-            var order = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).Build();
+            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Equal(new PurchaseOrderStates(this.Session).Created, order.PurchaseOrderState);
-            Assert.Equal(this.Session.Now().Date, order.OrderDate.Date);
-            Assert.Equal(this.Session.Now().Date, order.EntryDate.Date);
+            Assert.Equal(new PurchaseOrderStates(this.Transaction).Created, order.PurchaseOrderState);
+            Assert.Equal(this.Transaction.Now().Date, order.OrderDate.Date);
+            Assert.Equal(this.Transaction.Now().Date, order.EntryDate.Date);
             Assert.Equal(order.PreviousTakenViaSupplier, order.TakenViaSupplier);
         }
 
         [Fact]
         public void GivenOrder_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var supplier = new OrganisationBuilder(this.Session).WithName("supplier2").Build();
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier2").Build();
             var internalOrganisation = this.InternalOrganisation;
-            new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithSupplier(supplier).Build();
 
-            var mechelen = new CityBuilder(this.Session).WithName("Mechelen").Build();
-            ContactMechanism takenViaContactMechanism = new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
-            var supplierContactMechanism = new PartyContactMechanismBuilder(this.Session)
+            var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
+            ContactMechanism takenViaContactMechanism = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
+            var supplierContactMechanism = new PartyContactMechanismBuilder(this.Transaction)
                 .WithContactMechanism(takenViaContactMechanism)
                 .WithUseAsDefault(true)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).OrderAddress)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).OrderAddress)
                 .Build();
             supplier.AddPartyContactMechanism(supplierContactMechanism);
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var builder = new PurchaseOrderBuilder(this.Session);
+            var builder = new PurchaseOrderBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithTakenViaSupplier(supplier);
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
             builder.WithAssignedTakenViaContactMechanism(takenViaContactMechanism);
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void GivenPurchaseOrder_WhenDeriving_ThenTakenViaSupplierMustBeInSupplierRelationship()
         {
-            var supplier = new OrganisationBuilder(this.Session).WithName("supplier2").Build();
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier2").Build();
 
-            var order = new PurchaseOrderBuilder(this.Session)
+            var order = new PurchaseOrderBuilder(this.Transaction)
                 .WithTakenViaSupplier(supplier)
                 .Build();
 
             var expectedMessage = $"{order} { this.M.PurchaseOrder.TakenViaSupplier} { ErrorMessages.PartyIsNotASupplier}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
 
-            new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithSupplier(supplier).Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void GivenOrder_WhenDeriving_ThenLocaleMustExist()
         {
-            var supplier = new OrganisationBuilder(this.Session).WithName("supplier2").Build();
-            new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).Build();
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier2").Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithSupplier(supplier).Build();
 
-            var mechelen = new CityBuilder(this.Session).WithName("Mechelen").Build();
-            ContactMechanism takenViaContactMechanism = new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
-            var supplierContactMechanism = new PartyContactMechanismBuilder(this.Session)
+            var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
+            ContactMechanism takenViaContactMechanism = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
+            var supplierContactMechanism = new PartyContactMechanismBuilder(this.Transaction)
                 .WithContactMechanism(takenViaContactMechanism)
                 .WithUseAsDefault(true)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).OrderAddress)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).OrderAddress)
                 .Build();
             supplier.AddPartyContactMechanism(supplierContactMechanism);
 
-            var order = new PurchaseOrderBuilder(this.Session)
+            var order = new PurchaseOrderBuilder(this.Transaction)
                 .WithTakenViaSupplier(supplier)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(order.OrderedBy.Locale, order.DerivedLocale);
         }
@@ -119,20 +119,20 @@ namespace Allors.Database.Domain.Tests
             var internalOrganisation = this.InternalOrganisation;
             internalOrganisation.RemovePurchaseOrderNumberPrefix();
 
-            var supplier = new OrganisationBuilder(this.Session).WithName("supplier").Build();
-            new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).Build();
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithSupplier(supplier).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var order1 = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).Build();
+            var order1 = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal("1", order1.OrderNumber);
 
-            var order2 = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).Build();
+            var order2 = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal("2", order2.OrderNumber);
         }
@@ -140,28 +140,28 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPurchaseOrder_WhenGettingOrderNumberWithFormat_ThenFormattedOrderNumberShouldBeReturned()
         {
-            this.InternalOrganisation.InvoiceSequence = new InvoiceSequences(this.Session).EnforcedSequence;
-            var supplier = new OrganisationBuilder(this.Session).WithName("supplier").Build();
-            new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).Build();
+            this.InternalOrganisation.InvoiceSequence = new InvoiceSequences(this.Transaction).EnforcedSequence;
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithSupplier(supplier).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var internalOrganisation = this.InternalOrganisation;
             internalOrganisation.PurchaseOrderNumberPrefix = "the format is ";
 
-            var order1 = new PurchaseOrderBuilder(this.Session)
+            var order1 = new PurchaseOrderBuilder(this.Transaction)
                 .WithTakenViaSupplier(supplier)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal("the format is 1", order1.OrderNumber);
 
-            var order2 = new PurchaseOrderBuilder(this.Session)
+            var order2 = new PurchaseOrderBuilder(this.Transaction)
                 .WithTakenViaSupplier(supplier)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal("the format is 2", order2.OrderNumber);
         }
@@ -170,18 +170,18 @@ namespace Allors.Database.Domain.Tests
         public void GivenBilledToWithoutOrderNumberPrefix_WhenDeriving_ThenSortableOrderNumberIsSet()
         {
             this.InternalOrganisation.RemovePurchaseOrderNumberPrefix();
-            var supplier = new OrganisationBuilder(this.Session).WithName("supplier").Build();
-            new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).Build();
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithSupplier(supplier).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var order = new PurchaseOrderBuilder(this.Session)
+            var order = new PurchaseOrderBuilder(this.Transaction)
                 .WithTakenViaSupplier(supplier)
                 .Build();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.SetReadyForProcessing();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(int.Parse(order.OrderNumber), order.SortableOrderNumber);
         }
@@ -189,20 +189,20 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenBilledToWithOrderNumberPrefix_WhenDeriving_ThenSortableOrderNumberIsSet()
         {
-            this.InternalOrganisation.InvoiceSequence = new InvoiceSequences(this.Session).EnforcedSequence;
+            this.InternalOrganisation.InvoiceSequence = new InvoiceSequences(this.Transaction).EnforcedSequence;
             this.InternalOrganisation.PurchaseOrderNumberPrefix = "prefix-";
-            var supplier = new OrganisationBuilder(this.Session).WithName("supplier").Build();
-            new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).Build();
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithSupplier(supplier).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var order = new PurchaseOrderBuilder(this.Session)
+            var order = new PurchaseOrderBuilder(this.Transaction)
                 .WithTakenViaSupplier(supplier)
                 .Build();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.SetReadyForProcessing();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(int.Parse(order.OrderNumber.Split('-')[1]), order.SortableOrderNumber);
         }
@@ -210,105 +210,105 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenBilledToWithParametrizedOrderNumberPrefix_WhenDeriving_ThenSortableOrderNumberIsSet()
         {
-            this.InternalOrganisation.InvoiceSequence = new InvoiceSequences(this.Session).EnforcedSequence;
+            this.InternalOrganisation.InvoiceSequence = new InvoiceSequences(this.Transaction).EnforcedSequence;
             this.InternalOrganisation.PurchaseOrderNumberPrefix = "prefix-{year}-";
-            var supplier = new OrganisationBuilder(this.Session).WithName("supplier").Build();
-            new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).Build();
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithSupplier(supplier).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var order = new PurchaseOrderBuilder(this.Session)
+            var order = new PurchaseOrderBuilder(this.Transaction)
                 .WithTakenViaSupplier(supplier)
                 .Build();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.SetReadyForProcessing();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var number = int.Parse(order.OrderNumber.Split('-').Last()).ToString("000000");
-            Assert.Equal(int.Parse(string.Concat(this.Session.Now().Date.Year.ToString(), number)), order.SortableOrderNumber);
+            Assert.Equal(int.Parse(string.Concat(this.Transaction.Now().Date.Year.ToString(), number)), order.SortableOrderNumber);
         }
 
         [Fact]
         public void GivenPurchaseOrder_WhenConfirming_ThenAllValidItemsAreInConfirmedState()
         {
-            var supplier = new OrganisationBuilder(this.Session).WithName("supplier2").Build();
-            new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).Build();
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier2").Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithSupplier(supplier).Build();
 
-            var part = new NonUnifiedPartBuilder(this.Session)
-                .WithProductIdentification(new PartNumberBuilder(this.Session)
+            var part = new NonUnifiedPartBuilder(this.Transaction)
+                .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                     .WithIdentification("1")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                 .Build();
 
-            var order = new PurchaseOrderBuilder(this.Session)
+            var order = new PurchaseOrderBuilder(this.Transaction)
                 .WithTakenViaSupplier(supplier)
-                .WithAssignedVatRegime(new VatRegimes(this.Session).Exempt)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Exempt)
                 .Build();
 
-            var item1 = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
-            var item2 = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(2).Build();
-            var item3 = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(3).Build();
-            var item4 = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(4).Build();
+            var item1 = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(1).Build();
+            var item2 = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(2).Build();
+            var item3 = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(3).Build();
+            var item4 = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(4).Build();
             order.AddPurchaseOrderItem(item1);
             order.AddPurchaseOrderItem(item2);
             order.AddPurchaseOrderItem(item3);
             order.AddPurchaseOrderItem(item4);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.SetReadyForProcessing();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             item4.Cancel();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(3, order.ValidOrderItems.Count);
             Assert.Contains(item1, order.ValidOrderItems);
             Assert.Contains(item2, order.ValidOrderItems);
             Assert.Contains(item3, order.ValidOrderItems);
-            Assert.Equal(new PurchaseOrderItemStates(this.Session).InProcess, item1.PurchaseOrderItemState);
-            Assert.Equal(new PurchaseOrderItemStates(this.Session).InProcess, item2.PurchaseOrderItemState);
-            Assert.Equal(new PurchaseOrderItemStates(this.Session).InProcess, item3.PurchaseOrderItemState);
-            Assert.Equal(new PurchaseOrderItemStates(this.Session).Cancelled, item4.PurchaseOrderItemState);
+            Assert.Equal(new PurchaseOrderItemStates(this.Transaction).InProcess, item1.PurchaseOrderItemState);
+            Assert.Equal(new PurchaseOrderItemStates(this.Transaction).InProcess, item2.PurchaseOrderItemState);
+            Assert.Equal(new PurchaseOrderItemStates(this.Transaction).InProcess, item3.PurchaseOrderItemState);
+            Assert.Equal(new PurchaseOrderItemStates(this.Transaction).Cancelled, item4.PurchaseOrderItemState);
         }
 
         [Fact]
         public void GivenPurchaseOrder_WhenOrdering_ThenAllValidItemsAreInInProcessState()
         {
-            var supplier = new OrganisationBuilder(this.Session).WithName("supplier2").Build();
-            new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).Build();
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier2").Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithSupplier(supplier).Build();
 
-            var part = new NonUnifiedPartBuilder(this.Session)
-                .WithProductIdentification(new PartNumberBuilder(this.Session)
+            var part = new NonUnifiedPartBuilder(this.Transaction)
+                .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                     .WithIdentification("1")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                 .Build();
 
-            var order = new PurchaseOrderBuilder(this.Session)
+            var order = new PurchaseOrderBuilder(this.Transaction)
                 .WithTakenViaSupplier(supplier)
-                .WithAssignedVatRegime(new VatRegimes(this.Session).Exempt)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Exempt)
                 .Build();
 
-            var item1 = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
-            var item2 = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(2).Build();
-            var item3 = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(3).Build();
+            var item1 = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(1).Build();
+            var item2 = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(2).Build();
+            var item3 = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(3).Build();
             order.AddPurchaseOrderItem(item1);
             order.AddPurchaseOrderItem(item2);
             order.AddPurchaseOrderItem(item3);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.SetReadyForProcessing();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(3, order.ValidOrderItems.Count);
             Assert.Contains(item1, order.ValidOrderItems);
             Assert.Contains(item2, order.ValidOrderItems);
             Assert.Contains(item3, order.ValidOrderItems);
-            Assert.Equal(new PurchaseOrderItemStates(this.Session).InProcess, item1.PurchaseOrderItemState);
-            Assert.Equal(new PurchaseOrderItemStates(this.Session).InProcess, item2.PurchaseOrderItemState);
-            Assert.Equal(new PurchaseOrderItemStates(this.Session).InProcess, item3.PurchaseOrderItemState);
+            Assert.Equal(new PurchaseOrderItemStates(this.Transaction).InProcess, item1.PurchaseOrderItemState);
+            Assert.Equal(new PurchaseOrderItemStates(this.Transaction).InProcess, item2.PurchaseOrderItemState);
+            Assert.Equal(new PurchaseOrderItemStates(this.Transaction).InProcess, item3.PurchaseOrderItemState);
         }
     }
 
@@ -319,16 +319,16 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedOrderedByDeriveDerivedLocaleFromOrderedByLocale()
         {
-            var swedishLocale = new LocaleBuilder(this.Session)
-               .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
-               .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
+            var swedishLocale = new LocaleBuilder(this.Transaction)
+               .WithCountry(new Countries(this.Transaction).FindBy(this.M.Country.IsoCode, "SE"))
+               .WithLanguage(new Languages(this.Transaction).FindBy(this.M.Language.IsoCode, "sv"))
                .Build();
 
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             this.InternalOrganisation.Locale = swedishLocale;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(order.DerivedLocale, swedishLocale);
         }
@@ -336,16 +336,16 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedLocaleDeriveDerivedLocaleFromLocale()
         {
-            var swedishLocale = new LocaleBuilder(this.Session)
-               .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
-               .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
+            var swedishLocale = new LocaleBuilder(this.Transaction)
+               .WithCountry(new Countries(this.Transaction).FindBy(this.M.Country.IsoCode, "SE"))
+               .WithLanguage(new Languages(this.Transaction).FindBy(this.M.Language.IsoCode, "sv"))
                .Build();
 
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             order.Locale = swedishLocale;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(order.DerivedLocale, swedishLocale);
         }
@@ -353,11 +353,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedAssignedVatRegimeDeriveDerivedVatRegime()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            order.AssignedVatRegime = new VatRegimes(this.Session).ServiceB2B;
-            this.Session.Derive(false);
+            order.AssignedVatRegime = new VatRegimes(this.Transaction).ServiceB2B;
+            this.Transaction.Derive(false);
 
             Assert.Equal(order.DerivedVatRegime, order.AssignedVatRegime);
         }
@@ -366,16 +366,16 @@ namespace Allors.Database.Domain.Tests
         public void ChangedTakenViaSupplierDeriveDerivedVatRegime()
         {
             var supplier1 = this.InternalOrganisation.ActiveSuppliers.First;
-            supplier1.VatRegime = new VatRegimes(this.Session).Assessable10;
+            supplier1.VatRegime = new VatRegimes(this.Transaction).Assessable10;
 
-            var supplier2 = this.InternalOrganisation.CreateSupplier(this.Session.Faker());
-            supplier2.VatRegime = new VatRegimes(this.Session).Assessable21;
+            var supplier2 = this.InternalOrganisation.CreateSupplier(this.Transaction.Faker());
+            supplier2.VatRegime = new VatRegimes(this.Transaction).Assessable21;
 
-            var order = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier1).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier1).Build();
+            this.Transaction.Derive(false);
 
             order.TakenViaSupplier = supplier2;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(order.DerivedVatRegime, supplier2.VatRegime);
         }
@@ -385,11 +385,11 @@ namespace Allors.Database.Domain.Tests
         {
             var supplier = this.InternalOrganisation.ActiveSuppliers.First;
 
-            var order = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).Build();
+            this.Transaction.Derive(false);
 
-            supplier.VatRegime = new VatRegimes(this.Session).Assessable10;
-            this.Session.Derive(false);
+            supplier.VatRegime = new VatRegimes(this.Transaction).Assessable10;
+            this.Transaction.Derive(false);
 
             Assert.Equal(order.DerivedVatRegime, supplier.VatRegime);
         }
@@ -397,11 +397,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedAssignedIrpfRegimeDeriveDerivedIrpfRegime()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            order.AssignedIrpfRegime = new IrpfRegimes(this.Session).Assessable15;
-            this.Session.Derive(false);
+            order.AssignedIrpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
+            this.Transaction.Derive(false);
 
             Assert.Equal(order.DerivedIrpfRegime, order.AssignedIrpfRegime);
         }
@@ -410,16 +410,16 @@ namespace Allors.Database.Domain.Tests
         public void ChangedTakenViaSupplierDeriveDerivedIrpfRegime()
         {
             var supplier1 = this.InternalOrganisation.ActiveSuppliers.First;
-            supplier1.IrpfRegime = new IrpfRegimes(this.Session).Assessable15;
+            supplier1.IrpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
 
-            var supplier2 = this.InternalOrganisation.CreateSupplier(this.Session.Faker());
-            supplier2.IrpfRegime = new IrpfRegimes(this.Session).Assessable19;
+            var supplier2 = this.InternalOrganisation.CreateSupplier(this.Transaction.Faker());
+            supplier2.IrpfRegime = new IrpfRegimes(this.Transaction).Assessable19;
 
-            var order = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier1).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier1).Build();
+            this.Transaction.Derive(false);
 
             order.TakenViaSupplier = supplier2;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(order.DerivedIrpfRegime, supplier2.IrpfRegime);
         }
@@ -429,11 +429,11 @@ namespace Allors.Database.Domain.Tests
         {
             var supplier = this.InternalOrganisation.ActiveSuppliers.First;
 
-            var order = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).Build();
+            this.Transaction.Derive(false);
 
-            supplier.IrpfRegime = new IrpfRegimes(this.Session).Assessable15;
-            this.Session.Derive(false);
+            supplier.IrpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
+            this.Transaction.Derive(false);
 
             Assert.Equal(order.DerivedIrpfRegime, supplier.IrpfRegime);
         }
@@ -441,12 +441,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedAssignedCurrencyDeriveDerivedCurrency()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var swedishKrona = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "SEK");
+            var swedishKrona = new Currencies(this.Transaction).FindBy(M.Currency.IsoCode, "SEK");
             order.AssignedCurrency = swedishKrona;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(order.DerivedCurrency, order.AssignedCurrency);
         }
@@ -454,12 +454,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedOrderedByPreferredCurrencyDerivedCurrency()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var swedishKrona = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "SEK");
+            var swedishKrona = new Currencies(this.Transaction).FindBy(M.Currency.IsoCode, "SEK");
             order.OrderedBy.PreferredCurrency = swedishKrona;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(order.DerivedCurrency, order.OrderedBy.PreferredCurrency);
         }
@@ -467,11 +467,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedAssignedTakenViaContactMechanismDeriveDerivedTakenViaContactMechanism()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            order.AssignedTakenViaContactMechanism = new PostalAddressBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            order.AssignedTakenViaContactMechanism = new PostalAddressBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.Equal(order.DerivedTakenViaContactMechanism, order.AssignedTakenViaContactMechanism);
         }
@@ -480,11 +480,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedTakenByOrderAddressDeriveDerivedTakenViaContactMechanism()
         {
             var supplier = this.InternalOrganisation.ActiveSuppliers.First;
-            var order = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).Build();
+            this.Transaction.Derive(false);
 
-            supplier.OrderAddress = new PostalAddressBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            supplier.OrderAddress = new PostalAddressBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.Equal(order.DerivedTakenViaContactMechanism, supplier.OrderAddress);
         }
@@ -492,11 +492,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedAssignedBillToContactMechanismDeriveDeriveDerivedBillToContactMechanism()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            order.AssignedBillToContactMechanism = new PostalAddressBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            order.AssignedBillToContactMechanism = new PostalAddressBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.Equal(order.DerivedBillToContactMechanism, order.AssignedBillToContactMechanism);
         }
@@ -504,12 +504,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedOrderByBillingAddressDeriveDeriveDerivedBillToContactMechanism()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var postalAddress = new PostalAddressBuilder(this.Session).Build();
+            var postalAddress = new PostalAddressBuilder(this.Transaction).Build();
             this.InternalOrganisation.BillingAddress = postalAddress;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(order.DerivedBillToContactMechanism, postalAddress);
         }
@@ -517,13 +517,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedOrderByGeneralCorrespondenceDeriveDeriveDerivedBillToContactMechanism()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var postalAddress = new PostalAddressBuilder(this.Session).Build();
+            var postalAddress = new PostalAddressBuilder(this.Transaction).Build();
             this.InternalOrganisation.RemoveBillingAddress();
             this.InternalOrganisation.GeneralCorrespondence = postalAddress;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(order.DerivedBillToContactMechanism, postalAddress);
         }
@@ -531,12 +531,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedAssignedShipToAddressDeriveDeriveDerivedShipToAddress()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var postalAddress = new PostalAddressBuilder(this.Session).Build();
+            var postalAddress = new PostalAddressBuilder(this.Transaction).Build();
             order.AssignedShipToAddress = postalAddress;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(order.DerivedShipToAddress, postalAddress);
         }
@@ -544,12 +544,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedOrderedByShippingAddressDeriveDeriveDerivedShipToAddress()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var postalAddress = new PostalAddressBuilder(this.Session).Build();
+            var postalAddress = new PostalAddressBuilder(this.Transaction).Build();
             this.InternalOrganisation.ShippingAddress = postalAddress;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(order.DerivedShipToAddress, postalAddress);
         }
@@ -567,15 +567,15 @@ namespace Allors.Database.Domain.Tests
             supplierRelationship.NeedsApproval = true;
             supplierRelationship.ApprovalThresholdLevel1 = 0;
 
-            var order = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new PurchaseOrderItemBuilder(this.Session).WithQuantityOrdered(1).WithAssignedUnitPrice(100).Build();
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction).WithQuantityOrdered(1).WithAssignedUnitPrice(100).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.SetReadyForProcessing();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(order.ExistPurchaseOrderApprovalsLevel1WherePurchaseOrder);
         }
@@ -594,19 +594,19 @@ namespace Allors.Database.Domain.Tests
             supplierRelationship.ApprovalThresholdLevel1 = 0;
             supplierRelationship.ApprovalThresholdLevel2 = 0;
 
-            var order = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new PurchaseOrderItemBuilder(this.Session).WithQuantityOrdered(1).WithAssignedUnitPrice(100).Build();
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction).WithQuantityOrdered(1).WithAssignedUnitPrice(100).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.SetReadyForProcessing();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             var approvalLevel1 = order.PurchaseOrderApprovalsLevel1WherePurchaseOrder.First;
             approvalLevel1.Approve();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(order.ExistPurchaseOrderApprovalsLevel2WherePurchaseOrder);
         }
@@ -619,140 +619,140 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedOrderedByThrowValidationError()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            order.OrderedBy = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+            order.OrderedBy = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
 
             var expectedMessage = $"{order} { this.M.PurchaseOrder.OrderedBy} { ErrorMessages.InternalOrganisationChanged}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
 
         [Fact]
         public void ChangedInternalOrganisationActiveSuppliersThrowValidationError()
         {
-            var order = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(this.InternalOrganisation.ActiveSuppliers.First).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(this.InternalOrganisation.ActiveSuppliers.First).Build();
+            this.Transaction.Derive(false);
 
             var supplierRelationship = this.InternalOrganisation.ActiveSuppliers.First.SupplierRelationshipsWhereSupplier.First;
             supplierRelationship.ThroughDate = supplierRelationship.FromDate;
 
             var expectedMessage = $"{order} { this.M.PurchaseOrder.TakenViaSupplier} { ErrorMessages.PartyIsNotASupplier}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
 
         [Fact]
         public void ChangedOrderDateThrowValidationErrorPartyIsNotASupplier()
         {
-            var order = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(this.InternalOrganisation.ActiveSuppliers.First).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(this.InternalOrganisation.ActiveSuppliers.First).Build();
+            this.Transaction.Derive(false);
 
             var supplierRelationship = this.InternalOrganisation.ActiveSuppliers.First.SupplierRelationshipsWhereSupplier.First;
             order.OrderDate = supplierRelationship.FromDate.AddDays(-1);
 
             var expectedMessage = $"{order} { this.M.PurchaseOrder.TakenViaSupplier} { ErrorMessages.PartyIsNotASupplier}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
 
         [Fact]
         public void ChangedTakenViaSupplierThrowValidationError()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            order.TakenViaSupplier = new OrganisationBuilder(this.Session).Build();
+            order.TakenViaSupplier = new OrganisationBuilder(this.Transaction).Build();
 
             var expectedMessage = $"{order} { this.M.PurchaseOrder.TakenViaSupplier} { ErrorMessages.PartyIsNotASupplier}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
 
         [Fact]
         public void ChangedTakenViaSubcontractorThrowValidationError()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            order.TakenViaSubcontractor = new OrganisationBuilder(this.Session).Build();
+            order.TakenViaSubcontractor = new OrganisationBuilder(this.Transaction).Build();
 
             var expectedMessage = $"{order} { this.M.PurchaseOrder.TakenViaSubcontractor} { ErrorMessages.PartyIsNotASubcontractor}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
 
         [Fact]
         public void ChangedInternalOrganisationActiveSubcontractorsThrowValidationError()
         {
-            var order = new PurchaseOrderBuilder(this.Session).WithTakenViaSubcontractor(this.InternalOrganisation.ActiveSubContractors.First).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSubcontractor(this.InternalOrganisation.ActiveSubContractors.First).Build();
+            this.Transaction.Derive(false);
 
             var subcontractorRelationship = this.InternalOrganisation.ActiveSubContractors.First.SubContractorRelationshipsWhereSubContractor.First;
             subcontractorRelationship.ThroughDate = subcontractorRelationship.FromDate;
 
             var expectedMessage = $"{order} { this.M.PurchaseOrder.TakenViaSubcontractor} { ErrorMessages.PartyIsNotASubcontractor}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
 
         [Fact]
         public void ChangedOrderDateThrowValidationErrorPartyIsNotASubcontractor()
         {
-            var order = new PurchaseOrderBuilder(this.Session).WithTakenViaSubcontractor(this.InternalOrganisation.ActiveSubContractors.First).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSubcontractor(this.InternalOrganisation.ActiveSubContractors.First).Build();
+            this.Transaction.Derive(false);
 
             var subcontractorRelationship = this.InternalOrganisation.ActiveSubContractors.First.SubContractorRelationshipsWhereSubContractor.First;
             order.OrderDate = subcontractorRelationship.FromDate.AddDays(-1);
 
             var expectedMessage = $"{order} { this.M.PurchaseOrder.TakenViaSubcontractor} { ErrorMessages.PartyIsNotASubcontractor}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
 
         [Fact]
         public void ChangedOrderedByDeriveValidationErrorAtLeastOne()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.StartsWith("AssertAtLeastOne: PurchaseOrder.TakenViaSupplier\nPurchaseOrder.TakenViaSubcontractor"));
         }
 
         [Fact]
         public void ChangedTakenViaSupplierDeriveValidationErrorAtMostOne()
         {
-            var order = new PurchaseOrderBuilder(this.Session)
+            var order = new PurchaseOrderBuilder(this.Transaction)
                 .WithTakenViaSubcontractor(this.InternalOrganisation.ActiveSubContractors.First)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.TakenViaSupplier = this.InternalOrganisation.ActiveSuppliers.First;
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne: PurchaseOrder.TakenViaSupplier\nPurchaseOrder.TakenViaSubcontractor"));
         }
 
         [Fact]
         public void ChangedTakenViaSubcontractorDeriveValidationErrorAtMostOne()
         {
-            var order = new PurchaseOrderBuilder(this.Session)
+            var order = new PurchaseOrderBuilder(this.Transaction)
                 .WithTakenViaSupplier(this.InternalOrganisation.ActiveSuppliers.First)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.TakenViaSubcontractor = this.InternalOrganisation.ActiveSubContractors.First;
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne: PurchaseOrder.TakenViaSupplier\nPurchaseOrder.TakenViaSubcontractor"));
         }
 
         [Fact]
         public void ChangedOrderedByDeriveInvoiceNumber()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.True(order.ExistOrderNumber);
         }
@@ -760,8 +760,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedOrderedByDeriveSortableInvoiceNumber()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.True(order.ExistSortableOrderNumber);
         }
@@ -769,12 +769,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPurchaseOrderItemsDeriveValidOrderItems()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new PurchaseOrderItemBuilder(this.Session).Build();
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Single(order.ValidOrderItems);
         }
@@ -782,21 +782,21 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPurchaseOrderItemPurchaseOrderItemStateDeriveValidOrderItems()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem1 = new PurchaseOrderItemBuilder(this.Session).Build();
+            var orderItem1 = new PurchaseOrderItemBuilder(this.Transaction).Build();
             order.AddPurchaseOrderItem(orderItem1);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var orderItem2 = new PurchaseOrderItemBuilder(this.Session).Build();
+            var orderItem2 = new PurchaseOrderItemBuilder(this.Transaction).Build();
             order.AddPurchaseOrderItem(orderItem2);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(2, order.ValidOrderItems.Count);
 
             orderItem2.Cancel();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Single(order.ValidOrderItems);
         }
@@ -804,8 +804,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedTakenViaSupplierDeriveWorkItemDescription()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             var expected = $"PurchaseOrder: {order.OrderNumber} [{order.TakenViaSupplier?.PartyName}]";
             Assert.Equal(expected, order.WorkItemDescription);
@@ -819,190 +819,190 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPurchaseOrderItemsDerivePurchaseOrderShipmentStateNa()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new PurchaseOrderItemBuilder(this.Session)
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
                 .WithIsReceivable(false)
                 .Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            Assert.Equal(new PurchaseOrderShipmentStates(this.Session).Na, order.PurchaseOrderShipmentState);
+            Assert.Equal(new PurchaseOrderShipmentStates(this.Transaction).Na, order.PurchaseOrderShipmentState);
         }
 
         [Fact]
         public void ChangedPurchaseOrderItemPurchaseOrderItemShipmentStateDerivePurchaseOrderShipmentStateReceived()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem1 = new PurchaseOrderItemBuilder(this.Session)
+            var orderItem1 = new PurchaseOrderItemBuilder(this.Transaction)
                 .WithIsReceivable(true)
                 .Build();
             order.AddPurchaseOrderItem(orderItem1);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var orderItem2 = new PurchaseOrderItemBuilder(this.Session)
+            var orderItem2 = new PurchaseOrderItemBuilder(this.Transaction)
                 .WithIsReceivable(false)
                 .Build();
             order.AddPurchaseOrderItem(orderItem2);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            orderItem1.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(this.Session).Received;
-            this.Session.Derive(false);
+            orderItem1.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(this.Transaction).Received;
+            this.Transaction.Derive(false);
 
-            Assert.Equal(new PurchaseOrderShipmentStates(this.Session).Received, order.PurchaseOrderShipmentState);
+            Assert.Equal(new PurchaseOrderShipmentStates(this.Transaction).Received, order.PurchaseOrderShipmentState);
         }
 
         [Fact]
         public void ChangedPurchaseOrderItemPurchaseOrderItemShipmentStateDerivePurchaseOrderShipmentStateNotReceived()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new PurchaseOrderItemBuilder(this.Session)
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
                 .WithIsReceivable(true)
                 .Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            orderItem.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(this.Session).NotReceived;
-            this.Session.Derive(false);
+            orderItem.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(this.Transaction).NotReceived;
+            this.Transaction.Derive(false);
 
-            Assert.Equal(new PurchaseOrderShipmentStates(this.Session).NotReceived, order.PurchaseOrderShipmentState);
+            Assert.Equal(new PurchaseOrderShipmentStates(this.Transaction).NotReceived, order.PurchaseOrderShipmentState);
         }
 
         [Fact]
         public void ChangedPurchaseOrderItemPurchaseOrderItemShipmentStateDerivePurchaseOrderShipmentStatePartiallyReceived()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem1 = new PurchaseOrderItemBuilder(this.Session)
+            var orderItem1 = new PurchaseOrderItemBuilder(this.Transaction)
                 .WithIsReceivable(true)
                 .Build();
             order.AddPurchaseOrderItem(orderItem1);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var orderItem2 = new PurchaseOrderItemBuilder(this.Session)
+            var orderItem2 = new PurchaseOrderItemBuilder(this.Transaction)
                 .WithIsReceivable(true)
                 .Build();
             order.AddPurchaseOrderItem(orderItem2);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            orderItem1.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(this.Session).Received;
-            this.Session.Derive(false);
+            orderItem1.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(this.Transaction).Received;
+            this.Transaction.Derive(false);
 
-            Assert.Equal(new PurchaseOrderShipmentStates(this.Session).PartiallyReceived, order.PurchaseOrderShipmentState);
+            Assert.Equal(new PurchaseOrderShipmentStates(this.Transaction).PartiallyReceived, order.PurchaseOrderShipmentState);
         }
 
         [Fact]
         public void ChangedPurchaseOrderItemsDerivePurchaseOrderPaymentStateNotPaid()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem1 = new PurchaseOrderItemBuilder(this.Session).Build();
+            var orderItem1 = new PurchaseOrderItemBuilder(this.Transaction).Build();
             order.AddPurchaseOrderItem(orderItem1);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            Assert.Equal(new PurchaseOrderPaymentStates(this.Session).NotPaid, order.PurchaseOrderPaymentState);
+            Assert.Equal(new PurchaseOrderPaymentStates(this.Transaction).NotPaid, order.PurchaseOrderPaymentState);
         }
 
         [Fact]
         public void ChangedPurchaseOrderItemsDerivePurchaseOrderPaymentStatePaid()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem1 = new PurchaseOrderItemBuilder(this.Session)
-                .WithPurchaseOrderItemPaymentState(new PurchaseOrderItemPaymentStates(this.Session).Paid)
+            var orderItem1 = new PurchaseOrderItemBuilder(this.Transaction)
+                .WithPurchaseOrderItemPaymentState(new PurchaseOrderItemPaymentStates(this.Transaction).Paid)
                 .Build();
             order.AddPurchaseOrderItem(orderItem1);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            Assert.Equal(new PurchaseOrderPaymentStates(this.Session).Paid, order.PurchaseOrderPaymentState);
+            Assert.Equal(new PurchaseOrderPaymentStates(this.Transaction).Paid, order.PurchaseOrderPaymentState);
         }
 
         [Fact]
         public void ChangedPurchaseOrderItemsDerivePurchaseOrderPaymentStatePartiallyPaid()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem1 = new PurchaseOrderItemBuilder(this.Session)
-                .WithPurchaseOrderItemPaymentState(new PurchaseOrderItemPaymentStates(this.Session).Paid)
+            var orderItem1 = new PurchaseOrderItemBuilder(this.Transaction)
+                .WithPurchaseOrderItemPaymentState(new PurchaseOrderItemPaymentStates(this.Transaction).Paid)
                 .Build();
             order.AddPurchaseOrderItem(orderItem1);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var orderItem2 = new PurchaseOrderItemBuilder(this.Session)
-                .WithPurchaseOrderItemPaymentState(new PurchaseOrderItemPaymentStates(this.Session).NotPaid)
+            var orderItem2 = new PurchaseOrderItemBuilder(this.Transaction)
+                .WithPurchaseOrderItemPaymentState(new PurchaseOrderItemPaymentStates(this.Transaction).NotPaid)
                 .Build();
             order.AddPurchaseOrderItem(orderItem2);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            Assert.Equal(new PurchaseOrderPaymentStates(this.Session).PartiallyPaid, order.PurchaseOrderPaymentState);
+            Assert.Equal(new PurchaseOrderPaymentStates(this.Transaction).PartiallyPaid, order.PurchaseOrderPaymentState);
         }
 
         [Fact]
         public void ChangedPurchaseOrderStateDerivePurchaseOrderState()
         {
-            var order = new PurchaseOrderBuilder(this.Session)
-                .WithPurchaseOrderShipmentState(new PurchaseOrderShipmentStates(this.Session).Received)
+            var order = new PurchaseOrderBuilder(this.Transaction)
+                .WithPurchaseOrderShipmentState(new PurchaseOrderShipmentStates(this.Transaction).Received)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var orderItem = new PurchaseOrderItemBuilder(this.Session).Build();
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            order.PurchaseOrderState = new PurchaseOrderStates(this.Session).Sent;
-            this.Session.Derive(false);
+            order.PurchaseOrderState = new PurchaseOrderStates(this.Transaction).Sent;
+            this.Transaction.Derive(false);
 
-            Assert.Equal(new PurchaseOrderStates(this.Session).Completed, order.PurchaseOrderState);
+            Assert.Equal(new PurchaseOrderStates(this.Transaction).Completed, order.PurchaseOrderState);
         }
 
         [Fact]
         public void ChangedPurchaseOrderShipmentStateDerivePurchaseOrderState()
         {
-            var order = new PurchaseOrderBuilder(this.Session)
-                .WithPurchaseOrderState(new PurchaseOrderStates(this.Session).Sent)
+            var order = new PurchaseOrderBuilder(this.Transaction)
+                .WithPurchaseOrderState(new PurchaseOrderStates(this.Transaction).Sent)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var orderItem = new PurchaseOrderItemBuilder(this.Session)
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
                 .WithIsReceivable(true)
-                .WithPurchaseOrderItemShipmentState(new PurchaseOrderItemShipmentStates(this.Session).Received)
+                .WithPurchaseOrderItemShipmentState(new PurchaseOrderItemShipmentStates(this.Transaction).Received)
                 .WithQuantityOrdered(1)
                 .Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            new ShipmentReceiptBuilder(this.Session).WithOrderItem(orderItem).WithQuantityAccepted(1).Build();
-            this.Session.Derive(false);
+            new ShipmentReceiptBuilder(this.Transaction).WithOrderItem(orderItem).WithQuantityAccepted(1).Build();
+            this.Transaction.Derive(false);
 
-            Assert.Equal(new PurchaseOrderStates(this.Session).Completed, order.PurchaseOrderState);
+            Assert.Equal(new PurchaseOrderStates(this.Transaction).Completed, order.PurchaseOrderState);
         }
 
         [Fact]
         public void ChangedPurchaseOrderPaymentStateDerivePurchaseOrderState()
         {
-            var order = new PurchaseOrderBuilder(this.Session)
-                .WithPurchaseOrderState(new PurchaseOrderStates(this.Session).Completed)
+            var order = new PurchaseOrderBuilder(this.Transaction)
+                .WithPurchaseOrderState(new PurchaseOrderStates(this.Transaction).Completed)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var orderItem = new PurchaseOrderItemBuilder(this.Session)
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
                 .Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            orderItem.PurchaseOrderItemPaymentState = new PurchaseOrderItemPaymentStates(this.Session).Paid;
-            this.Session.Derive(false);
+            orderItem.PurchaseOrderItemPaymentState = new PurchaseOrderItemPaymentStates(this.Transaction).Paid;
+            this.Transaction.Derive(false);
 
-            Assert.Equal(new PurchaseOrderStates(this.Session).Finished, order.PurchaseOrderState);
+            Assert.Equal(new PurchaseOrderStates(this.Transaction).Finished, order.PurchaseOrderState);
         }
     }
 
@@ -1014,13 +1014,13 @@ namespace Allors.Database.Domain.Tests
         public void ChangedValidOrderItemsCalculatePrice()
         {
             var invoice = this.InternalOrganisation.CreatePurchaseOrderWithSerializedItem();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(invoice.TotalIncVat > 0);
             var totalIncVatBefore = invoice.TotalIncVat;
 
             invoice.PurchaseOrderItems.First.Cancel();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(invoice.TotalIncVat, totalIncVatBefore - invoice.PurchaseOrderItems.First.TotalIncVat);
         }
@@ -1028,26 +1028,26 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedDerivationTriggerCalculatePrice()
         {
-            var part = new UnifiedGoodBuilder(this.Session).Build();
+            var part = new UnifiedGoodBuilder(this.Transaction).Build();
 
-            var supplierOffering = new SupplierOfferingBuilder(this.Session)
+            var supplierOffering = new SupplierOfferingBuilder(this.Transaction)
                 .WithPart(part)
                 .WithSupplier(this.InternalOrganisation.ActiveSuppliers[0])
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
-            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(this.InternalOrganisation.ActiveSuppliers[0]).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var invoice = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(this.InternalOrganisation.ActiveSuppliers[0]).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(1).Build();
             invoice.AddPurchaseOrderItem(invoiceItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(supplierOffering.Price, invoice.TotalIncVat);
 
             supplierOffering.Price = 2;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(supplierOffering.Price, invoice.TotalIncVat);
         }
@@ -1055,19 +1055,19 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesOrderItemQuantityOrderedCalculatePrice()
         {
-            var part = new UnifiedGoodBuilder(this.Session).Build();
+            var part = new UnifiedGoodBuilder(this.Transaction).Build();
 
-            var invoice = new PurchaseOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var invoice = new PurchaseOrderBuilder(this.Transaction).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).WithAssignedUnitPrice(1).Build();
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(1).WithAssignedUnitPrice(1).Build();
             invoice.AddPurchaseOrderItem(invoiceItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, invoice.TotalIncVat);
 
             invoiceItem.QuantityOrdered = 2;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(2, invoice.TotalIncVat);
         }
@@ -1075,19 +1075,19 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesOrderItemAssignedUnitPriceCalculatePrice()
         {
-            var part = new UnifiedGoodBuilder(this.Session).Build();
+            var part = new UnifiedGoodBuilder(this.Transaction).Build();
 
-            var invoice = new PurchaseOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var invoice = new PurchaseOrderBuilder(this.Transaction).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).WithAssignedUnitPrice(1).Build();
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(1).WithAssignedUnitPrice(1).Build();
             invoice.AddPurchaseOrderItem(invoiceItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, invoice.TotalIncVat);
 
             invoiceItem.AssignedUnitPrice = 3;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(3, invoice.TotalIncVat);
         }
@@ -1096,34 +1096,34 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSalesOrderItemPartCalculatePrice()
         {
             var supplier = this.InternalOrganisation.ActiveSuppliers[0];
-            var part1 = new UnifiedGoodBuilder(this.Session).Build();
-            var part2 = new UnifiedGoodBuilder(this.Session).Build();
+            var part1 = new UnifiedGoodBuilder(this.Transaction).Build();
+            var part2 = new UnifiedGoodBuilder(this.Transaction).Build();
 
-            new SupplierOfferingBuilder(this.Session)
+            new SupplierOfferingBuilder(this.Transaction)
                 .WithPart(part1)
                 .WithSupplier(supplier)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
-            new SupplierOfferingBuilder(this.Session)
+            new SupplierOfferingBuilder(this.Transaction)
                 .WithPart(part2)
                 .WithSupplier(supplier)
                 .WithPrice(2)
-                .WithFromDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
-            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var invoice = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part1).WithQuantityOrdered(1).Build();
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part1).WithQuantityOrdered(1).Build();
             invoice.AddPurchaseOrderItem(invoiceItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, invoice.TotalIncVat);
 
             invoiceItem.Part = part2;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(2, invoice.TotalIncVat);
         }
@@ -1132,35 +1132,35 @@ namespace Allors.Database.Domain.Tests
         public void ChangedTakenViaSupplierCalculatePrice()
         {
             var supplier1 = this.InternalOrganisation.ActiveSuppliers[0];
-            var supplier2 = this.InternalOrganisation.CreateSupplier(this.Session.Faker());
-            var part = new UnifiedGoodBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var supplier2 = this.InternalOrganisation.CreateSupplier(this.Transaction.Faker());
+            var part = new UnifiedGoodBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            new SupplierOfferingBuilder(this.Session)
+            new SupplierOfferingBuilder(this.Transaction)
                 .WithPart(part)
                 .WithSupplier(supplier1)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
-            new SupplierOfferingBuilder(this.Session)
+            new SupplierOfferingBuilder(this.Transaction)
                 .WithPart(part)
                 .WithSupplier(supplier2)
                 .WithPrice(2)
-                .WithFromDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
-            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier1).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var invoice = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier1).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(1).Build();
             invoice.AddPurchaseOrderItem(invoiceItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, invoice.TotalIncVat);
 
             invoice.TakenViaSupplier = supplier2;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(2, invoice.TotalIncVat);
         }
@@ -1169,27 +1169,27 @@ namespace Allors.Database.Domain.Tests
         public void ChangedRoleSalesOrderItemDiscountAdjustmentsCalculatePrice()
         {
             var supplier = this.InternalOrganisation.ActiveSuppliers[0];
-            var part = new UnifiedGoodBuilder(this.Session).Build();
+            var part = new UnifiedGoodBuilder(this.Transaction).Build();
 
-            new SupplierOfferingBuilder(this.Session)
+            new SupplierOfferingBuilder(this.Transaction)
                 .WithPart(part)
                 .WithSupplier(supplier)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
-            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var invoice = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(1).Build();
             invoice.AddPurchaseOrderItem(invoiceItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, invoice.TotalIncVat);
 
-            var discount = new DiscountAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            var discount = new DiscountAdjustmentBuilder(this.Transaction).WithPercentage(10).Build();
             invoiceItem.AddDiscountAdjustment(discount);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0.9M, invoice.TotalIncVat);
         }
@@ -1198,32 +1198,32 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseOrderItemDiscountAdjustmentPercentageCalculatePrice()
         {
             var supplier = this.InternalOrganisation.ActiveSuppliers[0];
-            var part = new UnifiedGoodBuilder(this.Session).Build();
+            var part = new UnifiedGoodBuilder(this.Transaction).Build();
 
-            new SupplierOfferingBuilder(this.Session)
+            new SupplierOfferingBuilder(this.Transaction)
                 .WithPart(part)
                 .WithSupplier(supplier)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
-            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var invoice = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(1).Build();
             invoice.AddPurchaseOrderItem(invoiceItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, invoice.TotalIncVat);
 
-            var discount = new DiscountAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            var discount = new DiscountAdjustmentBuilder(this.Transaction).WithPercentage(10).Build();
             invoiceItem.AddDiscountAdjustment(discount);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0.9M, invoice.TotalIncVat);
 
             discount.Percentage = 20M;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0.8M, invoice.TotalIncVat);
         }
@@ -1232,32 +1232,32 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseOrderItemDiscountAdjustmentAmountCalculatePrice()
         {
             var supplier = this.InternalOrganisation.ActiveSuppliers[0];
-            var part = new UnifiedGoodBuilder(this.Session).Build();
+            var part = new UnifiedGoodBuilder(this.Transaction).Build();
 
-            new SupplierOfferingBuilder(this.Session)
+            new SupplierOfferingBuilder(this.Transaction)
                 .WithPart(part)
                 .WithSupplier(supplier)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
-            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var invoice = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(1).Build();
             invoice.AddPurchaseOrderItem(invoiceItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, invoice.TotalIncVat);
 
-            var discount = new DiscountAdjustmentBuilder(this.Session).WithAmount(0.5M).Build();
+            var discount = new DiscountAdjustmentBuilder(this.Transaction).WithAmount(0.5M).Build();
             invoiceItem.AddDiscountAdjustment(discount);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0.5M, invoice.TotalIncVat);
 
             discount.Amount = 0.4M;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0.6M, invoice.TotalIncVat);
         }
@@ -1266,27 +1266,27 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseOrderItemSurchargeAdjustmentsCalculatePrice()
         {
             var supplier = this.InternalOrganisation.ActiveSuppliers[0];
-            var part = new UnifiedGoodBuilder(this.Session).Build();
+            var part = new UnifiedGoodBuilder(this.Transaction).Build();
 
-            new SupplierOfferingBuilder(this.Session)
+            new SupplierOfferingBuilder(this.Transaction)
                 .WithPart(part)
                 .WithSupplier(supplier)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
-            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var invoice = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(1).Build();
             invoice.AddPurchaseOrderItem(invoiceItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, invoice.TotalIncVat);
 
-            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            var surcharge = new SurchargeAdjustmentBuilder(this.Transaction).WithPercentage(10).Build();
             invoiceItem.AddSurchargeAdjustment(surcharge);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.1M, invoice.TotalIncVat);
         }
@@ -1295,32 +1295,32 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseOrderItemSurchargeAdjustmentPercentageCalculatePrice()
         {
             var supplier = this.InternalOrganisation.ActiveSuppliers[0];
-            var part = new UnifiedGoodBuilder(this.Session).Build();
+            var part = new UnifiedGoodBuilder(this.Transaction).Build();
 
-            new SupplierOfferingBuilder(this.Session)
+            new SupplierOfferingBuilder(this.Transaction)
                 .WithPart(part)
                 .WithSupplier(supplier)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
-            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var invoice = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(1).Build();
             invoice.AddPurchaseOrderItem(invoiceItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, invoice.TotalIncVat);
 
-            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            var surcharge = new SurchargeAdjustmentBuilder(this.Transaction).WithPercentage(10).Build();
             invoiceItem.AddSurchargeAdjustment(surcharge);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.1M, invoice.TotalIncVat);
 
             surcharge.Percentage = 20M;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.2M, invoice.TotalIncVat);
         }
@@ -1329,32 +1329,32 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseOrderItemSurchargeAdjustmentAmountCalculatePrice()
         {
             var supplier = this.InternalOrganisation.ActiveSuppliers[0];
-            var part = new UnifiedGoodBuilder(this.Session).Build();
+            var part = new UnifiedGoodBuilder(this.Transaction).Build();
 
-            new SupplierOfferingBuilder(this.Session)
+            new SupplierOfferingBuilder(this.Transaction)
                 .WithPart(part)
                 .WithSupplier(supplier)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
-            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var invoice = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(1).Build();
             invoice.AddPurchaseOrderItem(invoiceItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, invoice.TotalIncVat);
 
-            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithAmount(0.5M).Build();
+            var surcharge = new SurchargeAdjustmentBuilder(this.Transaction).WithAmount(0.5M).Build();
             invoiceItem.AddSurchargeAdjustment(surcharge);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.5M, invoice.TotalIncVat);
 
             surcharge.Amount = 0.4M;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.4M, invoice.TotalIncVat);
         }
@@ -1363,27 +1363,27 @@ namespace Allors.Database.Domain.Tests
         public void ChangedDiscountAdjustmentsCalculatePrice()
         {
             var supplier = this.InternalOrganisation.ActiveSuppliers[0];
-            var part = new UnifiedGoodBuilder(this.Session).Build();
+            var part = new UnifiedGoodBuilder(this.Transaction).Build();
 
-            new SupplierOfferingBuilder(this.Session)
+            new SupplierOfferingBuilder(this.Transaction)
                 .WithPart(part)
                 .WithSupplier(supplier)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
-            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var invoice = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(1).Build();
             invoice.AddPurchaseOrderItem(invoiceItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, invoice.TotalIncVat);
 
-            var discount = new DiscountAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            var discount = new DiscountAdjustmentBuilder(this.Transaction).WithPercentage(10).Build();
             invoice.AddOrderAdjustment(discount);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0.9M, invoice.TotalIncVat);
         }
@@ -1392,32 +1392,32 @@ namespace Allors.Database.Domain.Tests
         public void ChangedDiscountAdjustmentPercentageCalculatePrice()
         {
             var supplier = this.InternalOrganisation.ActiveSuppliers[0];
-            var part = new UnifiedGoodBuilder(this.Session).Build();
+            var part = new UnifiedGoodBuilder(this.Transaction).Build();
 
-            new SupplierOfferingBuilder(this.Session)
+            new SupplierOfferingBuilder(this.Transaction)
                 .WithPart(part)
                 .WithSupplier(supplier)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
-            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var invoice = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(1).Build();
             invoice.AddPurchaseOrderItem(invoiceItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, invoice.TotalIncVat);
 
-            var discount = new DiscountAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            var discount = new DiscountAdjustmentBuilder(this.Transaction).WithPercentage(10).Build();
             invoice.AddOrderAdjustment(discount);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0.9M, invoice.TotalIncVat);
 
             discount.Percentage = 20M;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0.8M, invoice.TotalIncVat);
         }
@@ -1426,32 +1426,32 @@ namespace Allors.Database.Domain.Tests
         public void ChangedDiscountAdjustmentAmountCalculatePrice()
         {
             var supplier = this.InternalOrganisation.ActiveSuppliers[0];
-            var part = new UnifiedGoodBuilder(this.Session).Build();
+            var part = new UnifiedGoodBuilder(this.Transaction).Build();
 
-            new SupplierOfferingBuilder(this.Session)
+            new SupplierOfferingBuilder(this.Transaction)
                 .WithPart(part)
                 .WithSupplier(supplier)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
-            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var invoice = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(1).Build();
             invoice.AddPurchaseOrderItem(invoiceItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, invoice.TotalIncVat);
 
-            var discount = new DiscountAdjustmentBuilder(this.Session).WithAmount(0.5M).Build();
+            var discount = new DiscountAdjustmentBuilder(this.Transaction).WithAmount(0.5M).Build();
             invoice.AddOrderAdjustment(discount);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0.5M, invoice.TotalIncVat);
 
             discount.Amount = 0.4M;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0.6M, invoice.TotalIncVat);
         }
@@ -1460,27 +1460,27 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSurchargeAdjustmentsCalculatePrice()
         {
             var supplier = this.InternalOrganisation.ActiveSuppliers[0];
-            var part = new UnifiedGoodBuilder(this.Session).Build();
+            var part = new UnifiedGoodBuilder(this.Transaction).Build();
 
-            new SupplierOfferingBuilder(this.Session)
+            new SupplierOfferingBuilder(this.Transaction)
                 .WithPart(part)
                 .WithSupplier(supplier)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
-            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var invoice = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(1).Build();
             invoice.AddPurchaseOrderItem(invoiceItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, invoice.TotalIncVat);
 
-            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            var surcharge = new SurchargeAdjustmentBuilder(this.Transaction).WithPercentage(10).Build();
             invoice.AddOrderAdjustment(surcharge);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.1M, invoice.TotalIncVat);
         }
@@ -1489,32 +1489,32 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSurchargeAdjustmentPercentageCalculatePrice()
         {
             var supplier = this.InternalOrganisation.ActiveSuppliers[0];
-            var part = new UnifiedGoodBuilder(this.Session).Build();
+            var part = new UnifiedGoodBuilder(this.Transaction).Build();
 
-            new SupplierOfferingBuilder(this.Session)
+            new SupplierOfferingBuilder(this.Transaction)
                 .WithPart(part)
                 .WithSupplier(supplier)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
-            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var invoice = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(1).Build();
             invoice.AddPurchaseOrderItem(invoiceItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, invoice.TotalIncVat);
 
-            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            var surcharge = new SurchargeAdjustmentBuilder(this.Transaction).WithPercentage(10).Build();
             invoice.AddOrderAdjustment(surcharge);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.1M, invoice.TotalIncVat);
 
             surcharge.Percentage = 20M;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.2M, invoice.TotalIncVat);
         }
@@ -1523,32 +1523,32 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSurchargeAdjustmentAmountCalculatePrice()
         {
             var supplier = this.InternalOrganisation.ActiveSuppliers[0];
-            var part = new UnifiedGoodBuilder(this.Session).Build();
+            var part = new UnifiedGoodBuilder(this.Transaction).Build();
 
-            new SupplierOfferingBuilder(this.Session)
+            new SupplierOfferingBuilder(this.Transaction)
                 .WithPart(part)
                 .WithSupplier(supplier)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
-            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).WithOrderDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var invoice = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).WithOrderDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(1).Build();
             invoice.AddPurchaseOrderItem(invoiceItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, invoice.TotalIncVat);
 
-            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithAmount(0.5M).Build();
+            var surcharge = new SurchargeAdjustmentBuilder(this.Transaction).WithAmount(0.5M).Build();
             invoice.AddOrderAdjustment(surcharge);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.5M, invoice.TotalIncVat);
 
             surcharge.Amount = 0.4M;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1.4M, invoice.TotalIncVat);
         }
@@ -1559,13 +1559,13 @@ namespace Allors.Database.Domain.Tests
     {
         public PurchaseOrderDeniedPermissionDerivationTests(Fixture fixture) : base(fixture)
         {
-            this.deletePermission = new Permissions(this.Session).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.Delete);
-            this.setReadyPermission = new Permissions(this.Session).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.SetReadyForProcessing);
-            this.invoicePermission = new Permissions(this.Session).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.Invoice);
-            this.revisePermission = new Permissions(this.Session).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.Revise);
-            this.quickReceivePermission = new Permissions(this.Session).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.QuickReceive);
-            this.rejectPermission = new Permissions(this.Session).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.Reject);
-            this.cancelPermission = new Permissions(this.Session).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.Cancel);
+            this.deletePermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.Delete);
+            this.setReadyPermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.SetReadyForProcessing);
+            this.invoicePermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.Invoice);
+            this.revisePermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.Revise);
+            this.quickReceivePermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.QuickReceive);
+            this.rejectPermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.Reject);
+            this.cancelPermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.Cancel);
         }
 
         public override Config Config => new Config { SetupSecurity = true };
@@ -1581,18 +1581,18 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedPurchaseOrderStateIsCompletedDeriveInvoicePermission()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new PurchaseOrderItemBuilder(this.Session).Build();
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.Approve();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.Send();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(order.PurchaseOrderState.IsCompleted);
             Assert.DoesNotContain(this.invoicePermission, order.DeniedPermissions);
@@ -1601,15 +1601,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedPurchaseOrderStateInProcessDeriveInvoicePermission()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new PurchaseOrderItemBuilder(this.Session).Build();
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.SetReadyForProcessing();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(order.PurchaseOrderState.IsInProcess);
             Assert.Contains(this.invoicePermission, order.DeniedPermissions);
@@ -1618,10 +1618,10 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedPurchaseOrderStateIsCompletedWithoutValidItemsDeriveInvoicePermission()
         {
-            var order = new PurchaseOrderBuilder(this.Session)
-                .WithPurchaseOrderState(new PurchaseOrderStates(this.Session).Completed)
+            var order = new PurchaseOrderBuilder(this.Transaction)
+                .WithPurchaseOrderState(new PurchaseOrderStates(this.Transaction).Completed)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(order.PurchaseOrderState.IsCompleted);
             Assert.Contains(this.invoicePermission, order.DeniedPermissions);
@@ -1630,21 +1630,21 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedPurchaseOrderItemBillingDeriveInvoicePermission()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new PurchaseOrderItemBuilder(this.Session).Build();
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.Approve();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             order.Send();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            new OrderItemBillingBuilder(this.Session).WithOrderItem(orderItem).Build();
-            this.Session.Derive(false);
+            new OrderItemBillingBuilder(this.Transaction).WithOrderItem(orderItem).Build();
+            this.Transaction.Derive(false);
 
             Assert.Contains(this.invoicePermission, order.DeniedPermissions);
         }
@@ -1652,10 +1652,10 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedPurchaseOrderStateIsInProcessDeriveRevisePermission()
         {
-            var order = new PurchaseOrderBuilder(this.Session)
-                .WithPurchaseOrderState(new PurchaseOrderStates(this.Session).InProcess)
+            var order = new PurchaseOrderBuilder(this.Transaction)
+                .WithPurchaseOrderState(new PurchaseOrderStates(this.Transaction).InProcess)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(order.PurchaseOrderState.IsInProcess);
             Assert.DoesNotContain(this.revisePermission, order.DeniedPermissions);
@@ -1664,10 +1664,10 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedPurchaseOrderStateIsSentDeriveRevisePermission()
         {
-            var order = new PurchaseOrderBuilder(this.Session)
-                .WithPurchaseOrderState(new PurchaseOrderStates(this.Session).Sent)
+            var order = new PurchaseOrderBuilder(this.Transaction)
+                .WithPurchaseOrderState(new PurchaseOrderStates(this.Transaction).Sent)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(order.PurchaseOrderState.IsSent);
             Assert.DoesNotContain(this.revisePermission, order.DeniedPermissions);
@@ -1676,10 +1676,10 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedPurchaseOrderStateIsCompletedDeriveRevisePermission()
         {
-            var order = new PurchaseOrderBuilder(this.Session)
-                .WithPurchaseOrderState(new PurchaseOrderStates(this.Session).Completed)
+            var order = new PurchaseOrderBuilder(this.Transaction)
+                .WithPurchaseOrderState(new PurchaseOrderStates(this.Transaction).Completed)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(order.PurchaseOrderState.IsCompleted);
             Assert.DoesNotContain(this.revisePermission, order.DeniedPermissions);
@@ -1688,8 +1688,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedPurchaseOrderStateCreatedDeriveRevisePermission()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.Contains(this.revisePermission, order.DeniedPermissions);
         }
@@ -1697,13 +1697,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedPurchaseInvoicePurchaseOrdersDeriveRevisePermission()
         {
-            var order = new PurchaseOrderBuilder(this.Session)
-                .WithPurchaseOrderState(new PurchaseOrderStates(this.Session).Completed)
+            var order = new PurchaseOrderBuilder(this.Transaction)
+                .WithPurchaseOrderState(new PurchaseOrderStates(this.Transaction).Completed)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            new PurchaseInvoiceBuilder(this.Session).WithPurchaseOrder(order).Build();
-            this.Session.Derive(false);
+            new PurchaseInvoiceBuilder(this.Transaction).WithPurchaseOrder(order).Build();
+            this.Transaction.Derive(false);
 
             Assert.Contains(this.revisePermission, order.DeniedPermissions);
         }
@@ -1711,13 +1711,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedPurchaseOrderShipmentStateReceivedDeriveRevisePermission()
         {
-            var order = new PurchaseOrderBuilder(this.Session)
-                .WithPurchaseOrderState(new PurchaseOrderStates(this.Session).Completed)
+            var order = new PurchaseOrderBuilder(this.Transaction)
+                .WithPurchaseOrderState(new PurchaseOrderStates(this.Transaction).Completed)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            order.PurchaseOrderShipmentState = new PurchaseOrderShipmentStates(this.Session).Received;
-            this.Session.Derive(false);
+            order.PurchaseOrderShipmentState = new PurchaseOrderShipmentStates(this.Transaction).Received;
+            this.Transaction.Derive(false);
 
             Assert.Contains(this.revisePermission, order.DeniedPermissions);
         }
@@ -1725,13 +1725,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedPurchaseOrderShipmentStateNotReceivedDeriveRevisePermission()
         {
-            var order = new PurchaseOrderBuilder(this.Session)
-                .WithPurchaseOrderState(new PurchaseOrderStates(this.Session).Completed)
+            var order = new PurchaseOrderBuilder(this.Transaction)
+                .WithPurchaseOrderState(new PurchaseOrderStates(this.Transaction).Completed)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            order.PurchaseOrderShipmentState = new PurchaseOrderShipmentStates(this.Session).NotReceived;
-            this.Session.Derive(false);
+            order.PurchaseOrderShipmentState = new PurchaseOrderShipmentStates(this.Transaction).NotReceived;
+            this.Transaction.Derive(false);
 
             Assert.DoesNotContain(this.revisePermission, order.DeniedPermissions);
         }
@@ -1739,12 +1739,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedPurchaseOrderStateCreatedDeriveQuickReceivePermission()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new PurchaseOrderItemBuilder(this.Session).WithIsReceivable(true).Build();
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction).WithIsReceivable(true).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(orderItem.IsReceivable);
             Assert.Contains(this.quickReceivePermission, order.DeniedPermissions);
@@ -1753,14 +1753,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedPurchaseOrderStateSentDeriveQuickReceivePermission()
         {
-            var order = new PurchaseOrderBuilder(this.Session)
-                .WithPurchaseOrderState(new PurchaseOrderStates(this.Session).Sent)
+            var order = new PurchaseOrderBuilder(this.Transaction)
+                .WithPurchaseOrderState(new PurchaseOrderStates(this.Transaction).Sent)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var orderItem = new PurchaseOrderItemBuilder(this.Session).WithIsReceivable(true).Build();
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction).WithIsReceivable(true).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(orderItem.IsReceivable);
             Assert.True(order.PurchaseOrderState.IsSent);
@@ -1770,8 +1770,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedPurchaseOrderStateCreatedDeriveDeletePermission()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.True(order.PurchaseOrderState.IsCreated);
             Assert.DoesNotContain(this.deletePermission, order.DeniedPermissions);
@@ -1780,10 +1780,10 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedPurchaseOrderStateSentDeriveDeletePermission()
         {
-            var order = new PurchaseOrderBuilder(this.Session)
-                .WithPurchaseOrderState(new PurchaseOrderStates(this.Session).Sent)
+            var order = new PurchaseOrderBuilder(this.Transaction)
+                .WithPurchaseOrderState(new PurchaseOrderStates(this.Transaction).Sent)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(order.PurchaseOrderState.IsSent);
             Assert.Contains(this.deletePermission, order.DeniedPermissions);
@@ -1792,11 +1792,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedPurchaseInvoicePurchaseOrdersDeriveDeletePermission()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            new PurchaseInvoiceBuilder(this.Session).WithPurchaseOrder(order).Build();
-            this.Session.Derive(false);
+            new PurchaseInvoiceBuilder(this.Transaction).WithPurchaseOrder(order).Build();
+            this.Transaction.Derive(false);
 
             Assert.True(order.PurchaseOrderState.IsCreated);
             Assert.Contains(this.deletePermission, order.DeniedPermissions);
@@ -1805,11 +1805,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedSerialisedItemPurchaseOrderDeriveDeletePermission()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            new SerialisedItemBuilder(this.Session).WithPurchaseOrder(order).Build();
-            this.Session.Derive(false);
+            new SerialisedItemBuilder(this.Transaction).WithPurchaseOrder(order).Build();
+            this.Transaction.Derive(false);
 
             Assert.True(order.PurchaseOrderState.IsCreated);
             Assert.Contains(this.deletePermission, order.DeniedPermissions);
@@ -1818,11 +1818,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedWorkEffortPurchaseOrderItemAssignmentPurchaseOrderDeriveDeletePermission()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            new WorkEffortPurchaseOrderItemAssignmentBuilder(this.Session).WithPurchaseOrder(order).Build();
-            this.Session.Derive(false);
+            new WorkEffortPurchaseOrderItemAssignmentBuilder(this.Transaction).WithPurchaseOrder(order).Build();
+            this.Transaction.Derive(false);
 
             Assert.True(order.PurchaseOrderState.IsCreated);
             Assert.Contains(this.deletePermission, order.DeniedPermissions);
@@ -1831,15 +1831,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedPurchaseOrderItemBillingDeriveDeletePermission()
         {
-            var order = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var orderItem = new PurchaseOrderItemBuilder(this.Session).Build();
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            new OrderItemBillingBuilder(this.Session).WithOrderItem(orderItem).Build();
-            this.Session.Derive(false);
+            new OrderItemBillingBuilder(this.Transaction).WithOrderItem(orderItem).Build();
+            this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, order.DeniedPermissions);
         }
@@ -1847,10 +1847,10 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedPurchaseOrderPurchaseOrderShipmentStateDeriveMultiplePermissions()
         {
-            var order = new PurchaseOrderBuilder(this.Session)
-                .WithPurchaseOrderShipmentState(new PurchaseOrderShipmentStates(this.Session).Received)
+            var order = new PurchaseOrderBuilder(this.Transaction)
+                .WithPurchaseOrderShipmentState(new PurchaseOrderShipmentStates(this.Transaction).Received)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(order.PurchaseOrderShipmentState.IsReceived);
 

@@ -16,13 +16,13 @@ namespace Allors.Database.Domain
 
         public void AppsCreateQuote(RequestForQuoteCreateQuote Method)
         {
-            this.RequestState = new RequestStates(this.Strategy.Session).Quoted;
+            this.RequestState = new RequestStates(this.Strategy.Transaction).Quoted;
             this.QuoteThis();
         }
 
         private ProductQuote QuoteThis()
         {
-            var productQuote = new ProductQuoteBuilder(this.Strategy.Session)
+            var productQuote = new ProductQuoteBuilder(this.Strategy.Transaction)
                 .WithRequest(this)
                 .WithIssuer(this.Recipient)
                 .WithContactPerson(this.ContactPerson)
@@ -33,16 +33,16 @@ namespace Allors.Database.Domain
                 .WithFullfillContactMechanism(this.FullfillContactMechanism)
                 .Build();
 
-            var sourceItems = this.RequestItems.Where(i => i.RequestItemState.Equals(new RequestItemStates(this.Strategy.Session).Submitted)).ToArray();
+            var sourceItems = this.RequestItems.Where(i => i.RequestItemState.Equals(new RequestItemStates(this.Strategy.Transaction).Submitted)).ToArray();
 
             foreach (var requestItem in sourceItems)
             {
-                requestItem.RequestItemState = new RequestItemStates(this.Strategy.Session).Quoted;
+                requestItem.RequestItemState = new RequestItemStates(this.Strategy.Transaction).Quoted;
 
                 productQuote.AddQuoteItem(
-                    new QuoteItemBuilder(this.Strategy.Session)
+                    new QuoteItemBuilder(this.Strategy.Transaction)
                     .WithProduct(requestItem.Product)
-                    .WithInvoiceItemType(new InvoiceItemTypes(this.Session()).ProductItem)
+                    .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction()).ProductItem)
                     .WithSerialisedItem(requestItem.SerialisedItem)
                     .WithProductFeature(requestItem.ProductFeature)
                     .WithQuantity(requestItem.Quantity)

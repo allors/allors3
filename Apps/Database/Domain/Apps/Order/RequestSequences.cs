@@ -18,11 +18,11 @@ namespace Allors.Database.Domain
 
         public RequestSequence RestartOnFiscalYear => this.Cache[RestartOnFiscalYearId];
 
-        private UniquelyIdentifiableCache<RequestSequence> Cache => this.cache ??= new UniquelyIdentifiableCache<RequestSequence>(this.Session);
+        private UniquelyIdentifiableCache<RequestSequence> Cache => this.cache ??= new UniquelyIdentifiableCache<RequestSequence>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {
-            var dutchLocale = new Locales(this.Session).DutchNetherlands;
+            var dutchLocale = new Locales(this.Transaction).DutchNetherlands;
 
             var merge = this.Cache.Merger().Action();
             var localisedName = new LocalisedTextAccessor(this.Meta.LocalisedNames);

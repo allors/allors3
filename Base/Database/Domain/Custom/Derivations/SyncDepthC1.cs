@@ -24,7 +24,7 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistSyncDepth2)
             {
-                this.SyncDepth2 = new SyncDepth2Builder(this.strategy.Session).Build();
+                this.SyncDepth2 = new SyncDepth2Builder(this.strategy.Transaction).Build();
             }
         }
     }

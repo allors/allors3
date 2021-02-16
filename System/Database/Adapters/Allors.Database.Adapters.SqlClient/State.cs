@@ -2,7 +2,6 @@
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
-// <summary>Defines the Session type.</summary>
 
 namespace Allors.Database.Adapters.SqlClient
 {
@@ -44,23 +43,23 @@ namespace Allors.Database.Adapters.SqlClient
 
         internal HashSet<Reference> ReferencesWithoutVersions { get; set; }
 
-        public Reference GetOrCreateReferenceForExistingObject(long objectId, Session session)
+        public Reference GetOrCreateReferenceForExistingObject(long objectId, Transaction transaction)
         {
             if (!this.ReferenceByObjectId.TryGetValue(objectId, out var reference))
             {
-                var objectType = session.Database.Cache.GetObjectType(objectId);
+                var objectType = transaction.Database.Cache.GetObjectType(objectId);
                 if (objectType == null)
                 {
                     this.ExistingObjectIdsWithoutReference.Add(objectId);
 
-                    session.InstantiateReferences(this.ExistingObjectIdsWithoutReference);
+                    transaction.InstantiateReferences(this.ExistingObjectIdsWithoutReference);
 
                     this.ExistingObjectIdsWithoutReference = new HashSet<long>();
                     this.ReferenceByObjectId.TryGetValue(objectId, out reference);
                 }
                 else
                 {
-                    reference = new Reference(session, objectType, objectId, false);
+                    reference = new Reference(transaction, objectType, objectId, false);
                     this.ReferenceByObjectId[objectId] = reference;
                     this.ReferencesWithoutVersions.Add(reference);
                 }
@@ -73,7 +72,7 @@ namespace Allors.Database.Adapters.SqlClient
             return reference;
         }
 
-        public Reference[] GetOrCreateReferencesForExistingObjects(IEnumerable<long> objectIds, Session session)
+        public Reference[] GetOrCreateReferencesForExistingObjects(IEnumerable<long> objectIds, Transaction transaction)
         {
             var objectIdArray = objectIds.ToArray();
 
@@ -82,7 +81,7 @@ namespace Allors.Database.Adapters.SqlClient
             {
                 if (!this.ReferenceByObjectId.TryGetValue(objectId, out var reference))
                 {
-                    var objectType = session.Database.Cache.GetObjectType(objectId);
+                    var objectType = transaction.Database.Cache.GetObjectType(objectId);
                     if (objectType == null)
                     {
                         instantiate = true;
@@ -93,7 +92,7 @@ namespace Allors.Database.Adapters.SqlClient
 
             if (instantiate)
             {
-                session.InstantiateReferences(this.ExistingObjectIdsWithoutReference);
+                transaction.InstantiateReferences(this.ExistingObjectIdsWithoutReference);
                 this.ExistingObjectIdsWithoutReference = new HashSet<long>();
             }
 
@@ -102,14 +101,14 @@ namespace Allors.Database.Adapters.SqlClient
             {
                 if (!this.ReferenceByObjectId.TryGetValue(objectId, out var reference))
                 {
-                    var objectType = session.Database.Cache.GetObjectType(objectId);
+                    var objectType = transaction.Database.Cache.GetObjectType(objectId);
                     if (objectType == null)
                     {
                         this.ExistingObjectIdsWithoutReference.Add(objectId);
                     }
                     else
                     {
-                        reference = new Reference(session, objectType, objectId, false);
+                        reference = new Reference(transaction, objectType, objectId, false);
                         this.ReferenceByObjectId[objectId] = reference;
                         this.ReferencesWithoutVersions.Add(reference);
                     }
@@ -125,11 +124,11 @@ namespace Allors.Database.Adapters.SqlClient
             return references.ToArray();
         }
 
-        public Reference GetOrCreateReferenceForExistingObject(IClass objectType, long objectId, Session session)
+        public Reference GetOrCreateReferenceForExistingObject(IClass objectType, long objectId, Transaction transaction)
         {
             if (!this.ReferenceByObjectId.TryGetValue(objectId, out var reference))
             {
-                reference = new Reference(session, objectType, objectId, false);
+                reference = new Reference(transaction, objectType, objectId, false);
                 this.ReferenceByObjectId[objectId] = reference;
                 this.ReferencesWithoutVersions.Add(reference);
             }
@@ -141,11 +140,11 @@ namespace Allors.Database.Adapters.SqlClient
             return reference;
         }
 
-        public Reference GetOrCreateReferenceForExistingObject(IClass objectType, long objectId, long version, Session session)
+        public Reference GetOrCreateReferenceForExistingObject(IClass objectType, long objectId, long version, Transaction transaction)
         {
             if (!this.ReferenceByObjectId.TryGetValue(objectId, out var reference))
             {
-                reference = new Reference(session, objectType, objectId, version);
+                reference = new Reference(transaction, objectType, objectId, version);
                 this.ReferenceByObjectId[objectId] = reference;
             }
             else
@@ -157,9 +156,9 @@ namespace Allors.Database.Adapters.SqlClient
             return reference;
         }
 
-        public Reference CreateReferenceForNewObject(IClass objectType, long objectId, Session session)
+        public Reference CreateReferenceForNewObject(IClass objectType, long objectId, Transaction transaction)
         {
-            var strategyReference = new Reference(session, objectType, objectId, true);
+            var strategyReference = new Reference(transaction, objectType, objectId, true);
             this.ReferenceByObjectId[objectId] = strategyReference;
             return strategyReference;
         }

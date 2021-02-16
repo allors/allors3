@@ -14,7 +14,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenSingleton_WhenBuild_ThenLogoImageMustExist()
         {
-            var singleton = this.Session.GetSingleton();
+            var singleton = this.Transaction.GetSingleton();
 
             Assert.True(singleton.ExistLogoImage);
         }
@@ -22,15 +22,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenNewAdditionaleLocale_WhenDeriving_ThenLocalesIsDerived()
         {
-            var singleton = this.Session.GetSingleton();
+            var singleton = this.Transaction.GetSingleton();
             var localeCount = singleton.Locales.Count;
 
-            singleton.AddAdditionalLocale(new Locales(this.Session).EnglishUnitedStates);
+            singleton.AddAdditionalLocale(new Locales(this.Transaction).EnglishUnitedStates);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Contains(singleton.DefaultLocale, singleton.Locales);
-            Assert.Contains(new Locales(this.Session).EnglishUnitedStates, singleton.Locales);
+            Assert.Contains(new Locales(this.Transaction).EnglishUnitedStates, singleton.Locales);
             Assert.Equal(localeCount + 1, singleton.Locales.Count);
         }
     }

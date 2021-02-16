@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
 
         public ShipmentItemState Received => this.Cache[ReceivedId];
 
-        private UniquelyIdentifiableCache<ShipmentItemState> Cache => this.cache ??= new UniquelyIdentifiableCache<ShipmentItemState>(this.Session);
+        private UniquelyIdentifiableCache<ShipmentItemState> Cache => this.cache ??= new UniquelyIdentifiableCache<ShipmentItemState>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

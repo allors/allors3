@@ -24,7 +24,7 @@ namespace Allors.Database.Domain
 
         public OrganisationContactKind SupplierContact => this.Cache[SupplierContactId];
 
-        private UniquelyIdentifiableCache<OrganisationContactKind> Cache => this.cache ??= new UniquelyIdentifiableCache<OrganisationContactKind>(this.Session);
+        private UniquelyIdentifiableCache<OrganisationContactKind> Cache => this.cache ??= new UniquelyIdentifiableCache<OrganisationContactKind>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

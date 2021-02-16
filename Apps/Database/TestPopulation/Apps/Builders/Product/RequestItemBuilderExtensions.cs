@@ -10,16 +10,16 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static RequestItemBuilder WithSerializedDefaults(this RequestItemBuilder @this, Organisation internalOrganisation)
         {
-            var faker = @this.Session.Faker();
+            var faker = @this.Transaction.Faker();
 
-            var finishedGood = new UnifiedGoodBuilder(@this.Session).WithSerialisedDefaults(internalOrganisation).Build();
+            var finishedGood = new UnifiedGoodBuilder(@this.Transaction).WithSerialisedDefaults(internalOrganisation).Build();
 
             @this.WithComment(faker.Lorem.Sentence());
             @this.WithInternalComment(faker.Lorem.Sentence());
             @this.WithMaximumAllowedPrice(faker.Random.UInt());
             @this.WithQuantity(1);
             @this.WithProduct(finishedGood);
-            @this.WithRequiredByDate(@this.Session.Now().AddDays(7));
+            @this.WithRequiredByDate(@this.Transaction.Now().AddDays(7));
             @this.WithSerialisedItem(finishedGood.SerialisedItems.First);
 
             return @this;
@@ -27,16 +27,16 @@ namespace Allors.Database.Domain.TestPopulation
 
         public static RequestItemBuilder WithNonSerializedDefaults(this RequestItemBuilder @this, Organisation internalOrganisation)
         {
-            var faker = @this.Session.Faker();
+            var faker = @this.Transaction.Faker();
 
-            var finishedGood = new UnifiedGoodBuilder(@this.Session).WithNonSerialisedDefaults(internalOrganisation).Build();
+            var finishedGood = new UnifiedGoodBuilder(@this.Transaction).WithNonSerialisedDefaults(internalOrganisation).Build();
 
             @this.WithComment(faker.Lorem.Sentence());
             @this.WithInternalComment(faker.Lorem.Sentence());
             @this.WithMaximumAllowedPrice(faker.Random.UInt());
             @this.WithQuantity(faker.Random.UShort());
             @this.WithProduct(finishedGood);
-            @this.WithRequiredByDate(@this.Session.Now().AddDays(7));
+            @this.WithRequiredByDate(@this.Transaction.Now().AddDays(7));
 
             return @this;
         }

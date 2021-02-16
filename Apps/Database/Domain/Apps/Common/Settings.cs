@@ -11,25 +11,25 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistNoImageAvailableImage)
             {
-                this.NoImageAvailableImage = new MediaBuilder(this.Strategy.Session)
+                this.NoImageAvailableImage = new MediaBuilder(this.Strategy.Transaction)
                     .WithInFileName("No_image_available.svg")
-                    .WithInData(this.Session().GetSingleton().GetResourceBytes("No_image_available.svg"))
+                    .WithInData(this.Transaction().GetSingleton().GetResourceBytes("No_image_available.svg"))
                     .Build();
             }
 
             if (!this.ExistSkuCounter)
             {
-                this.SkuCounter = new CounterBuilder(this.Strategy.Session).Build();
+                this.SkuCounter = new CounterBuilder(this.Strategy.Transaction).Build();
             }
 
             if (!this.ExistSerialisedItemCounter)
             {
-                this.SerialisedItemCounter = new CounterBuilder(this.Strategy.Session).Build();
+                this.SerialisedItemCounter = new CounterBuilder(this.Strategy.Transaction).Build();
             }
 
             if (!this.ExistProductNumberCounter)
             {
-                this.ProductNumberCounter = new CounterBuilder(this.Strategy.Session).Build();
+                this.ProductNumberCounter = new CounterBuilder(this.Strategy.Transaction).Build();
             }
         }
 

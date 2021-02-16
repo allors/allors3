@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
 
     public partial class Counters
     {
-        public static int NextElfProefValue(ISession session, Guid counterId)
+        public static int NextElfProefValue(ITransaction transaction, Guid counterId)
         {
             int NextElfProefValue(Counter counter)
             {
@@ -23,22 +23,22 @@ namespace Allors.Database.Domain
                 return counter.Value;
             }
 
-            if (session.Database.IsShared)
+            if (transaction.Database.IsShared)
             {
-                using (var outOfBandSession = session.Database.CreateSession())
+                using (var outOfBandTransaction = transaction.Database.CreateTransaction())
                 {
-                    var outOfBandCounter = new Counters(outOfBandSession).Cache[counterId];
+                    var outOfBandCounter = new Counters(outOfBandTransaction).Cache[counterId];
                     if (outOfBandCounter != null)
                     {
                         var value = NextElfProefValue(outOfBandCounter);
-                        outOfBandSession.Commit();
+                        outOfBandTransaction.Commit();
                         return value;
                     }
                 }
             }
 
-            var sessionCounter = new Counters(session).Cache[counterId];
-            return NextElfProefValue(sessionCounter);
+            var transactionCounter = new Counters(transaction).Cache[counterId];
+            return NextElfProefValue(transactionCounter);
         }
 
         public static bool IsValidElfProefNumber(int number)

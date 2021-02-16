@@ -95,7 +95,7 @@ namespace Commands
                 return 1;
             }
 
-            using (var session = this.Parent.Database.CreateSession())
+            using (var session = this.Parent.Database.CreateTransaction())
             {
                 new Allors.Database.Domain.Upgrade(session, this.Parent.DataPath).Execute();
                 session.Commit();

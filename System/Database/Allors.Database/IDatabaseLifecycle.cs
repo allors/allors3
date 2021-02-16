@@ -14,6 +14,6 @@ namespace Allors.Database
     {
         void OnInit(IDatabase database);
 
-        ISessionLifecycle CreateSessionInstance();
+        ITransactionLifecycle CreateTransactionInstance();
     }
 }

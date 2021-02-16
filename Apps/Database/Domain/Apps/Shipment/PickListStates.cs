@@ -24,7 +24,7 @@ namespace Allors.Database.Domain
 
         public PickListState OnHold => this.Cache[OnHoldId];
 
-        private UniquelyIdentifiableCache<PickListState> Cache => this.cache ??= new UniquelyIdentifiableCache<PickListState>(this.Session);
+        private UniquelyIdentifiableCache<PickListState> Cache => this.cache ??= new UniquelyIdentifiableCache<PickListState>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

@@ -15,23 +15,23 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenCostCenter_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var builder = new CostCenterBuilder(this.Session);
+            var builder = new CostCenterBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithName("CostCenter");
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void GivenCostCenter_WhenDeriving_ThenPostBuildRelationsMustExist()
         {
-            var costCenter = new CostCenterBuilder(this.Session)
+            var costCenter = new CostCenterBuilder(this.Transaction)
                 .WithName("CostCenter")
                 .Build();
 

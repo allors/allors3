@@ -16,28 +16,28 @@ namespace Allors
     {
         public static void Full(this Singleton @this, DirectoryInfo dataPath, Faker faker)
         {
-            var m = @this.Strategy.Session.Database.Context().M;
+            var m = @this.Strategy.Transaction.Database.Context().M;
 
-            var dutchLocale = new Locales(@this.Session()).DutchNetherlands;
+            var dutchLocale = new Locales(@this.Transaction()).DutchNetherlands;
             @this.AddAdditionalLocale(dutchLocale);
 
-            var administrator = new PersonBuilder(@this.Session()).WithUserName("administrator").Build();
-            new UserGroups(@this.Session()).Administrators.AddMember(administrator);
-            new UserGroups(@this.Session()).Creators.AddMember(administrator);
+            var administrator = new PersonBuilder(@this.Transaction()).WithUserName("administrator").Build();
+            new UserGroups(@this.Transaction()).Administrators.AddMember(administrator);
+            new UserGroups(@this.Transaction()).Creators.AddMember(administrator);
 
-            @this.Session().Derive();
+            @this.Transaction().Derive();
 
-            var euro = new Currencies(@this.Session()).FindBy(m.Currency.IsoCode, "EUR");
+            var euro = new Currencies(@this.Transaction()).FindBy(m.Currency.IsoCode, "EUR");
 
-            var be = new Countries(@this.Session()).FindBy(m.Country.IsoCode, "BE");
-            var us = new Countries(@this.Session()).FindBy(m.Country.IsoCode, "US");
+            var be = new Countries(@this.Transaction()).FindBy(m.Country.IsoCode, "BE");
+            var us = new Countries(@this.Transaction()).FindBy(m.Country.IsoCode, "US");
 
             var allorsLogo = dataPath + @"\www\admin\images\logo.png";
 
-            var serialisedItemSoldOns = new SerialisedItemSoldOn[] { new SerialisedItemSoldOns(@this.Session()).SalesInvoiceSend, new SerialisedItemSoldOns(@this.Session()).PurchaseInvoiceConfirm };
+            var serialisedItemSoldOns = new SerialisedItemSoldOn[] { new SerialisedItemSoldOns(@this.Transaction()).SalesInvoiceSend, new SerialisedItemSoldOns(@this.Transaction()).PurchaseInvoiceConfirm };
 
             var allors = Organisations.CreateInternalOrganisation(
-                session: @this.Session(),
+                transaction: @this.Transaction(),
                 name: "Allors BVBA",
                 address: "Kleine Nieuwedijkstraat 4",
                 postalCode: "2800",
@@ -45,7 +45,7 @@ namespace Allors
                 country: be,
                 phone1CountryCode: "+32",
                 phone1: "2 335 2335",
-                phone1Purpose: new ContactMechanismPurposes(@this.Session()).GeneralPhoneNumber,
+                phone1Purpose: new ContactMechanismPurposes(@this.Transaction()).GeneralPhoneNumber,
                 phone2CountryCode: string.Empty,
                 phone2: string.Empty,
                 phone2Purpose: null,
@@ -59,7 +59,7 @@ namespace Allors
                 currency: euro,
                 logo: "allors.png",
                 storeName: "Allors Store",
-                billingProcess: new BillingProcesses(@this.Session()).BillingForOrderItems,
+                billingProcess: new BillingProcesses(@this.Transaction()).BillingForOrderItems,
                 customerShipmentNumberPrefix: "a-CS",
                 salesInvoiceNumberPrefix: "a-SI-{year}-",
                 salesOrderNumberPrefix: "a-SO",
@@ -89,15 +89,15 @@ namespace Allors
                 purchaseOrderApprovalThresholdLevel2: 5000M,
                 serialisedItemSoldOns: serialisedItemSoldOns,
                 collectiveWorkEffortInvoice: true,
-                invoiceSequence: new InvoiceSequences(@this.Session()).EnforcedSequence,
-                requestSequence: new RequestSequences(@this.Session()).EnforcedSequence,
-                quoteSequence: new QuoteSequences(@this.Session()).EnforcedSequence,
-                customerShipmentSequence: new CustomerShipmentSequences(@this.Session()).EnforcedSequence,
-                purchaseShipmentSequence: new PurchaseShipmentSequences(@this.Session()).EnforcedSequence,
-                workEffortSequence: new WorkEffortSequences(@this.Session()).EnforcedSequence);
+                invoiceSequence: new InvoiceSequences(@this.Transaction()).EnforcedSequence,
+                requestSequence: new RequestSequences(@this.Transaction()).EnforcedSequence,
+                quoteSequence: new QuoteSequences(@this.Transaction()).EnforcedSequence,
+                customerShipmentSequence: new CustomerShipmentSequences(@this.Transaction()).EnforcedSequence,
+                purchaseShipmentSequence: new PurchaseShipmentSequences(@this.Transaction()).EnforcedSequence,
+                workEffortSequence: new WorkEffortSequences(@this.Transaction()).EnforcedSequence);
 
             var dipu = Organisations.CreateInternalOrganisation(
-                session: @this.Session(),
+                transaction: @this.Transaction(),
                 name: "Dipu BVBA",
                 address: "Kleine Nieuwedijkstraat 2",
                 postalCode: "2800",
@@ -105,7 +105,7 @@ namespace Allors
                 country: be,
                 phone1CountryCode: "+32",
                 phone1: "2 15 49 49 49",
-                phone1Purpose: new ContactMechanismPurposes(@this.Session()).GeneralPhoneNumber,
+                phone1Purpose: new ContactMechanismPurposes(@this.Transaction()).GeneralPhoneNumber,
                 phone2CountryCode: string.Empty,
                 phone2: string.Empty,
                 phone2Purpose: null,
@@ -119,7 +119,7 @@ namespace Allors
                 currency: euro,
                 logo: "allors.png",
                 storeName: "Dipu Store",
-                billingProcess: new BillingProcesses(@this.Session()).BillingForOrderItems,
+                billingProcess: new BillingProcesses(@this.Transaction()).BillingForOrderItems,
                 customerShipmentNumberPrefix: "d-CS",
                 salesInvoiceNumberPrefix: "d-SI",
                 salesOrderNumberPrefix: "d-SO",
@@ -149,15 +149,15 @@ namespace Allors
                 purchaseOrderApprovalThresholdLevel2: null,
                 serialisedItemSoldOns: serialisedItemSoldOns,
                 collectiveWorkEffortInvoice: true,
-                invoiceSequence: new InvoiceSequences(@this.Session()).EnforcedSequence,
-                requestSequence: new RequestSequences(@this.Session()).EnforcedSequence,
-                quoteSequence: new QuoteSequences(@this.Session()).EnforcedSequence,
-                customerShipmentSequence: new CustomerShipmentSequences(@this.Session()).EnforcedSequence,
-                purchaseShipmentSequence: new PurchaseShipmentSequences(@this.Session()).EnforcedSequence,
-                workEffortSequence: new WorkEffortSequences(@this.Session()).EnforcedSequence);
+                invoiceSequence: new InvoiceSequences(@this.Transaction()).EnforcedSequence,
+                requestSequence: new RequestSequences(@this.Transaction()).EnforcedSequence,
+                quoteSequence: new QuoteSequences(@this.Transaction()).EnforcedSequence,
+                customerShipmentSequence: new CustomerShipmentSequences(@this.Transaction()).EnforcedSequence,
+                purchaseShipmentSequence: new PurchaseShipmentSequences(@this.Transaction()).EnforcedSequence,
+                workEffortSequence: new WorkEffortSequences(@this.Transaction()).EnforcedSequence);
 
             // Give Administrator access
-            new EmploymentBuilder(@this.Session()).WithEmployee(administrator).WithEmployer(allors).Build();
+            new EmploymentBuilder(@this.Transaction()).WithEmployee(administrator).WithEmployer(allors).Build();
 
             @this.Settings.DefaultFacility = allors.FacilitiesWhereOwner.First;
 
@@ -172,14 +172,14 @@ namespace Allors
             var dipuProductQuoteApprover = dipu.CreateEmployee("letmein", faker);
             var dipuPurchaseInvoiceApprover = dipu.CreateEmployee("letmein", faker);
 
-            new FacilityBuilder(@this.Session())
+            new FacilityBuilder(@this.Transaction())
                 .WithName("Allors warehouse 2")
-                .WithFacilityType(new FacilityTypes(@this.Session()).Warehouse)
+                .WithFacilityType(new FacilityTypes(@this.Transaction()).Warehouse)
                 .WithOwner(allors)
                 .Build();
 
-            var vatRate = new VatRateBuilder(@this.Session()).WithRate(21).Build();
-            var manufacturer = new OrganisationBuilder(@this.Session()).WithManufacturerDefaults(faker).Build();
+            var vatRate = new VatRateBuilder(@this.Transaction()).WithRate(21).Build();
+            var manufacturer = new OrganisationBuilder(@this.Transaction()).WithManufacturerDefaults(faker).Build();
 
             allors.CreateB2BCustomer(faker);
             allors.CreateB2CCustomer(faker);
@@ -190,68 +190,68 @@ namespace Allors
             allors.CreateSubContractor(faker);
             allors.CreateSubContractor(faker);
 
-            @this.Session().Derive();
+            @this.Transaction().Derive();
 
             var nonSerialisedPart1 = allors.CreateNonSerialisedNonUnifiedPart(faker);
             var nonSerialisedPart2 = allors.CreateNonSerialisedNonUnifiedPart(faker);
             var serialisedPart1 = allors.CreateSerialisedNonUnifiedPart(faker);
             var serialisedPart2 = allors.CreateSerialisedNonUnifiedPart(faker);
 
-            var good1 = new NonUnifiedGoodBuilder(@this.Session()).WithNonSerialisedDefaults(allors).Build();
+            var good1 = new NonUnifiedGoodBuilder(@this.Transaction()).WithNonSerialisedDefaults(allors).Build();
 
-            var good2 = new NonUnifiedGoodBuilder(@this.Session()).WithSerialisedDefaults(allors).Build();
+            var good2 = new NonUnifiedGoodBuilder(@this.Transaction()).WithSerialisedDefaults(allors).Build();
 
-            var serialisedItem = new SerialisedItemBuilder(@this.Session()).WithDefaults(allors).Build();
+            var serialisedItem = new SerialisedItemBuilder(@this.Transaction()).WithDefaults(allors).Build();
             serialisedPart1.AddSerialisedItem(serialisedItem);
 
-            new InventoryItemTransactionBuilder(@this.Session())
+            new InventoryItemTransactionBuilder(@this.Transaction())
                 .WithSerialisedItem(serialisedItem)
                 .WithFacility(allors.FacilitiesWhereOwner.First)
                 .WithQuantity(1)
-                .WithReason(new InventoryTransactionReasons(@this.Session()).IncomingShipment)
-                .WithSerialisedInventoryItemState(new SerialisedInventoryItemStates(@this.Session()).Good)
+                .WithReason(new InventoryTransactionReasons(@this.Transaction()).IncomingShipment)
+                .WithSerialisedInventoryItemState(new SerialisedInventoryItemStates(@this.Transaction()).Good)
                 .Build();
 
-            @this.Session().Derive();
+            @this.Transaction().Derive();
 
-            var good3 = new NonUnifiedGoodBuilder(@this.Session()).WithNonSerialisedDefaults(allors).Build();
+            var good3 = new NonUnifiedGoodBuilder(@this.Transaction()).WithNonSerialisedDefaults(allors).Build();
 
-            var good4 = new NonUnifiedGoodBuilder(@this.Session()).WithSerialisedDefaults(allors).Build();
+            var good4 = new NonUnifiedGoodBuilder(@this.Transaction()).WithSerialisedDefaults(allors).Build();
 
-            var productCategory1 = new ProductCategoryBuilder(@this.Session())
+            var productCategory1 = new ProductCategoryBuilder(@this.Transaction())
                 .WithInternalOrganisation(allors)
                 .WithName("Best selling gizmo's")
-                .WithLocalisedName(new LocalisedTextBuilder(@this.Session()).WithText("Meest verkochte gizmo's").WithLocale(dutchLocale).Build())
+                .WithLocalisedName(new LocalisedTextBuilder(@this.Transaction()).WithText("Meest verkochte gizmo's").WithLocale(dutchLocale).Build())
                 .Build();
 
-            var productCategory2 = new ProductCategoryBuilder(@this.Session())
+            var productCategory2 = new ProductCategoryBuilder(@this.Transaction())
                 .WithInternalOrganisation(allors)
                 .WithName("Big Gizmo's")
-                .WithLocalisedName(new LocalisedTextBuilder(@this.Session()).WithText("Grote Gizmo's").WithLocale(dutchLocale).Build())
+                .WithLocalisedName(new LocalisedTextBuilder(@this.Transaction()).WithText("Grote Gizmo's").WithLocale(dutchLocale).Build())
                 .Build();
 
-            var productCategory3 = new ProductCategoryBuilder(@this.Session())
+            var productCategory3 = new ProductCategoryBuilder(@this.Transaction())
                 .WithInternalOrganisation(allors)
                 .WithName("Small gizmo's")
-                .WithLocalisedName(new LocalisedTextBuilder(@this.Session()).WithText("Kleine gizmo's").WithLocale(dutchLocale).Build())
+                .WithLocalisedName(new LocalisedTextBuilder(@this.Transaction()).WithText("Kleine gizmo's").WithLocale(dutchLocale).Build())
                 .WithProduct(good1)
                 .WithProduct(good2)
                 .WithProduct(good3)
                 .WithProduct(good4)
                 .Build();
 
-            new CatalogueBuilder(@this.Session())
+            new CatalogueBuilder(@this.Transaction())
                 .WithInternalOrganisation(allors)
                 .WithName("New gizmo's")
-                .WithLocalisedName(new LocalisedTextBuilder(@this.Session()).WithText("Nieuwe gizmo's").WithLocale(dutchLocale).Build())
+                .WithLocalisedName(new LocalisedTextBuilder(@this.Transaction()).WithText("Nieuwe gizmo's").WithLocale(dutchLocale).Build())
                 .WithDescription("Latest in the world of Gizmo's")
-                .WithLocalisedDescription(new LocalisedTextBuilder(@this.Session()).WithText("Laatste in de wereld van Gizmo's").WithLocale(dutchLocale).Build())
+                .WithLocalisedDescription(new LocalisedTextBuilder(@this.Transaction()).WithText("Laatste in de wereld van Gizmo's").WithLocale(dutchLocale).Build())
                 .WithProductCategory(productCategory1)
                 .Build();
 
-            @this.Session().Derive();
+            @this.Transaction().Derive();
 
-            var email2 = new EmailAddressBuilder(@this.Session())
+            var email2 = new EmailAddressBuilder(@this.Transaction())
                 .WithElectronicAddressString("recipient@acme.com")
                 .Build();
 
@@ -259,57 +259,57 @@ namespace Allors
             {
                 var b2BCustomer = allors.CreateB2BCustomer(faker);
 
-                @this.Session().Derive();
+                @this.Transaction().Derive();
 
-                new FaceToFaceCommunicationBuilder(@this.Session())
+                new FaceToFaceCommunicationBuilder(@this.Transaction())
                     .WithDescription($"Meeting {i}")
                     .WithSubject($"meeting {i}")
-                    .WithEventPurpose(new CommunicationEventPurposes(@this.Session()).Meeting)
+                    .WithEventPurpose(new CommunicationEventPurposes(@this.Transaction()).Meeting)
                     .WithFromParty(allors.CurrentContacts.First)
                     .WithToParty(b2BCustomer.CurrentContacts.First)
                     .WithOwner(administrator)
-                    .WithActualStart(@this.Session().Now())
+                    .WithActualStart(@this.Transaction().Now())
                     .Build();
 
-                new EmailCommunicationBuilder(@this.Session())
+                new EmailCommunicationBuilder(@this.Transaction())
                     .WithDescription($"Email {i}")
                     .WithSubject($"email {i}")
                     .WithFromParty(allors.CurrentContacts.First)
                     .WithToParty(b2BCustomer.CurrentContacts.First)
                     .WithFromEmail(allors.GeneralEmail)
                     .WithToEmail(email2)
-                    .WithEventPurpose(new CommunicationEventPurposes(@this.Session()).Meeting)
+                    .WithEventPurpose(new CommunicationEventPurposes(@this.Transaction()).Meeting)
                     .WithOwner(administrator)
-                    .WithActualStart(@this.Session().Now())
+                    .WithActualStart(@this.Transaction().Now())
                     .Build();
 
-                new LetterCorrespondenceBuilder(@this.Session())
+                new LetterCorrespondenceBuilder(@this.Transaction())
                     .WithDescription($"Letter {i}")
                     .WithSubject($"letter {i}")
                     .WithFromParty(administrator)
                     .WithToParty(b2BCustomer.CurrentContacts.First)
-                    .WithEventPurpose(new CommunicationEventPurposes(@this.Session()).Meeting)
+                    .WithEventPurpose(new CommunicationEventPurposes(@this.Transaction()).Meeting)
                     .WithOwner(administrator)
-                    .WithActualStart(@this.Session().Now())
+                    .WithActualStart(@this.Transaction().Now())
                     .Build();
 
-                new PhoneCommunicationBuilder(@this.Session())
+                new PhoneCommunicationBuilder(@this.Transaction())
                     .WithDescription($"Phone {i}")
                     .WithSubject($"phone {i}")
                     .WithFromParty(administrator)
                     .WithToParty(b2BCustomer.CurrentContacts.First)
-                    .WithEventPurpose(new CommunicationEventPurposes(@this.Session()).Meeting)
+                    .WithEventPurpose(new CommunicationEventPurposes(@this.Transaction()).Meeting)
                     .WithOwner(administrator)
-                    .WithActualStart(@this.Session().Now())
+                    .WithActualStart(@this.Transaction().Now())
                     .Build();
 
-                var requestForQuote = new RequestForQuoteBuilder(@this.Session())
+                var requestForQuote = new RequestForQuoteBuilder(@this.Transaction())
                     .WithEmailAddress($"customer{i}@acme.com")
                     .WithTelephoneNumber("+1 234 56789")
                     .WithRecipient(allors)
                     .Build();
 
-                var requestItem = new RequestItemBuilder(@this.Session())
+                var requestItem = new RequestItemBuilder(@this.Transaction())
                     .WithSerialisedItem(serialisedItem)
                     .WithProduct(serialisedItem.PartWhereSerialisedItem.NonUnifiedGoodsWherePart.FirstOrDefault())
                     .WithComment($"Comment {i}")
@@ -318,33 +318,33 @@ namespace Allors
 
                 requestForQuote.AddRequestItem(requestItem);
 
-                var quote = new ProductQuoteBuilder(@this.Session()).WithDefaults(allors).Build();
+                var quote = new ProductQuoteBuilder(@this.Transaction()).WithDefaults(allors).Build();
 
-                var salesOrderItem1 = new SalesOrderItemBuilder(@this.Session())
+                var salesOrderItem1 = new SalesOrderItemBuilder(@this.Transaction())
                     .WithDescription("first item")
                     .WithProduct(good1)
                     .WithAssignedUnitPrice(3000)
                     .WithQuantityOrdered(1)
                     .WithMessage(@"line1
 line2")
-                    .WithInvoiceItemType(new InvoiceItemTypes(@this.Session()).ProductItem)
+                    .WithInvoiceItemType(new InvoiceItemTypes(@this.Transaction()).ProductItem)
                     .Build();
 
-                var salesOrderItem2 = new SalesOrderItemBuilder(@this.Session())
+                var salesOrderItem2 = new SalesOrderItemBuilder(@this.Transaction())
                     .WithDescription("second item")
                     .WithAssignedUnitPrice(2000)
                     .WithQuantityOrdered(2)
-                    .WithInvoiceItemType(new InvoiceItemTypes(@this.Session()).ProductItem)
+                    .WithInvoiceItemType(new InvoiceItemTypes(@this.Transaction()).ProductItem)
                     .Build();
 
-                var salesOrderItem3 = new SalesOrderItemBuilder(@this.Session())
+                var salesOrderItem3 = new SalesOrderItemBuilder(@this.Transaction())
                     .WithDescription("Service")
                     .WithAssignedUnitPrice(100)
                     .WithQuantityOrdered(1)
-                    .WithInvoiceItemType(new InvoiceItemTypes(@this.Session()).Service)
+                    .WithInvoiceItemType(new InvoiceItemTypes(@this.Transaction()).Service)
                     .Build();
 
-                var order = new SalesOrderBuilder(@this.Session())
+                var order = new SalesOrderBuilder(@this.Transaction())
                     .WithTakenBy(allors)
                     .WithBillToCustomer(b2BCustomer)
                     .WithAssignedBillToEndCustomerContactMechanism(b2BCustomer.BillingAddress)
@@ -353,37 +353,37 @@ line2")
                     .WithSalesOrderItem(salesOrderItem3)
                     .WithCustomerReference("a reference number")
                     .WithDescription("Sale of 1 used Aircraft Towbar")
-                    .WithAssignedVatRegime(new VatRegimes(@this.Session()).Assessable21)
+                    .WithAssignedVatRegime(new VatRegimes(@this.Transaction()).Assessable21)
                     .Build();
 
-                var salesInvoiceItem1 = new SalesInvoiceItemBuilder(@this.Session())
+                var salesInvoiceItem1 = new SalesInvoiceItemBuilder(@this.Transaction())
                     .WithDescription("first item")
                     .WithProduct(good1)
                     .WithAssignedUnitPrice(3000)
                     .WithQuantity(1)
                     .WithMessage(@"line1
 line2")
-                    .WithInvoiceItemType(new InvoiceItemTypes(@this.Session()).ProductItem)
+                    .WithInvoiceItemType(new InvoiceItemTypes(@this.Transaction()).ProductItem)
                     .Build();
 
-                var salesInvoiceItem2 = new SalesInvoiceItemBuilder(@this.Session())
+                var salesInvoiceItem2 = new SalesInvoiceItemBuilder(@this.Transaction())
                     .WithDescription("second item")
                     .WithAssignedUnitPrice(2000)
                     .WithQuantity(2)
-                    .WithInvoiceItemType(new InvoiceItemTypes(@this.Session()).ProductItem)
+                    .WithInvoiceItemType(new InvoiceItemTypes(@this.Transaction()).ProductItem)
                     .Build();
 
-                var salesInvoiceItem3 = new SalesInvoiceItemBuilder(@this.Session())
+                var salesInvoiceItem3 = new SalesInvoiceItemBuilder(@this.Transaction())
                     .WithDescription("Service")
                     .WithAssignedUnitPrice(100)
                     .WithQuantity(1)
-                    .WithInvoiceItemType(new InvoiceItemTypes(@this.Session()).Service)
+                    .WithInvoiceItemType(new InvoiceItemTypes(@this.Transaction()).Service)
                     .Build();
 
-                var exw = new IncoTermTypes(@this.Session()).Exw;
-                var incoTerm = new IncoTermBuilder(@this.Session()).WithTermType(exw).WithTermValue("XW").Build();
+                var exw = new IncoTermTypes(@this.Transaction()).Exw;
+                var incoTerm = new IncoTermBuilder(@this.Transaction()).WithTermType(exw).WithTermValue("XW").Build();
 
-                var salesInvoice = new SalesInvoiceBuilder(@this.Session())
+                var salesInvoice = new SalesInvoiceBuilder(@this.Transaction())
                     .WithBilledFrom(allors)
                     .WithBillToCustomer(b2BCustomer)
                     .WithBillToContactPerson(b2BCustomer.CurrentContacts.First)
@@ -393,56 +393,56 @@ line2")
                     .WithSalesInvoiceItem(salesInvoiceItem3)
                     .WithCustomerReference("a reference number")
                     .WithDescription("Sale of 1 used Aircraft Towbar")
-                    .WithSalesInvoiceType(new SalesInvoiceTypes(@this.Session()).SalesInvoice)
+                    .WithSalesInvoiceType(new SalesInvoiceTypes(@this.Transaction()).SalesInvoice)
                     .WithSalesTerm(incoTerm)
-                    .WithAssignedVatRegime(new VatRegimes(@this.Session()).Assessable21)
+                    .WithAssignedVatRegime(new VatRegimes(@this.Transaction()).Assessable21)
                     .Build();
 
                 for (var j = 0; j < 3; j++)
                 {
-                    var salesInvoiceItem = new SalesInvoiceItemBuilder(@this.Session())
+                    var salesInvoiceItem = new SalesInvoiceItemBuilder(@this.Transaction())
                         .WithDescription("Some service being delivered")
                         .WithAssignedUnitPrice(100 + j)
                         .WithQuantity(1)
-                        .WithInvoiceItemType(new InvoiceItemTypes(@this.Session()).Service)
+                        .WithInvoiceItemType(new InvoiceItemTypes(@this.Transaction()).Service)
                         .Build();
 
                     salesInvoice.AddSalesInvoiceItem(salesInvoiceItem);
                 }
             }
 
-            @this.Session().Derive();
+            @this.Transaction().Derive();
 
             for (var i = 0; i < 4; i++)
             {
                 var supplier = faker.Random.ListItem(allors.ActiveSuppliers);
 
-                var purchaseInvoiceItem1 = new PurchaseInvoiceItemBuilder(@this.Session())
+                var purchaseInvoiceItem1 = new PurchaseInvoiceItemBuilder(@this.Transaction())
                     .WithDescription("first item")
                     .WithPart(nonSerialisedPart1)
                     .WithAssignedUnitPrice(3000)
                     .WithQuantity(1)
                     .WithMessage(@"line1
 line2")
-                    .WithInvoiceItemType(new InvoiceItemTypes(@this.Session()).PartItem)
+                    .WithInvoiceItemType(new InvoiceItemTypes(@this.Transaction()).PartItem)
                     .Build();
 
-                var purchaseInvoiceItem2 = new PurchaseInvoiceItemBuilder(@this.Session())
+                var purchaseInvoiceItem2 = new PurchaseInvoiceItemBuilder(@this.Transaction())
                     .WithDescription("second item")
                     .WithAssignedUnitPrice(2000)
                     .WithQuantity(2)
                     .WithPart(nonSerialisedPart2)
-                    .WithInvoiceItemType(new InvoiceItemTypes(@this.Session()).PartItem)
+                    .WithInvoiceItemType(new InvoiceItemTypes(@this.Transaction()).PartItem)
                     .Build();
 
-                var purchaseInvoiceItem3 = new PurchaseInvoiceItemBuilder(@this.Session())
+                var purchaseInvoiceItem3 = new PurchaseInvoiceItemBuilder(@this.Transaction())
                     .WithDescription("Service")
                     .WithAssignedUnitPrice(100)
                     .WithQuantity(1)
-                    .WithInvoiceItemType(new InvoiceItemTypes(@this.Session()).Service)
+                    .WithInvoiceItemType(new InvoiceItemTypes(@this.Transaction()).Service)
                     .Build();
 
-                var purchaseInvoice = new PurchaseInvoiceBuilder(@this.Session())
+                var purchaseInvoice = new PurchaseInvoiceBuilder(@this.Transaction())
                     .WithBilledTo(allors)
                     .WithBilledFrom(supplier)
                     .WithPurchaseInvoiceItem(purchaseInvoiceItem1)
@@ -450,17 +450,17 @@ line2")
                     .WithPurchaseInvoiceItem(purchaseInvoiceItem3)
                     .WithCustomerReference("a reference number")
                     .WithDescription("Purchase of 1 used Aircraft Towbar")
-                    .WithPurchaseInvoiceType(new PurchaseInvoiceTypes(@this.Session()).PurchaseInvoice)
-                    .WithAssignedVatRegime(new VatRegimes(@this.Session()).Assessable21)
+                    .WithPurchaseInvoiceType(new PurchaseInvoiceTypes(@this.Transaction()).PurchaseInvoice)
+                    .WithAssignedVatRegime(new VatRegimes(@this.Transaction()).Assessable21)
                     .Build();
 
-                var purchaseOrderItem1 = new PurchaseOrderItemBuilder(@this.Session())
+                var purchaseOrderItem1 = new PurchaseOrderItemBuilder(@this.Transaction())
                     .WithDescription("first purchase order item")
                     .WithPart(nonSerialisedPart1)
                     .WithQuantityOrdered(1)
                     .Build();
 
-                var purchaseOrder = new PurchaseOrderBuilder(@this.Session())
+                var purchaseOrder = new PurchaseOrderBuilder(@this.Transaction())
                     .WithOrderedBy(allors)
                     .WithTakenViaSupplier(supplier)
                     .WithPurchaseOrderItem(purchaseOrderItem1)
@@ -468,25 +468,25 @@ line2")
                     .Build();
             }
 
-            var anOrganisation = new Organisations(@this.Session()).FindBy(m.Organisation.IsInternalOrganisation, false);
+            var anOrganisation = new Organisations(@this.Transaction()).FindBy(m.Organisation.IsInternalOrganisation, false);
 
-            var item = new SerialisedItemBuilder(@this.Session())
+            var item = new SerialisedItemBuilder(@this.Transaction())
                 .WithName("name")
                 .WithSerialNumber("112")
-                .WithSerialisedItemAvailability(new SerialisedItemAvailabilities(@this.Session()).Sold)
+                .WithSerialisedItemAvailability(new SerialisedItemAvailabilities(@this.Transaction()).Sold)
                 .WithAvailableForSale(false)
                 .WithOwnedBy(anOrganisation)
                 .Build();
 
             nonSerialisedPart2.AddSerialisedItem(item);
 
-            var workTask = new WorkTaskBuilder(@this.Session())
+            var workTask = new WorkTaskBuilder(@this.Transaction())
                 .WithTakenBy(allors)
                 .WithCustomer(anOrganisation)
                 .WithName("maintenance")
                 .Build();
 
-            new WorkEffortFixedAssetAssignmentBuilder(@this.Session())
+            new WorkEffortFixedAssetAssignmentBuilder(@this.Transaction())
                 .WithFixedAsset(item)
                 .WithAssignment(workTask)
                 .Build();
@@ -495,18 +495,18 @@ line2")
             var workOrderPart2 = allors.CreateNonSerialisedNonUnifiedPart(faker);
             var workOrderPart3 = allors.CreateNonSerialisedNonUnifiedPart(faker);
 
-            @this.Session().Derive();
+            @this.Transaction().Derive();
 
-            var workOrder = new WorkTaskBuilder(@this.Session())
+            var workOrder = new WorkTaskBuilder(@this.Transaction())
                 .WithName("Task")
                 .WithTakenBy(allors)
-                .WithFacility(new Facilities(@this.Session()).Extent().First)
+                .WithFacility(new Facilities(@this.Transaction()).Extent().First)
                 .WithCustomer(anOrganisation)
-                .WithWorkEffortPurpose(new WorkEffortPurposes(@this.Session()).Maintenance)
+                .WithWorkEffortPurpose(new WorkEffortPurposes(@this.Transaction()).Maintenance)
                 .WithSpecialTerms("Net 45 Days")
                 .Build();
 
-            new WorkEffortFixedAssetAssignmentBuilder(@this.Session())
+            new WorkEffortFixedAssetAssignmentBuilder(@this.Transaction())
                 .WithFixedAsset(item)
                 .WithAssignment(workOrder)
                 .WithComment("Busted tailpipe")
@@ -517,19 +517,19 @@ line2")
             workOrder.CreateInventoryAssignment(workOrderPart3, 13);
 
             //// Work Effort Time Entries
-            var yesterday = DateTimeFactory.CreateDateTime(@this.Session().Now().AddDays(-1));
+            var yesterday = DateTimeFactory.CreateDateTime(@this.Transaction().Now().AddDays(-1));
             var laterYesterday = DateTimeFactory.CreateDateTime(yesterday.AddHours(3));
 
-            var today = DateTimeFactory.CreateDateTime(@this.Session().Now());
+            var today = DateTimeFactory.CreateDateTime(@this.Transaction().Now());
             var laterToday = DateTimeFactory.CreateDateTime(today.AddHours(4));
 
-            var tomorrow = DateTimeFactory.CreateDateTime(@this.Session().Now().AddDays(1));
+            var tomorrow = DateTimeFactory.CreateDateTime(@this.Transaction().Now().AddDays(1));
             var laterTomorrow = DateTimeFactory.CreateDateTime(tomorrow.AddHours(6));
 
-            var standardRate = new RateTypes(@this.Session()).StandardRate;
-            var overtimeRate = new RateTypes(@this.Session()).OvertimeRate;
+            var standardRate = new RateTypes(@this.Transaction()).StandardRate;
+            var overtimeRate = new RateTypes(@this.Transaction()).OvertimeRate;
 
-            var frequencies = new TimeFrequencies(@this.Session());
+            var frequencies = new TimeFrequencies(@this.Transaction());
 
             var timeEntryYesterday1 = workOrder.CreateTimeEntry(yesterday, laterYesterday, frequencies.Day, standardRate);
             var timeEntryToday1 = workOrder.CreateTimeEntry(today, laterToday, frequencies.Hour, standardRate);
@@ -547,17 +547,17 @@ line2")
             allorsEmployee2.TimeSheetWhereWorker.AddTimeEntry(timeEntryToday2);
             allorsEmployee2.TimeSheetWhereWorker.AddTimeEntry(timeEntryTomorrow2);
 
-            var po = new PurchaseOrders(@this.Session()).Extent().First;
+            var po = new PurchaseOrders(@this.Transaction()).Extent().First;
             foreach (PurchaseOrderItem purchaseOrderItem in po.PurchaseOrderItems)
             {
-                new WorkEffortPurchaseOrderItemAssignmentBuilder(@this.Session())
+                new WorkEffortPurchaseOrderItemAssignmentBuilder(@this.Transaction())
                     .WithPurchaseOrderItem(purchaseOrderItem)
                     .WithAssignment(workOrder)
                     .WithQuantity(1)
                     .Build();
             }
 
-            @this.Session().Derive();
+            @this.Transaction().Derive();
         }
     }
 }

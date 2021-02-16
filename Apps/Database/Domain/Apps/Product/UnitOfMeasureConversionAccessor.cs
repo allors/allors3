@@ -39,7 +39,7 @@ namespace Allors.Database.Domain
                 }
             }
 
-            var newUnitOfMeasureConversion = new UnitOfMeasureConversionBuilder(@object.Strategy.Session)
+            var newUnitOfMeasureConversion = new UnitOfMeasureConversionBuilder(@object.Strategy.Transaction)
                 .WithToUnitOfMeasure(toUnitOfMeasure)
                 .WithConversionFactor(conversionFactor)
                 .Build();

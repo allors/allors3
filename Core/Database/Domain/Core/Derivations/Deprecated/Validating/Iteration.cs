@@ -80,7 +80,7 @@ namespace Allors.Database.Domain.Derivations.Validating
         {
             try
             {
-                var domainDerive = new DomainDerive(this.Cycle.Derivation.Session, this.Cycle.Derivation.Validation, this.DerivationConfig);
+                var domainDerive = new DomainDerive(this.Cycle.Derivation.Transaction, this.Cycle.Derivation.Validation, this.DerivationConfig);
                 var domainAccumulatedChangeSet = domainDerive.Execute();
                 
                 // Object Derivations

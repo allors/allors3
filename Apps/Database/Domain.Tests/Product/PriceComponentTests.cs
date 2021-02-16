@@ -18,77 +18,77 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenBasePrice_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var vatRate21 = new VatRateBuilder(this.Session).WithRate(21).Build();
-            var good = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
+            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
+            var good = new Goods(this.Transaction).FindBy(this.M.Good.Name, "good1");
 
-            var colorFeature = new ColourBuilder(this.Session)
+            var colorFeature = new ColourBuilder(this.Transaction)
                 .WithVatRate(vatRate21)
                 .WithName("black")
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var builder = new BasePriceBuilder(this.Session);
+            var builder = new BasePriceBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithPrice(1);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithProduct(good);
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithProductFeature(colorFeature);
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            builder.WithFromDate(this.Session.Now());
+            builder.WithFromDate(this.Transaction.Now());
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void GivenBasePriceForVirtualProduct_WhenDeriving_ThenProductVirtualProductPriceComponentIsUpdated()
         {
-            var vatRate21 = new VatRateBuilder(this.Session).WithRate(21).Build();
-            var physicalGood = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
-            var virtualGood = new NonUnifiedGoodBuilder(this.Session)
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
+            var physicalGood = new Goods(this.Transaction).FindBy(this.M.Good.Name, "good1");
+            var virtualGood = new NonUnifiedGoodBuilder(this.Transaction)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("v101")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithName("virtual gizmo")
                 .WithVatRate(vatRate21)
-                .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
+                .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
                 .Build();
 
             physicalGood.AddVariant(virtualGood);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var basePrice = new BasePriceBuilder(this.Session)
+            var basePrice = new BasePriceBuilder(this.Transaction)
                 .WithDescription("baseprice")
                 .WithPrice(10)
                 .WithProduct(physicalGood)
-                .WithFromDate(this.Session.Now())
+                .WithFromDate(this.Transaction.Now())
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Single(virtualGood.VirtualProductPriceComponents);
             Assert.Contains(basePrice, virtualGood.VirtualProductPriceComponents);
@@ -98,13 +98,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenBasePriceForNonVirtualProduct_WhenDeriving_ThenProductVirtualProductPriceComponentIsNull()
         {
-            var physicalGood = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
+            var physicalGood = new Goods(this.Transaction).FindBy(this.M.Good.Name, "good1");
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithDescription("baseprice")
                 .WithPrice(10)
                 .WithProduct(physicalGood)
-                .WithFromDate(this.Session.Now())
+                .WithFromDate(this.Transaction.Now())
                 .Build();
 
             Assert.False(physicalGood.ExistVirtualProductPriceComponents);
@@ -113,86 +113,86 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenDiscount_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var vatRate21 = new VatRateBuilder(this.Session).WithRate(21).Build();
-            var good = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
+            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
+            var good = new Goods(this.Transaction).FindBy(this.M.Good.Name, "good1");
 
-            var colorFeature = new ColourBuilder(this.Session)
+            var colorFeature = new ColourBuilder(this.Transaction)
              .WithVatRate(vatRate21)
              .WithName("black")
              .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var builder = new DiscountComponentBuilder(this.Session);
+            var builder = new DiscountComponentBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithPrice(1);
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            builder.WithFromDate(this.Session.Now());
+            builder.WithFromDate(this.Transaction.Now());
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
             builder.WithProduct(good);
             builder.Build();
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
             builder.WithProductFeature(colorFeature);
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithPercentage(10);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void GivenDiscountForVirtualProduct_WhenDeriving_ThenProductVirtualProductPriceComponentIsUpdated()
         {
-            var vatRate21 = new VatRateBuilder(this.Session).WithRate(21).Build();
-            var virtualService = new DeliverableBasedServiceBuilder(this.Session)
+            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
+            var virtualService = new DeliverableBasedServiceBuilder(this.Transaction)
                 .WithName("virtual service")
                 .WithVatRate(vatRate21)
                 .Build();
 
-            var physicalService = new DeliverableBasedServiceBuilder(this.Session)
+            var physicalService = new DeliverableBasedServiceBuilder(this.Transaction)
                 .WithName("real service")
                 .WithVatRate(vatRate21)
                 .Build();
 
             physicalService.AddVariant(virtualService);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var discount = new DiscountComponentBuilder(this.Session)
+            var discount = new DiscountComponentBuilder(this.Transaction)
                 .WithDescription("discount")
                 .WithPrice(10)
                 .WithProduct(physicalService)
-                .WithFromDate(this.Session.Now())
+                .WithFromDate(this.Transaction.Now())
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Single(virtualService.VirtualProductPriceComponents);
             Assert.Contains(discount, virtualService.VirtualProductPriceComponents);
@@ -202,17 +202,17 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenDiscountForNonVirtualProduct_WhenDeriving_ThenProductVirtualProductPriceComponentIsNull()
         {
-            var vatRate21 = new VatRateBuilder(this.Session).WithRate(21).Build();
-            var physicalService = new DeliverableBasedServiceBuilder(this.Session)
+            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
+            var physicalService = new DeliverableBasedServiceBuilder(this.Transaction)
                 .WithName("real service")
                 .WithVatRate(vatRate21)
                 .Build();
 
-            new DiscountComponentBuilder(this.Session)
+            new DiscountComponentBuilder(this.Transaction)
                 .WithDescription("discount")
                 .WithPrice(10)
                 .WithProduct(physicalService)
-                .WithFromDate(this.Session.Now())
+                .WithFromDate(this.Transaction.Now())
                 .Build();
 
             Assert.False(physicalService.ExistVirtualProductPriceComponents);
@@ -221,82 +221,82 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenSurcharge_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var vatRate21 = new VatRateBuilder(this.Session).WithRate(21).Build();
-            var good = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
+            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
+            var good = new Goods(this.Transaction).FindBy(this.M.Good.Name, "good1");
 
-            var colorFeature = new ColourBuilder(this.Session)
+            var colorFeature = new ColourBuilder(this.Transaction)
                 .WithVatRate(vatRate21)
                 .WithName("black")
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var builder = new SurchargeComponentBuilder(this.Session);
+            var builder = new SurchargeComponentBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithPrice(1);
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            builder.WithFromDate(this.Session.Now());
+            builder.WithFromDate(this.Transaction.Now());
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithProduct(good);
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
             builder.WithProductFeature(colorFeature);
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithPercentage(10);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void GivenSurchargeForVirtualProduct_WhenDeriving_ThenProductVirtualProductPriceComponentIsUpdated()
         {
-            var vatRate21 = new VatRateBuilder(this.Session).WithRate(21).Build();
-            var virtualService = new TimeAndMaterialsServiceBuilder(this.Session)
+            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
+            var virtualService = new TimeAndMaterialsServiceBuilder(this.Transaction)
                 .WithName("virtual service")
                 .WithVatRate(vatRate21)
                 .Build();
 
-            var physicalService = new TimeAndMaterialsServiceBuilder(this.Session)
+            var physicalService = new TimeAndMaterialsServiceBuilder(this.Transaction)
                 .WithName("real service")
                 .WithVatRate(vatRate21)
                 .Build();
 
             physicalService.AddVariant(virtualService);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var surcharge = new SurchargeComponentBuilder(this.Session)
+            var surcharge = new SurchargeComponentBuilder(this.Transaction)
                 .WithDescription("surcharge")
                 .WithPrice(10)
                 .WithProduct(physicalService)
-                .WithFromDate(this.Session.Now())
+                .WithFromDate(this.Transaction.Now())
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Single(virtualService.VirtualProductPriceComponents);
             Assert.Contains(surcharge, virtualService.VirtualProductPriceComponents);
@@ -306,17 +306,17 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenSurchargeForNonVirtualProduct_WhenDeriving_ThenProductVirtualProductPriceComponentIsNull()
         {
-            var vatRate21 = new VatRateBuilder(this.Session).WithRate(21).Build();
-            var physicalService = new TimeAndMaterialsServiceBuilder(this.Session)
+            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
+            var physicalService = new TimeAndMaterialsServiceBuilder(this.Transaction)
                 .WithName("real service")
                 .WithVatRate(vatRate21)
                 .Build();
 
-            new SurchargeComponentBuilder(this.Session)
+            new SurchargeComponentBuilder(this.Transaction)
                 .WithDescription("surcharge")
                 .WithPrice(10)
                 .WithProduct(physicalService)
-                .WithFromDate(this.Session.Now())
+                .WithFromDate(this.Transaction.Now())
                 .Build();
 
             Assert.False(physicalService.ExistVirtualProductPriceComponents);
@@ -330,11 +330,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPriceDeriveCurrency()
         {
-            var basePrice = new BasePriceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var basePrice = new BasePriceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             basePrice.Price = 1;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(basePrice.PricedBy.PreferredCurrency, basePrice.Currency);
         }
@@ -344,20 +344,20 @@ namespace Allors.Database.Domain.Tests
         {
             this.InternalOrganisation.RemovePreferredCurrency();
 
-            var basePrice = new BasePriceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var basePrice = new BasePriceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             basePrice.Price = 1;
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals("AssertExists: BasePrice.Currency"));
         }
 
         [Fact]
         public void OnCreatedDerivePricedBy()
         {
-            var basePrice = new BasePriceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var basePrice = new BasePriceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.Equal(this.InternalOrganisation, basePrice.PricedBy);
         }

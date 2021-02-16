@@ -28,7 +28,7 @@ namespace Allors.Database.Domain
         public SerialisedItemState Scrap => this.Cache[ScrapId];
 
         private UniquelyIdentifiableCache<SerialisedItemState> Cache =>
-            this.cache ??= new UniquelyIdentifiableCache<SerialisedItemState>(this.Session);
+            this.cache ??= new UniquelyIdentifiableCache<SerialisedItemState>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

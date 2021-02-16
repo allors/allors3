@@ -17,13 +17,13 @@ namespace Allors.Database.Adapters.Npgsql
 
         public override int Count => this.ObjectIds.Count;
 
-        public override IObject First => this.ObjectIds.Count > 0 ? this.Session.State.GetOrCreateReferenceForExistingObject(this.ObjectIds[0], this.Session).Strategy.GetObject() : null;
+        public override IObject First => this.ObjectIds.Count > 0 ? this.Transaction.State.GetOrCreateReferenceForExistingObject(this.ObjectIds[0], this.Transaction).Strategy.GetObject() : null;
 
         internal override SqlExtent ContainedInExtent => this;
 
         internal ExtentOperation ParentOperationExtent { get; set; }
 
-        internal abstract Session Session { get; }
+        internal abstract Transaction Transaction { get; }
 
         internal ExtentSort Sorter { get; private set; }
 
@@ -39,7 +39,7 @@ namespace Allors.Database.Adapters.Npgsql
             this.FlushCache();
             if (this.Sorter == null)
             {
-                this.Sorter = new ExtentSort(this.Session, roleType, direction);
+                this.Sorter = new ExtentSort(this.Transaction, roleType, direction);
             }
             else
             {
@@ -63,7 +63,7 @@ namespace Allors.Database.Adapters.Npgsql
 
         public override IEnumerator GetEnumerator()
         {
-            var references = this.Session.GetOrCreateReferencesForExistingObjects(this.ObjectIds);
+            var references = this.Transaction.GetOrCreateReferencesForExistingObjects(this.ObjectIds);
             return new ExtentEnumerator(references);
         }
 
@@ -79,13 +79,13 @@ namespace Allors.Database.Adapters.Npgsql
 
         public override IObject[] ToArray()
         {
-            var clrType = this.Session.Database.GetDomainType(this.ObjectType);
+            var clrType = this.Transaction.Database.GetDomainType(this.ObjectType);
             return this.ToArray(clrType);
         }
 
         public override IObject[] ToArray(Type type)
         {
-            var objects = this.Session.Instantiate(this.ObjectIds);
+            var objects = this.Transaction.Instantiate(this.ObjectIds);
             var array = Array.CreateInstance(type, objects.Length);
             Array.Copy(objects, array, objects.Length);
             return (IObject[])array;
@@ -104,7 +104,7 @@ namespace Allors.Database.Adapters.Npgsql
         protected override IObject GetItem(int index)
         {
             var objectId = this.ObjectIds[index];
-            return this.Session.State.GetOrCreateReferenceForExistingObject(objectId, this.Session).Strategy.GetObject();
+            return this.Transaction.State.GetOrCreateReferenceForExistingObject(objectId, this.Transaction).Strategy.GetObject();
         }
 
         protected abstract IList<long> GetObjectIds();

@@ -18,57 +18,57 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnCreatedThrowValidationError()
         {
-            var discountComponent = new DiscountComponentBuilder(this.Session).Build();
+            var discountComponent = new DiscountComponentBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.StartsWith("DiscountComponent.Price, DiscountComponent.Percentage at least one"));
         }
 
         [Fact]
         public void ChangedPriceThrowValidationError()
         {
-            var discountComponent = new DiscountComponentBuilder(this.Session).WithPrice(1).Build();
-            this.Session.Derive(false);
+            var discountComponent = new DiscountComponentBuilder(this.Transaction).WithPrice(1).Build();
+            this.Transaction.Derive(false);
 
             discountComponent.RemovePrice();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.StartsWith("DiscountComponent.Price, DiscountComponent.Percentage at least one"));
         }
 
         [Fact]
         public void ChangedPercentageThrowValidationError()
         {
-            var discountComponent = new DiscountComponentBuilder(this.Session).WithPercentage(1).Build();
-            this.Session.Derive(false);
+            var discountComponent = new DiscountComponentBuilder(this.Transaction).WithPercentage(1).Build();
+            this.Transaction.Derive(false);
 
             discountComponent.RemovePercentage();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.StartsWith("DiscountComponent.Price, DiscountComponent.Percentage at least one"));
         }
 
         [Fact]
         public void ChangedPriceThrowValidationErrorAtmostOne()
         {
-            var discountComponent = new DiscountComponentBuilder(this.Session).WithPercentage(1).Build();
-            this.Session.Derive(false);
+            var discountComponent = new DiscountComponentBuilder(this.Transaction).WithPercentage(1).Build();
+            this.Transaction.Derive(false);
 
             discountComponent.Price = 1;
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: DiscountComponent.Price\nDiscountComponent.Percentage"));
         }
 
         [Fact]
         public void ChangedPercentageThrowValidationErrorAtmostOne()
         {
-            var discountComponent = new DiscountComponentBuilder(this.Session).WithPrice(1).Build();
-            this.Session.Derive(false);
+            var discountComponent = new DiscountComponentBuilder(this.Transaction).WithPrice(1).Build();
+            this.Transaction.Derive(false);
 
             discountComponent.Percentage = 1;
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: DiscountComponent.Price\nDiscountComponent.Percentage"));
         }
     }

@@ -14,12 +14,12 @@ namespace Allors.Database.Protocol.Json
 
     public class SecurityResponseBuilder
     {
-        private readonly ISession session;
+        private readonly ITransaction transaction;
         private readonly ISet<IClass> allowedClasses;
 
-        public SecurityResponseBuilder(ISession session, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses)
+        public SecurityResponseBuilder(ITransaction transaction, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses)
         {
-            this.session = session;
+            this.transaction = transaction;
             this.allowedClasses = allowedClasses;
             this.AccessControlLists = accessControlLists;
         }
@@ -33,7 +33,7 @@ namespace Allors.Database.Protocol.Json
             if (securityRequest.AccessControls?.Length > 0)
             {
                 var accessControlIds = securityRequest.AccessControls;
-                var accessControls = this.session.Instantiate(accessControlIds).Cast<IAccessControl>().ToArray();
+                var accessControls = this.transaction.Instantiate(accessControlIds).Cast<IAccessControl>().ToArray();
 
                 securityResponse.AccessControls = accessControls
                     .Select(v =>
@@ -56,7 +56,7 @@ namespace Allors.Database.Protocol.Json
             if (securityRequest.Permissions?.Length > 0)
             {
                 var permissionIds = securityRequest.Permissions;
-                var permissions = this.session.Instantiate(permissionIds)
+                var permissions = this.transaction.Instantiate(permissionIds)
                     .Cast<IPermission>()
                     .Where(v => this.allowedClasses?.Contains(v.Class) == true);
 

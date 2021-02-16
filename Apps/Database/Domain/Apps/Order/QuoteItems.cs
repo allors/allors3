@@ -9,15 +9,15 @@ namespace Allors.Database.Domain
     {
         protected override void AppsSecure(Security config)
         {
-            var draft = new QuoteItemStates(this.Session).Draft;
-            var cancelled = new QuoteItemStates(this.Session).Cancelled;
-            var submitted = new QuoteItemStates(this.Session).Submitted;
-            var approved = new QuoteItemStates(this.Session).InProcess;
-            var awaitingAcceptance = new QuoteItemStates(this.Session).AwaitingAcceptance;
-            var awaitingApproval = new QuoteItemStates(this.Session).AwaitingApproval;
-            var accepted = new QuoteItemStates(this.Session).Accepted;
-            var ordered = new QuoteItemStates(this.Session).Ordered;
-            var rejected = new QuoteItemStates(this.Session).Rejected;
+            var draft = new QuoteItemStates(this.Transaction).Draft;
+            var cancelled = new QuoteItemStates(this.Transaction).Cancelled;
+            var submitted = new QuoteItemStates(this.Transaction).Submitted;
+            var approved = new QuoteItemStates(this.Transaction).InProcess;
+            var awaitingAcceptance = new QuoteItemStates(this.Transaction).AwaitingAcceptance;
+            var awaitingApproval = new QuoteItemStates(this.Transaction).AwaitingApproval;
+            var accepted = new QuoteItemStates(this.Transaction).Accepted;
+            var ordered = new QuoteItemStates(this.Transaction).Ordered;
+            var rejected = new QuoteItemStates(this.Transaction).Rejected;
 
             var cancel = this.Meta.Cancel;
             var submit = this.Meta.Submit;

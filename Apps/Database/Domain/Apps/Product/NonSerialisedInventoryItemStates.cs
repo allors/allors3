@@ -24,7 +24,7 @@ namespace Allors.Database.Domain
 
         public NonSerialisedInventoryItemState Scrap => this.Cache[ScrapId];
 
-        private UniquelyIdentifiableCache<NonSerialisedInventoryItemState> Cache => this.cache ??= new UniquelyIdentifiableCache<NonSerialisedInventoryItemState>(this.Session);
+        private UniquelyIdentifiableCache<NonSerialisedInventoryItemState> Cache => this.cache ??= new UniquelyIdentifiableCache<NonSerialisedInventoryItemState>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

@@ -11,9 +11,9 @@ namespace Allors.Database.Domain
 
         protected override void AppsSecure(Security config)
         {
-            var createdState = new WorkEffortStates(this.Session).Created;
-            var cancelledState = new WorkEffortStates(this.Session).Cancelled;
-            var finishedState = new WorkEffortStates(this.Session).Completed;
+            var createdState = new WorkEffortStates(this.Transaction).Created;
+            var cancelledState = new WorkEffortStates(this.Transaction).Cancelled;
+            var finishedState = new WorkEffortStates(this.Transaction).Completed;
 
             config.Deny(this.ObjectType, createdState, this.M.WorkEffort.Reopen);
 

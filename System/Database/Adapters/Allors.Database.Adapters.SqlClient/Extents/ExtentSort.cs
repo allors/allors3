@@ -11,12 +11,12 @@ namespace Allors.Database.Adapters.SqlClient
     {
         private readonly SortDirection direction;
         private readonly IRoleType roleType;
-        private readonly Session session;
+        private readonly Transaction transaction;
         private ExtentSort subSorter;
 
-        internal ExtentSort(Session session, IRoleType roleType, SortDirection direction)
+        internal ExtentSort(Transaction transaction, IRoleType roleType, SortDirection direction)
         {
-            this.session = session;
+            this.transaction = transaction;
             this.roleType = roleType;
             this.direction = direction;
         }
@@ -25,7 +25,7 @@ namespace Allors.Database.Adapters.SqlClient
         {
             if (this.subSorter == null)
             {
-                this.subSorter = new ExtentSort(this.session, subSortIRoleType, subSortDirection);
+                this.subSorter = new ExtentSort(this.transaction, subSortIRoleType, subSortDirection);
             }
             else
             {
@@ -89,7 +89,7 @@ namespace Allors.Database.Adapters.SqlClient
 
         private void AddAscendingAppendix(ExtentStatement statement)
         {
-            var sortAppendix = this.session.Database.AscendingSortAppendix;
+            var sortAppendix = this.transaction.Database.AscendingSortAppendix;
             if (sortAppendix != null)
             {
                 statement.Append(sortAppendix + " ");
@@ -98,7 +98,7 @@ namespace Allors.Database.Adapters.SqlClient
 
         private void AddDescendingAppendix(ExtentStatement statement)
         {
-            var sortAppendix = this.session.Database.DescendingSortAppendix;
+            var sortAppendix = this.transaction.Database.DescendingSortAppendix;
             if (sortAppendix != null)
             {
                 statement.Append(sortAppendix + " ");

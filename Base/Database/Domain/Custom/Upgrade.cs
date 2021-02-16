@@ -11,13 +11,13 @@ namespace Allors.Database.Domain
 
     public class Upgrade
     {
-        private readonly ISession session;
+        private readonly ITransaction transaction;
 
         private readonly DirectoryInfo dataPath;
 
-        public Upgrade(ISession session, DirectoryInfo dataPath)
+        public Upgrade(ITransaction session, DirectoryInfo dataPath)
         {
-            this.session = session;
+            this.transaction = session;
             this.dataPath = dataPath;
         }
 
@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
 
         private void Derive(Extent extent)
         {
-            var derivation = new Derivations.Default.DefaultDerivation(this.session);
+            var derivation = new Derivations.Default.DefaultDerivation(this.transaction);
             derivation.Mark(extent.Cast<Object>().ToArray());
             var validation = derivation.Derive();
             if (validation.HasErrors)

@@ -18,9 +18,9 @@ namespace Allors.Database.Adapters.SqlClient
 
         private WeakReference<Strategy> weakReference;
 
-        internal Reference(Session session, IClass @class, long objectId, bool isNew)
+        internal Reference(Transaction transaction, IClass @class, long objectId, bool isNew)
         {
-            this.Session = session;
+            this.Transaction = transaction;
             this.Class = @class;
             this.ObjectId = objectId;
 
@@ -33,8 +33,8 @@ namespace Allors.Database.Adapters.SqlClient
             }
         }
 
-        internal Reference(Session session, IClass @class, long objectId, long version)
-            : this(session, @class, objectId, false)
+        internal Reference(Transaction transaction, IClass @class, long objectId, long version)
+            : this(transaction, @class, objectId, false)
         {
             this.version = version;
             this.FlagExistsKnown = true;
@@ -65,7 +65,7 @@ namespace Allors.Database.Adapters.SqlClient
             }
         }
 
-        internal Session Session { get; }
+        internal Transaction Transaction { get; }
 
         internal IClass Class { get; }
 
@@ -77,8 +77,8 @@ namespace Allors.Database.Adapters.SqlClient
             {
                 if (!this.IsNew && this.version == (long) Allors.Version.None)
                 {
-                    this.Session.AddReferenceWithoutVersionOrExistsKnown(this);
-                    this.Session.GetVersionAndExists();
+                    this.Transaction.AddReferenceWithoutVersionOrExistsKnown(this);
+                    this.Transaction.GetVersionAndExists();
                 }
 
                 return this.version;
@@ -108,8 +108,8 @@ namespace Allors.Database.Adapters.SqlClient
                 var flagsExistsKnown = this.FlagExistsKnown;
                 if (!flagsExistsKnown)
                 {
-                    this.Session.AddReferenceWithoutVersionOrExistsKnown(this);
-                    this.Session.GetVersionAndExists();
+                    this.Transaction.AddReferenceWithoutVersionOrExistsKnown(this);
+                    this.Transaction.GetVersionAndExists();
                 }
 
                 return this.FlagExists;

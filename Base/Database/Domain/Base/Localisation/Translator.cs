@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
         public Translator(Locale locale, Func<T, string> value, Func<T, LocalisedText[]> localisedValues)
         {
             this.locale = locale;
-            this.defaultLocale = locale?.Strategy.Session.GetSingleton().DefaultLocale;
+            this.defaultLocale = locale?.Strategy.Transaction.GetSingleton().DefaultLocale;
 
             this.value = value;
             this.localisedValues = localisedValues;

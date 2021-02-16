@@ -29,11 +29,11 @@ namespace Allors.Database.Domain
                 @this.PurchaseOrder = @this.PurchaseOrderItemsWhereSerialisedItem
                     .LastOrDefault(v => v.ExistOrderWhereValidOrderItem
                                         && v.ExistInvoiceItemType
-                                        && (v.InvoiceItemType.Equals(new InvoiceItemTypes(@this.Session()).PartItem)
-                                            || v.InvoiceItemType.Equals(new InvoiceItemTypes(@this.Session()).ProductItem))
-                                        && (((PurchaseOrder)v.OrderWhereValidOrderItem).PurchaseOrderState.Equals(new PurchaseOrderStates(@this.Session()).Sent)
-                                            || ((PurchaseOrder)v.OrderWhereValidOrderItem).PurchaseOrderState.Equals(new PurchaseOrderStates(@this.Session()).Completed)
-                                            || ((PurchaseOrder)v.OrderWhereValidOrderItem).PurchaseOrderState.Equals(new PurchaseOrderStates(@this.Session()).Finished)))?
+                                        && (v.InvoiceItemType.Equals(new InvoiceItemTypes(@this.Transaction()).PartItem)
+                                            || v.InvoiceItemType.Equals(new InvoiceItemTypes(@this.Transaction()).ProductItem))
+                                        && (((PurchaseOrder)v.OrderWhereValidOrderItem).PurchaseOrderState.Equals(new PurchaseOrderStates(@this.Transaction()).Sent)
+                                            || ((PurchaseOrder)v.OrderWhereValidOrderItem).PurchaseOrderState.Equals(new PurchaseOrderStates(@this.Transaction()).Completed)
+                                            || ((PurchaseOrder)v.OrderWhereValidOrderItem).PurchaseOrderState.Equals(new PurchaseOrderStates(@this.Transaction()).Finished)))?
                     .PurchaseOrderWherePurchaseOrderItem;
             }
         }

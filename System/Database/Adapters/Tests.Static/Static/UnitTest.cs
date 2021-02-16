@@ -25,7 +25,7 @@ namespace Allors.Database.Adapters
 
         protected abstract IProfile Profile { get; }
 
-        protected ISession Session => this.Profile.Session;
+        protected ITransaction Transaction => this.Profile.Transaction;
 
         protected Action[] Markers => this.Profile.Markers;
 
@@ -39,13 +39,13 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
                     {
                         // True
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsBoolean = true;
                         values.I1AllorsBoolean = true;
                         values.S1AllorsBoolean = true;
@@ -59,7 +59,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // False
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsBoolean = false;
                         values.I1AllorsBoolean = false;
                         values.S1AllorsBoolean = false;
@@ -73,7 +73,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // initial empty
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
 
                         bool? value = null;
 
@@ -94,7 +94,7 @@ namespace Allors.Database.Adapters
                         Assert.False(values.ExistI1AllorsBoolean);
                         Assert.False(values.ExistS1AllorsBoolean);
 
-                        this.Session.Commit();
+                        this.Transaction.Commit();
 
                         value = null;
                         mark();
@@ -117,7 +117,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // reset empty
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsBoolean = true;
                         values.I1AllorsBoolean = true;
                         values.S1AllorsBoolean = true;
@@ -179,17 +179,17 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                if (this.Session is ISession)
+                if (this.Transaction is ITransaction)
                 {
-                    var c1 = C1.Create(this.Session);
+                    var c1 = C1.Create(this.Transaction);
                     var c1Id = c1.Id.ToString();
 
                     c1.C1AllorsBoolean = true;
 
                     // Force a Flush
-                    Extent<C1> extent = this.Session.Extent(m.C1.ObjectType);
+                    Extent<C1> extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddEquals(m.C1.C1AllorsBoolean, true);
                     Assert.NotNull(extent.First);
 
@@ -199,7 +199,7 @@ namespace Allors.Database.Adapters
 
                     GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
 
-                    c1 = (C1)this.Session.Instantiate(c1Id);
+                    c1 = (C1)this.Transaction.Instantiate(c1Id);
 
                     Assert.True(c1.C1AllorsBoolean);
                 }
@@ -212,13 +212,13 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
                     {
                         // unspecified
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
 
                         var exceptionThrown = false;
                         try
@@ -239,7 +239,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // Minimum
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsDateTime = DateTime.MinValue;
                         values.I1AllorsDateTime = DateTime.MinValue;
                         values.S1AllorsDateTime = DateTime.MinValue;
@@ -252,7 +252,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // Maximum
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsDateTime = DateTime.MaxValue;
                         values.I1AllorsDateTime = DateTime.MaxValue;
                         values.S1AllorsDateTime = DateTime.MaxValue;
@@ -273,13 +273,13 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
                     {
                         // year, day & month
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsDateTime = new DateTime(1973, 03, 27, 0, 0, 0, 0, DateTimeKind.Local);
                         values.I1AllorsDateTime = new DateTime(1973, 03, 27, 0, 0, 0, 0, DateTimeKind.Local);
                         values.S1AllorsDateTime = new DateTime(1973, 03, 27, 0, 0, 0, 0, DateTimeKind.Local);
@@ -293,7 +293,7 @@ namespace Allors.Database.Adapters
                     {
                         // Now
                         var now = this.StripNanoSeconds(DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local));
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsDateTime = now;
                         values.I1AllorsDateTime = now;
                         values.S1AllorsDateTime = now;
@@ -307,7 +307,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // initial empty
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
 
                         DateTime? value = null;
 
@@ -352,7 +352,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // reset empty
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsDateTime = DateTime.Now;
                         values.I1AllorsDateTime = DateTime.Now;
                         values.S1AllorsDateTime = DateTime.Now;
@@ -386,7 +386,7 @@ namespace Allors.Database.Adapters
                         Assert.False(values.ExistI1AllorsDateTime);
                         Assert.False(values.ExistS1AllorsDateTime);
 
-                        this.Session.Commit();
+                        this.Transaction.Commit();
 
                         value = null;
                         mark();
@@ -416,13 +416,13 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
                     var universal = new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc);
 
-                    var c1 = C1.Create(this.Session);
+                    var c1 = C1.Create(this.Transaction);
                     c1.C1AllorsDateTime = universal;
                     c1.I1AllorsDateTime = universal;
                     c1.S1AllorsDateTime = universal;
@@ -461,19 +461,19 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                if (this.Session is ISession)
+                if (this.Transaction is ITransaction)
                 {
-                    var c1 = C1.Create(this.Session);
+                    var c1 = C1.Create(this.Transaction);
                     var c1Id = c1.Id.ToString();
 
                     c1.C1AllorsDateTime = new DateTime(1973, 03, 27, 1, 2, 3, 4, DateTimeKind.Utc);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
                     // Force a Flush
-                    Extent<C1> extent = this.Session.Extent(m.C1.ObjectType);
+                    Extent<C1> extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddEquals(m.C1.C1AllorsDateTime, new DateTime(1973, 03, 27, 1, 2, 3, 4, DateTimeKind.Utc));
                     var first = extent.First;
                     Assert.NotNull(first);
@@ -484,7 +484,7 @@ namespace Allors.Database.Adapters
 
                     GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
 
-                    c1 = (C1)this.Session.Instantiate(c1Id);
+                    c1 = (C1)this.Transaction.Instantiate(c1Id);
 
                     Assert.Equal(new DateTime(1973, 03, 27, 1, 2, 3, 4, DateTimeKind.Utc), c1.C1AllorsDateTime);
                 }
@@ -497,13 +497,13 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
                     {
                         // Positive
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsDecimal = 10.10m;
                         values.I1AllorsDecimal = 10.10m;
                         values.S1AllorsDecimal = 10.10m;
@@ -516,7 +516,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // Negative
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsDecimal = -10.10m;
                         values.I1AllorsDecimal = -10.10m;
                         values.S1AllorsDecimal = -10.10m;
@@ -529,7 +529,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // Zero
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsDecimal = 0m;
                         values.I1AllorsDecimal = 0m;
                         values.S1AllorsDecimal = 0m;
@@ -542,7 +542,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // Minimum
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsDecimal = decimal.MinValue;
                         values.I1AllorsDecimal = decimal.MinValue;
                         values.S1AllorsDecimal = decimal.MinValue;
@@ -555,7 +555,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // Maximum
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsDecimal = decimal.MaxValue;
                         values.I1AllorsDecimal = decimal.MaxValue;
                         values.S1AllorsDecimal = decimal.MaxValue;
@@ -568,7 +568,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // initial empty
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
 
                         decimal? value = null;
 
@@ -589,7 +589,7 @@ namespace Allors.Database.Adapters
                         Assert.False(values.ExistI1AllorsDecimal);
                         Assert.False(values.ExistS1AllorsDecimal);
 
-                        this.Session.Commit();
+                        this.Transaction.Commit();
 
                         mark();
                         value = values.C1AllorsDecimal;
@@ -610,7 +610,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // reset empty
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsDecimal = 10.10m;
                         values.I1AllorsDecimal = 10.10m;
                         values.S1AllorsDecimal = 10.10m;
@@ -674,17 +674,17 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                if (this.Session is ISession)
+                if (this.Transaction is ITransaction)
                 {
-                    var c1 = C1.Create(this.Session);
+                    var c1 = C1.Create(this.Transaction);
                     var c1Id = c1.Id.ToString();
 
                     c1.C1AllorsDecimal = 1M;
 
                     // Force a Flush
-                    Extent<C1> extent = this.Session.Extent(m.C1.ObjectType);
+                    Extent<C1> extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddEquals(m.C1.C1AllorsDecimal, 1M);
                     Assert.NotNull(extent.First);
 
@@ -694,7 +694,7 @@ namespace Allors.Database.Adapters
 
                     GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
 
-                    c1 = (C1)this.Session.Instantiate(c1Id);
+                    c1 = (C1)this.Transaction.Instantiate(c1Id);
 
                     Assert.Equal(1M, c1.C1AllorsDecimal);
                 }
@@ -707,13 +707,13 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
                     {
                         // Positive
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsDouble = 10.10d;
                         values.I1AllorsDouble = 10.10d;
                         values.S1AllorsDouble = 10.10d;
@@ -726,7 +726,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // Negative
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsDouble = -10.10d;
                         values.I1AllorsDouble = -10.10d;
                         values.S1AllorsDouble = -10.10d;
@@ -739,7 +739,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // Zero
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsDouble = 0d;
                         values.I1AllorsDouble = 0d;
                         values.S1AllorsDouble = 0d;
@@ -753,7 +753,7 @@ namespace Allors.Database.Adapters
                     // Minimum
                     if (this.UseFloatMinimum)
                     {
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsDouble = double.MinValue;
                         values.I1AllorsDouble = double.MinValue;
                         values.S1AllorsDouble = double.MinValue;
@@ -767,7 +767,7 @@ namespace Allors.Database.Adapters
                     // Maximum
                     if (this.UseFloatMaximum)
                     {
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsDouble = double.MaxValue;
                         values.I1AllorsDouble = double.MaxValue;
                         values.S1AllorsDouble = double.MaxValue;
@@ -780,7 +780,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // initial empty
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
 
                         double? value = null;
 
@@ -823,7 +823,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // reset empty
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsDouble = 10.10d;
                         values.I1AllorsDouble = 10.10d;
                         values.S1AllorsDouble = 10.10d;
@@ -883,17 +883,17 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                if (this.Session is ISession)
+                if (this.Transaction is ITransaction)
                 {
-                    var c1 = C1.Create(this.Session);
+                    var c1 = C1.Create(this.Transaction);
                     var c1Id = c1.Id.ToString();
 
                     c1.C1AllorsDouble = 1;
 
                     // Force a Flush
-                    Extent<C1> extent = this.Session.Extent(m.C1.ObjectType);
+                    Extent<C1> extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddEquals(m.C1.C1AllorsDouble, 1);
                     Assert.NotNull(extent.First);
 
@@ -903,7 +903,7 @@ namespace Allors.Database.Adapters
 
                     GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
 
-                    c1 = (C1)this.Session.Instantiate(c1Id);
+                    c1 = (C1)this.Transaction.Instantiate(c1Id);
 
                     Assert.Equal(1, c1.C1AllorsDouble);
                 }
@@ -916,13 +916,13 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
                     {
                         // Positive
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsInteger = 10;
                         values.I1AllorsInteger = 10;
                         values.S1AllorsInteger = 10;
@@ -935,7 +935,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // Negative
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsInteger = -10;
                         values.I1AllorsInteger = -10;
                         values.S1AllorsInteger = -10;
@@ -948,7 +948,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // Zero
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsInteger = 0;
                         values.I1AllorsInteger = 0;
                         values.S1AllorsInteger = 0;
@@ -961,7 +961,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // Minimum
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsInteger = int.MinValue;
                         values.I1AllorsInteger = int.MinValue;
                         values.S1AllorsInteger = int.MinValue;
@@ -974,7 +974,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // Maximum
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsInteger = int.MaxValue;
                         values.I1AllorsInteger = int.MaxValue;
                         values.S1AllorsInteger = int.MaxValue;
@@ -987,7 +987,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // initial empty
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
 
                         int? value = null;
 
@@ -1030,9 +1030,9 @@ namespace Allors.Database.Adapters
 
                     {
                         // reset empty
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
 
-                        this.Session.Commit();
+                        this.Transaction.Commit();
 
                         values.C1AllorsInteger = 10;
                         values.I1AllorsInteger = 10;
@@ -1097,17 +1097,17 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                if (this.Session is ISession)
+                if (this.Transaction is ITransaction)
                 {
-                    var c1 = C1.Create(this.Session);
+                    var c1 = C1.Create(this.Transaction);
                     var c1Id = c1.Id.ToString();
 
                     c1.C1AllorsInteger = 1;
 
                     // Force a Flush
-                    Extent<C1> extent = this.Session.Extent(m.C1.ObjectType);
+                    Extent<C1> extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddEquals(m.C1.C1AllorsInteger, 1);
                     Assert.NotNull(extent.First);
 
@@ -1117,7 +1117,7 @@ namespace Allors.Database.Adapters
 
                     GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
 
-                    c1 = (C1)this.Session.Instantiate(c1Id);
+                    c1 = (C1)this.Transaction.Instantiate(c1Id);
 
                     Assert.Equal(1, c1.C1AllorsInteger);
                 }
@@ -1130,7 +1130,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
@@ -1138,7 +1138,7 @@ namespace Allors.Database.Adapters
                     var bLarge = new StringBuilder().Insert(0, "b", 100000).ToString();
                     var cLarge = new StringBuilder().Insert(0, "c", 100000).ToString();
                     {
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1StringLarge = aLarge;
                         values.I1StringLarge = bLarge;
                         values.S1StringLarge = cLarge;
@@ -1155,7 +1155,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // initial empty
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
 
                         mark();
                         Assert.False(values.ExistC1StringLarge);
@@ -1169,7 +1169,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // reset empty
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1StringLarge = aLarge;
                         values.I1StringLarge = bLarge;
                         values.S1StringLarge = cLarge;
@@ -1195,7 +1195,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // reset null
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1StringLarge = aLarge;
                         values.I1StringLarge = bLarge;
                         values.S1StringLarge = cLarge;
@@ -1222,7 +1222,7 @@ namespace Allors.Database.Adapters
                     {
                         // large string in small string
                         var exceptionThrown = false;
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         try
                         {
                             mark();
@@ -1237,7 +1237,7 @@ namespace Allors.Database.Adapters
                         Assert.False(values.ExistC1AllorsString);
 
                         exceptionThrown = false;
-                        values = C1.Create(this.Session);
+                        values = C1.Create(this.Transaction);
                         try
                         {
                             mark();
@@ -1252,7 +1252,7 @@ namespace Allors.Database.Adapters
                         Assert.False(values.ExistI1AllorsString);
 
                         exceptionThrown = false;
-                        values = C1.Create(this.Session);
+                        values = C1.Create(this.Transaction);
                         try
                         {
                             mark();
@@ -1266,7 +1266,7 @@ namespace Allors.Database.Adapters
                         Assert.True(exceptionThrown);
                         Assert.False(values.ExistS1AllorsString);
 
-                        this.Session.Commit();
+                        this.Transaction.Commit();
                     }
                 }
             }
@@ -1278,19 +1278,19 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                if (this.Session is ISession)
+                if (this.Transaction is ITransaction)
                 {
                     var aLarge = new StringBuilder().Insert(0, "a", 100000).ToString();
 
-                    var c1 = C1.Create(this.Session);
+                    var c1 = C1.Create(this.Transaction);
                     var c1Id = c1.Id.ToString();
 
                     c1.C1StringLarge = aLarge;
 
                     // Force a Flush
-                    Extent<C1> extent = this.Session.Extent(m.C1.ObjectType);
+                    Extent<C1> extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddEquals(m.C1.C1StringLarge, aLarge);
                     Assert.NotNull(extent.First);
 
@@ -1300,7 +1300,7 @@ namespace Allors.Database.Adapters
 
                     GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
 
-                    c1 = (C1)this.Session.Instantiate(c1Id);
+                    c1 = (C1)this.Transaction.Instantiate(c1Id);
 
                     Assert.Equal(aLarge, c1.C1StringLarge);
                 }
@@ -1313,7 +1313,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
@@ -1321,7 +1321,7 @@ namespace Allors.Database.Adapters
                     var binary2 = new byte[] { 1, 2 };
                     var binary3 = new byte[] { 3, 4, 5 };
                     {
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsBinary = binary1;
                         values.I1AllorsBinary = binary2;
                         values.S1AllorsBinary = binary3;
@@ -1337,7 +1337,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // initial empty
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
 
                         mark();
                         Assert.False(values.ExistC1AllorsBinary);
@@ -1351,7 +1351,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // reset empty
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsBinary = binary1;
                         values.I1AllorsBinary = binary2;
                         values.S1AllorsBinary = binary3;
@@ -1377,7 +1377,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // reset null
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsBinary = binary1;
                         values.I1AllorsBinary = binary2;
                         values.S1AllorsBinary = binary3;
@@ -1403,15 +1403,15 @@ namespace Allors.Database.Adapters
 
                     {
                         // rollback set
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
 
-                        this.Session.Commit();
+                        this.Transaction.Commit();
 
                         values.C1AllorsBinary = binary1;
                         values.I1AllorsBinary = binary2;
                         values.S1AllorsBinary = binary3;
 
-                        this.Session.Rollback();
+                        this.Transaction.Rollback();
 
                         Assert.False(values.ExistC1AllorsBinary);
                         Assert.False(values.ExistI1AllorsBinary);
@@ -1420,7 +1420,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // rollback reset
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
 
                         mark();
 
@@ -1428,13 +1428,13 @@ namespace Allors.Database.Adapters
                         values.I1AllorsBinary = binary2;
                         values.S1AllorsBinary = binary3;
 
-                        this.Session.Commit();
+                        this.Transaction.Commit();
 
                         values.C1AllorsBinary = new byte[] { 9 };
                         values.I1AllorsBinary = new byte[] { 9 };
                         values.S1AllorsBinary = new byte[] { 9 };
 
-                        this.Session.Rollback();
+                        this.Transaction.Rollback();
 
                         Assert.True(values.ExistC1AllorsBinary);
                         Assert.True(values.ExistI1AllorsBinary);
@@ -1447,7 +1447,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // rollback reset null
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
 
                         mark();
 
@@ -1455,13 +1455,13 @@ namespace Allors.Database.Adapters
                         values.I1AllorsBinary = binary2;
                         values.S1AllorsBinary = binary3;
 
-                        this.Session.Commit();
+                        this.Transaction.Commit();
 
                         values.RemoveC1AllorsBinary();
                         values.RemoveI1AllorsBinary();
                         values.RemoveS1AllorsBinary();
 
-                        this.Session.Rollback();
+                        this.Transaction.Rollback();
 
                         Assert.True(values.ExistC1AllorsBinary);
                         Assert.True(values.ExistI1AllorsBinary);
@@ -1481,19 +1481,19 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                if (this.Session is ISession)
+                if (this.Transaction is ITransaction)
                 {
                     var binary1 = new byte[] { 0 };
 
-                    var c1 = C1.Create(this.Session);
+                    var c1 = C1.Create(this.Transaction);
                     var c1Id = c1.Id.ToString();
 
                     c1.C1AllorsBinary = binary1;
 
                     // Force a Flush
-                    Extent<C1> extent = this.Session.Extent(m.C1.ObjectType);
+                    Extent<C1> extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddEquals(m.C1.C1AllorsBinary, binary1);
                     Assert.NotNull(extent.First);
 
@@ -1503,7 +1503,7 @@ namespace Allors.Database.Adapters
 
                     GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
 
-                    c1 = (C1)this.Session.Instantiate(c1Id);
+                    c1 = (C1)this.Transaction.Instantiate(c1Id);
 
                     Assert.Equal(binary1, c1.C1AllorsBinary);
                 }
@@ -1516,12 +1516,12 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
                     {
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsString = "a";
                         values.I1AllorsString = "b";
                         values.S1AllorsString = "c";
@@ -1537,7 +1537,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // initial empty
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
 
                         mark();
                         Assert.False(values.ExistC1AllorsString);
@@ -1551,7 +1551,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // reset empty
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsString = "a";
                         values.I1AllorsString = "b";
                         values.S1AllorsString = "c";
@@ -1577,7 +1577,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // reset null
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsString = "a";
                         values.I1AllorsString = "b";
                         values.S1AllorsString = "c";
@@ -1603,15 +1603,15 @@ namespace Allors.Database.Adapters
 
                     {
                         // rollback set
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
 
-                        this.Session.Commit();
+                        this.Transaction.Commit();
 
                         values.C1AllorsString = "a";
                         values.I1AllorsString = "b";
                         values.S1AllorsString = "c";
 
-                        this.Session.Rollback();
+                        this.Transaction.Rollback();
 
                         Assert.False(values.ExistC1AllorsString);
                         Assert.False(values.ExistI1AllorsString);
@@ -1620,7 +1620,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // rollback reset
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
 
                         mark();
 
@@ -1628,13 +1628,13 @@ namespace Allors.Database.Adapters
                         values.I1AllorsString = "b";
                         values.S1AllorsString = "c";
 
-                        this.Session.Commit();
+                        this.Transaction.Commit();
 
                         values.C1AllorsString = "q";
                         values.I1AllorsString = "r";
                         values.S1AllorsString = "s";
 
-                        this.Session.Rollback();
+                        this.Transaction.Rollback();
 
                         Assert.True(values.ExistC1AllorsString);
                         Assert.True(values.ExistI1AllorsString);
@@ -1647,7 +1647,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // rollback reset null
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
 
                         mark();
 
@@ -1655,13 +1655,13 @@ namespace Allors.Database.Adapters
                         values.I1AllorsString = "b";
                         values.S1AllorsString = "c";
 
-                        this.Session.Commit();
+                        this.Transaction.Commit();
 
                         values.RemoveC1AllorsString();
                         values.RemoveI1AllorsString();
                         values.RemoveS1AllorsString();
 
-                        this.Session.Rollback();
+                        this.Transaction.Rollback();
 
                         Assert.True(values.ExistC1AllorsString);
                         Assert.True(values.ExistI1AllorsString);
@@ -1681,17 +1681,17 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                if (this.Session is ISession)
+                if (this.Transaction is ITransaction)
                 {
-                    var c1 = C1.Create(this.Session);
+                    var c1 = C1.Create(this.Transaction);
                     var c1Id = c1.Id.ToString();
 
                     c1.C1AllorsString = "a";
 
                     // Force a Flush
-                    Extent<C1> extent = this.Session.Extent(m.C1.ObjectType);
+                    Extent<C1> extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddEquals(m.C1.C1AllorsString, "a");
                     Assert.NotNull(extent.First);
 
@@ -1701,7 +1701,7 @@ namespace Allors.Database.Adapters
 
                     GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
 
-                    c1 = (C1)this.Session.Instantiate(c1Id);
+                    c1 = (C1)this.Transaction.Instantiate(c1Id);
 
                     Assert.Equal("a", c1.C1AllorsString);
                 }
@@ -1714,7 +1714,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
@@ -1723,7 +1723,7 @@ namespace Allors.Database.Adapters
                         var unique2 = Guid.NewGuid();
                         var unique3 = Guid.NewGuid();
 
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsUnique = unique1;
                         values.I1AllorsUnique = unique2;
                         values.S1AllorsUnique = unique3;
@@ -1736,7 +1736,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // Empty Guid
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsUnique = Guid.Empty;
                         values.I1AllorsUnique = Guid.Empty;
                         values.S1AllorsUnique = Guid.Empty;
@@ -1749,7 +1749,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // initial empty
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
 
                         Guid? value = null;
 
@@ -1790,7 +1790,7 @@ namespace Allors.Database.Adapters
 
                     {
                         // reset empty
-                        var values = C1.Create(this.Session);
+                        var values = C1.Create(this.Transaction);
                         values.C1AllorsUnique = Guid.NewGuid();
                         values.I1AllorsUnique = Guid.NewGuid();
                         values.S1AllorsUnique = Guid.NewGuid();
@@ -1852,19 +1852,19 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                if (this.Session is ISession)
+                if (this.Transaction is ITransaction)
                 {
                     var unique = Guid.NewGuid();
 
-                    var c1 = C1.Create(this.Session);
+                    var c1 = C1.Create(this.Transaction);
                     var c1Id = c1.Id.ToString();
 
                     c1.C1AllorsUnique = unique;
 
                     // Force a Flush
-                    Extent<C1> extent = this.Session.Extent(m.C1.ObjectType);
+                    Extent<C1> extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddEquals(m.C1.C1AllorsUnique, unique);
                     Assert.NotNull(extent.First);
 
@@ -1874,7 +1874,7 @@ namespace Allors.Database.Adapters
 
                     GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
 
-                    c1 = (C1)this.Session.Instantiate(c1Id);
+                    c1 = (C1)this.Transaction.Instantiate(c1Id);
 
                     Assert.Equal(unique, c1.C1AllorsUnique);
                 }
@@ -1887,22 +1887,22 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 var values = new ArrayList();
                 for (var i = 0; i < 4000; i++)
                 {
-                    values.Add(SingleUnit.Create(this.Session));
+                    values.Add(SingleUnit.Create(this.Transaction));
                 }
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 foreach (SingleUnit singleValue in values)
                 {
                     singleValue.AllorsInteger = int.Parse(singleValue.Strategy.ObjectId.ToString());
                 }
 
-                this.Session.Commit();
+                this.Transaction.Commit();
             }
         }
 
@@ -1912,12 +1912,12 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
-                    var c1A = C1.Create(this.Session);
-                    var c1B = C1.Create(this.Session);
+                    var c1A = C1.Create(this.Transaction);
+                    var c1B = C1.Create(this.Transaction);
 
                     // Illegal Role
                     // Illegal values

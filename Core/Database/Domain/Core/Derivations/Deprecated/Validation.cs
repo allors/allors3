@@ -85,8 +85,8 @@ namespace Allors.Database.Domain.Derivations
 
                     if (role != null)
                     {
-                        var session = association.Strategy.Session;
-                        var extent = session.Extent(objectType);
+                        var transaction = association.Strategy.Transaction;
+                        var extent = transaction.Extent(objectType);
                         extent.Filter.AddEquals(roleType, role);
                         if (extent.Count != 1)
                         {

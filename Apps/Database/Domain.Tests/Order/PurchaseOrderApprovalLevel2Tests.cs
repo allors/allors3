@@ -21,11 +21,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPurchaseOrderDeriveTitle()
         {
-            var purchaseOrder = new PurchaseOrderBuilder(this.Session).WithDefaults(this.InternalOrganisation).Build();
-            this.Session.Derive(false);
+            var purchaseOrder = new PurchaseOrderBuilder(this.Transaction).WithDefaults(this.InternalOrganisation).Build();
+            this.Transaction.Derive(false);
 
-            var approval = new PurchaseOrderApprovalLevel2Builder(this.Session).WithPurchaseOrder(purchaseOrder).Build();
-            this.Session.Derive(false);
+            var approval = new PurchaseOrderApprovalLevel2Builder(this.Transaction).WithPurchaseOrder(purchaseOrder).Build();
+            this.Transaction.Derive(false);
 
             Assert.Equal(approval.Title, "Approval of " + purchaseOrder.WorkItemDescription);
         }
@@ -33,11 +33,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPurchaseOrderDeriveWorkItem()
         {
-            var purchaseOrder = new PurchaseOrderBuilder(this.Session).WithDefaults(this.InternalOrganisation).Build();
-            this.Session.Derive(false);
+            var purchaseOrder = new PurchaseOrderBuilder(this.Transaction).WithDefaults(this.InternalOrganisation).Build();
+            this.Transaction.Derive(false);
 
-            var approval = new PurchaseOrderApprovalLevel2Builder(this.Session).WithPurchaseOrder(purchaseOrder).Build();
-            this.Session.Derive(false);
+            var approval = new PurchaseOrderApprovalLevel2Builder(this.Transaction).WithPurchaseOrder(purchaseOrder).Build();
+            this.Transaction.Derive(false);
 
             Assert.Equal(approval.WorkItem, purchaseOrder);
         }
@@ -45,11 +45,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPurchaseOrderDeriveDeriveDateClosed()
         {
-            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var purchaseOrder = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var approval = new PurchaseOrderApprovalLevel2Builder(this.Session).WithPurchaseOrder(purchaseOrder).Build();
-            this.Session.Derive(false);
+            var approval = new PurchaseOrderApprovalLevel2Builder(this.Transaction).WithPurchaseOrder(purchaseOrder).Build();
+            this.Transaction.Derive(false);
 
             Assert.True(approval.ExistDateClosed);
         }
@@ -57,16 +57,16 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPurchaseOrderPurchaseOrderStateDeriveDateClosed()
         {
-            var purchaseOrder = this.InternalOrganisation.CreatePurchaseOrderWithBothItems(this.Session.Faker());
+            var purchaseOrder = this.InternalOrganisation.CreatePurchaseOrderWithBothItems(this.Transaction.Faker());
 
             var supplierRelationship = purchaseOrder.TakenViaSupplier.SupplierRelationshipsWhereSupplier.First(v => v.InternalOrganisation == purchaseOrder.OrderedBy);
             supplierRelationship.NeedsApproval = true;
             supplierRelationship.ApprovalThresholdLevel2 = 2;
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             purchaseOrder.SetReadyForProcessing();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.False(purchaseOrder.PurchaseOrderApprovalsLevel2WherePurchaseOrder.First().ExistDateClosed);
         }
@@ -74,13 +74,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnCreatedPurchaseOrderApprovalLevel2DeriveEmptyParticipants()
         {
-            var purchaseOrder = new PurchaseOrderBuilder(this.Session).WithDefaults(this.InternalOrganisation).Build();
+            var purchaseOrder = new PurchaseOrderBuilder(this.Transaction).WithDefaults(this.InternalOrganisation).Build();
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var approval = new PurchaseOrderApprovalLevel2Builder(this.Session).WithPurchaseOrder(purchaseOrder).Build();
+            var approval = new PurchaseOrderApprovalLevel2Builder(this.Transaction).WithPurchaseOrder(purchaseOrder).Build();
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Empty(approval.Participants);
         }
@@ -88,17 +88,17 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnCreatedPurchaseInvoiceApprovalLevel2DeriveParticipants()
         {
-            var purchaseOrder = this.InternalOrganisation.CreatePurchaseOrderWithNonSerializedItem(this.Session.Faker());
+            var purchaseOrder = this.InternalOrganisation.CreatePurchaseOrderWithNonSerializedItem(this.Transaction.Faker());
 
             var supplierRelationship = purchaseOrder.TakenViaSupplier.SupplierRelationshipsWhereSupplier.First(v => v.InternalOrganisation == purchaseOrder.OrderedBy);
             supplierRelationship.NeedsApproval = true;
             supplierRelationship.ApprovalThresholdLevel2 = 1;
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             purchaseOrder.SetReadyForProcessing();
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.NotEmpty(purchaseOrder.PurchaseOrderApprovalsLevel2WherePurchaseOrder.First().Participants);
         }

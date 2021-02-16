@@ -23,14 +23,14 @@ namespace Commands
         {
             var exitCode = ExitCode.Success;
 
-            using var session = this.Parent.Database.CreateSession();
+            using var transaction = this.Parent.Database.CreateTransaction();
             this.Logger.Info("Begin");
 
-            var scheduler = new AutomatedAgents(session).System;
-            session.Context().User = scheduler;
+            var scheduler = new AutomatedAgents(transaction).System;
+            transaction.Context().User = scheduler;
 
             var m = this.Parent.M;
-            var printDocuments = new PrintDocuments(session).Extent();
+            var printDocuments = new PrintDocuments(transaction).Extent();
             printDocuments.Filter.AddNot().AddExists(m.PrintDocument.Media);
 
             foreach (PrintDocument printDocument in printDocuments)
@@ -51,12 +51,12 @@ namespace Commands
                         this.Logger.Info($"Printed {printable.PrintDocument.Media.FileName}");
                     }
 
-                    session.Derive();
-                    session.Commit();
+                    transaction.Derive();
+                    transaction.Commit();
                 }
                 catch (Exception e)
                 {
-                    session.Rollback();
+                    transaction.Rollback();
                     exitCode = ExitCode.Error;
 
                     this.Logger.Error(e, $"Could not print {printable}");

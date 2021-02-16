@@ -42,13 +42,13 @@ namespace Allors.Database.Domain
 
         public SalesOrderItemState InProcess => this.Cache[InProcessId];
 
-        private UniquelyIdentifiableCache<SalesOrderItemState> Cache => this.cache ??= new UniquelyIdentifiableCache<SalesOrderItemState>(this.Session);
+        private UniquelyIdentifiableCache<SalesOrderItemState> Cache => this.cache ??= new UniquelyIdentifiableCache<SalesOrderItemState>(this.Transaction);
 
         protected override void AppsPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.InventoryTransactionReason.ObjectType);
 
         protected override void AppsSetup(Setup setup)
         {
-            var reasons = new InventoryTransactionReasons(this.Session);
+            var reasons = new InventoryTransactionReasons(this.Transaction);
 
             var merge = this.Cache.Merger().Action();
 

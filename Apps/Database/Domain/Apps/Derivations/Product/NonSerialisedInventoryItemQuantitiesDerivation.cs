@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<NonSerialisedInventoryItem>())
             {
-                var settings = @this.Strategy.Session.GetSingleton().Settings;
+                var settings = @this.Strategy.Transaction.GetSingleton().Settings;
 
                 var quantityOnHand = @this.CalculateQuantityOnHand(settings);
                 if (quantityOnHand != @this.QuantityOnHand)
@@ -58,8 +58,8 @@ namespace Allors.Database.Domain
                     foreach (PurchaseOrderItem purchaseOrderItem in @this.Part.PurchaseOrderItemsWherePart)
                     {
                         var facility = purchaseOrderItem.PurchaseOrderWherePurchaseOrderItem?.StoredInFacility;
-                        if ((purchaseOrderItem.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(@this.Strategy.Session).InProcess)
-                             || purchaseOrderItem.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(@this.Strategy.Session).Sent))
+                        if ((purchaseOrderItem.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(@this.Strategy.Transaction).InProcess)
+                             || purchaseOrderItem.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(@this.Strategy.Transaction).Sent))
                             && @this.Facility.Equals(facility))
                         {
                             quantityExpectedIn += purchaseOrderItem.QuantityOrdered;
@@ -92,8 +92,8 @@ namespace Allors.Database.Domain
 
         private void ReplenishSalesOrders(NonSerialisedInventoryItem nonSerialisedInventoryItem)
         {
-            var salesOrderItems = nonSerialisedInventoryItem.Strategy.Session.Extent<SalesOrderItem>();
-            salesOrderItems.Filter.AddEquals(this.M.SalesOrderItem.SalesOrderItemState, new SalesOrderItemStates(nonSerialisedInventoryItem.Strategy.Session).InProcess);
+            var salesOrderItems = nonSerialisedInventoryItem.Strategy.Transaction.Extent<SalesOrderItem>();
+            salesOrderItems.Filter.AddEquals(this.M.SalesOrderItem.SalesOrderItemState, new SalesOrderItemStates(nonSerialisedInventoryItem.Strategy.Transaction).InProcess);
             salesOrderItems.AddSort(this.M.OrderItem.DerivedDeliveryDate, SortDirection.Ascending);
             var nonUnifiedGoods = nonSerialisedInventoryItem.Part.NonUnifiedGoodsWherePart;
             var unifiedGood = nonSerialisedInventoryItem.Part as UnifiedGood;
@@ -110,7 +110,7 @@ namespace Allors.Database.Domain
                     salesOrderItems.Filter.AddContainedIn(this.M.SalesOrderItem.Product, (Extent)nonUnifiedGoods);
                 }
 
-                salesOrderItems = nonSerialisedInventoryItem.Strategy.Session.Instantiate(salesOrderItems);
+                salesOrderItems = nonSerialisedInventoryItem.Strategy.Transaction.Instantiate(salesOrderItems);
 
                 var extra = nonSerialisedInventoryItem.QuantityOnHand - nonSerialisedInventoryItem.PreviousQuantityOnHand;
 
@@ -147,12 +147,12 @@ namespace Allors.Database.Domain
 
         private void DepleteSalesOrders(NonSerialisedInventoryItem nonSerialisedInventoryItem)
         {
-            var salesOrderItems = nonSerialisedInventoryItem.Strategy.Session.Extent<SalesOrderItem>();
-            salesOrderItems.Filter.AddEquals(this.M.SalesOrderItem.SalesOrderItemState, new SalesOrderItemStates(nonSerialisedInventoryItem.Strategy.Session).InProcess);
+            var salesOrderItems = nonSerialisedInventoryItem.Strategy.Transaction.Extent<SalesOrderItem>();
+            salesOrderItems.Filter.AddEquals(this.M.SalesOrderItem.SalesOrderItemState, new SalesOrderItemStates(nonSerialisedInventoryItem.Strategy.Transaction).InProcess);
             salesOrderItems.Filter.AddExists(this.M.OrderItem.DerivedDeliveryDate);
             salesOrderItems.AddSort(this.M.OrderItem.DerivedDeliveryDate, SortDirection.Descending);
 
-            salesOrderItems = nonSerialisedInventoryItem.Strategy.Session.Instantiate(salesOrderItems);
+            salesOrderItems = nonSerialisedInventoryItem.Strategy.Transaction.Instantiate(salesOrderItems);
 
             var subtract = nonSerialisedInventoryItem.PreviousQuantityOnHand - nonSerialisedInventoryItem.QuantityOnHand;
 

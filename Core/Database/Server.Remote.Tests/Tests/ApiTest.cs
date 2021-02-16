@@ -13,6 +13,7 @@ namespace Allors.Server.Tests
     using System.Reflection;
     using System.Text;
     using System.Threading.Tasks;
+    using Database;
     using Database.Adapters.SqlClient;
     using Database.Domain;
     using Database.Meta;
@@ -21,7 +22,6 @@ namespace Allors.Server.Tests
     using Newtonsoft.Json;
     using Protocol.Json.Auth;
     using Xunit;
-    using ISession = Database.ISession;
     using ObjectFactory = Database.ObjectFactory;
 
     public abstract class ApiTest : IDisposable
@@ -64,25 +64,25 @@ namespace Allors.Server.Tests
 
             Assert.True(response.IsSuccessStatusCode);
 
-            this.Session = database.CreateSession();
+            this.Transaction = database.CreateTransaction();
         }
 
-        public M M => this.Session.Database.Context().M;
+        public M M => this.Transaction.Database.Context().M;
 
         public IConfigurationRoot Configuration { get; set; }
 
-        protected ISession Session { get; private set; }
+        protected ITransaction Transaction { get; private set; }
 
         protected HttpClient HttpClient { get; set; }
 
         protected HttpClientHandler HttpClientHandler { get; set; }
 
-        protected User Administrator => new Users(this.Session).FindBy(this.M.User.UserName, "jane@example.com");
+        protected User Administrator => new Users(this.Transaction).FindBy(this.M.User.UserName, "jane@example.com");
 
         public void Dispose()
         {
-            this.Session.Rollback();
-            this.Session = null;
+            this.Transaction.Rollback();
+            this.Transaction = null;
 
             this.HttpClient.Dispose();
             this.HttpClient = null;

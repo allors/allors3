@@ -95,15 +95,15 @@ namespace Commands
                 return 1;
             }
 
-            using (var session = this.Parent.Database.CreateSession())
+            using (var transaction = this.Parent.Database.CreateTransaction())
             {
-                new Allors.Database.Domain.Upgrade(session, this.Parent.DataPath).Execute();
-                session.Commit();
+                new Allors.Database.Domain.Upgrade(transaction, this.Parent.DataPath).Execute();
+                transaction.Commit();
 
-                new Permissions(session).Sync();
-                new Security(session).Apply();
+                new Permissions(transaction).Sync();
+                new Security(transaction).Apply();
 
-                session.Commit();
+                transaction.Commit();
             }
 
             this.Logger.Info("End");

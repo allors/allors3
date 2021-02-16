@@ -17,9 +17,9 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnCreatedThrowValidationError()
         {
-            new AgreementProductApplicabilityBuilder(this.Session).Build();
+            new AgreementProductApplicabilityBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.StartsWith("AgreementProductApplicability.Agreement, AgreementProductApplicability.AgreementItem at least one"));
         }
     }
@@ -31,44 +31,44 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedAgreementThrowValidationError()
         {
-            var agreementProductApplicability = new AgreementProductApplicabilityBuilder(this.Session)
-                .WithAgreement(new SalesAgreementBuilder(this.Session).Build())
+            var agreementProductApplicability = new AgreementProductApplicabilityBuilder(this.Transaction)
+                .WithAgreement(new SalesAgreementBuilder(this.Transaction).Build())
                 .Build();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.DoesNotContain(errors, e => e.Message.StartsWith("AgreementProductApplicability.Agreement, AgreementProductApplicability.AgreementItem at least one"));
 
             agreementProductApplicability.RemoveAgreement();
 
-            errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.StartsWith("AgreementProductApplicability.Agreement, AgreementProductApplicability.AgreementItem at least one"));
         }
 
         [Fact]
         public void ChangedAgreementItemThrowValidationError()
         {
-            var agreementProductApplicability = new AgreementProductApplicabilityBuilder(this.Session)
-                .WithAgreement(new SalesAgreementBuilder(this.Session).Build())
+            var agreementProductApplicability = new AgreementProductApplicabilityBuilder(this.Transaction)
+                .WithAgreement(new SalesAgreementBuilder(this.Transaction).Build())
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            agreementProductApplicability.AgreementItem = new AgreementSectionBuilder(this.Session).Build();
+            agreementProductApplicability.AgreementItem = new AgreementSectionBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: AgreementProductApplicability.Agreement\nAgreementProductApplicability.AgreementItem"));
         }
 
         [Fact]
         public void ChangedAgreementThrowValidationError_2()
         {
-            var agreementProductApplicability = new AgreementProductApplicabilityBuilder(this.Session)
-                .WithAgreementItem(new AgreementSectionBuilder(this.Session).Build())
+            var agreementProductApplicability = new AgreementProductApplicabilityBuilder(this.Transaction)
+                .WithAgreementItem(new AgreementSectionBuilder(this.Transaction).Build())
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            agreementProductApplicability.Agreement = new SalesAgreementBuilder(this.Session).Build();
+            agreementProductApplicability.Agreement = new SalesAgreementBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: AgreementProductApplicability.Agreement\nAgreementProductApplicability.AgreementItem"));
         }
     }

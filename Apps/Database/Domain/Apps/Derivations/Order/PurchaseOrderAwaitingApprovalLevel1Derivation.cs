@@ -29,7 +29,7 @@ namespace Allors.Database.Domain
 
                 if (!openTasks.OfType<PurchaseOrderApprovalLevel1>().Any())
                 {
-                    new PurchaseOrderApprovalLevel1Builder(@this.Session()).WithPurchaseOrder(@this).Build();
+                    new PurchaseOrderApprovalLevel1Builder(@this.Transaction()).WithPurchaseOrder(@this).Build();
                 }
             }
         }

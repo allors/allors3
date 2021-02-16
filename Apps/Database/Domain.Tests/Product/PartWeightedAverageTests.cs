@@ -20,8 +20,8 @@ namespace Allors.Database.Domain.Tests
             this.InternalOrganisation.IsAutomaticallyReceived = true;
             var defaultFacility = this.InternalOrganisation.StoresWhereInternalOrganisation.Single().DefaultFacility;
 
-            var secondFacility = new FacilityBuilder(this.Session)
-                .WithFacilityType(new FacilityTypes(this.Session).Warehouse)
+            var secondFacility = new FacilityBuilder(this.Transaction)
+                .WithFacilityType(new FacilityTypes(this.Transaction).Warehouse)
                 .WithName("second facility")
                 .WithOwner(this.InternalOrganisation)
                 .Build();
@@ -29,123 +29,123 @@ namespace Allors.Database.Domain.Tests
             var supplier = this.InternalOrganisation.ActiveSuppliers.First;
             var customer = this.InternalOrganisation.ActiveCustomers.First;
 
-            var part = new UnifiedGoodBuilder(this.Session).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
-            this.Session.Derive();
+            var part = new UnifiedGoodBuilder(this.Transaction).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
+            this.Transaction.Derive();
 
-            var purchaseOrder1 = new PurchaseOrderBuilder(this.Session)
+            var purchaseOrder1 = new PurchaseOrderBuilder(this.Transaction)
                 .WithTakenViaSupplier(supplier)
                 .WithStoredInFacility(defaultFacility)
-                .WithDeliveryDate(this.Session.Now())
+                .WithDeliveryDate(this.Transaction.Now())
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             // Beginning inventory: 150 items at 8 euro received in 2 facilities
-            var purchaseItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(100).WithAssignedUnitPrice(8M).Build();
+            var purchaseItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(100).WithAssignedUnitPrice(8M).Build();
             purchaseOrder1.AddPurchaseOrderItem(purchaseItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder1.SetReadyForProcessing();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder1.Send();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseItem.QuickReceive();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var purchaseOrder2 = new PurchaseOrderBuilder(this.Session)
+            var purchaseOrder2 = new PurchaseOrderBuilder(this.Transaction)
                 .WithTakenViaSupplier(supplier)
                 .WithStoredInFacility(secondFacility)
-                .WithDeliveryDate(this.Session.Now())
+                .WithDeliveryDate(this.Transaction.Now())
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             // Beginning inventory: 150 items at 8 euro
-            purchaseItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(50).WithAssignedUnitPrice(8M).Build();
+            purchaseItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(50).WithAssignedUnitPrice(8M).Build();
             purchaseOrder2.AddPurchaseOrderItem(purchaseItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder2.SetReadyForProcessing();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder2.Send();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseItem.QuickReceive();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(150, part.QuantityOnHand);
             Assert.Equal(8, part.PartWeightedAverage.AverageCost);
 
             purchaseOrder1.Revise();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             // Purchase: 75 items at 8.1 euro
-            purchaseItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(75).WithAssignedUnitPrice(8.1M).Build();
+            purchaseItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(75).WithAssignedUnitPrice(8.1M).Build();
             purchaseOrder1.AddPurchaseOrderItem(purchaseItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder1.SetReadyForProcessing();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder1.Send();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseItem.QuickReceive();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(225, part.QuantityOnHand);
             Assert.Equal(8.03M, part.PartWeightedAverage.AverageCost);
 
-            var salesOrder = new SalesOrderBuilder(this.Session)
+            var salesOrder = new SalesOrderBuilder(this.Transaction)
                 .WithTakenBy(this.InternalOrganisation)
                 .WithShipToCustomer(customer)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             // Sell 50 items for 20 euro
-            var salesItem1 = new SalesOrderItemBuilder(this.Session).WithProduct(part).WithQuantityOrdered(50).WithAssignedUnitPrice(20M).Build();
+            var salesItem1 = new SalesOrderItemBuilder(this.Transaction).WithProduct(part).WithQuantityOrdered(50).WithAssignedUnitPrice(20M).Build();
             salesOrder.AddSalesOrderItem(salesItem1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             salesOrder.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             salesOrder.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             salesOrder.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             salesOrder.Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var customerShipment = salesItem1.OrderShipmentsWhereOrderItem.First.ShipmentItem.ShipmentWhereShipmentItem as CustomerShipment;
 
             customerShipment.Pick();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            customer.PickListsWhereShipToParty.First(v => v.PickListState.Equals(new PickListStates(this.Session).Created)).SetPicked();
+            customer.PickListsWhereShipToParty.First(v => v.PickListState.Equals(new PickListStates(this.Transaction).Created)).SetPicked();
 
-            var package = new ShipmentPackageBuilder(this.Session).Build();
+            var package = new ShipmentPackageBuilder(this.Transaction).Build();
             customerShipment.AddShipmentPackage(package);
 
             foreach (ShipmentItem shipmentItem in customerShipment.ShipmentItems)
             {
-                package.AddPackagingContent(new PackagingContentBuilder(this.Session).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
+                package.AddPackagingContent(new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
             }
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             customerShipment.Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(175, part.QuantityOnHand);
             Assert.Equal(8.03M, part.PartWeightedAverage.AverageCost);
@@ -153,44 +153,44 @@ namespace Allors.Database.Domain.Tests
 
             // Again Sell 50 items for 20 euro
             salesOrder.Revise();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var salesItem2 = new SalesOrderItemBuilder(this.Session).WithProduct(part).WithQuantityOrdered(50).WithAssignedUnitPrice(20M).Build();
+            var salesItem2 = new SalesOrderItemBuilder(this.Transaction).WithProduct(part).WithQuantityOrdered(50).WithAssignedUnitPrice(20M).Build();
             salesOrder.AddSalesOrderItem(salesItem2);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             salesOrder.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             salesOrder.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             salesOrder.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             salesOrder.Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var customerShipment2 = salesItem2.OrderShipmentsWhereOrderItem.First.ShipmentItem.ShipmentWhereShipmentItem as CustomerShipment;
 
             customerShipment2.Pick();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            customer.PickListsWhereShipToParty.First(v => v.PickListState.Equals(new PickListStates(this.Session).Created)).SetPicked();
+            customer.PickListsWhereShipToParty.First(v => v.PickListState.Equals(new PickListStates(this.Transaction).Created)).SetPicked();
 
-            var package2 = new ShipmentPackageBuilder(this.Session).Build();
+            var package2 = new ShipmentPackageBuilder(this.Transaction).Build();
             customerShipment2.AddShipmentPackage(package2);
 
             foreach (ShipmentItem shipmentItem in customerShipment2.ShipmentItems)
             {
-                package.AddPackagingContent(new PackagingContentBuilder(this.Session).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
+                package.AddPackagingContent(new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
             }
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             customerShipment2.Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(125, part.QuantityOnHand);
             Assert.Equal(8.03M, part.PartWeightedAverage.AverageCost);
@@ -198,37 +198,37 @@ namespace Allors.Database.Domain.Tests
 
             // Purchase: 50 items at 8.25 euro
             purchaseOrder1.Revise();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            purchaseItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(50).WithAssignedUnitPrice(8.25M).Build();
+            purchaseItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(50).WithAssignedUnitPrice(8.25M).Build();
             purchaseOrder1.AddPurchaseOrderItem(purchaseItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder1.SetReadyForProcessing();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder1.Send();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseItem.QuickReceive();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(175, part.QuantityOnHand);
             Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
 
             // Use 65 items in a workorder
-            var workEffort = new WorkTaskBuilder(this.Session).WithName("Activity").WithCustomer(customer).WithTakenBy(this.InternalOrganisation).Build();
+            var workEffort = new WorkTaskBuilder(this.Transaction).WithName("Activity").WithCustomer(customer).WithTakenBy(this.InternalOrganisation).Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithInventoryItem(part.InventoryItemsWherePart.First)
                 .WithQuantity(65)
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             Assert.Equal(110, part.QuantityOnHand);
             Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
@@ -237,247 +237,247 @@ namespace Allors.Database.Domain.Tests
             // Cancel workeffort inventory assignment
             inventoryAssignment.Delete();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             Assert.Equal(175, part.QuantityOnHand);
             Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
 
             // Use 35 items in a workorder
-            inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+            inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithInventoryItem(part.InventoryItemsWherePart.First)
                 .WithQuantity(35)
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             Assert.Equal(140, part.QuantityOnHand);
             Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
             Assert.Equal(283.15M, inventoryAssignment.CostOfGoodsSold);
 
             // Use 30 items in a workorder form second facility
-            inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+            inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithInventoryItem(part.InventoryItemsWherePart.First(v => v.Facility.Equals(secondFacility)))
                 .WithQuantity(30)
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             Assert.Equal(110, part.QuantityOnHand);
             Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
             Assert.Equal(242.7M, inventoryAssignment.CostOfGoodsSold);
 
             // Purchase: 90 items at 8.35 euro
-            var purchaseOrder3 = new PurchaseOrderBuilder(this.Session)
+            var purchaseOrder3 = new PurchaseOrderBuilder(this.Transaction)
                 .WithTakenViaSupplier(supplier)
                 .WithStoredInFacility(defaultFacility)
-                .WithDeliveryDate(this.Session.Now())
+                .WithDeliveryDate(this.Transaction.Now())
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            purchaseItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(90).WithAssignedUnitPrice(8.35M).Build();
+            purchaseItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(90).WithAssignedUnitPrice(8.35M).Build();
             purchaseOrder3.AddPurchaseOrderItem(purchaseItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder3.SetReadyForProcessing();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder3.Send();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder3.QuickReceive();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             // Purchase: 50 items at 8.45 euro
-            var purchaseOrder4 = new PurchaseOrderBuilder(this.Session)
+            var purchaseOrder4 = new PurchaseOrderBuilder(this.Transaction)
                 .WithTakenViaSupplier(supplier)
                 .WithStoredInFacility(defaultFacility)
-                .WithDeliveryDate(this.Session.Now())
+                .WithDeliveryDate(this.Transaction.Now())
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            purchaseItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(50).WithAssignedUnitPrice(8.45M).Build();
+            purchaseItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(50).WithAssignedUnitPrice(8.45M).Build();
             purchaseOrder4.AddPurchaseOrderItem(purchaseItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder4.SetReadyForProcessing();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder4.Send();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder4.QuickReceive();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(250, part.QuantityOnHand);
             Assert.Equal(8.26M, part.PartWeightedAverage.AverageCost);
 
             // Ship 10 items to customer (without sales order)
-            var outgoingShipment = new CustomerShipmentBuilder(this.Session)
+            var outgoingShipment = new CustomerShipmentBuilder(this.Transaction)
                 .WithShipToParty(customer)
                 .WithShipToAddress(customer.ShippingAddress)
-                .WithShipmentMethod(new ShipmentMethods(this.Session).Ground)
+                .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            var outgoingItem = new ShipmentItemBuilder(this.Session).WithGood(part).WithQuantity(10).Build();
+            var outgoingItem = new ShipmentItemBuilder(this.Transaction).WithGood(part).WithQuantity(10).Build();
             outgoingShipment.AddShipmentItem(outgoingItem);
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             outgoingShipment.Pick();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            customer.PickListsWhereShipToParty.First(v => v.PickListState.Equals(new PickListStates(this.Session).Created)).SetPicked();
+            customer.PickListsWhereShipToParty.First(v => v.PickListState.Equals(new PickListStates(this.Transaction).Created)).SetPicked();
 
-            package = new ShipmentPackageBuilder(this.Session).Build();
+            package = new ShipmentPackageBuilder(this.Transaction).Build();
             customerShipment2.AddShipmentPackage(package);
 
             foreach (ShipmentItem shipmentItem in outgoingShipment.ShipmentItems)
             {
-                package.AddPackagingContent(new PackagingContentBuilder(this.Session).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
+                package.AddPackagingContent(new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
             }
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             outgoingShipment.Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(240, part.QuantityOnHand);
             Assert.Equal(8.26M, part.PartWeightedAverage.AverageCost);
 
             // Receive 10 items at 8.55 from supplier (without purchase order)
-            var incomingShipment = new PurchaseShipmentBuilder(this.Session)
-                .WithShipmentMethod(new ShipmentMethods(this.Session).Ground)
+            var incomingShipment = new PurchaseShipmentBuilder(this.Transaction)
+                .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
                 .WithShipFromParty(supplier)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var incomingItem = new ShipmentItemBuilder(this.Session).WithPart(part).WithQuantity(10).WithUnitPurchasePrice(8.55M).Build();
+            var incomingItem = new ShipmentItemBuilder(this.Transaction).WithPart(part).WithQuantity(10).WithUnitPurchasePrice(8.55M).Build();
             incomingShipment.AddShipmentItem(incomingItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             incomingShipment.Receive();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(250, part.QuantityOnHand);
             Assert.Equal(8.27M, part.PartWeightedAverage.AverageCost);
 
             // Receive 100 items at 7.9 from supplier (without purchase order)
-            incomingShipment = new PurchaseShipmentBuilder(this.Session)
-                .WithShipmentMethod(new ShipmentMethods(this.Session).Ground)
+            incomingShipment = new PurchaseShipmentBuilder(this.Transaction)
+                .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
                 .WithShipFromParty(supplier)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            incomingItem = new ShipmentItemBuilder(this.Session).WithPart(part).WithQuantity(100).WithUnitPurchasePrice(7.9M).Build();
+            incomingItem = new ShipmentItemBuilder(this.Transaction).WithPart(part).WithQuantity(100).WithUnitPurchasePrice(7.9M).Build();
             incomingShipment.AddShipmentItem(incomingItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             incomingShipment.Receive();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(350, part.QuantityOnHand);
             Assert.Equal(8.17M, part.PartWeightedAverage.AverageCost);
 
             // Ship all items to customer (without sales order)
-            outgoingShipment = new CustomerShipmentBuilder(this.Session)
+            outgoingShipment = new CustomerShipmentBuilder(this.Transaction)
                 .WithShipToParty(customer)
                 .WithShipFromFacility(part.DefaultFacility)
                 .WithShipToAddress(customer.ShippingAddress)
-                .WithShipmentMethod(new ShipmentMethods(this.Session).Ground)
+                .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            outgoingItem = new ShipmentItemBuilder(this.Session).WithGood(part).WithQuantity(330).Build();
+            outgoingItem = new ShipmentItemBuilder(this.Transaction).WithGood(part).WithQuantity(330).Build();
             outgoingShipment.AddShipmentItem(outgoingItem);
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             outgoingShipment.Pick();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            customer.PickListsWhereShipToParty.First(v => v.PickListState.Equals(new PickListStates(this.Session).Created)).SetPicked();
+            customer.PickListsWhereShipToParty.First(v => v.PickListState.Equals(new PickListStates(this.Transaction).Created)).SetPicked();
 
-            package = new ShipmentPackageBuilder(this.Session).Build();
+            package = new ShipmentPackageBuilder(this.Transaction).Build();
             customerShipment2.AddShipmentPackage(package);
 
             foreach (ShipmentItem shipmentItem in outgoingShipment.ShipmentItems)
             {
-                package.AddPackagingContent(new PackagingContentBuilder(this.Session).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
+                package.AddPackagingContent(new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
             }
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             outgoingShipment.Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             // Ship all items to customer (without sales order)
-            outgoingShipment = new CustomerShipmentBuilder(this.Session)
+            outgoingShipment = new CustomerShipmentBuilder(this.Transaction)
                 .WithShipToParty(customer)
                 .WithShipFromFacility(secondFacility)
                 .WithShipToAddress(customer.ShippingAddress)
-                .WithShipmentMethod(new ShipmentMethods(this.Session).Ground)
+                .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            outgoingItem = new ShipmentItemBuilder(this.Session).WithGood(part).WithQuantity(20).Build();
+            outgoingItem = new ShipmentItemBuilder(this.Transaction).WithGood(part).WithQuantity(20).Build();
             outgoingShipment.AddShipmentItem(outgoingItem);
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             outgoingShipment.Pick();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            customer.PickListsWhereShipToParty.First(v => v.PickListState.Equals(new PickListStates(this.Session).Created)).SetPicked();
+            customer.PickListsWhereShipToParty.First(v => v.PickListState.Equals(new PickListStates(this.Transaction).Created)).SetPicked();
 
-            package = new ShipmentPackageBuilder(this.Session).Build();
+            package = new ShipmentPackageBuilder(this.Transaction).Build();
             customerShipment2.AddShipmentPackage(package);
 
             foreach (ShipmentItem shipmentItem in outgoingShipment.ShipmentItems)
             {
-                package.AddPackagingContent(new PackagingContentBuilder(this.Session).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
+                package.AddPackagingContent(new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
             }
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             outgoingShipment.Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(0, part.QuantityOnHand);
             Assert.Equal(8.17M, part.PartWeightedAverage.AverageCost);
 
             purchaseOrder1.Revise();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             // Purchase 150 items at 8 euro
-            purchaseItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(150).WithAssignedUnitPrice(8M).Build();
+            purchaseItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(150).WithAssignedUnitPrice(8M).Build();
             purchaseOrder1.AddPurchaseOrderItem(purchaseItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder1.SetReadyForProcessing();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder1.Send();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseItem.QuickReceive();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(150, part.QuantityOnHand);
             Assert.Equal(8, part.PartWeightedAverage.AverageCost);
@@ -489,8 +489,8 @@ namespace Allors.Database.Domain.Tests
             this.InternalOrganisation.IsAutomaticallyReceived = true;
             var defaultFacility = this.InternalOrganisation.StoresWhereInternalOrganisation.Single().DefaultFacility;
 
-            var secondFacility = new FacilityBuilder(this.Session)
-                .WithFacilityType(new FacilityTypes(this.Session).Warehouse)
+            var secondFacility = new FacilityBuilder(this.Transaction)
+                .WithFacilityType(new FacilityTypes(this.Transaction).Warehouse)
                 .WithName("second facility")
                 .WithOwner(this.InternalOrganisation)
                 .Build();
@@ -498,129 +498,129 @@ namespace Allors.Database.Domain.Tests
             var supplier = this.InternalOrganisation.ActiveSuppliers.First;
             var customer = this.InternalOrganisation.ActiveCustomers.First;
 
-            var part = new NonUnifiedPartBuilder(this.Session).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
-            var good = new NonUnifiedGoodBuilder(this.Session)
+            var part = new NonUnifiedPartBuilder(this.Transaction).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
+            var good = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithName(part.Name)
                 .WithPart(part)
-                .WithVatRate(new VatRates(this.Session).Zero)
+                .WithVatRate(new VatRates(this.Transaction).Zero)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var purchaseOrder1 = new PurchaseOrderBuilder(this.Session)
+            var purchaseOrder1 = new PurchaseOrderBuilder(this.Transaction)
                 .WithTakenViaSupplier(supplier)
-                .WithDeliveryDate(this.Session.Now())
+                .WithDeliveryDate(this.Transaction.Now())
                 .WithStoredInFacility(defaultFacility)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             // Beginning inventory: 150 items at 8 euro received in 2 facilities
-            var purchaseItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(100).WithAssignedUnitPrice(8M).Build();
+            var purchaseItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(100).WithAssignedUnitPrice(8M).Build();
             purchaseOrder1.AddPurchaseOrderItem(purchaseItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder1.SetReadyForProcessing();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder1.Send();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseItem.QuickReceive();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var purchaseOrder2 = new PurchaseOrderBuilder(this.Session)
+            var purchaseOrder2 = new PurchaseOrderBuilder(this.Transaction)
                 .WithTakenViaSupplier(supplier)
                 .WithStoredInFacility(secondFacility)
-                .WithDeliveryDate(this.Session.Now())
+                .WithDeliveryDate(this.Transaction.Now())
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             // Beginning inventory: 150 items at 8 euro
-            purchaseItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(50).WithAssignedUnitPrice(8M).Build();
+            purchaseItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(50).WithAssignedUnitPrice(8M).Build();
             purchaseOrder2.AddPurchaseOrderItem(purchaseItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder2.SetReadyForProcessing();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder2.Send();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseItem.QuickReceive();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(150, part.QuantityOnHand);
             Assert.Equal(8, part.PartWeightedAverage.AverageCost);
 
             purchaseOrder1.Revise();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             // Purchase: 75 items at 8.1 euro
-            purchaseItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(75).WithAssignedUnitPrice(8.1M).Build();
+            purchaseItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(75).WithAssignedUnitPrice(8.1M).Build();
             purchaseOrder1.AddPurchaseOrderItem(purchaseItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder1.SetReadyForProcessing();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder1.Send();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseItem.QuickReceive();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(225, part.QuantityOnHand);
             Assert.Equal(8.03M, part.PartWeightedAverage.AverageCost);
 
-            var salesOrder = new SalesOrderBuilder(this.Session)
+            var salesOrder = new SalesOrderBuilder(this.Transaction)
                 .WithTakenBy(this.InternalOrganisation)
                 .WithShipToCustomer(customer)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             // Sell 50 items for 20 euro
-            var salesItem1 = new SalesOrderItemBuilder(this.Session).WithProduct(good).WithQuantityOrdered(50).WithAssignedUnitPrice(20M).Build();
+            var salesItem1 = new SalesOrderItemBuilder(this.Transaction).WithProduct(good).WithQuantityOrdered(50).WithAssignedUnitPrice(20M).Build();
             salesOrder.AddSalesOrderItem(salesItem1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             salesOrder.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             salesOrder.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             salesOrder.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             salesOrder.Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var customerShipment = salesItem1.OrderShipmentsWhereOrderItem.First.ShipmentItem.ShipmentWhereShipmentItem as CustomerShipment;
 
             customerShipment.Pick();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            customer.PickListsWhereShipToParty.First(v => v.PickListState.Equals(new PickListStates(this.Session).Created)).SetPicked();
+            customer.PickListsWhereShipToParty.First(v => v.PickListState.Equals(new PickListStates(this.Transaction).Created)).SetPicked();
 
-            var package = new ShipmentPackageBuilder(this.Session).Build();
+            var package = new ShipmentPackageBuilder(this.Transaction).Build();
             customerShipment.AddShipmentPackage(package);
 
             foreach (ShipmentItem shipmentItem in customerShipment.ShipmentItems)
             {
-                package.AddPackagingContent(new PackagingContentBuilder(this.Session).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
+                package.AddPackagingContent(new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
             }
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             customerShipment.Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(175, part.QuantityOnHand);
             Assert.Equal(8.03M, part.PartWeightedAverage.AverageCost);
@@ -628,44 +628,44 @@ namespace Allors.Database.Domain.Tests
 
             // Again Sell 50 items for 20 euro
             salesOrder.Revise();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var salesItem2 = new SalesOrderItemBuilder(this.Session).WithProduct(good).WithQuantityOrdered(50).WithAssignedUnitPrice(20M).Build();
+            var salesItem2 = new SalesOrderItemBuilder(this.Transaction).WithProduct(good).WithQuantityOrdered(50).WithAssignedUnitPrice(20M).Build();
             salesOrder.AddSalesOrderItem(salesItem2);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             salesOrder.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             salesOrder.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             salesOrder.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             salesOrder.Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var customerShipment2 = salesItem2.OrderShipmentsWhereOrderItem.First.ShipmentItem.ShipmentWhereShipmentItem as CustomerShipment;
 
             customerShipment2.Pick();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            customer.PickListsWhereShipToParty.First(v => v.PickListState.Equals(new PickListStates(this.Session).Created)).SetPicked();
+            customer.PickListsWhereShipToParty.First(v => v.PickListState.Equals(new PickListStates(this.Transaction).Created)).SetPicked();
 
-            var package2 = new ShipmentPackageBuilder(this.Session).Build();
+            var package2 = new ShipmentPackageBuilder(this.Transaction).Build();
             customerShipment2.AddShipmentPackage(package2);
 
             foreach (ShipmentItem shipmentItem in customerShipment2.ShipmentItems)
             {
-                package.AddPackagingContent(new PackagingContentBuilder(this.Session).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
+                package.AddPackagingContent(new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
             }
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             customerShipment2.Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(125, part.QuantityOnHand);
             Assert.Equal(8.03M, part.PartWeightedAverage.AverageCost);
@@ -673,37 +673,37 @@ namespace Allors.Database.Domain.Tests
 
             // Purchase: 50 items at 8.25 euro
             purchaseOrder1.Revise();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            purchaseItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(50).WithAssignedUnitPrice(8.25M).Build();
+            purchaseItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(50).WithAssignedUnitPrice(8.25M).Build();
             purchaseOrder1.AddPurchaseOrderItem(purchaseItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder1.SetReadyForProcessing();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder1.Send();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseItem.QuickReceive();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(175, part.QuantityOnHand);
             Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
 
             // Use 65 items in a workorder
-            var workEffort = new WorkTaskBuilder(this.Session).WithName("Activity").WithCustomer(customer).WithTakenBy(this.InternalOrganisation).Build();
+            var workEffort = new WorkTaskBuilder(this.Transaction).WithName("Activity").WithCustomer(customer).WithTakenBy(this.InternalOrganisation).Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithInventoryItem(part.InventoryItemsWherePart.First)
                 .WithQuantity(65)
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             Assert.Equal(110, part.QuantityOnHand);
             Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
@@ -712,247 +712,247 @@ namespace Allors.Database.Domain.Tests
             // Cancel workeffort inventory assignment
             inventoryAssignment.Delete();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             Assert.Equal(175, part.QuantityOnHand);
             Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
 
             // Use 35 items in a workorder
-            inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+            inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithInventoryItem(part.InventoryItemsWherePart.First)
                 .WithQuantity(35)
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             Assert.Equal(140, part.QuantityOnHand);
             Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
             Assert.Equal(283.15M, inventoryAssignment.CostOfGoodsSold);
 
             // Use 30 items in a workorder form second facility
-            inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+            inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithInventoryItem(part.InventoryItemsWherePart.First(v => v.Facility.Equals(secondFacility)))
                 .WithQuantity(30)
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             Assert.Equal(110, part.QuantityOnHand);
             Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
             Assert.Equal(242.7M, inventoryAssignment.CostOfGoodsSold);
 
             // Purchase: 90 items at 8.35 euro
-            var purchaseOrder3 = new PurchaseOrderBuilder(this.Session)
+            var purchaseOrder3 = new PurchaseOrderBuilder(this.Transaction)
                 .WithTakenViaSupplier(supplier)
                 .WithStoredInFacility(defaultFacility)
-                .WithDeliveryDate(this.Session.Now())
+                .WithDeliveryDate(this.Transaction.Now())
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            purchaseItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(90).WithAssignedUnitPrice(8.35M).Build();
+            purchaseItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(90).WithAssignedUnitPrice(8.35M).Build();
             purchaseOrder3.AddPurchaseOrderItem(purchaseItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder3.SetReadyForProcessing();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder3.Send();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder3.QuickReceive();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             // Purchase: 50 items at 8.45 euro
-            var purchaseOrder4 = new PurchaseOrderBuilder(this.Session)
+            var purchaseOrder4 = new PurchaseOrderBuilder(this.Transaction)
                 .WithTakenViaSupplier(supplier)
                 .WithStoredInFacility(defaultFacility)
-                .WithDeliveryDate(this.Session.Now())
+                .WithDeliveryDate(this.Transaction.Now())
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            purchaseItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(50).WithAssignedUnitPrice(8.45M).Build();
+            purchaseItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(50).WithAssignedUnitPrice(8.45M).Build();
             purchaseOrder4.AddPurchaseOrderItem(purchaseItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder4.SetReadyForProcessing();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder4.Send();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder4.QuickReceive();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(250, part.QuantityOnHand);
             Assert.Equal(8.26M, part.PartWeightedAverage.AverageCost);
 
             // Ship 10 items to customer (without sales order)
-            var outgoingShipment = new CustomerShipmentBuilder(this.Session)
+            var outgoingShipment = new CustomerShipmentBuilder(this.Transaction)
                 .WithShipToParty(customer)
                 .WithShipToAddress(customer.ShippingAddress)
-                .WithShipmentMethod(new ShipmentMethods(this.Session).Ground)
+                .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            var outgoingItem = new ShipmentItemBuilder(this.Session).WithGood(good).WithQuantity(10).Build();
+            var outgoingItem = new ShipmentItemBuilder(this.Transaction).WithGood(good).WithQuantity(10).Build();
             outgoingShipment.AddShipmentItem(outgoingItem);
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             outgoingShipment.Pick();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            customer.PickListsWhereShipToParty.First(v => v.PickListState.Equals(new PickListStates(this.Session).Created)).SetPicked();
+            customer.PickListsWhereShipToParty.First(v => v.PickListState.Equals(new PickListStates(this.Transaction).Created)).SetPicked();
 
-            package = new ShipmentPackageBuilder(this.Session).Build();
+            package = new ShipmentPackageBuilder(this.Transaction).Build();
             customerShipment2.AddShipmentPackage(package);
 
             foreach (ShipmentItem shipmentItem in outgoingShipment.ShipmentItems)
             {
-                package.AddPackagingContent(new PackagingContentBuilder(this.Session).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
+                package.AddPackagingContent(new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
             }
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             outgoingShipment.Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(240, part.QuantityOnHand);
             Assert.Equal(8.26M, part.PartWeightedAverage.AverageCost);
 
             // Receive 10 items at 8.55 from supplier (without purchase order)
-            var incomingShipment = new PurchaseShipmentBuilder(this.Session)
-                .WithShipmentMethod(new ShipmentMethods(this.Session).Ground)
+            var incomingShipment = new PurchaseShipmentBuilder(this.Transaction)
+                .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
                 .WithShipFromParty(supplier)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var incomingItem = new ShipmentItemBuilder(this.Session).WithPart(part).WithQuantity(10).WithUnitPurchasePrice(8.55M).Build();
+            var incomingItem = new ShipmentItemBuilder(this.Transaction).WithPart(part).WithQuantity(10).WithUnitPurchasePrice(8.55M).Build();
             incomingShipment.AddShipmentItem(incomingItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             incomingShipment.Receive();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(250, part.QuantityOnHand);
             Assert.Equal(8.27M, part.PartWeightedAverage.AverageCost);
 
             // Receive 100 items at 7.9 from supplier (without purchase order)
-            incomingShipment = new PurchaseShipmentBuilder(this.Session)
-                .WithShipmentMethod(new ShipmentMethods(this.Session).Ground)
+            incomingShipment = new PurchaseShipmentBuilder(this.Transaction)
+                .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
                 .WithShipFromParty(supplier)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            incomingItem = new ShipmentItemBuilder(this.Session).WithPart(part).WithQuantity(100).WithUnitPurchasePrice(7.9M).Build();
+            incomingItem = new ShipmentItemBuilder(this.Transaction).WithPart(part).WithQuantity(100).WithUnitPurchasePrice(7.9M).Build();
             incomingShipment.AddShipmentItem(incomingItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             incomingShipment.Receive();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(350, part.QuantityOnHand);
             Assert.Equal(8.17M, part.PartWeightedAverage.AverageCost);
 
             // Ship all items to customer (without sales order)
-            outgoingShipment = new CustomerShipmentBuilder(this.Session)
+            outgoingShipment = new CustomerShipmentBuilder(this.Transaction)
                 .WithShipToParty(customer)
                 .WithShipFromFacility(part.DefaultFacility)
                 .WithShipToAddress(customer.ShippingAddress)
-                .WithShipmentMethod(new ShipmentMethods(this.Session).Ground)
+                .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            outgoingItem = new ShipmentItemBuilder(this.Session).WithGood(good).WithQuantity(330).Build();
+            outgoingItem = new ShipmentItemBuilder(this.Transaction).WithGood(good).WithQuantity(330).Build();
             outgoingShipment.AddShipmentItem(outgoingItem);
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             outgoingShipment.Pick();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            customer.PickListsWhereShipToParty.First(v => v.PickListState.Equals(new PickListStates(this.Session).Created)).SetPicked();
+            customer.PickListsWhereShipToParty.First(v => v.PickListState.Equals(new PickListStates(this.Transaction).Created)).SetPicked();
 
-            package = new ShipmentPackageBuilder(this.Session).Build();
+            package = new ShipmentPackageBuilder(this.Transaction).Build();
             customerShipment2.AddShipmentPackage(package);
 
             foreach (ShipmentItem shipmentItem in outgoingShipment.ShipmentItems)
             {
-                package.AddPackagingContent(new PackagingContentBuilder(this.Session).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
+                package.AddPackagingContent(new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
             }
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             outgoingShipment.Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             // Ship all items to customer (without sales order)
-            outgoingShipment = new CustomerShipmentBuilder(this.Session)
+            outgoingShipment = new CustomerShipmentBuilder(this.Transaction)
                 .WithShipToParty(customer)
                 .WithShipFromFacility(secondFacility)
                 .WithShipToAddress(customer.ShippingAddress)
-                .WithShipmentMethod(new ShipmentMethods(this.Session).Ground)
+                .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            outgoingItem = new ShipmentItemBuilder(this.Session).WithGood(good).WithQuantity(20).Build();
+            outgoingItem = new ShipmentItemBuilder(this.Transaction).WithGood(good).WithQuantity(20).Build();
             outgoingShipment.AddShipmentItem(outgoingItem);
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             outgoingShipment.Pick();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            customer.PickListsWhereShipToParty.First(v => v.PickListState.Equals(new PickListStates(this.Session).Created)).SetPicked();
+            customer.PickListsWhereShipToParty.First(v => v.PickListState.Equals(new PickListStates(this.Transaction).Created)).SetPicked();
 
-            package = new ShipmentPackageBuilder(this.Session).Build();
+            package = new ShipmentPackageBuilder(this.Transaction).Build();
             customerShipment2.AddShipmentPackage(package);
 
             foreach (ShipmentItem shipmentItem in outgoingShipment.ShipmentItems)
             {
-                package.AddPackagingContent(new PackagingContentBuilder(this.Session).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
+                package.AddPackagingContent(new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
             }
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             outgoingShipment.Ship();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(0, part.QuantityOnHand);
             Assert.Equal(8.17M, part.PartWeightedAverage.AverageCost);
 
             purchaseOrder1.Revise();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             // Purchase 150 items at 8 euro
-            purchaseItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(150).WithAssignedUnitPrice(8M).Build();
+            purchaseItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(150).WithAssignedUnitPrice(8M).Build();
             purchaseOrder1.AddPurchaseOrderItem(purchaseItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder1.SetReadyForProcessing();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseOrder1.Send();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             purchaseItem.QuickReceive();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(150, part.QuantityOnHand);
             Assert.Equal(8, part.PartWeightedAverage.AverageCost);

@@ -38,201 +38,201 @@ namespace Allors.Database.Domain.Tests
 
         public SalesInvoiceItemTests(Fixture fixture) : base(fixture)
         {
-            var euro = new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR");
+            var euro = new Currencies(this.Transaction).FindBy(this.M.Currency.IsoCode, "EUR");
 
-            this.supplier = new OrganisationBuilder(this.Session).WithName("supplier").WithLocale(new Locales(this.Session).EnglishGreatBritain).Build();
+            this.supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").WithLocale(new Locales(this.Transaction).EnglishGreatBritain).Build();
 
-            this.internalOrganisation = this.Session.GetSingleton();
+            this.internalOrganisation = this.Transaction.GetSingleton();
 
-            this.vatRate21 = new VatRateBuilder(this.Session).WithRate(21).Build();
+            this.vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
 
-            this.mechelen = new CityBuilder(this.Session).WithName("Mechelen").Build();
-            this.kiev = new CityBuilder(this.Session).WithName("Kiev").Build();
+            this.mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
+            this.kiev = new CityBuilder(this.Transaction).WithName("Kiev").Build();
 
-            this.billToContactMechanismMechelen = new PostalAddressBuilder(this.Session).WithAddress1("Mechelen").WithPostalAddressBoundary(this.mechelen).Build();
-            this.shipToContactMechanismKiev = new PostalAddressBuilder(this.Session).WithAddress1("Kiev").WithPostalAddressBoundary(this.kiev).Build();
-            this.billToCustomer = new OrganisationBuilder(this.Session).WithName("billToCustomer").WithPreferredCurrency(euro).Build();
+            this.billToContactMechanismMechelen = new PostalAddressBuilder(this.Transaction).WithAddress1("Mechelen").WithPostalAddressBoundary(this.mechelen).Build();
+            this.shipToContactMechanismKiev = new PostalAddressBuilder(this.Transaction).WithAddress1("Kiev").WithPostalAddressBoundary(this.kiev).Build();
+            this.billToCustomer = new OrganisationBuilder(this.Transaction).WithName("billToCustomer").WithPreferredCurrency(euro).Build();
 
-            this.shipToCustomer = new OrganisationBuilder(this.Session).WithName("shipToCustomer").WithPreferredCurrency(euro).Build();
+            this.shipToCustomer = new OrganisationBuilder(this.Transaction).WithName("shipToCustomer").WithPreferredCurrency(euro).Build();
 
-            new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(this.billToCustomer).Build();
-            new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(this.shipToCustomer).Build();
+            new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(this.billToCustomer).Build();
+            new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(this.shipToCustomer).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            this.good = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good1");
+            this.good = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1");
             this.finishedGood = this.good.Part;
 
-            this.feature1 = new ColourBuilder(this.Session)
+            this.feature1 = new ColourBuilder(this.Transaction)
                 .WithVatRate(this.vatRate21)
                 .WithName("white")
                 .Build();
 
-            this.feature2 = new ColourBuilder(this.Session)
+            this.feature2 = new ColourBuilder(this.Transaction)
                 .WithName("black")
                 .Build();
 
-            this.goodPurchasePrice = new SupplierOfferingBuilder(this.Session)
+            this.goodPurchasePrice = new SupplierOfferingBuilder(this.Transaction)
                 .WithPart(this.finishedGood)
                 .WithSupplier(this.supplier)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
                 .WithPrice(7)
                 .WithCurrency(euro)
                 .Build();
 
-            this.currentBasePriceGeoBoundary = new BasePriceBuilder(this.Session)
+            this.currentBasePriceGeoBoundary = new BasePriceBuilder(this.Transaction)
                 .WithDescription("current BasePriceGeoBoundary")
                 .WithGeographicBoundary(this.mechelen)
                 .WithProduct(this.good)
                 .WithPrice(8)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
             // historic basePrice for good
-            new BasePriceBuilder(this.Session).WithDescription("previous good baseprice")
+            new BasePriceBuilder(this.Transaction).WithDescription("previous good baseprice")
                 .WithProduct(this.good)
                 .WithPrice(8)
-                .WithFromDate(this.Session.Now().AddYears(-1))
-                .WithThroughDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddYears(-1))
+                .WithThroughDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
-            this.currentGood1BasePrice = new BasePriceBuilder(this.Session)
+            this.currentGood1BasePrice = new BasePriceBuilder(this.Transaction)
                 .WithDescription("current good baseprice")
                 .WithProduct(this.good)
                 .WithPrice(10)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
             // future basePrice for good
-            new BasePriceBuilder(this.Session).WithDescription("future good baseprice")
+            new BasePriceBuilder(this.Transaction).WithDescription("future good baseprice")
                 .WithProduct(this.good)
                 .WithPrice(11)
-                .WithFromDate(this.Session.Now().AddYears(1))
+                .WithFromDate(this.Transaction.Now().AddYears(1))
                 .Build();
 
             // historic basePrice for feature1
-            new BasePriceBuilder(this.Session).WithDescription("previous feature1 price")
+            new BasePriceBuilder(this.Transaction).WithDescription("previous feature1 price")
                 .WithProductFeature(this.feature1)
                 .WithPrice(0.5M)
-                .WithFromDate(this.Session.Now().AddYears(-1))
-                .WithThroughDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddYears(-1))
+                .WithThroughDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
             // future basePrice for feature1
-            new BasePriceBuilder(this.Session).WithDescription("future feature1 price")
+            new BasePriceBuilder(this.Transaction).WithDescription("future feature1 price")
                 .WithProductFeature(this.feature1)
                 .WithPrice(2.5M)
-                .WithFromDate(this.Session.Now().AddYears(1))
+                .WithFromDate(this.Transaction.Now().AddYears(1))
                 .Build();
 
-            this.currentFeature1BasePrice = new BasePriceBuilder(this.Session)
+            this.currentFeature1BasePrice = new BasePriceBuilder(this.Transaction)
                 .WithDescription("current feature1 price")
                 .WithProductFeature(this.feature1)
                 .WithPrice(2)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
             // historic basePrice for feature2
-            new BasePriceBuilder(this.Session).WithDescription("previous feature2 price")
+            new BasePriceBuilder(this.Transaction).WithDescription("previous feature2 price")
                 .WithProductFeature(this.feature2)
                 .WithPrice(2)
-                .WithFromDate(this.Session.Now().AddYears(-1))
-                .WithThroughDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddYears(-1))
+                .WithThroughDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
             // future basePrice for feature2
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithDescription("future feature2 price")
                 .WithProductFeature(this.feature2)
                 .WithPrice(4)
-                .WithFromDate(this.Session.Now().AddYears(1))
+                .WithFromDate(this.Transaction.Now().AddYears(1))
                 .Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithDescription("current feature2 price")
                 .WithProductFeature(this.feature2)
                 .WithPrice(3)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
             // historic basePrice for good with feature1
-            new BasePriceBuilder(this.Session).WithDescription("previous good/feature1 baseprice")
+            new BasePriceBuilder(this.Transaction).WithDescription("previous good/feature1 baseprice")
                 .WithProduct(this.good)
                 .WithProductFeature(this.feature1)
                 .WithPrice(4)
-                .WithFromDate(this.Session.Now().AddYears(-1))
-                .WithThroughDate(this.Session.Now().AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddYears(-1))
+                .WithThroughDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
             // future basePrice for good with feature1
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithDescription("future good/feature1 baseprice")
                 .WithProduct(this.good)
                 .WithProductFeature(this.feature1)
                 .WithPrice(6)
-                .WithFromDate(this.Session.Now().AddYears(1))
+                .WithFromDate(this.Transaction.Now().AddYears(1))
                 .Build();
 
-            this.currentGood1Feature1BasePrice = new BasePriceBuilder(this.Session)
+            this.currentGood1Feature1BasePrice = new BasePriceBuilder(this.Transaction)
                 .WithDescription("current good/feature1 baseprice")
                 .WithProduct(this.good)
                 .WithProductFeature(this.feature1)
                 .WithPrice(5)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            this.invoice = new SalesInvoiceBuilder(this.Session)
-                .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
+            this.invoice = new SalesInvoiceBuilder(this.Transaction)
+                .WithSalesInvoiceType(new SalesInvoiceTypes(this.Transaction).SalesInvoice)
                 .WithAssignedBillToContactMechanism(this.billToContactMechanismMechelen)
                 .WithBillToCustomer(this.billToCustomer)
                 .WithAssignedShipToAddress(this.shipToContactMechanismKiev)
                 .WithShipToCustomer(this.shipToCustomer)
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
         }
 
         [Fact]
         public void GivenInvoiceItem_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var builder = new SalesInvoiceItemBuilder(this.Session);
+            var builder = new SalesInvoiceItemBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithProduct(this.good);
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithProductFeature(this.feature1);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void GivenInvoiceItem_WhenBuild_ThenPostBuildRelationsMustExist()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var item = new SalesInvoiceItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(this.good).Build();
+            var item = new SalesInvoiceItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(this.good).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Equal(new SalesInvoiceItemStates(this.Session).ReadyForPosting, item.SalesInvoiceItemState);
+            Assert.Equal(new SalesInvoiceItemStates(this.Transaction).ReadyForPosting, item.SalesInvoiceItemState);
             Assert.Equal(item.SalesInvoiceItemState, item.LastSalesInvoiceItemState);
             Assert.Equal(0, item.AmountPaid);
         }
@@ -240,20 +240,20 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenInvoiceItemWithoutVatRegime_WhenDeriving_ThenDerivedVatRegimeIsFromInvoice()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var productItem = new InvoiceItemTypes(this.Session).ProductItem;
+            var productItem = new InvoiceItemTypes(this.Transaction).ProductItem;
 
-            var salesInvoice = new SalesInvoiceBuilder(this.Session)
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction)
                 .WithBillToCustomer(this.billToCustomer)
                 .WithAssignedBillToContactMechanism(this.billToContactMechanismMechelen)
-                .WithAssignedVatRegime(new VatRegimes(this.Session).Export)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Export)
                 .Build();
 
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithQuantity(1).WithInvoiceItemType(productItem).Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithQuantity(1).WithInvoiceItemType(productItem).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(salesInvoice.AssignedVatRegime, invoiceItem.DerivedVatRegime);
         }
@@ -261,20 +261,20 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenInvoiceItemWithoutVatRegime_WhenDeriving_ThenItemDerivedVatRateIsFromInvoiceVatRegime()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var vatRate0 = new VatRates(this.Session).FindBy(this.M.VatRate.Rate, 0);
+            var vatRate0 = new VatRates(this.Transaction).FindBy(this.M.VatRate.Rate, 0);
 
-            var salesInvoice = new SalesInvoiceBuilder(this.Session)
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction)
                 .WithBillToCustomer(this.billToCustomer)
                 .WithAssignedBillToContactMechanism(this.billToContactMechanismMechelen)
-                .WithAssignedVatRegime(new VatRegimes(this.Session).Export)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Export)
                 .Build();
 
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(1).Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(1).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(salesInvoice.DerivedVatRegime, invoiceItem.DerivedVatRegime);
             Assert.Equal(vatRate0, invoiceItem.VatRate);
@@ -283,20 +283,20 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenInvoiceItemWithoutIrpfRegime_WhenDeriving_ThenDerivedIrpfRegimeIsFromInvoice()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var productItem = new InvoiceItemTypes(this.Session).ProductItem;
+            var productItem = new InvoiceItemTypes(this.Transaction).ProductItem;
 
-            var salesInvoice = new SalesInvoiceBuilder(this.Session)
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction)
                 .WithBillToCustomer(this.billToCustomer)
                 .WithAssignedBillToContactMechanism(this.billToContactMechanismMechelen)
-                .WithAssignedIrpfRegime(new IrpfRegimes(this.Session).Assessable19)
+                .WithAssignedIrpfRegime(new IrpfRegimes(this.Transaction).Assessable19)
                 .Build();
 
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithQuantity(1).WithInvoiceItemType(productItem).Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithQuantity(1).WithInvoiceItemType(productItem).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(salesInvoice.DerivedIrpfRegime, invoiceItem.DerivedIrpfRegime);
         }
@@ -304,20 +304,20 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenInvoiceItemWithoutIrpfRegime_WhenDeriving_ThenItemDerivedIrpfRateIsFromInvoiceIrpfRegime()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var irpfRate19 = new IrpfRates(this.Session).FindBy(this.M.IrpfRate.Rate, 19);
+            var irpfRate19 = new IrpfRates(this.Transaction).FindBy(this.M.IrpfRate.Rate, 19);
 
-            var salesInvoice = new SalesInvoiceBuilder(this.Session)
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction)
                 .WithBillToCustomer(this.billToCustomer)
                 .WithAssignedBillToContactMechanism(this.billToContactMechanismMechelen)
-                .WithAssignedIrpfRegime(new IrpfRegimes(this.Session).Assessable19)
+                .WithAssignedIrpfRegime(new IrpfRegimes(this.Transaction).Assessable19)
                 .Build();
 
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(1).Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(1).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(salesInvoice.DerivedIrpfRegime, invoiceItem.DerivedIrpfRegime);
             Assert.Equal(irpfRate19, invoiceItem.IrpfRate);
@@ -326,14 +326,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPurchasePriceInDifferenUnitOfMeasureComparedToProduct_WhenDerivingMarkupAndProfitMargin_ThenUnitOfMeasureConversionIsPerformed()
         {
-            var pair = new UnitsOfMeasure(this.Session).Pair;
-            var piece = new UnitsOfMeasure(this.Session).Piece;
+            var pair = new UnitsOfMeasure(this.Transaction).Pair;
+            var piece = new UnitsOfMeasure(this.Transaction).Piece;
 
-            var fromPairToPiece = new UnitOfMeasureConversionBuilder(this.Session)
+            var fromPairToPiece = new UnitOfMeasureConversionBuilder(this.Transaction)
                 .WithToUnitOfMeasure(piece)
                 .WithConversionFactor(2).Build();
 
-            var fromPieceToPair = new UnitOfMeasureConversionBuilder(this.Session)
+            var fromPieceToPair = new UnitOfMeasureConversionBuilder(this.Transaction)
                 .WithToUnitOfMeasure(pair)
                 .WithConversionFactor(0.5M).Build();
 
@@ -343,22 +343,22 @@ namespace Allors.Database.Domain.Tests
             this.goodPurchasePrice.UnitOfMeasure = pair;
             this.good.UnitOfMeasure = piece;
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
             const decimal quantity = 3;
-            var item1 = new SalesInvoiceItemBuilder(this.Session)
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction)
                 .WithProduct(this.good)
-                .WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem)
                 .WithQuantity(quantity)
-                .WithAssignedVatRegime(new VatRegimes(this.Session).Assessable21)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Assessable21)
                 .Build();
 
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitBasePrice);
             Assert.Equal(0, item1.UnitDiscount);
@@ -384,20 +384,20 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenInvoiceItemForGood1WithActualPrice_WhenDerivingPrices_ThenUseActualPrice()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session)
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction)
                 .WithProduct(this.good)
-                .WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem)
                 .WithQuantity(3)
                 .WithAssignedUnitPrice(15)
-                .WithAssignedVatRegime(new VatRegimes(this.Session).Assessable21)
-                .WithAssignedIrpfRegime(new IrpfRegimes(this.Session).Assessable19)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Assessable21)
+                .WithAssignedIrpfRegime(new IrpfRegimes(this.Transaction).Assessable19)
                 .Build();
 
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(10, item1.UnitBasePrice);
             Assert.Equal(0, item1.UnitDiscount);
@@ -427,22 +427,22 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenInvoiceItemForGood1_WhenDerivingPrices_ThenUsePriceComponentsForGood1()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var irpfRegime = new IrpfRegimes(this.Session).Assessable19;
+            var irpfRegime = new IrpfRegimes(this.Transaction).Assessable19;
 
             const decimal quantity = 3;
-            var item1 = new SalesInvoiceItemBuilder(this.Session)
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction)
                 .WithProduct(this.good)
-                .WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem)
                 .WithQuantity(quantity)
-                .WithAssignedVatRegime(new VatRegimes(this.Session).Assessable21)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Assessable21)
                 .WithAssignedIrpfRegime(irpfRegime)
                 .Build();
 
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitBasePrice);
             Assert.Equal(0, item1.UnitDiscount);
@@ -468,13 +468,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenInvoiceItemForFeature1_WhenDerivingPrices_ThenUsePriceComponentsForFeature1()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
             const decimal quantity = 3;
-            var item1 = new SalesInvoiceItemBuilder(this.Session).WithProductFeature(this.feature1).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductFeatureItem).WithQuantity(quantity).Build();
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProductFeature(this.feature1).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductFeatureItem).WithQuantity(quantity).Build();
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentFeature1BasePrice.Price, item1.UnitBasePrice);
             Assert.Equal(0, item1.UnitDiscount);
@@ -494,26 +494,26 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenProductWithMultipleBasePrices_WhenDeriving_ThenLowestUnitPriceMustBeCalculated()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
             this.invoice.AssignedShipToAddress = this.billToContactMechanismMechelen;
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(3).Build();
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(3).Build();
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentBasePriceGeoBoundary.Price, item1.UnitPrice);
 
-            var invoice2 = new SalesInvoiceBuilder(this.Session)
+            var invoice2 = new SalesInvoiceBuilder(this.Transaction)
                 .WithBillToCustomer(this.billToCustomer)
                 .WithAssignedBillToContactMechanism(this.billToContactMechanismMechelen)
                 .Build();
 
-            item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(3).Build();
+            item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(3).Build();
             invoice2.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitPrice);
         }
@@ -523,23 +523,23 @@ namespace Allors.Database.Domain.Tests
         {
             const decimal quantity = 3;
             const decimal amount = 1;
-            new DiscountComponentBuilder(this.Session)
+            new DiscountComponentBuilder(this.Transaction)
                 .WithDescription("discount good for geo boundary")
                 .WithGeographicBoundary(this.kiev)
                 .WithPrice(amount)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity).Build();
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity).Build();
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitBasePrice);
             Assert.Equal(amount, item1.UnitDiscount);
@@ -552,24 +552,24 @@ namespace Allors.Database.Domain.Tests
         {
             const decimal quantity = 3;
             const decimal amount = 1;
-            new DiscountComponentBuilder(this.Session)
+            new DiscountComponentBuilder(this.Transaction)
                 .WithDescription("discount good for geo boundary")
                 .WithGeographicBoundary(this.kiev)
                 .WithProduct(this.good)
                 .WithPrice(amount)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity).Build();
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity).Build();
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitBasePrice);
             Assert.Equal(amount, item1.UnitDiscount);
@@ -583,24 +583,24 @@ namespace Allors.Database.Domain.Tests
             const decimal quantity = 3;
             const decimal percentage = 5;
 
-            new DiscountComponentBuilder(this.Session)
+            new DiscountComponentBuilder(this.Transaction)
                 .WithDescription("discount good for geo boundary")
                 .WithGeographicBoundary(this.kiev)
                 .WithProduct(this.good)
                 .WithPercentage(percentage)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity).Build();
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity).Build();
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var price = this.currentGood1BasePrice.Price ?? 0;
             var amount = Math.Round(price * percentage / 100, 2);
@@ -616,24 +616,24 @@ namespace Allors.Database.Domain.Tests
             const decimal quantity = 3;
             const decimal amount = 1;
 
-            new SurchargeComponentBuilder(this.Session)
+            new SurchargeComponentBuilder(this.Transaction)
                 .WithDescription("surcharge good for geo boundary")
                 .WithGeographicBoundary(this.kiev)
                 .WithProduct(this.good)
                 .WithPrice(amount)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity).Build();
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity).Build();
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitBasePrice);
             Assert.Equal(0, item1.UnitDiscount);
@@ -647,24 +647,24 @@ namespace Allors.Database.Domain.Tests
             const decimal quantity = 3;
             const decimal percentage = 5;
 
-            new SurchargeComponentBuilder(this.Session)
+            new SurchargeComponentBuilder(this.Transaction)
                 .WithDescription("surcharge good for geo boundary")
                 .WithGeographicBoundary(this.kiev)
                 .WithProduct(this.good)
                 .WithPercentage(percentage)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity).Build();
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity).Build();
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var price = this.currentGood1BasePrice.Price ?? 0;
             var amount = Math.Round(price * percentage / 100, 2);
@@ -680,29 +680,29 @@ namespace Allors.Database.Domain.Tests
             const decimal quantity = 3;
             const decimal amount = 1;
 
-            var classification = new IndustryClassificationBuilder(this.Session).WithName("gold customer").Build();
-            new DiscountComponentBuilder(this.Session)
+            var classification = new IndustryClassificationBuilder(this.Transaction).WithName("gold customer").Build();
+            new DiscountComponentBuilder(this.Transaction)
                 .WithDescription("discount good for party classification")
                 .WithPartyClassification(classification)
                 .WithProduct(this.good)
                 .WithPrice(amount)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
             (this.billToCustomer).AddPartyClassification(classification);
 
             this.invoice.ShipToCustomer = this.shipToCustomer;
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity).Build();
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity).Build();
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitBasePrice);
             Assert.Equal(amount, item1.UnitDiscount);
@@ -716,29 +716,29 @@ namespace Allors.Database.Domain.Tests
             const decimal quantity = 3;
             const decimal percentage = 5;
 
-            var classification = new IndustryClassificationBuilder(this.Session).WithName("gold customer").Build();
-            new DiscountComponentBuilder(this.Session)
+            var classification = new IndustryClassificationBuilder(this.Transaction).WithName("gold customer").Build();
+            new DiscountComponentBuilder(this.Transaction)
                 .WithDescription("discount good for party classification")
                 .WithPartyClassification(classification)
                 .WithProduct(this.good)
                 .WithPercentage(percentage)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
             (this.billToCustomer).AddPartyClassification(classification);
 
             this.invoice.ShipToCustomer = this.shipToCustomer;
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity).Build();
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity).Build();
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var price = this.currentGood1BasePrice.Price ?? 0;
             var amount = Math.Round(price * percentage / 100, 2);
@@ -754,29 +754,29 @@ namespace Allors.Database.Domain.Tests
             const decimal quantity = 3;
             const decimal amount = 1;
 
-            var classification = new IndustryClassificationBuilder(this.Session).WithName("gold customer").Build();
-            new SurchargeComponentBuilder(this.Session)
+            var classification = new IndustryClassificationBuilder(this.Transaction).WithName("gold customer").Build();
+            new SurchargeComponentBuilder(this.Transaction)
                 .WithDescription("discount good for party classification")
                 .WithPartyClassification(classification)
                 .WithProduct(this.good)
                 .WithPrice(amount)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
             (this.billToCustomer).AddPartyClassification(classification);
 
             this.invoice.ShipToCustomer = this.shipToCustomer;
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity).Build();
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity).Build();
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitBasePrice);
             Assert.Equal(0, item1.UnitDiscount);
@@ -790,29 +790,29 @@ namespace Allors.Database.Domain.Tests
             const decimal quantity = 3;
             const decimal percentage = 5;
 
-            var classification = new IndustryClassificationBuilder(this.Session).WithName("gold customer").Build();
-            new SurchargeComponentBuilder(this.Session)
+            var classification = new IndustryClassificationBuilder(this.Transaction).WithName("gold customer").Build();
+            new SurchargeComponentBuilder(this.Transaction)
                 .WithDescription("discount good for party classification")
                 .WithPartyClassification(classification)
                 .WithProduct(this.good)
                 .WithPercentage(percentage)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
             (this.billToCustomer).AddPartyClassification(classification);
 
             this.invoice.ShipToCustomer = this.shipToCustomer;
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity).Build();
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity).Build();
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var price = this.currentGood1BasePrice.Price ?? 0;
             var amount = Math.Round(price * percentage / 100, 2);
@@ -828,32 +828,32 @@ namespace Allors.Database.Domain.Tests
             const decimal quantity = 3;
             const decimal amount = 1;
 
-            var category = new ProductCategoryBuilder(this.Session)
+            var category = new ProductCategoryBuilder(this.Transaction)
                 .WithName("gizmo")
                 .Build();
 
-            new DiscountComponentBuilder(this.Session)
+            new DiscountComponentBuilder(this.Transaction)
                 .WithDescription("discount good for product category")
                 .WithProductCategory(category)
                 .WithProduct(this.good)
                 .WithPrice(amount)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
             category.AddProduct(this.good);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity).Build();
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity).Build();
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitBasePrice);
             Assert.Equal(amount, item1.UnitDiscount);
@@ -867,32 +867,32 @@ namespace Allors.Database.Domain.Tests
             const decimal quantity = 3;
             const decimal percentage = 5;
 
-            var category = new ProductCategoryBuilder(this.Session)
+            var category = new ProductCategoryBuilder(this.Transaction)
                 .WithName("gizmo")
                 .Build();
 
-            new DiscountComponentBuilder(this.Session)
+            new DiscountComponentBuilder(this.Transaction)
                 .WithDescription("discount good for product category")
                 .WithProductCategory(category)
                 .WithProduct(this.good)
                 .WithPercentage(percentage)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
             category.AddProduct(this.good);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity).Build();
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity).Build();
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var price = this.currentGood1BasePrice.Price ?? 0;
             var amount = Math.Round(price * percentage / 100, 2);
@@ -908,32 +908,32 @@ namespace Allors.Database.Domain.Tests
             const decimal quantity = 3;
             const decimal amount = 1;
 
-            var category = new ProductCategoryBuilder(this.Session)
+            var category = new ProductCategoryBuilder(this.Transaction)
                 .WithName("gizmo")
                 .Build();
 
-            new SurchargeComponentBuilder(this.Session)
+            new SurchargeComponentBuilder(this.Transaction)
                 .WithDescription("discount good for product category")
                 .WithProductCategory(category)
                 .WithProduct(this.good)
                 .WithPrice(amount)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
             category.AddProduct(this.good);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity).Build();
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity).Build();
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitBasePrice);
             Assert.Equal(0, item1.UnitDiscount);
@@ -947,32 +947,32 @@ namespace Allors.Database.Domain.Tests
             const decimal quantity = 3;
             const decimal percentage = 5;
 
-            var category = new ProductCategoryBuilder(this.Session)
+            var category = new ProductCategoryBuilder(this.Transaction)
                 .WithName("gizmo")
                 .Build();
 
-            new SurchargeComponentBuilder(this.Session)
+            new SurchargeComponentBuilder(this.Transaction)
                 .WithDescription("discount good for product category")
                 .WithProductCategory(category)
                 .WithProduct(this.good)
                 .WithPercentage(percentage)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
             category.AddProduct(this.good);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity).Build();
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity).Build();
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var price = this.currentGood1BasePrice.Price ?? 0;
             var amount = Math.Round(price * percentage / 100, 2);
@@ -991,46 +991,46 @@ namespace Allors.Database.Domain.Tests
             const decimal amount1 = 1;
             const decimal amount2 = 3;
 
-            var break1 = new OrderQuantityBreakBuilder(this.Session).WithFromAmount(50).WithThroughAmount(99).Build();
-            var break2 = new OrderQuantityBreakBuilder(this.Session).WithFromAmount(100).Build();
+            var break1 = new OrderQuantityBreakBuilder(this.Transaction).WithFromAmount(50).WithThroughAmount(99).Build();
+            var break2 = new OrderQuantityBreakBuilder(this.Transaction).WithFromAmount(100).Build();
 
-            new DiscountComponentBuilder(this.Session)
+            new DiscountComponentBuilder(this.Transaction)
                 .WithDescription("discount good for quantity break 1")
                 .WithOrderQuantityBreak(break1)
                 .WithProduct(this.good)
                 .WithPrice(amount1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            new DiscountComponentBuilder(this.Session)
+            new DiscountComponentBuilder(this.Transaction)
                 .WithDescription("discount good for quantity break 2")
                 .WithOrderQuantityBreak(break2)
                 .WithProduct(this.good)
                 .WithPrice(amount2)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity1).Build();
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity1).Build();
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitBasePrice);
             Assert.Equal(0, item1.UnitDiscount);
             Assert.Equal(0, item1.UnitSurcharge);
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitPrice);
 
-            var item2 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity2).Build();
+            var item2 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity2).Build();
             this.invoice.AddSalesInvoiceItem(item2);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitBasePrice);
             Assert.Equal(amount1, item1.UnitDiscount);
@@ -1042,10 +1042,10 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(0, item2.UnitSurcharge);
             Assert.Equal(this.currentGood1BasePrice.Price - amount1, item2.UnitPrice);
 
-            var item3 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity3).Build();
+            var item3 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity3).Build();
             this.invoice.AddSalesInvoiceItem(item3);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitBasePrice);
             Assert.Equal(amount2, item1.UnitDiscount);
@@ -1072,46 +1072,46 @@ namespace Allors.Database.Domain.Tests
             const decimal percentage1 = 5;
             const decimal percentage2 = 10;
 
-            var break1 = new OrderQuantityBreakBuilder(this.Session).WithFromAmount(50).WithThroughAmount(99).Build();
-            var break2 = new OrderQuantityBreakBuilder(this.Session).WithFromAmount(100).Build();
+            var break1 = new OrderQuantityBreakBuilder(this.Transaction).WithFromAmount(50).WithThroughAmount(99).Build();
+            var break2 = new OrderQuantityBreakBuilder(this.Transaction).WithFromAmount(100).Build();
 
-            new DiscountComponentBuilder(this.Session)
+            new DiscountComponentBuilder(this.Transaction)
                 .WithDescription("discount good for quantity break 1")
                 .WithOrderQuantityBreak(break1)
                 .WithProduct(this.good)
                 .WithPercentage(percentage1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            new DiscountComponentBuilder(this.Session)
+            new DiscountComponentBuilder(this.Transaction)
                 .WithDescription("discount good for quantity break 2")
                 .WithOrderQuantityBreak(break2)
                 .WithProduct(this.good)
                 .WithPercentage(percentage2)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity1).Build();
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity1).Build();
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitBasePrice);
             Assert.Equal(0, item1.UnitDiscount);
             Assert.Equal(0, item1.UnitSurcharge);
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitPrice);
 
-            var item2 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity2).Build();
+            var item2 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity2).Build();
             this.invoice.AddSalesInvoiceItem(item2);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var price = this.currentGood1BasePrice.Price ?? 0;
             var amount1 = Math.Round(price * percentage1 / 100, 2);
@@ -1125,10 +1125,10 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(0, item2.UnitSurcharge);
             Assert.Equal(this.currentGood1BasePrice.Price - amount1, item2.UnitPrice);
 
-            var item3 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity3).Build();
+            var item3 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity3).Build();
             this.invoice.AddSalesInvoiceItem(item3);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var price2 = this.currentGood1BasePrice.Price ?? 0;
             var amount2 = Math.Round(price2 * percentage2 / 100, 2);
@@ -1157,46 +1157,46 @@ namespace Allors.Database.Domain.Tests
             const decimal amount1 = 1;
             const decimal amount2 = 3;
 
-            var break1 = new OrderQuantityBreakBuilder(this.Session).WithFromAmount(50).WithThroughAmount(99).Build();
-            var break2 = new OrderQuantityBreakBuilder(this.Session).WithFromAmount(100).Build();
+            var break1 = new OrderQuantityBreakBuilder(this.Transaction).WithFromAmount(50).WithThroughAmount(99).Build();
+            var break2 = new OrderQuantityBreakBuilder(this.Transaction).WithFromAmount(100).Build();
 
-            new SurchargeComponentBuilder(this.Session)
+            new SurchargeComponentBuilder(this.Transaction)
                 .WithDescription("surcharge good for quantity break 1")
                 .WithOrderQuantityBreak(break1)
                 .WithProduct(this.good)
                 .WithPrice(amount1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            new SurchargeComponentBuilder(this.Session)
+            new SurchargeComponentBuilder(this.Transaction)
                 .WithDescription("surcharge good for quantity break 2")
                 .WithOrderQuantityBreak(break2)
                 .WithProduct(this.good)
                 .WithPrice(amount2)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity1).Build();
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity1).Build();
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitBasePrice);
             Assert.Equal(0, item1.UnitDiscount);
             Assert.Equal(0, item1.UnitSurcharge);
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitPrice);
 
-            var item2 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity2).Build();
+            var item2 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity2).Build();
             this.invoice.AddSalesInvoiceItem(item2);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitBasePrice);
             Assert.Equal(0, item1.UnitDiscount);
@@ -1208,10 +1208,10 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(amount1, item2.UnitSurcharge);
             Assert.Equal(this.currentGood1BasePrice.Price + amount1, item2.UnitPrice);
 
-            var item3 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity3).Build();
+            var item3 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity3).Build();
             this.invoice.AddSalesInvoiceItem(item3);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitBasePrice);
             Assert.Equal(0, item1.UnitDiscount);
@@ -1238,46 +1238,46 @@ namespace Allors.Database.Domain.Tests
             const decimal percentage1 = 5;
             const decimal percentage2 = 10;
 
-            var break1 = new OrderQuantityBreakBuilder(this.Session).WithFromAmount(50).WithThroughAmount(99).Build();
-            var break2 = new OrderQuantityBreakBuilder(this.Session).WithFromAmount(100).Build();
+            var break1 = new OrderQuantityBreakBuilder(this.Transaction).WithFromAmount(50).WithThroughAmount(99).Build();
+            var break2 = new OrderQuantityBreakBuilder(this.Transaction).WithFromAmount(100).Build();
 
-            new SurchargeComponentBuilder(this.Session)
+            new SurchargeComponentBuilder(this.Transaction)
                 .WithDescription("surcharge good for quantity break 1")
                 .WithOrderQuantityBreak(break1)
                 .WithProduct(this.good)
                 .WithPercentage(percentage1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            new SurchargeComponentBuilder(this.Session)
+            new SurchargeComponentBuilder(this.Transaction)
                 .WithDescription("surcharge good for quantity break 2")
                 .WithOrderQuantityBreak(break2)
                 .WithProduct(this.good)
                 .WithPercentage(percentage2)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity1).Build();
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity1).Build();
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitBasePrice);
             Assert.Equal(0, item1.UnitDiscount);
             Assert.Equal(0, item1.UnitSurcharge);
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitPrice);
 
-            var item2 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity2).Build();
+            var item2 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity2).Build();
             this.invoice.AddSalesInvoiceItem(item2);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var price = this.currentGood1BasePrice.Price ?? 0;
             var amount1 = Math.Round(price * percentage1 / 100, 2);
@@ -1291,10 +1291,10 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(amount1, item2.UnitSurcharge);
             Assert.Equal(this.currentGood1BasePrice.Price + amount1, item2.UnitPrice);
 
-            var item3 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity3).Build();
+            var item3 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity3).Build();
             this.invoice.AddSalesInvoiceItem(item3);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var price2 = this.currentGood1BasePrice.Price ?? 0;
             var amount2 = Math.Round(price2 * percentage2 / 100, 2);
@@ -1323,46 +1323,46 @@ namespace Allors.Database.Domain.Tests
             const decimal amount1 = 1;
             const decimal amount2 = 3;
 
-            var value1 = new OrderValueBuilder(this.Session).WithFromAmount(50).WithThroughAmount(99).Build();
-            var value2 = new OrderValueBuilder(this.Session).WithFromAmount(100).Build();
+            var value1 = new OrderValueBuilder(this.Transaction).WithFromAmount(50).WithThroughAmount(99).Build();
+            var value2 = new OrderValueBuilder(this.Transaction).WithFromAmount(100).Build();
 
-            new DiscountComponentBuilder(this.Session)
+            new DiscountComponentBuilder(this.Transaction)
                 .WithDescription("discount good for order value 1")
                 .WithOrderValue(value1)
                 .WithProduct(this.good)
                 .WithPrice(amount1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            new DiscountComponentBuilder(this.Session)
+            new DiscountComponentBuilder(this.Transaction)
                 .WithDescription("discount good for order value 1")
                 .WithOrderValue(value2)
                 .WithProduct(this.good)
                 .WithPrice(amount2)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity1).Build();
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity1).Build();
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitBasePrice);
             Assert.Equal(0, item1.UnitDiscount);
             Assert.Equal(0, item1.UnitSurcharge);
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitPrice);
 
-            var item2 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity2).Build();
+            var item2 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity2).Build();
             this.invoice.AddSalesInvoiceItem(item2);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitBasePrice);
             Assert.Equal(amount1, item1.UnitDiscount);
@@ -1374,10 +1374,10 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(0, item2.UnitSurcharge);
             Assert.Equal(this.currentGood1BasePrice.Price - amount1, item2.UnitPrice);
 
-            var item3 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity3).Build();
+            var item3 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity3).Build();
             this.invoice.AddSalesInvoiceItem(item3);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitBasePrice);
             Assert.Equal(amount2, item1.UnitDiscount);
@@ -1404,46 +1404,46 @@ namespace Allors.Database.Domain.Tests
             const decimal percentage1 = 5;
             const decimal percentage2 = 10;
 
-            var value1 = new OrderValueBuilder(this.Session).WithFromAmount(50).WithThroughAmount(99).Build();
-            var value2 = new OrderValueBuilder(this.Session).WithFromAmount(100).Build();
+            var value1 = new OrderValueBuilder(this.Transaction).WithFromAmount(50).WithThroughAmount(99).Build();
+            var value2 = new OrderValueBuilder(this.Transaction).WithFromAmount(100).Build();
 
-            new DiscountComponentBuilder(this.Session)
+            new DiscountComponentBuilder(this.Transaction)
                 .WithDescription("discount good for order value 1")
                 .WithOrderValue(value1)
                 .WithProduct(this.good)
                 .WithPercentage(percentage1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            new DiscountComponentBuilder(this.Session)
+            new DiscountComponentBuilder(this.Transaction)
                 .WithDescription("discount good for order value 1")
                 .WithOrderValue(value2)
                 .WithProduct(this.good)
                 .WithPercentage(percentage2)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity1).Build();
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity1).Build();
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitBasePrice);
             Assert.Equal(0, item1.UnitDiscount);
             Assert.Equal(0, item1.UnitSurcharge);
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitPrice);
 
-            var item2 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity2).Build();
+            var item2 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity2).Build();
             this.invoice.AddSalesInvoiceItem(item2);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var price = this.currentGood1BasePrice.Price ?? 0;
             var amount1 = Math.Round(price * percentage1 / 100, 2);
@@ -1457,10 +1457,10 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(0, item2.UnitSurcharge);
             Assert.Equal(this.currentGood1BasePrice.Price - amount1, item2.UnitPrice);
 
-            var item3 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity3).Build();
+            var item3 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity3).Build();
             this.invoice.AddSalesInvoiceItem(item3);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var price2 = this.currentGood1BasePrice.Price ?? 0;
             var amount2 = Math.Round(price2 * percentage2 / 100, 2);
@@ -1489,46 +1489,46 @@ namespace Allors.Database.Domain.Tests
             const decimal amount1 = 1;
             const decimal amount2 = 3;
 
-            var value1 = new OrderValueBuilder(this.Session).WithFromAmount(50).WithThroughAmount(99).Build();
-            var value2 = new OrderValueBuilder(this.Session).WithFromAmount(100).Build();
+            var value1 = new OrderValueBuilder(this.Transaction).WithFromAmount(50).WithThroughAmount(99).Build();
+            var value2 = new OrderValueBuilder(this.Transaction).WithFromAmount(100).Build();
 
-            new SurchargeComponentBuilder(this.Session)
+            new SurchargeComponentBuilder(this.Transaction)
                 .WithDescription("surcharge good for order value 1")
                 .WithOrderValue(value1)
                 .WithProduct(this.good)
                 .WithPrice(amount1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            new SurchargeComponentBuilder(this.Session)
+            new SurchargeComponentBuilder(this.Transaction)
                 .WithDescription("surcharge good for order value 1")
                 .WithOrderValue(value2)
                 .WithProduct(this.good)
                 .WithPrice(amount2)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity1).Build();
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity1).Build();
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitBasePrice);
             Assert.Equal(0, item1.UnitDiscount);
             Assert.Equal(0, item1.UnitSurcharge);
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitPrice);
 
-            var item2 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity2).Build();
+            var item2 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity2).Build();
             this.invoice.AddSalesInvoiceItem(item2);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitBasePrice);
             Assert.Equal(0, item1.UnitDiscount);
@@ -1540,10 +1540,10 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(amount1, item2.UnitSurcharge);
             Assert.Equal(this.currentGood1BasePrice.Price + amount1, item2.UnitPrice);
 
-            var item3 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity3).Build();
+            var item3 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity3).Build();
             this.invoice.AddSalesInvoiceItem(item3);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitBasePrice);
             Assert.Equal(0, item1.UnitDiscount);
@@ -1570,46 +1570,46 @@ namespace Allors.Database.Domain.Tests
             const decimal percentage1 = 5;
             const decimal percentage2 = 10;
 
-            var value1 = new OrderValueBuilder(this.Session).WithFromAmount(50).WithThroughAmount(99).Build();
-            var value2 = new OrderValueBuilder(this.Session).WithFromAmount(100).Build();
+            var value1 = new OrderValueBuilder(this.Transaction).WithFromAmount(50).WithThroughAmount(99).Build();
+            var value2 = new OrderValueBuilder(this.Transaction).WithFromAmount(100).Build();
 
-            new SurchargeComponentBuilder(this.Session)
+            new SurchargeComponentBuilder(this.Transaction)
             .WithDescription("surcharge good for order value 1")
             .WithOrderValue(value1)
             .WithProduct(this.good)
             .WithPercentage(percentage1)
-            .WithFromDate(this.Session.Now().AddMinutes(-1))
-            .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+            .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+            .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
             .Build();
 
-            new SurchargeComponentBuilder(this.Session)
+            new SurchargeComponentBuilder(this.Transaction)
             .WithDescription("surcharge good for order value 1")
             .WithOrderValue(value2)
             .WithProduct(this.good)
             .WithPercentage(percentage2)
-            .WithFromDate(this.Session.Now().AddMinutes(-1))
-            .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+            .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+            .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
             .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity1).Build();
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity1).Build();
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitBasePrice);
             Assert.Equal(0, item1.UnitDiscount);
             Assert.Equal(0, item1.UnitSurcharge);
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitPrice);
 
-            var item2 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity2).Build();
+            var item2 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity2).Build();
             this.invoice.AddSalesInvoiceItem(item2);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var price = this.currentGood1BasePrice.Price ?? 0;
             var amount1 = Math.Round(price * percentage1 / 100, 2);
@@ -1623,10 +1623,10 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(amount1, item2.UnitSurcharge);
             Assert.Equal(this.currentGood1BasePrice.Price + amount1, item2.UnitPrice);
 
-            var item3 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity3).Build();
+            var item3 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity3).Build();
             this.invoice.AddSalesInvoiceItem(item3);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var price2 = this.currentGood1BasePrice.Price ?? 0;
             var amount2 = Math.Round(price2 * percentage2 / 100, 2);
@@ -1652,26 +1652,26 @@ namespace Allors.Database.Domain.Tests
             const decimal quantity = 3;
             const decimal amount = 1;
 
-            new DiscountComponentBuilder(this.Session)
+            new DiscountComponentBuilder(this.Transaction)
                 .WithDescription("discount good for sales type")
-                .WithSalesChannel(new SalesChannels(this.Session).EmailChannel)
+                .WithSalesChannel(new SalesChannels(this.Transaction).EmailChannel)
                 .WithProduct(this.good)
                 .WithPrice(amount)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            this.invoice.SalesChannel = new SalesChannels(this.Session).EmailChannel;
+            this.invoice.SalesChannel = new SalesChannels(this.Transaction).EmailChannel;
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity).Build();
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity).Build();
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitBasePrice);
             Assert.Equal(amount, item1.UnitDiscount);
@@ -1686,26 +1686,26 @@ namespace Allors.Database.Domain.Tests
             const decimal percentage = 5;
             const decimal adjustmentPerc = 10;
 
-            var discountAdjustment = new DiscountAdjustmentBuilder(this.Session).WithPercentage(adjustmentPerc).Build();
+            var discountAdjustment = new DiscountAdjustmentBuilder(this.Transaction).WithPercentage(adjustmentPerc).Build();
 
-            new DiscountComponentBuilder(this.Session)
+            new DiscountComponentBuilder(this.Transaction)
                 .WithDescription("discount good for sales type")
-                .WithSalesChannel(new SalesChannels(this.Session).EmailChannel)
+                .WithSalesChannel(new SalesChannels(this.Transaction).EmailChannel)
                 .WithProduct(this.good)
                 .WithPercentage(percentage)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            this.invoice.SalesChannel = new SalesChannels(this.Session).EmailChannel;
+            this.invoice.SalesChannel = new SalesChannels(this.Transaction).EmailChannel;
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session)
-                .WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem)
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem)
                 .WithProduct(this.good)
                 .WithQuantity(quantity)
                 .WithDiscountAdjustment(discountAdjustment)
@@ -1713,7 +1713,7 @@ namespace Allors.Database.Domain.Tests
 
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var price = this.currentGood1BasePrice.Price ?? 0;
             var discount = Math.Round(price * percentage / 100, 2);
@@ -1733,26 +1733,26 @@ namespace Allors.Database.Domain.Tests
             const decimal quantity = 3;
             const decimal amount = 1;
 
-            new SurchargeComponentBuilder(this.Session)
+            new SurchargeComponentBuilder(this.Transaction)
                 .WithDescription("discount good for sales type")
-                .WithSalesChannel(new SalesChannels(this.Session).EmailChannel)
+                .WithSalesChannel(new SalesChannels(this.Transaction).EmailChannel)
                 .WithProduct(this.good)
                 .WithPrice(amount)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            this.invoice.SalesChannel = new SalesChannels(this.Session).EmailChannel;
+            this.invoice.SalesChannel = new SalesChannels(this.Transaction).EmailChannel;
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity).Build();
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity).Build();
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitBasePrice);
             Assert.Equal(0, item1.UnitDiscount);
@@ -1766,26 +1766,26 @@ namespace Allors.Database.Domain.Tests
             const decimal quantity = 3;
             const decimal percentage = 5;
 
-            new SurchargeComponentBuilder(this.Session)
+            new SurchargeComponentBuilder(this.Transaction)
                 .WithDescription("discount good for sales type")
-                .WithSalesChannel(new SalesChannels(this.Session).EmailChannel)
+                .WithSalesChannel(new SalesChannels(this.Transaction).EmailChannel)
                 .WithProduct(this.good)
                 .WithPercentage(percentage)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            this.invoice.SalesChannel = new SalesChannels(this.Session).EmailChannel;
+            this.invoice.SalesChannel = new SalesChannels(this.Transaction).EmailChannel;
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity).Build();
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity).Build();
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var price = this.currentGood1BasePrice.Price ?? 0;
             var amount = Math.Round(price * percentage / 100, 2);
@@ -1802,26 +1802,26 @@ namespace Allors.Database.Domain.Tests
             const decimal percentage = 5;
             const decimal adjustmentPerc = 10;
 
-            var surchargeAdjustment = new SurchargeAdjustmentBuilder(this.Session).WithPercentage(adjustmentPerc).Build();
+            var surchargeAdjustment = new SurchargeAdjustmentBuilder(this.Transaction).WithPercentage(adjustmentPerc).Build();
 
-            new SurchargeComponentBuilder(this.Session)
+            new SurchargeComponentBuilder(this.Transaction)
                 .WithDescription("discount good for sales type")
-                .WithSalesChannel(new SalesChannels(this.Session).EmailChannel)
+                .WithSalesChannel(new SalesChannels(this.Transaction).EmailChannel)
                 .WithProduct(this.good)
                 .WithPercentage(percentage)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            this.invoice.SalesChannel = new SalesChannels(this.Session).EmailChannel;
+            this.invoice.SalesChannel = new SalesChannels(this.Transaction).EmailChannel;
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session)
-                .WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem)
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem)
                 .WithProduct(this.good)
                 .WithQuantity(quantity)
                 .WithSurchargeAdjustment(surchargeAdjustment)
@@ -1829,7 +1829,7 @@ namespace Allors.Database.Domain.Tests
 
             this.invoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var price = this.currentGood1BasePrice.Price ?? 0;
             var surcharge = Math.Round(price * percentage / 100, 2);
@@ -1846,39 +1846,39 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenBillToCustomerWithDifferentCurrency_WhenDerivingPrices_ThenCalculatePricesInPreferredCurrency()
         {
-            var poundSterling = new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "GBP");
+            var poundSterling = new Currencies(this.Transaction).FindBy(this.M.Currency.IsoCode, "GBP");
 
             const decimal conversionfactor = 0.8553M;
-            var euroToPoundStirling = new UnitOfMeasureConversionBuilder(this.Session)
+            var euroToPoundStirling = new UnitOfMeasureConversionBuilder(this.Transaction)
                 .WithConversionFactor(conversionfactor)
                 .WithToUnitOfMeasure(poundSterling)
-                .WithStartDate(this.Session.Now())
+                .WithStartDate(this.Transaction.Now())
                 .Build();
 
-            var euro = new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR");
+            var euro = new Currencies(this.Transaction).FindBy(this.M.Currency.IsoCode, "EUR");
             euro.AddUnitOfMeasureConversion(euroToPoundStirling);
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
             Assert.Equal(euro, this.invoice.DerivedCurrency);
 
             this.billToCustomer.PreferredCurrency = poundSterling;
 
-            var newInvoice = new SalesInvoiceBuilder(this.Session)
+            var newInvoice = new SalesInvoiceBuilder(this.Transaction)
                 .WithBillToCustomer(this.billToCustomer)
                 .WithAssignedBillToContactMechanism(this.billToContactMechanismMechelen)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             const decimal quantity = 3;
-            var item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity).Build();
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(quantity).Build();
             newInvoice.AddSalesInvoiceItem(item1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(poundSterling, newInvoice.DerivedCurrency);
 
@@ -1889,82 +1889,82 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GiveninvoiceItem_WhenPartialPaymentIsReceived_ThenInvoiceItemStateIsSetToPartiallyPaid()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session)
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction)
                 .WithProduct(this.good)
-                .WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem)
                 .WithQuantity(1)
                 .WithAssignedUnitPrice(100M)
                 .Build();
 
             this.invoice.AddSalesInvoiceItem(item1);
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.invoice.Send();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            new ReceiptBuilder(this.Session)
+            new ReceiptBuilder(this.Transaction)
                 .WithAmount(50)
-                .WithPaymentApplication(new PaymentApplicationBuilder(this.Session).WithInvoiceItem(item1).WithAmountApplied(50).Build())
-                .WithEffectiveDate(this.Session.Now())
+                .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(item1).WithAmountApplied(50).Build())
+                .WithEffectiveDate(this.Transaction.Now())
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Equal(new SalesInvoiceItemStates(this.Session).PartiallyPaid, item1.SalesInvoiceItemState);
+            Assert.Equal(new SalesInvoiceItemStates(this.Transaction).PartiallyPaid, item1.SalesInvoiceItemState);
         }
 
         [Fact]
         public void GiveninvoiceItem_WhenFullPaymentIsReceived_ThenInvoiceItemStateIsSetToPaid()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session)
-                .WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem)
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem)
                 .WithProduct(this.good)
                 .WithQuantity(1)
                 .WithAssignedUnitPrice(100M)
-                .WithAssignedVatRegime(new VatRegimes(this.Session).Assessable21)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Assessable21)
                 .Build();
 
             this.invoice.AddSalesInvoiceItem(item1);
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             this.invoice.Send();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            new ReceiptBuilder(this.Session)
+            new ReceiptBuilder(this.Transaction)
                 .WithAmount(121)
-                .WithPaymentApplication(new PaymentApplicationBuilder(this.Session).WithInvoiceItem(item1).WithAmountApplied(121).Build())
+                .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(item1).WithAmountApplied(121).Build())
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Equal(new SalesInvoiceItemStates(this.Session).Paid, item1.SalesInvoiceItemState);
+            Assert.Equal(new SalesInvoiceItemStates(this.Transaction).Paid, item1.SalesInvoiceItemState);
         }
 
-        private void InstantiateObjects(ISession session)
+        private void InstantiateObjects(ITransaction transaction)
         {
-            this.good = (NonUnifiedGood)session.Instantiate(this.good);
-            this.finishedGood = (Part)session.Instantiate(this.finishedGood);
-            this.feature1 = (Colour)session.Instantiate(this.feature1);
-            this.feature2 = (Colour)session.Instantiate(this.feature2);
-            this.internalOrganisation = (Singleton)session.Instantiate(this.internalOrganisation);
-            this.billToCustomer = (Organisation)session.Instantiate(this.billToCustomer);
-            this.shipToCustomer = (Organisation)session.Instantiate(this.shipToCustomer);
-            this.supplier = (Organisation)session.Instantiate(this.supplier);
-            this.mechelen = (City)session.Instantiate(this.mechelen);
-            this.kiev = (City)session.Instantiate(this.kiev);
-            this.billToContactMechanismMechelen = (PostalAddress)session.Instantiate(this.billToContactMechanismMechelen);
-            this.shipToContactMechanismKiev = (PostalAddress)session.Instantiate(this.shipToContactMechanismKiev);
-            this.goodPurchasePrice = (SupplierOffering)session.Instantiate(this.goodPurchasePrice);
-            this.currentBasePriceGeoBoundary = (BasePrice)session.Instantiate(this.currentBasePriceGeoBoundary);
-            this.currentFeature1BasePrice = (BasePrice)session.Instantiate(this.currentFeature1BasePrice);
-            this.currentGood1BasePrice = (BasePrice)session.Instantiate(this.currentGood1BasePrice);
-            this.currentGood1Feature1BasePrice = (BasePrice)session.Instantiate(this.currentGood1Feature1BasePrice);
-            this.invoice = (SalesInvoice)session.Instantiate(this.invoice);
-            this.vatRate21 = (VatRate)session.Instantiate(this.vatRate21);
+            this.good = (NonUnifiedGood)transaction.Instantiate(this.good);
+            this.finishedGood = (Part)transaction.Instantiate(this.finishedGood);
+            this.feature1 = (Colour)transaction.Instantiate(this.feature1);
+            this.feature2 = (Colour)transaction.Instantiate(this.feature2);
+            this.internalOrganisation = (Singleton)transaction.Instantiate(this.internalOrganisation);
+            this.billToCustomer = (Organisation)transaction.Instantiate(this.billToCustomer);
+            this.shipToCustomer = (Organisation)transaction.Instantiate(this.shipToCustomer);
+            this.supplier = (Organisation)transaction.Instantiate(this.supplier);
+            this.mechelen = (City)transaction.Instantiate(this.mechelen);
+            this.kiev = (City)transaction.Instantiate(this.kiev);
+            this.billToContactMechanismMechelen = (PostalAddress)transaction.Instantiate(this.billToContactMechanismMechelen);
+            this.shipToContactMechanismKiev = (PostalAddress)transaction.Instantiate(this.shipToContactMechanismKiev);
+            this.goodPurchasePrice = (SupplierOffering)transaction.Instantiate(this.goodPurchasePrice);
+            this.currentBasePriceGeoBoundary = (BasePrice)transaction.Instantiate(this.currentBasePriceGeoBoundary);
+            this.currentFeature1BasePrice = (BasePrice)transaction.Instantiate(this.currentFeature1BasePrice);
+            this.currentGood1BasePrice = (BasePrice)transaction.Instantiate(this.currentGood1BasePrice);
+            this.currentGood1Feature1BasePrice = (BasePrice)transaction.Instantiate(this.currentGood1Feature1BasePrice);
+            this.invoice = (SalesInvoice)transaction.Instantiate(this.invoice);
+            this.vatRate21 = (VatRate)transaction.Instantiate(this.vatRate21);
         }
     }
 
@@ -1975,30 +1975,30 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void DeriveSalesInvoiceItemState()
         {
-            var invoiceitem = new SalesInvoiceItemBuilder(this.Session).Build();
+            var invoiceitem = new SalesInvoiceItemBuilder(this.Transaction).Build();
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            Assert.Equal(new SalesInvoiceItemStates(this.Session).ReadyForPosting, invoiceitem.SalesInvoiceItemState);
+            Assert.Equal(new SalesInvoiceItemStates(this.Transaction).ReadyForPosting, invoiceitem.SalesInvoiceItemState);
         }
 
         [Fact]
         public void DeriveInvoiceItemType()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
-            var invoiceitem = new SalesInvoiceItemBuilder(this.Session).WithProduct(product).Build();
+            var product = new NonUnifiedGoodBuilder(this.Transaction).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
+            var invoiceitem = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(product).Build();
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            Assert.Equal(new InvoiceItemTypes(this.Session).ProductItem, invoiceitem.InvoiceItemType);
+            Assert.Equal(new InvoiceItemTypes(this.Transaction).ProductItem, invoiceitem.InvoiceItemType);
         }
 
         [Fact]
         public void DeriveDerivationTrigger()
         {
-            var invoiceitem = new SalesInvoiceItemBuilder(this.Session).Build();
+            var invoiceitem = new SalesInvoiceItemBuilder(this.Transaction).Build();
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(invoiceitem.ExistDerivationTrigger);
         }
@@ -2011,12 +2011,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedSalesInvoiceSalesInvoiceItemsDeriveVatRegime()
         {
-            var salesInvoice = new SalesInvoiceBuilder(this.Session).WithAssignedVatRegime(new VatRegimes(this.Session).Exempt).Build();
-            this.Session.Derive(false);
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).WithAssignedVatRegime(new VatRegimes(this.Transaction).Exempt).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(invoiceItem.DerivedVatRegime, salesInvoice.DerivedVatRegime);
         }
@@ -2024,182 +2024,182 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ValidateAtmostOneProductAndPart()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
-            var part = new NonUnifiedPartBuilder(this.Session).Build();
-            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
+            var part = new NonUnifiedPartBuilder(this.Transaction).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithPart(part).WithProduct(product).Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithPart(part).WithProduct(product).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne"));
         }
 
         [Fact]
         public void ValidateAtmostOneProductAndProductFeature()
         {
-            var product = new NonUnifiedGoodBuilder(this.Session).Build();
-            var colour = new ColourBuilder(this.Session).Build();
-            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
+            var colour = new ColourBuilder(this.Transaction).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithProductFeature(colour).WithProduct(product).Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithProductFeature(colour).WithProduct(product).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne"));
         }
 
         [Fact]
         public void ValidateAtmostOneSerialisedItemAndProductFeature()
         {
-            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
-            var colour = new ColourBuilder(this.Session).Build();
-            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            var colour = new ColourBuilder(this.Transaction).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithProductFeature(colour).WithSerialisedItem(serialisedItem).Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithProductFeature(colour).WithSerialisedItem(serialisedItem).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Single(errors.FindAll(e => e.Message.StartsWith("AssertExistsAtMostOne")));
         }
 
         [Fact]
         public void ValidateAtmostOneSerialisedItemAndPart()
         {
-            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
-            var part = new NonUnifiedPartBuilder(this.Session).Build();
-            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            var part = new NonUnifiedPartBuilder(this.Transaction).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithPart(part).WithSerialisedItem(serialisedItem).Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithPart(part).WithSerialisedItem(serialisedItem).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Single(errors.FindAll(e => e.Message.StartsWith("AssertExistsAtMostOne")));
         }
 
         [Fact]
         public void ValidateNextSerialisedItemAvailability()
         {
-            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
-            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithSerialisedItem(serialisedItem).Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithSerialisedItem(serialisedItem).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Single(errors.FindAll(e => e.Message.StartsWith("AssertExists: ")));
         }
 
         [Fact]
         public void ValidateSerialisedPartQuantityValid()
         {
-            var part = new NonUnifiedPartBuilder(this.Session).WithSerialisedDefaults(this.InternalOrganisation, this.Session.Faker()).Build();
-            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var part = new NonUnifiedPartBuilder(this.Transaction).WithSerialisedDefaults(this.InternalOrganisation, this.Transaction.Faker()).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithPart(part).WithQuantity(1).Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithPart(part).WithQuantity(1).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
             var expectedMessage = $"{invoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.DoesNotContain(errors, e => e.Message.Equals(expectedMessage));
         }
 
         [Fact]
         public void ValidateSerialisedPartQuantityInvalid()
         {
-            var part = new NonUnifiedPartBuilder(this.Session).WithSerialisedDefaults(this.InternalOrganisation, this.Session.Faker()).Build();
-            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var part = new NonUnifiedPartBuilder(this.Transaction).WithSerialisedDefaults(this.InternalOrganisation, this.Transaction.Faker()).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithPart(part).WithQuantity(2).Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithPart(part).WithQuantity(2).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
             var expectedMessage = $"{invoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Single(errors.FindAll(e => e.Message.Equals(expectedMessage)));
         }
 
         [Fact]
         public void ValidateSerialisedPartQuantityInvalidAgain()
         {
-            var part = new NonUnifiedPartBuilder(this.Session).WithSerialisedDefaults(this.InternalOrganisation, this.Session.Faker()).Build();
-            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var part = new NonUnifiedPartBuilder(this.Transaction).WithSerialisedDefaults(this.InternalOrganisation, this.Transaction.Faker()).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithPart(part).WithQuantity(0).Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithPart(part).WithQuantity(0).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
             var expectedMessage = $"{invoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Single(errors.FindAll(e => e.Message.Equals(expectedMessage)));
         }
 
         [Fact]
         public void ValidateNonSerialisedPartQuantityInvalid()
         {
-            var part = new NonUnifiedPartBuilder(this.Session).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
-            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var part = new NonUnifiedPartBuilder(this.Transaction).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithPart(part).WithQuantity(0).Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithPart(part).WithQuantity(0).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
             var expectedMessage = $"{invoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Single(errors.FindAll(e => e.Message.Equals(expectedMessage)));
         }
 
         [Fact]
         public void ValidateServiceInvoiceItemQuantityInvalid()
         {
-            var service = new InvoiceItemTypes(this.Session).Service;
-            var part = new NonUnifiedPartBuilder(this.Session).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
-            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var service = new InvoiceItemTypes(this.Transaction).Service;
+            var part = new NonUnifiedPartBuilder(this.Transaction).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithInvoiceItemType(service).WithQuantity(service.MaxQuantity + 1).Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithInvoiceItemType(service).WithQuantity(service.MaxQuantity + 1).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
             var expectedMessage = $"{invoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Single(errors.FindAll(e => e.Message.Equals(expectedMessage)));
         }
 
         [Fact]
         public void ValidateServiceInvoiceItemQuantityvalid()
         {
-            var service = new InvoiceItemTypes(this.Session).Service;
-            var part = new NonUnifiedPartBuilder(this.Session).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
-            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var service = new InvoiceItemTypes(this.Transaction).Service;
+            var part = new NonUnifiedPartBuilder(this.Transaction).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithInvoiceItemType(service).WithQuantity(service.MaxQuantity).Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithInvoiceItemType(service).WithQuantity(service.MaxQuantity).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
             var expectedMessage = $"{invoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.DoesNotContain(errors, e => e.Message.Equals(expectedMessage));
         }
 
         [Fact]
         public void OnChangedRoleAssignedVatRegimeDeriveVatRegime()
         {
-            var assignedVatRegime = new VatRegimes(this.Session).Assessable10;
-            var salesInvoice = new SalesInvoiceBuilder(this.Session).WithAssignedVatRegime(new VatRegimes(this.Session).Exempt).Build();
-            this.Session.Derive(false);
+            var assignedVatRegime = new VatRegimes(this.Transaction).Assessable10;
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).WithAssignedVatRegime(new VatRegimes(this.Transaction).Exempt).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             invoiceItem.AssignedVatRegime = assignedVatRegime;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(assignedVatRegime, invoiceItem.DerivedVatRegime);
         }
@@ -2207,16 +2207,16 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedRoleSalesInvoiceVatRegimeDeriveVatRegime()
         {
-            var vatRegime = new VatRegimes(this.Session).Assessable10;
-            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var vatRegime = new VatRegimes(this.Transaction).Assessable10;
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             salesInvoice.AssignedVatRegime = vatRegime;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(vatRegime, invoiceItem.DerivedVatRegime);
         }
@@ -2224,16 +2224,16 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedRoleSalesInvoiceVatRegimeDeriveVatRate()
         {
-            var vatRegime = new VatRegimes(this.Session).Assessable10;
-            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var vatRegime = new VatRegimes(this.Transaction).Assessable10;
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             salesInvoice.AssignedVatRegime = vatRegime;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(vatRegime.VatRate, invoiceItem.VatRate);
         }
@@ -2241,16 +2241,16 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedRoleAssignedIrpfRegimeDeriveIrpfRegime()
         {
-            var assignedIrpfRegime = new IrpfRegimes(this.Session).Assessable15;
-            var salesInvoice = new SalesInvoiceBuilder(this.Session).WithAssignedIrpfRegime(new IrpfRegimes(this.Session).Exempt).Build();
-            this.Session.Derive(false);
+            var assignedIrpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).WithAssignedIrpfRegime(new IrpfRegimes(this.Transaction).Exempt).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             invoiceItem.AssignedIrpfRegime = assignedIrpfRegime;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(assignedIrpfRegime, invoiceItem.DerivedIrpfRegime);
         }
@@ -2258,16 +2258,16 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedRoleSalesInvoiceIrpfRegimeDeriveIrpfRegime()
         {
-            var irpfRegime = new IrpfRegimes(this.Session).Assessable15;
-            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var irpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             salesInvoice.AssignedIrpfRegime = irpfRegime;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(irpfRegime, invoiceItem.DerivedIrpfRegime);
         }
@@ -2275,16 +2275,16 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedRoleSalesInvoiceIrpfRegimeDeriveIrpfRate()
         {
-            var irpfRegime = new IrpfRegimes(this.Session).Assessable15;
-            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var irpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             salesInvoice.AssignedIrpfRegime = irpfRegime;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(irpfRegime.IrpfRate, invoiceItem.IrpfRate);
         }
@@ -2292,15 +2292,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedRolePaymentApplicationAmountAppliedDeriveAmountPaid()
         {
-            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            new PaymentApplicationBuilder(this.Session).WithInvoiceItem(invoiceItem).WithAmountApplied(1).Build();
-            this.Session.Derive(false);
+            new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoiceItem).WithAmountApplied(1).Build();
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, invoiceItem.AmountPaid);
         }
@@ -2308,59 +2308,59 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedRoleSalesInvoiceSalesInvoiceStateDeriveSalesInvoiceItemStateCancelled()
         {
-            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             salesInvoice.CancelInvoice();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            Assert.Equal(new SalesInvoiceItemStates(this.Session).CancelledByInvoice, invoiceItem.SalesInvoiceItemState);
+            Assert.Equal(new SalesInvoiceItemStates(this.Transaction).CancelledByInvoice, invoiceItem.SalesInvoiceItemState);
         }
 
         [Fact]
         public void OnChangedRoleSalesInvoiceSalesInvoiceStateDeriveSalesInvoiceItemStateWrittenOff()
         {
-            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             salesInvoice.WriteOff();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            Assert.Equal(new SalesInvoiceItemStates(this.Session).WrittenOff, invoiceItem.SalesInvoiceItemState);
+            Assert.Equal(new SalesInvoiceItemStates(this.Transaction).WrittenOff, invoiceItem.SalesInvoiceItemState);
         }
 
         [Fact]
         public void OnChangedRoleSalesInvoiceSalesInvoiceStateDeriveSalesInvoiceItemStateReadyForPosting()
         {
-            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             salesInvoice.CancelInvoice();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             salesInvoice.Reopen();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            Assert.Equal(new SalesInvoiceItemStates(this.Session).ReadyForPosting, invoiceItem.SalesInvoiceItemState);
+            Assert.Equal(new SalesInvoiceItemStates(this.Transaction).ReadyForPosting, invoiceItem.SalesInvoiceItemState);
         }
     }
 
     [Trait("Category", "Security")]
     public class SalesInvoiceItemDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesInvoiceItemDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.SalesInvoiceItem.ObjectType, this.M.SalesInvoiceItem.Delete);
+        public SalesInvoiceItemDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.SalesInvoiceItem.ObjectType, this.M.SalesInvoiceItem.Delete);
 
         public override Config Config => new Config { SetupSecurity = true };
 
@@ -2369,8 +2369,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedSalesInvoiceItemStateReadyForPostingDeriveDeletePermission()
         {
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.DoesNotContain(this.deletePermission, invoiceItem.DeniedPermissions);
         }
@@ -2378,11 +2378,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedSalesInvoiceItemStateCancelledDeriveDeletePermission()
         {
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             invoiceItem.CancelFromInvoice();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, invoiceItem.DeniedPermissions);
         }

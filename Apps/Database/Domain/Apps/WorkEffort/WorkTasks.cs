@@ -12,19 +12,19 @@ namespace Allors.Database.Domain
 
     public partial class WorkTasks
     {
-        public static void AppsMonthly(ISession session)
+        public static void AppsMonthly(ITransaction transaction)
         {
-            var m = session.Database.Context().M;
+            var m = transaction.Database.Context().M;
 
-            var customers = new Parties(session).Extent();
+            var customers = new Parties(transaction).Extent();
             customers.Filter.AddEquals(m.Party.CollectiveWorkEffortInvoice, true);
 
-            var workTasks = new WorkTasks(session).Extent();
-            workTasks.Filter.AddEquals(m.WorkEffort.WorkEffortState, new WorkEffortStates(session).Completed);
+            var workTasks = new WorkTasks(transaction).Extent();
+            workTasks.Filter.AddEquals(m.WorkEffort.WorkEffortState, new WorkEffortStates(transaction).Completed);
             workTasks.Filter.AddContainedIn(m.WorkEffort.Customer, (Extent)customers);
 
             var workTasksByCustomer = workTasks.Select(v => v.Customer).Distinct()
-                .ToDictionary(v => v, v => v.WorkEffortsWhereCustomer.Where(w => w.WorkEffortState.Equals(new WorkEffortStates(session).Completed)).ToArray());
+                .ToDictionary(v => v, v => v.WorkEffortsWhereCustomer.Where(w => w.WorkEffortState.Equals(new WorkEffortStates(transaction).Completed)).ToArray());
 
             SalesInvoice salesInvoice = null;
 
@@ -43,11 +43,11 @@ namespace Allors.Database.Domain
                     {
                         if (group.Any(v => v.CanInvoice))
                         {
-                            salesInvoice = new SalesInvoiceBuilder(session)
+                            salesInvoice = new SalesInvoiceBuilder(transaction)
                                 .WithBilledFrom(group.Key)
                                 .WithBillToCustomer(customer)
-                                .WithInvoiceDate(session.Now())
-                                .WithSalesInvoiceType(new SalesInvoiceTypes(session).SalesInvoice)
+                                .WithInvoiceDate(transaction.Now())
+                                .WithSalesInvoiceType(new SalesInvoiceTypes(transaction).SalesInvoice)
                                 .Build();
                         }
 
@@ -61,8 +61,8 @@ namespace Allors.Database.Domain
                         {
                             var timeEntries = rateGroup.ToArray();
 
-                            var invoiceItem = new SalesInvoiceItemBuilder(session)
-                                .WithInvoiceItemType(new InvoiceItemTypes(session).Service)
+                            var invoiceItem = new SalesInvoiceItemBuilder(transaction)
+                                .WithInvoiceItemType(new InvoiceItemTypes(transaction).Service)
                                 .WithAssignedUnitPrice(rateGroup.Key)
                                 .WithQuantity(timeEntries.Sum(v => v.BillableAmountOfTime ?? v.AmountOfTime ?? 0.0m))
                                 .Build();
@@ -71,7 +71,7 @@ namespace Allors.Database.Domain
 
                             foreach (var billableEntry in timeEntries)
                             {
-                                new TimeEntryBillingBuilder(session)
+                                new TimeEntryBillingBuilder(transaction)
                                     .WithTimeEntry(billableEntry)
                                     .WithInvoiceItem(invoiceItem)
                                     .Build();
@@ -95,8 +95,8 @@ namespace Allors.Database.Domain
                                 {
                                     var part = inventoryAssignment.InventoryItem.Part;
 
-                                    var invoiceItem = new SalesInvoiceItemBuilder(session)
-                                        .WithInvoiceItemType(new InvoiceItemTypes(session).PartItem)
+                                    var invoiceItem = new SalesInvoiceItemBuilder(transaction)
+                                        .WithInvoiceItemType(new InvoiceItemTypes(transaction).PartItem)
                                         .WithPart(part)
                                         .WithAssignedUnitPrice(inventoryAssignment.UnitSellingPrice)
                                         .WithQuantity(inventoryAssignment.DerivedBillableQuantity)
@@ -104,7 +104,7 @@ namespace Allors.Database.Domain
 
                                     salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-                                    new WorkEffortBillingBuilder(session)
+                                    new WorkEffortBillingBuilder(transaction)
                                         .WithWorkEffort(workEffort)
                                         .WithInvoiceItem(invoiceItem)
                                         .Build();
@@ -112,21 +112,21 @@ namespace Allors.Database.Domain
 
                                 foreach (WorkEffortPurchaseOrderItemAssignment purchaseOrderItemAssignment in workEffort.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment)
                                 {
-                                    var invoiceItem = new SalesInvoiceItemBuilder(session)
-                                        .WithInvoiceItemType(new InvoiceItemTypes(session).Service)
+                                    var invoiceItem = new SalesInvoiceItemBuilder(transaction)
+                                        .WithInvoiceItemType(new InvoiceItemTypes(transaction).Service)
                                         .WithAssignedUnitPrice(purchaseOrderItemAssignment.UnitSellingPrice)
                                         .WithQuantity(purchaseOrderItemAssignment.Quantity)
                                         .Build();
 
                                     salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-                                    new WorkEffortBillingBuilder(session)
+                                    new WorkEffortBillingBuilder(transaction)
                                         .WithWorkEffort(workEffort)
                                         .WithInvoiceItem(invoiceItem)
                                         .Build();
                                 }
 
-                                workEffort.WorkEffortState = new WorkEffortStates(session).Finished;
+                                workEffort.WorkEffortState = new WorkEffortStates(transaction).Finished;
                             }
                         }
                     }
@@ -136,11 +136,11 @@ namespace Allors.Database.Domain
 
         protected override void AppsSecure(Security config)
         {
-            var created = new WorkEffortStates(this.Session).Created;
-            var inProgress = new WorkEffortStates(this.Session).InProgress;
-            var cancelled = new WorkEffortStates(this.Session).Cancelled;
-            var completed = new WorkEffortStates(this.Session).Completed;
-            var finished = new WorkEffortStates(this.Session).Finished;
+            var created = new WorkEffortStates(this.Transaction).Created;
+            var inProgress = new WorkEffortStates(this.Transaction).InProgress;
+            var cancelled = new WorkEffortStates(this.Transaction).Cancelled;
+            var completed = new WorkEffortStates(this.Transaction).Completed;
+            var finished = new WorkEffortStates(this.Transaction).Finished;
 
             var cancel = this.Meta.Cancel;
             var reopen = this.Meta.Reopen;

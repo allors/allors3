@@ -17,43 +17,43 @@ namespace Allors.Database.Domain.Tests
         public void GivenWorkEffort_WhenAddingInventoryAssignment_ThenInventoryConsumptionCreated()
         {
             // Arrange
-            var customer = new OrganisationBuilder(this.Session).WithName("Org1").Build();
-            var internalOrganisation = new Organisations(this.Session).Extent().First(o => o.IsInternalOrganisation);
-            new CustomerRelationshipBuilder(this.Session).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
+            var customer = new OrganisationBuilder(this.Transaction).WithName("Org1").Build();
+            var internalOrganisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
+            new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
 
-            var reasons = new InventoryTransactionReasons(this.Session);
+            var reasons = new InventoryTransactionReasons(this.Transaction);
 
-            var workEffort = new WorkTaskBuilder(this.Session).WithName("Activity").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
-            var part = new NonUnifiedPartBuilder(this.Session)
-                .WithProductIdentification(new PartNumberBuilder(this.Session)
+            var workEffort = new WorkTaskBuilder(this.Transaction).WithName("Activity").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
+            var part = new NonUnifiedPartBuilder(this.Transaction)
+                .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                     .WithIdentification("P1")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part)
-                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
                 .WithQuantity(11)
                 .Build();
 
             // Act
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             // Assert
             Assert.Empty(workEffort.WorkEffortInventoryAssignmentsWhereAssignment);
             Assert.True(workEffort.WorkEffortState.IsCreated);
 
             // Re-arrange
-            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithInventoryItem(part.InventoryItemsWherePart.First)
                 .WithQuantity(10)
                 .Build();
 
             // Act
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             // Assert
             var transactions = inventoryAssignment.InventoryItemTransactions;
@@ -72,48 +72,48 @@ namespace Allors.Database.Domain.Tests
         public void GivenWorkEffortWithInventoryAssignment_WhenChangingPart_ThenInventoryConsumptionChange()
         {
             // Arrange
-            var reasons = new InventoryTransactionReasons(this.Session);
+            var reasons = new InventoryTransactionReasons(this.Transaction);
 
-            var customer = new OrganisationBuilder(this.Session).WithName("Org1").Build();
-            var internalOrganisation = new Organisations(this.Session).Extent().First(o => o.IsInternalOrganisation);
-            new CustomerRelationshipBuilder(this.Session).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
+            var customer = new OrganisationBuilder(this.Transaction).WithName("Org1").Build();
+            var internalOrganisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
+            new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
 
-            var workEffort = new WorkTaskBuilder(this.Session).WithName("Activity").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
-            var part1 = new NonUnifiedPartBuilder(this.Session)
-                .WithProductIdentification(new PartNumberBuilder(this.Session)
+            var workEffort = new WorkTaskBuilder(this.Transaction).WithName("Activity").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
+            var part1 = new NonUnifiedPartBuilder(this.Transaction)
+                .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                     .WithIdentification("P1")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                 .Build();
-            var part2 = new NonUnifiedPartBuilder(this.Session)
-                .WithProductIdentification(new PartNumberBuilder(this.Session)
+            var part2 = new NonUnifiedPartBuilder(this.Transaction)
+                .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                     .WithIdentification("P2")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part1)
-                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
                 .WithQuantity(10)
                 .Build();
 
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part2)
-                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
                 .WithQuantity(10)
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithInventoryItem(part1.InventoryItemsWherePart.First)
                 .WithQuantity(10)
                 .Build();
 
             // Act
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             // Assert
             var transactions = inventoryAssignment.InventoryItemTransactions.ToArray();
@@ -127,7 +127,7 @@ namespace Allors.Database.Domain.Tests
             inventoryAssignment.InventoryItem = part2.InventoryItemsWherePart.First;
 
             // Act
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             // Assert
             var part1Transactions = inventoryAssignment.InventoryItemTransactions.Where(t => t.Part.Equals(part1)).ToArray();
@@ -144,40 +144,40 @@ namespace Allors.Database.Domain.Tests
         public void GivenWorkEffortWithInventoryAssignment_WhenCancelling_ThenInventoryConsumptionCancelled()
         {
             // Arrange
-            var reasons = new InventoryTransactionReasons(this.Session);
+            var reasons = new InventoryTransactionReasons(this.Transaction);
 
-            var customer = new OrganisationBuilder(this.Session).WithName("Org1").Build();
-            var internalOrganisation = new Organisations(this.Session).Extent().First(o => o.IsInternalOrganisation);
-            new CustomerRelationshipBuilder(this.Session).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
+            var customer = new OrganisationBuilder(this.Transaction).WithName("Org1").Build();
+            var internalOrganisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
+            new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
 
-            var workEffort = new WorkTaskBuilder(this.Session).WithName("Activity").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
-            var part = new NonUnifiedPartBuilder(this.Session)
-                .WithProductIdentification(new PartNumberBuilder(this.Session)
+            var workEffort = new WorkTaskBuilder(this.Transaction).WithName("Activity").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
+            var part = new NonUnifiedPartBuilder(this.Transaction)
+                .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                     .WithIdentification("P1")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part)
-                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
                 .WithQuantity(10)
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithInventoryItem(part.InventoryItemsWherePart.First)
                 .WithQuantity(10)
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             // Act
             workEffort.Cancel();
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             // Assert
             var transactions = inventoryAssignment.InventoryItemTransactions;
@@ -197,36 +197,36 @@ namespace Allors.Database.Domain.Tests
         public void GivenWorkEffortWithInventoryAssignment_WhenCompleting_ThenInventoryTransactionsCreated()
         {
             // Arrange
-            var reasons = new InventoryTransactionReasons(this.Session);
+            var reasons = new InventoryTransactionReasons(this.Transaction);
 
-            var customer = new OrganisationBuilder(this.Session).WithName("Org1").Build();
-            var internalOrganisation = new Organisations(this.Session).Extent().First(o => o.IsInternalOrganisation);
-            new CustomerRelationshipBuilder(this.Session).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
+            var customer = new OrganisationBuilder(this.Transaction).WithName("Org1").Build();
+            var internalOrganisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
+            new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
 
-            var workEffort = new WorkTaskBuilder(this.Session).WithName("Activity").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
-            var part = new NonUnifiedPartBuilder(this.Session)
-                .WithProductIdentification(new PartNumberBuilder(this.Session)
+            var workEffort = new WorkTaskBuilder(this.Transaction).WithName("Activity").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
+            var part = new NonUnifiedPartBuilder(this.Transaction)
+                .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                     .WithIdentification("P1")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            new InventoryItemTransactionBuilder(this.Session).WithPart(part).WithQuantity(100).WithReason(reasons.PhysicalCount).Build();
+            new InventoryItemTransactionBuilder(this.Transaction).WithPart(part).WithQuantity(100).WithReason(reasons.PhysicalCount).Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithInventoryItem(part.InventoryItemsWherePart.First)
                 .WithQuantity(10)
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             // Act
             workEffort.Complete();
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             // Assert
             var transactions = inventoryAssignment.InventoryItemTransactions;
@@ -244,43 +244,43 @@ namespace Allors.Database.Domain.Tests
         public void GivenWorkEffortWithInventoryAssignment_WhenCompletingThenCancelling_ThenInventoryTransactionsCancelled()
         {
             // Arrange
-            var reasons = new InventoryTransactionReasons(this.Session);
+            var reasons = new InventoryTransactionReasons(this.Transaction);
 
-            var customer = new OrganisationBuilder(this.Session).WithName("Org1").Build();
-            var internalOrganisation = new Organisations(this.Session).Extent().First(o => o.IsInternalOrganisation);
-            new CustomerRelationshipBuilder(this.Session).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
+            var customer = new OrganisationBuilder(this.Transaction).WithName("Org1").Build();
+            var internalOrganisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
+            new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
 
-            var workEffort = new WorkTaskBuilder(this.Session).WithName("Activity").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
-            var part = new NonUnifiedPartBuilder(this.Session)
-                .WithProductIdentification(new PartNumberBuilder(this.Session)
+            var workEffort = new WorkTaskBuilder(this.Transaction).WithName("Activity").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
+            var part = new NonUnifiedPartBuilder(this.Transaction)
+                .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                     .WithIdentification("P1")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part)
-                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
                 .WithQuantity(10)
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithInventoryItem(part.InventoryItemsWherePart.First)
                 .WithQuantity(10)
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             // Act
             workEffort.Complete();
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             workEffort.Cancel();
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             // Assert
             var transactions = inventoryAssignment.InventoryItemTransactions;
@@ -299,54 +299,54 @@ namespace Allors.Database.Domain.Tests
         public void GivenWorkEffortWithInventoryAssignment_WhenChangingPartAndQuantityAndFinishing_ThenOldInventoryCancelledAndNewInventoryCreated()
         {
             // Arrange
-            var reasons = new InventoryTransactionReasons(this.Session);
+            var reasons = new InventoryTransactionReasons(this.Transaction);
 
-            var customer = new OrganisationBuilder(this.Session).WithName("Org1").Build();
-            var internalOrganisation = new Organisations(this.Session).Extent().First(o => o.IsInternalOrganisation);
-            new CustomerRelationshipBuilder(this.Session).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
+            var customer = new OrganisationBuilder(this.Transaction).WithName("Org1").Build();
+            var internalOrganisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
+            new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
 
-            var workEffort = new WorkTaskBuilder(this.Session).WithName("Activity").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
-            var part1 = new NonUnifiedPartBuilder(this.Session)
-                .WithProductIdentification(new PartNumberBuilder(this.Session)
+            var workEffort = new WorkTaskBuilder(this.Transaction).WithName("Activity").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
+            var part1 = new NonUnifiedPartBuilder(this.Transaction)
+                .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                     .WithIdentification("P1")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                 .Build();
-            var part2 = new NonUnifiedPartBuilder(this.Session)
-                .WithProductIdentification(new PartNumberBuilder(this.Session)
+            var part2 = new NonUnifiedPartBuilder(this.Transaction)
+                .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                     .WithIdentification("P2")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part1)
-                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
                 .WithQuantity(10)
                 .Build();
 
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part2)
-                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
                 .WithQuantity(10)
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithInventoryItem(part1.InventoryItemsWherePart.First)
                 .WithQuantity(10)
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             // Act
             inventoryAssignment.InventoryItem = part2.InventoryItemsWherePart.First;
             inventoryAssignment.Quantity = 5;
 
             workEffort.Complete();
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             // Assert
             var part1Transactions = inventoryAssignment.InventoryItemTransactions.Where(t => t.Part.Equals(part1)).ToArray();
@@ -366,59 +366,59 @@ namespace Allors.Database.Domain.Tests
         public void GivenWorkEffortWithInventoryAssignment_WhenChangingPartAndQuantityAndReopening_ThenOldInventoryCancelledAndNewInventoryCreated()
         {
             // Arrange
-            var reasons = new InventoryTransactionReasons(this.Session);
+            var reasons = new InventoryTransactionReasons(this.Transaction);
 
-            var customer = new OrganisationBuilder(this.Session).WithName("Org1").Build();
-            var internalOrganisation = new Organisations(this.Session).Extent().First(o => o.IsInternalOrganisation);
-            new CustomerRelationshipBuilder(this.Session).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
+            var customer = new OrganisationBuilder(this.Transaction).WithName("Org1").Build();
+            var internalOrganisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
+            new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
 
-            var workEffort = new WorkTaskBuilder(this.Session).WithName("Activity").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
-            var part1 = new NonUnifiedPartBuilder(this.Session)
-                .WithProductIdentification(new PartNumberBuilder(this.Session)
+            var workEffort = new WorkTaskBuilder(this.Transaction).WithName("Activity").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
+            var part1 = new NonUnifiedPartBuilder(this.Transaction)
+                .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                     .WithIdentification("P1")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                 .Build();
-            var part2 = new NonUnifiedPartBuilder(this.Session)
-                .WithProductIdentification(new PartNumberBuilder(this.Session)
+            var part2 = new NonUnifiedPartBuilder(this.Transaction)
+                .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                     .WithIdentification("P2")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part1)
-                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
                 .WithQuantity(10)
                 .Build();
 
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part2)
-                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
                 .WithQuantity(5)
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithInventoryItem(part1.InventoryItemsWherePart.First)
                 .WithQuantity(10)
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             workEffort.Complete();
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             workEffort.Reopen();
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             // Act
             inventoryAssignment.InventoryItem = part2.InventoryItemsWherePart.First;
             inventoryAssignment.Quantity = 4;
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             // Assert
             var part1Transactions = inventoryAssignment.InventoryItemTransactions.Where(t => t.Part.Equals(part1)).ToArray();
@@ -438,37 +438,37 @@ namespace Allors.Database.Domain.Tests
         public void GivenWorkEffortWithInventoryAssignment_WhenChangingQuantity_ThenInventoryTransactionsCreated()
         {
             // Arrage
-            var reasons = new InventoryTransactionReasons(this.Session);
+            var reasons = new InventoryTransactionReasons(this.Transaction);
 
-            var customer = new OrganisationBuilder(this.Session).WithName("Org1").Build();
-            var internalOrganisation = new Organisations(this.Session).Extent().First(o => o.IsInternalOrganisation);
-            new CustomerRelationshipBuilder(this.Session).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
+            var customer = new OrganisationBuilder(this.Transaction).WithName("Org1").Build();
+            var internalOrganisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
+            new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
 
-            var workEffort = new WorkTaskBuilder(this.Session).WithName("Activity").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
-            var part = new NonUnifiedPartBuilder(this.Session)
-                .WithProductIdentification(new PartNumberBuilder(this.Session)
+            var workEffort = new WorkTaskBuilder(this.Transaction).WithName("Activity").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
+            var part = new NonUnifiedPartBuilder(this.Transaction)
+                .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                     .WithIdentification("P1")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part)
-                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
                 .WithQuantity(20)
                 .Build();
 
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
-            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithInventoryItem(part.InventoryItemsWherePart.First)
                 .WithQuantity(5)
                 .Build();
 
             // Act
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             // Assert
             var consumption = inventoryAssignment.InventoryItemTransactions.First(t => t.Reason.Equals(reasons.Consumption) && (t.Quantity > 0));
@@ -478,7 +478,7 @@ namespace Allors.Database.Domain.Tests
             inventoryAssignment.Quantity = 10;
 
             // Act
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             // Assert
             var consumptions = inventoryAssignment.InventoryItemTransactions.Where(t => t.Reason.Equals(reasons.Consumption));
@@ -488,7 +488,7 @@ namespace Allors.Database.Domain.Tests
             workEffort.Complete();
 
             // Act
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             // Assert
             consumptions = inventoryAssignment.InventoryItemTransactions.Where(t => t.Reason.Equals(reasons.Consumption));
@@ -507,36 +507,36 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedInventoryItemCreateInventoryItemTransaction()
         {
-            var workEffort = new WorkTaskBuilder(this.Session).Build();
-            var part1 = new NonUnifiedPartBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
-            var part2 = new NonUnifiedPartBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
-            this.Session.Derive(false);
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            var part1 = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
+            var part2 = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
+            this.Transaction.Derive(false);
 
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part1)
-                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
                 .WithQuantity(3)
                 .Build();
 
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part2)
-                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
                 .WithQuantity(3)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithInventoryItem(part1.InventoryItemsWherePart.First)
                 .WithQuantity(1)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(2, part1.QuantityOnHand);
             Assert.Equal(3, part2.QuantityOnHand);
 
             inventoryAssignment.InventoryItem = part2.InventoryItemsWherePart.First;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(3, part1.QuantityOnHand);
             Assert.Equal(2, part2.QuantityOnHand);
@@ -545,26 +545,26 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedInventoryItemDeriveCostOfGoodsSold()
         {
-            var workEffort = new WorkTaskBuilder(this.Session).Build();
-            var part1 = new NonUnifiedPartBuilder(this.Session)
-                .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised)
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            var part1 = new NonUnifiedPartBuilder(this.Transaction)
+                .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part1)
-                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
                 .WithQuantity(3)
                 .WithCost(10)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithInventoryItem(part1.InventoryItemsWherePart.First)
                 .WithQuantity(2)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(20, inventoryAssignment.CostOfGoodsSold);
         }
@@ -572,29 +572,29 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedQuantityDeriveCostOfGoodsSold()
         {
-            var workEffort = new WorkTaskBuilder(this.Session).Build();
-            var part = new NonUnifiedPartBuilder(this.Session)
-                .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised)
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            var part = new NonUnifiedPartBuilder(this.Transaction)
+                .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part)
-                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
                 .WithQuantity(3)
                 .WithCost(10)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithInventoryItem(part.InventoryItemsWherePart.First)
                 .WithQuantity(2)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             inventoryAssignment.Quantity = 3;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(30, inventoryAssignment.CostOfGoodsSold);
         }
@@ -602,28 +602,28 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedAssignedUnitSellingPriceDeriveUnitSellingPrice()
         {
-            var workEffort = new WorkTaskBuilder(this.Session).Build();
-            var part = new NonUnifiedPartBuilder(this.Session)
-                .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised)
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            var part = new NonUnifiedPartBuilder(this.Transaction)
+                .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part)
-                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
                 .WithQuantity(3)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithInventoryItem(part.InventoryItemsWherePart.First)
                 .WithQuantity(2)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             inventoryAssignment.AssignedUnitSellingPrice = 11;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(11, inventoryAssignment.UnitSellingPrice);
         }
@@ -631,26 +631,26 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedInventoryItemDeriveUnitSellingPrice()
         {
-            var part = new NonUnifiedPartBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
-            new BasePriceBuilder(this.Session).WithPart(part).WithPrice(11).Build();
-            this.Session.Derive(false);
+            var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
+            new BasePriceBuilder(this.Transaction).WithPart(part).WithPrice(11).Build();
+            this.Transaction.Derive(false);
 
-            var workEffort = new WorkTaskBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part)
-                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
                 .WithQuantity(3)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithQuantity(2)
                 .WithInventoryItem(part.InventoryItemsWherePart.First)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(11, inventoryAssignment.UnitSellingPrice);
         }
@@ -658,17 +658,17 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedAssignedBillableQuantityDeriveDerivedBillableQuantity()
         {
-            var part = new NonUnifiedPartBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
-            this.Session.Derive(false);
+            var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
+            this.Transaction.Derive(false);
 
-            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithInventoryItem(part.InventoryItemsWherePart.First)
                 .WithQuantity(2)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             inventoryAssignment.AssignedBillableQuantity = 1;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, inventoryAssignment.DerivedBillableQuantity);
         }
@@ -676,17 +676,17 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedQuantityDeriveDerivedBillableQuantity()
         {
-            var part = new NonUnifiedPartBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
-            this.Session.Derive(false);
+            var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
+            this.Transaction.Derive(false);
 
-            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithInventoryItem(part.InventoryItemsWherePart.First)
                 .WithQuantity(2)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             inventoryAssignment.Quantity = 1;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, inventoryAssignment.DerivedBillableQuantity);
         }

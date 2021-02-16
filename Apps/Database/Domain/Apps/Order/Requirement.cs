@@ -16,16 +16,16 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistRequirementState)
             {
-                this.RequirementState = new RequirementStates(this.Strategy.Session).Active;
+                this.RequirementState = new RequirementStates(this.Strategy.Transaction).Active;
             }
         }
 
-        public void AppsClose(RequirementClose method) => this.RequirementState = new RequirementStates(this.Strategy.Session).Closed;
+        public void AppsClose(RequirementClose method) => this.RequirementState = new RequirementStates(this.Strategy.Transaction).Closed;
 
-        public void AppsReopen(RequirementReopen method) => this.RequirementState = new RequirementStates(this.Strategy.Session).Active;
+        public void AppsReopen(RequirementReopen method) => this.RequirementState = new RequirementStates(this.Strategy.Transaction).Active;
 
-        public void AppsCancel(RequirementCancel method) => this.RequirementState = new RequirementStates(this.Strategy.Session).Cancelled;
+        public void AppsCancel(RequirementCancel method) => this.RequirementState = new RequirementStates(this.Strategy.Transaction).Cancelled;
 
-        public void AppsHold(RequirementHold method) => this.RequirementState = new RequirementStates(this.Strategy.Session).OnHold;
+        public void AppsHold(RequirementHold method) => this.RequirementState = new RequirementStates(this.Strategy.Transaction).OnHold;
     }
 }

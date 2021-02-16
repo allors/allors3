@@ -19,165 +19,165 @@ namespace Allors.Database.Domain.Tests
         public void GivenJournal_WhenDeriving_ThenDescriptionMustExist()
         {
             this.InternalOrganisation.DoAccounting = true;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var glAccount = new GeneralLedgerAccountBuilder(this.Session)
+            var glAccount = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithAccountNumber("0001")
                 .WithName("GeneralLedgerAccount")
                 .WithBalanceSheetAccount(true)
-                .WithSide(new DebitCreditConstants(this.Session).Debit)
-                .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Session).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Session).WithDescription("accountGroup").Build())
+                .WithSide(new DebitCreditConstants(this.Transaction).Debit)
+                .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
+                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Transaction).WithDescription("accountGroup").Build())
                 .Build();
 
-            var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Session)
-                .WithFromDate(this.Session.Now())
+            var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction)
+                .WithFromDate(this.Transaction.Now())
                 .WithGeneralLedgerAccount(glAccount)
                 .Build();
 
-            this.Session.Commit();
+            this.Transaction.Commit();
 
-            var builder = new JournalBuilder(this.Session);
-            builder.WithJournalType(new JournalTypes(this.Session).Bank);
+            var builder = new JournalBuilder(this.Transaction);
+            builder.WithJournalType(new JournalTypes(this.Transaction).Bank);
             builder.WithContraAccount(internalOrganisationGlAccount);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithDescription("description");
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void GivenJournal_WhenDeriving_ThenSingletonMustExist()
         {
             this.InternalOrganisation.DoAccounting = true;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var glAccount = new GeneralLedgerAccountBuilder(this.Session)
+            var glAccount = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithAccountNumber("0001")
                 .WithName("GeneralLedgerAccount")
                 .WithBalanceSheetAccount(true)
-                .WithSide(new DebitCreditConstants(this.Session).Debit)
-                .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Session).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Session).WithDescription("accountGroup").Build())
+                .WithSide(new DebitCreditConstants(this.Transaction).Debit)
+                .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
+                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Transaction).WithDescription("accountGroup").Build())
                 .Build();
 
-            var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Session)
-                .WithFromDate(this.Session.Now())
+            var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction)
+                .WithFromDate(this.Transaction.Now())
                 .WithGeneralLedgerAccount(glAccount)
                 .Build();
 
-            this.Session.Commit();
+            this.Transaction.Commit();
 
-            var builder = new JournalBuilder(this.Session);
+            var builder = new JournalBuilder(this.Transaction);
             builder.WithDescription("description");
-            builder.WithJournalType(new JournalTypes(this.Session).Bank);
+            builder.WithJournalType(new JournalTypes(this.Transaction).Bank);
             builder.WithContraAccount(internalOrganisationGlAccount);
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void GivenJournal_WhenDeriving_ThenJournalTypeMustExist()
         {
             this.InternalOrganisation.DoAccounting = true;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var glAccount = new GeneralLedgerAccountBuilder(this.Session)
+            var glAccount = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithAccountNumber("0001")
                 .WithName("GeneralLedgerAccount")
                 .WithBalanceSheetAccount(true)
-                .WithSide(new DebitCreditConstants(this.Session).Debit)
-                .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Session).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Session).WithDescription("accountGroup").Build())
+                .WithSide(new DebitCreditConstants(this.Transaction).Debit)
+                .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
+                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Transaction).WithDescription("accountGroup").Build())
                 .Build();
 
-            var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Session)
-                .WithFromDate(this.Session.Now())
+            var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction)
+                .WithFromDate(this.Transaction.Now())
                 .WithGeneralLedgerAccount(glAccount)
                 .Build();
 
-            this.Session.Commit();
+            this.Transaction.Commit();
 
-            var builder = new JournalBuilder(this.Session);
+            var builder = new JournalBuilder(this.Transaction);
             builder.WithDescription("description");
             builder.WithContraAccount(internalOrganisationGlAccount);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            builder.WithJournalType(new JournalTypes(this.Session).Bank);
+            builder.WithJournalType(new JournalTypes(this.Transaction).Bank);
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void GivenJournal_WhenDeriving_ThenContraAccountMustExist()
         {
             this.InternalOrganisation.DoAccounting = true;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var builder = new JournalBuilder(this.Session);
+            var builder = new JournalBuilder(this.Transaction);
             builder.WithDescription("description");
-            builder.WithJournalType(new JournalTypes(this.Session).Bank);
+            builder.WithJournalType(new JournalTypes(this.Transaction).Bank);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var glAccount = new GeneralLedgerAccountBuilder(this.Session)
+            var glAccount = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithAccountNumber("0001")
                 .WithName("GeneralLedgerAccount")
                 .WithBalanceSheetAccount(true)
-                .WithSide(new DebitCreditConstants(this.Session).Debit)
-                .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Session).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Session).WithDescription("accountGroup").Build())
+                .WithSide(new DebitCreditConstants(this.Transaction).Debit)
+                .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
+                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Transaction).WithDescription("accountGroup").Build())
                 .Build();
 
-            var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Session)
-                .WithFromDate(this.Session.Now())
+            var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction)
+                .WithFromDate(this.Transaction.Now())
                 .WithGeneralLedgerAccount(glAccount)
                 .Build();
 
             builder.WithContraAccount(internalOrganisationGlAccount);
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void GivenJournal_WhenBuildWithout_ThenBlockUnpaidTransactionsIsFalse()
         {
             this.InternalOrganisation.DoAccounting = true;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Session)
+            var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithAccountNumber("0001")
                 .WithName("GeneralLedgerAccount")
                 .WithBalanceSheetAccount(true)
                 .Build();
 
-            var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Session)
+            var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction)
                 .WithGeneralLedgerAccount(generalLedgerAccount)
                 .Build();
 
-            var journal = new JournalBuilder(this.Session)
-                .WithJournalType(new JournalTypes(this.Session).Bank)
+            var journal = new JournalBuilder(this.Transaction)
+                .WithJournalType(new JournalTypes(this.Transaction).Bank)
                 .WithContraAccount(internalOrganisationGlAccount)
                 .WithDescription("journal")
                 .Build();
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.False(journal.BlockUnpaidTransactions);
         }
@@ -186,25 +186,25 @@ namespace Allors.Database.Domain.Tests
         public void GivenJournal_WhenBuildWithout_ThenCloseWhenInBalanceIsFalse()
         {
             this.InternalOrganisation.DoAccounting = true;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Session)
+            var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithAccountNumber("0001")
                 .WithName("GeneralLedgerAccount")
                 .WithBalanceSheetAccount(true)
                 .Build();
 
-            var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Session)
+            var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction)
                 .WithGeneralLedgerAccount(generalLedgerAccount)
                 .Build();
 
-            var journal = new JournalBuilder(this.Session)
-                .WithJournalType(new JournalTypes(this.Session).Bank)
+            var journal = new JournalBuilder(this.Transaction)
+                .WithJournalType(new JournalTypes(this.Transaction).Bank)
                 .WithContraAccount(internalOrganisationGlAccount)
                 .WithDescription("journal")
                 .Build();
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.False(journal.CloseWhenInBalance);
         }
@@ -213,25 +213,25 @@ namespace Allors.Database.Domain.Tests
         public void GivenJournal_WhenBuildWithout_ThenUseAsDefaultIsFalse()
         {
             this.InternalOrganisation.DoAccounting = true;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Session)
+            var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithAccountNumber("0001")
                 .WithName("GeneralLedgerAccount")
                 .WithBalanceSheetAccount(true)
                 .Build();
 
-            var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Session)
+            var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction)
                 .WithGeneralLedgerAccount(generalLedgerAccount)
                 .Build();
 
-            var journal = new JournalBuilder(this.Session)
-                .WithJournalType(new JournalTypes(this.Session).Bank)
+            var journal = new JournalBuilder(this.Transaction)
+                .WithJournalType(new JournalTypes(this.Transaction).Bank)
                 .WithContraAccount(internalOrganisationGlAccount)
                 .WithDescription("journal")
                 .Build();
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.False(journal.UseAsDefault);
         }
@@ -240,47 +240,47 @@ namespace Allors.Database.Domain.Tests
         public void GivenJournal_WhenDeriving_ThenContraAccountCanBeChangedWhenNotUsedYet()
         {
             this.InternalOrganisation.DoAccounting = true;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var generalLedgerAccount1 = new GeneralLedgerAccountBuilder(this.Session)
+            var generalLedgerAccount1 = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithAccountNumber("0001")
                 .WithName("bankAccount 1")
                 .WithBalanceSheetAccount(true)
-                .WithSide(new DebitCreditConstants(this.Session).Debit)
-                .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Session).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Session).WithDescription("accountGroup").Build())
+                .WithSide(new DebitCreditConstants(this.Transaction).Debit)
+                .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
+                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Transaction).WithDescription("accountGroup").Build())
                 .Build();
 
-            var internalOrganisationGlAccount1 = new OrganisationGlAccountBuilder(this.Session)
-                .WithFromDate(this.Session.Now())
+            var internalOrganisationGlAccount1 = new OrganisationGlAccountBuilder(this.Transaction)
+                .WithFromDate(this.Transaction.Now())
                 .WithGeneralLedgerAccount(generalLedgerAccount1)
                 .Build();
 
-            var generalLedgerAccount2 = new GeneralLedgerAccountBuilder(this.Session)
+            var generalLedgerAccount2 = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithAccountNumber("0002")
                 .WithName("bankAccount 2")
                 .WithBalanceSheetAccount(true)
-                .WithSide(new DebitCreditConstants(this.Session).Debit)
-                .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Session).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Session).WithDescription("accountGroup").Build())
+                .WithSide(new DebitCreditConstants(this.Transaction).Debit)
+                .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
+                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Transaction).WithDescription("accountGroup").Build())
                 .Build();
 
-            var internalOrganisationGlAccount2 = new OrganisationGlAccountBuilder(this.Session)
-                .WithFromDate(this.Session.Now())
+            var internalOrganisationGlAccount2 = new OrganisationGlAccountBuilder(this.Transaction)
+                .WithFromDate(this.Transaction.Now())
                 .WithGeneralLedgerAccount(generalLedgerAccount2)
                 .Build();
 
-            var journal = new JournalBuilder(this.Session)
+            var journal = new JournalBuilder(this.Transaction)
                 .WithDescription("description")
                 .WithContraAccount(internalOrganisationGlAccount1)
-                .WithJournalType(new JournalTypes(this.Session).Bank)
+                .WithJournalType(new JournalTypes(this.Transaction).Bank)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             journal.ContraAccount = internalOrganisationGlAccount2;
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(generalLedgerAccount2, journal.ContraAccount.GeneralLedgerAccount);
         }
@@ -289,46 +289,46 @@ namespace Allors.Database.Domain.Tests
         public void GivenJournal_WhenDeriving_ThenContraAccountCanNotBeChangedWhenJournalEntriesArePresent()
         {
             this.InternalOrganisation.DoAccounting = true;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var generalLedgerAccount1 = new GeneralLedgerAccountBuilder(this.Session)
+            var generalLedgerAccount1 = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithAccountNumber("0001")
                 .WithName("bankAccount 1")
                 .WithBalanceSheetAccount(true)
-                .WithSide(new DebitCreditConstants(this.Session).Debit)
-                .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Session).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Session).WithDescription("accountGroup").Build())
+                .WithSide(new DebitCreditConstants(this.Transaction).Debit)
+                .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
+                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Transaction).WithDescription("accountGroup").Build())
                 .Build();
 
-            var internalOrganisationGlAccount1 = new OrganisationGlAccountBuilder(this.Session)
-                .WithFromDate(this.Session.Now())
+            var internalOrganisationGlAccount1 = new OrganisationGlAccountBuilder(this.Transaction)
+                .WithFromDate(this.Transaction.Now())
                 .WithGeneralLedgerAccount(generalLedgerAccount1)
                 .Build();
 
-            var generalLedgerAccount2 = new GeneralLedgerAccountBuilder(this.Session)
+            var generalLedgerAccount2 = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithAccountNumber("0002")
                 .WithName("bankAccount 2")
                 .WithBalanceSheetAccount(true)
-                .WithSide(new DebitCreditConstants(this.Session).Debit)
-                .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Session).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Session).WithDescription("accountGroup").Build())
+                .WithSide(new DebitCreditConstants(this.Transaction).Debit)
+                .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
+                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Transaction).WithDescription("accountGroup").Build())
                 .Build();
 
-            var internalOrganisationGlAccount2 = new OrganisationGlAccountBuilder(this.Session)
-                .WithFromDate(this.Session.Now())
+            var internalOrganisationGlAccount2 = new OrganisationGlAccountBuilder(this.Transaction)
+                .WithFromDate(this.Transaction.Now())
                 .WithGeneralLedgerAccount(generalLedgerAccount2)
                 .Build();
 
-            var journal = new JournalBuilder(this.Session)
+            var journal = new JournalBuilder(this.Transaction)
                 .WithDescription("description")
                 .WithContraAccount(internalOrganisationGlAccount1)
-                .WithJournalType(new JournalTypes(this.Session).Bank)
+                .WithJournalType(new JournalTypes(this.Transaction).Bank)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            journal.AddJournalEntry(new JournalEntryBuilder(this.Session)
-                                        .WithJournalEntryDetail(new JournalEntryDetailBuilder(this.Session)
+            journal.AddJournalEntry(new JournalEntryBuilder(this.Transaction)
+                                        .WithJournalEntryDetail(new JournalEntryDetailBuilder(this.Transaction)
                                                                     .WithAmount(1)
                                                                     .WithDebit(true)
                                                                     .WithGeneralLedgerAccount(internalOrganisationGlAccount1)
@@ -338,7 +338,7 @@ namespace Allors.Database.Domain.Tests
             journal.ContraAccount = internalOrganisationGlAccount2;
 
             var expectedMessage = $"{journal} {this.M.Journal.ContraAccount} {ErrorMessages.ContraAccountChanged}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
 
@@ -346,77 +346,77 @@ namespace Allors.Database.Domain.Tests
         public void GivenJournal_WhenDeriving_ThenJournalTypeCanBeChangedWhenJournalIsNotUsedYet()
         {
             this.InternalOrganisation.DoAccounting = true;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var generalLedgerAccount1 = new GeneralLedgerAccountBuilder(this.Session)
+            var generalLedgerAccount1 = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithAccountNumber("0001")
                 .WithName("bankAccount 1")
                 .WithBalanceSheetAccount(true)
-                .WithSide(new DebitCreditConstants(this.Session).Debit)
-                .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Session).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Session).WithDescription("accountGroup").Build())
+                .WithSide(new DebitCreditConstants(this.Transaction).Debit)
+                .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
+                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Transaction).WithDescription("accountGroup").Build())
                 .Build();
 
-            var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Session)
-                .WithFromDate(this.Session.Now())
+            var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction)
+                .WithFromDate(this.Transaction.Now())
                 .WithGeneralLedgerAccount(generalLedgerAccount1)
                 .Build();
 
-            var journal = new JournalBuilder(this.Session)
+            var journal = new JournalBuilder(this.Transaction)
                 .WithDescription("description")
                 .WithContraAccount(internalOrganisationGlAccount)
-                .WithJournalType(new JournalTypes(this.Session).Bank)
+                .WithJournalType(new JournalTypes(this.Transaction).Bank)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            journal.JournalType = new JournalTypes(this.Session).Cash;
+            journal.JournalType = new JournalTypes(this.Transaction).Cash;
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Equal(new JournalTypes(this.Session).Cash, journal.JournalType);
+            Assert.Equal(new JournalTypes(this.Transaction).Cash, journal.JournalType);
         }
 
         [Fact]
         public void GivenJournal_WhenDeriving_ThenJournalTypeCanNotBeChangedWhenJournalEntriesArePresent()
         {
             this.InternalOrganisation.DoAccounting = true;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var generalLedgerAccount1 = new GeneralLedgerAccountBuilder(this.Session)
+            var generalLedgerAccount1 = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithAccountNumber("0001")
                 .WithName("bankAccount 1")
                 .WithBalanceSheetAccount(true)
-                .WithSide(new DebitCreditConstants(this.Session).Debit)
-                .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Session).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Session).WithDescription("accountGroup").Build())
+                .WithSide(new DebitCreditConstants(this.Transaction).Debit)
+                .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
+                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Transaction).WithDescription("accountGroup").Build())
                 .Build();
 
-            var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Session)
-                .WithFromDate(this.Session.Now())
+            var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction)
+                .WithFromDate(this.Transaction.Now())
                 .WithGeneralLedgerAccount(generalLedgerAccount1)
                 .Build();
 
-            var journal = new JournalBuilder(this.Session)
+            var journal = new JournalBuilder(this.Transaction)
                 .WithDescription("description")
                 .WithContraAccount(internalOrganisationGlAccount)
-                .WithJournalType(new JournalTypes(this.Session).Bank)
+                .WithJournalType(new JournalTypes(this.Transaction).Bank)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            journal.AddJournalEntry(new JournalEntryBuilder(this.Session)
-                                        .WithJournalEntryDetail(new JournalEntryDetailBuilder(this.Session)
+            journal.AddJournalEntry(new JournalEntryBuilder(this.Transaction)
+                                        .WithJournalEntryDetail(new JournalEntryDetailBuilder(this.Transaction)
                                                                     .WithAmount(1)
                                                                     .WithDebit(true)
                                                                     .WithGeneralLedgerAccount(internalOrganisationGlAccount)
                                                                     .Build())
                                         .Build());
 
-            journal.JournalType = new JournalTypes(this.Session).Cash;
+            journal.JournalType = new JournalTypes(this.Transaction).Cash;
 
             var expectedMessage = $"{journal} {this.M.Journal.JournalType} {ErrorMessages.JournalTypeChanged}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
     }
@@ -428,39 +428,39 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedContraAccountThrowValidationError()
         {
-            var contraAccount = new OrganisationGlAccountBuilder(this.Session).Build();
-            var journal = new JournalBuilder(this.Session)
+            var contraAccount = new OrganisationGlAccountBuilder(this.Transaction).Build();
+            var journal = new JournalBuilder(this.Transaction)
                 .WithContraAccount(contraAccount)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var detail = new JournalEntryDetailBuilder(this.Session).WithGeneralLedgerAccount(contraAccount).Build();
-            this.Session.Derive(false);
+            var detail = new JournalEntryDetailBuilder(this.Transaction).WithGeneralLedgerAccount(contraAccount).Build();
+            this.Transaction.Derive(false);
 
-            journal.ContraAccount = new OrganisationGlAccountBuilder(this.Session).Build();
+            journal.ContraAccount = new OrganisationGlAccountBuilder(this.Transaction).Build();
 
             var expectedMessage = $"{journal} {this.M.Journal.ContraAccount} {ErrorMessages.ContraAccountChanged}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
 
         [Fact]
         public void ChangedJournalTypeThrowValidationError()
         {
-            var journalType = new JournalTypeBuilder(this.Session).Build();
-            var journal = new JournalBuilder(this.Session)
-                .WithContraAccount(new OrganisationGlAccountBuilder(this.Session).Build())
+            var journalType = new JournalTypeBuilder(this.Transaction).Build();
+            var journal = new JournalBuilder(this.Transaction)
+                .WithContraAccount(new OrganisationGlAccountBuilder(this.Transaction).Build())
                 .WithJournalType(journalType)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var detail = new JournalEntryDetailBuilder(this.Session).WithGeneralLedgerAccount(journal.ContraAccount).Build();
-            this.Session.Derive(false);
+            var detail = new JournalEntryDetailBuilder(this.Transaction).WithGeneralLedgerAccount(journal.ContraAccount).Build();
+            this.Transaction.Derive(false);
 
-            journal.JournalType = new JournalTypeBuilder(this.Session).Build();
+            journal.JournalType = new JournalTypeBuilder(this.Transaction).Build();
 
             var expectedMessage = $"{journal} {this.M.Journal.JournalType} {ErrorMessages.JournalTypeChanged}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
     }

@@ -15,15 +15,15 @@ namespace Allors.Database.Protocol.Json
 
     public class PushResponseBuilder
     {
-        private readonly ISession session;
+        private readonly ITransaction transaction;
         private readonly Func<IDerivationResult> derive;
         private readonly IMetaPopulation metaPopulation;
         private readonly ISet<IClass> allowedClasses;
         private readonly Func<IClass, IObject> build;
 
-        public PushResponseBuilder(ISession session, Func<IDerivationResult> derive, IMetaPopulation metaPopulation, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, Func<IClass, IObject> build)
+        public PushResponseBuilder(ITransaction transaction, Func<IDerivationResult> derive, IMetaPopulation metaPopulation, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, Func<IClass, IObject> build)
         {
-            this.session = session;
+            this.transaction = transaction;
             this.derive = derive;
             this.metaPopulation = metaPopulation;
             this.allowedClasses = allowedClasses;
@@ -60,7 +60,7 @@ namespace Allors.Database.Protocol.Json
             {
                 // bulk load all objects
                 var objectIds = pushRequest.Objects.Select(v => v.DatabaseId).ToArray();
-                var objects = this.session.Instantiate(objectIds);
+                var objects = this.transaction.Instantiate(objectIds);
 
                 if (objectIds.Length != objects.Length)
                 {
@@ -76,7 +76,7 @@ namespace Allors.Database.Protocol.Json
                 {
                     foreach (var pushRequestObject in pushRequest.Objects)
                     {
-                        var obj = this.session.Instantiate(pushRequestObject.DatabaseId);
+                        var obj = this.transaction.Instantiate(pushRequestObject.DatabaseId);
 
                         if (!pushRequestObject.Version.Equals(obj.Strategy.ObjectVersion.ToString()))
                         {
@@ -159,7 +159,7 @@ namespace Allors.Database.Protocol.Json
                     }).ToArray();
                 }
 
-                this.session.Commit();
+                this.transaction.Commit();
             }
 
             return pushResponse;
@@ -286,7 +286,7 @@ namespace Allors.Database.Protocol.Json
         {
             if (objectByNewId == null || !objectByNewId.TryGetValue(roleId, out var role))
             {
-                role = this.session.Instantiate(roleId);
+                role = this.transaction.Instantiate(roleId);
             }
 
             return role;
@@ -296,7 +296,7 @@ namespace Allors.Database.Protocol.Json
         {
             if (objectByNewId == null)
             {
-                return this.session.Instantiate(roleIds);
+                return this.transaction.Instantiate(roleIds);
             }
 
             var roles = new List<IObject>();
@@ -320,7 +320,7 @@ namespace Allors.Database.Protocol.Json
 
             if (existingRoleIds != null)
             {
-                var existingRoles = this.session.Instantiate(existingRoleIds);
+                var existingRoles = this.transaction.Instantiate(existingRoleIds);
                 roles.AddRange(existingRoles);
             }
 

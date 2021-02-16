@@ -20,42 +20,42 @@ namespace Allors.Database.Domain.Tests
 
         public ReceiptTests(Fixture fixture) : base(fixture)
         {
-            var euro = new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR");
+            var euro = new Currencies(this.Transaction).FindBy(this.M.Currency.IsoCode, "EUR");
 
-            this.singleton = this.Session.GetSingleton();
-            this.billToCustomer = new OrganisationBuilder(this.Session).WithName("billToCustomer").WithPreferredCurrency(euro).Build();
-            this.good = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
-            var supplier = new OrganisationBuilder(this.Session).WithName("supplier").WithLocale(new Locales(this.Session).EnglishGreatBritain).Build();
+            this.singleton = this.Transaction.GetSingleton();
+            this.billToCustomer = new OrganisationBuilder(this.Transaction).WithName("billToCustomer").WithPreferredCurrency(euro).Build();
+            this.good = new Goods(this.Transaction).FindBy(this.M.Good.Name, "good1");
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").WithLocale(new Locales(this.Transaction).EnglishGreatBritain).Build();
 
-            new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(this.billToCustomer).Build();
+            new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(this.billToCustomer).Build();
 
-            new SupplierOfferingBuilder(this.Session)
+            new SupplierOfferingBuilder(this.Transaction)
                 .WithPart(this.finishedGood)
                 .WithSupplier(supplier)
-                .WithFromDate(this.Session.Now())
-                .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
+                .WithFromDate(this.Transaction.Now())
+                .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
                 .WithCurrency(euro)
                 .WithPrice(7)
                 .Build();
 
-            new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Transaction)
                 .WithDescription("current good")
                 .WithProduct(this.good)
                 .WithPrice(10)
-                .WithFromDate(this.Session.Now())
-                .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
+                .WithFromDate(this.Transaction.Now())
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
         }
 
         [Fact]
         public void GivenReceipt_WhenBuild_ThenPostBuildRelationsMustExist()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var receipt = new ReceiptBuilder(this.Session).WithEffectiveDate(this.Session.Now()).Build();
+            var receipt = new ReceiptBuilder(this.Transaction).WithEffectiveDate(this.Transaction.Now()).Build();
 
             Assert.True(receipt.ExistUniqueId);
         }
@@ -63,47 +63,47 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenReceipt_WhenApplied_ThenInvoiceItemAmountPaidIsUpdated()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var productItem = new InvoiceItemTypes(this.Session).ProductItem;
-            var contactMechanism = new ContactMechanisms(this.Session).Extent().First;
+            var productItem = new InvoiceItemTypes(this.Transaction).ProductItem;
+            var contactMechanism = new ContactMechanisms(this.Transaction).Extent().First;
 
-            var invoice = new SalesInvoiceBuilder(this.Session)
+            var invoice = new SalesInvoiceBuilder(this.Transaction)
                 .WithBillToCustomer(this.billToCustomer)
                 .WithAssignedBillToContactMechanism(contactMechanism)
                 .Build();
 
-            var item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithQuantity(1).WithAssignedUnitPrice(100M).WithInvoiceItemType(productItem).Build();
-            var item2 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithQuantity(1).WithAssignedUnitPrice(200M).WithInvoiceItemType(productItem).Build();
-            var item3 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithQuantity(1).WithAssignedUnitPrice(300M).WithInvoiceItemType(productItem).Build();
+            var item1 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithQuantity(1).WithAssignedUnitPrice(100M).WithInvoiceItemType(productItem).Build();
+            var item2 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithQuantity(1).WithAssignedUnitPrice(200M).WithInvoiceItemType(productItem).Build();
+            var item3 = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithQuantity(1).WithAssignedUnitPrice(300M).WithInvoiceItemType(productItem).Build();
 
             invoice.AddSalesInvoiceItem(item1);
             invoice.AddSalesInvoiceItem(item2);
             invoice.AddSalesInvoiceItem(item3);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            new ReceiptBuilder(this.Session)
+            new ReceiptBuilder(this.Transaction)
                 .WithAmount(50)
-                .WithPaymentApplication(new PaymentApplicationBuilder(this.Session).WithInvoiceItem(item2).WithAmountApplied(50).Build())
-                .WithEffectiveDate(this.Session.Now())
+                .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(item2).WithAmountApplied(50).Build())
+                .WithEffectiveDate(this.Transaction.Now())
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(0, item1.AmountPaid);
             Assert.Equal(50, item2.AmountPaid);
             Assert.Equal(0, item3.AmountPaid);
 
-            new ReceiptBuilder(this.Session)
+            new ReceiptBuilder(this.Transaction)
                 .WithAmount(350)
-                .WithPaymentApplication(new PaymentApplicationBuilder(this.Session).WithInvoiceItem(item1).WithAmountApplied(100).Build())
-                .WithPaymentApplication(new PaymentApplicationBuilder(this.Session).WithInvoiceItem(item2).WithAmountApplied(150).Build())
-                .WithPaymentApplication(new PaymentApplicationBuilder(this.Session).WithInvoiceItem(item3).WithAmountApplied(100).Build())
-                .WithEffectiveDate(this.Session.Now())
+                .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(item1).WithAmountApplied(100).Build())
+                .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(item2).WithAmountApplied(150).Build())
+                .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(item3).WithAmountApplied(100).Build())
+                .WithEffectiveDate(this.Transaction.Now())
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(100, item1.AmountPaid);
             Assert.Equal(200, item2.AmountPaid);
@@ -113,59 +113,59 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenReceipt_WhenDeriving_ThenAmountCanNotBeSmallerThenAmountApplied()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var billToContactMechanism = new EmailAddressBuilder(this.Session).WithElectronicAddressString("info@allors.com").Build();
+            var billToContactMechanism = new EmailAddressBuilder(this.Transaction).WithElectronicAddressString("info@allors.com").Build();
 
-            var customer = new PersonBuilder(this.Session)
+            var customer = new PersonBuilder(this.Transaction)
                 .WithLastName("customer")
 
                 .Build();
 
-            new CustomerRelationshipBuilder(this.Session)
+            new CustomerRelationshipBuilder(this.Transaction)
                 .WithCustomer(customer)
                 .Build();
 
-            var invoice = new SalesInvoiceBuilder(this.Session)
+            var invoice = new SalesInvoiceBuilder(this.Transaction)
                 .WithBillToCustomer(customer)
                 .WithAssignedBillToContactMechanism(billToContactMechanism)
-                .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
-                .WithSalesInvoiceItem(new SalesInvoiceItemBuilder(this.Session)
-                                        .WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem)
+                .WithSalesInvoiceType(new SalesInvoiceTypes(this.Transaction).SalesInvoice)
+                .WithSalesInvoiceItem(new SalesInvoiceItemBuilder(this.Transaction)
+                                        .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem)
                                         .WithProduct(this.good)
                                         .WithQuantity(1)
                                         .WithAssignedUnitPrice(100M)
                                         .Build())
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var receipt = new ReceiptBuilder(this.Session)
+            var receipt = new ReceiptBuilder(this.Transaction)
                 .WithAmount(100)
-                .WithEffectiveDate(this.Session.Now())
-                .WithPaymentApplication(new PaymentApplicationBuilder(this.Session).WithInvoiceItem(invoice.SalesInvoiceItems[0]).WithAmountApplied(50).Build())
+                .WithEffectiveDate(this.Transaction.Now())
+                .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice.SalesInvoiceItems[0]).WithAmountApplied(50).Build())
                 .Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
-            receipt.AddPaymentApplication(new PaymentApplicationBuilder(this.Session).WithInvoiceItem(invoice.SalesInvoiceItems[0]).WithAmountApplied(50).Build());
+            receipt.AddPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice.SalesInvoiceItems[0]).WithAmountApplied(50).Build());
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
-            receipt.AddPaymentApplication(new PaymentApplicationBuilder(this.Session).WithInvoiceItem(invoice.SalesInvoiceItems[0]).WithAmountApplied(1).Build());
+            receipt.AddPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice.SalesInvoiceItems[0]).WithAmountApplied(1).Build());
 
             var expectedMessage = $"{receipt} { this.M.Payment.Amount} { ErrorMessages.PaymentAmountIsToSmall}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
 
             Assert.Single(errors.FindAll(e => e.Message.Equals(expectedMessage)));
         }
 
-        private void InstantiateObjects(ISession session)
+        private void InstantiateObjects(ITransaction transaction)
         {
-            this.finishedGood = (Part)session.Instantiate(this.finishedGood);
-            this.good = (Good)session.Instantiate(this.good);
-            this.singleton = (Singleton)session.Instantiate(this.singleton);
-            this.billToCustomer = (Organisation)session.Instantiate(this.billToCustomer);
+            this.finishedGood = (Part)transaction.Instantiate(this.finishedGood);
+            this.good = (Good)transaction.Instantiate(this.good);
+            this.singleton = (Singleton)transaction.Instantiate(this.singleton);
+            this.billToCustomer = (Organisation)transaction.Instantiate(this.billToCustomer);
         }
     }
 }

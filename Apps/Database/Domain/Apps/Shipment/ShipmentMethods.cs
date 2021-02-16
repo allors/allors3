@@ -27,11 +27,11 @@ namespace Allors.Database.Domain
 
         public ShipmentMethod ExWorks => this.Cache[ExWorksId];
 
-        private UniquelyIdentifiableCache<ShipmentMethod> Cache => this.cache ??= new UniquelyIdentifiableCache<ShipmentMethod>(this.Session);
+        private UniquelyIdentifiableCache<ShipmentMethod> Cache => this.cache ??= new UniquelyIdentifiableCache<ShipmentMethod>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {
-            var dutchLocale = new Locales(this.Session).DutchNetherlands;
+            var dutchLocale = new Locales(this.Transaction).DutchNetherlands;
 
             var merge = this.Cache.Merger().Action();
             var localisedName = new LocalisedTextAccessor(this.Meta.LocalisedNames);

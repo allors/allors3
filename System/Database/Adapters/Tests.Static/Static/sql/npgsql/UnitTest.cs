@@ -34,12 +34,12 @@ namespace Allors.Database.Adapters.Npgsql
 
                 // Positive
                 {
-                    var values = C1.Create(this.Session);
+                    var values = C1.Create(this.Transaction);
                     values.C1AllorsDecimal = 10.10m;
                     values.I1AllorsDecimal = 10.10m;
                     values.S1AllorsDecimal = 10.10m;
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
                     Assert.Equal(10.10m, values.C1AllorsDecimal);
                     Assert.Equal(10.10m, values.I1AllorsDecimal);
@@ -48,12 +48,12 @@ namespace Allors.Database.Adapters.Npgsql
 
                 // Negative
                 {
-                    var values = C1.Create(this.Session);
+                    var values = C1.Create(this.Transaction);
                     values.C1AllorsDecimal = -10.10m;
                     values.I1AllorsDecimal = -10.10m;
                     values.S1AllorsDecimal = -10.10m;
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
                     Assert.Equal(-10.10m, values.C1AllorsDecimal);
                     Assert.Equal(-10.10m, values.I1AllorsDecimal);
@@ -62,12 +62,12 @@ namespace Allors.Database.Adapters.Npgsql
 
                 // Zero
                 {
-                    var values = C1.Create(this.Session);
+                    var values = C1.Create(this.Transaction);
                     values.C1AllorsDecimal = 0m;
                     values.I1AllorsDecimal = 0m;
                     values.S1AllorsDecimal = 0m;
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
                     Assert.Equal(0m, values.C1AllorsDecimal);
                     Assert.Equal(0m, values.I1AllorsDecimal);
@@ -76,7 +76,7 @@ namespace Allors.Database.Adapters.Npgsql
 
                 // initial empty
                 {
-                    var values = C1.Create(this.Session);
+                    var values = C1.Create(this.Transaction);
 
                     decimal? value = null;
 
@@ -93,7 +93,7 @@ namespace Allors.Database.Adapters.Npgsql
                     Assert.False(values.ExistI1AllorsDecimal);
                     Assert.False(values.ExistS1AllorsDecimal);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
                     value = values.C1AllorsDecimal;
                     Assert.Null(value);
@@ -111,12 +111,12 @@ namespace Allors.Database.Adapters.Npgsql
 
                 // reset empty
                 {
-                    var values = C1.Create(this.Session);
+                    var values = C1.Create(this.Transaction);
                     values.C1AllorsDecimal = 10.10m;
                     values.I1AllorsDecimal = 10.10m;
                     values.S1AllorsDecimal = 10.10m;
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
                     Assert.True(values.ExistC1AllorsDecimal);
                     Assert.True(values.ExistI1AllorsDecimal);
@@ -140,7 +140,7 @@ namespace Allors.Database.Adapters.Npgsql
                     Assert.False(values.ExistI1AllorsDecimal);
                     Assert.False(values.ExistS1AllorsDecimal);
 
-                    this.Session.Commit();
+                    this.Transaction.Commit();
 
                     value = values.C1AllorsDecimal;
                     Assert.Null(value);

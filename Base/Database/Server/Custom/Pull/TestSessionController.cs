@@ -14,14 +14,14 @@ namespace Allors.Database.Server.Controllers
 
     public class TestSessionController : Controller
     {
-        public TestSessionController(ISessionService sessionService, IWorkspaceService workspaceService)
+        public TestSessionController(ITransactionService sessionService, IWorkspaceService workspaceService)
         {
             this.WorkspaceService = workspaceService;
-            this.Session = sessionService.Session;
-            this.TreeCache = this.Session.Database.Context().TreeCache;
+            this.Transaction = sessionService.Transaction;
+            this.TreeCache = this.Transaction.Database.Context().TreeCache;
         }
 
-        private ISession Session { get; }
+        private ITransaction Transaction { get; }
 
         public IWorkspaceService WorkspaceService { get; }
 
@@ -32,7 +32,7 @@ namespace Allors.Database.Server.Controllers
         [Authorize]
         public IActionResult UserName()
         {
-            var user = this.Session.Context().User;
+            var user = this.Transaction.Context().User;
             var result = user?.UserName;
             return this.Content(result);
         }

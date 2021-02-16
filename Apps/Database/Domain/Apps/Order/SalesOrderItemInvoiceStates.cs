@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
 
         public SalesOrderItemInvoiceState PartiallyInvoiced => this.Cache[PartiallyInvoicedId];
 
-        private UniquelyIdentifiableCache<SalesOrderItemInvoiceState> Cache => this.cache ??= new UniquelyIdentifiableCache<SalesOrderItemInvoiceState>(this.Session);
+        private UniquelyIdentifiableCache<SalesOrderItemInvoiceState> Cache => this.cache ??= new UniquelyIdentifiableCache<SalesOrderItemInvoiceState>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

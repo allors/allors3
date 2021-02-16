@@ -24,15 +24,15 @@ namespace Tests
 
         public PushExistingObjectTests(Fixture fixture) : base(fixture)
         {
-            this.x1 = new WorkspaceXObject1Builder(this.Session).Build();
-            this.y1 = new WorkspaceYObject1Builder(this.Session).Build();
-            this.none1 = new WorkspaceNoneObject1Builder(this.Session).Build();
+            this.x1 = new WorkspaceXObject1Builder(this.Transaction).Build();
+            this.y1 = new WorkspaceYObject1Builder(this.Transaction).Build();
+            this.none1 = new WorkspaceNoneObject1Builder(this.Transaction).Build();
 
             this.x1Version = this.x1.Strategy.ObjectVersion;
             this.y1Version = this.y1.Strategy.ObjectVersion;
             this.none1Version = this.none1.Strategy.ObjectVersion;
 
-            this.Session.Commit();
+            this.Transaction.Commit();
         }
 
         [Fact]
@@ -60,10 +60,10 @@ namespace Tests
                 }
             };
 
-            var api = new Api(this.Session, "X");
+            var api = new Api(this.Transaction, "X");
             var pushResponse = api.Push(pushRequest);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             Assert.NotEqual(this.x1.Strategy.ObjectVersion, this.x1Version);
             Assert.Equal("x string", this.x1.WorkspaceXString);
@@ -95,10 +95,10 @@ namespace Tests
                 }
             };
 
-            var api = new Api(this.Session, "Y");
+            var api = new Api(this.Transaction, "Y");
             var pushResponse = api.Push(pushRequest);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             Assert.Equal(this.x1.Strategy.ObjectVersion, this.x1Version);
             Assert.Null(this.x1.WorkspaceXString);

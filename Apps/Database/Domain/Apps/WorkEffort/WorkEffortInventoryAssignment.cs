@@ -12,9 +12,9 @@ namespace Allors.Database.Domain
     {
         public void AppsDelete(DeletableDelete method)
         {
-            var session = this.strategy.Session;
-            var derivation = new Derivations.Default.DefaultDerivation(session);
-            this.SyncInventoryTransactions(derivation, this.InventoryItem, this.Quantity, new InventoryTransactionReasons(session).Consumption, true);
+            var transaction = this.strategy.Transaction;
+            var derivation = new Derivations.Default.DefaultDerivation(transaction);
+            this.SyncInventoryTransactions(derivation, this.InventoryItem, this.Quantity, new InventoryTransactionReasons(transaction).Consumption, true);
         }
 
         public void AppsCalculateBillableQuantity(WorkEffortInventoryAssignmentCalculateBillableQuantity method)
@@ -113,7 +113,7 @@ namespace Allors.Database.Domain
 
             if (adjustmentQuantity != 0)
             {
-                this.AddInventoryItemTransaction(new InventoryItemTransactionBuilder(this.Session())
+                this.AddInventoryItemTransaction(new InventoryItemTransactionBuilder(this.Transaction())
                     .WithPart(inventoryItem.Part)
                     .WithFacility(inventoryItem.Facility)
                     .WithQuantity(adjustmentQuantity)

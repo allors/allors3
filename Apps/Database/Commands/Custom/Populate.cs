@@ -26,21 +26,21 @@ namespace Commands
 
             database.Init();
 
-            using (var session = database.CreateSession())
+            using (var transaction = database.CreateTransaction())
             {
                 var config = new Config { DataPath = this.Parent.DataPath };
-                new Setup(session, config).Apply();
+                new Setup(transaction, config).Apply();
 
-                session.Derive();
-                session.Commit();
+                transaction.Derive();
+                transaction.Commit();
 
-                var scheduler = new AutomatedAgents(session).System;
-                session.Context().User = scheduler;
+                var scheduler = new AutomatedAgents(transaction).System;
+                transaction.Context().User = scheduler;
 
-                new Allors.Database.Domain.Upgrade(session, this.Parent.DataPath).Execute();
+                new Allors.Database.Domain.Upgrade(transaction, this.Parent.DataPath).Execute();
 
-                session.Derive();
-                session.Commit();
+                transaction.Derive();
+                transaction.Commit();
             }
 
             this.Logger.Info("End");

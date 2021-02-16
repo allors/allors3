@@ -19,13 +19,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedProfessionalDeriveParties()
         {
-            var internalOrganisation = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
-            var relationship = new ProfessionalServicesRelationshipBuilder(this.Session).WithProfessionalServicesProvider(internalOrganisation).Build();
-            this.Session.Derive(false);
+            var internalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
+            var relationship = new ProfessionalServicesRelationshipBuilder(this.Transaction).WithProfessionalServicesProvider(internalOrganisation).Build();
+            this.Transaction.Derive(false);
 
-            var professional = new PersonBuilder(this.Session).Build();
+            var professional = new PersonBuilder(this.Transaction).Build();
             relationship.Professional = professional;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains(professional, relationship.Parties);
         }
@@ -33,13 +33,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedProfessionalServicesProviderDeriveParties()
         {
-            var professional = new PersonBuilder(this.Session).Build();
-            var relationship = new ProfessionalServicesRelationshipBuilder(this.Session).WithProfessional(professional).Build();
-            this.Session.Derive(false);
+            var professional = new PersonBuilder(this.Transaction).Build();
+            var relationship = new ProfessionalServicesRelationshipBuilder(this.Transaction).WithProfessional(professional).Build();
+            this.Transaction.Derive(false);
 
-            var internalOrganisation = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+            var internalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
             relationship.ProfessionalServicesProvider = internalOrganisation;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains(internalOrganisation, relationship.Parties);
         }

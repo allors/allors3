@@ -31,24 +31,24 @@ namespace Allors.Database.Adapters
         public readonly C4 C4C;
         public readonly C4 C4D;
 
-        public TestPopulation(ISession session)
+        public TestPopulation(ITransaction transaction)
         {
-            this.C1A = C1.Create(session);
-            this.C1B = C1.Create(session);
-            this.C1C = C1.Create(session);
-            this.C1D = C1.Create(session);
-            this.C2A = C2.Create(session);
-            this.C2B = C2.Create(session);
-            this.C2C = C2.Create(session);
-            this.C2D = C2.Create(session);
-            this.C3A = C3.Create(session);
-            this.C3B = C3.Create(session);
-            this.C3C = C3.Create(session);
-            this.C3D = C3.Create(session);
-            this.C4A = C4.Create(session);
-            this.C4B = C4.Create(session);
-            this.C4C = C4.Create(session);
-            this.C4D = C4.Create(session);
+            this.C1A = C1.Create(transaction);
+            this.C1B = C1.Create(transaction);
+            this.C1C = C1.Create(transaction);
+            this.C1D = C1.Create(transaction);
+            this.C2A = C2.Create(transaction);
+            this.C2B = C2.Create(transaction);
+            this.C2C = C2.Create(transaction);
+            this.C2D = C2.Create(transaction);
+            this.C3A = C3.Create(transaction);
+            this.C3B = C3.Create(transaction);
+            this.C3C = C3.Create(transaction);
+            this.C3D = C3.Create(transaction);
+            this.C4A = C4.Create(transaction);
+            this.C4B = C4.Create(transaction);
+            this.C4C = C4.Create(transaction);
+            this.C4D = C4.Create(transaction);
 
             // Names
             this.C1A.Name = "c1a";

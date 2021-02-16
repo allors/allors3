@@ -36,9 +36,9 @@ namespace Allors.Database.Domain.Tests
 
         public virtual Config Config { get; } = new Config { SetupSecurity = false };
 
-        public ISession Session { get; private set; }
+        public ITransaction Transaction { get; private set; }
 
-        public ITime Time => this.Session.Database.Context().Time;
+        public ITime Time => this.Transaction.Database.Context().Time;
 
         public TimeSpan? TimeShift
         {
@@ -47,7 +47,7 @@ namespace Allors.Database.Domain.Tests
             set => this.Time.Shift = value;
         }
 
-        protected Organisation InternalOrganisation => this.Session.Extent<Organisation>().First(v => v.IsInternalOrganisation);
+        protected Organisation InternalOrganisation => this.Transaction.Extent<Organisation>().First(v => v.IsInternalOrganisation);
 
         protected Person Administrator => this.GetPersonByUserName("administrator");
 
@@ -57,8 +57,8 @@ namespace Allors.Database.Domain.Tests
 
         public void Dispose()
         {
-            this.Session.Rollback();
-            this.Session = null;
+            this.Transaction.Rollback();
+            this.Transaction = null;
         }
 
         protected void Setup(IDatabase database, bool populate)
@@ -67,12 +67,12 @@ namespace Allors.Database.Domain.Tests
 
             database.RegisterDerivations();
 
-            this.Session = database.CreateSession();
+            this.Transaction = database.CreateTransaction();
 
             if (populate)
             {
                 this.Populate();
-                this.Session.Commit();
+                this.Transaction.Commit();
             }
         }
 
@@ -81,34 +81,34 @@ namespace Allors.Database.Domain.Tests
             CultureInfo.CurrentCulture = new CultureInfo("en-GB");
             CultureInfo.CurrentUICulture = new CultureInfo("en-GB");
 
-            new Setup(this.Session, this.Config).Apply();
+            new Setup(this.Transaction, this.Config).Apply();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var administrator = new PersonBuilder(this.Session).WithUserName("administrator").Build();
+            var administrator = new PersonBuilder(this.Transaction).WithUserName("administrator").Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            new UserGroups(this.Session).Administrators.AddMember(administrator);
+            new UserGroups(this.Transaction).Administrators.AddMember(administrator);
 
-            this.Session.Context().User = administrator;
+            this.Transaction.Context().User = administrator;
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var singleton = this.Session.GetSingleton();
+            var singleton = this.Transaction.GetSingleton();
 
-            var belgium = new Countries(this.Session).CountryByIsoCode["BE"];
+            var belgium = new Countries(this.Transaction).CountryByIsoCode["BE"];
             var euro = belgium.Currency;
 
             singleton.AddAdditionalLocale(belgium.LocalesWhereCountry.First);
 
-            var bank = new BankBuilder(this.Session).WithCountry(belgium).WithName("ING België").WithBic("BBRUBEBB").Build();
+            var bank = new BankBuilder(this.Transaction).WithCountry(belgium).WithName("ING België").WithBic("BBRUBEBB").Build();
 
-            var ownBankAccount = new OwnBankAccountBuilder(this.Session)
-                .WithBankAccount(new BankAccountBuilder(this.Session).WithBank(bank)
+            var ownBankAccount = new OwnBankAccountBuilder(this.Transaction)
+                .WithBankAccount(new BankAccountBuilder(this.Transaction).WithBank(bank)
                                     .WithCurrency(euro)
                                     .WithIban("BE68539007547034")
                                     .WithNameOnAccount("Koen")
@@ -116,63 +116,63 @@ namespace Allors.Database.Domain.Tests
                 .WithDescription("Main bank account")
                 .Build();
 
-            var postalAddress = new PostalAddressBuilder(this.Session)
+            var postalAddress = new PostalAddressBuilder(this.Transaction)
                 .WithAddress1("Kleine Nieuwedijkstraat 2")
                 .WithLocality("Mechelen")
                 .WithCountry(belgium)
                 .Build();
 
-            var internalOrganisation = new OrganisationBuilder(this.Session)
+            var internalOrganisation = new OrganisationBuilder(this.Transaction)
                 .WithIsInternalOrganisation(true)
                 .WithDoAccounting(false)
                 .WithName("internalOrganisation")
-                .WithPreferredCurrency(new Currencies(this.Session).CurrencyByCode["EUR"])
-                .WithInvoiceSequence(new InvoiceSequences(this.Session).EnforcedSequence)
-                .WithRequestSequence(new RequestSequences(this.Session).EnforcedSequence)
-                .WithQuoteSequence(new QuoteSequences(this.Session).EnforcedSequence)
-                .WithCustomerShipmentSequence(new CustomerShipmentSequences(this.Session).EnforcedSequence)
-                .WithCustomerReturnSequence(new CustomerReturnSequences(this.Session).EnforcedSequence)
-                .WithPurchaseShipmentSequence(new PurchaseShipmentSequences(this.Session).EnforcedSequence)
-                .WithPurchaseReturnSequence(new PurchaseReturnSequences(this.Session).EnforcedSequence)
-                .WithDropShipmentSequence(new DropShipmentSequences(this.Session).EnforcedSequence)
-                .WithIncomingTransferSequence(new IncomingTransferSequences(this.Session).EnforcedSequence)
-                .WithOutgoingTransferSequence(new OutgoingTransferSequences(this.Session).EnforcedSequence)
-                .WithWorkEffortSequence(new WorkEffortSequences(this.Session).EnforcedSequence)
+                .WithPreferredCurrency(new Currencies(this.Transaction).CurrencyByCode["EUR"])
+                .WithInvoiceSequence(new InvoiceSequences(this.Transaction).EnforcedSequence)
+                .WithRequestSequence(new RequestSequences(this.Transaction).EnforcedSequence)
+                .WithQuoteSequence(new QuoteSequences(this.Transaction).EnforcedSequence)
+                .WithCustomerShipmentSequence(new CustomerShipmentSequences(this.Transaction).EnforcedSequence)
+                .WithCustomerReturnSequence(new CustomerReturnSequences(this.Transaction).EnforcedSequence)
+                .WithPurchaseShipmentSequence(new PurchaseShipmentSequences(this.Transaction).EnforcedSequence)
+                .WithPurchaseReturnSequence(new PurchaseReturnSequences(this.Transaction).EnforcedSequence)
+                .WithDropShipmentSequence(new DropShipmentSequences(this.Transaction).EnforcedSequence)
+                .WithIncomingTransferSequence(new IncomingTransferSequences(this.Transaction).EnforcedSequence)
+                .WithOutgoingTransferSequence(new OutgoingTransferSequences(this.Transaction).EnforcedSequence)
+                .WithWorkEffortSequence(new WorkEffortSequences(this.Transaction).EnforcedSequence)
                 .WithFiscalYearStartMonth(01)
                 .WithPurchaseShipmentNumberPrefix("incoming shipmentno: ")
                 .WithPurchaseInvoiceNumberPrefix("incoming invoiceno: ")
                 .WithPurchaseOrderNumberPrefix("purchase orderno: ")
                 .WithDefaultCollectionMethod(ownBankAccount)
-                .WithSubAccountCounter(new CounterBuilder(this.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build())
+                .WithSubAccountCounter(new CounterBuilder(this.Transaction).WithUniqueId(Guid.NewGuid()).WithValue(0).Build())
                 .Build();
 
-            internalOrganisation.AddPartyContactMechanism(new PartyContactMechanismBuilder(this.Session)
+            internalOrganisation.AddPartyContactMechanism(new PartyContactMechanismBuilder(this.Transaction)
                 .WithUseAsDefault(true)
                 .WithContactMechanism(postalAddress)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).GeneralCorrespondence)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).BillingAddress)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).ShippingAddress)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).GeneralCorrespondence)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
                 .Build());
 
-            var facility = new FacilityBuilder(this.Session)
-                .WithFacilityType(new FacilityTypes(this.Session).Warehouse)
+            var facility = new FacilityBuilder(this.Transaction)
+                .WithFacilityType(new FacilityTypes(this.Transaction).Warehouse)
                 .WithName("facility")
                 .WithOwner(internalOrganisation)
                 .Build();
 
             singleton.Settings.DefaultFacility = facility;
 
-            var collectionMethod = new PaymentMethods(this.Session).Extent().First;
+            var collectionMethod = new PaymentMethods(this.Transaction).Extent().First;
 
-            new StoreBuilder(this.Session)
+            new StoreBuilder(this.Transaction)
                 .WithName("store")
-                .WithBillingProcess(new BillingProcesses(this.Session).BillingForShipmentItems)
+                .WithBillingProcess(new BillingProcesses(this.Transaction).BillingForShipmentItems)
                 .WithInternalOrganisation(internalOrganisation)
                 .WithCustomerShipmentNumberPrefix("shipmentno: ")
                 .WithSalesInvoiceNumberPrefix("invoiceno: ")
                 .WithSalesOrderNumberPrefix("orderno: ")
-                .WithDefaultShipmentMethod(new ShipmentMethods(this.Session).Ground)
-                .WithDefaultCarrier(new Carriers(this.Session).Fedex)
+                .WithDefaultShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
+                .WithDefaultCarrier(new Carriers(this.Transaction).Fedex)
                 .WithCreditLimit(500)
                 .WithPaymentGracePeriod(10)
                 .WithDefaultCollectionMethod(collectionMethod)
@@ -181,91 +181,91 @@ namespace Allors.Database.Domain.Tests
                 .WithIsImmediatelyPacked(true)
                 .Build();
 
-            new ProductCategoryBuilder(this.Session).WithName("Primary Category").Build();
+            new ProductCategoryBuilder(this.Transaction).WithName("Primary Category").Build();
 
-            internalOrganisation.CreateEmployee("letmein", this.Session.Faker());
-            internalOrganisation.CreateB2BCustomer(this.Session.Faker());
-            internalOrganisation.CreateB2CCustomer(this.Session.Faker());
-            internalOrganisation.CreateSupplier(this.Session.Faker());
-            internalOrganisation.CreateSubContractor(this.Session.Faker());
+            internalOrganisation.CreateEmployee("letmein", this.Transaction.Faker());
+            internalOrganisation.CreateB2BCustomer(this.Transaction.Faker());
+            internalOrganisation.CreateB2CCustomer(this.Transaction.Faker());
+            internalOrganisation.CreateSupplier(this.Transaction.Faker());
+            internalOrganisation.CreateSubContractor(this.Transaction.Faker());
 
-            var purchaser = new PersonBuilder(this.Session).WithFirstName("The").WithLastName("purchaser").WithUserName("purchaser").Build();
-            var orderProcessor = new PersonBuilder(this.Session).WithFirstName("The").WithLastName("orderProcessor").WithUserName("orderProcessor").Build();
+            var purchaser = new PersonBuilder(this.Transaction).WithFirstName("The").WithLastName("purchaser").WithUserName("purchaser").Build();
+            var orderProcessor = new PersonBuilder(this.Transaction).WithFirstName("The").WithLastName("orderProcessor").WithUserName("orderProcessor").Build();
 
             // Adding newly created persons to EmployeeUserGroup as employees do not have any permission when created
-            var employeesUserGroup = new UserGroups(this.Session).Employees;
+            var employeesUserGroup = new UserGroups(this.Transaction).Employees;
             employeesUserGroup.AddMember(purchaser);
             employeesUserGroup.AddMember(orderProcessor);
             employeesUserGroup.AddMember(administrator);
 
-            new UserGroups(this.Session).Creators.AddMember(purchaser);
-            new UserGroups(this.Session).Creators.AddMember(orderProcessor);
-            new UserGroups(this.Session).Creators.AddMember(administrator);
+            new UserGroups(this.Transaction).Creators.AddMember(purchaser);
+            new UserGroups(this.Transaction).Creators.AddMember(orderProcessor);
+            new UserGroups(this.Transaction).Creators.AddMember(administrator);
 
-            new EmploymentBuilder(this.Session).WithFromDate(this.Session.Now()).WithEmployee(purchaser).WithEmployer(internalOrganisation).Build();
+            new EmploymentBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithEmployee(purchaser).WithEmployer(internalOrganisation).Build();
 
-            new EmploymentBuilder(this.Session).WithFromDate(this.Session.Now()).WithEmployee(orderProcessor).WithEmployer(internalOrganisation).Build();
+            new EmploymentBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithEmployee(orderProcessor).WithEmployer(internalOrganisation).Build();
 
-            var good1 = new NonUnifiedGoodBuilder(this.Session)
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+            var good1 = new NonUnifiedGoodBuilder(this.Transaction)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("1")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithName("good1")
-                .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                    .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                    .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                         .WithIdentification("1")
-                        .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                    .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build())
+                        .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                    .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build())
                 .Build();
 
-            var good2 = new NonUnifiedGoodBuilder(this.Session)
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+            var good2 = new NonUnifiedGoodBuilder(this.Transaction)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("2")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithName("good2")
-                .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                    .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                    .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                         .WithIdentification("2")
-                        .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                    .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build())
+                        .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                    .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build())
                 .Build();
 
-            var good3 = new NonUnifiedGoodBuilder(this.Session)
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+            var good3 = new NonUnifiedGoodBuilder(this.Transaction)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("3")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithName("good3")
-                .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                    .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                    .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                         .WithIdentification("3")
-                        .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                    .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build())
+                        .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                    .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build())
                 .Build();
 
-            var serialisedUnifiedGood = new UnifiedGoodBuilder(this.Session).WithSerialisedDefaults(internalOrganisation).Build();
+            var serialisedUnifiedGood = new UnifiedGoodBuilder(this.Transaction).WithSerialisedDefaults(internalOrganisation).Build();
 
-            var catMain = new ProductCategoryBuilder(this.Session).WithName("main cat").Build();
+            var catMain = new ProductCategoryBuilder(this.Transaction).WithName("main cat").Build();
 
-            var cat1 = new ProductCategoryBuilder(this.Session)
+            var cat1 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("cat for good1")
                 .WithPrimaryParent(catMain)
                 .WithProduct(good1)
                 .Build();
 
-            var cat2 = new ProductCategoryBuilder(this.Session)
+            var cat2 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("cat for good2")
                 .WithPrimaryParent(catMain)
                 .WithProduct(good2)
                 .WithProduct(good3)
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
         }
 
-        private Person GetPersonByUserName(string userName) => new People(this.Session).FindBy(this.M.User.UserName, userName);
+        private Person GetPersonByUserName(string userName) => new People(this.Transaction).FindBy(this.M.User.UserName, userName);
     }
 }

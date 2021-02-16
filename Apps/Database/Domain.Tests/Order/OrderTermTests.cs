@@ -15,17 +15,17 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenOrderTerm_WhenDeriving_ThenDescriptionIsRequired()
         {
-            var builder = new OrderTermBuilder(this.Session);
+            var builder = new OrderTermBuilder(this.Transaction);
             var salesTerm = builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            builder.WithTermType(new OrderTermTypes(this.Session).PercentageCancellationCharge);
+            builder.WithTermType(new OrderTermTypes(this.Transaction).PercentageCancellationCharge);
             salesTerm = builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
     }
 }

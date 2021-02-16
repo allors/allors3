@@ -18,11 +18,11 @@ namespace Allors.Database.Domain
 
         public PurchaseInvoiceType PurchaseReturn => this.Cache[PurchaseReturnId];
 
-        private UniquelyIdentifiableCache<PurchaseInvoiceType> Cache => this.cache ??= new UniquelyIdentifiableCache<PurchaseInvoiceType>(this.Session);
+        private UniquelyIdentifiableCache<PurchaseInvoiceType> Cache => this.cache ??= new UniquelyIdentifiableCache<PurchaseInvoiceType>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {
-            var dutchLocale = new Locales(this.Session).DutchNetherlands;
+            var dutchLocale = new Locales(this.Transaction).DutchNetherlands;
 
             var merge = this.Cache.Merger().Action();
             var localisedName = new LocalisedTextAccessor(this.Meta.LocalisedNames);

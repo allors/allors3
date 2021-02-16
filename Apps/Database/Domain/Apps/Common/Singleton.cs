@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistLogoImage)
             {
-                this.LogoImage = new MediaBuilder(this.Strategy.Session).WithInFileName("allors.png").WithInData(this.GetResourceBytes("allors.png")).Build();
+                this.LogoImage = new MediaBuilder(this.Strategy.Transaction).WithInFileName("allors.png").WithInData(this.GetResourceBytes("allors.png")).Build();
             }
         }
 

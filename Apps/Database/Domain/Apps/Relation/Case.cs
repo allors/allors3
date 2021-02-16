@@ -16,25 +16,25 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistCaseState)
             {
-                this.CaseState = new CaseStates(this.Strategy.Session).Opened;
+                this.CaseState = new CaseStates(this.Strategy.Transaction).Opened;
             }
         }
 
         public void AppsClose()
         {
-            var closed = new CaseStates(this.Strategy.Session).Closed;
+            var closed = new CaseStates(this.Strategy.Transaction).Closed;
             this.CaseState = closed;
         }
 
         public void AppsComplete()
         {
-            var completed = new CaseStates(this.Strategy.Session).Completed;
+            var completed = new CaseStates(this.Strategy.Transaction).Completed;
             this.CaseState = completed;
         }
 
         public void AppsReopen()
         {
-            var opened = new CaseStates(this.Strategy.Session).Opened;
+            var opened = new CaseStates(this.Strategy.Transaction).Opened;
             this.CaseState = opened;
         }
     }

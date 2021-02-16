@@ -9,6 +9,6 @@ namespace Allors.Database.Domain
 
     public interface IDerivationFactory
     {
-        IDerivation CreateDerivation(ISession session);
+        IDerivation CreateDerivation(ITransaction transaction);
     }
 }

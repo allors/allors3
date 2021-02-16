@@ -7,10 +7,10 @@ namespace Allors.Database.Domain
 {
     public partial class GenderType
     {
-        public bool IsMale => this.Equals(new GenderTypes(this.Strategy.Session).Male);
+        public bool IsMale => this.Equals(new GenderTypes(this.Strategy.Transaction).Male);
 
-        public bool IsFemale => this.Equals(new GenderTypes(this.Strategy.Session).Female);
+        public bool IsFemale => this.Equals(new GenderTypes(this.Strategy.Transaction).Female);
 
-        public bool IsOther => this.Equals(new GenderTypes(this.Strategy.Session).Other);
+        public bool IsOther => this.Equals(new GenderTypes(this.Strategy.Transaction).Other);
     }
 }

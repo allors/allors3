@@ -22,7 +22,7 @@ namespace Allors.Database.Adapters
 
         protected abstract IProfile Profile { get; }
 
-        protected ISession Session => this.Profile.Session;
+        protected ITransaction Transaction => this.Profile.Transaction;
 
         protected Action[] Markers => this.Profile.Markers;
 
@@ -36,18 +36,18 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
                     for (var i = 0; i < numberOfRuns; i++)
                     {
-                        var from1 = C1.Create(this.Session);
-                        var from2 = C1.Create(this.Session);
-                        var from3 = C1.Create(this.Session);
-                        var from4 = C1.Create(this.Session);
-                        var to = C1.Create(this.Session);
-                        var toAnother = C1.Create(this.Session);
+                        var from1 = C1.Create(this.Transaction);
+                        var from2 = C1.Create(this.Transaction);
+                        var from3 = C1.Create(this.Transaction);
+                        var from4 = C1.Create(this.Transaction);
+                        var to = C1.Create(this.Transaction);
+                        var toAnother = C1.Create(this.Transaction);
 
                         // From 0-4-0
                         // Get
@@ -677,17 +677,17 @@ namespace Allors.Database.Adapters
 
                     for (var i = 0; i < numberOfRuns; i++)
                     {
-                        var from1 = C1.Create(this.Session);
+                        var from1 = C1.Create(this.Transaction);
                         mark();
-                        var from2 = C1.Create(this.Session);
+                        var from2 = C1.Create(this.Transaction);
                         mark();
-                        var from3 = C1.Create(this.Session);
+                        var from3 = C1.Create(this.Transaction);
                         mark();
-                        var from4 = C1.Create(this.Session);
+                        var from4 = C1.Create(this.Transaction);
                         mark();
-                        var to = C1.Create(this.Session);
+                        var to = C1.Create(this.Transaction);
                         mark();
-                        var toAnother = C1.Create(this.Session);
+                        var toAnother = C1.Create(this.Transaction);
                         mark();
 
                         // From 0-4-0
@@ -1800,18 +1800,18 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
                     for (var i = 0; i < numberOfRuns; i++)
                     {
-                        var from1 = C1.Create(this.Session);
-                        var from2 = C1.Create(this.Session);
-                        var from3 = C1.Create(this.Session);
-                        var from4 = C1.Create(this.Session);
-                        var to = C2.Create(this.Session);
-                        var toAnother = C2.Create(this.Session);
+                        var from1 = C1.Create(this.Transaction);
+                        var from2 = C1.Create(this.Transaction);
+                        var from3 = C1.Create(this.Transaction);
+                        var from4 = C1.Create(this.Transaction);
+                        var to = C2.Create(this.Transaction);
+                        var toAnother = C2.Create(this.Transaction);
 
                         // From 0-4-0
                         // Get
@@ -2448,18 +2448,18 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
                     for (var i = 0; i < numberOfRuns; i++)
                     {
-                        var from1 = C3.Create(this.Session);
-                        var from2 = C3.Create(this.Session);
-                        var from3 = C3.Create(this.Session);
-                        var from4 = C3.Create(this.Session);
-                        var to = C4.Create(this.Session);
-                        var toAnother = C4.Create(this.Session);
+                        var from1 = C3.Create(this.Transaction);
+                        var from2 = C3.Create(this.Transaction);
+                        var from3 = C3.Create(this.Transaction);
+                        var from4 = C3.Create(this.Transaction);
+                        var to = C4.Create(this.Transaction);
+                        var toAnother = C4.Create(this.Transaction);
 
                         // From 0-4-0
                         // Get
@@ -3096,18 +3096,18 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
                     for (var i = 0; i < numberOfRuns; i++)
                     {
-                        var from1 = C1.Create(this.Session);
-                        var from2 = C1.Create(this.Session);
-                        var from3 = C1.Create(this.Session);
-                        var from4 = C1.Create(this.Session);
-                        var to = C1.Create(this.Session);
-                        var toAnother = C1.Create(this.Session);
+                        var from1 = C1.Create(this.Transaction);
+                        var from2 = C1.Create(this.Transaction);
+                        var from3 = C1.Create(this.Transaction);
+                        var from4 = C1.Create(this.Transaction);
+                        var to = C1.Create(this.Transaction);
+                        var toAnother = C1.Create(this.Transaction);
 
                         // From 0-4-0
                         // Get
@@ -3738,17 +3738,17 @@ namespace Allors.Database.Adapters
 
                     for (var i = 0; i < numberOfRuns; i++)
                     {
-                        var from1 = C1.Create(this.Session);
+                        var from1 = C1.Create(this.Transaction);
                         mark();
-                        var from2 = C1.Create(this.Session);
+                        var from2 = C1.Create(this.Transaction);
                         mark();
-                        var from3 = C1.Create(this.Session);
+                        var from3 = C1.Create(this.Transaction);
                         mark();
-                        var from4 = C1.Create(this.Session);
+                        var from4 = C1.Create(this.Transaction);
                         mark();
-                        var to = C1.Create(this.Session);
+                        var to = C1.Create(this.Transaction);
                         mark();
-                        var toAnother = C1.Create(this.Session);
+                        var toAnother = C1.Create(this.Transaction);
                         mark();
 
                         // From 0-4-0
@@ -4861,18 +4861,18 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
-                    var c1a = C1.Create(this.Session);
-                    var c1b = C1.Create(this.Session);
-                    var c2a = C2.Create(this.Session);
-                    var c2b = C2.Create(this.Session);
-                    var c3a = C3.Create(this.Session);
-                    var c3b = C3.Create(this.Session);
-                    var c4a = C4.Create(this.Session);
-                    var c4b = C4.Create(this.Session);
+                    var c1a = C1.Create(this.Transaction);
+                    var c1b = C1.Create(this.Transaction);
+                    var c2a = C2.Create(this.Transaction);
+                    var c2b = C2.Create(this.Transaction);
+                    var c3a = C3.Create(this.Transaction);
+                    var c3b = C3.Create(this.Transaction);
+                    var c4a = C4.Create(this.Transaction);
+                    var c4b = C4.Create(this.Transaction);
 
                     // Illegal Role
                     var exceptionThrown = false;

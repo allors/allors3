@@ -10,7 +10,7 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static MiscellaneousChargeBuilder WithAmountDefaults(this MiscellaneousChargeBuilder @this)
         {
-            var faker = @this.Session.Faker();
+            var faker = @this.Transaction.Faker();
 
             @this.WithAmount(decimal.Round(faker.Random.Decimal(10, 100), 2));
             @this.WithDescription(faker.Lorem.Sentence());
@@ -20,7 +20,7 @@ namespace Allors.Database.Domain.TestPopulation
 
         public static MiscellaneousChargeBuilder WithPercentageDefaults(this MiscellaneousChargeBuilder @this)
         {
-            var faker = @this.Session.Faker();
+            var faker = @this.Transaction.Faker();
 
             @this.WithPercentage(decimal.Round(faker.Random.Decimal(1, 5), 2));
             @this.WithDescription(faker.Lorem.Sentence());

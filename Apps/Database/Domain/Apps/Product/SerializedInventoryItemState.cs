@@ -7,12 +7,12 @@ namespace Allors.Database.Domain
 {
     public partial class SerialisedInventoryItemState
     {
-        public bool IsGood => this.Equals(new SerialisedInventoryItemStates(this.Strategy.Session).Good);
+        public bool IsGood => this.Equals(new SerialisedInventoryItemStates(this.Strategy.Transaction).Good);
 
-        public bool IsSlightlyDamaged => this.Equals(new SerialisedInventoryItemStates(this.Strategy.Session).SlightlyDamaged);
+        public bool IsSlightlyDamaged => this.Equals(new SerialisedInventoryItemStates(this.Strategy.Transaction).SlightlyDamaged);
 
-        public bool IsDefective => this.Equals(new SerialisedInventoryItemStates(this.Strategy.Session).Defective);
+        public bool IsDefective => this.Equals(new SerialisedInventoryItemStates(this.Strategy.Transaction).Defective);
 
-        public bool IsScrap => this.Equals(new SerialisedInventoryItemStates(this.Strategy.Session).Scrap);
+        public bool IsScrap => this.Equals(new SerialisedInventoryItemStates(this.Strategy.Transaction).Scrap);
     }
 }

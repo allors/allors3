@@ -9,15 +9,15 @@ namespace Allors.Database.Domain
 
     public partial class Singletons
     {
-        public Singleton Instance => this.Session.GetSingleton();
+        public Singleton Instance => this.Transaction.GetSingleton();
 
         protected override void CorePrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.Locale.ObjectType);
 
         protected override void CoreSetup(Setup setup)
         {
-            var singleton = this.Session.GetSingleton() ?? new SingletonBuilder(this.Session).Build();
+            var singleton = this.Transaction.GetSingleton() ?? new SingletonBuilder(this.Transaction).Build();
 
-            singleton.DefaultLocale = new Locales(this.Session).EnglishGreatBritain;
+            singleton.DefaultLocale = new Locales(this.Transaction).EnglishGreatBritain;
         }
     }
 }

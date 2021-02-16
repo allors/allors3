@@ -58,7 +58,7 @@ namespace Allors.Database.Domain
                         var invoice = purchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem;
                         if (purchaseInvoiceItem.ExistPart)
                         {
-                            purchaseInvoiceItem.UnitBasePrice = new SupplierOfferings(purchaseInvoiceItem.Strategy.Session).PurchasePrice(invoice.BilledFrom, invoice.InvoiceDate, purchaseInvoiceItem.Part);
+                            purchaseInvoiceItem.UnitBasePrice = new SupplierOfferings(purchaseInvoiceItem.Strategy.Transaction).PurchasePrice(invoice.BilledFrom, invoice.InvoiceDate, purchaseInvoiceItem.Part);
                         }
                     }
 

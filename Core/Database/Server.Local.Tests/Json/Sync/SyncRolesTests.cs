@@ -22,20 +22,20 @@ namespace Tests
             var m = this.M;
             var user = this.SetUser("jane@example.com");
 
-            var x1 = new WorkspaceXObject1Builder(this.Session)
+            var x1 = new WorkspaceXObject1Builder(this.Transaction)
                 .WithWorkspaceXString("x1:x")
                 .WithWorkspaceYString("x1:y")
                 .WithWorkspaceXYString("x1:xy")
                 .WithWorkspaceNonString("x1:none")
                 .Build();
 
-            this.Session.Commit();
+            this.Transaction.Commit();
 
             var syncRequest = new SyncRequest
             {
                 Objects = new[] { x1.Id.ToString() },
             };
-            var api = new Api(this.Session, "X");
+            var api = new Api(this.Transaction, "X");
             var syncResponse = api.Sync(syncRequest);
 
             Assert.Single(syncResponse.Objects);
@@ -58,20 +58,20 @@ namespace Tests
             var m = this.M;
             var user = this.SetUser("jane@example.com");
 
-            var x1 = new WorkspaceXObject1Builder(this.Session)
+            var x1 = new WorkspaceXObject1Builder(this.Transaction)
                 .WithWorkspaceXString("x1:x")
                 .WithWorkspaceYString("x1:y")
                 .WithWorkspaceXYString("x1:xy")
                 .WithWorkspaceNonString("x1:none")
                 .Build();
 
-            this.Session.Commit();
+            this.Transaction.Commit();
 
             var syncRequest = new SyncRequest
             {
                 Objects = new[] { x1.Id.ToString() },
             };
-            var api = new Api(this.Session, "None");
+            var api = new Api(this.Transaction, "None");
             var syncResponse = api.Sync(syncRequest);
 
             Assert.Empty(syncResponse.Objects);

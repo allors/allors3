@@ -20,9 +20,9 @@ namespace Allors.Database.Server.Controllers
     {
         protected const int OneYearInSeconds = 60 * 60 * 24 * 356;
 
-        protected BaseMediaController(ISessionService sessionService) => this.Session = sessionService.Session;
+        protected BaseMediaController(ITransactionService transactionService) => this.Transaction = transactionService.Transaction;
 
-        protected ISession Session { get; }
+        protected ITransaction Transaction { get; }
 
         [Authorize]
         [AllowAnonymous]
@@ -30,13 +30,13 @@ namespace Allors.Database.Server.Controllers
         [HttpGet("/print/{idString}/{*name}")]
         public virtual ActionResult Print(string idString, string name)
         {
-            if (this.Session.Instantiate(idString) is Printable printable)
+            if (this.Transaction.Instantiate(idString) is Printable printable)
             {
                 if (printable.PrintDocument?.ExistMedia == false)
                 {
                     printable.Print();
-                    this.Session.Derive();
-                    this.Session.Commit();
+                    this.Transaction.Derive();
+                    this.Transaction.Commit();
                 }
 
                 var media = printable.PrintDocument?.Media;
@@ -59,11 +59,11 @@ namespace Allors.Database.Server.Controllers
         [HttpGet("/media/{idString}/{*name}")]
         public virtual IActionResult RedirectOrNotFound(string idString, string name)
         {
-            var m = ((IDatabaseContext) this.Session.Database.Context()).M;
+            var m = ((IDatabaseContext) this.Transaction.Database.Context()).M;
 
             if (Guid.TryParse(idString, out var id))
             {
-                var media = new Medias(this.Session).FindBy(m.Media.UniqueId, id);
+                var media = new Medias(this.Transaction).FindBy(m.Media.UniqueId, id);
                 if (media != null)
                 {
                     return this.RedirectToAction(nameof(this.Get), new { idString = media.UniqueId.ToString("N"), revisionString = media.Revision?.ToString("N") });
@@ -79,11 +79,11 @@ namespace Allors.Database.Server.Controllers
         [HttpGet("/media/{idString}/{revisionString}/{*name}")]
         public virtual IActionResult Get(string idString, string revisionString, string name)
         {
-            var m = ((IDatabaseContext) this.Session.Database.Context()).M;
+            var m = ((IDatabaseContext) this.Transaction.Database.Context()).M;
 
             if (Guid.TryParse(idString, out var id))
             {
-                var media = new Medias(this.Session).FindBy(m.Media.UniqueId, id);
+                var media = new Medias(this.Transaction).FindBy(m.Media.UniqueId, id);
                 if (media != null)
                 {
                     if (media.MediaContent?.Data == null)

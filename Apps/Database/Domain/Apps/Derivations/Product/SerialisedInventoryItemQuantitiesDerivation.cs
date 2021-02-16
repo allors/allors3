@@ -26,7 +26,7 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<SerialisedInventoryItem>())
             {
-                var settings = @this.Strategy.Session.GetSingleton().Settings;
+                var settings = @this.Strategy.Transaction.GetSingleton().Settings;
 
                 @this.Quantity = 0;
 
@@ -53,7 +53,7 @@ namespace Allors.Database.Domain
 
                 foreach (PickListItem pickListItem in @this.PickListItemsWhereInventoryItem)
                 {
-                    if (pickListItem.PickListWherePickListItem.PickListState.Equals(new PickListStates(@this.Strategy.Session).Picked))
+                    if (pickListItem.PickListWherePickListItem.PickListState.Equals(new PickListStates(@this.Strategy.Transaction).Picked))
                     {
                         foreach (ItemIssuance itemIssuance in pickListItem.ItemIssuancesWherePickListItem)
                         {

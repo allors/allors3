@@ -44,20 +44,20 @@ namespace Allors.Database.Domain
                 }
 
                 //TODO: Begin Run Asynchronously in the Background
-                if (!@this.ExistActualStart || (@this.ActualStart > @this.Strategy.Session.Now()))
+                if (!@this.ExistActualStart || (@this.ActualStart > @this.Strategy.Transaction.Now()))
                 {
-                    @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Session).Scheduled;
+                    @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Transaction).Scheduled;
                 }
 
-                if (@this.ExistActualStart && @this.ActualStart <= @this.Strategy.Session.Now() &&
-                    ((@this.ExistActualEnd && @this.ActualEnd > @this.Strategy.Session.Now()) || !@this.ExistActualEnd))
+                if (@this.ExistActualStart && @this.ActualStart <= @this.Strategy.Transaction.Now() &&
+                    ((@this.ExistActualEnd && @this.ActualEnd > @this.Strategy.Transaction.Now()) || !@this.ExistActualEnd))
                 {
-                    @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Session).InProgress;
+                    @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Transaction).InProgress;
                 }
 
-                if (@this.ExistActualEnd && @this.ActualEnd <= @this.Strategy.Session.Now())
+                if (@this.ExistActualEnd && @this.ActualEnd <= @this.Strategy.Transaction.Now())
                 {
-                    @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Session).Completed;
+                    @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Transaction).Completed;
                 }
 
                 // End Run Asynchronously in the Background
@@ -78,7 +78,7 @@ namespace Allors.Database.Domain
 
                 if (!@this.ExistActualEnd && openCommunicationTasks.Length == 0)
                 {
-                    new CommunicationTaskBuilder(@this.Strategy.Session).WithCommunicationEvent(@this).Build();
+                    new CommunicationTaskBuilder(@this.Strategy.Transaction).WithCommunicationEvent(@this).Build();
                 }
 
                 var parties = new[] { @this.FromParty, @this.ToParty, @this.Owner }.Distinct().ToArray();

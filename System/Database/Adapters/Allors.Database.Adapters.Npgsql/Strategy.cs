@@ -28,9 +28,9 @@ namespace Allors.Database.Adapters.Npgsql
             this.ObjectId = reference.ObjectId;
         }
 
-        ISession IStrategy.Session => this.Reference.Session;
+        ITransaction IStrategy.Transaction => this.Reference.Transaction;
 
-        public Session Session => this.Reference.Session;
+        public Transaction Transaction => this.Reference.Transaction;
 
         public IClass Class
         {
@@ -51,13 +51,13 @@ namespace Allors.Database.Adapters.Npgsql
 
         public bool IsDeleted => !this.Reference.Exists;
 
-        public bool IsNewInSession => this.Reference.IsNew;
+        public bool IsNewInTransaction => this.Reference.IsNew;
 
-        internal Roles Roles => this.roles ??= this.Reference.Session.State.GetOrCreateRoles(this.Reference);
+        internal Roles Roles => this.roles ??= this.Reference.Transaction.State.GetOrCreateRoles(this.Reference);
 
         internal Reference Reference { get; }
 
-        public IObject GetObject() => this.allorsObject ??= this.Reference.Session.Database.ObjectFactory.Create(this);
+        public IObject GetObject() => this.allorsObject ??= this.Reference.Transaction.Database.ObjectFactory.Create(this);
 
         public virtual void Delete()
         {
@@ -77,9 +77,9 @@ namespace Allors.Database.Adapters.Npgsql
 
                 if (associationType.IsMany)
                 {
-                    foreach (var association in this.Session.GetAssociations(this, associationType))
+                    foreach (var association in this.Transaction.GetAssociations(this, associationType))
                     {
-                        var associationStrategy = this.Session.State.GetOrCreateReferenceForExistingObject(association, this.Session).Strategy;
+                        var associationStrategy = this.Transaction.State.GetOrCreateReferenceForExistingObject(association, this.Transaction).Strategy;
                         if (roleType.IsMany)
                         {
                             associationStrategy.RemoveCompositeRole(roleType, this.GetObject());
@@ -107,10 +107,10 @@ namespace Allors.Database.Adapters.Npgsql
                 }
             }
 
-            this.Session.Commands.DeleteObject(this);
+            this.Transaction.Commands.DeleteObject(this);
             this.Reference.Exists = false;
 
-            this.Session.State.ChangeSet.OnDeleted(this);
+            this.Transaction.State.ChangeSet.OnDeleted(this);
         }
 
         public virtual bool ExistRole(IRoleType roleType)
@@ -199,7 +199,7 @@ namespace Allors.Database.Adapters.Npgsql
         {
             this.AssertExist();
             var role = this.Roles.GetCompositeRole(roleType);
-            return role == null ? null : this.Session.State.GetOrCreateReferenceForExistingObject(role.Value, this.Session).Strategy.GetObject();
+            return role == null ? null : this.Transaction.State.GetOrCreateReferenceForExistingObject(role.Value, this.Transaction).Strategy.GetObject();
         }
 
         public virtual void SetCompositeRole(IRoleType roleType, IObject newRole)
@@ -297,7 +297,7 @@ namespace Allors.Database.Adapters.Npgsql
                 {
                     if (!newRoles.Contains(previousRole))
                     {
-                        this.Roles.RemoveCompositeRole(roleType, this.Session.State.GetOrCreateReferenceForExistingObject(previousRole, this.Session).Strategy);
+                        this.Roles.RemoveCompositeRole(roleType, this.Transaction.State.GetOrCreateReferenceForExistingObject(previousRole, this.Transaction).Strategy);
                     }
                 }
             }
@@ -310,7 +310,7 @@ namespace Allors.Database.Adapters.Npgsql
 
             foreach (var previousRole in this.Roles.GetCompositesRole(roleType))
             {
-                this.Roles.RemoveCompositeRole(roleType, this.Session.State.GetOrCreateReferenceForExistingObject(previousRole, this.Session).Strategy);
+                this.Roles.RemoveCompositeRole(roleType, this.Transaction.State.GetOrCreateReferenceForExistingObject(previousRole, this.Transaction).Strategy);
             }
         }
 
@@ -323,7 +323,7 @@ namespace Allors.Database.Adapters.Npgsql
         public virtual IObject GetCompositeAssociation(IAssociationType associationType)
         {
             this.AssertExist();
-            var association = this.Session.GetAssociation(this, associationType);
+            var association = this.Transaction.GetAssociation(this, associationType);
             return association?.Strategy.GetObject();
         }
 
@@ -350,10 +350,10 @@ namespace Allors.Database.Adapters.Npgsql
         {
             this.AssertExist();
 
-            return this.Roles.ExtentFirst(this.Session, roleType);
+            return this.Roles.ExtentFirst(this.Transaction, roleType);
         }
 
-        internal void ExtentRolesCopyTo(IRoleType roleType, Array array, int index) => this.Roles.ExtentCopyTo(this.Session, roleType, array, index);
+        internal void ExtentRolesCopyTo(IRoleType roleType, Array array, int index) => this.Roles.ExtentCopyTo(this.Transaction, roleType, array, index);
 
         internal int ExtentIndexOf(IRoleType roleType, IObject value)
         {
@@ -378,7 +378,7 @@ namespace Allors.Database.Adapters.Npgsql
             {
                 if (i == index)
                 {
-                    return this.Session.State.GetOrCreateReferenceForExistingObject(oid, this.Session).Strategy.GetObject();
+                    return this.Transaction.State.GetOrCreateReferenceForExistingObject(oid, this.Transaction).Strategy.GetObject();
                 }
 
                 ++i;
@@ -393,7 +393,7 @@ namespace Allors.Database.Adapters.Npgsql
         {
             this.AssertExist();
 
-            return this.Session.GetAssociations(this, associationType);
+            return this.Transaction.GetAssociations(this, associationType);
         }
 
         protected virtual void AssertExist()

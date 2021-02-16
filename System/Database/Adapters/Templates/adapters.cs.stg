@@ -182,9 +182,9 @@ namespace Allors.Database.Domain
             get { return this.strategy; }
         }
 
-		public static $class.name$ Instantiate (Allors.Database.ISession allorsSession, string allorsObjectId)
+		public static $class.name$ Instantiate (Allors.Database.ITransaction allorsTransaction, string allorsObjectId)
 		{
-			return ($class.name$) allorsSession.Instantiate(allorsObjectId);
+			return ($class.name$) allorsTransaction.Instantiate(allorsObjectId);
 		}
 
 		public override bool Equals(object obj)
@@ -192,7 +192,7 @@ namespace Allors.Database.Domain
             var typedObj = obj as IObject;
             return typedObj != null &&
                    typedObj.Strategy.ObjectId.Equals(this.Strategy.ObjectId) &&
-                   typedObj.Strategy.Session.Database.Id.Equals(this.Strategy.Session.Database.Id);
+                   typedObj.Strategy.Transaction.Database.Id.Equals(this.Strategy.Transaction.Database.Id);
         }
 
 		public override int GetHashCode()
@@ -205,15 +205,15 @@ $class.DatabaseAssociationTypes:{associationType|$classAssociationType_Class()$}
 $class.MethodTypes:{methodType|$classMethodType_Method()$}$
 
         #region Test Helpers
-        public static $class.name$ Create(ISession session) => ($class.name$)session.Create(session.Database.Context().M.$class.name$.ObjectType);
+        public static $class.name$ Create(ITransaction session) => ($class.name$)session.Create(session.Database.Context().M.$class.name$.ObjectType);
 
-        public static $class.name$[] Create(ISession session, int count) => ($class.name$[])session.Create(session.Database.Context().M.$class.name$.ObjectType, count);
+        public static $class.name$[] Create(ITransaction session, int count) => ($class.name$[])session.Create(session.Database.Context().M.$class.name$.ObjectType, count);
 
-        public static $class.name$ Instantiate(ISession session, long id) => ($class.name$)session.Instantiate(id);
+        public static $class.name$ Instantiate(ITransaction session, long id) => ($class.name$)session.Instantiate(id);
 
-        public static $class.name$[] Instantiate(ISession session, string[] ids) => ($class.name$[])session.Instantiate(ids);
+        public static $class.name$[] Instantiate(ITransaction session, string[] ids) => ($class.name$[])session.Instantiate(ids);
 
-        public static $class.name$[] Extent(ISession session) => ($class.name$[])session.Extent(session.Database.Context().M.$class.name$.ObjectType).ToArray();
+        public static $class.name$[] Extent(ITransaction session) => ($class.name$[])session.Extent(session.Database.Context().M.$class.name$.ObjectType).ToArray();
         #endregion
 	}
 }
@@ -371,7 +371,7 @@ $if(methodType.Composite.IsClass)$
 		{
 			get
 			{
-			    var m = this.Object.Strategy.Session.Database.Context().M;
+			    var m = this.Object.Strategy.Transaction.Database.Context().M;
 				return new Allors.Database.Meta.MethodInvocation(m.$methodType.Composite.SingularName$.$methodType.Name$);
 			}
 		}
@@ -400,7 +400,7 @@ methodTypeLeafClass() ::= <<
 		{
 			get
 			{
-			    var m = this.Object.Strategy.Session.Database.Context().M;
+			    var m = this.Object.Strategy.Transaction.Database.Context().M;
 				return new Allors.Database.Meta.MethodInvocation(m.$class.SingularName$.$methodType.Name$);
 			}
 		}

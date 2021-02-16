@@ -77,7 +77,7 @@ namespace Allors.Database.Adapters.Npgsql
                 }
             }
 
-            this.command = this.Session.Connection.CreateCommand();
+            this.command = this.Transaction.Connection.CreateCommand();
             this.command.CommandText = this.sql.ToString();
             this.command.CommandType = CommandType.Text;
 

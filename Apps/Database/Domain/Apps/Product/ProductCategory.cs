@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistCatScope)
             {
-                this.CatScope = new Scopes(this.Strategy.Session).Public;
+                this.CatScope = new Scopes(this.Strategy.Transaction).Public;
             }
         }
     }

@@ -10,10 +10,10 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static OrderTermBuilder WithDefaults(this OrderTermBuilder @this)
         {
-            var faker = @this.Session.Faker();
+            var faker = @this.Transaction.Faker();
 
             @this.WithTermValue(faker.Lorem.Sentence());
-            @this.WithTermType(faker.Random.ListItem(@this.Session.Extent<OrderTermType>()));
+            @this.WithTermType(faker.Random.ListItem(@this.Transaction.Extent<OrderTermType>()));
             @this.WithDescription(faker.Lorem.Sentence());
 
             return @this;

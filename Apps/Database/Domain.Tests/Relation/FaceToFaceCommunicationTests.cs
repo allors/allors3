@@ -15,39 +15,39 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenFaceToFaceCommunicationIsBuild_WhenDeriving_ThenStatusIsSet()
         {
-            var communication = new FaceToFaceCommunicationBuilder(this.Session)
-                .WithOwner(new PersonBuilder(this.Session).WithLastName("owner").Build())
+            var communication = new FaceToFaceCommunicationBuilder(this.Transaction)
+                .WithOwner(new PersonBuilder(this.Transaction).WithLastName("owner").Build())
                 .WithSubject("subject")
-                .WithFromParty(new PersonBuilder(this.Session).WithLastName("participant1").Build())
-                .WithToParty(new PersonBuilder(this.Session).WithLastName("participant2").Build())
-                .WithActualStart(this.Session.Now())
+                .WithFromParty(new PersonBuilder(this.Transaction).WithLastName("participant1").Build())
+                .WithToParty(new PersonBuilder(this.Transaction).WithLastName("participant2").Build())
+                .WithActualStart(this.Transaction.Now())
                 .Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
-            Assert.Equal(communication.CommunicationEventState, new CommunicationEventStates(this.Session).InProgress);
+            Assert.Equal(communication.CommunicationEventState, new CommunicationEventStates(this.Transaction).InProgress);
             Assert.Equal(communication.CommunicationEventState, communication.LastCommunicationEventState);
         }
 
         [Fact]
         public void GivenFaceToFaceCommunication_WhenDeriving_ThenInvolvedPartiesAreDerived()
         {
-            var owner = new PersonBuilder(this.Session).WithLastName("owner").Build();
-            var participant1 = new PersonBuilder(this.Session).WithLastName("participant1").Build();
-            var participant2 = new PersonBuilder(this.Session).WithLastName("participant2").Build();
+            var owner = new PersonBuilder(this.Transaction).WithLastName("owner").Build();
+            var participant1 = new PersonBuilder(this.Transaction).WithLastName("participant1").Build();
+            var participant2 = new PersonBuilder(this.Transaction).WithLastName("participant2").Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var communication = new FaceToFaceCommunicationBuilder(this.Session)
+            var communication = new FaceToFaceCommunicationBuilder(this.Transaction)
                 .WithOwner(owner)
                 .WithSubject("subject")
                 .WithFromParty(participant1)
                 .WithToParty(participant2)
-                .WithActualStart(this.Session.Now())
+                .WithActualStart(this.Transaction.Now())
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(3, communication.InvolvedParties.Count);
             Assert.Contains(participant1, communication.InvolvedParties);
@@ -58,27 +58,27 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenFaceToFaceCommunication_WhenParticipantIsDeleted_ThenCommunicationEventIsDeleted()
         {
-            var participant1 = new PersonBuilder(this.Session).WithLastName("participant1").Build();
-            var participant2 = new PersonBuilder(this.Session).WithLastName("participant2").Build();
+            var participant1 = new PersonBuilder(this.Transaction).WithLastName("participant1").Build();
+            var participant2 = new PersonBuilder(this.Transaction).WithLastName("participant2").Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            new FaceToFaceCommunicationBuilder(this.Session)
+            new FaceToFaceCommunicationBuilder(this.Transaction)
                 .WithSubject("subject")
                 .WithFromParty(participant1)
                 .WithToParty(participant2)
-                .WithActualStart(this.Session.Now())
+                .WithActualStart(this.Transaction.Now())
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Single(this.Session.Extent<FaceToFaceCommunication>());
+            Assert.Single(this.Transaction.Extent<FaceToFaceCommunication>());
 
             participant2.Delete();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Empty(this.Session.Extent<FaceToFaceCommunication>());
+            Assert.Empty(this.Transaction.Extent<FaceToFaceCommunication>());
         }
     }
 
@@ -89,11 +89,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSubjectDeriveWorkItemDescription()
         {
-            var communication = new FaceToFaceCommunicationBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var communication = new FaceToFaceCommunicationBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             communication.Subject = "subject";
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains("subject", communication.WorkItemDescription);
         }
@@ -101,14 +101,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedToPartyDeriveWorkItemDescription()
         {
-            var communication = new FaceToFaceCommunicationBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var communication = new FaceToFaceCommunicationBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var person = new PersonBuilder(this.Session).WithLastName("person").Build();
-            this.Session.Derive(false);
+            var person = new PersonBuilder(this.Transaction).WithLastName("person").Build();
+            this.Transaction.Derive(false);
 
             communication.ToParty = person;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains("person", communication.WorkItemDescription);
         }
@@ -116,14 +116,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPartyPartyNameDeriveWorkItemDescription()
         {
-            var person = new PersonBuilder(this.Session).WithLastName("person").Build();
-            this.Session.Derive(false);
+            var person = new PersonBuilder(this.Transaction).WithLastName("person").Build();
+            this.Transaction.Derive(false);
 
-            var communication = new FaceToFaceCommunicationBuilder(this.Session).WithToParty(person).Build();
-            this.Session.Derive(false);
+            var communication = new FaceToFaceCommunicationBuilder(this.Transaction).WithToParty(person).Build();
+            this.Transaction.Derive(false);
 
             person.LastName = "changed";
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains("changed", communication.WorkItemDescription);
         }
@@ -139,52 +139,52 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenCurrentUserIsUnknown_WhenAccessingFaceToFaceCommunicationWithOwner_ThenOwnerSecurityTokenIsApplied()
         {
-            var owner = new PersonBuilder(this.Session).WithLastName("owner").Build();
-            var participant1 = new PersonBuilder(this.Session).WithLastName("participant1").Build();
-            var participant2 = new PersonBuilder(this.Session).WithLastName("participant2").Build();
+            var owner = new PersonBuilder(this.Transaction).WithLastName("owner").Build();
+            var participant1 = new PersonBuilder(this.Transaction).WithLastName("participant1").Build();
+            var participant2 = new PersonBuilder(this.Transaction).WithLastName("participant2").Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var communication = new FaceToFaceCommunicationBuilder(this.Session)
+            var communication = new FaceToFaceCommunicationBuilder(this.Transaction)
                 .WithOwner(owner)
                 .WithSubject("subject")
                 .WithFromParty(participant1)
                 .WithToParty(participant2)
-                .WithActualStart(this.Session.Now())
+                .WithActualStart(this.Transaction.Now())
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(2, communication.SecurityTokens.Count);
-            Assert.Contains(new SecurityTokens(this.Session).DefaultSecurityToken, communication.SecurityTokens);
+            Assert.Contains(new SecurityTokens(this.Transaction).DefaultSecurityToken, communication.SecurityTokens);
             Assert.Contains(owner.OwnerSecurityToken, communication.SecurityTokens);
         }
 
         [Fact]
         public void GivenCurrentUserIsKnown_WhenAccessingFaceToFaceCommunicationWithOwner_ThenOwnerSecurityTokenIsApplied()
         {
-            var owner = new PersonBuilder(this.Session).WithLastName("owner").Build();
-            var participant1 = new PersonBuilder(this.Session).WithLastName("participant1").Build();
-            var participant2 = new PersonBuilder(this.Session).WithLastName("participant2").Build();
+            var owner = new PersonBuilder(this.Transaction).WithLastName("owner").Build();
+            var participant1 = new PersonBuilder(this.Transaction).WithLastName("participant1").Build();
+            var participant2 = new PersonBuilder(this.Transaction).WithLastName("participant2").Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            this.Session.SetUser(owner);
+            this.Transaction.SetUser(owner);
 
-            var communication = new FaceToFaceCommunicationBuilder(this.Session)
+            var communication = new FaceToFaceCommunicationBuilder(this.Transaction)
                 .WithOwner(owner)
                 .WithSubject("subject")
                 .WithFromParty(participant1)
                 .WithToParty(participant2)
-                .WithActualStart(this.Session.Now())
+                .WithActualStart(this.Transaction.Now())
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(2, communication.SecurityTokens.Count);
-            Assert.Contains(new SecurityTokens(this.Session).DefaultSecurityToken, communication.SecurityTokens);
+            Assert.Contains(new SecurityTokens(this.Transaction).DefaultSecurityToken, communication.SecurityTokens);
             Assert.Contains(owner.OwnerSecurityToken, communication.SecurityTokens);
         }
     }

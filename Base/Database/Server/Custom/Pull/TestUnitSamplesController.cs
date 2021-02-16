@@ -17,14 +17,14 @@ namespace Allors.Database.Server.Controllers
 
     public class TestUnitSamplesController : Controller
     {
-        public TestUnitSamplesController(ISessionService sessionService, IWorkspaceService workspaceService)
+        public TestUnitSamplesController(ITransactionService sessionService, IWorkspaceService workspaceService)
         {
             this.WorkspaceService = workspaceService;
-            this.Session = sessionService.Session;
-            this.TreeCache = this.Session.Database.Context().TreeCache;
+            this.Transaction = sessionService.Transaction;
+            this.TreeCache = this.Transaction.Database.Context().TreeCache;
         }
 
-        private ISession Session { get; }
+        private ITransaction Transaction { get; }
 
         public IWorkspaceService WorkspaceService { get; }
 
@@ -35,14 +35,14 @@ namespace Allors.Database.Server.Controllers
         {
             try
             {
-                var unitSample = new UnitSamples(this.Session).Extent().First;
+                var unitSample = new UnitSamples(this.Transaction).Extent().First;
                 if (unitSample == null)
                 {
-                    unitSample = new UnitSampleBuilder(this.Session).Build();
-                    this.Session.Commit();
+                    unitSample = new UnitSampleBuilder(this.Transaction).Build();
+                    this.Transaction.Commit();
                 }
 
-                var api = new Api(this.Session, this.WorkspaceService.Name);
+                var api = new Api(this.Transaction, this.WorkspaceService.Name);
                 var response = api.CreatePullResponseBuilder();
 
                 switch (@params.Step)
@@ -72,7 +72,7 @@ namespace Allors.Database.Server.Controllers
                         break;
                 }
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 response.AddObject("unitSample", unitSample);
                 var pullResponse = response.Build();

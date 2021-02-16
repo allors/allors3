@@ -9,9 +9,9 @@ namespace Allors.Database.Domain
     {
         public void ManageNotification(TaskAssignment taskAssignment)
         {
-            if (!taskAssignment.ExistNotification && this.CommunicationEvent.SendNotification == true && this.CommunicationEvent.RemindAt < this.Strategy.Session.Now())
+            if (!taskAssignment.ExistNotification && this.CommunicationEvent.SendNotification == true && this.CommunicationEvent.RemindAt < this.Strategy.Transaction.Now())
             {
-                var notification = new NotificationBuilder(this.Strategy.Session)
+                var notification = new NotificationBuilder(this.Strategy.Transaction)
                     .WithTitle("CommunicationEvent: " + this.WorkItem.WorkItemDescription)
                     .WithDescription("CommunicationEvent: " + this.WorkItem.WorkItemDescription)
                     .WithTarget(this)

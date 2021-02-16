@@ -11,9 +11,9 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static EanIdentificationBuilder WithDefaults(this EanIdentificationBuilder @this)
         {
-            var faker = @this.Session.Faker();
+            var faker = @this.Transaction.Faker();
             @this.WithIdentification(faker.Commerce.Ean13());
-            @this.WithProductIdentificationType(new ProductIdentificationTypes(@this.Session).Ean);
+            @this.WithProductIdentificationType(new ProductIdentificationTypes(@this.Transaction).Ean);
             return @this;
         }
     }

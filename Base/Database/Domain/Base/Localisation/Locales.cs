@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
 
         private Cache<string, Locale> localeByIdentifier;
 
-        public Cache<string, Locale> LocaleByIdentifier => this.localeByIdentifier ??= new Cache<string, Locale>(this.Session, this.Meta.Name);
+        public Cache<string, Locale> LocaleByIdentifier => this.localeByIdentifier ??= new Cache<string, Locale>(this.Transaction, this.Meta.Name);
 
         public Locale EnglishGreatBritain => this.FindBy(this.Meta.Name, EnglishGreatBritainName);
 
@@ -37,8 +37,8 @@ namespace Allors.Database.Domain
 
         protected override void CoreSetup(Setup setup)
         {
-            var countries = new Countries(this.Session);
-            var languages = new Languages(this.Session);
+            var countries = new Countries(this.Transaction);
+            var languages = new Languages(this.Transaction);
 
             var merge = this.LocaleByIdentifier.Merger().Action();
 

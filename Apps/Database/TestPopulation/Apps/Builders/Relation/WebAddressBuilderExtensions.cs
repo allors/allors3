@@ -11,7 +11,7 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static WebAddressBuilder WithDefaults(this WebAddressBuilder @this)
         {
-            var faker = @this.Session.Faker();
+            var faker = @this.Transaction.Faker();
 
             @this.WithElectronicAddressString(faker.Internet.Url());
             @this.WithDescription(faker.Lorem.Sentence());

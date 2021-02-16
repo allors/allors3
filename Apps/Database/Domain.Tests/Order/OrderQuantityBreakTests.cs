@@ -19,9 +19,9 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnBuildThrowValidationError()
         {
-            var orderQuantityBreak = new OrderQuantityBreakBuilder(this.Session).Build();
+            var orderQuantityBreak = new OrderQuantityBreakBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Single(errors, e => e.Message == "OrderQuantityBreak.FromAmount, OrderQuantityBreak.ThroughAmount at least one");
         }
     }

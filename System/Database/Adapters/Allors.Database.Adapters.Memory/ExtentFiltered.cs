@@ -15,12 +15,12 @@ namespace Allors.Database.Adapters.Memory
 
         private And filter;
 
-        internal ExtentFiltered(Session session, IComposite objectType)
-            : base(session) =>
+        internal ExtentFiltered(Transaction transaction, IComposite objectType)
+            : base(transaction) =>
             this.objectType = objectType;
 
         internal ExtentFiltered(StrategyExtent extent)
-            : base(extent.Session)
+            : base(extent.Transaction)
         {
             this.objectType = extent.ObjectType;
             extent.UpgradeTo(this);
@@ -52,7 +52,7 @@ namespace Allors.Database.Adapters.Memory
             {
                 this.Strategies = new List<Strategy>();
 
-                var allStrategies = this.Session.GetStrategiesForExtentIncludingDeleted(this.objectType);
+                var allStrategies = this.Transaction.GetStrategiesForExtentIncludingDeleted(this.objectType);
                 foreach (var strategy in allStrategies)
                 {
                     if (!strategy.IsDeleted)

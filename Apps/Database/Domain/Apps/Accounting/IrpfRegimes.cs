@@ -21,13 +21,13 @@ namespace Allors.Database.Domain
 
         public IrpfRegime Exempt => this.Cache[ExemptId];
 
-        private UniquelyIdentifiableCache<IrpfRegime> Cache => this.cache ??= new UniquelyIdentifiableCache<IrpfRegime>(this.Session);
+        private UniquelyIdentifiableCache<IrpfRegime> Cache => this.cache ??= new UniquelyIdentifiableCache<IrpfRegime>(this.Transaction);
 
         protected override void AppsPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.IrpfRate);
 
         protected override void AppsSetup(Setup setup)
         {
-            var dutchLocale = new Locales(this.Session).DutchNetherlands;
+            var dutchLocale = new Locales(this.Transaction).DutchNetherlands;
 
             var merge = this.Cache.Merger().Action();
             var localisedName = new LocalisedTextAccessor(this.Meta.LocalisedNames);
@@ -36,7 +36,7 @@ namespace Allors.Database.Domain
             {
                 v.Name = "IRPF Assessable 15%";
                 localisedName.Set(v, dutchLocale, "IRPF-plichtig 15%");
-                v.IrpfRate = new IrpfRates(this.Session).fifteen;
+                v.IrpfRate = new IrpfRates(this.Transaction).fifteen;
                 v.IsActive = true;
             });
 
@@ -44,7 +44,7 @@ namespace Allors.Database.Domain
             {
                 v.Name = "IRPF Assessable 19%";
                 localisedName.Set(v, dutchLocale, "IRPF-plichtig 19%");
-                v.IrpfRate = new IrpfRates(this.Session).nineteen;
+                v.IrpfRate = new IrpfRates(this.Transaction).nineteen;
                 v.IsActive = true;
             });
 
@@ -52,7 +52,7 @@ namespace Allors.Database.Domain
             {
                 v.Name = "Exempt";
                 localisedName.Set(v, dutchLocale, "Vrijgesteld");
-                v.IrpfRate = new IrpfRates(this.Session).Zero;
+                v.IrpfRate = new IrpfRates(this.Transaction).Zero;
                 v.IsActive = true;
             });
         }

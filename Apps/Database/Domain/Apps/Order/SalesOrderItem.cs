@@ -22,10 +22,10 @@ namespace Allors.Database.Domain
         public bool WasValid => this.ExistLastObjectStates && !(this.LastSalesOrderItemState.IsCancelled || this.LastSalesOrderItemState.IsRejected);
 
         internal bool IsDeletable =>
-            (this.SalesOrderItemState.Equals(new SalesOrderItemStates(this.Strategy.Session).Provisional)
-                || this.SalesOrderItemState.Equals(new SalesOrderItemStates(this.Strategy.Session).ReadyForPosting)
-                || this.SalesOrderItemState.Equals(new SalesOrderItemStates(this.Strategy.Session).Cancelled)
-                || this.SalesOrderItemState.Equals(new SalesOrderItemStates(this.Strategy.Session).Rejected))
+            (this.SalesOrderItemState.Equals(new SalesOrderItemStates(this.Strategy.Transaction).Provisional)
+                || this.SalesOrderItemState.Equals(new SalesOrderItemStates(this.Strategy.Transaction).ReadyForPosting)
+                || this.SalesOrderItemState.Equals(new SalesOrderItemStates(this.Strategy.Transaction).Cancelled)
+                || this.SalesOrderItemState.Equals(new SalesOrderItemStates(this.Strategy.Transaction).Rejected))
             && !this.ExistOrderItemBillingsWhereOrderItem
             && !this.ExistOrderShipmentsWhereOrderItem
             && !this.ExistOrderRequirementCommitmentsWhereOrderItem
@@ -63,27 +63,27 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistSalesOrderItemState)
             {
-                this.SalesOrderItemState = new SalesOrderItemStates(this.Strategy.Session).Provisional;
+                this.SalesOrderItemState = new SalesOrderItemStates(this.Strategy.Transaction).Provisional;
             }
 
             if (this.ExistProduct && !this.ExistInvoiceItemType)
             {
-                this.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Session).ProductItem;
+                this.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Transaction).ProductItem;
             }
 
             if (!this.ExistSalesOrderItemShipmentState)
             {
-                this.SalesOrderItemShipmentState = new SalesOrderItemShipmentStates(this.Strategy.Session).NotShipped;
+                this.SalesOrderItemShipmentState = new SalesOrderItemShipmentStates(this.Strategy.Transaction).NotShipped;
             }
 
             if (!this.ExistSalesOrderItemInvoiceState)
             {
-                this.SalesOrderItemInvoiceState = new SalesOrderItemInvoiceStates(this.Strategy.Session).NotInvoiced;
+                this.SalesOrderItemInvoiceState = new SalesOrderItemInvoiceStates(this.Strategy.Transaction).NotInvoiced;
             }
 
             if (!this.ExistSalesOrderItemPaymentState)
             {
-                this.SalesOrderItemPaymentState = new SalesOrderItemPaymentStates(this.Strategy.Session).NotPaid;
+                this.SalesOrderItemPaymentState = new SalesOrderItemPaymentStates(this.Strategy.Transaction).NotPaid;
             }
 
             this.DerivationTrigger = Guid.NewGuid();
@@ -93,7 +93,7 @@ namespace Allors.Database.Domain
         {
             if (this.ExistProduct && !this.ExistInvoiceItemType)
             {
-                this.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Session).ProductItem;
+                this.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Transaction).ProductItem;
             }
         }
 
@@ -112,17 +112,17 @@ namespace Allors.Database.Domain
 
         public void AppsCancel(OrderItemCancel method)
         {
-            this.SalesOrderItemState = new SalesOrderItemStates(this.Strategy.Session).Cancelled;
+            this.SalesOrderItemState = new SalesOrderItemStates(this.Strategy.Transaction).Cancelled;
             this.DerivationTrigger = Guid.NewGuid();
         }
 
         public void AppsReject(OrderItemReject method)
         {
-            this.SalesOrderItemState = new SalesOrderItemStates(this.Strategy.Session).Rejected;
+            this.SalesOrderItemState = new SalesOrderItemStates(this.Strategy.Transaction).Rejected;
             this.DerivationTrigger = Guid.NewGuid();
         }
 
-        public void AppsApprove(OrderItemApprove method) => this.SalesOrderItemState = new SalesOrderItemStates(this.Strategy.Session).ReadyForPosting;
+        public void AppsApprove(OrderItemApprove method) => this.SalesOrderItemState = new SalesOrderItemStates(this.Strategy.Transaction).ReadyForPosting;
 
         public void AppsReopen(OrderItemReopen method) => this.SalesOrderItemState = this.PreviousSalesOrderItemState;
 

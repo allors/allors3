@@ -55,9 +55,9 @@ namespace Allors.Database.Adapters
 
         public override int GetRolesPerGroup() => this.subject.GetRolesPerGroup();
 
-        public override ISession GetSession() => this.subject.GetSession();
+        public override ITransaction GetTransaction() => this.subject.GetTransaction();
 
-        public override ISession GetSession2() => this.subject.GetSession2();
+        public override ITransaction GetTransaction2() => this.subject.GetTransaction2();
 
         public override int[] GetTestRepeats() => this.subject.GetTestRepeats();
 

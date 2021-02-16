@@ -45,8 +45,8 @@ namespace Allors.Database.Domain
         {
             var permissionsByAccessControl = new Dictionary<IAccessControl, ISet<long>>();
 
-            var session = this.User.Session();
-            var database = session.Database;
+            var transaction = this.User.Transaction();
+            var database = transaction.Database;
             var accessControlCache = database.Context().AccessControlCache;
 
             List<AccessControl> misses = null;
@@ -81,7 +81,7 @@ namespace Allors.Database.Domain
                         .WithRule(m.AccessControl.EffectivePermissions, permissionPrefetch)
                         .Build();
 
-                    session.Prefetch(prefetch, misses);
+                    transaction.Prefetch(prefetch, misses);
                 }
 
                 foreach (var accessControl in misses)

@@ -34,11 +34,11 @@ namespace Allors.Database.Domain
                         {
                             @this.SerialisedItemAvailability = shipmentItem.NextSerialisedItemAvailability;
 
-                            if ((shipment.ShipFromParty as InternalOrganisation)?.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(@this.Session()).CustomerShipmentShip) == true
-                                && shipmentItem.NextSerialisedItemAvailability.Equals(new SerialisedItemAvailabilities(@this.Session()).Sold))
+                            if ((shipment.ShipFromParty as InternalOrganisation)?.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(@this.Transaction()).CustomerShipmentShip) == true
+                                && shipmentItem.NextSerialisedItemAvailability.Equals(new SerialisedItemAvailabilities(@this.Transaction()).Sold))
                             {
                                 @this.OwnedBy = shipment.ShipToParty;
-                                @this.Ownership = new Ownerships(@this.Session()).ThirdParty;
+                                @this.Ownership = new Ownerships(@this.Transaction()).ThirdParty;
                             }
                         }
 

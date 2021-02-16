@@ -15,8 +15,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void WhenEmailTemplateDescriptionIsNull()
         {
-            var emailTemplate = new EmailTemplateBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var emailTemplate = new EmailTemplateBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.Equal("Default", emailTemplate.Description);
         }

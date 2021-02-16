@@ -27,13 +27,13 @@ namespace Allors.Database.Domain
 
         public WorkEffortState Cancelled => this.Cache[CancelledId];
 
-        private UniquelyIdentifiableCache<WorkEffortState> Cache => this.cache ??= new UniquelyIdentifiableCache<WorkEffortState>(this.Session);
+        private UniquelyIdentifiableCache<WorkEffortState> Cache => this.cache ??= new UniquelyIdentifiableCache<WorkEffortState>(this.Transaction);
 
         protected override void AppsPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.InventoryTransactionReason);
 
         protected override void AppsSetup(Setup setup)
         {
-            var reasons = new InventoryTransactionReasons(this.Session);
+            var reasons = new InventoryTransactionReasons(this.Transaction);
 
             var merge = this.Cache.Merger().Action();
 

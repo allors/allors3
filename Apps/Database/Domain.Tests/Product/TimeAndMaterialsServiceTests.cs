@@ -20,21 +20,21 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedVariantsDeriveVirtualProductPriceComponents()
         {
-            var service = new TimeAndMaterialsServiceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var service = new TimeAndMaterialsServiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var pricecomponent = new BasePriceBuilder(this.Session)
+            var pricecomponent = new BasePriceBuilder(this.Transaction)
                 .WithProduct(service)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var variant = new TimeAndMaterialsServiceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var variant = new TimeAndMaterialsServiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             service.AddVariant(variant);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(variant.VirtualProductPriceComponents.First, pricecomponent);
         }
@@ -42,21 +42,21 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedVariantsDeriveVirtualProductPriceComponents_2()
         {
-            var variantGood = new TimeAndMaterialsServiceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var variantGood = new TimeAndMaterialsServiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var service = new TimeAndMaterialsServiceBuilder(this.Session).WithVariant(variantGood).Build();
-            this.Session.Derive(false);
+            var service = new TimeAndMaterialsServiceBuilder(this.Transaction).WithVariant(variantGood).Build();
+            this.Transaction.Derive(false);
 
-            var pricecomponent = new BasePriceBuilder(this.Session)
+            var pricecomponent = new BasePriceBuilder(this.Transaction)
                 .WithProduct(service)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             service.RemoveVariant(variantGood);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Empty(variantGood.VirtualProductPriceComponents);
         }
@@ -64,21 +64,21 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedVariantsDeriveBasePrice()
         {
-            var service = new TimeAndMaterialsServiceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var service = new TimeAndMaterialsServiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var pricecomponent = new BasePriceBuilder(this.Session)
+            var pricecomponent = new BasePriceBuilder(this.Transaction)
                 .WithProduct(service)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var variant = new TimeAndMaterialsServiceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var variant = new TimeAndMaterialsServiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             service.AddVariant(variant);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(variant.BasePrices.First, pricecomponent);
         }
@@ -86,18 +86,18 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPriceComponentProductDeriveVirtualProductPriceComponents()
         {
-            var variantService = new TimeAndMaterialsServiceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var variantService = new TimeAndMaterialsServiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var service = new TimeAndMaterialsServiceBuilder(this.Session).WithVariant(variantService).Build();
-            this.Session.Derive(false);
+            var service = new TimeAndMaterialsServiceBuilder(this.Transaction).WithVariant(variantService).Build();
+            this.Transaction.Derive(false);
 
-            var pricecomponent = new BasePriceBuilder(this.Session)
+            var pricecomponent = new BasePriceBuilder(this.Transaction)
                 .WithProduct(service)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(variantService.VirtualProductPriceComponents.First, pricecomponent);
         }

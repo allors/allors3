@@ -32,7 +32,7 @@ namespace Allors.Database.Domain
                 // Lifecycle
                 if (!@this.ExistDateClosed && @this.CommunicationEvent.ExistActualEnd)
                 {
-                    @this.DateClosed = @this.Session().Now();
+                    @this.DateClosed = @this.Transaction().Now();
                 }
             }
         }

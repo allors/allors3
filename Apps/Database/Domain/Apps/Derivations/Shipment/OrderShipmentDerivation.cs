@@ -39,7 +39,7 @@ namespace Allors.Database.Domain
                         customerShipment.AppsOnDeriveQuantityDecreased(@this.ShipmentItem, salesOrderItem, diff);
                     }
 
-                    if (@this.Strategy.IsNewInSession)
+                    if (@this.Strategy.IsNewInTransaction)
                     {
                         var quantityPicked = @this.OrderItem.OrderShipmentsWhereOrderItem.Select(v => v.ShipmentItem?.ItemIssuancesWhereShipmentItem.Sum(z => z.PickListItem.Quantity)).Sum();
                         var pendingFromOthers = salesOrderItem.QuantityPendingShipment - @this.Quantity;

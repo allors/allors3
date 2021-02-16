@@ -11,7 +11,7 @@ namespace Allors.Database.Domain.Print.SalesInvoiceModel
     {
         public Model(SalesInvoice invoice)
         {
-            var session = invoice.Strategy.Session;
+            var transaction = invoice.Strategy.Transaction;
 
             this.Invoice = new InvoiceModel(invoice);
             this.BilledFrom = new BilledFromModel((Organisation)invoice.BilledFrom);
@@ -25,7 +25,7 @@ namespace Allors.Database.Domain.Print.SalesInvoiceModel
                 this.OrderAdjustments = invoice.OrderAdjustments.Select(v => new OrderAdjustmentModel(v)).ToArray();
             }
 
-            var paymentTerm = new InvoiceTermTypes(session).PaymentNetDays;
+            var paymentTerm = new InvoiceTermTypes(transaction).PaymentNetDays;
             this.SalesTerms = invoice.SalesTerms.Where(v => !v.TermType.Equals(paymentTerm)).Select(v => new SalesTermModel(v)).ToArray();
         }
 

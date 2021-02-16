@@ -25,11 +25,11 @@ namespace Allors.Database.Configuration
             var permissionCacheEntryByClassId = this.PermissionCacheEntryByClassId;
             if (permissionCacheEntryByClassId == null)
             {
-                var session = this.DatabaseContext.Database.CreateSession();
+                var transaction = this.DatabaseContext.Database.CreateTransaction();
                 try
                 {
-                    var permissions = new Permissions(session).Extent();
-                    session.Prefetch(this.DatabaseContext.PrefetchPolicyCache.PermissionsWithClass, permissions);
+                    var permissions = new Permissions(transaction).Extent();
+                    transaction.Prefetch(this.DatabaseContext.PrefetchPolicyCache.PermissionsWithClass, permissions);
 
                     permissionCacheEntryByClassId = permissions
                         .GroupBy(v => v.ClassPointer)
@@ -43,7 +43,7 @@ namespace Allors.Database.Configuration
                 {
                     if (this.DatabaseContext.Database.IsShared)
                     {
-                        session.Dispose();
+                        transaction.Dispose();
                     }
                 }
             }

@@ -20,14 +20,14 @@ namespace Allors.Database.Data
 
         bool IPredicate.HasMissingArguments(IDictionary<string, string> parameters) => this.Operands.All(v => v.HasMissingArguments(parameters));
 
-        void IPredicate.Build(ISession session, IDictionary<string, string> parameters, Database.ICompositePredicate compositePredicate)
+        void IPredicate.Build(ITransaction transaction, IDictionary<string, string> parameters, Database.ICompositePredicate compositePredicate)
         {
             var and = compositePredicate.AddAnd();
             foreach (var predicate in this.Operands)
             {
                 if (!predicate.ShouldTreeShake(parameters))
                 {
-                    predicate.Build(session, parameters, and);
+                    predicate.Build(transaction, parameters, and);
                 }
             }
         }

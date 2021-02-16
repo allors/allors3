@@ -7,10 +7,10 @@ namespace Allors.Database.Domain
 {
     public partial class Ownership
     {
-        public bool IsOwn => this.Equals(new Ownerships(this.Strategy.Session).Own);
+        public bool IsOwn => this.Equals(new Ownerships(this.Strategy.Transaction).Own);
 
-        public bool IsTrading => this.Equals(new Ownerships(this.Strategy.Session).Trading);
+        public bool IsTrading => this.Equals(new Ownerships(this.Strategy.Transaction).Trading);
 
-        public bool IsThirdParty => this.Equals(new Ownerships(this.Strategy.Session).ThirdParty);
+        public bool IsThirdParty => this.Equals(new Ownerships(this.Strategy.Transaction).ThirdParty);
     }
 }

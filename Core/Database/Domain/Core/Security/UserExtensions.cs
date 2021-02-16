@@ -12,14 +12,14 @@ namespace Allors.Database.Domain
     {
         public static bool IsAdministrator(this User @this)
         {
-            var administrators = new UserGroups(@this.Session()).Administrators;
+            var administrators = new UserGroups(@this.Transaction()).Administrators;
             return administrators.Members.Contains(@this);
         }
 
         public static T SetPassword<T>(this T @this, string clearTextPassword)
             where T : User
         {
-            var passwordService = @this.Session().Database.Context().PasswordHasher;
+            var passwordService = @this.Transaction().Database.Context().PasswordHasher;
             @this.UserPasswordHash = passwordService.HashPassword(@this.UserName, clearTextPassword);
             return @this;
         }
@@ -31,7 +31,7 @@ namespace Allors.Database.Domain
                 return false;
             }
 
-            var passwordService = @this.Session().Database.Context().PasswordHasher;
+            var passwordService = @this.Transaction().Database.Context().PasswordHasher;
             return passwordService.VerifyHashedPassword(@this.UserName, @this.UserPasswordHash, clearTextPassword);
         }
 
@@ -39,8 +39,8 @@ namespace Allors.Database.Domain
         {
             if (!@this.ExistOwnerAccessControl)
             {
-                var ownerRole = new Roles(@this.Strategy.Session).Owner;
-                @this.OwnerAccessControl = new AccessControlBuilder(@this.Strategy.Session)
+                var ownerRole = new Roles(@this.Strategy.Transaction).Owner;
+                @this.OwnerAccessControl = new AccessControlBuilder(@this.Strategy.Transaction)
                     .WithRole(ownerRole)
                     .WithSubject(@this)
                     .Build();
@@ -48,7 +48,7 @@ namespace Allors.Database.Domain
 
             if (!@this.ExistOwnerSecurityToken)
             {
-                @this.OwnerSecurityToken = new SecurityTokenBuilder(@this.Strategy.Session)
+                @this.OwnerSecurityToken = new SecurityTokenBuilder(@this.Strategy.Transaction)
                     .WithAccessControl(@this.OwnerAccessControl)
                     .Build();
             }
@@ -66,7 +66,7 @@ namespace Allors.Database.Domain
 
             if (@this.ExistInUserPassword)
             {
-                var passwordService = @this.Session().Database.Context().PasswordHasher;
+                var passwordService = @this.Transaction().Database.Context().PasswordHasher;
                 @this.UserPasswordHash = passwordService.HashPassword(@this.UserName, @this.InUserPassword);
                 @this.RemoveInUserPassword();
             }

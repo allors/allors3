@@ -16,10 +16,10 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistPartSpecificationState)
             {
-                this.PartSpecificationState = new PartSpecificationStates(this.Strategy.Session).Created;
+                this.PartSpecificationState = new PartSpecificationStates(this.Strategy.Transaction).Created;
             }
         }
 
-        public void AppsApprove(PartSpecificationApprove method) => this.PartSpecificationState = new PartSpecificationStates(this.Strategy.Session).Approved;
+        public void AppsApprove(PartSpecificationApprove method) => this.PartSpecificationState = new PartSpecificationStates(this.Strategy.Transaction).Approved;
     }
 }

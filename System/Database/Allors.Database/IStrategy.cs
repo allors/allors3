@@ -16,10 +16,10 @@ namespace Allors.Database
     public interface IStrategy
     {
         /// <summary>
-        /// Gets the database session.
+        /// Gets the database transaction.
         /// </summary>
-        /// <value>The database session.</value>
-        ISession Session { get; }
+        /// <value>The database transaction.</value>
+        ITransaction Transaction { get; }
 
         /// <summary>
         /// Gets the <see cref="Class"/>.
@@ -48,12 +48,12 @@ namespace Allors.Database
         bool IsDeleted { get; }
 
         /// <summary>
-        /// Gets a value indicating whether this object is new in the current Session.
+        /// Gets a value indicating whether this object is new in the current Transaction.
         /// </summary>
         /// <value>
-        ///  <c>true</c> if this object is new in the current session otherwise, <c>false</c>.
+        ///  <c>true</c> if this object is new in the current transaction otherwise, <c>false</c>.
         /// </value>
-        bool IsNewInSession { get; }
+        bool IsNewInTransaction { get; }
 
         /// <summary>
         /// Gets the <see cref="IObject"/>.

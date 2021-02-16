@@ -39,7 +39,7 @@ namespace Allors.Database.Domain
 
         public QuoteItemState Ordered => this.Cache[OrderedId];
 
-        private UniquelyIdentifiableCache<QuoteItemState> Cache => this.cache ??= new UniquelyIdentifiableCache<QuoteItemState>(this.Session);
+        private UniquelyIdentifiableCache<QuoteItemState> Cache => this.cache ??= new UniquelyIdentifiableCache<QuoteItemState>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

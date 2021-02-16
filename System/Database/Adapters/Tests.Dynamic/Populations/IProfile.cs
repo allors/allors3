@@ -22,7 +22,7 @@ namespace Allors.Database.Adapters
     {
         IDatabase Database { get; }
 
-        ISession Session { get; }
+        ITransaction Transaction { get; }
 
         Action[] Markers { get; }
 

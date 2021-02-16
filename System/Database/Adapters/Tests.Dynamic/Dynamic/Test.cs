@@ -47,7 +47,7 @@ namespace Allors.Database.Adapters
         {
             if (transactionFlag)
             {
-                this.GetSession().Commit();
+                this.GetTransaction().Commit();
             }
         }
 
@@ -55,7 +55,7 @@ namespace Allors.Database.Adapters
         {
             if (rollbackFlag)
             {
-                this.GetSession().Rollback();
+                this.GetTransaction().Rollback();
             }
         }
 
@@ -81,9 +81,9 @@ namespace Allors.Database.Adapters
 
         public abstract IDatabase GetPopulation2();
 
-        public abstract ISession GetSession();
+        public abstract ITransaction GetTransaction();
 
-        public abstract ISession GetSession2();
+        public abstract ITransaction GetTransaction2();
 
         public virtual IClass GetMetaType(IObject allorsObject) => allorsObject.Strategy.Class;
 
@@ -285,22 +285,22 @@ namespace Allors.Database.Adapters
             return roleList.ToArray();
         }
 
-        public void Load(ISession session, string xml)
+        public void Load(ITransaction transaction, string xml)
         {
             using (var stringReader = new StringReader(xml))
             {
                 var reader = new XmlTextReader(stringReader);
-                session.Database.Load(reader);
+                transaction.Database.Load(reader);
                 reader.Close();
             }
         }
 
-        protected string Save(ISession session)
+        protected string Save(ITransaction transaction)
         {
             using (var stringWriter = new StringWriter())
             {
                 var writer = new XmlTextWriter(stringWriter);
-                session.Database.Save(writer);
+                transaction.Database.Save(writer);
                 writer.Close();
                 return stringWriter.ToString();
             }

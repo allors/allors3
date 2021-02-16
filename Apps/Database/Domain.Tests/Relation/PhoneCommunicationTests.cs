@@ -15,63 +15,63 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPhoneCommunication_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var receiver = new PersonBuilder(this.Session).WithLastName("receiver").Build();
-            var caller = new PersonBuilder(this.Session).WithLastName("caller").Build();
+            var receiver = new PersonBuilder(this.Transaction).WithLastName("receiver").Build();
+            var caller = new PersonBuilder(this.Transaction).WithLastName("caller").Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var builder = new PhoneCommunicationBuilder(this.Session);
+            var builder = new PhoneCommunicationBuilder(this.Transaction);
             builder.WithToParty(receiver);
             builder.WithFromParty(caller);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
-            this.Session.Rollback();
+            Assert.True(this.Transaction.Derive(false).HasErrors);
+            this.Transaction.Rollback();
 
             builder.WithSubject("Phonecall");
             var communication = builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
-            Assert.Equal(communication.CommunicationEventState, new CommunicationEventStates(this.Session).Scheduled);
+            Assert.Equal(communication.CommunicationEventState, new CommunicationEventStates(this.Transaction).Scheduled);
             Assert.Equal(communication.CommunicationEventState, communication.LastCommunicationEventState);
         }
 
         [Fact]
         public void GivenPhoneCommunicationIsBuild_WhenDeriving_ThenStatusIsSet()
         {
-            var communication = new PhoneCommunicationBuilder(this.Session)
+            var communication = new PhoneCommunicationBuilder(this.Transaction)
                 .WithSubject("Hello world!")
-                .WithOwner(new PersonBuilder(this.Session).WithLastName("owner").Build())
-                .WithFromParty(new PersonBuilder(this.Session).WithLastName("caller").Build())
-                .WithToParty(new PersonBuilder(this.Session).WithLastName("receiver").Build())
+                .WithOwner(new PersonBuilder(this.Transaction).WithLastName("owner").Build())
+                .WithFromParty(new PersonBuilder(this.Transaction).WithLastName("caller").Build())
+                .WithToParty(new PersonBuilder(this.Transaction).WithLastName("receiver").Build())
                 .Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
-            Assert.Equal(communication.CommunicationEventState, new CommunicationEventStates(this.Session).Scheduled);
+            Assert.Equal(communication.CommunicationEventState, new CommunicationEventStates(this.Transaction).Scheduled);
             Assert.Equal(communication.CommunicationEventState, communication.LastCommunicationEventState);
         }
 
         [Fact]
         public void GivenPhoneCommunication_WhenDeriving_ThenInvolvedPartiesAreDerived()
         {
-            var owner = new PersonBuilder(this.Session).WithLastName("owner").Build();
-            var caller = new PersonBuilder(this.Session).WithLastName("caller").Build();
-            var receiver = new PersonBuilder(this.Session).WithLastName("receiver").Build();
+            var owner = new PersonBuilder(this.Transaction).WithLastName("owner").Build();
+            var caller = new PersonBuilder(this.Transaction).WithLastName("caller").Build();
+            var receiver = new PersonBuilder(this.Transaction).WithLastName("receiver").Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var communication = new PhoneCommunicationBuilder(this.Session)
+            var communication = new PhoneCommunicationBuilder(this.Transaction)
                 .WithSubject("Hello world!")
                 .WithOwner(owner)
                 .WithFromParty(caller)
                 .WithToParty(receiver)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(3, communication.InvolvedParties.Count);
             Assert.Contains(owner, communication.InvolvedParties);
@@ -82,28 +82,28 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPhoneCommunication_WhenCallerIsDeleted_ThenCommunicationEventIsDeleted()
         {
-            var owner = new PersonBuilder(this.Session).WithLastName("owner").Build();
-            var originator = new PersonBuilder(this.Session).WithLastName("originator").Build();
-            var receiver = new PersonBuilder(this.Session).WithLastName("receiver").Build();
+            var owner = new PersonBuilder(this.Transaction).WithLastName("owner").Build();
+            var originator = new PersonBuilder(this.Transaction).WithLastName("originator").Build();
+            var receiver = new PersonBuilder(this.Transaction).WithLastName("receiver").Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            new PhoneCommunicationBuilder(this.Session)
+            new PhoneCommunicationBuilder(this.Transaction)
                 .WithSubject("Hello world!")
                 .WithOwner(owner)
                 .WithFromParty(originator)
                 .WithToParty(receiver)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Single(this.Session.Extent<PhoneCommunication>());
+            Assert.Single(this.Transaction.Extent<PhoneCommunication>());
 
             originator.Delete();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Empty(this.Session.Extent<PhoneCommunication>());
+            Assert.Empty(this.Transaction.Extent<PhoneCommunication>());
         }
     }
 
@@ -114,11 +114,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSubjectDeriveWorkItemDescription()
         {
-            var communication = new PhoneCommunicationBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var communication = new PhoneCommunicationBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             communication.Subject = "subject";
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains("subject", communication.WorkItemDescription);
         }
@@ -126,14 +126,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedToPartyDeriveWorkItemDescription()
         {
-            var communication = new PhoneCommunicationBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var communication = new PhoneCommunicationBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var person = new PersonBuilder(this.Session).WithLastName("person").Build();
-            this.Session.Derive(false);
+            var person = new PersonBuilder(this.Transaction).WithLastName("person").Build();
+            this.Transaction.Derive(false);
 
             communication.ToParty = person;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains("person", communication.WorkItemDescription);
         }
@@ -141,14 +141,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPartyPartyNameDeriveWorkItemDescription()
         {
-            var person = new PersonBuilder(this.Session).WithLastName("person").Build();
-            this.Session.Derive(false);
+            var person = new PersonBuilder(this.Transaction).WithLastName("person").Build();
+            this.Transaction.Derive(false);
 
-            var communication = new PhoneCommunicationBuilder(this.Session).WithToParty(person).Build();
-            this.Session.Derive(false);
+            var communication = new PhoneCommunicationBuilder(this.Transaction).WithToParty(person).Build();
+            this.Transaction.Derive(false);
 
             person.LastName = "changed";
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains("changed", communication.WorkItemDescription);
         }

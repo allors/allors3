@@ -23,10 +23,10 @@ namespace Allors.Database.Data
 
         bool IPredicate.HasMissingArguments(IDictionary<string, string> parameters) => this.Parameter != null && (parameters == null || !parameters.ContainsKey(this.Parameter));
 
-        void IPredicate.Build(ISession session, IDictionary<string, string> parameters, Database.ICompositePredicate compositePredicate)
+        void IPredicate.Build(ITransaction transaction, IDictionary<string, string> parameters, Database.ICompositePredicate compositePredicate)
         {
             var parameter = this.Parameter != null ? parameters[this.Parameter] : null;
-            var propertyType = Guid.TryParse(parameter, out var metaObjectId) ? (IPropertyType)session.GetMetaObject(metaObjectId) : this.PropertyType;
+            var propertyType = Guid.TryParse(parameter, out var metaObjectId) ? (IPropertyType)transaction.GetMetaObject(metaObjectId) : this.PropertyType;
 
             if (propertyType != null)
             {

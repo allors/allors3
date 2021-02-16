@@ -24,7 +24,7 @@ namespace Allors.Database.Domain
 
         public SalesOrderItemShipmentState InProgress => this.Cache[InProgressId];
 
-        private UniquelyIdentifiableCache<SalesOrderItemShipmentState> Cache => this.cache ??= new UniquelyIdentifiableCache<SalesOrderItemShipmentState>(this.Session);
+        private UniquelyIdentifiableCache<SalesOrderItemShipmentState> Cache => this.cache ??= new UniquelyIdentifiableCache<SalesOrderItemShipmentState>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

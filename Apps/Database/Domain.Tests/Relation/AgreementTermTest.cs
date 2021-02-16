@@ -17,111 +17,111 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenFinancialTerm_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var builder = new FinancialTermBuilder(this.Session);
+            var builder = new FinancialTermBuilder(this.Transaction);
             var financialTerm = builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithDescription("FinancialTerm");
             financialTerm = builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            builder.WithTermType(new OrderTermTypes(this.Session).NonReturnableSalesItem);
+            builder.WithTermType(new OrderTermTypes(this.Transaction).NonReturnableSalesItem);
             financialTerm = builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
             financialTerm.RemoveDescription();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void GivenIncentive_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var builder = new IncentiveBuilder(this.Session);
+            var builder = new IncentiveBuilder(this.Transaction);
             var incentive = builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithDescription("Incentive");
             incentive = builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            builder.WithTermType(new OrderTermTypes(this.Session).NonReturnableSalesItem);
+            builder.WithTermType(new OrderTermTypes(this.Transaction).NonReturnableSalesItem);
             incentive = builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
             incentive.RemoveDescription();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void GivenLegalTerm_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var builder = new LegalTermBuilder(this.Session);
+            var builder = new LegalTermBuilder(this.Transaction);
             var legalTerm = builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithDescription("LegalTerm");
             legalTerm = builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            builder.WithTermType(new OrderTermTypes(this.Session).NonReturnableSalesItem);
+            builder.WithTermType(new OrderTermTypes(this.Transaction).NonReturnableSalesItem);
             legalTerm = builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
             legalTerm.RemoveDescription();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void GivenThreshold_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var builder = new ThresholdBuilder(this.Session);
+            var builder = new ThresholdBuilder(this.Transaction);
             var threshold = builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithDescription("Threshold");
             threshold = builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            builder.WithTermType(new OrderTermTypes(this.Session).NonReturnableSalesItem);
+            builder.WithTermType(new OrderTermTypes(this.Transaction).NonReturnableSalesItem);
             threshold = builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
             threshold.RemoveDescription();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void OnCreatedThrowValidationError()
         {
-            new InvoiceTermBuilder(this.Session).Build();
+            new InvoiceTermBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.StartsWith("InvoiceTerm.TermType, InvoiceTerm.Description at least one"));
         }
     }
@@ -133,30 +133,30 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedDescriptionThrowValidationError()
         {
-            var agreementTerm = new InvoiceTermBuilder(this.Session)
+            var agreementTerm = new InvoiceTermBuilder(this.Transaction)
                 .WithDescription("description")
                 .Build();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.DoesNotContain(errors, e => e.Message.StartsWith("InvoiceTerm.TermType, InvoiceTerm.Description at least one"));
 
             agreementTerm.RemoveDescription();
 
-            errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.StartsWith("InvoiceTerm.TermType, InvoiceTerm.Description at least one"));
         }
 
         [Fact]
         public void ChangedTermTypeThrowValidationError()
         {
-            var agreementTerm = new InvoiceTermBuilder(this.Session)
-                .WithTermType(new InvoiceTermTypes(this.Session).PaymentNetDays)
+            var agreementTerm = new InvoiceTermBuilder(this.Transaction)
+                .WithTermType(new InvoiceTermTypes(this.Transaction).PaymentNetDays)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             agreementTerm.RemoveTermType();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals("AssertAtLeastOne: InvoiceTerm.TermType\nInvoiceTerm.Description"));
         }
     }

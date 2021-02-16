@@ -36,7 +36,7 @@ namespace Allors.Database.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            var session = cycle.Session;
+            var transaction = cycle.Transaction;
             var validation = cycle.Validation;
 
             foreach (var @this in matches.Cast<SalesInvoice>())
@@ -67,7 +67,7 @@ namespace Allors.Database.Domain
 
                 @this.IsRepeatingInvoice = @this.ExistRepeatingSalesInvoiceWhereSource
                         && (!@this.RepeatingSalesInvoiceWhereSource.ExistFinalExecutionDate
-                            || @this.RepeatingSalesInvoiceWhereSource.FinalExecutionDate.Value.Date >= @this.Strategy.Session.Now().Date);
+                            || @this.RepeatingSalesInvoiceWhereSource.FinalExecutionDate.Value.Date >= @this.Strategy.Transaction.Now().Date);
 
                 @this.PaymentDays = @this.PaymentNetDays;
 

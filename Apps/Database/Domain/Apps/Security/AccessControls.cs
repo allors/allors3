@@ -19,8 +19,8 @@ namespace Allors.Database.Domain
             {
                 var merge = this.Cache.Merger().Action();
 
-                var roles = new Roles(this.Session);
-                var userGroups = new UserGroups(this.Session);
+                var roles = new Roles(this.Transaction);
+                var userGroups = new UserGroups(this.Transaction);
 
                 merge(EmployeesId, v =>
                 {

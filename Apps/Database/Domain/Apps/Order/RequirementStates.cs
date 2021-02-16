@@ -33,7 +33,7 @@ namespace Allors.Database.Domain
 
         public RequirementState FullfilledByOtherEnterprise => this.Cache[FullfilledByOtherEnterpriseId];
 
-        private UniquelyIdentifiableCache<RequirementState> Cache => this.cache ??= new UniquelyIdentifiableCache<RequirementState>(this.Session);
+        private UniquelyIdentifiableCache<RequirementState> Cache => this.cache ??= new UniquelyIdentifiableCache<RequirementState>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

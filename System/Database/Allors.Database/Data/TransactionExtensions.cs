@@ -1,4 +1,4 @@
-// <copyright file="SessionExtensions.cs" company="Allors bvba">
+// <copyright file="TransactionExtensions.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -10,9 +10,9 @@ namespace Allors.Database.Data
 
     using Meta;
 
-    internal static class SessionExtensions
+    internal static class TransactionExtensions
     {
-        internal static IMetaObject GetMetaObject(this ISession @this, object value)
+        internal static IMetaObject GetMetaObject(this ITransaction @this, object value)
         {
             switch (value)
             {
@@ -30,7 +30,7 @@ namespace Allors.Database.Data
             }
         }
 
-        internal static IObject GetObject(this ISession @this, object value)
+        internal static IObject GetObject(this ITransaction @this, object value)
         {
             if (value == null)
             {
@@ -53,7 +53,7 @@ namespace Allors.Database.Data
             }
         }
 
-        internal static IObject[] GetObjects(this ISession @this, object value)
+        internal static IObject[] GetObjects(this ITransaction @this, object value)
         {
             var emptyArray = Array.Empty<IObject>();
 

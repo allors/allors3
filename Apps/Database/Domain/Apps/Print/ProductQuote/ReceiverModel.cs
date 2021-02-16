@@ -14,7 +14,7 @@ namespace Allors.Database.Domain.Print.ProductQuoteModel
     {
         public ReceiverModel(ProductQuote quote, Dictionary<string, byte[]> imageByImageName)
         {
-            var session = quote.Strategy.Session;
+            var transaction = quote.Strategy.Transaction;
 
             var receiver = quote.Receiver;
             var organisationReceiver = quote.Receiver as Organisation;

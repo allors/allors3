@@ -20,7 +20,7 @@ namespace Allors.Database.Domain
             {
                 using TextReader reader = new StringReader(this.Content);
                 var protocolFetch = (Fetch)XmlSerializer.Deserialize(reader);
-                return protocolFetch.FromJson(this.Strategy.Session);
+                return protocolFetch.FromJson(this.Strategy.Transaction);
             }
 
             set

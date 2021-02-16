@@ -13,9 +13,9 @@ namespace Allors.Database.Domain
     {
         public static Template CreateOpenDocumentTemplate<T>(this Singleton @this, string fileName, byte[] content)
         {
-            var media = new MediaBuilder(@this.Strategy.Session).WithInFileName(fileName).WithInData(content).Build();
-            var templateType = new TemplateTypes(@this.Strategy.Session).OpenDocumentType;
-            var template = new TemplateBuilder(@this.Strategy.Session).WithMedia(media).WithTemplateType(templateType).WithArguments<T>().Build();
+            var media = new MediaBuilder(@this.Strategy.Transaction).WithInFileName(fileName).WithInData(content).Build();
+            var templateType = new TemplateTypes(@this.Strategy.Transaction).OpenDocumentType;
+            var template = new TemplateBuilder(@this.Strategy.Transaction).WithMedia(media).WithTemplateType(templateType).WithArguments<T>().Build();
             return template;
         }
 

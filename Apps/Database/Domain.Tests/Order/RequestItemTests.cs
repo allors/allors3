@@ -13,7 +13,7 @@ namespace Allors.Database.Domain.Tests
 
     public class RequestItemDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public RequestItemDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.RequestItem.ObjectType, this.M.RequestItem.Delete);
+        public RequestItemDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.RequestItem.ObjectType, this.M.RequestItem.Delete);
         public override Config Config => new Config { SetupSecurity = true };
 
         private readonly Permission deletePermission;
@@ -21,114 +21,114 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedRequestItemStateDraftThrowValidationError()
         {
-            var request = new RequestForQuoteBuilder(this.Session).Build();
+            var request = new RequestForQuoteBuilder(this.Transaction).Build();
 
-            var requestItem = new RequestItemBuilder(this.Session).Build();
+            var requestItem = new RequestItemBuilder(this.Transaction).Build();
             request.AddRequestItem(requestItem);
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.StartsWith("AssertAtLeastOne: RequestItem.Product\nRequestItem.ProductFeature"));
         }
 
         [Fact]
         public void OnChangedProductThrowValidationError()
         {
-            var requestItem = new RequestItemBuilder(this.Session)
-                .WithProductFeature(new ColourBuilder(this.Session).Build())
+            var requestItem = new RequestItemBuilder(this.Transaction)
+                .WithProductFeature(new ColourBuilder(this.Transaction).Build())
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            requestItem.Product = new UnifiedGoodBuilder(this.Session).Build();
+            requestItem.Product = new UnifiedGoodBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne: RequestItem.Product\nRequestItem.ProductFeature"));
         }
 
         [Fact]
         public void OnChangedProductFeatureThrowValidationError()
         {
-            var requestItem = new RequestItemBuilder(this.Session)
-                .WithProduct(new UnifiedGoodBuilder(this.Session).Build())
+            var requestItem = new RequestItemBuilder(this.Transaction)
+                .WithProduct(new UnifiedGoodBuilder(this.Transaction).Build())
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            requestItem.ProductFeature = new ColourBuilder(this.Session).Build();
+            requestItem.ProductFeature = new ColourBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne: RequestItem.Product\nRequestItem.ProductFeature"));
         }
 
         [Fact]
         public void OnChangedDescriptionThrowValidationError()
         {
-            var requestItem = new RequestItemBuilder(this.Session)
-                .WithProduct(new UnifiedGoodBuilder(this.Session).Build())
+            var requestItem = new RequestItemBuilder(this.Transaction)
+                .WithProduct(new UnifiedGoodBuilder(this.Transaction).Build())
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             requestItem.Description = "Description";
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne: RequestItem.Product\nRequestItem.ProductFeature"));
         }
 
         [Fact]
         public void OnChangedNeededSkillThrowValidationError()
         {
-            var requestItem = new RequestItemBuilder(this.Session)
-                .WithProduct(new UnifiedGoodBuilder(this.Session).Build())
+            var requestItem = new RequestItemBuilder(this.Transaction)
+                .WithProduct(new UnifiedGoodBuilder(this.Transaction).Build())
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            requestItem.NeededSkill = new NeededSkillBuilder(this.Session).Build();
+            requestItem.NeededSkill = new NeededSkillBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne: RequestItem.Product\nRequestItem.ProductFeature"));
         }
 
         [Fact]
         public void OnChangedDeliverableThrowValidationError()
         {
-            var requestItem = new RequestItemBuilder(this.Session)
-                .WithProduct(new UnifiedGoodBuilder(this.Session).Build())
+            var requestItem = new RequestItemBuilder(this.Transaction)
+                .WithProduct(new UnifiedGoodBuilder(this.Transaction).Build())
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            requestItem.Deliverable = new DeliverableBuilder(this.Session).Build();
+            requestItem.Deliverable = new DeliverableBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne: RequestItem.Product\nRequestItem.ProductFeature"));
         }
 
         [Fact]
         public void OnChangedSerialisedItemThrowValidationError()
         {
-            var requestItem = new RequestItemBuilder(this.Session)
-                .WithProductFeature(new ColourBuilder(this.Session).Build())
+            var requestItem = new RequestItemBuilder(this.Transaction)
+                .WithProductFeature(new ColourBuilder(this.Transaction).Build())
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            requestItem.SerialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            requestItem.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne: RequestItem.SerialisedItem\nRequestItem.ProductFeature"));
         }
 
         [Fact]
         public void OnChangedRequestRequestStateDeriveRequestItemStateSubmitted()
         {
-            var request = new RequestForInformationBuilder(this.Session)
-                .WithRequestState(new RequestStates(this.Session).Anonymous)
+            var request = new RequestForInformationBuilder(this.Transaction)
+                .WithRequestState(new RequestStates(this.Transaction).Anonymous)
                 .Build();
 
-            var requestItem = new RequestItemBuilder(this.Session).Build();
+            var requestItem = new RequestItemBuilder(this.Transaction).Build();
             request.AddRequestItem(requestItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(requestItem.RequestItemState.IsDraft);
 
-            request.RequestState = new RequestStates(this.Session).Submitted;
-            this.Session.Derive(false);
+            request.RequestState = new RequestStates(this.Transaction).Submitted;
+            this.Transaction.Derive(false);
 
             Assert.True(requestItem.RequestItemState.IsSubmitted);
         }
@@ -136,18 +136,18 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedRequestRequestStateDeriveRequestItemStateCancelled()
         {
-            var request = new RequestForInformationBuilder(this.Session)
-                .WithRequestState(new RequestStates(this.Session).Anonymous)
+            var request = new RequestForInformationBuilder(this.Transaction)
+                .WithRequestState(new RequestStates(this.Transaction).Anonymous)
                 .Build();
 
-            var requestItem = new RequestItemBuilder(this.Session).Build();
+            var requestItem = new RequestItemBuilder(this.Transaction).Build();
             request.AddRequestItem(requestItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(requestItem.RequestItemState.IsDraft);
 
-            request.RequestState = new RequestStates(this.Session).Cancelled;
-            this.Session.Derive(false);
+            request.RequestState = new RequestStates(this.Transaction).Cancelled;
+            this.Transaction.Derive(false);
 
             Assert.True(requestItem.RequestItemState.IsCancelled);
         }
@@ -155,18 +155,18 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedRequestRequestStateDeriveRequestItemStateRejected()
         {
-            var request = new RequestForInformationBuilder(this.Session)
-                .WithRequestState(new RequestStates(this.Session).Anonymous)
+            var request = new RequestForInformationBuilder(this.Transaction)
+                .WithRequestState(new RequestStates(this.Transaction).Anonymous)
                 .Build();
 
-            var requestItem = new RequestItemBuilder(this.Session).Build();
+            var requestItem = new RequestItemBuilder(this.Transaction).Build();
             request.AddRequestItem(requestItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(requestItem.RequestItemState.IsDraft);
 
-            request.RequestState = new RequestStates(this.Session).Rejected;
-            this.Session.Derive(false);
+            request.RequestState = new RequestStates(this.Transaction).Rejected;
+            this.Transaction.Derive(false);
 
             Assert.True(requestItem.RequestItemState.IsRejected);
         }
@@ -174,18 +174,18 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedRequestRequestStateDeriveRequestItemStateQuoted()
         {
-            var request = new RequestForInformationBuilder(this.Session)
-                .WithRequestState(new RequestStates(this.Session).Anonymous)
+            var request = new RequestForInformationBuilder(this.Transaction)
+                .WithRequestState(new RequestStates(this.Transaction).Anonymous)
                 .Build();
 
-            var requestItem = new RequestItemBuilder(this.Session).Build();
+            var requestItem = new RequestItemBuilder(this.Transaction).Build();
             request.AddRequestItem(requestItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(requestItem.RequestItemState.IsDraft);
 
-            request.RequestState = new RequestStates(this.Session).Quoted;
-            this.Session.Derive(false);
+            request.RequestState = new RequestStates(this.Transaction).Quoted;
+            this.Transaction.Derive(false);
 
             Assert.True(requestItem.RequestItemState.IsQuoted);
         }
@@ -193,27 +193,27 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedUnitOfMeasureDeriveUnitOfMeasure()
         {
-            var requestItem = new RequestItemBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var requestItem = new RequestItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             requestItem.RemoveUnitOfMeasure();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            Assert.Equal(new UnitsOfMeasure(this.Session).Piece, requestItem.UnitOfMeasure);
+            Assert.Equal(new UnitsOfMeasure(this.Transaction).Piece, requestItem.UnitOfMeasure);
         }
 
         [Fact]
         public void OnChangedQuantityThrowValidationError()
         {
-            var requestItem = new RequestItemBuilder(this.Session)
-                .WithSerialisedItem(new SerialisedItemBuilder(this.Session).Build())
+            var requestItem = new RequestItemBuilder(this.Transaction)
+                .WithSerialisedItem(new SerialisedItemBuilder(this.Transaction).Build())
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             requestItem.Quantity = 2;
 
             var expectedMessage = $"{requestItem}, { this.M.RequestItem.Quantity}, { ErrorMessages.SerializedItemQuantity}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
     }
@@ -221,7 +221,7 @@ namespace Allors.Database.Domain.Tests
     [Trait("Category", "Security")]
     public class RequestItemDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public RequestItemDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.RequestItem.ObjectType, this.M.RequestItem.Delete);
+        public RequestItemDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.RequestItem.ObjectType, this.M.RequestItem.Delete);
         public override Config Config => new Config { SetupSecurity = true };
 
         private readonly Permission deletePermission;
@@ -229,8 +229,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedRequestItemStateDraftDeriveDeletePermission()
         {
-            var requestItem = new RequestItemBuilder(this.Session).WithRequestItemState(new RequestItemStates(this.Session).Draft).Build();
-            this.Session.Derive(false);
+            var requestItem = new RequestItemBuilder(this.Transaction).WithRequestItemState(new RequestItemStates(this.Transaction).Draft).Build();
+            this.Transaction.Derive(false);
 
             Assert.DoesNotContain(this.deletePermission, requestItem.DeniedPermissions);
         }
@@ -238,8 +238,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedRequestItemStateSubmitDeriveDeletePermission()
         {
-            var requestItem = new RequestItemBuilder(this.Session).WithRequestItemState(new RequestItemStates(this.Session).Quoted).Build();
-            this.Session.Derive(false);
+            var requestItem = new RequestItemBuilder(this.Transaction).WithRequestItemState(new RequestItemStates(this.Transaction).Quoted).Build();
+            this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, requestItem.DeniedPermissions);
         }

@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
 
         public EngineeringChangeObjectState Released => this.Cache[ReleasedId];
 
-        private UniquelyIdentifiableCache<EngineeringChangeObjectState> Cache => this.cache ??= new UniquelyIdentifiableCache<EngineeringChangeObjectState>(this.Session);
+        private UniquelyIdentifiableCache<EngineeringChangeObjectState> Cache => this.cache ??= new UniquelyIdentifiableCache<EngineeringChangeObjectState>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

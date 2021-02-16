@@ -17,13 +17,13 @@ namespace Allors.Database.Adapters
     {
         protected abstract IProfile Profile { get; }
 
-        protected ISession Session => this.Profile.Session;
+        protected ITransaction Transaction => this.Profile.Transaction;
 
         protected Action[] Markers => this.Profile.Markers;
 
         protected Action[] Inits => this.Profile.Inits;
 
-        protected IOnAccess OnAccess => (IOnAccess)this.Session;
+        protected IOnAccess OnAccess => (IOnAccess)this.Transaction;
 
         public abstract void Dispose();
 
@@ -33,7 +33,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
@@ -44,7 +44,7 @@ namespace Allors.Database.Adapters
                     {
                         this.OnAccess.OnAccessUnitRole = OnAccessUnitRole;
 
-                        var c1 = C1.Create(this.Session);
+                        var c1 = C1.Create(this.Transaction);
 
                         c1.C1AllorsBinary = new byte[] { 0 };
                         c1.I1AllorsBinary = new byte[] { 1, 2 };
@@ -148,7 +148,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
@@ -160,13 +160,13 @@ namespace Allors.Database.Adapters
 
                         this.OnAccess.OnAccessCompositeRole = OnAccessCompositeRole;
 
-                        var c1a = C1.Create(this.Session);
-                        var c1b = C1.Create(this.Session);
-                        var c1c = C1.Create(this.Session);
-                        var c1d = C1.Create(this.Session);
+                        var c1a = C1.Create(this.Transaction);
+                        var c1b = C1.Create(this.Transaction);
+                        var c1c = C1.Create(this.Transaction);
+                        var c1d = C1.Create(this.Transaction);
 
-                        var c2a = C2.Create(this.Session);
-                        var c2b = C2.Create(this.Session);
+                        var c2a = C2.Create(this.Transaction);
+                        var c2b = C2.Create(this.Transaction);
 
                         c1a.C1C2one2one = c2a;
                         c1b.C1C2one2one = c2b;
@@ -195,7 +195,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
@@ -207,13 +207,13 @@ namespace Allors.Database.Adapters
 
                         this.OnAccess.OnAccessCompositeRole = OnAccessCompositeRole;
 
-                        var c1a = C1.Create(this.Session);
-                        var c1b = C1.Create(this.Session);
-                        var c1c = C1.Create(this.Session);
-                        var c1d = C1.Create(this.Session);
+                        var c1a = C1.Create(this.Transaction);
+                        var c1b = C1.Create(this.Transaction);
+                        var c1c = C1.Create(this.Transaction);
+                        var c1d = C1.Create(this.Transaction);
 
-                        var c2a = C2.Create(this.Session);
-                        var c2b = C2.Create(this.Session);
+                        var c2a = C2.Create(this.Transaction);
+                        var c2b = C2.Create(this.Transaction);
 
                         c1a.C1C2many2one = c2a;
                         c1b.C1C2many2one = c2b;
@@ -242,7 +242,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
@@ -254,15 +254,15 @@ namespace Allors.Database.Adapters
 
                         this.OnAccess.OnAccessCompositesRole = OnAccessCompositesRole;
 
-                        var c1a = C1.Create(this.Session);
-                        var c1b = C1.Create(this.Session);
-                        var c1c = C1.Create(this.Session);
-                        var c1d = C1.Create(this.Session);
+                        var c1a = C1.Create(this.Transaction);
+                        var c1b = C1.Create(this.Transaction);
+                        var c1c = C1.Create(this.Transaction);
+                        var c1d = C1.Create(this.Transaction);
 
-                        var c2a = C2.Create(this.Session);
-                        var c2b = C2.Create(this.Session);
-                        var c2c = C2.Create(this.Session);
-                        var c2d = C2.Create(this.Session);
+                        var c2a = C2.Create(this.Transaction);
+                        var c2b = C2.Create(this.Transaction);
+                        var c2c = C2.Create(this.Transaction);
+                        var c2d = C2.Create(this.Transaction);
 
                         c1b.AddC1C2one2many(c2b);
                         c1b.AddC1C2one2many(c2c);
@@ -292,7 +292,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
@@ -304,15 +304,15 @@ namespace Allors.Database.Adapters
 
                         this.OnAccess.OnAccessCompositesRole = OnAccessCompositesRole;
 
-                        var c1a = C1.Create(this.Session);
-                        var c1b = C1.Create(this.Session);
-                        var c1c = C1.Create(this.Session);
-                        var c1d = C1.Create(this.Session);
+                        var c1a = C1.Create(this.Transaction);
+                        var c1b = C1.Create(this.Transaction);
+                        var c1c = C1.Create(this.Transaction);
+                        var c1d = C1.Create(this.Transaction);
 
-                        var c2a = C2.Create(this.Session);
-                        var c2b = C2.Create(this.Session);
-                        var c2c = C2.Create(this.Session);
-                        var c2d = C2.Create(this.Session);
+                        var c2a = C2.Create(this.Transaction);
+                        var c2b = C2.Create(this.Transaction);
+                        var c2c = C2.Create(this.Transaction);
+                        var c2d = C2.Create(this.Transaction);
 
                         c1b.AddC1C2many2many(c2b);
                         c1b.AddC1C2many2many(c2c);
@@ -342,7 +342,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
@@ -354,15 +354,15 @@ namespace Allors.Database.Adapters
 
                         this.OnAccess.OnAccessCompositeAssociation = OnAccessCompositeAssociation;
 
-                        var c1a = C1.Create(this.Session);
-                        var c1b = C1.Create(this.Session);
-                        var c1c = C1.Create(this.Session);
-                        var c1d = C1.Create(this.Session);
+                        var c1a = C1.Create(this.Transaction);
+                        var c1b = C1.Create(this.Transaction);
+                        var c1c = C1.Create(this.Transaction);
+                        var c1d = C1.Create(this.Transaction);
 
-                        var c2a = C2.Create(this.Session);
-                        var c2b = C2.Create(this.Session);
-                        var c2c = C2.Create(this.Session);
-                        var c2d = C2.Create(this.Session);
+                        var c2a = C2.Create(this.Transaction);
+                        var c2b = C2.Create(this.Transaction);
+                        var c2c = C2.Create(this.Transaction);
+                        var c2d = C2.Create(this.Transaction);
 
                         c1a.C1C2one2one = c2a;
                         c1b.C1C2one2one = c2b;
@@ -391,7 +391,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
@@ -403,15 +403,15 @@ namespace Allors.Database.Adapters
 
                         this.OnAccess.OnAccessCompositeAssociation = OnAccessCompositeAssociation;
 
-                        var c1a = C1.Create(this.Session);
-                        var c1b = C1.Create(this.Session);
-                        var c1c = C1.Create(this.Session);
-                        var c1d = C1.Create(this.Session);
+                        var c1a = C1.Create(this.Transaction);
+                        var c1b = C1.Create(this.Transaction);
+                        var c1c = C1.Create(this.Transaction);
+                        var c1d = C1.Create(this.Transaction);
 
-                        var c2a = C2.Create(this.Session);
-                        var c2b = C2.Create(this.Session);
-                        var c2c = C2.Create(this.Session);
-                        var c2d = C2.Create(this.Session);
+                        var c2a = C2.Create(this.Transaction);
+                        var c2b = C2.Create(this.Transaction);
+                        var c2c = C2.Create(this.Transaction);
+                        var c2d = C2.Create(this.Transaction);
 
                         c1a.AddC1C2one2many(c2a);
                         c1b.AddC1C2one2many(c2b);
@@ -441,7 +441,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
@@ -453,15 +453,15 @@ namespace Allors.Database.Adapters
 
                         this.OnAccess.OnAccessCompositesAssociation = OnAccessCompositesAssociation;
 
-                        var c1a = C1.Create(this.Session);
-                        var c1b = C1.Create(this.Session);
-                        var c1c = C1.Create(this.Session);
-                        var c1d = C1.Create(this.Session);
+                        var c1a = C1.Create(this.Transaction);
+                        var c1b = C1.Create(this.Transaction);
+                        var c1c = C1.Create(this.Transaction);
+                        var c1d = C1.Create(this.Transaction);
 
-                        var c2a = C2.Create(this.Session);
-                        var c2b = C2.Create(this.Session);
-                        var c2c = C2.Create(this.Session);
-                        var c2d = C2.Create(this.Session);
+                        var c2a = C2.Create(this.Transaction);
+                        var c2b = C2.Create(this.Transaction);
+                        var c2c = C2.Create(this.Transaction);
+                        var c2d = C2.Create(this.Transaction);
 
                         c1a.C1C2many2one = c2a;
                         c1b.C1C2many2one = c2b;
@@ -491,7 +491,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
@@ -503,15 +503,15 @@ namespace Allors.Database.Adapters
 
                         this.OnAccess.OnAccessCompositesAssociation = OnAccessCompositesAssociation;
 
-                        var c1a = C1.Create(this.Session);
-                        var c1b = C1.Create(this.Session);
-                        var c1c = C1.Create(this.Session);
-                        var c1d = C1.Create(this.Session);
+                        var c1a = C1.Create(this.Transaction);
+                        var c1b = C1.Create(this.Transaction);
+                        var c1c = C1.Create(this.Transaction);
+                        var c1d = C1.Create(this.Transaction);
 
-                        var c2a = C2.Create(this.Session);
-                        var c2b = C2.Create(this.Session);
-                        var c2c = C2.Create(this.Session);
-                        var c2d = C2.Create(this.Session);
+                        var c2a = C2.Create(this.Transaction);
+                        var c2b = C2.Create(this.Transaction);
+                        var c2c = C2.Create(this.Transaction);
+                        var c2d = C2.Create(this.Transaction);
 
                         c1a.AddC1C2many2many(c2a);
                         c1b.AddC1C2many2many(c2a);

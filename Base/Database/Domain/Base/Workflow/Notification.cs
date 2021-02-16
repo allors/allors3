@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistDateCreated)
             {
-                this.DateCreated = this.Strategy.Session.Now();
+                this.DateCreated = this.Strategy.Transaction.Now();
             }
 
             if (!this.ExistConfirmed)
@@ -40,7 +40,7 @@ namespace Allors.Database.Domain
                 if (this.ExistNotificationListWhereNotification && this.NotificationListWhereNotification.ExistUserWhereNotificationList)
                 {
                     var user = this.NotificationListWhereNotification.UserWhereNotificationList;
-                    var defaultSecurityToken = new SecurityTokens(this.Session()).DefaultSecurityToken;
+                    var defaultSecurityToken = new SecurityTokens(this.Transaction()).DefaultSecurityToken;
 
                     this.SecurityTokens = new[] { user.OwnerSecurityToken, defaultSecurityToken };
                 }

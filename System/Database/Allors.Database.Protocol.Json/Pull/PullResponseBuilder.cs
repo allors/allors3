@@ -23,9 +23,9 @@ namespace Allors.Database.Protocol.Json
         private readonly AccessControlsWriter accessControlsWriter;
         private readonly PermissionsWriter permissionsWriter;
 
-        public PullResponseBuilder(ISession session, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, IPreparedFetches preparedFetches, IPreparedExtents preparedExtents)
+        public PullResponseBuilder(ITransaction transaction, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, IPreparedFetches preparedFetches, IPreparedExtents preparedExtents)
         {
-            this.Session = session;
+            this.Transaction = transaction;
 
             this.AccessControlLists = accessControlLists;
             this.AllowedClasses = allowedClasses;
@@ -37,7 +37,7 @@ namespace Allors.Database.Protocol.Json
             this.permissionsWriter = new PermissionsWriter(this.AccessControlLists);
         }
 
-        public ISession Session { get; }
+        public ITransaction Transaction { get; }
 
         public IAccessControlLists AccessControlLists { get; }
 
@@ -94,9 +94,9 @@ namespace Allors.Database.Protocol.Json
                     if (tree != null)
                     {
                         // Prefetch
-                        var session = @object.Strategy.Session;
+                        var transaction = @object.Strategy.Transaction;
                         var prefetcher = tree.BuildPrefetchPolicy();
-                        session.Prefetch(prefetcher, @object);
+                        transaction.Prefetch(prefetcher, @object);
                     }
 
                     this.objects.Add(@object);
@@ -131,14 +131,14 @@ namespace Allors.Database.Protocol.Json
                     if (existingCollection != null)
                     {
                         newCollection = filteredCollection.ToArray();
-                        this.Session.Prefetch(prefetchPolicy, newCollection);
+                        this.Transaction.Prefetch(prefetchPolicy, newCollection);
                         existingCollection.UnionWith(newCollection);
                     }
                     else
                     {
                         var newSet = new HashSet<IObject>(filteredCollection);
                         newCollection = newSet;
-                        this.Session.Prefetch(prefetchPolicy, newCollection);
+                        this.Transaction.Prefetch(prefetchPolicy, newCollection);
                         this.collectionsByName.Add(name, newSet);
                     }
 
@@ -171,16 +171,16 @@ namespace Allors.Database.Protocol.Json
             {
                 foreach (var p in pullRequest.Pulls)
                 {
-                    var pull = p.FromJson(this.Session);
+                    var pull = p.FromJson(this.Transaction);
 
                     if (pull.Object != null)
                     {
-                        var pullInstantiate = new PullInstantiate(this.Session, pull, this.AccessControlLists, this.PreparedFetches);
+                        var pullInstantiate = new PullInstantiate(this.Transaction, pull, this.AccessControlLists, this.PreparedFetches);
                         pullInstantiate.Execute(this);
                     }
                     else
                     {
-                        var pullExtent = new PullExtent(this.Session, pull, this.AccessControlLists, this.PreparedFetches, this.PreparedExtents);
+                        var pullExtent = new PullExtent(this.Transaction, pull, this.AccessControlLists, this.PreparedFetches, this.PreparedExtents);
                         pullExtent.Execute(this);
                     }
                 }

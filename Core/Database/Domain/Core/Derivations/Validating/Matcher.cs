@@ -36,7 +36,7 @@ namespace Allors.Database.Domain.Derivations.Validating
 
         public void Match(IStrategy strategy, IPropertyType propertyType)
         {
-            if (strategy.IsNewInSession)
+            if (strategy.IsNewInTransaction)
             {
                 return;
             }

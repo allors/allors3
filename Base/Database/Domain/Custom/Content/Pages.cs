@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
         private UniquelyIdentifiableCache<Page> cache;
 
-        public Cache<Guid, Page> Cache => this.cache ??= new UniquelyIdentifiableCache<Page>(this.Session);
+        public Cache<Guid, Page> Cache => this.cache ??= new UniquelyIdentifiableCache<Page>(this.Transaction);
 
         public Page Index => this.Cache[IndexId];
 
@@ -22,7 +22,7 @@ namespace Allors.Database.Domain
 
         protected override void CustomSetup(Setup setup)
         {
-            var medias = new Medias(this.Session);
+            var medias = new Medias(this.Transaction);
 
             var merge = this.Cache.Merger().Action();
 

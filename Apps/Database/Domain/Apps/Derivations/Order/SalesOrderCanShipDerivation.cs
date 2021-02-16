@@ -28,13 +28,13 @@ namespace Allors.Database.Domain
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
-            var session = cycle.Session;
+            var transaction = cycle.Transaction;
 
             foreach (var @this in matches.Cast<SalesOrder>())
             {
                 var validOrderItems = @this.SalesOrderItems.Where(v => v.IsValid).ToArray();
 
-                if (@this.SalesOrderState.Equals(new SalesOrderStates(@this.Strategy.Session).InProcess))
+                if (@this.SalesOrderState.Equals(new SalesOrderStates(@this.Strategy.Transaction).InProcess))
                 {
                     var somethingToShip = false;
                     var allItemsAvailable = true;

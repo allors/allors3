@@ -15,24 +15,24 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenTelecommunicationsNumber_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var builder = new TelecommunicationsNumberBuilder(this.Session);
+            var builder = new TelecommunicationsNumberBuilder(this.Transaction);
             var contactMechanism = builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithAreaCode("area");
             contactMechanism = builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithContactNumber("number");
             contactMechanism = builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
     }
 }

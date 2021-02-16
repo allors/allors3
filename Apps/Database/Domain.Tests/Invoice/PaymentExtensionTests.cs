@@ -18,22 +18,22 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void DeriveOnCreatePaymentAmountIsSmallerThanTheAppliedAmount()
         {
-            var salesInvoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
             var fullAmount = salesInvoice.TotalIncVat;
             var extraAmount = salesInvoice.TotalIncVat + 1;
-            var paymentApp = new PaymentApplicationBuilder(this.Session).WithInvoice(salesInvoice).WithAmountApplied(extraAmount).Build();
+            var paymentApp = new PaymentApplicationBuilder(this.Transaction).WithInvoice(salesInvoice).WithAmountApplied(extraAmount).Build();
 
-            var receipt = new ReceiptBuilder(this.Session)
+            var receipt = new ReceiptBuilder(this.Transaction)
                 .WithAmount(fullAmount)
                 .WithPaymentApplication(paymentApp)
-                .WithEffectiveDate(this.Session.Now())
+                .WithEffectiveDate(this.Transaction.Now())
                 .Build();
 
             var expectedMessage = $"{receipt} { this.M.Receipt.Amount} { ErrorMessages.PaymentAmountIsToSmall}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Single(errors.FindAll(e => e.Message.Contains(expectedMessage)));
         }
     }

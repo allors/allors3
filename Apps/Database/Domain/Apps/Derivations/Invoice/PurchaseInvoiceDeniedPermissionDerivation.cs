@@ -23,14 +23,14 @@ namespace Allors.Database.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            var session = cycle.Session;
+            var transaction = cycle.Transaction;
             var validation = cycle.Validation;
 
             foreach (var @this in matches.Cast<PurchaseInvoice>())
             {
                 @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
 
-                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta.ObjectType, @this.Meta.Delete);
                 if (@this.IsDeletable)
                 {
                     @this.RemoveDeniedPermission(deletePermission);
@@ -40,7 +40,7 @@ namespace Allors.Database.Domain
                     @this.AddDeniedPermission(deletePermission);
                 }
 
-                var createSalesInvoicePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.CreateSalesInvoice);
+                var createSalesInvoicePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta.ObjectType, @this.Meta.CreateSalesInvoice);
                 if (!@this.ExistSalesInvoiceWherePurchaseInvoice
                     && (@this.BilledFrom as Organisation)?.IsInternalOrganisation == true
                     && (@this.PurchaseInvoiceState.IsPaid || @this.PurchaseInvoiceState.IsPartiallyPaid || @this.PurchaseInvoiceState.IsNotPaid))

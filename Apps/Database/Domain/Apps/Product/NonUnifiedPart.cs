@@ -18,17 +18,17 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistInventoryItemKind)
             {
-                this.InventoryItemKind = new InventoryItemKinds(this.Strategy.Session).NonSerialised;
+                this.InventoryItemKind = new InventoryItemKinds(this.Strategy.Transaction).NonSerialised;
             }
 
             if (!this.ExistUnitOfMeasure)
             {
-                this.UnitOfMeasure = new UnitsOfMeasure(this.Strategy.Session).Piece;
+                this.UnitOfMeasure = new UnitsOfMeasure(this.Strategy.Transaction).Piece;
             }
 
             if (!this.ExistDefaultFacility)
             {
-                this.DefaultFacility = this.Strategy.Session.GetSingleton().Settings.DefaultFacility;
+                this.DefaultFacility = this.Strategy.Transaction.GetSingleton().Settings.DefaultFacility;
             }
         }
 

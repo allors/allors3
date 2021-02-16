@@ -19,7 +19,7 @@ namespace Allors.Database.Adapters.Memory
         private IObject[] defaultObjectArray;
         private Extent parent;
 
-        protected Extent(Session session) => this.Session = session;
+        protected Extent(Transaction transaction) => this.Transaction = transaction;
 
         public override int Count
         {
@@ -54,7 +54,7 @@ namespace Allors.Database.Adapters.Memory
             }
         }
 
-        internal Session Session { get; }
+        internal Transaction Transaction { get; }
 
         internal ExtentSort Sorter { get; private set; }
 
@@ -119,7 +119,7 @@ namespace Allors.Database.Adapters.Memory
         public override IObject[] ToArray()
         {
             this.Evaluate();
-            var clrType = this.Session.GetTypeForObjectType(this.ObjectType);
+            var clrType = this.Transaction.GetTypeForObjectType(this.ObjectType);
 
             if (this.Strategies.Count > 0)
             {

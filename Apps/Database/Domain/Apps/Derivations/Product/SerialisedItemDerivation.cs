@@ -107,7 +107,7 @@ namespace Allors.Database.Domain
                         var characteristic = @this.SerialisedItemCharacteristics.FirstOrDefault(v2 => Equals(v2.SerialisedItemCharacteristicType, characteristicType));
                         if (characteristic == null)
                         {
-                            var newCharacteristic = new SerialisedItemCharacteristicBuilder(@this.Strategy.Session)
+                            var newCharacteristic = new SerialisedItemCharacteristicBuilder(@this.Strategy.Transaction)
                                 .WithSerialisedItemCharacteristicType(characteristicType).Build();
                             @this.AddSerialisedItemCharacteristic(newCharacteristic);
 

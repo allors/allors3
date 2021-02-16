@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
     {
         public Permission Get(Class @class, RoleType roleType, Operations operation)
         {
-            var permissionCacheEntry = this.Session.Database.Context().PermissionsCache.Get(@class.Id);
+            var permissionCacheEntry = this.Transaction.Database.Context().PermissionsCache.Get(@class.Id);
             if (permissionCacheEntry != null)
             {
                 long id = 0;
@@ -31,7 +31,7 @@ namespace Allors.Database.Domain
                         break;
                 }
 
-                return (Permission)this.Session.Instantiate(id);
+                return (Permission)this.Transaction.Instantiate(id);
             }
 
             return null;
@@ -39,11 +39,11 @@ namespace Allors.Database.Domain
 
         public Permission Get(Class @class, MethodType methodType)
         {
-            var permissionCacheEntry = this.Session.Database.Context().PermissionsCache.Get(@class.Id);
+            var permissionCacheEntry = this.Transaction.Database.Context().PermissionsCache.Get(@class.Id);
             if (permissionCacheEntry != null)
             {
                 var id = permissionCacheEntry.MethodExecutePermissionIdByMethodTypeId[methodType.Id];
-                return (Permission)this.Session.Instantiate(id);
+                return (Permission)this.Transaction.Instantiate(id);
             }
 
             return null;
@@ -51,10 +51,10 @@ namespace Allors.Database.Domain
 
         public void Sync()
         {
-            var permissions = new Permissions(this.Session).Extent();
-            this.Session.Prefetch(this.DatabaseContext().PrefetchPolicyCache.PermissionsWithClass, permissions);
+            var permissions = new Permissions(this.Transaction).Extent();
+            this.Transaction.Prefetch(this.DatabaseContext().PrefetchPolicyCache.PermissionsWithClass, permissions);
 
-            var permissionsCache = this.Session.Database.Context().PermissionsCache;
+            var permissionsCache = this.Transaction.Database.Context().PermissionsCache;
 
             var permissionCacheEntryByClassId = permissions
                 .GroupBy(v => v.ClassPointer)
@@ -77,7 +77,7 @@ namespace Allors.Database.Domain
                             if (!permissionCacheEntry.RoleReadPermissionIdByRelationTypeId.TryGetValue(relationTypeId,
                                 out var permissionId))
                             {
-                                permissionId = new ReadPermissionBuilder(this.Session)
+                                permissionId = new ReadPermissionBuilder(this.Transaction)
                                     .WithClassPointer(@class.Id)
                                     .WithRelationTypePointer(relationTypeId)
                                     .Build()
@@ -90,7 +90,7 @@ namespace Allors.Database.Domain
                         {
                             if (!permissionCacheEntry.RoleWritePermissionIdByRelationTypeId.TryGetValue(relationTypeId, out var permissionId))
                             {
-                                permissionId = new WritePermissionBuilder(this.Session)
+                                permissionId = new WritePermissionBuilder(this.Transaction)
                                     .WithClassPointer(@class.Id)
                                     .WithRelationTypePointer(relationTypeId)
                                     .Build()
@@ -105,7 +105,7 @@ namespace Allors.Database.Domain
                     {
                         if (!permissionCacheEntry.MethodExecutePermissionIdByMethodTypeId.TryGetValue(methodType.Id, out var permissionId))
                         {
-                            permissionId = new ExecutePermissionBuilder(this.Session)
+                            permissionId = new ExecutePermissionBuilder(this.Transaction)
                                 .WithClassPointer(@class.Id)
                                 .WithMethodTypePointer(methodType.Id)
                                 .Build()
@@ -122,19 +122,19 @@ namespace Allors.Database.Domain
                     {
                         var relationTypeId = roleType.RelationType.Id;
 
-                        permissionIds.Add(new ReadPermissionBuilder(this.Session).WithClassPointer(@class.Id).WithRelationTypePointer(relationTypeId).Build().Id);
-                        permissionIds.Add(new WritePermissionBuilder(this.Session).WithClassPointer(@class.Id).WithRelationTypePointer(relationTypeId).Build().Id);
+                        permissionIds.Add(new ReadPermissionBuilder(this.Transaction).WithClassPointer(@class.Id).WithRelationTypePointer(relationTypeId).Build().Id);
+                        permissionIds.Add(new WritePermissionBuilder(this.Transaction).WithClassPointer(@class.Id).WithRelationTypePointer(relationTypeId).Build().Id);
                     }
 
                     foreach (var methodType in @class.MethodTypes)
                     {
-                        permissionIds.Add(new ExecutePermissionBuilder(this.Session).WithClassPointer(@class.Id).WithMethodTypePointer(methodType.Id).Build().Id);
+                        permissionIds.Add(new ExecutePermissionBuilder(this.Transaction).WithClassPointer(@class.Id).WithMethodTypePointer(methodType.Id).Build().Id);
                     }
                 }
             }
 
             // Delete obsolete permissions
-            foreach (var permissionToDelete in new Permissions(this.Session).Extent().Where(v => !permissionIds.Contains(v.Id)))
+            foreach (var permissionToDelete in new Permissions(this.Transaction).Extent().Where(v => !permissionIds.Contains(v.Id)))
             {
                 permissionToDelete.Delete();
             }

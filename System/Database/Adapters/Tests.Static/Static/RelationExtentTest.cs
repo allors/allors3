@@ -34,7 +34,7 @@ namespace Allors.Database.Adapters
 
         protected abstract IProfile Profile { get; }
 
-        protected ISession Session => this.Profile.Session;
+        protected ITransaction Transaction => this.Profile.Transaction;
 
         protected Action[] Markers => this.Profile.Markers;
 
@@ -49,16 +49,16 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var acme = Company.Create(this.Session, "Acme", 2);
-                var acne = Company.Create(this.Session, "Acne", 1);
+                var acme = Company.Create(this.Transaction, "Acme", 2);
+                var acne = Company.Create(this.Transaction, "Acne", 1);
 
-                var john = Person.Create(this.Session, "John", 2);
-                var jane = Person.Create(this.Session, "Jane", 1);
+                var john = Person.Create(this.Transaction, "John", 2);
+                var jane = Person.Create(this.Transaction, "Jane", 1);
 
-                var johny = Person.Create(this.Session, "johny", 4);
-                var janet = Person.Create(this.Session, "Janet", 3);
+                var johny = Person.Create(this.Transaction, "johny", 4);
+                var janet = Person.Create(this.Transaction, "Janet", 3);
 
                 // Many 2 one
                 acme.Manager = john;
@@ -114,16 +114,16 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var acme = Company.Create(this.Session, "Acme");
-                var acne = Company.Create(this.Session, "Acne");
+                var acme = Company.Create(this.Transaction, "Acme");
+                var acne = Company.Create(this.Transaction, "Acne");
 
-                var john = Person.Create(this.Session, "John", 2);
-                var jane = Person.Create(this.Session, "Jane", 1);
+                var john = Person.Create(this.Transaction, "John", 2);
+                var jane = Person.Create(this.Transaction, "Jane", 1);
 
-                var johny = Person.Create(this.Session, "Johny", 4);
-                var janet = Person.Create(this.Session, "Janet", 3);
+                var johny = Person.Create(this.Transaction, "Johny", 4);
+                var janet = Person.Create(this.Transaction, "Janet", 3);
 
                 // One 2 Many
                 acme.AddEmployee(john);
@@ -177,7 +177,7 @@ namespace Allors.Database.Adapters
 
         protected void Populate()
         {
-            var population = new TestPopulation(this.Session);
+            var population = new TestPopulation(this.Transaction);
             this.c1_0 = population.C1A;
             this.c1_1 = population.C1B;
             this.c1_2 = population.C1C;

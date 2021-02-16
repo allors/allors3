@@ -18,52 +18,52 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenProductCategory_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var builder = new ProductCategoryBuilder(this.Session);
+            var builder = new ProductCategoryBuilder(this.Transaction);
             var productCategory = builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithName("category");
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void GivenProductCategory_WhenDeriving_ThenProductCategoriesWhereDescendantAreSet()
         {
-            var productCategory1 = new ProductCategoryBuilder(this.Session)
+            var productCategory1 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1")
                 .Build();
-            var productCategory2 = new ProductCategoryBuilder(this.Session)
+            var productCategory2 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("2")
                 .Build();
-            var productCategory11 = new ProductCategoryBuilder(this.Session)
+            var productCategory11 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.1")
                 .WithPrimaryParent(productCategory1)
                 .WithSecondaryParent(productCategory2)
                 .Build();
-            var productCategory12 = new ProductCategoryBuilder(this.Session)
+            var productCategory12 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.2")
                 .WithPrimaryParent(productCategory1)
                 .WithSecondaryParent(productCategory2)
                 .Build();
-            var productCategory111 = new ProductCategoryBuilder(this.Session)
+            var productCategory111 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.1.1")
                 .WithPrimaryParent(productCategory11)
                 .Build();
-            var productCategory121 = new ProductCategoryBuilder(this.Session)
+            var productCategory121 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.2.1")
                 .WithPrimaryParent(productCategory12)
                 .Build();
-            var productCategory122 = new ProductCategoryBuilder(this.Session)
+            var productCategory122 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.2.2")
                 .WithPrimaryParent(productCategory12)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.False(productCategory1.ExistProductCategoriesWhereDescendant);
             Assert.False(productCategory2.ExistProductCategoriesWhereDescendant);
@@ -95,32 +95,32 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenProductCategory_WhenDeriving_ThenDisplayNameIsSet()
         {
-            var productCategory1 = new ProductCategoryBuilder(this.Session)
+            var productCategory1 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1")
                 .Build();
-            var productCategory2 = new ProductCategoryBuilder(this.Session)
+            var productCategory2 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("2")
                 .Build();
-            var productCategory11 = new ProductCategoryBuilder(this.Session)
+            var productCategory11 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.1")
                 .WithPrimaryParent(productCategory1)
                 .WithSecondaryParent(productCategory2)
                 .Build();
-            var productCategory12 = new ProductCategoryBuilder(this.Session)
+            var productCategory12 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.2")
                 .WithPrimaryParent(productCategory1)
                 .WithSecondaryParent(productCategory2)
                 .Build();
-            var productCategory111 = new ProductCategoryBuilder(this.Session)
+            var productCategory111 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.1.1")
                 .WithPrimaryParent(productCategory11)
                 .Build();
-            var productCategory121 = new ProductCategoryBuilder(this.Session)
+            var productCategory121 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.2.1")
                 .WithPrimaryParent(productCategory12)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal("1", productCategory1.DisplayName);
             Assert.Equal("2", productCategory2.DisplayName);
@@ -133,36 +133,36 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenProductCategory_WhenNewParentsAreInserted_ThenProductCategoriesWhereDescendantAreRecalculated()
         {
-            var productCategory1 = new ProductCategoryBuilder(this.Session)
+            var productCategory1 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1")
                 .Build();
-            var productCategory2 = new ProductCategoryBuilder(this.Session)
+            var productCategory2 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("2")
                 .Build();
-            var productCategory11 = new ProductCategoryBuilder(this.Session)
+            var productCategory11 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.1")
                 .WithPrimaryParent(productCategory1)
                 .WithSecondaryParent(productCategory2)
                 .Build();
-            var productCategory12 = new ProductCategoryBuilder(this.Session)
+            var productCategory12 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.2")
                 .WithPrimaryParent(productCategory1)
                 .WithSecondaryParent(productCategory2)
                 .Build();
-            var productCategory111 = new ProductCategoryBuilder(this.Session)
+            var productCategory111 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.1.1")
                 .WithPrimaryParent(productCategory11)
                 .Build();
-            var productCategory121 = new ProductCategoryBuilder(this.Session)
+            var productCategory121 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.2.1")
                 .WithPrimaryParent(productCategory12)
                 .Build();
-            var productCategory122 = new ProductCategoryBuilder(this.Session)
+            var productCategory122 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.2.2")
                 .WithPrimaryParent(productCategory12)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.False(productCategory1.ExistProductCategoriesWhereDescendant);
             Assert.False(productCategory2.ExistProductCategoriesWhereDescendant);
@@ -190,12 +190,12 @@ namespace Allors.Database.Domain.Tests
             Assert.Contains(productCategory1, productCategory122.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory122.ProductCategoriesWhereDescendant);
 
-            var productCategory3 = new ProductCategoryBuilder(this.Session)
+            var productCategory3 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("3")
                 .Build();
             productCategory11.AddSecondaryParent(productCategory3);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.False(productCategory1.ExistProductCategoriesWhereDescendant);
             Assert.False(productCategory2.ExistProductCategoriesWhereDescendant);
@@ -226,13 +226,13 @@ namespace Allors.Database.Domain.Tests
             Assert.Contains(productCategory1, productCategory122.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory122.ProductCategoriesWhereDescendant);
 
-            var productCategory13 = new ProductCategoryBuilder(this.Session)
+            var productCategory13 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.3")
                 .WithPrimaryParent(productCategory1)
                 .Build();
             productCategory122.AddSecondaryParent(productCategory13);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.False(productCategory1.ExistProductCategoriesWhereDescendant);
             Assert.False(productCategory2.ExistProductCategoriesWhereDescendant);
@@ -271,36 +271,36 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenProductCategory_WhenNewParentsAreRemoved_ThenProductCategoriesWhereDescendantAreRecalculated()
         {
-            var productCategory1 = new ProductCategoryBuilder(this.Session)
+            var productCategory1 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1")
                 .Build();
-            var productCategory2 = new ProductCategoryBuilder(this.Session)
+            var productCategory2 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("2")
                 .Build();
-            var productCategory11 = new ProductCategoryBuilder(this.Session)
+            var productCategory11 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.1")
                 .WithPrimaryParent(productCategory1)
                 .WithSecondaryParent(productCategory2)
                 .Build();
-            var productCategory12 = new ProductCategoryBuilder(this.Session)
+            var productCategory12 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.2")
                 .WithPrimaryParent(productCategory1)
                 .WithSecondaryParent(productCategory2)
                 .Build();
-            var productCategory111 = new ProductCategoryBuilder(this.Session)
+            var productCategory111 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.1.1")
                 .WithPrimaryParent(productCategory11)
                 .Build();
-            var productCategory121 = new ProductCategoryBuilder(this.Session)
+            var productCategory121 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.2.1")
                 .WithPrimaryParent(productCategory12)
                 .Build();
-            var productCategory122 = new ProductCategoryBuilder(this.Session)
+            var productCategory122 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.2.2")
                 .WithPrimaryParent(productCategory12)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.False(productCategory1.ExistProductCategoriesWhereDescendant);
             Assert.False(productCategory2.ExistProductCategoriesWhereDescendant);
@@ -330,7 +330,7 @@ namespace Allors.Database.Domain.Tests
 
             productCategory11.RemoveSecondaryParent(productCategory2);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.False(productCategory1.ExistProductCategoriesWhereDescendant);
             Assert.False(productCategory2.ExistProductCategoriesWhereDescendant);
@@ -360,35 +360,35 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenProductCategory_WhenDeriving_ThenChildrenAreSet()
         {
-            var productCategory1 = new ProductCategoryBuilder(this.Session)
+            var productCategory1 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1")
                 .Build();
-            var productCategory2 = new ProductCategoryBuilder(this.Session)
+            var productCategory2 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("2")
                 .Build();
-            var productCategory11 = new ProductCategoryBuilder(this.Session)
+            var productCategory11 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.1")
                 .WithPrimaryParent(productCategory1)
                 .Build();
-            var productCategory12 = new ProductCategoryBuilder(this.Session)
+            var productCategory12 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.2")
                 .WithPrimaryParent(productCategory1)
                 .WithSecondaryParent(productCategory2)
                 .Build();
-            var productCategory111 = new ProductCategoryBuilder(this.Session)
+            var productCategory111 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.1.1")
                 .WithPrimaryParent(productCategory11)
                 .Build();
-            var productCategory121 = new ProductCategoryBuilder(this.Session)
+            var productCategory121 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.2.1")
                 .WithPrimaryParent(productCategory12)
                 .Build();
-            var productCategory122 = new ProductCategoryBuilder(this.Session)
+            var productCategory122 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.2.2")
                 .WithPrimaryParent(productCategory12)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(2, productCategory1.Children.Count);
             Assert.Contains(productCategory11, productCategory1.Children);
@@ -412,135 +412,135 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenProductCategoryHierarchy_WhenDeriving_ThenAllProductAreSet()
         {
-            var vatRate21 = new VatRateBuilder(this.Session).WithRate(21).Build();
+            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
 
-            var good1 = new NonUnifiedGoodBuilder(this.Session)
+            var good1 = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithName("good1")
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("good1")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(vatRate21)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                            .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                            .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                                 .WithIdentification("1")
-                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                            .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build())
+                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                            .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build())
                 .Build();
 
-            var good2 = new NonUnifiedGoodBuilder(this.Session)
+            var good2 = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithName("good2")
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("good2")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(vatRate21)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                            .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                            .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                                 .WithIdentification("2")
-                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                            .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build())
+                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                            .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build())
                 .Build();
 
-            var good11 = new NonUnifiedGoodBuilder(this.Session)
+            var good11 = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithName("good11")
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("good11")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(vatRate21)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                            .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                            .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                                 .WithIdentification("3")
-                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                            .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build())
+                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                            .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build())
                 .Build();
 
-            var good12 = new NonUnifiedGoodBuilder(this.Session)
+            var good12 = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithName("good12")
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("good12")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(vatRate21)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                            .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                            .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                                 .WithIdentification("4")
-                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                            .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build())
+                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                            .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build())
                 .Build();
 
-            var good111 = new NonUnifiedGoodBuilder(this.Session)
+            var good111 = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithName("good111")
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("good111")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(vatRate21)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                    .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                    .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                         .WithIdentification("5")
-                        .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                    .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build())
+                        .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                    .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build())
                 .Build();
 
-            var good121 = new NonUnifiedGoodBuilder(this.Session)
+            var good121 = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithName("good121")
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("good121")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(vatRate21)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                    .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                    .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                         .WithIdentification("6")
-                        .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                    .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build())
+                        .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                    .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build())
                 .Build();
 
-            var good122 = new NonUnifiedGoodBuilder(this.Session)
+            var good122 = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithName("good122")
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("good122")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(vatRate21)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                    .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                    .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                         .WithIdentification("7")
-                        .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                    .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build())
+                        .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                    .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build())
                 .Build();
 
-            var productCategory1 = new ProductCategoryBuilder(this.Session)
+            var productCategory1 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1")
                 .WithProduct(good1)
                 .Build();
-            var productCategory2 = new ProductCategoryBuilder(this.Session)
+            var productCategory2 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("2")
                 .WithProduct(good2)
                 .Build();
-            var productCategory11 = new ProductCategoryBuilder(this.Session)
+            var productCategory11 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.1")
                 .WithPrimaryParent(productCategory1)
                 .WithProduct(good11)
                 .Build();
-            var productCategory12 = new ProductCategoryBuilder(this.Session)
+            var productCategory12 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.2")
                 .WithPrimaryParent(productCategory1)
                 .WithSecondaryParent(productCategory2)
                 .WithProduct(good12)
                 .Build();
-            var productCategory111 = new ProductCategoryBuilder(this.Session)
+            var productCategory111 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.1.1")
                 .WithPrimaryParent(productCategory11)
                 .WithProduct(good111)
                 .Build();
-            var productCategory121 = new ProductCategoryBuilder(this.Session)
+            var productCategory121 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.2.1")
                 .WithPrimaryParent(productCategory12)
                 .WithProduct(good121)
                 .Build();
-            var productCategory122 = new ProductCategoryBuilder(this.Session)
+            var productCategory122 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.2.2")
                 .WithPrimaryParent(productCategory12)
                 .WithProduct(good122)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(6, productCategory1.AllProducts.Count);
             Assert.Contains(good1, productCategory1.AllProducts);
@@ -578,167 +578,167 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenProductCategoryHierarchy_WhenDeriving_ThenAllSerialisedItemsForSaleAreSet()
         {
-            var vatRate21 = new VatRateBuilder(this.Session).WithRate(21).Build();
+            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
 
-            var good1 = new NonUnifiedGoodBuilder(this.Session)
+            var good1 = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithName("good1")
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("good1")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(vatRate21)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                            .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                            .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                                 .WithIdentification("1")
-                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                            .WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised)
+                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                            .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised)
                             .Build())
                 .Build();
 
-            var serialisedItem1 = new SerialisedItemBuilder(this.Session).WithName("name").WithSerialNumber("1").WithAvailableForSale(true).Build();
-            var serialisedItem1Not = new SerialisedItemBuilder(this.Session).WithName("name").WithSerialNumber("1Not").Build();  // This one must be excluded
+            var serialisedItem1 = new SerialisedItemBuilder(this.Transaction).WithName("name").WithSerialNumber("1").WithAvailableForSale(true).Build();
+            var serialisedItem1Not = new SerialisedItemBuilder(this.Transaction).WithName("name").WithSerialNumber("1Not").Build();  // This one must be excluded
             good1.Part.AddSerialisedItem(serialisedItem1);
             good1.Part.AddSerialisedItem(serialisedItem1Not);
 
-            var good2 = new NonUnifiedGoodBuilder(this.Session)
+            var good2 = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithName("good2")
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("good2")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(vatRate21)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                            .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                            .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                                 .WithIdentification("2")
-                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                            .WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised)
+                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                            .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised)
                             .Build())
                 .Build();
 
-            var serialisedItem2a = new SerialisedItemBuilder(this.Session).WithName("name").WithSerialNumber("2a").WithAvailableForSale(true).Build();
-            var serialisedItem2b = new SerialisedItemBuilder(this.Session).WithName("name").WithSerialNumber("2b").WithAvailableForSale(true).Build();
+            var serialisedItem2a = new SerialisedItemBuilder(this.Transaction).WithName("name").WithSerialNumber("2a").WithAvailableForSale(true).Build();
+            var serialisedItem2b = new SerialisedItemBuilder(this.Transaction).WithName("name").WithSerialNumber("2b").WithAvailableForSale(true).Build();
             good2.Part.AddSerialisedItem(serialisedItem2a);
             good2.Part.AddSerialisedItem(serialisedItem2b);
 
-            var good11 = new NonUnifiedGoodBuilder(this.Session)
+            var good11 = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithName("good11")
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("good11")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(vatRate21)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                            .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                            .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                                 .WithIdentification("3")
-                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                            .WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised)
+                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                            .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised)
                             .Build())
                 .Build();
 
-            var serialisedItem11 = new SerialisedItemBuilder(this.Session).WithName("name").WithSerialNumber("11").WithAvailableForSale(true).Build();
+            var serialisedItem11 = new SerialisedItemBuilder(this.Transaction).WithName("name").WithSerialNumber("11").WithAvailableForSale(true).Build();
             good11.Part.AddSerialisedItem(serialisedItem11);
 
-            var good12 = new NonUnifiedGoodBuilder(this.Session)
+            var good12 = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithName("good12")
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("good12")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(vatRate21)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                            .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                            .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                                 .WithIdentification("4")
-                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                            .WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised)
+                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                            .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised)
                             .Build())
                 .Build();
 
-            var serialisedItem12 = new SerialisedItemBuilder(this.Session).WithName("name").WithSerialNumber("12").WithAvailableForSale(true).Build();
+            var serialisedItem12 = new SerialisedItemBuilder(this.Transaction).WithName("name").WithSerialNumber("12").WithAvailableForSale(true).Build();
             good12.Part.AddSerialisedItem(serialisedItem12);
 
-            var good111 = new NonUnifiedGoodBuilder(this.Session)
+            var good111 = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithName("good111")
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("good111")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(vatRate21)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                            .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                            .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                                 .WithIdentification("5")
-                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                            .WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised)
+                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                            .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised)
                             .Build())
                 .Build();
 
-            var serialisedItem111 = new SerialisedItemBuilder(this.Session).WithName("name").WithSerialNumber("111").WithAvailableForSale(true).Build();
+            var serialisedItem111 = new SerialisedItemBuilder(this.Transaction).WithName("name").WithSerialNumber("111").WithAvailableForSale(true).Build();
             good111.Part.AddSerialisedItem(serialisedItem111);
 
-            var good121 = new NonUnifiedGoodBuilder(this.Session)
+            var good121 = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithName("good121")
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("good121")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(vatRate21)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                            .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                            .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                                 .WithIdentification("6")
-                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                            .WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised)
+                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                            .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised)
                             .Build())
                 .Build();
 
-            var serialisedItem121 = new SerialisedItemBuilder(this.Session).WithName("name").WithSerialNumber("121").WithAvailableForSale(true).Build();
+            var serialisedItem121 = new SerialisedItemBuilder(this.Transaction).WithName("name").WithSerialNumber("121").WithAvailableForSale(true).Build();
             good121.Part.AddSerialisedItem(serialisedItem121);
 
-            var good122 = new NonUnifiedGoodBuilder(this.Session)
+            var good122 = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithName("good122")
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("good122")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(vatRate21)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                            .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                            .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                                 .WithIdentification("7")
-                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                            .WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised)
+                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                            .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised)
                             .Build())
                 .Build();
 
-            var serialisedItem122 = new SerialisedItemBuilder(this.Session).WithName("name").WithSerialNumber("122").WithAvailableForSale(true).Build();
+            var serialisedItem122 = new SerialisedItemBuilder(this.Transaction).WithName("name").WithSerialNumber("122").WithAvailableForSale(true).Build();
             good122.Part.AddSerialisedItem(serialisedItem122);
 
-            var productCategory1 = new ProductCategoryBuilder(this.Session)
+            var productCategory1 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1")
                 .WithProduct(good1)
                 .Build();
-            var productCategory2 = new ProductCategoryBuilder(this.Session)
+            var productCategory2 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("2")
                 .WithProduct(good2)
                 .Build();
-            var productCategory11 = new ProductCategoryBuilder(this.Session)
+            var productCategory11 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.1")
                 .WithPrimaryParent(productCategory1)
                 .WithProduct(good11)
                 .Build();
-            var productCategory12 = new ProductCategoryBuilder(this.Session)
+            var productCategory12 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.2")
                 .WithPrimaryParent(productCategory1)
                 .WithSecondaryParent(productCategory2)
                 .WithProduct(good12)
                 .Build();
-            var productCategory111 = new ProductCategoryBuilder(this.Session)
+            var productCategory111 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.1.1")
                 .WithPrimaryParent(productCategory11)
                 .WithProduct(good111)
                 .Build();
-            var productCategory121 = new ProductCategoryBuilder(this.Session)
+            var productCategory121 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.2.1")
                 .WithPrimaryParent(productCategory12)
                 .WithProduct(good121)
                 .Build();
-            var productCategory122 = new ProductCategoryBuilder(this.Session)
+            var productCategory122 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.2.2")
                 .WithPrimaryParent(productCategory12)
                 .WithProduct(good122)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(6, productCategory1.AllSerialisedItemsForSale.Count);
             Assert.Contains(serialisedItem1, productCategory1.AllSerialisedItemsForSale);
@@ -777,182 +777,182 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenProductCategoryHierarchy_WhenDeriving_ThenAllNonSerialisedInventoryItemsForSaleAreSet()
         {
-            var vatRate21 = new VatRateBuilder(this.Session).WithRate(21).Build();
+            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
 
-            var good1 = new NonUnifiedGoodBuilder(this.Session)
+            var good1 = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithName("good1")
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("good1")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(vatRate21)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                            .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                            .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                                 .WithIdentification("1")
-                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                            .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised)
+                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                            .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
                             .WithDefaultFacility(this.InternalOrganisation.FacilitiesWhereOwner.First)
                             .Build())
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            new NonSerialisedInventoryItemBuilder(this.Session).WithPart(good1.Part).WithNonSerialisedInventoryItemState(new NonSerialisedInventoryItemStates(this.Session).Scrap).Build();
+            new NonSerialisedInventoryItemBuilder(this.Transaction).WithPart(good1.Part).WithNonSerialisedInventoryItemState(new NonSerialisedInventoryItemStates(this.Transaction).Scrap).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var good2 = new NonUnifiedGoodBuilder(this.Session)
+            var good2 = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithName("good2")
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("good2")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(vatRate21)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                            .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                            .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                                 .WithIdentification("2")
-                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                            .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised)
+                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                            .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
                             .WithDefaultFacility(this.InternalOrganisation.FacilitiesWhereOwner.First)
                             .Build())
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            new NonSerialisedInventoryItemBuilder(this.Session).WithPart(good2.Part).WithNonSerialisedInventoryItemState(new NonSerialisedInventoryItemStates(this.Session).SlightlyDamaged).Build();
+            new NonSerialisedInventoryItemBuilder(this.Transaction).WithPart(good2.Part).WithNonSerialisedInventoryItemState(new NonSerialisedInventoryItemStates(this.Transaction).SlightlyDamaged).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var good11 = new NonUnifiedGoodBuilder(this.Session)
+            var good11 = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithName("good11")
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("good11")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(vatRate21)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                            .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                            .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                                 .WithIdentification("3")
-                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                            .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised)
+                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                            .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
                             .WithDefaultFacility(this.InternalOrganisation.FacilitiesWhereOwner.First)
                             .Build())
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var good12 = new NonUnifiedGoodBuilder(this.Session)
+            var good12 = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithName("good12")
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("good12")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(vatRate21)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                            .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                            .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                                 .WithIdentification("4")
-                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                            .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised)
+                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                            .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
                             .WithDefaultFacility(this.InternalOrganisation.FacilitiesWhereOwner.First)
                             .Build())
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var good111 = new NonUnifiedGoodBuilder(this.Session)
+            var good111 = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithName("good111")
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("good111")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(vatRate21)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                            .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                            .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                                 .WithIdentification("5")
-                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                            .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised)
+                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                            .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
                             .WithDefaultFacility(this.InternalOrganisation.FacilitiesWhereOwner.First)
                             .Build())
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var good121 = new NonUnifiedGoodBuilder(this.Session)
+            var good121 = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithName("good121")
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("good121")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(vatRate21)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                            .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                            .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                                 .WithIdentification("6")
-                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                            .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised)
+                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                            .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
                             .WithDefaultFacility(this.InternalOrganisation.FacilitiesWhereOwner.First)
                             .Build())
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var good122 = new NonUnifiedGoodBuilder(this.Session)
+            var good122 = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithName("good122")
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("good122")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithVatRate(vatRate21)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                            .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                            .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                                 .WithIdentification("7")
-                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                            .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised)
+                                .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                            .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
                             .WithDefaultFacility(this.InternalOrganisation.FacilitiesWhereOwner.First)
                             .Build())
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var productCategory1 = new ProductCategoryBuilder(this.Session)
+            var productCategory1 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1")
                 .WithProduct(good1)
                 .Build();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var productCategory2 = new ProductCategoryBuilder(this.Session)
+            var productCategory2 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("2")
                 .WithProduct(good2)
                 .Build();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var productCategory11 = new ProductCategoryBuilder(this.Session)
+            var productCategory11 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.1")
                 .WithPrimaryParent(productCategory1)
                 .WithProduct(good11)
                 .Build();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var productCategory12 = new ProductCategoryBuilder(this.Session)
+            var productCategory12 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.2")
                 .WithPrimaryParent(productCategory1)
                 .WithSecondaryParent(productCategory2)
                 .WithProduct(good12)
                 .Build();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var productCategory111 = new ProductCategoryBuilder(this.Session)
+            var productCategory111 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.1.1")
                 .WithPrimaryParent(productCategory11)
                 .WithProduct(good111)
                 .Build();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var productCategory121 = new ProductCategoryBuilder(this.Session)
+            var productCategory121 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.2.1")
                 .WithPrimaryParent(productCategory12)
                 .WithProduct(good121)
                 .Build();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var productCategory122 = new ProductCategoryBuilder(this.Session)
+            var productCategory122 = new ProductCategoryBuilder(this.Transaction)
                 .WithName("1.2.2")
                 .WithPrimaryParent(productCategory12)
                 .WithProduct(good122)
                 .Build();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(6, productCategory1.AllNonSerialisedInventoryItemsForSale.Count);
 
@@ -977,13 +977,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedNameDeriveDisplayName()
         {
-            var productCategory = new ProductCategoryBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var productCategory = new ProductCategoryBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.Null(productCategory.DisplayName);
 
             productCategory.Name = "name";
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal("name", productCategory.DisplayName);
         }
@@ -991,15 +991,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedLocalisedTextTextDeriveName()
         {
-            var defaultLocale = this.Session.GetSingleton().DefaultLocale;
+            var defaultLocale = this.Transaction.GetSingleton().DefaultLocale;
 
-            var productCategory = new ProductCategoryBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var productCategory = new ProductCategoryBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.Null(productCategory.Name);
 
-            productCategory.AddLocalisedName(new LocalisedTextBuilder(this.Session).WithLocale(defaultLocale).WithText("name").Build());
-            this.Session.Derive(false);
+            productCategory.AddLocalisedName(new LocalisedTextBuilder(this.Transaction).WithLocale(defaultLocale).WithText("name").Build());
+            this.Transaction.Derive(false);
 
             Assert.Equal("name", productCategory.Name);
         }
@@ -1007,15 +1007,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedLocalisedTextTextDeriveDescription()
         {
-            var defaultLocale = this.Session.GetSingleton().DefaultLocale;
+            var defaultLocale = this.Transaction.GetSingleton().DefaultLocale;
 
-            var productCategory = new ProductCategoryBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var productCategory = new ProductCategoryBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.Null(productCategory.Description);
 
-            productCategory.AddLocalisedDescription(new LocalisedTextBuilder(this.Session).WithLocale(defaultLocale).WithText("description").Build());
-            this.Session.Derive(false);
+            productCategory.AddLocalisedDescription(new LocalisedTextBuilder(this.Transaction).WithLocale(defaultLocale).WithText("description").Build());
+            this.Transaction.Derive(false);
 
             Assert.Equal("description", productCategory.Description);
         }
@@ -1023,13 +1023,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedCategoryImageDeriveCategoryImage()
         {
-            var noImageAvailableImage = this.Session.GetSingleton().Settings.NoImageAvailableImage;
+            var noImageAvailableImage = this.Transaction.GetSingleton().Settings.NoImageAvailableImage;
 
-            var productCategory = new ProductCategoryBuilder(this.Session).WithName("name").Build();
-            this.Session.Derive(false);
+            var productCategory = new ProductCategoryBuilder(this.Transaction).WithName("name").Build();
+            this.Transaction.Derive(false);
 
             productCategory.RemoveCategoryImage();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(noImageAvailableImage, productCategory.CategoryImage);
         }
@@ -1037,28 +1037,28 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPrimaryParentValidationError()
         {
-            var productCategory1 = new ProductCategoryBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var productCategory1 = new ProductCategoryBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var productCategory2 = new ProductCategoryBuilder(this.Session).WithPrimaryParent(productCategory1).Build();
-            this.Session.Derive(false);
+            var productCategory2 = new ProductCategoryBuilder(this.Transaction).WithPrimaryParent(productCategory1).Build();
+            this.Transaction.Derive(false);
 
             productCategory1.PrimaryParent = productCategory2;
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains("Cycle detected in"));
         }
 
         [Fact]
         public void ChangedPrimaryParentDeriveDisplayName()
         {
-            var productCategory1 = new ProductCategoryBuilder(this.Session).WithName("1").Build();
-            this.Session.Derive(false);
+            var productCategory1 = new ProductCategoryBuilder(this.Transaction).WithName("1").Build();
+            this.Transaction.Derive(false);
 
-            var productCategory11 = new ProductCategoryBuilder(this.Session).WithName("1.1").WithPrimaryParent(productCategory1).Build();
-            this.Session.Derive(false);
+            var productCategory11 = new ProductCategoryBuilder(this.Transaction).WithName("1.1").WithPrimaryParent(productCategory1).Build();
+            this.Transaction.Derive(false);
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal("1/1.1", productCategory11.DisplayName);
         }
@@ -1066,11 +1066,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPrimaryParentDeriveChildren()
         {
-            var productCategory1 = new ProductCategoryBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var productCategory1 = new ProductCategoryBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var productCategory11 = new ProductCategoryBuilder(this.Session).WithPrimaryParent(productCategory1).Build();
-            this.Session.Derive(false);
+            var productCategory11 = new ProductCategoryBuilder(this.Transaction).WithPrimaryParent(productCategory1).Build();
+            this.Transaction.Derive(false);
 
             Assert.Single(productCategory1.Children);
             Assert.Contains(productCategory11, productCategory1.Children);
@@ -1079,14 +1079,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSecondaryParentDeriveChildren()
         {
-            var productCategory1 = new ProductCategoryBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var productCategory1 = new ProductCategoryBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var productCategory11 = new ProductCategoryBuilder(this.Session).WithPrimaryParent(productCategory1).Build();
-            this.Session.Derive(false);
+            var productCategory11 = new ProductCategoryBuilder(this.Transaction).WithPrimaryParent(productCategory1).Build();
+            this.Transaction.Derive(false);
 
-            var productCategory12 = new ProductCategoryBuilder(this.Session).WithSecondaryParent(productCategory1).Build();
-            this.Session.Derive(false);
+            var productCategory12 = new ProductCategoryBuilder(this.Transaction).WithSecondaryParent(productCategory1).Build();
+            this.Transaction.Derive(false);
 
             Assert.Equal(2, productCategory1.Children.Count);
             Assert.Contains(productCategory11, productCategory1.Children);
@@ -1096,18 +1096,18 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedChildrenDeriveDescendants()
         {
-            var productCategory111 = new ProductCategoryBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var productCategory111 = new ProductCategoryBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var productCategory11 = new ProductCategoryBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var productCategory11 = new ProductCategoryBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var productCategory1 = new ProductCategoryBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var productCategory1 = new ProductCategoryBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             productCategory11.PrimaryParent = productCategory1;
             productCategory111.PrimaryParent = productCategory11;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(2, productCategory1.Descendants.Count);
             Assert.Contains(productCategory11, productCategory1.Descendants);
@@ -1117,28 +1117,28 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedProductsDeriveAllProducts()
         {
-            var productCategory1 = new ProductCategoryBuilder(this.Session)
-                .WithProduct(new NonUnifiedGoodBuilder(this.Session).Build())
+            var productCategory1 = new ProductCategoryBuilder(this.Transaction)
+                .WithProduct(new NonUnifiedGoodBuilder(this.Transaction).Build())
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var productCategory11 = new ProductCategoryBuilder(this.Session)
-                .WithProduct(new NonUnifiedGoodBuilder(this.Session).Build())
+            var productCategory11 = new ProductCategoryBuilder(this.Transaction)
+                .WithProduct(new NonUnifiedGoodBuilder(this.Transaction).Build())
                 .WithPrimaryParent(productCategory1)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var productCategory111 = new ProductCategoryBuilder(this.Session)
-                .WithProduct(new NonUnifiedGoodBuilder(this.Session).Build())
+            var productCategory111 = new ProductCategoryBuilder(this.Transaction)
+                .WithProduct(new NonUnifiedGoodBuilder(this.Transaction).Build())
                 .WithPrimaryParent(productCategory11)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(3, productCategory1.AllProducts.Count);
 
-            var good = new NonUnifiedGoodBuilder(this.Session).Build();
+            var good = new NonUnifiedGoodBuilder(this.Transaction).Build();
             productCategory111.AddProduct(good);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(4, productCategory1.AllProducts.Count);
             Assert.Contains(good, productCategory1.AllProducts);
@@ -1147,36 +1147,36 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedProductsDeriveAllParts()
         {
-            var productCategory1 = new ProductCategoryBuilder(this.Session)
-                .WithProduct(new NonUnifiedGoodBuilder(this.Session)
-                                .WithPart(new NonUnifiedPartBuilder(this.Session).Build())
+            var productCategory1 = new ProductCategoryBuilder(this.Transaction)
+                .WithProduct(new NonUnifiedGoodBuilder(this.Transaction)
+                                .WithPart(new NonUnifiedPartBuilder(this.Transaction).Build())
                                 .Build())
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var productCategory11 = new ProductCategoryBuilder(this.Session)
-                .WithProduct(new NonUnifiedGoodBuilder(this.Session)
-                                .WithPart(new NonUnifiedPartBuilder(this.Session).Build())
+            var productCategory11 = new ProductCategoryBuilder(this.Transaction)
+                .WithProduct(new NonUnifiedGoodBuilder(this.Transaction)
+                                .WithPart(new NonUnifiedPartBuilder(this.Transaction).Build())
                                 .Build())
                 .WithPrimaryParent(productCategory1)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var productCategory111 = new ProductCategoryBuilder(this.Session)
-                .WithProduct(new NonUnifiedGoodBuilder(this.Session)
-                                .WithPart(new NonUnifiedPartBuilder(this.Session).Build())
+            var productCategory111 = new ProductCategoryBuilder(this.Transaction)
+                .WithProduct(new NonUnifiedGoodBuilder(this.Transaction)
+                                .WithPart(new NonUnifiedPartBuilder(this.Transaction).Build())
                                 .Build())
                 .WithPrimaryParent(productCategory11)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(3, productCategory1.AllParts.Count);
 
-            var good = new NonUnifiedGoodBuilder(this.Session)
-                .WithPart(new NonUnifiedPartBuilder(this.Session).Build())
+            var good = new NonUnifiedGoodBuilder(this.Transaction)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction).Build())
                 .Build();
             productCategory111.AddProduct(good);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(4, productCategory1.AllParts.Count);
             Assert.Contains(good.Part, productCategory1.AllParts);
@@ -1185,44 +1185,44 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedProductsDeriveAllSerialisedItemsForSale()
         {
-            var productCategory1 = new ProductCategoryBuilder(this.Session)
-                .WithProduct(new NonUnifiedGoodBuilder(this.Session)
-                                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                                            .WithSerialisedItem(new SerialisedItemBuilder(this.Session).WithAvailableForSale(true).Build())
+            var productCategory1 = new ProductCategoryBuilder(this.Transaction)
+                .WithProduct(new NonUnifiedGoodBuilder(this.Transaction)
+                                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                                            .WithSerialisedItem(new SerialisedItemBuilder(this.Transaction).WithAvailableForSale(true).Build())
                                             .Build())
                                 .Build())
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var productCategory11 = new ProductCategoryBuilder(this.Session)
-                .WithProduct(new NonUnifiedGoodBuilder(this.Session)
-                                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                                            .WithSerialisedItem(new SerialisedItemBuilder(this.Session).WithAvailableForSale(true).Build())
+            var productCategory11 = new ProductCategoryBuilder(this.Transaction)
+                .WithProduct(new NonUnifiedGoodBuilder(this.Transaction)
+                                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                                            .WithSerialisedItem(new SerialisedItemBuilder(this.Transaction).WithAvailableForSale(true).Build())
                                             .Build())
                                 .Build())
                 .WithPrimaryParent(productCategory1)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var productCategory111 = new ProductCategoryBuilder(this.Session)
-                .WithProduct(new NonUnifiedGoodBuilder(this.Session)
-                                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                                            .WithSerialisedItem(new SerialisedItemBuilder(this.Session).WithAvailableForSale(true).Build())
+            var productCategory111 = new ProductCategoryBuilder(this.Transaction)
+                .WithProduct(new NonUnifiedGoodBuilder(this.Transaction)
+                                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                                            .WithSerialisedItem(new SerialisedItemBuilder(this.Transaction).WithAvailableForSale(true).Build())
                                             .Build())
                                 .Build())
                 .WithPrimaryParent(productCategory11)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(3, productCategory1.AllSerialisedItemsForSale.Count);
 
-            var good = new NonUnifiedGoodBuilder(this.Session)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                            .WithSerialisedItem(new SerialisedItemBuilder(this.Session).WithAvailableForSale(true).Build())
+            var good = new NonUnifiedGoodBuilder(this.Transaction)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                            .WithSerialisedItem(new SerialisedItemBuilder(this.Transaction).WithAvailableForSale(true).Build())
                             .Build())
                 .Build();
             productCategory111.AddProduct(good);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(4, productCategory1.AllSerialisedItemsForSale.Count);
             Assert.Contains(good.Part.SerialisedItems[0], productCategory1.AllSerialisedItemsForSale);
@@ -1231,44 +1231,44 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedProductsDeriveAllNonSerialisedInventoryItemsForSale()
         {
-            var productCategory1 = new ProductCategoryBuilder(this.Session)
-                .WithProduct(new NonUnifiedGoodBuilder(this.Session)
-                                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                                            .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised)
+            var productCategory1 = new ProductCategoryBuilder(this.Transaction)
+                .WithProduct(new NonUnifiedGoodBuilder(this.Transaction)
+                                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                                            .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
                                             .Build())
                                 .Build())
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var productCategory11 = new ProductCategoryBuilder(this.Session)
-                .WithProduct(new NonUnifiedGoodBuilder(this.Session)
-                                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                                            .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised)
+            var productCategory11 = new ProductCategoryBuilder(this.Transaction)
+                .WithProduct(new NonUnifiedGoodBuilder(this.Transaction)
+                                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                                            .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
                                             .Build())
                                 .Build())
                 .WithPrimaryParent(productCategory1)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var productCategory111 = new ProductCategoryBuilder(this.Session)
-                .WithProduct(new NonUnifiedGoodBuilder(this.Session)
-                                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                                            .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised)
+            var productCategory111 = new ProductCategoryBuilder(this.Transaction)
+                .WithProduct(new NonUnifiedGoodBuilder(this.Transaction)
+                                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                                            .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
                                             .Build())
                                 .Build())
                 .WithPrimaryParent(productCategory11)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(3, productCategory1.AllNonSerialisedInventoryItemsForSale.Count);
 
-            var good = new NonUnifiedGoodBuilder(this.Session)
-                .WithPart(new NonUnifiedPartBuilder(this.Session)
-                            .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised)
+            var good = new NonUnifiedGoodBuilder(this.Transaction)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                            .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
                             .Build())
                 .Build();
             productCategory111.AddProduct(good);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(4, productCategory1.AllNonSerialisedInventoryItemsForSale.Count);
             Assert.Contains(good.Part.InventoryItemsWherePart[0], productCategory1.AllNonSerialisedInventoryItemsForSale);

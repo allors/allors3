@@ -34,7 +34,7 @@ namespace Allors.Database.Domain
                         validation.AddError($"{@this}, {@this.Bic}, {ErrorMessages.NotAValidBic}");
                     }
 
-                    var country = new Countries(@this.Strategy.Session).FindBy(@this.M.Country.IsoCode, @this.Bic.Substring(4, 2));
+                    var country = new Countries(@this.Strategy.Transaction).FindBy(@this.M.Country.IsoCode, @this.Bic.Substring(4, 2));
                     if (country == null)
                     {
                         validation.AddError($"{@this}, {@this.Bic}, {ErrorMessages.NotAValidBic}");

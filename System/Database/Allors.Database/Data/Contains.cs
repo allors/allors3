@@ -25,9 +25,9 @@ namespace Allors.Database.Data
 
         bool IPredicate.HasMissingArguments(IDictionary<string, string> parameters) => this.Parameter != null && (parameters == null || !parameters.ContainsKey(this.Parameter));
 
-        void IPredicate.Build(ISession session, IDictionary<string, string> parameters, Database.ICompositePredicate compositePredicate)
+        void IPredicate.Build(ITransaction transaction, IDictionary<string, string> parameters, Database.ICompositePredicate compositePredicate)
         {
-            var containedObject = this.Parameter != null ? session.GetObject(parameters[this.Parameter]) : this.Object;
+            var containedObject = this.Parameter != null ? transaction.GetObject(parameters[this.Parameter]) : this.Object;
 
             if (this.PropertyType is IRoleType roleType)
             {

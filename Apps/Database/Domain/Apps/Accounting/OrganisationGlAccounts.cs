@@ -10,7 +10,7 @@ namespace Allors.Database.Domain
         protected override void AppsSecure(Security config)
         {
             var write = Operations.Write;
-            var closed = new BudgetStates(this.Session).Closed;
+            var closed = new BudgetStates(this.Transaction).Closed;
 
             config.Deny(this.ObjectType, closed, write);
         }

@@ -2,7 +2,7 @@ delimiters "$", "$"
 
 TemplateId() ::= <<17ED40F8-BDF8-4A7C-9AE9-1C4D2AD6BA2B>>
 TemplateName() ::= <<Allors C# Domain>>
-TemplateVersion() ::= <<3.0.1>>
+TemplateVersion() ::= <<3.0.2>>
 TemplateAllors() ::= <<1.0>>
 TemplateConfiguration(meta) ::= <<
 $!
@@ -166,7 +166,7 @@ namespace Allors.Database.Domain
 		public $class.name$(Allors.Database.IStrategy strategy)
 		{
 			this.strategy = strategy;
-            this.m = strategy.Session.Database.Context().M;
+            this.m = strategy.Transaction.Database.Context().M;
 		}
 
 		public Allors.Database.Meta.M M => m;
@@ -184,9 +184,9 @@ namespace Allors.Database.Domain
             get { return this.strategy; }
         }
 
-		public static $class.name$ Instantiate (Allors.Database.ISession allorsSession, string allorsObjectId)
+		public static $class.name$ Instantiate (Allors.Database.ITransaction allorsTransaction, string allorsObjectId)
 		{
-			return ($class.name$) allorsSession.Instantiate(allorsObjectId);
+			return ($class.name$) allorsTransaction.Instantiate(allorsObjectId);
 		}
 
 		public override bool Equals(object obj)
@@ -194,7 +194,7 @@ namespace Allors.Database.Domain
             var typedObj = obj as IObject;
             return typedObj != null &&
                    typedObj.Strategy.ObjectId.Equals(this.Strategy.ObjectId) &&
-                   typedObj.Strategy.Session.Database.Id.Equals(this.Strategy.Session.Database.Id);
+                   typedObj.Strategy.Transaction.Database.Id.Equals(this.Strategy.Transaction.Database.Id);
         }
 
 		public override int GetHashCode()
@@ -209,7 +209,7 @@ $class.MethodTypes:{methodType|$classMethodType_Method()$}$
 
 	public partial class $class.name$Builder : Allors.Database.Domain.ObjectBuilder<$class.name$> $class.DirectSupertypes:{directSupertype|, $directSupertype.Name$Builder}$, global::System.IDisposable
 	{
-		public $class.name$Builder(Allors.Database.ISession session) : base(session)
+		public $class.name$Builder(Allors.Database.ITransaction transaction) : base(transaction)
 	    {
 	    }
 
@@ -468,7 +468,7 @@ $endif$
 objectType_Plural() ::= <<
 	public partial class $objectType.pluralName$ : global::Allors.Database.Domain.ObjectsBase<$objectType.singularName$>
 	{
-		public $objectType.pluralName$(Allors.Database.ISession session) : base(session)
+		public $objectType.pluralName$(Allors.Database.ITransaction transaction) : base(transaction)
 		{
 		}
 
@@ -506,7 +506,7 @@ $if(methodType.Composite.IsClass)$
 		{
 			get
 			{
-			    var m = this.Object.Strategy.Session.Database.Context().M;
+			    var m = this.Object.Strategy.Transaction.Database.Context().M;
 				return new Allors.Database.Meta.MethodInvocation(m.$methodType.Composite.SingularName$.$methodType.Name$);
 			}
 		}
@@ -535,7 +535,7 @@ methodTypeLeafClass() ::= <<
 		{
 			get
 			{
-			    var m = this.Object.Strategy.Session.Database.Context().M;
+			    var m = this.Object.Strategy.Transaction.Database.Context().M;
 				return new Allors.Database.Meta.MethodInvocation(m.$class.SingularName$.$methodType.Name$);
 			}
 		}

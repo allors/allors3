@@ -43,7 +43,7 @@ namespace Allors.Database.Domain
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
-            var session = cycle.Session;
+            var transaction = cycle.Transaction;
 
             foreach (var @this in matches.Cast<SalesOrder>())
             {
@@ -66,7 +66,7 @@ namespace Allors.Database.Domain
 
                     var fiscalYearStoreSequenceNumbers = @this.Store.FiscalYearsStoreSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
                     var prefix = @this.TakenBy.InvoiceSequence.IsEnforcedSequence ? @this.Store.SalesOrderNumberPrefix : fiscalYearStoreSequenceNumbers.SalesOrderNumberPrefix;
-                    @this.SortableOrderNumber = @this.Session().GetSingleton().SortableNumber(prefix, @this.OrderNumber, year.ToString());
+                    @this.SortableOrderNumber = @this.Transaction().GetSingleton().SortableNumber(prefix, @this.OrderNumber, year.ToString());
                 }
 
                 if (@this.BillToCustomer?.AppsIsActiveCustomer(@this.TakenBy, @this.OrderDate) == false)

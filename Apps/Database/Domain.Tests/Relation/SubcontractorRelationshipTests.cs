@@ -19,10 +19,10 @@ namespace Allors.Database.Domain.Tests
 
         public SubContractorRelationshipTests(Fixture fixture) : base(fixture)
         {
-            this.subcontractor = this.InternalOrganisation.CreateSubContractor(this.Session.Faker());
+            this.subcontractor = this.InternalOrganisation.CreateSubContractor(this.Transaction.Faker());
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
             this.subContractorRelationship = this.subcontractor.SubContractorRelationshipsWhereSubContractor.First();
             this.organisationContactRelationship = this.subcontractor.OrganisationContactRelationshipsWhereOrganisation.First();
@@ -34,38 +34,38 @@ namespace Allors.Database.Domain.Tests
         {
             this.InternalOrganisation.SubAccountCounter.Value = 1000;
 
-            this.Session.Commit();
+            this.Transaction.Commit();
 
-            var subcontractor1 = new OrganisationBuilder(this.Session).WithDefaults().Build();
-            new SubContractorRelationshipBuilder(this.Session).WithSubContractor(subcontractor1).Build();
+            var subcontractor1 = new OrganisationBuilder(this.Transaction).WithDefaults().Build();
+            new SubContractorRelationshipBuilder(this.Transaction).WithSubContractor(subcontractor1).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var subContractor1Financial = subcontractor1.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, this.InternalOrganisation));
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(1007, subContractor1Financial.SubAccountNumber);
 
-            var subcontractor2 = new OrganisationBuilder(this.Session).WithDefaults().Build();
-            new SubContractorRelationshipBuilder(this.Session).WithSubContractor(subcontractor2).Build();
+            var subcontractor2 = new OrganisationBuilder(this.Transaction).WithDefaults().Build();
+            new SubContractorRelationshipBuilder(this.Transaction).WithSubContractor(subcontractor2).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var subContractor2Financial = subcontractor2.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, this.InternalOrganisation));
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(1015, subContractor2Financial.SubAccountNumber);
 
-            var subcontractor3 = new OrganisationBuilder(this.Session).WithDefaults().Build();
-            new SubContractorRelationshipBuilder(this.Session).WithSubContractor(subcontractor3).Build();
+            var subcontractor3 = new OrganisationBuilder(this.Transaction).WithDefaults().Build();
+            new SubContractorRelationshipBuilder(this.Transaction).WithSubContractor(subcontractor3).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var subContractor3Financial = subcontractor3.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, this.InternalOrganisation));
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(1023, subContractor3Financial.SubAccountNumber);
         }
@@ -73,59 +73,59 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenSubContractorRelationship_WhenDeriving_ThenSubAccountNumberMustBeUniqueWithinInternalOrganisation()
         {
-            var belgium = new Countries(this.Session).CountryByIsoCode["BE"];
+            var belgium = new Countries(this.Transaction).CountryByIsoCode["BE"];
             var euro = belgium.Currency;
 
-            var bank = new BankBuilder(this.Session).WithCountry(belgium).WithName("ING België").WithBic("BBRUBEBB").Build();
+            var bank = new BankBuilder(this.Transaction).WithCountry(belgium).WithName("ING België").WithBic("BBRUBEBB").Build();
 
-            var ownBankAccount = new OwnBankAccountBuilder(this.Session)
+            var ownBankAccount = new OwnBankAccountBuilder(this.Transaction)
                 .WithDescription("BE23 3300 6167 6391")
-                .WithBankAccount(new BankAccountBuilder(this.Session).WithBank(bank).WithCurrency(euro).WithIban("BE23 3300 6167 6391").WithNameOnAccount("Koen").Build())
+                .WithBankAccount(new BankAccountBuilder(this.Transaction).WithBank(bank).WithCurrency(euro).WithIban("BE23 3300 6167 6391").WithNameOnAccount("Koen").Build())
                 .Build();
 
-            var internalOrganisation2 = new OrganisationBuilder(this.Session)
+            var internalOrganisation2 = new OrganisationBuilder(this.Transaction)
                 .WithIsInternalOrganisation(true)
                 .WithName("internalOrganisation2")
                 .WithDefaultCollectionMethod(ownBankAccount)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var subcontractor2 = internalOrganisation2.CreateSubContractor(this.Session.Faker());
+            var subcontractor2 = internalOrganisation2.CreateSubContractor(this.Transaction.Faker());
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var subContractorRelationship2 = subcontractor2.SubContractorRelationshipsWhereSubContractor.First();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var partyFinancial2 = subcontractor2.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, internalOrganisation2));
 
             partyFinancial2.SubAccountNumber = 19;
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void GivenSubContractorRelationship_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var builder = new SubContractorRelationshipBuilder(this.Session);
+            var builder = new SubContractorRelationshipBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithSubContractor(this.subcontractor);
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void GivenContractorOrganisation_WhenOrganisationContactRelationshipIsCreated_ThenPersonIsAddedToUserGroup()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
             Assert.Single(this.subContractorRelationship.SubContractor.ContactsUserGroup.Members);
             Assert.Contains(this.contact, this.subContractorRelationship.SubContractor.ContactsUserGroup.Members);
@@ -134,30 +134,30 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenSubContractorRelationship_WhenRelationshipPeriodIsNotValid_ThenContactIsNotInContactsUserGroup()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
             Assert.Single(this.subContractorRelationship.SubContractor.ContactsUserGroup.Members);
             Assert.Contains(this.contact, this.subContractorRelationship.SubContractor.ContactsUserGroup.Members);
 
-            this.organisationContactRelationship.FromDate = this.Session.Now().AddDays(+1);
+            this.organisationContactRelationship.FromDate = this.Transaction.Now().AddDays(+1);
             this.organisationContactRelationship.RemoveThroughDate();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Empty(this.subContractorRelationship.SubContractor.ContactsUserGroup.Members);
 
-            this.organisationContactRelationship.FromDate = this.Session.Now().AddSeconds(-1);
+            this.organisationContactRelationship.FromDate = this.Transaction.Now().AddSeconds(-1);
             this.organisationContactRelationship.RemoveThroughDate();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Single(this.subContractorRelationship.SubContractor.ContactsUserGroup.Members);
             Assert.Contains(this.contact, this.subContractorRelationship.SubContractor.ContactsUserGroup.Members);
 
-            this.organisationContactRelationship.FromDate = this.Session.Now().AddDays(-2);
-            this.organisationContactRelationship.ThroughDate = this.Session.Now().AddDays(-1);
+            this.organisationContactRelationship.FromDate = this.Transaction.Now().AddDays(-2);
+            this.organisationContactRelationship.ThroughDate = this.Transaction.Now().AddDays(-1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Empty(this.subContractorRelationship.SubContractor.ContactsUserGroup.Members);
         }
@@ -165,24 +165,24 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenSubContractorRelationship_WhenContactForOrganisationEnds_ThenContactIsRemovedfromContactsUserGroup()
         {
-            this.InstantiateObjects(this.Session);
+            this.InstantiateObjects(this.Transaction);
 
-            var contact2 = new PersonBuilder(this.Session).WithLastName("contact2").Build();
-            var contactRelationship2 = new OrganisationContactRelationshipBuilder(this.Session)
+            var contact2 = new PersonBuilder(this.Transaction).WithLastName("contact2").Build();
+            var contactRelationship2 = new OrganisationContactRelationshipBuilder(this.Transaction)
                 .WithOrganisation(this.subcontractor)
                 .WithContact(contact2)
-                .WithFromDate(this.Session.Now())
+                .WithFromDate(this.Transaction.Now())
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(2, this.subContractorRelationship.SubContractor.ContactsUserGroup.Members.Count);
             Assert.Contains(this.contact, this.subContractorRelationship.SubContractor.ContactsUserGroup.Members);
             Assert.Contains(contact2, this.subContractorRelationship.SubContractor.ContactsUserGroup.Members);
 
-            contactRelationship2.ThroughDate = this.Session.Now().AddDays(-1);
+            contactRelationship2.ThroughDate = this.Transaction.Now().AddDays(-1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Single(this.subContractorRelationship.SubContractor.ContactsUserGroup.Members);
             Assert.Contains(this.contact, this.subContractorRelationship.SubContractor.ContactsUserGroup.Members);
@@ -195,8 +195,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenSubContractorRelationshipToCome_WhenDeriving_ThenInternalOrganisationSuppliersDosNotContainSupplier()
         {
-            this.subContractorRelationship.FromDate = this.Session.Now().AddDays(1);
-            this.Session.Derive();
+            this.subContractorRelationship.FromDate = this.Transaction.Now().AddDays(1);
+            this.Transaction.Derive();
 
             Assert.DoesNotContain(this.subcontractor, this.InternalOrganisation.ActiveSubContractors);
         }
@@ -204,20 +204,20 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenSubContractorRelationshipThatHasEnded_WhenDeriving_ThenInternalOrganisationSuppliersDosNotContainSupplier()
         {
-            this.subContractorRelationship.FromDate = this.Session.Now().AddDays(-10);
-            this.subContractorRelationship.ThroughDate = this.Session.Now().AddDays(-1);
+            this.subContractorRelationship.FromDate = this.Transaction.Now().AddDays(-10);
+            this.subContractorRelationship.ThroughDate = this.Transaction.Now().AddDays(-1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.DoesNotContain(this.subcontractor, this.InternalOrganisation.ActiveSubContractors);
         }
 
-        private void InstantiateObjects(ISession session)
+        private void InstantiateObjects(ITransaction transaction)
         {
-            this.contact = (Person)session.Instantiate(this.contact);
-            this.subcontractor = (Organisation)session.Instantiate(this.subcontractor);
-            this.subContractorRelationship = (SubContractorRelationship)session.Instantiate(this.subContractorRelationship);
-            this.organisationContactRelationship = (OrganisationContactRelationship)session.Instantiate(this.organisationContactRelationship);
+            this.contact = (Person)transaction.Instantiate(this.contact);
+            this.subcontractor = (Organisation)transaction.Instantiate(this.subcontractor);
+            this.subContractorRelationship = (SubContractorRelationship)transaction.Instantiate(this.subContractorRelationship);
+            this.organisationContactRelationship = (OrganisationContactRelationship)transaction.Instantiate(this.organisationContactRelationship);
         }
     }
 
@@ -228,12 +228,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSubContractorDeriveParties()
         {
-            var relationship = new SubContractorRelationshipBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var relationship = new SubContractorRelationshipBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var supplier = new OrganisationBuilder(this.Session).Build();
+            var supplier = new OrganisationBuilder(this.Transaction).Build();
             relationship.SubContractor = supplier;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains(supplier, relationship.Parties);
         }
@@ -241,12 +241,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedInternalOrganisationDeriveParties()
         {
-            var relationship = new SubContractorRelationshipBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var relationship = new SubContractorRelationshipBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var internalOrganisation = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+            var internalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
             relationship.Contractor = internalOrganisation;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains(internalOrganisation, relationship.Parties);
         }

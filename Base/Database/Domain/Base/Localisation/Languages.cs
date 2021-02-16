@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
     {
         private Cache<string, Language> languageByCode;
 
-        public Cache<string, Language> LanguageByCode => this.languageByCode ??= new Cache<string, Language>(this.Session, this.Meta.IsoCode);
+        public Cache<string, Language> LanguageByCode => this.languageByCode ??= new Cache<string, Language>(this.Transaction, this.Meta.IsoCode);
 
         protected override void CoreSetup(Setup setup)
         {

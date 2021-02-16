@@ -18,23 +18,23 @@ namespace Allors.Database.Protocol.Json
 
         public static IRoleType FindRoleType(this IMetaPopulation @this, Guid? id) => id != null ? ((IRelationType)@this.Find(id.Value)).RoleType : null;
 
-        public static Data.Pull FromJson(this Pull pull, ISession session)
+        public static Data.Pull FromJson(this Pull pull, ITransaction transaction)
         {
-            var fromJsonVisitor = new FromJsonVisitor(session);
+            var fromJsonVisitor = new FromJsonVisitor(transaction);
             pull.Accept(fromJsonVisitor);
             return fromJsonVisitor.Pull;
         }
 
-        public static Data.IExtent FromJson(this Allors.Protocol.Json.Data.Extent extent, ISession session)
+        public static Data.IExtent FromJson(this Allors.Protocol.Json.Data.Extent extent, ITransaction transaction)
         {
-            var fromJsonVisitor = new FromJsonVisitor(session);
+            var fromJsonVisitor = new FromJsonVisitor(transaction);
             extent.Accept(fromJsonVisitor);
             return fromJsonVisitor.Extent;
         }
 
-        public static Fetch FromJson(this Allors.Protocol.Json.Data.Fetch extent, ISession session)
+        public static Fetch FromJson(this Allors.Protocol.Json.Data.Fetch extent, ITransaction transaction)
         {
-            var fromJsonVisitor = new FromJsonVisitor(session);
+            var fromJsonVisitor = new FromJsonVisitor(transaction);
             extent.Accept(fromJsonVisitor);
             return fromJsonVisitor.Fetch;
         }

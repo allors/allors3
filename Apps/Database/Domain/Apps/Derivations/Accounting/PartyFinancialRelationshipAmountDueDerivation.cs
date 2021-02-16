@@ -35,7 +35,7 @@ namespace Allors.Database.Domain
 
                     // Amount Due
                     foreach (var salesInvoice in party.SalesInvoicesWhereBillToCustomer.Where(v => Equals(v.BilledFrom, @this.InternalOrganisation) &&
-                        !v.SalesInvoiceState.Equals(new SalesInvoiceStates(party.Strategy.Session).Paid)))
+                        !v.SalesInvoiceState.Equals(new SalesInvoiceStates(party.Strategy.Transaction).Paid)))
                     {
 
                         @this.AmountDue += salesInvoice.TotalIncVat - salesInvoice.AmountPaid;
@@ -52,7 +52,7 @@ namespace Allors.Database.Domain
                                 dueDate = salesInvoice.DueDate.Value.AddDays(gracePeriod.Value);
                             }
 
-                            if (party.Strategy.Session.Now() > dueDate)
+                            if (party.Strategy.Transaction.Now() > dueDate)
                             {
                                 @this.AmountOverDue += salesInvoice.TotalIncVat - salesInvoice.AmountPaid;
                             }

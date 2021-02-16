@@ -1,4 +1,4 @@
-// <copyright file="TestPopulation.cs" company="Allors bvba">
+// <copyright file="TestData.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -8,9 +8,9 @@ namespace Allors.Database.Domain
     using System;
     using Domain;
 
-    public static class TestSessionExtensions
+    public static class TestData
     {
-        public static UnitSample UnitSample(this ISession @this, int step)
+        public static UnitSample UnitSample(this ITransaction @this, int step)
         {
             var unitSample = new UnitSamples(@this).Extent().First;
             if (unitSample == null)

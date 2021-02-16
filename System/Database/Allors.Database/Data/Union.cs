@@ -22,9 +22,9 @@ namespace Allors.Database.Data
 
         bool IExtent.HasMissingArguments(IDictionary<string, string> parameters) => this.Operands.Any(v => v.HasMissingArguments(parameters));
 
-        public Database.Extent Build(ISession session, IDictionary<string, string> parameters = null)
+        public Database.Extent Build(ITransaction transaction, IDictionary<string, string> parameters = null)
         {
-            var extent = session.Union(this.Operands[0].Build(session, parameters), this.Operands[1].Build(session, parameters));
+            var extent = transaction.Union(this.Operands[0].Build(transaction, parameters), this.Operands[1].Build(transaction, parameters));
             foreach (var sort in this.Sorting)
             {
                 sort.Build(extent);

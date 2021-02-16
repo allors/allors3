@@ -43,7 +43,7 @@ namespace Allors.Database.Domain
         }
 
         internal bool IsDeletable =>
-            this.SalesInvoiceItemState.Equals(new SalesInvoiceItemStates(this.Strategy.Session).ReadyForPosting);
+            this.SalesInvoiceItemState.Equals(new SalesInvoiceItemStates(this.Strategy.Transaction).ReadyForPosting);
 
         public void AppsDelegateAccess(DelegatedAccessControlledObjectDelegateAccess method)
         {
@@ -62,12 +62,12 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistSalesInvoiceItemState)
             {
-                this.SalesInvoiceItemState = new SalesInvoiceItemStates(this.Strategy.Session).ReadyForPosting;
+                this.SalesInvoiceItemState = new SalesInvoiceItemStates(this.Strategy.Transaction).ReadyForPosting;
             }
 
             if (this.ExistProduct && !this.ExistInvoiceItemType)
             {
-                this.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Session).ProductItem;
+                this.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Transaction).ProductItem;
             }
 
             this.DerivationTrigger = Guid.NewGuid();
@@ -77,19 +77,19 @@ namespace Allors.Database.Domain
         {
             if (this.ExistProduct && !this.ExistInvoiceItemType)
             {
-                this.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Session).ProductItem;
+                this.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Transaction).ProductItem;
             }
         }
 
         public void AppsWriteOff()
         {
-            this.SalesInvoiceItemState = new SalesInvoiceItemStates(this.Strategy.Session).WrittenOff;
+            this.SalesInvoiceItemState = new SalesInvoiceItemStates(this.Strategy.Transaction).WrittenOff;
             this.DerivationTrigger = Guid.NewGuid();
         }
 
         public void CancelFromInvoice()
         {
-            this.SalesInvoiceItemState = new SalesInvoiceItemStates(this.Strategy.Session).CancelledByInvoice;
+            this.SalesInvoiceItemState = new SalesInvoiceItemStates(this.Strategy.Transaction).CancelledByInvoice;
             this.DerivationTrigger = Guid.NewGuid();
         }
 
@@ -140,8 +140,8 @@ namespace Allors.Database.Domain
         {
             if (!method.Result.HasValue)
             {
-                method.Result = this.InvoiceItemType.Equals(new InvoiceItemTypes(this.Strategy.Session).ProductItem)
-                    || this.InvoiceItemType.Equals(new InvoiceItemTypes(this.Strategy.Session).PartItem);
+                method.Result = this.InvoiceItemType.Equals(new InvoiceItemTypes(this.Strategy.Transaction).ProductItem)
+                    || this.InvoiceItemType.Equals(new InvoiceItemTypes(this.Strategy.Transaction).PartItem);
             }
         }
 

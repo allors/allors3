@@ -63,7 +63,7 @@ namespace Allors.Database.Adapters.SqlClient
                     return null;
                 }
 
-                return this.strategy.Session.State.GetOrCreateReferenceForExistingObject(associations[0], this.strategy.Session).Strategy.GetObject();
+                return this.strategy.Transaction.State.GetOrCreateReferenceForExistingObject(associations[0], this.strategy.Transaction).Strategy.GetObject();
             }
         }
 
@@ -89,7 +89,7 @@ namespace Allors.Database.Adapters.SqlClient
             }
 
             var associations = this.strategy.ExtentGetCompositeAssociations(this.associationType);
-            var references = this.strategy.Session.GetOrCreateReferencesForExistingObjects(associations);
+            var references = this.strategy.Transaction.GetOrCreateReferencesForExistingObjects(associations);
             return new ExtentEnumerator(references);
         }
 
@@ -116,7 +116,7 @@ namespace Allors.Database.Adapters.SqlClient
                 return this.upgrade.ToArray();
             }
 
-            var clrType = this.strategy.Session.Database.GetDomainType(this.ObjectType);
+            var clrType = this.strategy.Transaction.Database.GetDomainType(this.ObjectType);
             return this.ToArray(clrType);
         }
 
@@ -128,7 +128,7 @@ namespace Allors.Database.Adapters.SqlClient
             }
 
             var associations = this.strategy.ExtentGetCompositeAssociations(this.associationType);
-            var references = this.strategy.Session.GetOrCreateReferencesForExistingObjects(associations);
+            var references = this.strategy.Transaction.GetOrCreateReferencesForExistingObjects(associations);
 
             var objects = new IObject[references.Length];
             for (var i = 0; i < objects.Length; i++)
@@ -176,14 +176,14 @@ namespace Allors.Database.Adapters.SqlClient
             }
 
             var associations = this.strategy.ExtentGetCompositeAssociations(this.associationType);
-            return this.strategy.Session.State.GetOrCreateReferenceForExistingObject(associations[index], this.strategy.Session).Strategy.GetObject();
+            return this.strategy.Transaction.State.GetOrCreateReferenceForExistingObject(associations[index], this.strategy.Transaction).Strategy.GetObject();
         }
 
         private void LazyUpgrade()
         {
             if (this.upgrade == null)
             {
-                this.upgrade = new ExtentFiltered(this.strategy.Session, this.strategy, this.associationType);
+                this.upgrade = new ExtentFiltered(this.strategy.Transaction, this.strategy, this.associationType);
             }
         }
     }

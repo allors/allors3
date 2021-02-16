@@ -17,7 +17,7 @@ namespace Allors.Database.Adapters
     {
         protected abstract IProfile Profile { get; }
 
-        protected ISession Session => this.Profile.Session;
+        protected ITransaction Transaction => this.Profile.Transaction;
 
         protected Action[] Markers => this.Profile.Markers;
 
@@ -31,20 +31,20 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var a = (C1)this.Session.Create(m.C1.ObjectType);
-                var c = this.Session.Create(m.C3.ObjectType);
-                this.Session.Commit();
+                var a = (C1)this.Transaction.Create(m.C1.ObjectType);
+                var c = this.Transaction.Create(m.C3.ObjectType);
+                this.Transaction.Commit();
 
-                a = (C1)this.Session.Instantiate(a);
-                var b = C2.Create(this.Session);
-                this.Session.Instantiate(c);
+                a = (C1)this.Transaction.Instantiate(a);
+                var b = C2.Create(this.Transaction);
+                this.Transaction.Instantiate(c);
 
                 a.RemoveC1AllorsString();
                 b.RemoveC2AllorsString();
 
-                var changeSet = this.Session.Checkpoint();
+                var changeSet = this.Transaction.Checkpoint();
 
                 var associations = changeSet.Associations;
                 var roles = changeSet.Roles;
@@ -55,7 +55,7 @@ namespace Allors.Database.Adapters
                 a.C1AllorsString = "a changed";
                 b.C2AllorsString = "b changed";
 
-                changeSet = this.Session.Checkpoint();
+                changeSet = this.Transaction.Checkpoint();
 
                 associations = changeSet.Associations;
                 roles = changeSet.Roles;
@@ -84,7 +84,7 @@ namespace Allors.Database.Adapters
                 a.C1AllorsString = "a changed";
                 b.C2AllorsString = "b changed";
 
-                changeSet = this.Session.Checkpoint();
+                changeSet = this.Transaction.Checkpoint();
 
                 associations = changeSet.Associations;
                 roles = changeSet.Roles;
@@ -95,7 +95,7 @@ namespace Allors.Database.Adapters
                 a.C1AllorsString = "a changed again";
                 b.C2AllorsString = "b changed again";
 
-                changeSet = this.Session.Checkpoint();
+                changeSet = this.Transaction.Checkpoint();
 
                 associations = changeSet.Associations;
                 roles = changeSet.Roles;
@@ -118,7 +118,7 @@ namespace Allors.Database.Adapters
                 Assert.False(roles.Contains(b.Id));
                 Assert.False(roles.Contains(c.Id));
 
-                changeSet = this.Session.Checkpoint();
+                changeSet = this.Transaction.Checkpoint();
 
                 associations = changeSet.Associations;
                 roles = changeSet.Roles;
@@ -138,7 +138,7 @@ namespace Allors.Database.Adapters
                 a.RemoveC1AllorsString();
                 b.RemoveC2AllorsString();
 
-                changeSet = this.Session.Checkpoint();
+                changeSet = this.Transaction.Checkpoint();
 
                 associations = changeSet.Associations;
                 roles = changeSet.Roles;
@@ -161,7 +161,7 @@ namespace Allors.Database.Adapters
                 Assert.False(roles.Contains(b.Id));
                 Assert.False(roles.Contains(c.Id));
 
-                changeSet = this.Session.Checkpoint();
+                changeSet = this.Transaction.Checkpoint();
 
                 associations = changeSet.Associations;
                 roles = changeSet.Roles;
@@ -177,9 +177,9 @@ namespace Allors.Database.Adapters
                 Assert.False(roles.Contains(a.Id));
                 Assert.False(roles.Contains(b.Id));
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
-                changeSet = this.Session.Checkpoint();
+                changeSet = this.Transaction.Checkpoint();
 
                 associations = changeSet.Associations;
                 roles = changeSet.Roles;
@@ -197,9 +197,9 @@ namespace Allors.Database.Adapters
 
                 a.C1AllorsString = "a changed";
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                changeSet = this.Session.Checkpoint();
+                changeSet = this.Transaction.Checkpoint();
 
                 associations = changeSet.Associations;
                 roles = changeSet.Roles;
@@ -223,19 +223,19 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var c1a = (C1)this.Session.Create(m.C1.ObjectType);
-                var c1b = (C1)this.Session.Create(m.C1.ObjectType);
-                var c2a = (C2)this.Session.Create(m.C2.ObjectType);
+                var c1a = (C1)this.Transaction.Create(m.C1.ObjectType);
+                var c1b = (C1)this.Transaction.Create(m.C1.ObjectType);
+                var c2a = (C2)this.Transaction.Create(m.C2.ObjectType);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                c1a = (C1)this.Session.Instantiate(c1a);
-                var c2b = C2.Create(this.Session);
-                this.Session.Instantiate(c2a);
+                c1a = (C1)this.Transaction.Instantiate(c1a);
+                var c2b = C2.Create(this.Transaction);
+                this.Transaction.Instantiate(c2a);
 
-                var changes = this.Session.Checkpoint();
+                var changes = this.Transaction.Checkpoint();
 
                 c1a.C1C2one2one = null;
 
@@ -255,7 +255,7 @@ namespace Allors.Database.Adapters
 
                 c1a.C1C2one2one = c2b;
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -279,7 +279,7 @@ namespace Allors.Database.Adapters
 
                 c1a.C1C2one2one = c2b;
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -289,7 +289,7 @@ namespace Allors.Database.Adapters
 
                 c1a.C1C2one2one = c2a;
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -312,7 +312,7 @@ namespace Allors.Database.Adapters
                 Assert.Contains(c2b.Id, roles);
                 Assert.Contains(c2a.Id, roles);
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -325,7 +325,7 @@ namespace Allors.Database.Adapters
 
                 c1a.RemoveC1C2one2one();
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -347,7 +347,7 @@ namespace Allors.Database.Adapters
                 Assert.DoesNotContain(c2b.Id, roles);
                 Assert.Contains(c2a.Id, roles);
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -360,7 +360,7 @@ namespace Allors.Database.Adapters
 
                 c1a.C1C2one2one = c2a;
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -373,7 +373,7 @@ namespace Allors.Database.Adapters
 
                 c1a.C1C2one2one = c2a;
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -386,7 +386,7 @@ namespace Allors.Database.Adapters
 
                 c1b.C1C2one2one = c2a;
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -406,19 +406,19 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var c1a = (C1)this.Session.Create(m.C1.ObjectType);
-                var c1b = (C1)this.Session.Create(m.C1.ObjectType);
-                var c2a = (C2)this.Session.Create(m.C2.ObjectType);
+                var c1a = (C1)this.Transaction.Create(m.C1.ObjectType);
+                var c1b = (C1)this.Transaction.Create(m.C1.ObjectType);
+                var c2a = (C2)this.Transaction.Create(m.C2.ObjectType);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                c1a = (C1)this.Session.Instantiate(c1a);
-                var c2b = C2.Create(this.Session);
-                this.Session.Instantiate(c2a);
+                c1a = (C1)this.Transaction.Instantiate(c1a);
+                var c2b = C2.Create(this.Transaction);
+                this.Transaction.Instantiate(c2a);
 
-                var changes = this.Session.Checkpoint();
+                var changes = this.Transaction.Checkpoint();
 
                 c1a.C1C2many2one = null;
 
@@ -438,7 +438,7 @@ namespace Allors.Database.Adapters
 
                 c1a.C1C2many2one = c2b;
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -462,7 +462,7 @@ namespace Allors.Database.Adapters
 
                 c1a.C1C2many2one = c2b;
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -472,7 +472,7 @@ namespace Allors.Database.Adapters
 
                 c1a.C1C2many2one = c2a;
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -495,7 +495,7 @@ namespace Allors.Database.Adapters
                 Assert.Contains(c2b.Id, roles);
                 Assert.Contains(c2a.Id, roles);
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -508,7 +508,7 @@ namespace Allors.Database.Adapters
 
                 c1a.RemoveC1C2many2one();
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -530,7 +530,7 @@ namespace Allors.Database.Adapters
                 Assert.DoesNotContain(c2b.Id, roles);
                 Assert.Contains(c2a.Id, roles);
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -543,7 +543,7 @@ namespace Allors.Database.Adapters
 
                 c1a.C1C2many2one = c2a;
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -556,7 +556,7 @@ namespace Allors.Database.Adapters
 
                 c1a.C1C2many2one = c2a;
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -569,7 +569,7 @@ namespace Allors.Database.Adapters
 
                 c1b.C1C2many2one = c2a;
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -589,21 +589,21 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var c1a = (C1)this.Session.Create(m.C1.ObjectType);
-                var c1b = (C1)this.Session.Create(m.C1.ObjectType);
-                var c2a = (C2)this.Session.Create(m.C2.ObjectType);
+                var c1a = (C1)this.Transaction.Create(m.C1.ObjectType);
+                var c1b = (C1)this.Transaction.Create(m.C1.ObjectType);
+                var c2a = (C2)this.Transaction.Create(m.C2.ObjectType);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                c1a = (C1)this.Session.Instantiate(c1a);
-                var c2b = C2.Create(this.Session);
-                this.Session.Instantiate(c2a);
+                c1a = (C1)this.Transaction.Instantiate(c1a);
+                var c2b = C2.Create(this.Transaction);
+                this.Transaction.Instantiate(c2a);
 
                 c1a.C1C2one2manies = null;
 
-                var changes = this.Session.Checkpoint();
+                var changes = this.Transaction.Checkpoint();
 
                 var associations = changes.Associations.ToArray();
                 var roles = changes.Roles.ToArray();
@@ -613,7 +613,7 @@ namespace Allors.Database.Adapters
 
                 c1a.RemoveC1C2one2manies();
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -623,7 +623,7 @@ namespace Allors.Database.Adapters
 
                 c1a.RemoveC1C2one2many(c2b);
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -633,7 +633,7 @@ namespace Allors.Database.Adapters
 
                 c1a.AddC1C2one2many(c2b);
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -657,7 +657,7 @@ namespace Allors.Database.Adapters
 
                 c1a.AddC1C2one2many(c2b);
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -667,7 +667,7 @@ namespace Allors.Database.Adapters
 
                 c1a.C1C2one2manies = new[] { c2b };
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -677,7 +677,7 @@ namespace Allors.Database.Adapters
 
                 c1a.AddC1C2one2many(c2a);
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -699,7 +699,7 @@ namespace Allors.Database.Adapters
                 Assert.DoesNotContain(c2b.Id, roles);
                 Assert.Contains(c2a.Id, roles);
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -712,7 +712,7 @@ namespace Allors.Database.Adapters
 
                 c1a.RemoveC1C2one2many(c2a);
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -734,7 +734,7 @@ namespace Allors.Database.Adapters
                 Assert.DoesNotContain(c2b.Id, roles);
                 Assert.Contains(c2a.Id, roles);
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -747,7 +747,7 @@ namespace Allors.Database.Adapters
 
                 c1a.RemoveC1C2one2many(c2b);
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -769,7 +769,7 @@ namespace Allors.Database.Adapters
                 Assert.Contains(c2b.Id, roles);
                 Assert.DoesNotContain(c2a.Id, roles);
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -782,9 +782,9 @@ namespace Allors.Database.Adapters
 
                 c1a.AddC1C2one2many(c2a);
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -798,9 +798,9 @@ namespace Allors.Database.Adapters
 
                 c1a.AddC1C2one2many(c2a);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -814,7 +814,7 @@ namespace Allors.Database.Adapters
 
                 c1b.AddC1C2one2many(c2a);
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -834,21 +834,21 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var c1a = (C1)this.Session.Create(m.C1.ObjectType);
-                var c1b = (C1)this.Session.Create(m.C1.ObjectType);
-                var c2a = (C2)this.Session.Create(m.C2.ObjectType);
+                var c1a = (C1)this.Transaction.Create(m.C1.ObjectType);
+                var c1b = (C1)this.Transaction.Create(m.C1.ObjectType);
+                var c2a = (C2)this.Transaction.Create(m.C2.ObjectType);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                c1a = (C1)this.Session.Instantiate(c1a);
-                var c2b = C2.Create(this.Session);
-                this.Session.Instantiate(c2a);
+                c1a = (C1)this.Transaction.Instantiate(c1a);
+                var c2b = C2.Create(this.Transaction);
+                this.Transaction.Instantiate(c2a);
 
                 c1a.C1C2many2manies = null;
 
-                var changes = this.Session.Checkpoint();
+                var changes = this.Transaction.Checkpoint();
 
                 var associations = changes.Associations.ToArray();
                 var roles = changes.Roles.ToArray();
@@ -858,7 +858,7 @@ namespace Allors.Database.Adapters
 
                 c1a.RemoveC1C2many2manies();
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -868,7 +868,7 @@ namespace Allors.Database.Adapters
 
                 c1a.RemoveC1C2many2many(c2b);
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -878,7 +878,7 @@ namespace Allors.Database.Adapters
 
                 c1a.AddC1C2many2many(c2b);
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -902,7 +902,7 @@ namespace Allors.Database.Adapters
 
                 c1a.AddC1C2many2many(c2b);
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -912,7 +912,7 @@ namespace Allors.Database.Adapters
 
                 c1a.C1C2many2manies = new[] { c2b };
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -922,7 +922,7 @@ namespace Allors.Database.Adapters
 
                 c1a.AddC1C2many2many(c2a);
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -944,7 +944,7 @@ namespace Allors.Database.Adapters
                 Assert.DoesNotContain(c2b.Id, roles);
                 Assert.Contains(c2a.Id, roles);
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -957,7 +957,7 @@ namespace Allors.Database.Adapters
 
                 c1a.RemoveC1C2many2many(c2a);
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -979,7 +979,7 @@ namespace Allors.Database.Adapters
                 Assert.DoesNotContain(c2b.Id, roles);
                 Assert.Contains(c2a.Id, roles);
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -992,7 +992,7 @@ namespace Allors.Database.Adapters
 
                 c1a.RemoveC1C2many2many(c2b);
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -1014,7 +1014,7 @@ namespace Allors.Database.Adapters
                 Assert.Contains(c2b.Id, roles);
                 Assert.DoesNotContain(c2a.Id, roles);
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -1027,9 +1027,9 @@ namespace Allors.Database.Adapters
 
                 c1a.AddC1C2many2many(c2a);
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -1043,9 +1043,9 @@ namespace Allors.Database.Adapters
 
                 c1a.AddC1C2many2many(c2a);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -1059,7 +1059,7 @@ namespace Allors.Database.Adapters
 
                 c1b.AddC1C2many2many(c2a);
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
@@ -1079,36 +1079,36 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var a = (C1)this.Session.Create(m.C1.ObjectType);
-                var c = this.Session.Create(m.C3.ObjectType);
-                this.Session.Commit();
+                var a = (C1)this.Transaction.Create(m.C1.ObjectType);
+                var c = this.Transaction.Create(m.C3.ObjectType);
+                this.Transaction.Commit();
 
-                a = (C1)this.Session.Instantiate(a);
-                var b = C2.Create(this.Session);
-                this.Session.Instantiate(c);
+                a = (C1)this.Transaction.Instantiate(a);
+                var b = C2.Create(this.Transaction);
+                this.Transaction.Instantiate(c);
 
                 a.Strategy.Delete();
                 b.Strategy.Delete();
 
-                var changes = this.Session.Checkpoint();
+                var changes = this.Transaction.Checkpoint();
 
                 Assert.Equal(2, changes.Deleted.Count());
                 Assert.Contains(a.Strategy, changes.Deleted.ToArray());
                 Assert.Contains(b.Strategy, changes.Deleted.ToArray());
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 Assert.Empty(changes.Deleted);
 
                 a.Strategy.Delete();
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 Assert.Empty(changes.Deleted);
             }
@@ -1120,32 +1120,32 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var a = (C1)this.Session.Create(m.C1.ObjectType);
-                var c = this.Session.Create(m.C3.ObjectType);
-                this.Session.Commit();
+                var a = (C1)this.Transaction.Create(m.C1.ObjectType);
+                var c = this.Transaction.Create(m.C3.ObjectType);
+                this.Transaction.Commit();
 
-                a = (C1)this.Session.Instantiate(a);
-                var b = C2.Create(this.Session);
-                this.Session.Instantiate(c);
+                a = (C1)this.Transaction.Instantiate(a);
+                var b = C2.Create(this.Transaction);
+                this.Transaction.Instantiate(c);
 
-                var changes = this.Session.Checkpoint();
+                var changes = this.Transaction.Checkpoint();
 
                 Assert.Single(changes.Created);
                 Assert.Contains(b.Strategy, changes.Created.ToArray());
 
-                this.Session.Rollback();
+                this.Transaction.Rollback();
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 Assert.Empty(changes.Created);
 
-                b = C2.Create(this.Session);
+                b = C2.Create(this.Transaction);
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                changes = this.Session.Checkpoint();
+                changes = this.Transaction.Checkpoint();
 
                 Assert.Empty(changes.Created);
             }

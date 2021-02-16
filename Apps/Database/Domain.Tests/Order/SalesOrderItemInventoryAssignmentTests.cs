@@ -17,50 +17,50 @@ namespace Allors.Database.Domain.Tests
 
         public SalesOrderItemInventoryAssignmentTests(Fixture fixture) : base(fixture)
         {
-            this.reasons = new InventoryTransactionReasons(this.Session);
+            this.reasons = new InventoryTransactionReasons(this.Transaction);
 
-            var customer = new PersonBuilder(this.Session).WithFirstName("Koen").Build();
+            var customer = new PersonBuilder(this.Transaction).WithFirstName("Koen").Build();
             var internalOrganisation = this.InternalOrganisation;
 
-            new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
+            new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
 
-            var mechelen = new CityBuilder(this.Session).WithName("Mechelen").Build();
+            var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
 
-            this.part = new NonUnifiedPartBuilder(this.Session)
-                .WithProductIdentification(new PartNumberBuilder(this.Session)
+            this.part = new NonUnifiedPartBuilder(this.Transaction)
+                .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                     .WithIdentification("1")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised)
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
                 .Build();
 
-            var good = new NonUnifiedGoodBuilder(this.Session)
-                .WithProductIdentification(new ProductNumberBuilder(this.Session)
+            var good = new NonUnifiedGoodBuilder(this.Transaction)
+                .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("10101")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithName("good")
                 .WithPart(this.part)
-                .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
-                .WithVatRate(new VatRateBuilder(this.Session).WithRate(21).Build())
+                .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
+                .WithVatRate(new VatRateBuilder(this.Transaction).WithRate(21).Build())
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            new InventoryItemTransactionBuilder(this.Session)
+            new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(this.part)
-                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
                 .WithQuantity(11)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var salesOrder = new SalesOrderBuilder(this.Session)
+            var salesOrder = new SalesOrderBuilder(this.Transaction)
                 .WithTakenBy(this.InternalOrganisation)
                 .WithShipToCustomer(customer)
-                .WithAssignedShipToAddress(new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build())
-                .WithAssignedBillToContactMechanism(new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build())
+                .WithAssignedShipToAddress(new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build())
+                .WithAssignedBillToContactMechanism(new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build())
                 .Build();
 
-            this.salesOrderItem = new SalesOrderItemBuilder(this.Session)
+            this.salesOrderItem = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(good)
                 .WithQuantityOrdered(3)
                 .WithAssignedUnitPrice(5)
@@ -68,18 +68,18 @@ namespace Allors.Database.Domain.Tests
 
             salesOrder.AddSalesOrderItem(this.salesOrderItem);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             salesOrder.SetReadyForPosting();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             salesOrder.Post();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             salesOrder.Accept();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            this.Session.Commit();
+            this.Transaction.Commit();
         }
 
         [Fact]
@@ -108,24 +108,24 @@ namespace Allors.Database.Domain.Tests
         //[Fact]
         //public void GivenSalesOrderItem_WhenChangingInventoryItem_ThenInventoryReservationsChange()
         //{
-        //    var facility2 = new FacilityBuilder(this.Session)
-        //        .WithFacilityType(new FacilityTypes(this.Session).Warehouse)
+        //    var facility2 = new FacilityBuilder(this.Transaction)
+        //        .WithFacilityType(new FacilityTypes(this.Transaction).Warehouse)
         //        .WithName("facility 2")
         //        .WithOwner(this.InternalOrganisation)
         //        .Build();
 
-        //    new InventoryItemTransactionBuilder(this.Session)
+        //    new InventoryItemTransactionBuilder(this.Transaction)
         //        .WithPart(this.part)
-        //        .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+        //        .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
         //        .WithFacility(facility2)
         //        .WithQuantity(10)
         //        .Build();
 
-        //    this.Session.Derive();
+        //    this.Transaction.Derive();
 
         //    this.salesOrderItem.ReservedFromNonSerialisedInventoryItem = (NonSerialisedInventoryItem)this.part.InventoryItemsWherePart.Single(v => v.Facility.Equals(facility2));
 
-        //    this.Session.Derive();
+        //    this.Transaction.Derive();
 
         //    Assert.True(this.salesOrderItem.SalesOrderItemState.InProcess);
         //    Assert.Equal(2, this.salesOrderItem.SalesOrderItemInventoryAssignments.Count);
@@ -152,7 +152,7 @@ namespace Allors.Database.Domain.Tests
         {
             this.salesOrderItem.QuantityOrdered = 6;
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var transaction = this.salesOrderItem.SalesOrderItemInventoryAssignments.First.InventoryItemTransactions.Last();
             Assert.Equal(this.part, transaction.Part);

@@ -12,7 +12,7 @@ namespace Allors.Database.Domain
     {
         public string NextSalesInvoiceNumber(int year)
         {
-            if (this.InternalOrganisation.InvoiceSequence.Equals(new InvoiceSequences(this.Strategy.Session).EnforcedSequence))
+            if (this.InternalOrganisation.InvoiceSequence.Equals(new InvoiceSequences(this.Strategy.Transaction).EnforcedSequence))
             {
                 return string.Concat(this.SalesInvoiceNumberPrefix, this.SalesInvoiceNumberCounter.NextValue()).Replace("{year}", year.ToString());
             }
@@ -22,7 +22,7 @@ namespace Allors.Database.Domain
 
                 if (fiscalYearStoreSequenceNumbers == null)
                 {
-                    fiscalYearStoreSequenceNumbers = new FiscalYearStoreSequenceNumbersBuilder(this.Strategy.Session).WithFiscalYear(year).Build();
+                    fiscalYearStoreSequenceNumbers = new FiscalYearStoreSequenceNumbersBuilder(this.Strategy.Transaction).WithFiscalYear(year).Build();
                     this.AddFiscalYearsStoreSequenceNumber(fiscalYearStoreSequenceNumbers);
                 }
 
@@ -32,7 +32,7 @@ namespace Allors.Database.Domain
 
         public string NextCreditNoteNumber(int year)
         {
-            if (this.InternalOrganisation.InvoiceSequence.Equals(new InvoiceSequences(this.Strategy.Session).EnforcedSequence))
+            if (this.InternalOrganisation.InvoiceSequence.Equals(new InvoiceSequences(this.Strategy.Transaction).EnforcedSequence))
             {
                 return string.Concat(this.CreditNoteNumberPrefix, this.CreditNoteNumberCounter.NextValue()).Replace("{year}", year.ToString());
             }
@@ -42,7 +42,7 @@ namespace Allors.Database.Domain
 
                 if (fiscalYearStoreSequenceNumbers == null)
                 {
-                    fiscalYearStoreSequenceNumbers = new FiscalYearStoreSequenceNumbersBuilder(this.Strategy.Session).WithFiscalYear(year).Build();
+                    fiscalYearStoreSequenceNumbers = new FiscalYearStoreSequenceNumbersBuilder(this.Strategy.Transaction).WithFiscalYear(year).Build();
                     this.AddFiscalYearsStoreSequenceNumber(fiscalYearStoreSequenceNumbers);
                 }
 
@@ -52,7 +52,7 @@ namespace Allors.Database.Domain
 
         public string NextCustomerShipmentNumber(int year)
         {
-            if (this.InternalOrganisation.CustomerShipmentSequence.Equals(new CustomerShipmentSequences(this.Strategy.Session).EnforcedSequence))
+            if (this.InternalOrganisation.CustomerShipmentSequence.Equals(new CustomerShipmentSequences(this.Strategy.Transaction).EnforcedSequence))
             {
                 return string.Concat(this.CustomerShipmentNumberPrefix, this.CustomerShipmentNumberCounter.NextValue()).Replace("{year}", year.ToString());
             }
@@ -62,7 +62,7 @@ namespace Allors.Database.Domain
 
                 if (fiscalYearStoreSequenceNumbers == null)
                 {
-                    fiscalYearStoreSequenceNumbers = new FiscalYearStoreSequenceNumbersBuilder(this.Strategy.Session).WithFiscalYear(year).Build();
+                    fiscalYearStoreSequenceNumbers = new FiscalYearStoreSequenceNumbersBuilder(this.Strategy.Transaction).WithFiscalYear(year).Build();
                     this.AddFiscalYearsStoreSequenceNumber(fiscalYearStoreSequenceNumbers);
                 }
 
@@ -72,7 +72,7 @@ namespace Allors.Database.Domain
 
         public string NextPurchaseReturnNumber(int year)
         {
-            if (this.InternalOrganisation.PurchaseReturnSequence.Equals(new PurchaseReturnSequences(this.Strategy.Session).EnforcedSequence))
+            if (this.InternalOrganisation.PurchaseReturnSequence.Equals(new PurchaseReturnSequences(this.Strategy.Transaction).EnforcedSequence))
             {
                 return string.Concat(this.PurchaseReturnNumberPrefix, this.PurchaseReturnNumberCounter.NextValue()).Replace("{year}", year.ToString());
             }
@@ -82,7 +82,7 @@ namespace Allors.Database.Domain
 
                 if (fiscalYearStoreSequenceNumbers == null)
                 {
-                    fiscalYearStoreSequenceNumbers = new FiscalYearStoreSequenceNumbersBuilder(this.Strategy.Session).WithFiscalYear(year).Build();
+                    fiscalYearStoreSequenceNumbers = new FiscalYearStoreSequenceNumbersBuilder(this.Strategy.Transaction).WithFiscalYear(year).Build();
                     this.AddFiscalYearsStoreSequenceNumber(fiscalYearStoreSequenceNumbers);
                 }
 
@@ -92,7 +92,7 @@ namespace Allors.Database.Domain
 
         public string NextDropShipmentNumber(int year)
         {
-            if (this.InternalOrganisation.DropShipmentSequence.Equals(new DropShipmentSequences(this.Strategy.Session).EnforcedSequence))
+            if (this.InternalOrganisation.DropShipmentSequence.Equals(new DropShipmentSequences(this.Strategy.Transaction).EnforcedSequence))
             {
                 return string.Concat(this.DropShipmentNumberPrefix, this.DropShipmentNumberCounter.NextValue()).Replace("{year}", year.ToString());
             }
@@ -102,7 +102,7 @@ namespace Allors.Database.Domain
 
                 if (fiscalYearStoreSequenceNumbers == null)
                 {
-                    fiscalYearStoreSequenceNumbers = new FiscalYearStoreSequenceNumbersBuilder(this.Strategy.Session).WithFiscalYear(year).Build();
+                    fiscalYearStoreSequenceNumbers = new FiscalYearStoreSequenceNumbersBuilder(this.Strategy.Transaction).WithFiscalYear(year).Build();
                     this.AddFiscalYearsStoreSequenceNumber(fiscalYearStoreSequenceNumbers);
                 }
 
@@ -112,7 +112,7 @@ namespace Allors.Database.Domain
 
         public string NextSalesOrderNumber(int year)
         {
-            if (this.InternalOrganisation.InvoiceSequence.Equals(new InvoiceSequences(this.Strategy.Session).EnforcedSequence))
+            if (this.InternalOrganisation.InvoiceSequence.Equals(new InvoiceSequences(this.Strategy.Transaction).EnforcedSequence))
             {
                 return string.Concat(this.SalesOrderNumberPrefix, this.SalesOrderNumberCounter.NextValue()).Replace("{year}", year.ToString());
             }
@@ -122,7 +122,7 @@ namespace Allors.Database.Domain
 
                 if (fiscalYearStoreSequenceNumbers == null)
                 {
-                    fiscalYearStoreSequenceNumbers = new FiscalYearStoreSequenceNumbersBuilder(this.Strategy.Session).WithFiscalYear(year).Build();
+                    fiscalYearStoreSequenceNumbers = new FiscalYearStoreSequenceNumbersBuilder(this.Strategy.Transaction).WithFiscalYear(year).Build();
                     this.AddFiscalYearsStoreSequenceNumber(fiscalYearStoreSequenceNumbers);
                 }
 
@@ -146,15 +146,15 @@ namespace Allors.Database.Domain
 
             if (!this.ExistBillingProcess)
             {
-                this.BillingProcess = new BillingProcesses(this.Strategy.Session).BillingForShipmentItems;
+                this.BillingProcess = new BillingProcesses(this.Strategy.Transaction).BillingForShipmentItems;
             }
 
             if (!this.ExistSalesInvoiceTemporaryCounter)
             {
-                this.SalesInvoiceTemporaryCounter = new CounterBuilder(this.Strategy.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
+                this.SalesInvoiceTemporaryCounter = new CounterBuilder(this.Strategy.Transaction).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
             }
 
-            var internalOrganisations = new Organisations(this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
+            var internalOrganisations = new Organisations(this.Strategy.Transaction).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
 
             if (!this.ExistInternalOrganisation && internalOrganisations.Length == 1)
             {
@@ -163,7 +163,7 @@ namespace Allors.Database.Domain
 
             if (!this.ExistDefaultFacility)
             {
-                this.DefaultFacility = this.Strategy.Session.GetSingleton().Settings.DefaultFacility;
+                this.DefaultFacility = this.Strategy.Transaction.GetSingleton().Settings.DefaultFacility;
             }
         }
     }

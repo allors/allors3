@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
         //    {
         //        if (!this.ExistMediaContent)
         //        {
-        //            this.MediaContent = new MediaContentBuilder(this.Strategy.Session).Build();
+        //            this.MediaContent = new MediaContentBuilder(this.Strategy.Transaction).Build();
         //        }
         //    }
 

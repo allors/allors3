@@ -15,8 +15,8 @@ namespace Allors.Database.Domain
 
         protected override void AppsSecure(Security config)
         {
-            var received = new ShipmentStates(this.Session).Received;
-            var cancelled = new ShipmentStates(this.Session).Cancelled;
+            var received = new ShipmentStates(this.Transaction).Received;
+            var cancelled = new ShipmentStates(this.Transaction).Cancelled;
 
             var except = new HashSet<OperandType>
             {

@@ -20,18 +20,18 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void WhenDeletingUserThenLoginShouldAlsoBeDeleted()
         {
-            var person = new PersonBuilder(this.Session).WithUserName("user").Build();
+            var person = new PersonBuilder(this.Transaction).WithUserName("user").Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var login = new LoginBuilder(this.Session).WithProvider("MyProvider").WithKey("XXXYYYZZZ").Build();
+            var login = new LoginBuilder(this.Transaction).WithProvider("MyProvider").WithKey("XXXYYYZZZ").Build();
             person.AddLogin(login);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             person.Delete();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(login.Strategy.IsDeleted);
         }

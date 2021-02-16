@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         IClass IPermission.Class => this.Class;
         public Class Class
         {
-            get => (Class)this.Strategy.Session.Database.MetaPopulation.Find(this.ClassPointer);
+            get => (Class)this.Strategy.Transaction.Database.MetaPopulation.Find(this.ClassPointer);
 
             set
             {
@@ -42,7 +42,7 @@ namespace Allors.Database.Domain
         IMethodType IExecutePermission.MethodType => this.MethodType;
         public MethodType MethodType
         {
-            get => (MethodType)this.Strategy.Session.Database.MetaPopulation.Find(this.MethodTypePointer);
+            get => (MethodType)this.Strategy.Transaction.Database.MetaPopulation.Find(this.MethodTypePointer);
 
             set
             {

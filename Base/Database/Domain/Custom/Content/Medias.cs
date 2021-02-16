@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
         private UniquelyIdentifiableCache<Media> cache;
 
-        public Cache<Guid, Media> Cache => this.cache ??= new UniquelyIdentifiableCache<Media>(this.Session);
+        public Cache<Guid, Media> Cache => this.cache ??= new UniquelyIdentifiableCache<Media>(this.Transaction);
 
         public Media Avatar => this.Cache[AvatarId];
 

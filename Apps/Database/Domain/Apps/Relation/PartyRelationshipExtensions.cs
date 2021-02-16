@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
         {
             if (!@this.ExistFromDate)
             {
-                @this.FromDate = @this.Strategy.Session.Now();
+                @this.FromDate = @this.Strategy.Transaction.Now();
             }
         }
 
@@ -23,7 +23,7 @@ namespace Allors.Database.Domain
             {
                 foreach (AgreementTerm term in agreement.AgreementTerms)
                 {
-                    if (term.TermType.Equals(new InvoiceTermTypes(@this.Strategy.Session).PaymentNetDays))
+                    if (term.TermType.Equals(new InvoiceTermTypes(@this.Strategy.Transaction).PaymentNetDays))
                     {
                         if (int.TryParse(term.TermValue, out var netDays))
                         {

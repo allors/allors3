@@ -11,10 +11,10 @@ namespace Allors.Database.Server.Controllers
 
     public class TestPopulation
     {
-        private readonly ISession session;
+        private readonly ITransaction session;
         private readonly string population;
 
-        public TestPopulation(ISession session, string population)
+        public TestPopulation(ITransaction session, string population)
         {
             this.session = session;
             this.population = population;

@@ -15,12 +15,12 @@ namespace Allors.Database.Domain
 
         protected override void AppsSecure(Security config)
         {
-            var notPaid = new SalesInvoiceStates(this.Session).NotPaid;
-            var paid = new SalesInvoiceStates(this.Session).Paid;
-            var partiallyPaid = new SalesInvoiceStates(this.Session).PartiallyPaid;
-            var writtenOff = new SalesInvoiceStates(this.Session).WrittenOff;
-            var cancelled = new SalesInvoiceStates(this.Session).Cancelled;
-            var readyForPosting = new SalesInvoiceStates(this.Session).ReadyForPosting;
+            var notPaid = new SalesInvoiceStates(this.Transaction).NotPaid;
+            var paid = new SalesInvoiceStates(this.Transaction).Paid;
+            var partiallyPaid = new SalesInvoiceStates(this.Transaction).PartiallyPaid;
+            var writtenOff = new SalesInvoiceStates(this.Transaction).WrittenOff;
+            var cancelled = new SalesInvoiceStates(this.Transaction).Cancelled;
+            var readyForPosting = new SalesInvoiceStates(this.Transaction).ReadyForPosting;
 
             var send = this.Meta.Send;
             var cancelInvoice = this.Meta.CancelInvoice;

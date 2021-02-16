@@ -23,15 +23,15 @@ namespace Tests
 
         public InvokeTests(Fixture fixture) : base(fixture)
         {
-            this.x1 = new WorkspaceXObject1Builder(this.Session).Build();
-            this.y1 = new WorkspaceYObject1Builder(this.Session).Build();
-            this.none1 = new WorkspaceNoneObject1Builder(this.Session).Build();
+            this.x1 = new WorkspaceXObject1Builder(this.Transaction).Build();
+            this.y1 = new WorkspaceYObject1Builder(this.Transaction).Build();
+            this.none1 = new WorkspaceNoneObject1Builder(this.Transaction).Build();
 
             this.x1Version = this.x1.Strategy.ObjectVersion;
             this.y1Version = this.y1.Strategy.ObjectVersion;
             this.none1Version = this.none1.Strategy.ObjectVersion;
 
-            this.Session.Commit();
+            this.Transaction.Commit();
         }
 
         [Fact]
@@ -52,7 +52,7 @@ namespace Tests
                 },
             };
 
-            var api = new Api(this.Session, "X");
+            var api = new Api(this.Transaction, "X");
             var invokeResponse = api.Invoke(invokeRequest);
 
             Assert.False(invokeResponse.HasErrors);
@@ -76,7 +76,7 @@ namespace Tests
                 },
             };
 
-            var api = new Api(this.Session, "Y");
+            var api = new Api(this.Transaction, "Y");
             var invokeResponse = api.Invoke(invokeRequest);
 
             Assert.True(invokeResponse.HasErrors);
@@ -106,7 +106,7 @@ namespace Tests
                 },
             };
 
-            var api = new Api(this.Session, "None");
+            var api = new Api(this.Transaction, "None");
             var invokeResponse = api.Invoke(invokeRequest);
 
             Assert.True(invokeResponse.HasErrors);

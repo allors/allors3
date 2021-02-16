@@ -14,15 +14,15 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static PurchaseInvoiceBuilder WithInternalInvoiceDefaults(this PurchaseInvoiceBuilder @this, Organisation internalOrganisation)
         {
-            var faker = @this.Session.Faker();
+            var faker = @this.Transaction.Faker();
 
-            var internalOrganisations = @this.Session.Extent<Organisation>();
+            var internalOrganisations = @this.Transaction.Extent<Organisation>();
             var otherInternalOrganization = internalOrganisations.Except(new List<Organisation> { internalOrganisation }).FirstOrDefault();
             var endCustomer = faker.Random.ListItem(internalOrganisation.ActiveCustomers);
 
-            var purchaseInvoiceType = faker.Random.ListItem(@this.Session.Extent<PurchaseInvoiceType>());
+            var purchaseInvoiceType = faker.Random.ListItem(@this.Transaction.Extent<PurchaseInvoiceType>());
 
-            var paymentMethod = faker.Random.ListItem(@this.Session.Extent<PaymentMethod>());
+            var paymentMethod = faker.Random.ListItem(@this.Transaction.Extent<PaymentMethod>());
 
             @this.WithCustomerReference(faker.Random.String(16).ToUpper(CultureInfo.CurrentCulture));
             @this.WithBilledFrom(internalOrganisation);
@@ -50,13 +50,13 @@ namespace Allors.Database.Domain.TestPopulation
 
         public static PurchaseInvoiceBuilder WithExternalB2BInvoiceDefaults(this PurchaseInvoiceBuilder @this, Organisation internalOrganisation)
         {
-            var faker = @this.Session.Faker();
+            var faker = @this.Transaction.Faker();
 
             var supplier = internalOrganisation.ActiveSuppliers.Where(v => v.GetType().Name == typeof(Organisation).Name).FirstOrDefault();
 
-            var purchaseInvoiceType = faker.Random.ListItem(@this.Session.Extent<PurchaseInvoiceType>());
+            var purchaseInvoiceType = faker.Random.ListItem(@this.Transaction.Extent<PurchaseInvoiceType>());
 
-            var paymentMethod = faker.Random.ListItem(@this.Session.Extent<PaymentMethod>());
+            var paymentMethod = faker.Random.ListItem(@this.Transaction.Extent<PaymentMethod>());
 
             @this.WithCustomerReference(faker.Random.String(16).ToUpper(CultureInfo.CurrentCulture));
             @this.WithBilledFrom(supplier);
@@ -69,7 +69,7 @@ namespace Allors.Database.Domain.TestPopulation
             @this.WithBilledToContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault());
             @this.WithPurchaseInvoiceType(purchaseInvoiceType);
             @this.WithAssignedBillToCustomerPaymentMethod(paymentMethod);
-            @this.WithAssignedVatRegime(faker.Random.ListItem(@this.Session.Extent<VatRegime>()));
+            @this.WithAssignedVatRegime(faker.Random.ListItem(@this.Transaction.Extent<VatRegime>()));
 
             return @this;
         }

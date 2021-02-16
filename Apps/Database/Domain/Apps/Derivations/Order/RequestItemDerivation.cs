@@ -41,7 +41,7 @@ namespace Allors.Database.Domain
                 validation.AssertExistsAtMostOne(@this, this.M.RequestItem.Product, this.M.RequestItem.ProductFeature, this.M.RequestItem.Description, this.M.RequestItem.NeededSkill, this.M.RequestItem.Deliverable);
                 validation.AssertExistsAtMostOne(@this, this.M.RequestItem.SerialisedItem, this.M.RequestItem.ProductFeature, this.M.RequestItem.Description, this.M.RequestItem.NeededSkill, this.M.RequestItem.Deliverable);
 
-                var requestItemStates = new RequestItemStates(cycle.Session);
+                var requestItemStates = new RequestItemStates(cycle.Transaction);
                 if (@this.ExistRequestWhereRequestItem && @this.IsValid)
                 {
                     if (@this.RequestWhereRequestItem.RequestState.IsSubmitted && @this.RequestItemState.IsDraft)
@@ -67,7 +67,7 @@ namespace Allors.Database.Domain
 
                 if (!@this.ExistUnitOfMeasure)
                 {
-                    @this.UnitOfMeasure = new UnitsOfMeasure(@this.Strategy.Session).Piece;
+                    @this.UnitOfMeasure = new UnitsOfMeasure(@this.Strategy.Transaction).Piece;
                 }
 
                 if (@this.ExistSerialisedItem && @this.Quantity != 1)

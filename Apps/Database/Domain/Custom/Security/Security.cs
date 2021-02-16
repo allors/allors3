@@ -14,11 +14,11 @@ namespace Allors.Database.Domain
         private void CustomOnPreSetup()
         {
             // Default access policy
-            var security = new Security(this.session);
+            var security = new Security(this.transaction);
 
             var full = new[] { Operations.Read, Operations.Write, Operations.Execute };
 
-            foreach (ObjectType @class in this.session.Database.MetaPopulation.DatabaseClasses)
+            foreach (ObjectType @class in this.transaction.Database.MetaPopulation.DatabaseClasses)
             {
                 security.GrantAdministrator(@class, full);
                 security.Grantemployee(@class, Operations.Read);

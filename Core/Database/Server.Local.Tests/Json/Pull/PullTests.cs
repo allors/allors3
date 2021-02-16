@@ -28,12 +28,12 @@ namespace Tests
             var m = this.M;
             var user = this.SetUser("jane@example.com");
 
-            var data = new DataBuilder(this.Session).WithString("First").Build();
-            var permissions = new Permissions(this.Session).Extent();
+            var data = new DataBuilder(this.Transaction).WithString("First").Build();
+            var permissions = new Permissions(this.Transaction).Extent();
             var permission = permissions.First(v => Equals(v.Class, this.M.Data.Class));
             data.AddDeniedPermission(permission);
 
-            this.Session.Commit();
+            this.Transaction.Commit();
 
             var pull = new Pull { Extent = new Extent(m.Data.ObjectType) };
             var pullRequest = new PullRequest
@@ -44,7 +44,7 @@ namespace Tests
                 },
             };
 
-            var api = new Api(this.Session, "Default");
+            var api = new Api(this.Transaction, "Default");
             var pullResponse = api.Pull(pullRequest);
 
             var namedCollection = pullResponse.NamedCollections["Datas"];
@@ -89,7 +89,7 @@ namespace Tests
                   },
             };
 
-            var api = new Api(this.Session, "Default");
+            var api = new Api(this.Transaction, "Default");
             var pullResponse = api.Pull(pullRequest);
 
             var organisations = pullResponse.NamedCollections["Organisations"];
@@ -114,7 +114,7 @@ namespace Tests
                   },
             };
 
-            var api = new Api(this.Session, "Default");
+            var api = new Api(this.Transaction, "Default");
             var pullResponse = api.Pull(pullRequest);
 
             var organisations = pullResponse.NamedCollections["Organisations"];
@@ -127,10 +127,10 @@ namespace Tests
         {
             var user = this.SetUser("jane@example.com");
 
-            var data = new DataBuilder(this.Session).WithString("First").Build();
+            var data = new DataBuilder(this.Transaction).WithString("First").Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
             var uri = new Uri(@"allors/pull", UriKind.Relative);
 
@@ -144,7 +144,7 @@ namespace Tests
                       },
             };
 
-            var api = new Api(this.Session, "Default");
+            var api = new Api(this.Transaction, "Default");
             var pullResponse = api.Pull(pullRequest);
 
             var namedCollection = pullResponse.NamedCollections["Datas"];
@@ -176,10 +176,10 @@ namespace Tests
         {
             var user = this.SetUser("jane@example.com");
 
-            var data = new DataBuilder(this.Session).WithString("First").Build();
+            var data = new DataBuilder(this.Transaction).WithString("First").Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
             var pull = new Pull
             {
@@ -198,7 +198,7 @@ namespace Tests
                 },
             };
 
-            var api = new Api(this.Session, "Default");
+            var api = new Api(this.Transaction, "Default");
             var pullResponse = api.Pull(pullRequest);
 
             var namedCollection = pullResponse.NamedCollections["Datas"];

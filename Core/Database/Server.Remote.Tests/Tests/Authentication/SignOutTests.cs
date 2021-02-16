@@ -15,9 +15,9 @@ namespace Allors.Server.Tests
     {
         public SignOutTests()
         {
-            new PersonBuilder(this.Session).WithUserName("user").Build().SetPassword("p@ssw0rd");
-            this.Session.Derive();
-            this.Session.Commit();
+            new PersonBuilder(this.Transaction).WithUserName("user").Build().SetPassword("p@ssw0rd");
+            this.Transaction.Derive();
+            this.Transaction.Commit();
         }
 
         [Fact]

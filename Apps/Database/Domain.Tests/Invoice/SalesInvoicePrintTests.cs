@@ -16,7 +16,7 @@ namespace Allors.Database.Domain.Tests
         //public void GivenSalesInvoice_WhenCreatingPrintModel_ThenPrintModelIsNotNull()
         //{
         //    // Arrange
-        //    var invoice = new SalesInvoices(this.Session).Extent().First;
+        //    var invoice = new SalesInvoices(this.Transaction).Extent().First;
 
         //    // Act
         //    var printModel = new Print.SalesInvoiceModel.Model(invoice);
@@ -29,7 +29,7 @@ namespace Allors.Database.Domain.Tests
         //public void GivenSalesInvoice_WhenDeriving_ThenPrintDocumentWithoutMediaCreated()
         //{
         //    // Arrange
-        //    var invoice = new SalesInvoices(this.Session).Extent().First;
+        //    var invoice = new SalesInvoices(this.Transaction).Extent().First;
 
         //    // Act
 
@@ -42,13 +42,13 @@ namespace Allors.Database.Domain.Tests
         //public void GivenSalesInvoicePrintDocument_WhenPrinting_ThenMediaCreated()
         //{
         //    // Arrange
-        //    var invoice = new SalesInvoices(this.Session).Extent().First;
+        //    var invoice = new SalesInvoices(this.Transaction).Extent().First;
 
         //    // Act
         //    invoice.Print();
 
-        //    this.Session.Derive();
-        //    this.Session.Commit();
+        //    this.Transaction.Derive();
+        //    this.Transaction.Commit();
 
         //    // Assert
         //    Assert.True(invoice.PrintDocument.ExistMedia);

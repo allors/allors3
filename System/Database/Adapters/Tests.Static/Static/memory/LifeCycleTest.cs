@@ -17,7 +17,7 @@ namespace Allors.Database.Adapters.Memory
         protected override IProfile Profile => this.profile;
 
         [Fact]
-        public override void DifferentSessions()
+        public override void DifferentTransactions()
         {
         }
 
@@ -29,6 +29,6 @@ namespace Allors.Database.Adapters.Memory
 
         protected override IDatabase CreatePopulation() => this.profile.CreateDatabase();
 
-        protected override ISession CreateSession() => this.profile.CreateSession();
+        protected override ITransaction CreateTransaction() => this.profile.CreateTransaction();
     }
 }

@@ -66,11 +66,11 @@ namespace Allors.Security
         public async Task<IdentityResult> CreateAsync(IdentityUser identityUser, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            using (var session = this.database.CreateSession())
+            using (var transaction = this.database.CreateTransaction())
             {
                 try
                 {
-                    var user = new PersonBuilder(session)
+                    var user = new PersonBuilder(transaction)
                         .WithUserName(identityUser.UserName)
                         .WithUserPasswordHash(identityUser.PasswordHash)
                         .WithUserEmail(identityUser.Email)
@@ -85,10 +85,10 @@ namespace Allors.Security
                         .WithUserAccessFailedCount(identityUser.AccessFailedCount)
                         .Build();
 
-                    new UserGroups(session).Creators.AddMember(user);
+                    new UserGroups(transaction).Creators.AddMember(user);
 
-                    session.Derive();
-                    session.Commit();
+                    transaction.Derive();
+                    transaction.Commit();
 
                     identityUser.Id = user.Id.ToString();
 
@@ -104,11 +104,11 @@ namespace Allors.Security
         public async Task<IdentityResult> UpdateAsync(IdentityUser identityUser, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            using (var session = this.database.CreateSession())
+            using (var transaction = this.database.CreateTransaction())
             {
                 try
                 {
-                    var user = identityUser.User(session);
+                    var user = identityUser.User(transaction);
 
                     user.UserName = identityUser.UserName;
                     user.UserPasswordHash = identityUser.PasswordHash;
@@ -123,8 +123,8 @@ namespace Allors.Security
                     user.UserLockoutEnabled = identityUser.LockoutEnabled;
                     user.UserAccessFailedCount = identityUser.AccessFailedCount;
 
-                    session.Derive();
-                    session.Commit();
+                    transaction.Derive();
+                    transaction.Commit();
 
                     return IdentityResult.Success;
                 }
@@ -138,19 +138,19 @@ namespace Allors.Security
         public async Task<IdentityResult> DeleteAsync(IdentityUser identityUser, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            using (var session = this.database.CreateSession())
+            using (var transaction = this.database.CreateTransaction())
             {
                 try
                 {
-                    var user = (User)session.Instantiate(identityUser.Id);
+                    var user = (User)transaction.Instantiate(identityUser.Id);
 
                     if (user is Deletable)
                     {
                         ((Deletable)user).Delete();
                     }
 
-                    session.Derive();
-                    session.Commit();
+                    transaction.Derive();
+                    transaction.Commit();
 
                     return IdentityResult.Success;
                 }
@@ -164,9 +164,9 @@ namespace Allors.Security
         public async Task<IdentityUser> FindByIdAsync(string userId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            using (var session = this.database.CreateSession())
+            using (var transaction = this.database.CreateTransaction())
             {
-                var user = (User)session.Instantiate(userId);
+                var user = (User)transaction.Instantiate(userId);
                 return user?.AsIdentityUser();
             }
         }
@@ -176,9 +176,9 @@ namespace Allors.Security
             var m = this.database.Context().M;
 
             cancellationToken.ThrowIfCancellationRequested();
-            using (var session = this.database.CreateSession())
+            using (var transaction = this.database.CreateTransaction())
             {
-                var user = new Users(session).FindBy(m.User.NormalizedUserName, normalizedUserName);
+                var user = new Users(transaction).FindBy(m.User.NormalizedUserName, normalizedUserName);
                 return user?.AsIdentityUser();
             }
         }
@@ -210,11 +210,11 @@ namespace Allors.Security
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            using (var session = this.database.CreateSession())
+            using (var transaction = this.database.CreateTransaction())
             {
-                var user = (User)session.Instantiate(identityUser.Id);
+                var user = (User)transaction.Instantiate(identityUser.Id);
 
-                var login = new LoginBuilder(session)
+                var login = new LoginBuilder(transaction)
                     .WithProvider(userLoginInfo.LoginProvider)
                     .WithKey(userLoginInfo.ProviderKey)
                     .WithDisplayName(userLoginInfo.ProviderDisplayName)
@@ -222,8 +222,8 @@ namespace Allors.Security
 
                 user.AddLogin(login);
 
-                session.Derive();
-                session.Commit();
+                transaction.Derive();
+                transaction.Commit();
             }
         }
 
@@ -233,9 +233,9 @@ namespace Allors.Security
 
             var m = this.database.Context().M;
 
-            using (var session = this.database.CreateSession())
+            using (var transaction = this.database.CreateTransaction())
             {
-                var extent = new Logins(session).Extent();
+                var extent = new Logins(transaction).Extent();
                 extent.Filter.AddEquals(m.Login.Provider, loginProvider);
                 extent.Filter.AddEquals(m.Login.Key, providerKey);
 
@@ -248,9 +248,9 @@ namespace Allors.Security
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            using (var session = this.database.CreateSession())
+            using (var transaction = this.database.CreateTransaction())
             {
-                var user = (User)session.Instantiate(identityUser.Id);
+                var user = (User)transaction.Instantiate(identityUser.Id);
                 return user.Logins.Select(v => v.AsUserLoginInfo()).ToArray();
             }
         }
@@ -261,17 +261,17 @@ namespace Allors.Security
 
             var m = this.database.Context().M;
 
-            using (var session = this.database.CreateSession())
+            using (var transaction = this.database.CreateTransaction())
             {
-                var extent = new Logins(session).Extent();
+                var extent = new Logins(transaction).Extent();
                 extent.Filter.AddEquals(m.Login.Provider, loginProvider);
                 extent.Filter.AddEquals(m.Login.Key, providerKey);
 
                 var login = extent.FirstOrDefault();
                 login?.Delete();
 
-                session.Derive();
-                session.Commit();
+                transaction.Derive();
+                transaction.Commit();
             }
         }
 
@@ -314,9 +314,9 @@ namespace Allors.Security
 
             var m = this.database.Context().M;
 
-            using (var session = this.database.CreateSession())
+            using (var transaction = this.database.CreateTransaction())
             {
-                var user = new Users(session).FindBy(m.User.NormalizedUserEmail, normalizedEmail);
+                var user = new Users(transaction).FindBy(m.User.NormalizedUserEmail, normalizedEmail);
                 return user?.AsIdentityUser();
             }
         }

@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
-            var session = cycle.Session;
+            var transaction = cycle.Transaction;
 
             foreach (var @this in matches.Cast<SalesOrder>())
             {
@@ -35,7 +35,7 @@ namespace Allors.Database.Domain
 
                 if (@this.ExistSalesOrderState
                     && @this.SalesOrderState.IsInProcess
-                    && Equals(@this.Store.BillingProcess, new BillingProcesses(@this.Strategy.Session).BillingForOrderItems))
+                    && Equals(@this.Store.BillingProcess, new BillingProcesses(@this.Strategy.Transaction).BillingForOrderItems))
                 {
                     @this.CanInvoice = false;
 

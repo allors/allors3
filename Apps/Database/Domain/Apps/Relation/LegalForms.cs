@@ -92,7 +92,7 @@ namespace Allors.Database.Domain
         public LegalForm NlCow => this.Cache[NlCowId];
         public LegalForm NlStichting => this.Cache[NlStichtingId];
 
-        private UniquelyIdentifiableCache<LegalForm> Cache => this.cache ??= new UniquelyIdentifiableCache<LegalForm>(this.Session);
+        private UniquelyIdentifiableCache<LegalForm> Cache => this.cache ??= new UniquelyIdentifiableCache<LegalForm>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

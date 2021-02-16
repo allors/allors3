@@ -21,11 +21,11 @@ namespace Allors.Database.Domain
 
         public OrganisationUnit Subsidiary => this.Cache[SubsidiaryId];
 
-        private UniquelyIdentifiableCache<OrganisationUnit> Cache => this.cache ??= new UniquelyIdentifiableCache<OrganisationUnit>(this.Session);
+        private UniquelyIdentifiableCache<OrganisationUnit> Cache => this.cache ??= new UniquelyIdentifiableCache<OrganisationUnit>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {
-            var dutchLocale = new Locales(this.Session).DutchNetherlands;
+            var dutchLocale = new Locales(this.Transaction).DutchNetherlands;
 
 
             var merge = this.Cache.Merger().Action();

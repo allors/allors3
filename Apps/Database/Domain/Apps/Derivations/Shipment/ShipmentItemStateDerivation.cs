@@ -31,12 +31,12 @@ namespace Allors.Database.Domain
 
                 if (shipment.ShipmentState.IsPicked && !@this.ShipmentItemState.IsPicked)
                 {
-                    @this.ShipmentItemState = new ShipmentItemStates(@this.Session()).Picked;
+                    @this.ShipmentItemState = new ShipmentItemStates(@this.Transaction()).Picked;
                 }
 
                 if (shipment.ShipmentState.IsPacked && !@this.ShipmentItemState.IsPacked)
                 {
-                    @this.ShipmentItemState = new ShipmentItemStates(@this.Session()).Packed;
+                    @this.ShipmentItemState = new ShipmentItemStates(@this.Transaction()).Packed;
                 }
             }
         }

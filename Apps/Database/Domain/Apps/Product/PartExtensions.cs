@@ -13,23 +13,23 @@ namespace Allors.Database.Domain
         {
             if (!@this.ExistPartWeightedAverage)
             {
-                @this.PartWeightedAverage = new PartWeightedAverageBuilder(@this.Session()).Build();
+                @this.PartWeightedAverage = new PartWeightedAverageBuilder(@this.Transaction()).Build();
             }
         }
         public static void AppsOnInit(this Part @this, ObjectOnInit method)
         {
-            var m = @this.Strategy.Session.Database.Context().M;
-            var settings = @this.Strategy.Session.GetSingleton().Settings;
+            var m = @this.Strategy.Transaction.Database.Context().M;
+            var settings = @this.Strategy.Transaction.GetSingleton().Settings;
 
             var identifications = @this.ProductIdentifications;
-            identifications.Filter.AddEquals(m.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(@this.Strategy.Session).Part);
+            identifications.Filter.AddEquals(m.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(@this.Strategy.Transaction).Part);
             var partIdentification = identifications.FirstOrDefault();
 
             if (partIdentification == null && settings.UsePartNumberCounter)
             {
-                partIdentification = new PartNumberBuilder(@this.Strategy.Session)
+                partIdentification = new PartNumberBuilder(@this.Strategy.Transaction)
                     .WithIdentification(settings.NextPartNumber())
-                    .WithProductIdentificationType(new ProductIdentificationTypes(@this.Strategy.Session).Part).Build();
+                    .WithProductIdentificationType(new ProductIdentificationTypes(@this.Strategy.Transaction).Part).Build();
 
                 @this.AddProductIdentification(partIdentification);
             }
@@ -43,10 +43,10 @@ namespace Allors.Database.Domain
             }
 
             var partId = @this.ProductIdentifications.FirstOrDefault(g => g.ExistProductIdentificationType
-                                                                         && g.ProductIdentificationType.Equals(new ProductIdentificationTypes(@this.Strategy.Session).Part));
+                                                                         && g.ProductIdentificationType.Equals(new ProductIdentificationTypes(@this.Strategy.Transaction).Part));
 
             var goodId = @this.ProductIdentifications.FirstOrDefault(g => g.ExistProductIdentificationType
-                                                                          && g.ProductIdentificationType.Equals(new ProductIdentificationTypes(@this.Strategy.Session).Good));
+                                                                          && g.ProductIdentificationType.Equals(new ProductIdentificationTypes(@this.Strategy.Transaction).Good));
 
             var id = partId ?? goodId;
             return id?.Identification;

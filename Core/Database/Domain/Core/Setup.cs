@@ -10,20 +10,20 @@ namespace Allors.Database.Domain
 
     public partial class Setup
     {
-        private readonly ISession session;
+        private readonly ITransaction transaction;
 
         private readonly Dictionary<IObjectType, IObjects> objectsByObjectType;
         private readonly ObjectsGraph objectsGraph;
 
-        public Setup(ISession session, Config config)
+        public Setup(ITransaction transaction, Config config)
         {
             this.Config = config;
-            this.session = session;
+            this.transaction = transaction;
 
             this.objectsByObjectType = new Dictionary<IObjectType, IObjects>();
-            foreach (var objectType in session.Database.MetaPopulation.DatabaseComposites)
+            foreach (var objectType in transaction.Database.MetaPopulation.DatabaseComposites)
             {
-                this.objectsByObjectType[objectType] = objectType.GetObjects(session);
+                this.objectsByObjectType[objectType] = objectType.GetObjects(transaction);
             }
 
             this.objectsGraph = new ObjectsGraph();
@@ -48,11 +48,11 @@ namespace Allors.Database.Domain
 
             this.OnPostSetup();
 
-            this.session.Derive();
+            this.transaction.Derive();
 
             if (this.Config.SetupSecurity)
             {
-                new Security(this.session).Apply();
+                new Security(this.transaction).Apply();
             }
         }
 

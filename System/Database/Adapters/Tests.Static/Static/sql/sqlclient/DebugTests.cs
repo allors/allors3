@@ -61,13 +61,13 @@ namespace Allors.Database.Adapters.SqlClient
         protected Action[] Inits => this.Profile.Inits;
 
         [Fact]
-        public void SessionCreation()
+        public void TransactionCreation()
         {
             foreach (var init in this.Inits)
             {
                 init();
 
-                using (var session = this.Database.CreateSession())
+                using (var transaction = this.Database.CreateTransaction())
                 {
                     var connectionFactory = (DebugConnectionFactory)this.Database.ConnectionFactory;
 
@@ -88,12 +88,12 @@ namespace Allors.Database.Adapters.SqlClient
                 var m = this.Database.Context().M;
 
                 var connection = (DebugConnection)this.connectionFactory.Create(this.Database);
-                using (var session = this.Database.CreateSession(connection))
+                using (var transaction = this.Database.CreateTransaction(connection))
                 {
 
                     connection.Commands.Clear();
 
-                    var extent = session.Extent<C1>();
+                    var extent = transaction.Extent<C1>();
 
                     foreach (C1 c1 in extent)
                     {
@@ -103,15 +103,15 @@ namespace Allors.Database.Adapters.SqlClient
                     Assert.Equal(2, connection.Commands.Count);
                     Assert.Equal(2, connection.Executions.Count());
 
-                    session.Rollback();
+                    transaction.Rollback();
                     connection.Commands.Clear();
                     this.InvalidateCache();
                 }
 
                 connection = (DebugConnection)this.connectionFactory.Create(this.Database);
-                using (var session = this.Database.CreateSession(connection))
+                using (var transaction = this.Database.CreateTransaction(connection))
                 {
-                    var extent = session.Extent<C1>();
+                    var extent = transaction.Extent<C1>();
 
                     foreach (C1 c1 in extent)
                     {
@@ -136,9 +136,9 @@ namespace Allors.Database.Adapters.SqlClient
                 this.InvalidateCache();
 
                 var connection = (DebugConnection)this.connectionFactory.Create(this.Database);
-                using (var session = this.Database.CreateSession(connection))
+                using (var transaction = this.Database.CreateTransaction(connection))
                 {
-                    C1[] extent = session.Extent<C1>();
+                    C1[] extent = transaction.Extent<C1>();
 
                     foreach (var c1 in extent)
                     {
@@ -152,9 +152,9 @@ namespace Allors.Database.Adapters.SqlClient
                 this.InvalidateCache();
 
                 connection = (DebugConnection)this.connectionFactory.Create(this.Database);
-                using (var session = this.Database.CreateSession(connection))
+                using (var transaction = this.Database.CreateTransaction(connection))
                 {
-                    var extent = session.Extent<C1>();
+                    var extent = transaction.Extent<C1>();
 
                     foreach (C1 c1 in extent)
                     {
@@ -177,9 +177,9 @@ namespace Allors.Database.Adapters.SqlClient
                 this.Populate();
 
                 var connection = (DebugConnection)this.connectionFactory.Create(this.Database);
-                using (var session = this.Database.CreateSession(connection))
+                using (var transaction = this.Database.CreateTransaction(connection))
                 {
-                    var extent = session.Extent<C1>();
+                    var extent = transaction.Extent<C1>();
 
                     var stringBuilder = new StringBuilder();
                     foreach (C1 c1 in extent)
@@ -194,9 +194,9 @@ namespace Allors.Database.Adapters.SqlClient
                 this.InvalidateCache();
 
                 connection = (DebugConnection)this.connectionFactory.Create(this.Database);
-                using (var session = this.Database.CreateSession(connection))
+                using (var transaction = this.Database.CreateTransaction(connection))
                 {
-                    var extent = session.Extent<C1>();
+                    var extent = transaction.Extent<C1>();
 
                     var stringBuilder = new StringBuilder();
                     foreach (C1 c1 in extent)
@@ -222,10 +222,10 @@ namespace Allors.Database.Adapters.SqlClient
                 var c1Prefetcher = new PrefetchPolicyBuilder().WithRule(m.C1.C1AllorsString).Build();
 
                 var connection = (DebugConnection)this.connectionFactory.Create(this.Database);
-                using (var session = this.Database.CreateSession(connection))
+                using (var transaction = this.Database.CreateTransaction(connection))
                 {
-                    var extent = session.Extent<C1>();
-                    session.Prefetch(c1Prefetcher, extent);
+                    var extent = transaction.Extent<C1>();
+                    transaction.Prefetch(c1Prefetcher, extent);
 
                     Assert.Equal(3, connection.Commands.Count);
                     Assert.Equal(3, connection.Executions.Count());
@@ -243,10 +243,10 @@ namespace Allors.Database.Adapters.SqlClient
                 this.InvalidateCache();
 
                 connection = (DebugConnection)this.connectionFactory.Create(this.Database);
-                using (var session = this.Database.CreateSession(connection))
+                using (var transaction = this.Database.CreateTransaction(connection))
                 {
-                    var extent = session.Extent<C1>();
-                    session.Prefetch(c1Prefetcher, extent);
+                    var extent = transaction.Extent<C1>();
+                    transaction.Prefetch(c1Prefetcher, extent);
 
                     var stringBuilder = new StringBuilder();
                     foreach (C1 c1 in extent)
@@ -276,10 +276,10 @@ namespace Allors.Database.Adapters.SqlClient
                         .Build();
 
                 var connection = (DebugConnection)this.connectionFactory.Create(this.Database);
-                using (var session = this.Database.CreateSession(connection))
+                using (var transaction = this.Database.CreateTransaction(connection))
                 {
-                    var extent = session.Extent<C1>();
-                    session.Prefetch(c1Prefetcher, extent);
+                    var extent = transaction.Extent<C1>();
+                    transaction.Prefetch(c1Prefetcher, extent);
 
                     Assert.Equal(5, connection.Commands.Count);
                     Assert.Equal(6, connection.Executions.Count());
@@ -300,10 +300,10 @@ namespace Allors.Database.Adapters.SqlClient
                 this.InvalidateCache();
 
                 connection = (DebugConnection)this.connectionFactory.Create(this.Database);
-                using (var session = this.Database.CreateSession(connection))
+                using (var transaction = this.Database.CreateTransaction(connection))
                 {
-                    var extent = session.Extent<C1>();
-                    session.Prefetch(c1Prefetcher, extent);
+                    var extent = transaction.Extent<C1>();
+                    transaction.Prefetch(c1Prefetcher, extent);
 
                     var stringBuilder = new StringBuilder();
                     foreach (C1 c1 in extent)
@@ -337,10 +337,10 @@ namespace Allors.Database.Adapters.SqlClient
                         .Build();
 
                 var connection = (DebugConnection)this.connectionFactory.Create(this.Database);
-                using (var session = this.Database.CreateSession(connection))
+                using (var transaction = this.Database.CreateTransaction(connection))
                 {
-                    var extent = session.Extent<C1>();
-                    session.Prefetch(c1Prefetcher, extent);
+                    var extent = transaction.Extent<C1>();
+                    transaction.Prefetch(c1Prefetcher, extent);
 
                     Assert.Equal(5, connection.Commands.Count);
                     Assert.Equal(6, connection.Executions.Count());
@@ -359,7 +359,7 @@ namespace Allors.Database.Adapters.SqlClient
                     Assert.Equal(5, connection.Commands.Count);
                     Assert.Equal(6, connection.Executions.Count());
 
-                    session.Prefetch(c1Prefetcher, extent);
+                    transaction.Prefetch(c1Prefetcher, extent);
 
                     stringBuilder = new StringBuilder();
                     foreach (C1 c1 in extent)
@@ -379,10 +379,10 @@ namespace Allors.Database.Adapters.SqlClient
                 this.InvalidateCache();
 
                 connection = (DebugConnection)this.connectionFactory.Create(this.Database);
-                using (var session = this.Database.CreateSession(connection))
+                using (var transaction = this.Database.CreateTransaction(connection))
                 {
-                    var extent = session.Extent<C1>();
-                    session.Prefetch(c1Prefetcher, extent);
+                    var extent = transaction.Extent<C1>();
+                    transaction.Prefetch(c1Prefetcher, extent);
 
                     var stringBuilder = new StringBuilder();
                     foreach (C1 c1 in extent)
@@ -404,9 +404,9 @@ namespace Allors.Database.Adapters.SqlClient
         {
             var m = this.Database.Context().M;
 
-            using (var session = this.Database.CreateSession())
+            using (var transaction = this.Database.CreateTransaction())
             {
-                var population = new TestPopulation(session);
+                var population = new TestPopulation(transaction);
 
                 this.c1A = population.C1A;
                 this.c1B = population.C1B;
@@ -428,11 +428,11 @@ namespace Allors.Database.Adapters.SqlClient
                 this.c4C = population.C4C;
                 this.c4D = population.C4D;
 
-                session.Commit();
+                transaction.Commit();
             }
         }
 
-        protected ISession CreateSession() => this.Profile.Database.CreateSession();
+        protected ITransaction CreateTransaction() => this.Profile.Database.CreateTransaction();
 
         private void InvalidateCache()
         {

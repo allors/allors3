@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
 
         public RequestState Rejected => this.Cache[RejectedId];
 
-        private UniquelyIdentifiableCache<RequestState> Cache => this.cache ??= new UniquelyIdentifiableCache<RequestState>(this.Session);
+        private UniquelyIdentifiableCache<RequestState> Cache => this.cache ??= new UniquelyIdentifiableCache<RequestState>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

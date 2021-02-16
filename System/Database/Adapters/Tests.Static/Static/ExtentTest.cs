@@ -49,7 +49,7 @@ namespace Allors.Database.Adapters
 
         protected abstract IProfile Profile { get; }
 
-        protected ISession Session => this.Profile.Session;
+        protected ITransaction Transaction => this.Profile.Transaction;
 
         protected Action[] Markers => this.Profile.Markers;
 
@@ -66,10 +66,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 var all = extent.Filter.AddAnd();
                 all.AddGreaterThan(m.C1.C1AllorsInteger, 0);
                 all.AddLessThan(m.C1.C1AllorsInteger, 2);
@@ -93,7 +93,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4D));
 
                 // Interface
-                (extent = this.Session.Extent(m.I12.ObjectType)).Filter.AddAnd()
+                (extent = this.Transaction.Extent(m.I12.ObjectType)).Filter.AddAnd()
                     .AddGreaterThan(m.I12.I12AllorsInteger, 0)
                     .AddLessThan(m.I12.I12AllorsInteger, 2);
 
@@ -116,7 +116,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4D));
 
                 // Super Interface
-                (extent = this.Session.Extent(m.S1234.ObjectType)).Filter.AddAnd()
+                (extent = this.Transaction.Extent(m.S1234.ObjectType)).Filter.AddAnd()
                     .AddGreaterThan(m.S1234.S1234AllorsInteger, 0)
                     .AddLessThan(m.S1234.S1234AllorsInteger, 2);
 
@@ -147,10 +147,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 var all = extent.Filter.AddAnd();
                 all.AddLessThan(m.C1.C1AllorsInteger, 2);
 
@@ -173,7 +173,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4D));
 
                 // Interface
-                (extent = this.Session.Extent(m.I12.ObjectType)).Filter.AddAnd().AddLessThan(m.I12.I12AllorsInteger, 2);
+                (extent = this.Transaction.Extent(m.I12.ObjectType)).Filter.AddAnd().AddLessThan(m.I12.I12AllorsInteger, 2);
 
                 Assert.Equal(2, extent.Count);
                 Assert.False(extent.Contains(this.c1A));
@@ -194,7 +194,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4D));
 
                 // Super Interface
-                (extent = this.Session.Extent(m.S1234.ObjectType)).Filter.AddAnd()
+                (extent = this.Transaction.Extent(m.S1234.ObjectType)).Filter.AddAnd()
                     .AddLessThan(m.S1234.S1234AllorsInteger, 2);
 
                 Assert.Equal(4, extent.Count);
@@ -224,24 +224,24 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var useEnumerable in TrueFalse)
                 {
                     foreach (var useOperator in this.UseOperator)
                     {
-                        var inExtent = this.Session.Extent(m.C1.ObjectType);
+                        var inExtent = this.Transaction.Extent(m.C1.ObjectType);
                         inExtent.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
                         if (useOperator)
                         {
-                            var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                            var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                             inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                            var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                            var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                             inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                            inExtent = this.Session.Union(inExtentA, inExtentB);
+                            inExtent = this.Transaction.Union(inExtentA, inExtentB);
                         }
 
-                        var extent = this.Session.Extent(m.C2.ObjectType);
+                        var extent = this.Transaction.Extent(m.C2.ObjectType);
                         if (useEnumerable)
                         {
                             var enumerable = (IEnumerable<IObject>)(Extent<IObject>)inExtent;
@@ -259,15 +259,15 @@ namespace Allors.Database.Adapters
                         this.AssertC4(extent, false, false, false, false);
 
                         // Full
-                        inExtent = this.Session.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Extent(m.C1.ObjectType);
                         if (useOperator)
                         {
-                            var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                            var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                            inExtent = this.Session.Union(inExtentA, inExtentB);
+                            var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                            var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                            inExtent = this.Transaction.Union(inExtentA, inExtentB);
                         }
 
-                        extent = this.Session.Extent(m.C2.ObjectType);
+                        extent = this.Transaction.Extent(m.C2.ObjectType);
                         if (useEnumerable)
                         {
                             var enumerable = (IEnumerable<IObject>)(Extent<IObject>)inExtent;
@@ -285,18 +285,18 @@ namespace Allors.Database.Adapters
                         this.AssertC4(extent, false, false, false, false);
 
                         // Filtered
-                        inExtent = this.Session.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Extent(m.C1.ObjectType);
                         inExtent.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
                         if (useOperator)
                         {
-                            var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                            var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                             inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                            var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                            var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                             inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                            inExtent = this.Session.Union(inExtentA, inExtentB);
+                            inExtent = this.Transaction.Union(inExtentA, inExtentB);
                         }
 
-                        extent = this.Session.Extent(m.C2.ObjectType);
+                        extent = this.Transaction.Extent(m.C2.ObjectType);
                         if (useEnumerable)
                         {
                             var enumerable = (IEnumerable<IObject>)(Extent<IObject>)inExtent;
@@ -315,18 +315,18 @@ namespace Allors.Database.Adapters
 
                         // ContainedIn Extent over Interface
                         // Empty
-                        inExtent = this.Session.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Extent(m.I12.ObjectType);
                         inExtent.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
                         if (useOperator)
                         {
-                            var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                            var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                             inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                            var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                            var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                             inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                            inExtent = this.Session.Union(inExtentA, inExtentB);
+                            inExtent = this.Transaction.Union(inExtentA, inExtentB);
                         }
 
-                        extent = this.Session.Extent(m.C2.ObjectType);
+                        extent = this.Transaction.Extent(m.C2.ObjectType);
                         if (useEnumerable)
                         {
                             var enumerable = (IEnumerable<IObject>)(Extent<IObject>)inExtent;
@@ -344,15 +344,15 @@ namespace Allors.Database.Adapters
                         this.AssertC4(extent, false, false, false, false);
 
                         // Full
-                        inExtent = this.Session.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Extent(m.I12.ObjectType);
                         if (useOperator)
                         {
-                            var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                            var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                            inExtent = this.Session.Union(inExtentA, inExtentB);
+                            var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                            var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                            inExtent = this.Transaction.Union(inExtentA, inExtentB);
                         }
 
-                        extent = this.Session.Extent(m.C2.ObjectType);
+                        extent = this.Transaction.Extent(m.C2.ObjectType);
                         if (useEnumerable)
                         {
                             var enumerable = (IEnumerable<IObject>)(Extent<IObject>)inExtent;
@@ -370,18 +370,18 @@ namespace Allors.Database.Adapters
                         this.AssertC4(extent, false, false, false, false);
 
                         // Filtered
-                        inExtent = this.Session.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Extent(m.I12.ObjectType);
                         inExtent.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
                         if (useOperator)
                         {
-                            var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                            var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                             inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                            var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                            var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                             inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                            inExtent = this.Session.Union(inExtentA, inExtentB);
+                            inExtent = this.Transaction.Union(inExtentA, inExtentB);
                         }
 
-                        extent = this.Session.Extent(m.C2.ObjectType);
+                        extent = this.Transaction.Extent(m.C2.ObjectType);
                         if (useEnumerable)
                         {
                             var enumerable = (IEnumerable<IObject>)(Extent<IObject>)inExtent;
@@ -402,18 +402,18 @@ namespace Allors.Database.Adapters
 
                         // ContainedIn Extent over Class
                         // Empty
-                        inExtent = this.Session.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Extent(m.C1.ObjectType);
                         inExtent.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
                         if (useOperator)
                         {
-                            var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                            var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                             inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                            var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                            var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                             inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                            inExtent = this.Session.Union(inExtentA, inExtentB);
+                            inExtent = this.Transaction.Union(inExtentA, inExtentB);
                         }
 
-                        extent = this.Session.Extent(m.C2.ObjectType);
+                        extent = this.Transaction.Extent(m.C2.ObjectType);
                         if (useEnumerable)
                         {
                             var enumerable = (IEnumerable<IObject>)(Extent<IObject>)inExtent;
@@ -431,15 +431,15 @@ namespace Allors.Database.Adapters
                         this.AssertC4(extent, false, false, false, false);
 
                         // Full
-                        inExtent = this.Session.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Extent(m.C1.ObjectType);
                         if (useOperator)
                         {
-                            var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                            var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                            inExtent = this.Session.Union(inExtentA, inExtentB);
+                            var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                            var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                            inExtent = this.Transaction.Union(inExtentA, inExtentB);
                         }
 
-                        extent = this.Session.Extent(m.C2.ObjectType);
+                        extent = this.Transaction.Extent(m.C2.ObjectType);
                         if (useEnumerable)
                         {
                             var enumerable = (IEnumerable<IObject>)(Extent<IObject>)inExtent;
@@ -457,18 +457,18 @@ namespace Allors.Database.Adapters
                         this.AssertC4(extent, false, false, false, false);
 
                         // Filtered
-                        inExtent = this.Session.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Extent(m.C1.ObjectType);
                         inExtent.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
                         if (useOperator)
                         {
-                            var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                            var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                             inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                            var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                            var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                             inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                            inExtent = this.Session.Union(inExtentA, inExtentB);
+                            inExtent = this.Transaction.Union(inExtentA, inExtentB);
                         }
 
-                        extent = this.Session.Extent(m.C2.ObjectType);
+                        extent = this.Transaction.Extent(m.C2.ObjectType);
                         if (useEnumerable)
                         {
                             var enumerable = (IEnumerable<IObject>)(Extent<IObject>)inExtent;
@@ -487,18 +487,18 @@ namespace Allors.Database.Adapters
 
                         // ContainedIn Extent over Interface
                         // Empty
-                        inExtent = this.Session.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Extent(m.I12.ObjectType);
                         inExtent.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
                         if (useOperator)
                         {
-                            var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                            var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                             inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                            var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                            var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                             inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                            inExtent = this.Session.Union(inExtentA, inExtentB);
+                            inExtent = this.Transaction.Union(inExtentA, inExtentB);
                         }
 
-                        extent = this.Session.Extent(m.C2.ObjectType);
+                        extent = this.Transaction.Extent(m.C2.ObjectType);
                         if (useEnumerable)
                         {
                             var enumerable = (IEnumerable<IObject>)(Extent<IObject>)inExtent;
@@ -516,15 +516,15 @@ namespace Allors.Database.Adapters
                         this.AssertC4(extent, false, false, false, false);
 
                         // Full
-                        inExtent = this.Session.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Extent(m.I12.ObjectType);
                         if (useOperator)
                         {
-                            var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                            var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                            inExtent = this.Session.Union(inExtentA, inExtentB);
+                            var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                            var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                            inExtent = this.Transaction.Union(inExtentA, inExtentB);
                         }
 
-                        extent = this.Session.Extent(m.C2.ObjectType);
+                        extent = this.Transaction.Extent(m.C2.ObjectType);
                         if (useEnumerable)
                         {
                             var enumerable = (IEnumerable<IObject>)(Extent<IObject>)inExtent;
@@ -542,18 +542,18 @@ namespace Allors.Database.Adapters
                         this.AssertC4(extent, false, false, false, false);
 
                         // Filtered
-                        inExtent = this.Session.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Extent(m.I12.ObjectType);
                         inExtent.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
                         if (useOperator)
                         {
-                            var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                            var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                             inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                            var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                            var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                             inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                            inExtent = this.Session.Union(inExtentA, inExtentB);
+                            inExtent = this.Transaction.Union(inExtentA, inExtentB);
                         }
 
-                        extent = this.Session.Extent(m.C2.ObjectType);
+                        extent = this.Transaction.Extent(m.C2.ObjectType);
                         if (useEnumerable)
                         {
                             var enumerable = (IEnumerable<IObject>)(Extent<IObject>)inExtent;
@@ -572,18 +572,18 @@ namespace Allors.Database.Adapters
 
                         // ContainedIn Extent over Disjoint Interfaces
                         // Empty
-                        inExtent = this.Session.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Extent(m.I12.ObjectType);
                         inExtent.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
                         if (useOperator)
                         {
-                            var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                            var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                             inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                            var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                            var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                             inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                            inExtent = this.Session.Union(inExtentA, inExtentB);
+                            inExtent = this.Transaction.Union(inExtentA, inExtentB);
                         }
 
-                        extent = this.Session.Extent(m.I34.ObjectType);
+                        extent = this.Transaction.Extent(m.I34.ObjectType);
                         if (useEnumerable)
                         {
                             extent.Filter.AddContainedIn(m.I34.I12sWhereI12I34many2many, (IEnumerable<IObject>)(Extent<IObject>)inExtent);
@@ -600,15 +600,15 @@ namespace Allors.Database.Adapters
                         this.AssertC4(extent, false, false, false, false);
 
                         // Full
-                        inExtent = this.Session.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Extent(m.I12.ObjectType);
                         if (useOperator)
                         {
-                            var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                            var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                            inExtent = this.Session.Union(inExtentA, inExtentB);
+                            var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                            var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                            inExtent = this.Transaction.Union(inExtentA, inExtentB);
                         }
 
-                        extent = this.Session.Extent(m.I34.ObjectType);
+                        extent = this.Transaction.Extent(m.I34.ObjectType);
                         if (useEnumerable)
                         {
                             var enumerable = (IEnumerable<IObject>)(Extent<IObject>)inExtent;
@@ -626,18 +626,18 @@ namespace Allors.Database.Adapters
                         this.AssertC4(extent, true, true, true, true);
 
                         // Filtered
-                        inExtent = this.Session.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Extent(m.I12.ObjectType);
                         inExtent.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
                         if (useOperator)
                         {
-                            var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                            var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                             inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                            var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                            var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                             inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                            inExtent = this.Session.Union(inExtentA, inExtentB);
+                            inExtent = this.Transaction.Union(inExtentA, inExtentB);
                         }
 
-                        extent = this.Session.Extent(m.I34.ObjectType);
+                        extent = this.Transaction.Extent(m.I34.ObjectType);
                         if (useEnumerable)
                         {
                             var enumerable = (IEnumerable<IObject>)(Extent<IObject>)inExtent;
@@ -665,10 +665,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C2.ObjectType);
+                var extent = this.Transaction.Extent(m.C2.ObjectType);
                 extent.Filter.AddContains(m.C2.C1sWhereC1C2many2many, this.c1C);
 
                 Assert.Equal(2, extent.Count);
@@ -689,7 +689,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4C));
                 Assert.False(extent.Contains(this.c4D));
 
-                extent = this.Session.Extent(m.C2.ObjectType);
+                extent = this.Transaction.Extent(m.C2.ObjectType);
                 extent.Filter.AddContains(m.C2.C1sWhereC1C2many2many, this.c1C);
                 extent.Filter.AddContains(m.C2.C1sWhereC1C2many2many, this.c1D);
 
@@ -712,7 +712,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4D));
 
                 // Interface
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddContains(m.I12.C1sWhereC1I12many2many, this.c1C);
 
                 Assert.Equal(2, extent.Count);
@@ -734,7 +734,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4D));
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddContains(m.S1234.S1234sWhereS1234many2many, this.c1B);
 
                 Assert.Equal(2, extent.Count);
@@ -764,10 +764,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C2.ObjectType);
+                var extent = this.Transaction.Extent(m.C2.ObjectType);
                 extent.Filter.AddExists(m.C2.C1sWhereC1C2many2many);
 
                 Assert.Equal(3, extent.Count);
@@ -789,7 +789,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4D));
 
                 // Interface
-                extent = this.Session.Extent(m.I2.ObjectType);
+                extent = this.Transaction.Extent(m.I2.ObjectType);
                 extent.Filter.AddExists(m.I2.I1sWhereI1I2many2many);
 
                 Assert.Equal(3, extent.Count);
@@ -811,7 +811,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4D));
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddExists(m.S1234.S1234sWhereS1234many2many);
 
                 Assert.Equal(10, extent.Count);
@@ -833,7 +833,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4D));
 
                 // Class - Wrong RelationType
-                extent = this.Session.Extent(m.C2.ObjectType);
+                extent = this.Transaction.Extent(m.C2.ObjectType);
 
                 var exception = false;
                 try
@@ -848,7 +848,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Interface - Wrong RelationType
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
 
                 exception = false;
                 try
@@ -863,7 +863,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Super Interface - Wrong RelationType
-                extent = this.Session.Extent(m.S12.ObjectType);
+                extent = this.Transaction.Extent(m.S12.ObjectType);
 
                 exception = false;
                 try
@@ -886,9 +886,9 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -898,18 +898,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Class
                     // Empty
-                    var inExtent = this.Session.Extent(m.C1.ObjectType);
+                    var inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    var extent = this.Session.Extent(m.C2.ObjectType);
+                    var extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.C2.C1sWhereC1C2many2one, inExtent);
 
                     Assert.Empty(extent);
@@ -919,15 +919,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.C2.C1sWhereC1C2many2one, inExtent);
 
                     Assert.Equal(2, extent.Count);
@@ -937,18 +937,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.C2.C1sWhereC1C2many2one, inExtent);
 
                     Assert.Single(extent);
@@ -959,18 +959,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Interface
                     // Empty
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.C2.C1sWhereC1C2many2one, inExtent);
 
                     Assert.Empty(extent);
@@ -980,15 +980,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.C2.C1sWhereC1C2many2one, inExtent);
 
                     Assert.Equal(2, extent.Count);
@@ -998,18 +998,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.C2.C1sWhereC1C2many2one, inExtent);
 
                     Assert.Single(extent);
@@ -1022,18 +1022,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Class
                     // Empty
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.I12.C1sWhereC1I12many2one, inExtent);
 
                     Assert.Empty(extent);
@@ -1043,15 +1043,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.I12.C1sWhereC1I12many2one, inExtent);
 
                     Assert.Single(extent);
@@ -1061,18 +1061,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.I12.C1sWhereC1I12many2one, inExtent);
 
                     Assert.Empty(extent);
@@ -1083,18 +1083,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Interface
                     // Empty
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.I12.C1sWhereC1I12many2one, inExtent);
 
                     Assert.Empty(extent);
@@ -1104,15 +1104,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.I12.C1sWhereC1I12many2one, inExtent);
 
                     Assert.Single(extent);
@@ -1122,18 +1122,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.I12.C1sWhereC1I12many2one, inExtent);
 
                     Assert.Empty(extent);
@@ -1146,18 +1146,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Interface
                     // Empty
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.I34.ObjectType);
+                    extent = this.Transaction.Extent(m.I34.ObjectType);
                     extent.Filter.AddContainedIn(m.I34.I12sWhereI12I34many2one, inExtent);
 
                     Assert.Empty(extent);
@@ -1167,15 +1167,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.I34.ObjectType);
+                    extent = this.Transaction.Extent(m.I34.ObjectType);
                     extent.Filter.AddContainedIn(m.I34.I12sWhereI12I34many2one, inExtent);
 
                     Assert.Equal(2, extent.Count);
@@ -1185,18 +1185,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, true, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.I34.ObjectType);
+                    extent = this.Transaction.Extent(m.I34.ObjectType);
                     extent.Filter.AddContainedIn(m.I34.I12sWhereI12I34many2one, inExtent);
 
                     Assert.Equal(2, extent.Count);
@@ -1215,10 +1215,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddContains(m.C1.C1sWhereC1C1many2one, this.c1C);
 
                 Assert.Single(extent);
@@ -1239,7 +1239,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4C));
                 Assert.False(extent.Contains(this.c4D));
 
-                extent = this.Session.Extent(m.C2.ObjectType);
+                extent = this.Transaction.Extent(m.C2.ObjectType);
                 extent.Filter.AddContains(m.C2.C1sWhereC1C2many2one, this.c1C);
 
                 Assert.Single(extent);
@@ -1260,7 +1260,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4C));
                 Assert.False(extent.Contains(this.c4D));
 
-                extent = this.Session.Extent(m.C4.ObjectType);
+                extent = this.Transaction.Extent(m.C4.ObjectType);
                 extent.Filter.AddContains(m.C4.C3sWhereC3C4many2one, this.c3C);
 
                 Assert.Single(extent);
@@ -1282,7 +1282,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4D));
 
                 // Interface
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddContains(m.I12.C1sWhereC1I12many2one, this.c1C);
 
                 Assert.Single(extent);
@@ -1314,7 +1314,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -1324,18 +1324,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Class
                     // Empty
-                    var inExtent = this.Session.Extent(m.C1.ObjectType);
+                    var inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    var extent = this.Session.Extent(m.C2.ObjectType);
+                    var extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.C2.C1WhereC1C2one2many, inExtent);
 
                     Assert.Empty(extent);
@@ -1345,15 +1345,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.C2.C1WhereC1C2one2many, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -1363,18 +1363,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.C2.C1WhereC1C2one2many, inExtent);
 
                     Assert.Single(extent);
@@ -1385,18 +1385,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Interface
                     // Empty
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.C2.C1WhereC1C2one2many, inExtent);
 
                     Assert.Empty(extent);
@@ -1406,15 +1406,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.C2.C1WhereC1C2one2many, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -1424,18 +1424,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.C2.C1WhereC1C2one2many, inExtent);
 
                     Assert.Single(extent);
@@ -1448,18 +1448,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Class
                     // Empty
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.I12.C1WhereC1I12one2many, inExtent);
 
                     Assert.Empty(extent);
@@ -1469,15 +1469,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.I12.C1WhereC1I12one2many, inExtent);
 
                     Assert.Equal(2, extent.Count);
@@ -1487,18 +1487,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.I12.C1WhereC1I12one2many, inExtent);
 
                     Assert.Empty(extent);
@@ -1509,18 +1509,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Interface
                     // Empty
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.I12.C1WhereC1I12one2many, inExtent);
 
                     Assert.Empty(extent);
@@ -1530,15 +1530,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.I12.C1WhereC1I12one2many, inExtent);
 
                     Assert.Equal(2, extent.Count);
@@ -1548,18 +1548,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.I12.C1WhereC1I12one2many, inExtent);
 
                     Assert.Empty(extent);
@@ -1578,10 +1578,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C2.ObjectType);
+                var extent = this.Transaction.Extent(m.C2.ObjectType);
                 extent.Filter.AddEquals(m.C2.C1WhereC1C2one2many, this.c1B);
 
                 Assert.Single(extent);
@@ -1590,7 +1590,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C2.ObjectType);
+                extent = this.Transaction.Extent(m.C2.ObjectType);
                 extent.Filter.AddEquals(m.C2.C1WhereC1C2one2many, this.c1C);
 
                 Assert.Equal(2, extent.Count);
@@ -1600,7 +1600,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Interface
-                extent = this.Session.Extent(m.I2.ObjectType);
+                extent = this.Transaction.Extent(m.I2.ObjectType);
                 extent.Filter.AddEquals(m.I2.I1WhereI1I2one2many, this.c1B);
 
                 Assert.Single(extent);
@@ -1609,7 +1609,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.I2.ObjectType);
+                extent = this.Transaction.Extent(m.I2.ObjectType);
                 extent.Filter.AddEquals(m.I2.I1WhereI1I2one2many, this.c1C);
 
                 Assert.Equal(2, extent.Count);
@@ -1619,7 +1619,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddEquals(m.S1234.S1234WhereS1234one2many, this.c1B);
 
                 Assert.Single(extent);
@@ -1628,7 +1628,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddEquals(m.S1234.S1234WhereS1234one2many, this.c3C);
 
                 Assert.Equal(2, extent.Count);
@@ -1638,7 +1638,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Class - Wrong RelationType
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -1653,7 +1653,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Interface - Wrong RelationType
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
 
                 exception = false;
                 try
@@ -1668,7 +1668,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Super Interface - Wrong RelationType
-                extent = this.Session.Extent(m.S12.ObjectType);
+                extent = this.Transaction.Extent(m.S12.ObjectType);
 
                 exception = false;
                 try
@@ -1691,10 +1691,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C2.ObjectType);
+                var extent = this.Transaction.Extent(m.C2.ObjectType);
                 extent.Filter.AddExists(m.C2.C1WhereC1C2one2many);
 
                 Assert.Equal(3, extent.Count);
@@ -1716,7 +1716,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4D));
 
                 // Interface
-                extent = this.Session.Extent(m.I2.ObjectType);
+                extent = this.Transaction.Extent(m.I2.ObjectType);
                 extent.Filter.AddExists(m.I2.I1WhereI1I2one2many);
 
                 Assert.Equal(3, extent.Count);
@@ -1738,7 +1738,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4D));
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddExists(m.S1234.S1234WhereS1234one2many);
 
                 Assert.Equal(3, extent.Count);
@@ -1760,7 +1760,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4D));
 
                 // Class - Wrong RelationType
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -1775,7 +1775,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Interface - Wrong RelationType
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
 
                 exception = false;
                 try
@@ -1790,7 +1790,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Super Interface - Wrong RelationType
-                extent = this.Session.Extent(m.S12.ObjectType);
+                extent = this.Transaction.Extent(m.S12.ObjectType);
 
                 exception = false;
                 try
@@ -1813,10 +1813,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C2.ObjectType);
+                var extent = this.Transaction.Extent(m.C2.ObjectType);
                 extent.Filter.AddInstanceof(m.C2.C1WhereC1C2one2many, m.C1.ObjectType);
 
                 Assert.Equal(3, extent.Count);
@@ -1838,7 +1838,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4D));
 
                 // Interface
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddInstanceof(m.I12.C1WhereC1I12one2many, m.C1.ObjectType);
 
                 Assert.Equal(3, extent.Count);
@@ -1860,7 +1860,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4D));
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddInstanceof(m.S1234.S1234WhereS1234one2many, m.C1.ObjectType);
 
                 Assert.Single(extent);
@@ -1892,7 +1892,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -1900,15 +1900,15 @@ namespace Allors.Database.Adapters
                     // RelationType from Class to Class
 
                     // ContainedIn Extent over Class
-                    var inExtent = this.Session.Extent(m.C1.ObjectType);
+                    var inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    var extent = this.Session.Extent(m.C1.ObjectType);
+                    var extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1WhereC1C1one2one, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -1929,7 +1929,7 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4C));
                     Assert.False(extent.Contains(this.c4D));
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.C2.C1WhereC1C2one2one, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -1950,15 +1950,15 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4C));
                     Assert.False(extent.Contains(this.c4D));
 
-                    inExtent = this.Session.Extent(m.C3.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C3.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C3.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C3.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C3.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C3.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C4.ObjectType);
+                    extent = this.Transaction.Extent(m.C4.ObjectType);
                     extent.Filter.AddContainedIn(m.C4.C3WhereC3C4one2one, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -1980,15 +1980,15 @@ namespace Allors.Database.Adapters
                     Assert.True(extent.Contains(this.c4D));
 
                     // ContainedIn Extent over Interface
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1WhereC1C1one2one, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -2009,7 +2009,7 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4C));
                     Assert.False(extent.Contains(this.c4D));
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.C2.C1WhereC1C2one2one, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -2030,15 +2030,15 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4C));
                     Assert.False(extent.Contains(this.c4D));
 
-                    inExtent = this.Session.Extent(m.I34.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I34.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I34.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I34.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I34.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I34.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C4.ObjectType);
+                    extent = this.Transaction.Extent(m.C4.ObjectType);
                     extent.Filter.AddContainedIn(m.C4.C3WhereC3C4one2one, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -2062,15 +2062,15 @@ namespace Allors.Database.Adapters
                     // RelationType from Interface to Class
 
                     // ContainedIn Extent over Class
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.C2.I12WhereI12C2one2one, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -2092,15 +2092,15 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4D));
 
                     // ContainedIn Extent over Interface
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.C2.I12WhereI12C2one2one, inExtent);
 
                     Assert.Equal(4, extent.Count);
@@ -2119,10 +2119,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddEquals(m.C1.C1WhereC1C1one2one, this.c1B);
 
                 Assert.Single(extent);
@@ -2143,7 +2143,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4C));
                 Assert.False(extent.Contains(this.c4D));
 
-                extent = this.Session.Extent(m.C2.ObjectType);
+                extent = this.Transaction.Extent(m.C2.ObjectType);
                 extent.Filter.AddEquals(m.C2.C1WhereC1C2one2one, this.c1B);
 
                 Assert.Single(extent);
@@ -2164,7 +2164,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4C));
                 Assert.False(extent.Contains(this.c4D));
 
-                extent = this.Session.Extent(m.C4.ObjectType);
+                extent = this.Transaction.Extent(m.C4.ObjectType);
                 extent.Filter.AddEquals(m.C4.C3WhereC3C4one2one, this.c3B);
 
                 Assert.Single(extent);
@@ -2186,7 +2186,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4D));
 
                 // Interface
-                extent = this.Session.Extent(m.I2.ObjectType);
+                extent = this.Transaction.Extent(m.I2.ObjectType);
                 extent.Filter.AddEquals(m.I2.I1WhereI1I2one2one, this.c1B);
 
                 Assert.Single(extent);
@@ -2208,7 +2208,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4D));
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddEquals(m.S1234.S1234WhereS1234one2one, this.c1C);
 
                 Assert.Single(extent);
@@ -2230,7 +2230,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4D));
 
                 // Class - Wrong RelationType
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -2245,7 +2245,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Interface - Wrong RelationType
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
 
                 exception = false;
                 try
@@ -2260,7 +2260,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Super Interface - Wrong RelationType
-                extent = this.Session.Extent(m.S12.ObjectType);
+                extent = this.Transaction.Extent(m.S12.ObjectType);
 
                 exception = false;
                 try
@@ -2283,10 +2283,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddExists(m.C1.C1WhereC1C1one2one);
 
                 Assert.Equal(3, extent.Count);
@@ -2307,7 +2307,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4C));
                 Assert.False(extent.Contains(this.c4D));
 
-                extent = this.Session.Extent(m.C2.ObjectType);
+                extent = this.Transaction.Extent(m.C2.ObjectType);
                 extent.Filter.AddExists(m.C2.C1WhereC1C2one2one);
 
                 Assert.Equal(3, extent.Count);
@@ -2328,7 +2328,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4C));
                 Assert.False(extent.Contains(this.c4D));
 
-                extent = this.Session.Extent(m.C4.ObjectType);
+                extent = this.Transaction.Extent(m.C4.ObjectType);
                 extent.Filter.AddExists(m.C4.C3WhereC3C4one2one);
 
                 Assert.Equal(3, extent.Count);
@@ -2350,7 +2350,7 @@ namespace Allors.Database.Adapters
                 Assert.True(extent.Contains(this.c4D));
 
                 // Interface
-                extent = this.Session.Extent(m.I2.ObjectType);
+                extent = this.Transaction.Extent(m.I2.ObjectType);
                 extent.Filter.AddExists(m.I2.I1WhereI1I2one2one);
 
                 Assert.Equal(3, extent.Count);
@@ -2372,7 +2372,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4D));
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddExists(m.S1234.S1234WhereS1234one2one);
 
                 Assert.Equal(9, extent.Count);
@@ -2394,7 +2394,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4D));
 
                 // Class - Wrong RelationType
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -2409,7 +2409,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Interface - Wrong RelationType
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
 
                 exception = false;
                 try
@@ -2424,7 +2424,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Super Interface - Wrong RelationType
-                extent = this.Session.Extent(m.S12.ObjectType);
+                extent = this.Transaction.Extent(m.S12.ObjectType);
 
                 exception = false;
                 try
@@ -2447,12 +2447,12 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddInstanceof(m.C1.C1WhereC1C1one2one, m.C1.ObjectType);
 
                 Assert.Equal(3, extent.Count);
@@ -2473,7 +2473,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4C));
                 Assert.False(extent.Contains(this.c4D));
 
-                extent = this.Session.Extent(m.C2.ObjectType);
+                extent = this.Transaction.Extent(m.C2.ObjectType);
                 extent.Filter.AddInstanceof(m.C2.C1WhereC1C2one2one, m.C1.ObjectType);
 
                 Assert.Equal(3, extent.Count);
@@ -2494,7 +2494,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4C));
                 Assert.False(extent.Contains(this.c4D));
 
-                extent = this.Session.Extent(m.C4.ObjectType);
+                extent = this.Transaction.Extent(m.C4.ObjectType);
                 extent.Filter.AddInstanceof(m.C4.C3WhereC3C4one2one, m.C3.ObjectType);
 
                 Assert.Equal(3, extent.Count);
@@ -2516,7 +2516,7 @@ namespace Allors.Database.Adapters
                 Assert.True(extent.Contains(this.c4D));
 
                 // Interface
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddInstanceof(m.I12.C1WhereC1I12one2one, m.C1.ObjectType);
 
                 Assert.Equal(3, extent.Count);
@@ -2538,7 +2538,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4D));
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddInstanceof(m.S1234.S1234WhereS1234one2one, m.C1.ObjectType);
 
                 Assert.Equal(3, extent.Count);
@@ -2562,7 +2562,7 @@ namespace Allors.Database.Adapters
                 // Interface
 
                 // Class
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddInstanceof(m.C1.C1WhereC1C1one2one, m.I1.ObjectType);
 
                 Assert.Equal(3, extent.Count);
@@ -2583,7 +2583,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4C));
                 Assert.False(extent.Contains(this.c4D));
 
-                extent = this.Session.Extent(m.C2.ObjectType);
+                extent = this.Transaction.Extent(m.C2.ObjectType);
                 extent.Filter.AddInstanceof(m.C2.C1WhereC1C2one2one, m.I1.ObjectType);
 
                 Assert.Equal(3, extent.Count);
@@ -2604,7 +2604,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4C));
                 Assert.False(extent.Contains(this.c4D));
 
-                extent = this.Session.Extent(m.C4.ObjectType);
+                extent = this.Transaction.Extent(m.C4.ObjectType);
                 extent.Filter.AddInstanceof(m.C4.C3WhereC3C4one2one, m.I3.ObjectType);
 
                 Assert.Equal(3, extent.Count);
@@ -2626,7 +2626,7 @@ namespace Allors.Database.Adapters
                 Assert.True(extent.Contains(this.c4D));
 
                 // Interface
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddInstanceof(m.I12.C1WhereC1I12one2one, m.I1.ObjectType);
 
                 Assert.Equal(3, extent.Count);
@@ -2648,7 +2648,7 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4D));
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddInstanceof(m.S1234.S1234WhereS1234one2one, m.S1234.ObjectType);
 
                 Assert.Equal(9, extent.Count);
@@ -2680,10 +2680,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Like and any
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 extent.Filter.AddLike(m.C1.C1AllorsString, "%nada%");
 
@@ -2698,7 +2698,7 @@ namespace Allors.Database.Adapters
                 extent.ToArray(typeof(C1));
 
                 // Role + Value for Shared Interface
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddExists(m.C1.C1C1one2manies);
 
                 extent.Filter.AddExists(m.I12.I12AllorsInteger);
@@ -2727,15 +2727,15 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4D));
 
                 // Role In + Except
-                var firstExtent = this.Session.Extent(m.C2.ObjectType);
+                var firstExtent = this.Transaction.Extent(m.C2.ObjectType);
                 firstExtent.Filter.AddLike(m.I12.I12AllorsString, "ᴀbra%");
 
-                var secondExtent = this.Session.Extent(m.C2.ObjectType);
+                var secondExtent = this.Transaction.Extent(m.C2.ObjectType);
                 secondExtent.Filter.AddLike(m.I12.I12AllorsString, "ᴀbracadabra");
 
-                var inExtent = this.Session.Except(firstExtent, secondExtent);
+                var inExtent = this.Transaction.Except(firstExtent, secondExtent);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddContainedIn(m.C1.C1C2one2manies, inExtent);
 
                 Assert.Single(extent);
@@ -2757,15 +2757,15 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4D));
 
                 // AssociationType In + Except
-                firstExtent = this.Session.Extent(m.C1.ObjectType);
+                firstExtent = this.Transaction.Extent(m.C1.ObjectType);
                 firstExtent.Filter.AddLike(m.I12.I12AllorsString, "ᴀbra%");
 
-                secondExtent = this.Session.Extent(m.C1.ObjectType);
+                secondExtent = this.Transaction.Extent(m.C1.ObjectType);
                 secondExtent.Filter.AddLike(m.I12.I12AllorsString, "ᴀbracadabra");
 
-                inExtent = this.Session.Except(firstExtent, secondExtent);
+                inExtent = this.Transaction.Except(firstExtent, secondExtent);
 
-                extent = this.Session.Extent(m.C2.ObjectType);
+                extent = this.Transaction.Extent(m.C2.ObjectType);
                 extent.Filter.AddContainedIn(m.C2.C1WhereC1C2one2many, inExtent);
 
                 Assert.Single(extent);
@@ -2795,19 +2795,19 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Except + Union
-                var firstExtent = this.Session.Extent(m.C1.ObjectType);
+                var firstExtent = this.Transaction.Extent(m.C1.ObjectType);
                 firstExtent.Filter.AddNot().AddExists(m.C1.C1AllorsString);
 
-                var secondExtent = this.Session.Extent(m.C1.ObjectType);
+                var secondExtent = this.Transaction.Extent(m.C1.ObjectType);
                 secondExtent.Filter.AddLike(m.C1.C1AllorsString, "ᴀbracadabra");
 
-                var unionExtent = this.Session.Union(firstExtent, secondExtent);
-                var topExtent = this.Session.Extent(m.C1.ObjectType);
+                var unionExtent = this.Transaction.Union(firstExtent, secondExtent);
+                var topExtent = this.Transaction.Extent(m.C1.ObjectType);
 
-                var extent = this.Session.Except(topExtent, unionExtent);
+                var extent = this.Transaction.Except(topExtent, unionExtent);
 
                 Assert.Single(extent);
                 Assert.False(extent.Contains(this.c1A));
@@ -2828,16 +2828,16 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4D));
 
                 // Except + Intersect
-                firstExtent = this.Session.Extent(m.C1.ObjectType);
+                firstExtent = this.Transaction.Extent(m.C1.ObjectType);
                 firstExtent.Filter.AddExists(m.C1.C1AllorsString);
 
-                secondExtent = this.Session.Extent(m.C1.ObjectType);
+                secondExtent = this.Transaction.Extent(m.C1.ObjectType);
                 secondExtent.Filter.AddLike(m.C1.C1AllorsString, "ᴀbracadabra");
 
-                var intersectExtent = this.Session.Intersect(firstExtent, secondExtent);
-                topExtent = this.Session.Extent(m.C1.ObjectType);
+                var intersectExtent = this.Transaction.Intersect(firstExtent, secondExtent);
+                topExtent = this.Transaction.Extent(m.C1.ObjectType);
 
-                extent = this.Session.Except(topExtent, intersectExtent);
+                extent = this.Transaction.Except(topExtent, intersectExtent);
 
                 Assert.Equal(2, extent.Count);
                 Assert.True(extent.Contains(this.c1A));
@@ -2858,14 +2858,14 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4D));
 
                 // Intersect + Intersect + Intersect
-                firstExtent = this.Session.Intersect(
-                    this.Session.Extent(m.C1.ObjectType),
-                    this.Session.Extent(m.C1.ObjectType));
-                secondExtent = this.Session.Intersect(
-                    this.Session.Extent(m.C1.ObjectType),
-                    this.Session.Extent(m.C1.ObjectType));
+                firstExtent = this.Transaction.Intersect(
+                    this.Transaction.Extent(m.C1.ObjectType),
+                    this.Transaction.Extent(m.C1.ObjectType));
+                secondExtent = this.Transaction.Intersect(
+                    this.Transaction.Extent(m.C1.ObjectType),
+                    this.Transaction.Extent(m.C1.ObjectType));
 
-                extent = this.Session.Intersect(firstExtent, secondExtent);
+                extent = this.Transaction.Intersect(firstExtent, secondExtent);
 
                 Assert.Equal(4, extent.Count);
                 Assert.True(extent.Contains(this.c1A));
@@ -2886,14 +2886,14 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4D));
 
                 // Except + Intersect + Intersect
-                firstExtent = this.Session.Intersect(
-                    this.Session.Extent(m.C1.ObjectType),
-                    this.Session.Extent(m.C1.ObjectType));
-                secondExtent = this.Session.Intersect(
-                    this.Session.Extent(m.C1.ObjectType),
-                    this.Session.Extent(m.C1.ObjectType));
+                firstExtent = this.Transaction.Intersect(
+                    this.Transaction.Extent(m.C1.ObjectType),
+                    this.Transaction.Extent(m.C1.ObjectType));
+                secondExtent = this.Transaction.Intersect(
+                    this.Transaction.Extent(m.C1.ObjectType),
+                    this.Transaction.Extent(m.C1.ObjectType));
 
-                extent = this.Session.Except(firstExtent, secondExtent);
+                extent = this.Transaction.Except(firstExtent, secondExtent);
 
                 Assert.Empty(extent);
                 Assert.False(extent.Contains(this.c1A));
@@ -2922,9 +2922,9 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var extent = this.Session.Extent(m.InterfaceWithoutClass.ObjectType);
+                var extent = this.Transaction.Extent(m.InterfaceWithoutClass.ObjectType);
 
                 Assert.Empty(extent);
             }
@@ -2937,10 +2937,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 extent.Filter.AddEquals(this.c1A);
 
@@ -2955,7 +2955,7 @@ namespace Allors.Database.Adapters
                 Assert.Empty(extent);
 
                 // interface
-                extent = this.Session.Extent(m.I1.ObjectType);
+                extent = this.Transaction.Extent(m.I1.ObjectType);
 
                 extent.Filter.AddEquals(this.c1A);
 
@@ -2970,7 +2970,7 @@ namespace Allors.Database.Adapters
                 Assert.Empty(extent);
 
                 // shared interface
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
 
                 extent.Filter.AddEquals(this.c1A);
 
@@ -2993,10 +2993,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 var not = extent.Filter.AddNot();
                 var and = not.AddAnd();
                 and.AddEquals(this.c1A);
@@ -3016,7 +3016,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // interface
-                extent = this.Session.Extent(m.I1.ObjectType);
+                extent = this.Transaction.Extent(m.I1.ObjectType);
                 not = extent.Filter.AddNot();
                 and = not.AddAnd();
                 and.AddEquals(this.c1A);
@@ -3036,7 +3036,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // shared interface
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 not = extent.Filter.AddNot();
                 and = not.AddAnd();
                 and.AddEquals(this.c1A);
@@ -3064,10 +3064,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 var or = extent.Filter.AddOr();
                 or.AddEquals(this.c1A);
 
@@ -3086,7 +3086,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // interface
-                extent = this.Session.Extent(m.I1.ObjectType);
+                extent = this.Transaction.Extent(m.I1.ObjectType);
                 or = extent.Filter.AddOr();
                 or.AddEquals(this.c1A);
 
@@ -3105,7 +3105,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // shared interface
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 or = extent.Filter.AddOr();
                 or.AddEquals(this.c1A);
 
@@ -3132,10 +3132,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 var not = extent.Filter.AddNot();
                 var or = not.AddOr();
                 or.AddEquals(this.c1A);
@@ -3155,7 +3155,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // interface
-                extent = this.Session.Extent(m.I1.ObjectType);
+                extent = this.Transaction.Extent(m.I1.ObjectType);
                 not = extent.Filter.AddNot();
                 or = not.AddOr();
                 or.AddEquals(this.c1A);
@@ -3175,7 +3175,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // shared interface
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 not = extent.Filter.AddNot();
                 or = not.AddOr();
                 or.AddEquals(this.c1A);
@@ -3203,15 +3203,15 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // class
-                var firstExtent = this.Session.Extent(m.C1.ObjectType);
+                var firstExtent = this.Transaction.Extent(m.C1.ObjectType);
 
-                var secondExtent = this.Session.Extent(m.C1.ObjectType);
+                var secondExtent = this.Transaction.Extent(m.C1.ObjectType);
                 secondExtent.Filter.AddLike(m.C1.C1AllorsString, "ᴀbracadabra");
 
-                var extent = this.Session.Except(firstExtent, secondExtent);
+                var extent = this.Transaction.Except(firstExtent, secondExtent);
 
                 Assert.Equal(2, extent.Count);
                 this.AssertC1(extent, true, true, false, false);
@@ -3220,13 +3220,13 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // interface
-                firstExtent = this.Session.Extent(m.I12.ObjectType);
+                firstExtent = this.Transaction.Extent(m.I12.ObjectType);
                 firstExtent.Filter.AddLike(m.I12.I12AllorsString, "ᴀbra%");
 
-                secondExtent = this.Session.Extent(m.I12.ObjectType);
+                secondExtent = this.Transaction.Extent(m.I12.ObjectType);
                 secondExtent.Filter.AddLike(m.I12.I12AllorsString, "ᴀbracadabra");
 
-                extent = this.Session.Except(firstExtent, secondExtent);
+                extent = this.Transaction.Except(firstExtent, secondExtent);
 
                 Assert.Equal(2, extent.Count);
                 this.AssertC1(extent, false, true, false, false);
@@ -3237,7 +3237,7 @@ namespace Allors.Database.Adapters
                 // Shortcut
                 firstExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
                 secondExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
-                extent = this.Session.Except(firstExtent, secondExtent);
+                extent = this.Transaction.Except(firstExtent, secondExtent);
 
                 Assert.Empty(extent);
                 this.AssertC1(extent, false, false, false, false);
@@ -3247,7 +3247,7 @@ namespace Allors.Database.Adapters
 
                 firstExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
                 secondExtent = this.c1C.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
-                extent = this.Session.Except(firstExtent, secondExtent);
+                extent = this.Transaction.Except(firstExtent, secondExtent);
 
                 Assert.Single(extent);
                 this.AssertC1(extent, false, true, false, false);
@@ -3256,13 +3256,13 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Different Classes
-                firstExtent = this.Session.Extent(m.C1.ObjectType);
-                secondExtent = this.Session.Extent(m.C2.ObjectType);
+                firstExtent = this.Transaction.Extent(m.C1.ObjectType);
+                secondExtent = this.Transaction.Extent(m.C2.ObjectType);
 
                 var exceptionThrown = false;
                 try
                 {
-                    extent = this.Session.Except(firstExtent, secondExtent);
+                    extent = this.Transaction.Except(firstExtent, secondExtent);
                 }
                 catch (ArgumentException)
                 {
@@ -3280,9 +3280,9 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddExists(m.C1.C1AllorsString);
                 Assert.Equal(3, extent.Count);
                 extent.Filter.AddLike(m.C1.C1AllorsString, "ᴀbra");
@@ -3299,10 +3299,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class + Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddInstanceof(m.C1.ObjectType);
 
                 Assert.Equal(4, extent.Count);
@@ -3312,7 +3312,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Class + Interface
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddInstanceof(m.C1.ObjectType);
 
                 Assert.Equal(4, extent.Count);
@@ -3322,7 +3322,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Class + Shared Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddInstanceof(m.C1.ObjectType);
 
                 Assert.Equal(4, extent.Count);
@@ -3332,7 +3332,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Inteface + Class
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddInstanceof(m.I1.ObjectType);
 
                 Assert.Equal(4, extent.Count);
@@ -3342,7 +3342,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Interface + Interface
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddInstanceof(m.I1.ObjectType);
 
                 Assert.Equal(4, extent.Count);
@@ -3351,7 +3351,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddInstanceof(m.I12.ObjectType);
 
                 Assert.Equal(8, extent.Count);
@@ -3361,7 +3361,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Interface + Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddInstanceof(m.I1.ObjectType);
 
                 Assert.Equal(4, extent.Count);
@@ -3370,7 +3370,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddInstanceof(m.I12.ObjectType);
 
                 Assert.Equal(8, extent.Count);
@@ -3379,7 +3379,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddInstanceof(m.S1234.ObjectType);
 
                 Assert.Equal(16, extent.Count);
@@ -3397,15 +3397,15 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // class
-                var firstExtent = this.Session.Extent(m.C1.ObjectType);
+                var firstExtent = this.Transaction.Extent(m.C1.ObjectType);
 
-                var secondExtent = this.Session.Extent(m.C1.ObjectType);
+                var secondExtent = this.Transaction.Extent(m.C1.ObjectType);
                 secondExtent.Filter.AddLike(m.C1.C1AllorsString, "ᴀbracadabra");
 
-                var extent = this.Session.Intersect(firstExtent, secondExtent);
+                var extent = this.Transaction.Intersect(firstExtent, secondExtent);
 
                 Assert.Equal(2, extent.Count);
                 this.AssertC1(extent, false, false, true, true);
@@ -3416,7 +3416,7 @@ namespace Allors.Database.Adapters
                 // Shortcut
                 firstExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
                 secondExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
-                extent = this.Session.Intersect(firstExtent, secondExtent);
+                extent = this.Transaction.Intersect(firstExtent, secondExtent);
 
                 Assert.Single(extent);
                 this.AssertC1(extent, false, true, false, false);
@@ -3426,7 +3426,7 @@ namespace Allors.Database.Adapters
 
                 firstExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
                 secondExtent = this.c1C.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
-                extent = this.Session.Intersect(firstExtent, secondExtent);
+                extent = this.Transaction.Intersect(firstExtent, secondExtent);
 
                 Assert.Empty(extent);
                 this.AssertC1(extent, false, false, false, false);
@@ -3435,13 +3435,13 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Different Classes
-                firstExtent = this.Session.Extent(m.C1.ObjectType);
-                secondExtent = this.Session.Extent(m.C2.ObjectType);
+                firstExtent = this.Transaction.Extent(m.C1.ObjectType);
+                secondExtent = this.Transaction.Extent(m.C2.ObjectType);
 
                 var exceptionThrown = false;
                 try
                 {
-                    this.Session.Intersect(firstExtent, secondExtent);
+                    this.Transaction.Intersect(firstExtent, secondExtent);
                 }
                 catch (ArgumentException)
                 {
@@ -3459,10 +3459,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 {
-                    var extent = this.Session.Extent(m.C1.ObjectType);
+                    var extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddEquals(m.S1234.ClassName, "c1");
                     extent.Filter.AddContains(m.C1.C1C3one2manies, this.c3B);
                     extent.AddSort(m.S1234.ClassName);
@@ -3478,10 +3478,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 var none = extent.Filter.AddNot().AddAnd();
                 none.AddGreaterThan(m.C1.C1AllorsInteger, 0);
                 none.AddLessThan(m.C1.C1AllorsInteger, 2);
@@ -3493,7 +3493,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Interface
-                (extent = this.Session.Extent(m.I12.ObjectType)).Filter.AddNot()
+                (extent = this.Transaction.Extent(m.I12.ObjectType)).Filter.AddNot()
                     .AddAnd()
                     .AddGreaterThan(m.I12.I12AllorsInteger, 0)
                     .AddLessThan(m.I12.I12AllorsInteger, 2);
@@ -3505,7 +3505,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                (extent = this.Session.Extent(m.S1234.ObjectType)).Filter.AddNot()
+                (extent = this.Transaction.Extent(m.S1234.ObjectType)).Filter.AddNot()
                     .AddAnd()
                     .AddGreaterThan(m.S1234.S1234AllorsInteger, 0)
                     .AddLessThan(m.S1234.S1234AllorsInteger, 2);
@@ -3517,7 +3517,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, true, true);
 
                 // Class
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddAnd();
 
                 Assert.Equal(4, extent.Count);
@@ -3535,9 +3535,9 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -3546,18 +3546,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Class
                     // Empty
-                    var inExtent = this.Session.Extent(m.C1.ObjectType);
+                    var inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    var extent = this.Session.Extent(m.C2.ObjectType);
+                    var extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C2.C1sWhereC1C2many2many, inExtent);
 
                     Assert.Equal(4, extent.Count);
@@ -3567,15 +3567,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C2.C1sWhereC1C2many2many, inExtent);
 
                     Assert.Single(extent);
@@ -3585,18 +3585,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C2.C1sWhereC1C2many2many, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -3607,18 +3607,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Interface
                     // Empty
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C2.C1sWhereC1C2many2many, inExtent);
 
                     Assert.Equal(4, extent.Count);
@@ -3628,15 +3628,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C2.C1sWhereC1C2many2many, inExtent);
 
                     Assert.Single(extent);
@@ -3646,18 +3646,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C2.C1sWhereC1C2many2many, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -3670,18 +3670,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Class
                     // Empty
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.I12.C1sWhereC1I12many2many, inExtent);
 
                     Assert.Equal(4, extent.Count);
@@ -3691,15 +3691,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.I12.C1sWhereC1I12many2many, inExtent);
 
                     Assert.Single(extent);
@@ -3709,18 +3709,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.I12.C1sWhereC1I12many2many, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -3731,18 +3731,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Interface
                     // Empty
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.I12.C1sWhereC1I12many2many, inExtent);
 
                     Assert.Equal(4, extent.Count);
@@ -3752,15 +3752,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.I12.C1sWhereC1I12many2many, inExtent);
 
                     Assert.Single(extent);
@@ -3770,18 +3770,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.I12.C1sWhereC1I12many2many, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -3800,10 +3800,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C2.ObjectType);
+                var extent = this.Transaction.Extent(m.C2.ObjectType);
                 extent.Filter.AddNot().AddExists(m.C2.C1sWhereC1C2many2many);
 
                 Assert.Single(extent);
@@ -3813,7 +3813,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Interface
-                extent = this.Session.Extent(m.I2.ObjectType);
+                extent = this.Transaction.Extent(m.I2.ObjectType);
                 extent.Filter.AddNot().AddExists(m.I2.I1sWhereI1I2many2many);
 
                 Assert.Single(extent);
@@ -3823,7 +3823,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddExists(m.S1234.S1234sWhereS1234many2many);
 
                 Assert.Equal(6, extent.Count);
@@ -3833,7 +3833,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, true, true, true, true);
 
                 // Class - Wrong RelationType
-                extent = this.Session.Extent(m.C2.ObjectType);
+                extent = this.Transaction.Extent(m.C2.ObjectType);
 
                 var exception = false;
                 try
@@ -3848,7 +3848,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Interface - Wrong RelationType
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
 
                 exception = false;
                 try
@@ -3863,7 +3863,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Super Interface - Wrong RelationType
-                extent = this.Session.Extent(m.S12.ObjectType);
+                extent = this.Transaction.Extent(m.S12.ObjectType);
 
                 exception = false;
                 try
@@ -3886,7 +3886,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -3896,18 +3896,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Class
                     // Empty
-                    var inExtent = this.Session.Extent(m.C1.ObjectType);
+                    var inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    var extent = this.Session.Extent(m.C2.ObjectType);
+                    var extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C2.C1sWhereC1C2many2one, inExtent);
 
                     Assert.Equal(4, extent.Count);
@@ -3917,15 +3917,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C2.C1sWhereC1C2many2one, inExtent);
 
                     Assert.Equal(2, extent.Count);
@@ -3935,18 +3935,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C2.C1sWhereC1C2many2one, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -3957,18 +3957,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Interface
                     // Empty
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C2.C1sWhereC1C2many2one, inExtent);
 
                     Assert.Equal(4, extent.Count);
@@ -3978,15 +3978,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C2.C1sWhereC1C2many2one, inExtent);
 
                     Assert.Equal(2, extent.Count);
@@ -3996,18 +3996,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C2.C1sWhereC1C2many2one, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -4020,18 +4020,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Class
                     // Empty
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.I12.C1sWhereC1I12many2one, inExtent);
 
                     Assert.Equal(4, extent.Count);
@@ -4041,15 +4041,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.I12.C1sWhereC1I12many2one, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -4059,18 +4059,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.I12.C1sWhereC1I12many2one, inExtent);
 
                     Assert.Equal(4, extent.Count);
@@ -4081,18 +4081,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Interface
                     // Empty
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.I12.C1sWhereC1I12many2one, inExtent);
 
                     Assert.Equal(4, extent.Count);
@@ -4102,15 +4102,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.I12.C1sWhereC1I12many2one, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -4120,18 +4120,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.I12.C1sWhereC1I12many2one, inExtent);
 
                     Assert.Equal(4, extent.Count);
@@ -4150,7 +4150,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -4160,18 +4160,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Class
                     // Empty
-                    var inExtent = this.Session.Extent(m.C1.ObjectType);
+                    var inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    var extent = this.Session.Extent(m.C2.ObjectType);
+                    var extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C2.C1WhereC1C2one2many, inExtent);
 
                     Assert.Equal(4, extent.Count);
@@ -4181,15 +4181,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C2.C1WhereC1C2one2many, inExtent);
 
                     Assert.Single(extent);
@@ -4199,18 +4199,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C2.C1WhereC1C2one2many, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -4221,18 +4221,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Interface
                     // Empty
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C2.C1WhereC1C2one2many, inExtent);
 
                     Assert.Equal(4, extent.Count);
@@ -4242,15 +4242,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C2.C1WhereC1C2one2many, inExtent);
 
                     Assert.Single(extent);
@@ -4260,18 +4260,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C2.C1WhereC1C2one2many, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -4284,18 +4284,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Class
                     // Empty
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.I12.C1WhereC1I12one2many, inExtent);
 
                     Assert.Equal(4, extent.Count);
@@ -4305,15 +4305,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.I12.C1WhereC1I12one2many, inExtent);
 
                     Assert.Equal(2, extent.Count);
@@ -4323,18 +4323,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.I12.C1WhereC1I12one2many, inExtent);
 
                     Assert.Equal(4, extent.Count);
@@ -4345,18 +4345,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Interface
                     // Empty
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.I12.C1WhereC1I12one2many, inExtent);
 
                     Assert.Equal(4, extent.Count);
@@ -4366,15 +4366,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.I12.C1WhereC1I12one2many, inExtent);
 
                     Assert.Equal(2, extent.Count);
@@ -4384,18 +4384,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.I12.C1WhereC1I12one2many, inExtent);
 
                     Assert.Equal(4, extent.Count);
@@ -4414,10 +4414,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.C1.C1WhereC1C1one2many, this.c1B);
 
                 Assert.Equal(3, extent.Count);
@@ -4426,7 +4426,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.C1.C1WhereC1C1one2many, this.c1C);
 
                 Assert.Equal(2, extent.Count);
@@ -4435,7 +4435,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C2.ObjectType);
+                extent = this.Transaction.Extent(m.C2.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.C2.C1WhereC1C2one2many, this.c1B);
 
                 Assert.Equal(3, extent.Count);
@@ -4444,7 +4444,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C2.ObjectType);
+                extent = this.Transaction.Extent(m.C2.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.C2.C1WhereC1C2one2many, this.c1C);
 
                 Assert.Equal(2, extent.Count);
@@ -4454,7 +4454,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Interface
-                extent = this.Session.Extent(m.I2.ObjectType);
+                extent = this.Transaction.Extent(m.I2.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.I2.I1WhereI1I2one2many, this.c1B);
 
                 Assert.Equal(3, extent.Count);
@@ -4463,7 +4463,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.I2.ObjectType);
+                extent = this.Transaction.Extent(m.I2.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.I2.I1WhereI1I2one2many, this.c1C);
 
                 Assert.Equal(2, extent.Count);
@@ -4473,7 +4473,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.S1234.S1234WhereS1234one2many, this.c1B);
 
                 Assert.Equal(15, extent.Count);
@@ -4482,7 +4482,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, true, true, true, true);
                 this.AssertC4(extent, true, true, true, true);
 
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.S1234.S1234WhereS1234one2many, this.c3C);
 
                 Assert.Equal(14, extent.Count);
@@ -4492,7 +4492,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, true, true, true, true);
 
                 // Class - Wrong RelationType
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -4507,7 +4507,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Interface - Wrong RelationType
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
 
                 exception = false;
                 try
@@ -4522,7 +4522,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Super Interface - Wrong RelationType
-                extent = this.Session.Extent(m.S12.ObjectType);
+                extent = this.Transaction.Extent(m.S12.ObjectType);
 
                 exception = false;
                 try
@@ -4545,10 +4545,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C2.ObjectType);
+                var extent = this.Transaction.Extent(m.C2.ObjectType);
                 extent.Filter.AddNot().AddExists(m.C2.C1WhereC1C2one2many);
 
                 Assert.Single(extent);
@@ -4558,7 +4558,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Interface
-                extent = this.Session.Extent(m.I2.ObjectType);
+                extent = this.Transaction.Extent(m.I2.ObjectType);
                 extent.Filter.AddNot().AddExists(m.I2.I1WhereI1I2one2many);
 
                 Assert.Single(extent);
@@ -4568,7 +4568,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddExists(m.S1234.S1234WhereS1234one2many);
 
                 Assert.Equal(13, extent.Count);
@@ -4578,7 +4578,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, true, true, true, true);
 
                 // Class - Wrong RelationType
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -4593,7 +4593,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Interface - Wrong RelationType
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
 
                 exception = false;
                 try
@@ -4608,7 +4608,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Super Interface - Wrong RelationType
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
 
                 exception = false;
                 try
@@ -4631,7 +4631,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -4640,15 +4640,15 @@ namespace Allors.Database.Adapters
                     // RelationType from C1 to C1
 
                     // ContainedIn Extent over Class
-                    var inExtent = this.Session.Extent(m.C1.ObjectType);
+                    var inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    var extent = this.Session.Extent(m.C1.ObjectType);
+                    var extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1WhereC1C1one2one, inExtent);
 
                     Assert.Single(extent);
@@ -4658,15 +4658,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // ContainedIn Extent over Interface
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1WhereC1C1one2one, inExtent);
 
                     Assert.Single(extent);
@@ -4678,15 +4678,15 @@ namespace Allors.Database.Adapters
                     // RelationType from C1 to C2
 
                     // ContainedIn Extent over Class
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C2.C1WhereC1C2one2one, inExtent);
 
                     Assert.Single(extent);
@@ -4696,15 +4696,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // ContainedIn Extent over Class
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C2.C1WhereC1C2one2one, inExtent);
 
                     Assert.Single(extent);
@@ -4716,15 +4716,15 @@ namespace Allors.Database.Adapters
                     // RelationType from C3 to C4
 
                     // ContainedIn Extent over Class
-                    inExtent = this.Session.Extent(m.C3.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C3.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C3.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C3.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C3.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C3.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C4.ObjectType);
+                    extent = this.Transaction.Extent(m.C4.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C4.C3WhereC3C4one2one, inExtent);
 
                     Assert.Single(extent);
@@ -4734,15 +4734,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, true, false, false, false);
 
                     // ContainedIn Extent over Interface
-                    inExtent = this.Session.Extent(m.I34.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I34.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I34.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I34.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I34.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I34.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C4.ObjectType);
+                    extent = this.Transaction.Extent(m.C4.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C4.C3WhereC3C4one2one, inExtent);
 
                     Assert.Single(extent);
@@ -4754,15 +4754,15 @@ namespace Allors.Database.Adapters
                     // RelationType from I12 to C2
 
                     // ContainedIn Extent over Class
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C2.I12WhereI12C2one2one, inExtent);
 
                     Assert.Single(extent);
@@ -4772,15 +4772,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // ContainedIn Extent over Interface
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C2.ObjectType);
+                    extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C2.I12WhereI12C2one2one, inExtent);
 
                     Assert.Empty(extent);
@@ -4794,15 +4794,15 @@ namespace Allors.Database.Adapters
                     // RelationType from C1 to I12
 
                     // ContainedIn Extent over Class
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.I12.ObjectType);
+                    extent = this.Transaction.Extent(m.I12.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.I12.C1WhereC1I12one2one, inExtent);
 
                     Assert.Equal(5, extent.Count);
@@ -4812,15 +4812,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // ContainedIn Extent over Interface
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.I12.ObjectType);
+                    extent = this.Transaction.Extent(m.I12.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.I12.C1WhereC1I12one2one, inExtent);
 
                     Assert.Equal(5, extent.Count);
@@ -4839,10 +4839,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.C1.C1WhereC1C1one2one, this.c1B);
 
                 Assert.Equal(3, extent.Count);
@@ -4851,7 +4851,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C2.ObjectType);
+                extent = this.Transaction.Extent(m.C2.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.C2.C1WhereC1C2one2one, this.c1B);
 
                 Assert.Equal(3, extent.Count);
@@ -4860,7 +4860,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C4.ObjectType);
+                extent = this.Transaction.Extent(m.C4.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.C4.C3WhereC3C4one2one, this.c3B);
 
                 Assert.Equal(3, extent.Count);
@@ -4870,7 +4870,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, true, false, true, true);
 
                 // Interface
-                extent = this.Session.Extent(m.I2.ObjectType);
+                extent = this.Transaction.Extent(m.I2.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.I2.I1WhereI1I2one2one, this.c1B);
 
                 Assert.Equal(3, extent.Count);
@@ -4880,7 +4880,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.S1234.S1234WhereS1234one2one, this.c1C);
 
                 Assert.Equal(15, extent.Count);
@@ -4890,7 +4890,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, true, true, true, true);
 
                 // Class - Wrong RelationType
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -4905,7 +4905,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Interface - Wrong RelationType
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
 
                 exception = false;
                 try
@@ -4920,7 +4920,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Super Interface - Wrong RelationType
-                extent = this.Session.Extent(m.S12.ObjectType);
+                extent = this.Transaction.Extent(m.S12.ObjectType);
 
                 exception = false;
                 try
@@ -4943,10 +4943,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddExists(m.C1.C1WhereC1C1one2one);
 
                 Assert.Single(extent);
@@ -4955,7 +4955,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C2.ObjectType);
+                extent = this.Transaction.Extent(m.C2.ObjectType);
                 extent.Filter.AddNot().AddExists(m.C2.C1WhereC1C2one2one);
 
                 Assert.Single(extent);
@@ -4964,7 +4964,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C2.ObjectType);
+                extent = this.Transaction.Extent(m.C2.ObjectType);
                 extent.Filter.AddNot().AddExists(m.C2.C1WhereC1C2one2one);
 
                 Assert.Single(extent);
@@ -4973,7 +4973,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C4.ObjectType);
+                extent = this.Transaction.Extent(m.C4.ObjectType);
                 extent.Filter.AddNot().AddExists(m.C4.C3WhereC3C4one2one);
 
                 Assert.Single(extent);
@@ -4983,7 +4983,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, true, false, false, false);
 
                 // Interface
-                extent = this.Session.Extent(m.I2.ObjectType);
+                extent = this.Transaction.Extent(m.I2.ObjectType);
                 extent.Filter.AddNot().AddExists(m.I2.I1WhereI1I2one2one);
 
                 Assert.Single(extent);
@@ -4993,7 +4993,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddExists(m.S1234.S1234WhereS1234one2one);
 
                 Assert.Equal(7, extent.Count);
@@ -5003,7 +5003,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, true, true, true, true);
 
                 // Class - Wrong RelationType
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -5018,7 +5018,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Interface - Wrong RelationType
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
 
                 exception = false;
                 try
@@ -5033,7 +5033,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Super Interface - Wrong RelationType
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
 
                 exception = false;
                 try
@@ -5056,12 +5056,12 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddInstanceof(m.C1.C1WhereC1C1one2one, m.C1.ObjectType);
 
                 Assert.Single(extent);
@@ -5070,7 +5070,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C2.ObjectType);
+                extent = this.Transaction.Extent(m.C2.ObjectType);
                 extent.Filter.AddNot().AddInstanceof(m.C2.C1WhereC1C2one2one, m.C1.ObjectType);
 
                 Assert.Single(extent);
@@ -5079,7 +5079,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C4.ObjectType);
+                extent = this.Transaction.Extent(m.C4.ObjectType);
                 extent.Filter.AddNot().AddInstanceof(m.C4.C3WhereC3C4one2one, m.C3.ObjectType);
 
                 Assert.Single(extent);
@@ -5089,7 +5089,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, true, false, false, false);
 
                 // Interface
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddNot().AddInstanceof(m.I12.C1WhereC1I12one2one, m.C1.ObjectType);
 
                 Assert.Equal(5, extent.Count);
@@ -5099,7 +5099,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddInstanceof(m.S1234.S1234WhereS1234one2one, m.C1.ObjectType);
 
                 Assert.Equal(13, extent.Count);
@@ -5111,7 +5111,7 @@ namespace Allors.Database.Adapters
                 // Interface
 
                 // Class
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddInstanceof(m.C1.C1WhereC1C1one2one, m.I1.ObjectType);
 
                 Assert.Single(extent);
@@ -5120,7 +5120,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C2.ObjectType);
+                extent = this.Transaction.Extent(m.C2.ObjectType);
                 extent.Filter.AddNot().AddInstanceof(m.C2.C1WhereC1C2one2one, m.I1.ObjectType);
 
                 Assert.Single(extent);
@@ -5129,7 +5129,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C4.ObjectType);
+                extent = this.Transaction.Extent(m.C4.ObjectType);
                 extent.Filter.AddNot().AddInstanceof(m.C4.C3WhereC3C4one2one, m.I3.ObjectType);
 
                 Assert.Single(extent);
@@ -5139,7 +5139,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, true, false, false, false);
 
                 // Interface
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddNot().AddInstanceof(m.I12.C1WhereC1I12one2one, m.I1.ObjectType);
 
                 Assert.Equal(5, extent.Count);
@@ -5149,7 +5149,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddInstanceof(m.S1234.S1234WhereS1234one2one, m.S1234.ObjectType);
 
                 Assert.Equal(7, extent.Count);
@@ -5169,10 +5169,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 var none = extent.Filter.AddNot().AddOr();
                 none.AddGreaterThan(m.C1.C1AllorsInteger, 1);
                 none.AddLessThan(m.C1.C1AllorsInteger, 1);
@@ -5184,7 +5184,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Interface
-                (extent = this.Session.Extent(m.I12.ObjectType)).Filter.AddNot()
+                (extent = this.Transaction.Extent(m.I12.ObjectType)).Filter.AddNot()
                     .AddOr()
                     .AddGreaterThan(m.I12.I12AllorsInteger, 1)
                     .AddLessThan(m.I12.I12AllorsInteger, 1);
@@ -5196,7 +5196,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                (extent = this.Session.Extent(m.S1234.ObjectType)).Filter.AddNot()
+                (extent = this.Transaction.Extent(m.S1234.ObjectType)).Filter.AddNot()
                     .AddOr()
                     .AddGreaterThan(m.S1234.S1234AllorsInteger, 1)
                     .AddLessThan(m.S1234.S1234AllorsInteger, 1);
@@ -5208,7 +5208,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, false, false);
 
                 // Class
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddOr();
 
                 Assert.Equal(4, extent.Count);
@@ -5226,12 +5226,12 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
 
                 // Between -10 and 0
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddBetween(m.C1.C1AllorsInteger, -10, 0);
 
                 Assert.Equal(3, extent.Count);
@@ -5241,7 +5241,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 0 and 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddBetween(m.C1.C1AllorsInteger, 0, 1);
 
                 Assert.Equal(2, extent.Count);
@@ -5251,7 +5251,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 1 and 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddBetween(m.C1.C1AllorsInteger, 1, 2);
 
                 Assert.Empty(extent);
@@ -5261,7 +5261,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 3 and 10
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddBetween(m.C1.C1AllorsInteger, 3, 10);
 
                 Assert.Equal(3, extent.Count);
@@ -5273,7 +5273,7 @@ namespace Allors.Database.Adapters
                 // Interface
 
                 // Between -10 and 0
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddNot().AddBetween(m.I12.I12AllorsInteger, -10, 0);
 
                 Assert.Equal(6, extent.Count);
@@ -5283,7 +5283,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 0 and 1
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddNot().AddBetween(m.I12.I12AllorsInteger, 0, 1);
 
                 Assert.Equal(4, extent.Count);
@@ -5293,7 +5293,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 1 and 2
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddNot().AddBetween(m.I12.I12AllorsInteger, 1, 2);
 
                 Assert.Empty(extent);
@@ -5303,7 +5303,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 3 and 10
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddNot().AddBetween(m.I12.I12AllorsInteger, 3, 10);
 
                 Assert.Equal(6, extent.Count);
@@ -5315,7 +5315,7 @@ namespace Allors.Database.Adapters
                 // Super Interface
 
                 // Between -10 and 0
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddBetween(m.S1234.S1234AllorsInteger, -10, 0);
 
                 Assert.Equal(12, extent.Count);
@@ -5325,7 +5325,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, true, true);
 
                 // Between 0 and 1
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddBetween(m.S1234.S1234AllorsInteger, 0, 1);
 
                 Assert.Equal(8, extent.Count);
@@ -5335,7 +5335,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, true, true);
 
                 // Between 1 and 2
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddBetween(m.S1234.S1234AllorsInteger, 1, 2);
 
                 Assert.Empty(extent);
@@ -5345,7 +5345,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 3 and 10
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddBetween(m.S1234.S1234AllorsInteger, 3, 10);
 
                 Assert.Equal(12, extent.Count);
@@ -5357,7 +5357,7 @@ namespace Allors.Database.Adapters
                 // Class - Wrong RelationType
 
                 // Between -10 and 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -5372,7 +5372,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Between 0 and 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -5387,7 +5387,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Between 1 and 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -5402,7 +5402,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Between 3 and 10
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -5425,12 +5425,12 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
 
                 // Less Than 1
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddLessThan(m.C1.C1AllorsInteger, 1);
 
                 Assert.Equal(3, extent.Count);
@@ -5440,7 +5440,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddLessThan(m.C1.C1AllorsInteger, 2);
 
                 Assert.Equal(2, extent.Count);
@@ -5450,7 +5450,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddLessThan(m.C1.C1AllorsInteger, 3);
 
                 Assert.Empty(extent);
@@ -5462,7 +5462,7 @@ namespace Allors.Database.Adapters
                 // Interface
 
                 // Less Than 1
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddNot().AddLessThan(m.I12.I12AllorsInteger, 1);
 
                 Assert.Equal(6, extent.Count);
@@ -5472,7 +5472,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddNot().AddLessThan(m.I12.I12AllorsInteger, 2);
 
                 Assert.Equal(4, extent.Count);
@@ -5482,7 +5482,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddNot().AddLessThan(m.I12.I12AllorsInteger, 3);
 
                 Assert.Empty(extent);
@@ -5494,7 +5494,7 @@ namespace Allors.Database.Adapters
                 // Super Interface
 
                 // Less Than 1
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddLessThan(m.S1234.S1234AllorsInteger, 1);
 
                 Assert.Equal(12, extent.Count);
@@ -5504,7 +5504,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, true, true);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddLessThan(m.S1234.S1234AllorsInteger, 2);
 
                 Assert.Equal(8, extent.Count);
@@ -5514,7 +5514,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, true, true);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddLessThan(m.S1234.S1234AllorsInteger, 3);
 
                 Assert.Empty(extent);
@@ -5526,7 +5526,7 @@ namespace Allors.Database.Adapters
                 // Class - Wrong RelationType
 
                 // Less Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -5541,7 +5541,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -5556,7 +5556,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -5573,7 +5573,7 @@ namespace Allors.Database.Adapters
                 // Interface - Wrong RelationType
 
                 // Less Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -5588,7 +5588,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -5603,7 +5603,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -5620,7 +5620,7 @@ namespace Allors.Database.Adapters
                 // Super Interface - Wrong RelationType
 
                 // Less Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -5635,7 +5635,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -5650,7 +5650,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -5673,12 +5673,12 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
 
                 // Greater Than 0
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddGreaterThan(m.C1.C1AllorsInteger, 0);
 
                 Assert.Empty(extent);
@@ -5688,7 +5688,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddGreaterThan(m.C1.C1AllorsInteger, 1);
 
                 Assert.Single(extent);
@@ -5698,7 +5698,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddGreaterThan(m.C1.C1AllorsInteger, 2);
 
                 Assert.Equal(3, extent.Count);
@@ -5710,7 +5710,7 @@ namespace Allors.Database.Adapters
                 // Interface
 
                 // Greater Than 0
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddNot().AddGreaterThan(m.I12.I12AllorsInteger, 0);
 
                 Assert.Empty(extent);
@@ -5720,7 +5720,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddNot().AddGreaterThan(m.I12.I12AllorsInteger, 1);
 
                 Assert.Equal(2, extent.Count);
@@ -5730,7 +5730,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddNot().AddGreaterThan(m.I12.I12AllorsInteger, 2);
 
                 Assert.Equal(6, extent.Count);
@@ -5742,7 +5742,7 @@ namespace Allors.Database.Adapters
                 // Super Interface
 
                 // Greater Than 0
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddGreaterThan(m.S1234.S1234AllorsInteger, 0);
 
                 Assert.Empty(extent);
@@ -5752,7 +5752,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddGreaterThan(m.S1234.S1234AllorsInteger, 1);
 
                 Assert.Equal(4, extent.Count);
@@ -5762,7 +5762,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, false, false);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddGreaterThan(m.S1234.S1234AllorsInteger, 2);
 
                 Assert.Equal(12, extent.Count);
@@ -5774,7 +5774,7 @@ namespace Allors.Database.Adapters
                 // Class - Wrong RelationType
 
                 // Greater Than 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -5789,7 +5789,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -5804,7 +5804,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -5821,7 +5821,7 @@ namespace Allors.Database.Adapters
                 // Interface - Wrong RelationType
 
                 // Greater Than 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -5836,7 +5836,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -5851,7 +5851,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -5868,7 +5868,7 @@ namespace Allors.Database.Adapters
                 // Super Interface - Wrong RelationType
 
                 // Greater Than 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -5883,7 +5883,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -5898,7 +5898,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -5921,10 +5921,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddExists(m.C1.C1AllorsInteger);
 
                 Assert.Single(extent);
@@ -5934,7 +5934,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Interface
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddNot().AddExists(m.I12.I12AllorsInteger);
 
                 Assert.Equal(2, extent.Count);
@@ -5944,7 +5944,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddExists(m.S1234.S1234AllorsInteger);
 
                 Assert.Equal(4, extent.Count);
@@ -5954,7 +5954,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, true, false, false, false);
 
                 // Class - Wrong RelationType
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -5969,7 +5969,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Interface - Wrong RelationType
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -5984,7 +5984,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Super Interface - Wrong RelationType
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -6007,7 +6007,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -6016,18 +6016,18 @@ namespace Allors.Database.Adapters
                     // RelationType from C1 to C2
                     // ContainedIn Extent over Class
                     // Empty
-                    var inExtent = this.Session.Extent(m.C2.ObjectType);
+                    var inExtent = this.Transaction.Extent(m.C2.ObjectType);
                     inExtent.Filter.AddEquals(m.C2.C2AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C2.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C2.ObjectType);
                         inExtentA.Filter.AddEquals(m.C2.C2AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.C2.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C2.ObjectType);
                         inExtentB.Filter.AddEquals(m.C2.C2AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    var extent = this.Session.Extent(m.C1.ObjectType);
+                    var extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C2many2manies, inExtent);
 
                     Assert.Equal(4, extent.Count);
@@ -6037,15 +6037,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.C2.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C2.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C2.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C2.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C2.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C2.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C2many2manies, inExtent);
 
                     Assert.Single(extent);
@@ -6055,18 +6055,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.C2.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C2.ObjectType);
                     inExtent.Filter.AddEquals(m.C2.C2AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C2.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C2.ObjectType);
                         inExtentA.Filter.AddEquals(m.C2.C2AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.C2.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C2.ObjectType);
                         inExtentB.Filter.AddEquals(m.C2.C2AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C2many2manies, inExtent);
 
                     Assert.Single(extent);
@@ -6077,18 +6077,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Class
                     // Empty
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C2many2manies, inExtent);
 
                     Assert.Equal(4, extent.Count);
@@ -6098,15 +6098,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C2many2manies, inExtent);
 
                     Assert.Single(extent);
@@ -6116,18 +6116,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C2many2manies, inExtent);
 
                     Assert.Single(extent);
@@ -6140,18 +6140,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Class
                     // Empty
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C1many2manies, inExtent);
 
                     Assert.Equal(4, extent.Count);
@@ -6161,15 +6161,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C1many2manies, inExtent);
 
                     Assert.Single(extent);
@@ -6179,18 +6179,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C1many2manies, inExtent);
 
                     Assert.Single(extent);
@@ -6201,18 +6201,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Class
                     // Empty
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C1many2manies, inExtent);
 
                     Assert.Equal(4, extent.Count);
@@ -6222,15 +6222,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C1many2manies, inExtent);
 
                     Assert.Single(extent);
@@ -6240,18 +6240,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C1many2manies, inExtent);
 
                     Assert.Single(extent);
@@ -6264,18 +6264,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Class
                     // Empty
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1I12many2manies, inExtent);
 
                     Assert.Equal(4, extent.Count);
@@ -6285,15 +6285,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1I12many2manies, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -6303,18 +6303,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1I12many2manies, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -6325,18 +6325,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Class
                     // Empty
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1I12many2manies, inExtent);
 
                     Assert.Equal(4, extent.Count);
@@ -6346,15 +6346,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1I12many2manies, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -6364,18 +6364,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1I12many2manies, inExtent);
 
                     Assert.Single(extent);
@@ -6386,18 +6386,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent I12<->I34
                     // Empty
-                    inExtent = this.Session.Extent(m.I34.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I34.ObjectType);
                     inExtent.Filter.AddEquals(m.I34.I34AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I34.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I34.ObjectType);
                         inExtentA.Filter.AddEquals(m.I34.I34AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.I34.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I34.ObjectType);
                         inExtentB.Filter.AddEquals(m.I34.I34AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.I12.ObjectType);
+                    extent = this.Transaction.Extent(m.I12.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.I12.I12I34many2manies, inExtent);
 
                     Assert.Equal(8, extent.Count);
@@ -6407,15 +6407,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.I34.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I34.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I34.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I34.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I34.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I34.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.I12.ObjectType);
+                    extent = this.Transaction.Extent(m.I12.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.I12.I12I34many2manies, inExtent);
 
                     Assert.Equal(4, extent.Count);
@@ -6425,18 +6425,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.I34.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I34.ObjectType);
                     inExtent.Filter.AddEquals(m.I34.I34AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I34.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I34.ObjectType);
                         inExtentA.Filter.AddEquals(m.I34.I34AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.I34.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I34.ObjectType);
                         inExtentB.Filter.AddEquals(m.I34.I34AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.I12.ObjectType);
+                    extent = this.Transaction.Extent(m.I12.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.I12.I12I34many2manies, inExtent);
 
                     Assert.Equal(4, extent.Count);
@@ -6455,19 +6455,19 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 // Extent over Class
 
                 // RelationType from C1 to C2
                 // ContainedIn Extent over Class
                 // Empty
-                var inExtent = this.Session.Extent(m.C2.ObjectType);
+                var inExtent = this.Transaction.Extent(m.C2.ObjectType);
                 inExtent.Filter.AddEquals(m.C2.C2AllorsString, "Nothing here!");
 
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddContainedIn(m.C1.C1C2many2manies, (IEnumerable<IObject>)inExtent.ToArray());
 
                 Assert.Equal(4, extent.Count);
@@ -6477,9 +6477,9 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Full
-                inExtent = this.Session.Extent(m.C2.ObjectType);
+                inExtent = this.Transaction.Extent(m.C2.ObjectType);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddContainedIn(m.C1.C1C2many2manies, (IEnumerable<IObject>)inExtent.ToArray());
 
                 Assert.Single(extent);
@@ -6489,10 +6489,10 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Filtered
-                inExtent = this.Session.Extent(m.C2.ObjectType);
+                inExtent = this.Transaction.Extent(m.C2.ObjectType);
                 inExtent.Filter.AddEquals(m.C2.C2AllorsString, "ᴀbra");
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddContainedIn(m.C1.C1C2many2manies, (IEnumerable<IObject>)inExtent.ToArray());
 
                 Assert.Single(extent);
@@ -6503,10 +6503,10 @@ namespace Allors.Database.Adapters
 
                 // ContainedIn Extent over Class
                 // Empty
-                inExtent = this.Session.Extent(m.I12.ObjectType);
+                inExtent = this.Transaction.Extent(m.I12.ObjectType);
                 inExtent.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddContainedIn(m.C1.C1C2many2manies, (IEnumerable<IObject>)inExtent.ToArray());
 
                 Assert.Equal(4, extent.Count);
@@ -6516,9 +6516,9 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Full
-                inExtent = this.Session.Extent(m.I12.ObjectType);
+                inExtent = this.Transaction.Extent(m.I12.ObjectType);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddContainedIn(m.C1.C1C2many2manies, (IEnumerable<IObject>)inExtent.ToArray());
 
                 Assert.Single(extent);
@@ -6528,10 +6528,10 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Filtered
-                inExtent = this.Session.Extent(m.I12.ObjectType);
+                inExtent = this.Transaction.Extent(m.I12.ObjectType);
                 inExtent.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddContainedIn(m.C1.C1C2many2manies, (IEnumerable<IObject>)inExtent.ToArray());
 
                 Assert.Single(extent);
@@ -6544,10 +6544,10 @@ namespace Allors.Database.Adapters
 
                 // ContainedIn Extent over Class
                 // Empty
-                inExtent = this.Session.Extent(m.C1.ObjectType);
+                inExtent = this.Transaction.Extent(m.C1.ObjectType);
                 inExtent.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddContainedIn(m.C1.C1C1many2manies, (IEnumerable<IObject>)inExtent.ToArray());
 
                 Assert.Equal(4, extent.Count);
@@ -6557,9 +6557,9 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Full
-                inExtent = this.Session.Extent(m.C1.ObjectType);
+                inExtent = this.Transaction.Extent(m.C1.ObjectType);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddContainedIn(m.C1.C1C1many2manies, (IEnumerable<IObject>)inExtent.ToArray());
 
                 Assert.Single(extent);
@@ -6569,10 +6569,10 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Filtered
-                inExtent = this.Session.Extent(m.C1.ObjectType);
+                inExtent = this.Transaction.Extent(m.C1.ObjectType);
                 inExtent.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddContainedIn(m.C1.C1C1many2manies, (IEnumerable<IObject>)inExtent.ToArray());
 
                 Assert.Single(extent);
@@ -6583,10 +6583,10 @@ namespace Allors.Database.Adapters
 
                 // ContainedIn Extent over Class
                 // Empty
-                inExtent = this.Session.Extent(m.I12.ObjectType);
+                inExtent = this.Transaction.Extent(m.I12.ObjectType);
                 inExtent.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddContainedIn(m.C1.C1C1many2manies, (IEnumerable<IObject>)inExtent.ToArray());
 
                 Assert.Equal(4, extent.Count);
@@ -6596,9 +6596,9 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Full
-                inExtent = this.Session.Extent(m.I12.ObjectType);
+                inExtent = this.Transaction.Extent(m.I12.ObjectType);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddContainedIn(m.C1.C1C1many2manies, (IEnumerable<IObject>)inExtent.ToArray());
 
                 Assert.Single(extent);
@@ -6608,10 +6608,10 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Filtered
-                inExtent = this.Session.Extent(m.I12.ObjectType);
+                inExtent = this.Transaction.Extent(m.I12.ObjectType);
                 inExtent.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddContainedIn(m.C1.C1C1many2manies, (IEnumerable<IObject>)inExtent.ToArray());
 
                 Assert.Single(extent);
@@ -6624,10 +6624,10 @@ namespace Allors.Database.Adapters
 
                 // ContainedIn Extent over Class
                 // Empty
-                inExtent = this.Session.Extent(m.C1.ObjectType);
+                inExtent = this.Transaction.Extent(m.C1.ObjectType);
                 inExtent.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddContainedIn(m.C1.C1I12many2manies, (IEnumerable<IObject>)inExtent.ToArray());
 
                 Assert.Equal(4, extent.Count);
@@ -6637,12 +6637,12 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Full
-                inExtent = this.Session.Extent(m.C1.ObjectType);
+                inExtent = this.Transaction.Extent(m.C1.ObjectType);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddContainedIn(m.C1.C1I12many2manies, (IEnumerable<IObject>)inExtent.ToArray());
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 Assert.Equal(3, extent.Count);
                 this.AssertC1(extent, true, false, true, true);
@@ -6651,10 +6651,10 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Filtered
-                inExtent = this.Session.Extent(m.C1.ObjectType);
+                inExtent = this.Transaction.Extent(m.C1.ObjectType);
                 inExtent.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddContainedIn(m.C1.C1I12many2manies, (IEnumerable<IObject>)inExtent.ToArray());
 
                 Assert.Equal(3, extent.Count);
@@ -6665,10 +6665,10 @@ namespace Allors.Database.Adapters
 
                 // ContainedIn Extent over Class
                 // Empty
-                inExtent = this.Session.Extent(m.I12.ObjectType);
+                inExtent = this.Transaction.Extent(m.I12.ObjectType);
                 inExtent.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddContainedIn(m.C1.C1I12many2manies, (IEnumerable<IObject>)inExtent.ToArray());
 
                 Assert.Equal(4, extent.Count);
@@ -6678,9 +6678,9 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Full
-                inExtent = this.Session.Extent(m.C1.ObjectType);
+                inExtent = this.Transaction.Extent(m.C1.ObjectType);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddContainedIn(m.C1.C1I12many2manies, (IEnumerable<IObject>)inExtent.ToArray());
 
                 Assert.Equal(3, extent.Count);
@@ -6690,10 +6690,10 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Filtered
-                inExtent = this.Session.Extent(m.I12.ObjectType);
+                inExtent = this.Transaction.Extent(m.I12.ObjectType);
                 inExtent.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddContainedIn(m.C1.C1I12many2manies, (IEnumerable<IObject>)inExtent.ToArray());
 
                 Assert.Single(extent);
@@ -6711,10 +6711,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddExists(m.C1.C1C2many2manies);
 
                 Assert.Single(extent);
@@ -6724,7 +6724,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Interface
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddNot().AddExists(m.I12.I12C2many2manies);
 
                 Assert.Equal(4, extent.Count);
@@ -6734,7 +6734,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddExists(m.S1234.S1234C2many2manies);
 
                 Assert.Equal(12, extent.Count);
@@ -6744,7 +6744,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, true, true, true, true);
 
                 // Class - Wrong RelationType
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -6759,7 +6759,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Interface - Wrong RelationType
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
 
                 exception = false;
                 try
@@ -6774,7 +6774,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Super Interface - Wrong RelationType
-                extent = this.Session.Extent(m.S12.ObjectType);
+                extent = this.Transaction.Extent(m.S12.ObjectType);
 
                 exception = false;
                 try
@@ -6797,7 +6797,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -6806,18 +6806,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Class
                     // Emtpy Extent
-                    var inExtent = this.Session.Extent(m.C1.ObjectType);
+                    var inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    var extent = this.Session.Extent(m.C1.ObjectType);
+                    var extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C1one2manies, inExtent);
 
                     Assert.Equal(4, extent.Count);
@@ -6827,15 +6827,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full Extent
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C1one2manies, inExtent);
 
                     Assert.Equal(2, extent.Count);
@@ -6844,15 +6844,15 @@ namespace Allors.Database.Adapters
                     this.AssertC3(extent, false, false, false, false);
                     this.AssertC4(extent, false, false, false, false);
 
-                    inExtent = this.Session.Extent(m.C2.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C2.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C2.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C2.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C2.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C2.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C2one2manies, inExtent);
 
                     Assert.Equal(2, extent.Count);
@@ -6861,15 +6861,15 @@ namespace Allors.Database.Adapters
                     this.AssertC3(extent, false, false, false, false);
                     this.AssertC4(extent, false, false, false, false);
 
-                    inExtent = this.Session.Extent(m.C4.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C4.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C4.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C4.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C4.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C4.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C3.ObjectType);
+                    extent = this.Transaction.Extent(m.C3.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C3.C3C4one2manies, inExtent);
 
                     Assert.Equal(2, extent.Count);
@@ -6880,18 +6880,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Interface
                     // Emtpy Extent
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C1one2manies, inExtent);
 
                     Assert.Equal(4, extent.Count);
@@ -6901,15 +6901,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full Extent
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C1one2manies, inExtent);
 
                     Assert.Equal(2, extent.Count);
@@ -6918,15 +6918,15 @@ namespace Allors.Database.Adapters
                     this.AssertC3(extent, false, false, false, false);
                     this.AssertC4(extent, false, false, false, false);
 
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C2one2manies, inExtent);
 
                     Assert.Equal(2, extent.Count);
@@ -6935,15 +6935,15 @@ namespace Allors.Database.Adapters
                     this.AssertC3(extent, false, false, false, false);
                     this.AssertC4(extent, false, false, false, false);
 
-                    inExtent = this.Session.Extent(m.I34.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I34.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I34.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I34.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I34.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I34.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C3.ObjectType);
+                    extent = this.Transaction.Extent(m.C3.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C3.C3C4one2manies, inExtent);
 
                     Assert.Equal(2, extent.Count);
@@ -6955,15 +6955,15 @@ namespace Allors.Database.Adapters
                     // RelationType from Class to Interface
 
                     // ContainedIn Extent over Class
-                    inExtent = this.Session.Extent(m.C2.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C2.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C2.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C2.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C2.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C2.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.I12.I12C2one2manies, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -6973,15 +6973,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // ContainedIn Extent over Interface
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.I12.I12C2one2manies, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -7000,7 +7000,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -7009,18 +7009,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Class
                     // Emtpy Extent
-                    var inExtent = this.Session.Extent(m.C1.ObjectType);
+                    var inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    var extent = this.Session.Extent(m.C1.ObjectType);
+                    var extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C1one2manies, (IEnumerable<IObject>)inExtent.ToArray());
 
                     Assert.Equal(4, extent.Count);
@@ -7030,15 +7030,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full Extent
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C1one2manies, (IEnumerable<IObject>)inExtent.ToArray());
 
                     Assert.Equal(2, extent.Count);
@@ -7047,15 +7047,15 @@ namespace Allors.Database.Adapters
                     this.AssertC3(extent, false, false, false, false);
                     this.AssertC4(extent, false, false, false, false);
 
-                    inExtent = this.Session.Extent(m.C2.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C2.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C2.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C2.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C2.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C2.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C2one2manies, (IEnumerable<IObject>)inExtent.ToArray());
 
                     Assert.Equal(2, extent.Count);
@@ -7064,15 +7064,15 @@ namespace Allors.Database.Adapters
                     this.AssertC3(extent, false, false, false, false);
                     this.AssertC4(extent, false, false, false, false);
 
-                    inExtent = this.Session.Extent(m.C4.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C4.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C4.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C4.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C4.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C4.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C3.ObjectType);
+                    extent = this.Transaction.Extent(m.C3.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C3.C3C4one2manies, (IEnumerable<IObject>)inExtent.ToArray());
 
                     Assert.Equal(2, extent.Count);
@@ -7083,18 +7083,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Interface
                     // Emtpy Extent
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C1one2manies, (IEnumerable<IObject>)inExtent.ToArray());
 
                     Assert.Equal(4, extent.Count);
@@ -7104,15 +7104,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full Extent
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C1one2manies, (IEnumerable<IObject>)inExtent.ToArray());
 
                     Assert.Equal(2, extent.Count);
@@ -7121,15 +7121,15 @@ namespace Allors.Database.Adapters
                     this.AssertC3(extent, false, false, false, false);
                     this.AssertC4(extent, false, false, false, false);
 
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C2one2manies, (IEnumerable<IObject>)inExtent.ToArray());
 
                     Assert.Equal(2, extent.Count);
@@ -7138,15 +7138,15 @@ namespace Allors.Database.Adapters
                     this.AssertC3(extent, false, false, false, false);
                     this.AssertC4(extent, false, false, false, false);
 
-                    inExtent = this.Session.Extent(m.I34.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I34.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I34.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I34.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I34.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I34.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C3.ObjectType);
+                    extent = this.Transaction.Extent(m.C3.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C3.C3C4one2manies, (IEnumerable<IObject>)inExtent.ToArray());
 
                     Assert.Equal(2, extent.Count);
@@ -7158,15 +7158,15 @@ namespace Allors.Database.Adapters
                     // RelationType from Class to Interface
 
                     // ContainedIn Extent over Class
-                    inExtent = this.Session.Extent(m.C2.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C2.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C2.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C2.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C2.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C2.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.I12.I12C2one2manies, (IEnumerable<IObject>)inExtent.ToArray());
 
                     Assert.Equal(3, extent.Count);
@@ -7176,15 +7176,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // ContainedIn Extent over Interface
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.I12.I12C2one2manies, (IEnumerable<IObject>)inExtent.ToArray());
 
                     Assert.Equal(3, extent.Count);
@@ -7203,10 +7203,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddContains(m.C1.C1C2one2manies, this.c2C);
 
                 Assert.Equal(3, extent.Count);
@@ -7216,7 +7216,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Interface
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddContains(m.C1.C1I12one2manies, this.c2C);
 
                 Assert.Equal(3, extent.Count);
@@ -7226,7 +7226,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddContains(m.S1234.S1234one2manies, this.c1B);
 
                 Assert.Equal(15, extent.Count);
@@ -7246,10 +7246,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddExists(m.C1.C1C2one2manies);
 
                 Assert.Equal(2, extent.Count);
@@ -7259,7 +7259,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Interface
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddNot().AddExists(m.I12.I12C2one2manies);
 
                 Assert.Equal(6, extent.Count);
@@ -7269,7 +7269,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddExists(m.S1234.S1234C2one2manies);
 
                 Assert.Equal(14, extent.Count);
@@ -7279,7 +7279,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, true, true, true, true);
 
                 // Class - Wrong RelationType
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -7294,7 +7294,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Interface - Wrong RelationType
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
 
                 exception = false;
                 try
@@ -7309,7 +7309,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Super Interface - Wrong RelationType
-                extent = this.Session.Extent(m.S12.ObjectType);
+                extent = this.Transaction.Extent(m.S12.ObjectType);
 
                 exception = false;
                 try
@@ -7332,7 +7332,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -7341,15 +7341,15 @@ namespace Allors.Database.Adapters
                     // RelationType from Class to Class
 
                     // ContainedIn Extent over Class
-                    var inExtent = this.Session.Extent(m.C1.ObjectType);
+                    var inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    var extent = this.Session.Extent(m.C1.ObjectType);
+                    var extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C1one2one, inExtent);
 
                     Assert.Single(extent);
@@ -7358,15 +7358,15 @@ namespace Allors.Database.Adapters
                     this.AssertC3(extent, false, false, false, false);
                     this.AssertC4(extent, false, false, false, false);
 
-                    inExtent = this.Session.Extent(m.C2.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C2.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C2.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C2.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C2.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C2.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C2one2one, inExtent);
 
                     Assert.Single(extent);
@@ -7375,15 +7375,15 @@ namespace Allors.Database.Adapters
                     this.AssertC3(extent, false, false, false, false);
                     this.AssertC4(extent, false, false, false, false);
 
-                    inExtent = this.Session.Extent(m.C4.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C4.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C4.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C4.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C4.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C4.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C3.ObjectType);
+                    extent = this.Transaction.Extent(m.C3.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C3.C3C4one2one, inExtent);
 
                     Assert.Single(extent);
@@ -7393,15 +7393,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // ContainedIn Extent over Interface
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C1one2one, inExtent);
 
                     Assert.Single(extent);
@@ -7410,15 +7410,15 @@ namespace Allors.Database.Adapters
                     this.AssertC3(extent, false, false, false, false);
                     this.AssertC4(extent, false, false, false, false);
 
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C2one2one, inExtent);
 
                     Assert.Single(extent);
@@ -7427,15 +7427,15 @@ namespace Allors.Database.Adapters
                     this.AssertC3(extent, false, false, false, false);
                     this.AssertC4(extent, false, false, false, false);
 
-                    inExtent = this.Session.Extent(m.I34.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I34.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I34.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I34.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I34.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I34.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C3.ObjectType);
+                    extent = this.Transaction.Extent(m.C3.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C3.C3C4one2one, inExtent);
 
                     Assert.Single(extent);
@@ -7447,15 +7447,15 @@ namespace Allors.Database.Adapters
                     // RelationType from Class to Interface
 
                     // ContainedIn Extent over Class
-                    inExtent = this.Session.Extent(m.C2.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C2.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C2.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C2.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C2.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C2.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1I12one2one, inExtent);
 
                     Assert.Equal(2, extent.Count);
@@ -7465,15 +7465,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // ContainedIn Extent over Interface
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1I12one2one, inExtent);
 
                     Assert.Single(extent);
@@ -7492,7 +7492,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -7501,15 +7501,15 @@ namespace Allors.Database.Adapters
                     // RelationType from Class to Class
 
                     // ContainedIn Extent over Class
-                    var inExtent = this.Session.Extent(m.C1.ObjectType);
+                    var inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    var extent = this.Session.Extent(m.C1.ObjectType);
+                    var extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C1one2one, (IEnumerable<IObject>)inExtent.ToArray());
 
                     Assert.Single(extent);
@@ -7518,15 +7518,15 @@ namespace Allors.Database.Adapters
                     this.AssertC3(extent, false, false, false, false);
                     this.AssertC4(extent, false, false, false, false);
 
-                    inExtent = this.Session.Extent(m.C2.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C2.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C2.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C2.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C2.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C2.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C2one2one, (IEnumerable<IObject>)inExtent.ToArray());
 
                     Assert.Single(extent);
@@ -7535,15 +7535,15 @@ namespace Allors.Database.Adapters
                     this.AssertC3(extent, false, false, false, false);
                     this.AssertC4(extent, false, false, false, false);
 
-                    inExtent = this.Session.Extent(m.C4.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C4.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C4.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C4.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C4.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C4.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C3.ObjectType);
+                    extent = this.Transaction.Extent(m.C3.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C3.C3C4one2one, (IEnumerable<IObject>)inExtent.ToArray());
 
                     Assert.Single(extent);
@@ -7553,15 +7553,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // ContainedIn Extent over Interface
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C1one2one, (IEnumerable<IObject>)inExtent.ToArray());
 
                     Assert.Single(extent);
@@ -7570,15 +7570,15 @@ namespace Allors.Database.Adapters
                     this.AssertC3(extent, false, false, false, false);
                     this.AssertC4(extent, false, false, false, false);
 
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1C2one2one, (IEnumerable<IObject>)inExtent.ToArray());
 
                     Assert.Single(extent);
@@ -7587,15 +7587,15 @@ namespace Allors.Database.Adapters
                     this.AssertC3(extent, false, false, false, false);
                     this.AssertC4(extent, false, false, false, false);
 
-                    inExtent = this.Session.Extent(m.I34.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I34.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I34.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I34.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I34.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I34.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C3.ObjectType);
+                    extent = this.Transaction.Extent(m.C3.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C3.C3C4one2one, (IEnumerable<IObject>)inExtent.ToArray());
 
                     Assert.Single(extent);
@@ -7607,15 +7607,15 @@ namespace Allors.Database.Adapters
                     // RelationType from Class to Interface
 
                     // ContainedIn Extent over Class
-                    inExtent = this.Session.Extent(m.C2.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C2.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C2.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C2.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C2.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C2.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1I12one2one, (IEnumerable<IObject>)inExtent.ToArray());
 
                     Assert.Equal(2, extent.Count);
@@ -7625,15 +7625,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // ContainedIn Extent over Interface
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddNot().AddContainedIn(m.C1.C1I12one2one, (IEnumerable<IObject>)inExtent.ToArray());
 
                     Assert.Single(extent);
@@ -7652,10 +7652,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.C1.C1C1one2one, this.c1B);
 
                 Assert.Equal(3, extent.Count);
@@ -7664,7 +7664,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.C1.C1C2one2one, this.c2B);
 
                 Assert.Equal(3, extent.Count);
@@ -7674,7 +7674,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Interface
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.I12.I12C2one2one, this.c2A);
 
                 Assert.Equal(7, extent.Count);
@@ -7684,7 +7684,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.S1234.S1234C2one2one, this.c2A);
 
                 Assert.Equal(15, extent.Count);
@@ -7694,7 +7694,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, true, true, true, true);
 
                 // Class - Wrong RelationType
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -7709,7 +7709,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Interface - Wrong RelationType
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
 
                 exception = false;
                 try
@@ -7724,7 +7724,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Super Interface - Wrong RelationType
-                extent = this.Session.Extent(m.S12.ObjectType);
+                extent = this.Transaction.Extent(m.S12.ObjectType);
 
                 exception = false;
                 try
@@ -7747,10 +7747,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddExists(m.C1.C1C2one2one);
 
                 Assert.Single(extent);
@@ -7759,7 +7759,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddExists(m.C1.C1C2one2one);
 
                 Assert.Single(extent);
@@ -7769,7 +7769,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Interface
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddNot().AddExists(m.I12.I12C2one2one);
 
                 Assert.Equal(4, extent.Count);
@@ -7779,7 +7779,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddExists(m.S1234.S1234C2one2one);
 
                 Assert.Equal(12, extent.Count);
@@ -7789,7 +7789,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, true, true, true, true);
 
                 // Class - Wrong RelationType
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -7804,7 +7804,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Interface - Wrong RelationType
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
 
                 exception = false;
                 try
@@ -7819,7 +7819,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Super Interface - Wrong RelationType
-                extent = this.Session.Extent(m.S12.ObjectType);
+                extent = this.Transaction.Extent(m.S12.ObjectType);
 
                 exception = false;
                 try
@@ -7842,12 +7842,12 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddInstanceof(m.C1.C1C1one2one, m.C1.ObjectType);
 
                 Assert.Single(extent);
@@ -7856,7 +7856,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddInstanceof(m.C1.C1C2one2one, m.C2.ObjectType);
 
                 Assert.Single(extent);
@@ -7866,7 +7866,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Interface
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddInstanceof(m.C1.C1I12one2one, m.C2.ObjectType);
 
                 Assert.Equal(2, extent.Count);
@@ -7876,7 +7876,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddInstanceof(m.S1234.S1234one2one, m.C2.ObjectType);
 
                 Assert.Equal(13, extent.Count);
@@ -7888,7 +7888,7 @@ namespace Allors.Database.Adapters
                 // Interface
 
                 // Class
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddInstanceof(m.C1.C1C2one2one, m.I2.ObjectType);
 
                 Assert.Single(extent);
@@ -7898,7 +7898,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Interface
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddInstanceof(m.C1.C1I12one2one, m.I2.ObjectType);
 
                 Assert.Equal(2, extent.Count);
@@ -7907,7 +7907,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddInstanceof(m.C1.C1I12one2one, m.I12.ObjectType);
 
                 Assert.Single(extent);
@@ -7917,7 +7917,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddInstanceof(m.S1234.S1234one2one, m.S1234.ObjectType);
 
                 Assert.Equal(7, extent.Count);
@@ -7937,12 +7937,12 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
 
                 // Equal ""
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.C1.C1AllorsString, string.Empty);
 
                 Assert.Equal(3, extent.Count);
@@ -7951,7 +7951,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C3.ObjectType);
+                extent = this.Transaction.Extent(m.C3.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.C3.C3AllorsString, string.Empty);
 
                 Assert.Equal(3, extent.Count);
@@ -7961,7 +7961,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal "ᴀbra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.C1.C1AllorsString, "ᴀbra");
 
                 Assert.Equal(2, extent.Count);
@@ -7970,7 +7970,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C3.ObjectType);
+                extent = this.Transaction.Extent(m.C3.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.C3.C3AllorsString, "ᴀbra");
 
                 Assert.Equal(2, extent.Count);
@@ -7980,7 +7980,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal "ᴀbracadabra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.C1.C1AllorsString, "ᴀbracadabra");
 
                 Assert.Single(extent);
@@ -7989,7 +7989,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C3.ObjectType);
+                extent = this.Transaction.Extent(m.C3.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.C3.C3AllorsString, "ᴀbracadabra");
 
                 Assert.Single(extent);
@@ -8001,7 +8001,7 @@ namespace Allors.Database.Adapters
                 // Interface
 
                 // Equal ""
-                extent = this.Session.Extent(m.I1.ObjectType);
+                extent = this.Transaction.Extent(m.I1.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.I1.I1AllorsString, string.Empty);
 
                 Assert.Equal(3, extent.Count);
@@ -8010,7 +8010,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.I3.ObjectType);
+                extent = this.Transaction.Extent(m.I3.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.I3.I3AllorsString, string.Empty);
 
                 Assert.Equal(3, extent.Count);
@@ -8020,7 +8020,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal "ᴀbra"
-                extent = this.Session.Extent(m.I1.ObjectType);
+                extent = this.Transaction.Extent(m.I1.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.I1.I1AllorsString, "ᴀbra");
 
                 Assert.Equal(2, extent.Count);
@@ -8029,7 +8029,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.I3.ObjectType);
+                extent = this.Transaction.Extent(m.I3.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.I3.I3AllorsString, "ᴀbra");
 
                 Assert.Equal(2, extent.Count);
@@ -8039,7 +8039,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal "ᴀbracadabra"
-                extent = this.Session.Extent(m.I1.ObjectType);
+                extent = this.Transaction.Extent(m.I1.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.I1.I1AllorsString, "ᴀbracadabra");
 
                 Assert.Single(extent);
@@ -8048,7 +8048,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.I3.ObjectType);
+                extent = this.Transaction.Extent(m.I3.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.I3.I3AllorsString, "ᴀbracadabra");
 
                 Assert.Single(extent);
@@ -8060,7 +8060,7 @@ namespace Allors.Database.Adapters
                 // Shared Interface
 
                 // Equal ""
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.I12.I12AllorsString, string.Empty);
 
                 Assert.Equal(6, extent.Count);
@@ -8069,7 +8069,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.I34.ObjectType);
+                extent = this.Transaction.Extent(m.I34.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.I34.I34AllorsString, string.Empty);
 
                 Assert.Equal(6, extent.Count);
@@ -8079,7 +8079,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, true, true);
 
                 // Equal "ᴀbra"
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.I12.I12AllorsString, "ᴀbra");
 
                 Assert.Equal(4, extent.Count);
@@ -8088,7 +8088,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.I12.I12AllorsString, "ᴀbra");
 
                 Assert.Equal(2, extent.Count);
@@ -8097,7 +8097,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.I23.ObjectType);
+                extent = this.Transaction.Extent(m.I23.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.I23.I23AllorsString, "ᴀbra");
 
                 Assert.Equal(4, extent.Count);
@@ -8106,7 +8106,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, true, true);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C2.ObjectType);
+                extent = this.Transaction.Extent(m.C2.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.I23.I23AllorsString, "ᴀbra");
 
                 Assert.Equal(2, extent.Count);
@@ -8115,7 +8115,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C3.ObjectType);
+                extent = this.Transaction.Extent(m.C3.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.I23.I23AllorsString, "ᴀbra");
 
                 Assert.Equal(2, extent.Count);
@@ -8124,7 +8124,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, true, true);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.I34.ObjectType);
+                extent = this.Transaction.Extent(m.I34.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.I34.I34AllorsString, "ᴀbra");
 
                 Assert.Equal(4, extent.Count);
@@ -8133,7 +8133,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, true, true);
                 this.AssertC4(extent, false, false, true, true);
 
-                extent = this.Session.Extent(m.C3.ObjectType);
+                extent = this.Transaction.Extent(m.C3.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.I34.I34AllorsString, "ᴀbra");
 
                 Assert.Equal(2, extent.Count);
@@ -8143,7 +8143,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal "ᴀbracadabra"
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.I12.I12AllorsString, "ᴀbracadabra");
 
                 Assert.Equal(2, extent.Count);
@@ -8152,7 +8152,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.I12.I12AllorsString, "ᴀbracadabra");
 
                 Assert.Single(extent);
@@ -8161,7 +8161,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.I34.ObjectType);
+                extent = this.Transaction.Extent(m.I34.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.I34.I34AllorsString, "ᴀbracadabra");
 
                 Assert.Equal(2, extent.Count);
@@ -8173,7 +8173,7 @@ namespace Allors.Database.Adapters
                 // Super Interface
 
                 // Equal ""
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.S1234.S1234AllorsString, string.Empty);
 
                 Assert.Equal(12, extent.Count);
@@ -8183,7 +8183,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, true, true);
 
                 // Equal "ᴀbra"
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.S1234.S1234AllorsString, "ᴀbra");
 
                 Assert.Equal(8, extent.Count);
@@ -8193,7 +8193,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, true, true);
 
                 // Equal "ᴀbracadabra"
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddEquals(m.S1234.S1234AllorsString, "ᴀbracadabra");
 
                 Assert.Equal(4, extent.Count);
@@ -8205,7 +8205,7 @@ namespace Allors.Database.Adapters
                 // Class - Wrong RelationType
 
                 // Equal ""
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -8220,7 +8220,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal "ᴀbra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -8235,7 +8235,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal "ᴀbracadabra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -8252,7 +8252,7 @@ namespace Allors.Database.Adapters
                 // Interface - Wrong RelationType
 
                 // Equal ""
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -8267,7 +8267,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal "ᴀbra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -8282,7 +8282,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal "ᴀbracadabra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -8299,7 +8299,7 @@ namespace Allors.Database.Adapters
                 // Super Interface - Wrong RelationType
 
                 // Equal ""
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -8314,7 +8314,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal "ᴀbra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -8329,7 +8329,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal "ᴀbracadabra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -8352,10 +8352,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddExists(m.C1.C1AllorsString);
 
                 Assert.Single(extent);
@@ -8365,7 +8365,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Interface
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddNot().AddExists(m.I12.I12AllorsString);
 
                 Assert.Equal(2, extent.Count);
@@ -8375,7 +8375,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddExists(m.S1234.S1234AllorsString);
 
                 Assert.Equal(4, extent.Count);
@@ -8385,7 +8385,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, true, false, false, false);
 
                 // Class - Wrong RelationType
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -8400,7 +8400,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Interface - Wrong RelationType
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -8415,7 +8415,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Super Interface - Wrong RelationType
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -8438,12 +8438,12 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
 
                 // Like ""
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddLike(m.C1.C1AllorsString, string.Empty);
 
                 Assert.Equal(3, extent.Count);
@@ -8453,7 +8453,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Like "ᴀbra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddLike(m.C1.C1AllorsString, "ᴀbra");
 
                 Assert.Equal(2, extent.Count);
@@ -8463,7 +8463,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Like "ᴀbracadabra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddLike(m.C1.C1AllorsString, "ᴀbracadabra");
 
                 Assert.Single(extent);
@@ -8473,7 +8473,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Like "notfound"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddLike(m.C1.C1AllorsString, "notfound");
 
                 Assert.Equal(3, extent.Count);
@@ -8483,7 +8483,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Like "%ra%"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddLike(m.C1.C1AllorsString, "%ra%");
 
                 Assert.Empty(extent);
@@ -8493,7 +8493,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Like "%bra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddLike(m.C1.C1AllorsString, "%bra");
 
                 Assert.Empty(extent);
@@ -8503,7 +8503,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Like "%cadabra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddNot().AddLike(m.C1.C1AllorsString, "%cadabra");
 
                 Assert.Single(extent);
@@ -8515,7 +8515,7 @@ namespace Allors.Database.Adapters
                 // Interface
 
                 // Like ""
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddNot().AddLike(m.I12.I12AllorsString, string.Empty);
 
                 Assert.Equal(6, extent.Count);
@@ -8525,7 +8525,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Like "ᴀbra"
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddNot().AddLike(m.I12.I12AllorsString, "ᴀbra");
 
                 Assert.Equal(4, extent.Count);
@@ -8535,7 +8535,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Like "ᴀbracadabra"
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddNot().AddLike(m.I12.I12AllorsString, "ᴀbracadabra");
 
                 Assert.Equal(2, extent.Count);
@@ -8547,7 +8547,7 @@ namespace Allors.Database.Adapters
                 // Super Interface
 
                 // Like ""
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddLike(m.S1234.S1234AllorsString, string.Empty);
 
                 Assert.Equal(12, extent.Count);
@@ -8557,7 +8557,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, true, true);
 
                 // Like "ᴀbra"
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddLike(m.S1234.S1234AllorsString, "ᴀbra");
 
                 Assert.Equal(8, extent.Count);
@@ -8567,7 +8567,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, true, true);
 
                 // Like "ᴀbracadabra"
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddNot().AddLike(m.S1234.S1234AllorsString, "ᴀbracadabra");
 
                 Assert.Equal(4, extent.Count);
@@ -8579,7 +8579,7 @@ namespace Allors.Database.Adapters
                 // Class - Wrong RelationType
 
                 // Like ""
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -8594,7 +8594,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Like "ᴀbra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -8609,7 +8609,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Like "ᴀbracadabra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -8626,7 +8626,7 @@ namespace Allors.Database.Adapters
                 // Interface - Wrong RelationType
 
                 // Like ""
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -8641,7 +8641,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Like "ᴀbra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -8656,7 +8656,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Like "ᴀbracadabra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -8673,7 +8673,7 @@ namespace Allors.Database.Adapters
                 // Super Interface - Wrong RelationType
 
                 // Like ""
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -8688,7 +8688,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Like "ᴀbra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -8703,7 +8703,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Like "ᴀbracadabra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -8726,15 +8726,15 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var firstExtent = this.Session.Extent(m.C1.ObjectType);
+                var firstExtent = this.Transaction.Extent(m.C1.ObjectType);
                 firstExtent.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
 
-                var secondExtent = this.Session.Extent(m.C1.ObjectType);
+                var secondExtent = this.Transaction.Extent(m.C1.ObjectType);
                 secondExtent.Filter.AddLike(m.C1.C1AllorsString, "ᴀbracadabra");
 
-                var extent = this.Session.Union(firstExtent, secondExtent);
+                var extent = this.Transaction.Union(firstExtent, secondExtent);
 
                 Assert.Equal(3, extent.Count);
 
@@ -8757,10 +8757,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Dangling empty And behind Or
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 var or = extent.Filter.AddOr();
 
                 or.AddAnd();
@@ -8773,7 +8773,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Dangling empty Or behind Or
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 or = extent.Filter.AddOr();
 
                 or.AddOr();
@@ -8786,7 +8786,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Dangling empty Not behind Or
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 or = extent.Filter.AddOr();
 
                 or.AddNot();
@@ -8799,7 +8799,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Dangling empty And behind And
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 var and = extent.Filter.AddAnd();
 
                 and.AddAnd();
@@ -8812,7 +8812,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Dangling empty Or behind And
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 and = extent.Filter.AddAnd();
 
                 and.AddOr();
@@ -8825,7 +8825,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Dangling empty Not behind And
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 and = extent.Filter.AddAnd();
 
                 and.AddNot();
@@ -8838,7 +8838,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Dangling empty And
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddAnd();
 
                 Assert.Equal(4, extent.Count);
@@ -8856,10 +8856,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 var any = extent.Filter.AddOr();
                 any.AddGreaterThan(m.C1.C1AllorsInteger, 0);
                 any.AddLessThan(m.C1.C1AllorsInteger, 3);
@@ -8871,7 +8871,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Interface
-                (extent = this.Session.Extent(m.I12.ObjectType)).Filter.AddOr()
+                (extent = this.Transaction.Extent(m.I12.ObjectType)).Filter.AddOr()
                     .AddGreaterThan(m.I12.I12AllorsInteger, 0)
                     .AddLessThan(m.I12.I12AllorsInteger, 3);
 
@@ -8882,7 +8882,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                (extent = this.Session.Extent(m.S1234.ObjectType)).Filter.AddOr()
+                (extent = this.Transaction.Extent(m.S1234.ObjectType)).Filter.AddOr()
                     .AddGreaterThan(m.S1234.S1234AllorsInteger, 0)
                     .AddLessThan(m.S1234.S1234AllorsInteger, 3);
 
@@ -8893,7 +8893,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, true, true);
 
                 // Class Without predicates
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddOr();
 
                 Assert.Equal(4, extent.Count);
@@ -8911,15 +8911,15 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Association (Amgiguous Name)
-                Extent<Company> parents = this.Session.Extent(m.Company.ObjectType);
+                Extent<Company> parents = this.Transaction.Extent(m.Company.ObjectType);
 
-                Extent<Company> children = this.Session.Extent(m.Company.ObjectType);
+                Extent<Company> children = this.Transaction.Extent(m.Company.ObjectType);
                 children.Filter.AddContainedIn(m.Company.CompanyWhereChild, (Extent)parents);
 
-                Extent<Person> persons = this.Session.Extent(m.Person.ObjectType);
+                Extent<Person> persons = this.Transaction.Extent(m.Person.ObjectType);
                 var or = persons.Filter.AddOr();
                 or.AddContainedIn(m.Person.Company, (Extent)parents);
                 or.AddContainedIn(m.Person.Company, (Extent)children);
@@ -8935,10 +8935,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddExists(m.C1.C1AllorsInteger);
 
                 Assert.Equal(3, extent.Count);
@@ -8948,7 +8948,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Interface
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddExists(m.I12.I12AllorsInteger);
 
                 Assert.Equal(6, extent.Count);
@@ -8958,7 +8958,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddExists(m.S1234.S1234AllorsInteger);
 
                 Assert.Equal(12, extent.Count);
@@ -8968,7 +8968,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, true, true);
 
                 // Class - Wrong RelationType
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -8983,7 +8983,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Interface - Wrong RelationType
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -8998,7 +8998,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Super Interface - Wrong RelationType
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -9021,12 +9021,12 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
 
                 // Between C1
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddBetween(m.C1.C1AllorsInteger, m.C1.C1IntegerBetweenA, m.C1.C1IntegerBetweenB);
 
                 Assert.Equal(2, extent.Count);
@@ -9039,7 +9039,7 @@ namespace Allors.Database.Adapters
                 // Interface
 
                 // Between -10 and 0
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddBetween(m.I12.I12AllorsInteger, -10, 0);
 
                 Assert.Empty(extent);
@@ -9049,7 +9049,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 0 and 1
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddBetween(m.I12.I12AllorsInteger, 0, 1);
 
                 Assert.Equal(2, extent.Count);
@@ -9059,7 +9059,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 1 and 2
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddBetween(m.I12.I12AllorsInteger, 1, 2);
 
                 Assert.Equal(6, extent.Count);
@@ -9069,7 +9069,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 3 and 10
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddBetween(m.I12.I12AllorsInteger, 3, 10);
 
                 Assert.Empty(extent);
@@ -9081,7 +9081,7 @@ namespace Allors.Database.Adapters
                 // Super Interface
 
                 // Between -10 and 0
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddBetween(m.S1234.S1234AllorsInteger, -10, 0);
 
                 Assert.Empty(extent);
@@ -9091,7 +9091,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 0 and 1
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddBetween(m.S1234.S1234AllorsInteger, 0, 1);
 
                 Assert.Equal(4, extent.Count);
@@ -9101,7 +9101,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, false, false);
 
                 // Between 1 and 2
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddBetween(m.S1234.S1234AllorsInteger, 1, 2);
 
                 Assert.Equal(12, extent.Count);
@@ -9111,7 +9111,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, true, true);
 
                 // Between 3 and 10
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddBetween(m.S1234.S1234AllorsInteger, 3, 10);
 
                 Assert.Empty(extent);
@@ -9123,7 +9123,7 @@ namespace Allors.Database.Adapters
                 // Class - Wrong RelationType
 
                 // Between -10 and 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -9138,7 +9138,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Between 0 and 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -9153,7 +9153,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Between 1 and 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -9168,7 +9168,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Between 3 and 10
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -9191,12 +9191,12 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
 
                 // Less Than 1
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddLessThan(m.C1.C1AllorsInteger, m.C1.C1IntegerLessThan);
 
                 Assert.Single(extent);
@@ -9209,7 +9209,7 @@ namespace Allors.Database.Adapters
                 // Interface
 
                 // Less Than 1
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddLessThan(m.I12.I12AllorsInteger, 1);
 
                 Assert.Empty(extent);
@@ -9219,7 +9219,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddLessThan(m.I12.I12AllorsInteger, 2);
 
                 Assert.Equal(2, extent.Count);
@@ -9229,7 +9229,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddLessThan(m.I12.I12AllorsInteger, 3);
 
                 Assert.Equal(6, extent.Count);
@@ -9241,7 +9241,7 @@ namespace Allors.Database.Adapters
                 // Super Interface
 
                 // Less Than 1
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddLessThan(m.S1234.S1234AllorsInteger, 1);
 
                 Assert.Empty(extent);
@@ -9251,7 +9251,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddLessThan(m.S1234.S1234AllorsInteger, 2);
 
                 Assert.Equal(4, extent.Count);
@@ -9261,7 +9261,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, false, false);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddLessThan(m.S1234.S1234AllorsInteger, 3);
 
                 Assert.Equal(12, extent.Count);
@@ -9273,7 +9273,7 @@ namespace Allors.Database.Adapters
                 // Class - Wrong RelationType
 
                 // Less Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -9288,7 +9288,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -9303,7 +9303,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -9320,7 +9320,7 @@ namespace Allors.Database.Adapters
                 // Interface - Wrong RelationType
 
                 // Less Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -9335,7 +9335,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -9350,7 +9350,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -9367,7 +9367,7 @@ namespace Allors.Database.Adapters
                 // Super Interface - Wrong RelationType
 
                 // Less Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -9382,7 +9382,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -9397,7 +9397,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -9420,12 +9420,12 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
 
                 // C1
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddGreaterThan(m.C1.C1AllorsInteger, m.C1.C1IntegerGreaterThan);
 
                 Assert.Single(extent);
@@ -9438,7 +9438,7 @@ namespace Allors.Database.Adapters
                 // Interface
 
                 // Greater Than 0
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddGreaterThan(m.I12.I12AllorsInteger, 0);
 
                 Assert.Equal(6, extent.Count);
@@ -9448,7 +9448,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddGreaterThan(m.I12.I12AllorsInteger, 1);
 
                 Assert.Equal(4, extent.Count);
@@ -9458,7 +9458,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddGreaterThan(m.I12.I12AllorsInteger, 2);
 
                 Assert.Empty(extent);
@@ -9470,7 +9470,7 @@ namespace Allors.Database.Adapters
                 // Super Interface
 
                 // Greater Than 0
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddGreaterThan(m.S1234.S1234AllorsInteger, 0);
 
                 Assert.Equal(12, extent.Count);
@@ -9480,7 +9480,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, true, true);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddGreaterThan(m.S1234.S1234AllorsInteger, 1);
 
                 Assert.Equal(8, extent.Count);
@@ -9490,7 +9490,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, true, true);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddGreaterThan(m.S1234.S1234AllorsInteger, 2);
 
                 Assert.Empty(extent);
@@ -9502,7 +9502,7 @@ namespace Allors.Database.Adapters
                 // Class - Wrong RelationType
 
                 // Greater Than 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -9517,7 +9517,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -9532,7 +9532,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -9549,7 +9549,7 @@ namespace Allors.Database.Adapters
                 // Interface - Wrong RelationType
 
                 // Greater Than 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -9564,7 +9564,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -9579,7 +9579,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -9596,7 +9596,7 @@ namespace Allors.Database.Adapters
                 // Super Interface - Wrong RelationType
 
                 // Greater Than 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -9611,7 +9611,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -9626,7 +9626,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -9649,12 +9649,12 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
 
                 // Between -10 and 0
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddBetween(m.C1.C1AllorsInteger, -10, 0);
 
                 Assert.Empty(extent);
@@ -9664,7 +9664,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 0 and 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddBetween(m.C1.C1AllorsInteger, 0, 1);
 
                 Assert.Single(extent);
@@ -9674,7 +9674,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 1 and 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddBetween(m.C1.C1AllorsInteger, 1, 2);
 
                 Assert.Equal(3, extent.Count);
@@ -9684,7 +9684,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 3 and 10
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddBetween(m.C1.C1AllorsInteger, 3, 10);
 
                 Assert.Empty(extent);
@@ -9696,7 +9696,7 @@ namespace Allors.Database.Adapters
                 // Interface
 
                 // Between -10 and 0
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddBetween(m.I12.I12AllorsInteger, -10, 0);
 
                 Assert.Empty(extent);
@@ -9706,7 +9706,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 0 and 1
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddBetween(m.I12.I12AllorsInteger, 0, 1);
 
                 Assert.Equal(2, extent.Count);
@@ -9716,7 +9716,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 1 and 2
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddBetween(m.I12.I12AllorsInteger, 1, 2);
 
                 Assert.Equal(6, extent.Count);
@@ -9726,7 +9726,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 3 and 10
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddBetween(m.I12.I12AllorsInteger, 3, 10);
 
                 Assert.Empty(extent);
@@ -9738,7 +9738,7 @@ namespace Allors.Database.Adapters
                 // Super Interface
 
                 // Between -10 and 0
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddBetween(m.S1234.S1234AllorsInteger, -10, 0);
 
                 Assert.Empty(extent);
@@ -9748,7 +9748,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 0 and 1
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddBetween(m.S1234.S1234AllorsInteger, 0, 1);
 
                 Assert.Equal(4, extent.Count);
@@ -9758,7 +9758,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, false, false);
 
                 // Between 1 and 2
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddBetween(m.S1234.S1234AllorsInteger, 1, 2);
 
                 Assert.Equal(12, extent.Count);
@@ -9768,7 +9768,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, true, true);
 
                 // Between 3 and 10
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddBetween(m.S1234.S1234AllorsInteger, 3, 10);
 
                 Assert.Empty(extent);
@@ -9780,7 +9780,7 @@ namespace Allors.Database.Adapters
                 // Class - Wrong RelationType
 
                 // Between -10 and 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -9795,7 +9795,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Between 0 and 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -9810,7 +9810,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Between 1 and 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -9825,7 +9825,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Between 3 and 10
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -9848,12 +9848,12 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
 
                 // Less Than 1
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddLessThan(m.C1.C1AllorsInteger, 1);
 
                 Assert.Empty(extent);
@@ -9863,7 +9863,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddLessThan(m.C1.C1AllorsInteger, 2);
 
                 Assert.Single(extent);
@@ -9873,7 +9873,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddLessThan(m.C1.C1AllorsInteger, 3);
 
                 Assert.Equal(3, extent.Count);
@@ -9885,7 +9885,7 @@ namespace Allors.Database.Adapters
                 // Interface
 
                 // Less Than 1
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddLessThan(m.I12.I12AllorsInteger, 1);
 
                 Assert.Empty(extent);
@@ -9895,7 +9895,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddLessThan(m.I12.I12AllorsInteger, 2);
 
                 Assert.Equal(2, extent.Count);
@@ -9905,7 +9905,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddLessThan(m.I12.I12AllorsInteger, 3);
 
                 Assert.Equal(6, extent.Count);
@@ -9917,7 +9917,7 @@ namespace Allors.Database.Adapters
                 // Super Interface
 
                 // Less Than 1
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddLessThan(m.S1234.S1234AllorsInteger, 1);
 
                 Assert.Empty(extent);
@@ -9927,7 +9927,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddLessThan(m.S1234.S1234AllorsInteger, 2);
 
                 Assert.Equal(4, extent.Count);
@@ -9937,7 +9937,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, false, false);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddLessThan(m.S1234.S1234AllorsInteger, 3);
 
                 Assert.Equal(12, extent.Count);
@@ -9949,7 +9949,7 @@ namespace Allors.Database.Adapters
                 // Class - Wrong RelationType
 
                 // Less Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -9964,7 +9964,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -9979,7 +9979,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -9996,7 +9996,7 @@ namespace Allors.Database.Adapters
                 // Interface - Wrong RelationType
 
                 // Less Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10011,7 +10011,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10026,7 +10026,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10043,7 +10043,7 @@ namespace Allors.Database.Adapters
                 // Super Interface - Wrong RelationType
 
                 // Less Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10058,7 +10058,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10073,7 +10073,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10096,12 +10096,12 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
 
                 // Greater Than 0
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddGreaterThan(m.C1.C1AllorsInteger, 0);
 
                 Assert.Equal(3, extent.Count);
@@ -10111,7 +10111,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddGreaterThan(m.C1.C1AllorsInteger, 1);
 
                 Assert.Equal(2, extent.Count);
@@ -10121,7 +10121,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddGreaterThan(m.C1.C1AllorsInteger, 2);
 
                 Assert.Empty(extent);
@@ -10132,7 +10132,7 @@ namespace Allors.Database.Adapters
 
                 // Interface
                 // Greater Than 0
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddGreaterThan(m.I12.I12AllorsInteger, 0);
 
                 Assert.Equal(6, extent.Count);
@@ -10142,7 +10142,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddGreaterThan(m.I12.I12AllorsInteger, 1);
 
                 Assert.Equal(4, extent.Count);
@@ -10152,7 +10152,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddGreaterThan(m.I12.I12AllorsInteger, 2);
 
                 Assert.Empty(extent);
@@ -10163,7 +10163,7 @@ namespace Allors.Database.Adapters
 
                 // Super Interface
                 // Greater Than 0
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddGreaterThan(m.S1234.S1234AllorsInteger, 0);
 
                 Assert.Equal(12, extent.Count);
@@ -10173,7 +10173,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, true, true);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddGreaterThan(m.S1234.S1234AllorsInteger, 1);
 
                 Assert.Equal(8, extent.Count);
@@ -10183,7 +10183,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, true, true);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddGreaterThan(m.S1234.S1234AllorsInteger, 2);
 
                 Assert.Empty(extent);
@@ -10194,7 +10194,7 @@ namespace Allors.Database.Adapters
 
                 // Class - Wrong RelationType
                 // Greater Than 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -10209,7 +10209,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10224,7 +10224,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10240,7 +10240,7 @@ namespace Allors.Database.Adapters
 
                 // Interface - Wrong RelationType
                 // Greater Than 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10255,7 +10255,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10270,7 +10270,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10286,7 +10286,7 @@ namespace Allors.Database.Adapters
 
                 // Super Interface - Wrong RelationType
                 // Greater Than 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10301,7 +10301,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10316,7 +10316,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10339,11 +10339,11 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
                 // Equal 0
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddEquals(m.C1.C1AllorsInteger, 0);
 
                 Assert.Empty(extent);
@@ -10353,7 +10353,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddEquals(m.C1.C1AllorsInteger, 1);
 
                 Assert.Single(extent);
@@ -10363,7 +10363,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddEquals(m.C1.C1AllorsInteger, 2);
 
                 Assert.Equal(2, extent.Count);
@@ -10374,7 +10374,7 @@ namespace Allors.Database.Adapters
 
                 // Interface
                 // Equal 0
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddEquals(m.I12.I12AllorsInteger, 0);
 
                 Assert.Empty(extent);
@@ -10384,7 +10384,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal 1
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddEquals(m.I12.I12AllorsInteger, 1);
 
                 Assert.Equal(2, extent.Count);
@@ -10394,7 +10394,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal 2
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddEquals(m.I12.I12AllorsInteger, 2);
 
                 Assert.Equal(4, extent.Count);
@@ -10405,7 +10405,7 @@ namespace Allors.Database.Adapters
 
                 // Super Interface
                 // Equal 0
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddEquals(m.S1234.S1234AllorsInteger, 0);
 
                 Assert.Empty(extent);
@@ -10415,7 +10415,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal 1
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddEquals(m.S1234.S1234AllorsInteger, 1);
 
                 Assert.Equal(4, extent.Count);
@@ -10425,7 +10425,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, false, false);
 
                 // Equal 2
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddEquals(m.S1234.S1234AllorsInteger, 2);
 
                 Assert.Equal(8, extent.Count);
@@ -10436,7 +10436,7 @@ namespace Allors.Database.Adapters
 
                 // Class - Wrong RelationType
                 // Equal 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -10451,7 +10451,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10466,7 +10466,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10482,7 +10482,7 @@ namespace Allors.Database.Adapters
 
                 // Interface - Wrong RelationType
                 // Equal 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10497,7 +10497,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10512,7 +10512,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10528,7 +10528,7 @@ namespace Allors.Database.Adapters
 
                 // Super Interface - Wrong RelationType
                 // Equal 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10543,7 +10543,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10558,7 +10558,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10581,12 +10581,12 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
 
                 // Between -10 and 0
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddBetween(m.C1.C1AllorsDouble, -10, 0);
 
                 Assert.Empty(extent);
@@ -10596,7 +10596,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 0 and 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddBetween(m.C1.C1AllorsDouble, 0, 1);
 
                 Assert.Single(extent);
@@ -10606,7 +10606,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 1 and 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddBetween(m.C1.C1AllorsDouble, 1, 2);
 
                 Assert.Equal(3, extent.Count);
@@ -10616,7 +10616,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 3 and 10
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddBetween(m.C1.C1AllorsDouble, 3, 10);
 
                 Assert.Empty(extent);
@@ -10628,7 +10628,7 @@ namespace Allors.Database.Adapters
                 // Interface
 
                 // Between -10 and 0
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddBetween(m.I12.I12AllorsDouble, -10, 0);
 
                 Assert.Empty(extent);
@@ -10638,7 +10638,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 0 and 1
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddBetween(m.I12.I12AllorsDouble, 0, 1);
 
                 Assert.Equal(2, extent.Count);
@@ -10648,7 +10648,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 1 and 2
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddBetween(m.I12.I12AllorsDouble, 1, 2);
 
                 Assert.Equal(6, extent.Count);
@@ -10658,7 +10658,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 3 and 10
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddBetween(m.I12.I12AllorsDouble, 3, 10);
 
                 Assert.Empty(extent);
@@ -10670,7 +10670,7 @@ namespace Allors.Database.Adapters
                 // Super Interface
 
                 // Between -10 and 0
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddBetween(m.S1234.S1234AllorsDouble, -10, 0);
 
                 Assert.Empty(extent);
@@ -10680,7 +10680,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 0 and 1
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddBetween(m.S1234.S1234AllorsDouble, 0, 1);
 
                 Assert.Equal(4, extent.Count);
@@ -10690,7 +10690,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, false, false);
 
                 // Between 1 and 2
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddBetween(m.S1234.S1234AllorsDouble, 1, 2);
 
                 Assert.Equal(12, extent.Count);
@@ -10700,7 +10700,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, true, true);
 
                 // Between 3 and 10
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddBetween(m.S1234.S1234AllorsDouble, 3, 10);
 
                 Assert.Empty(extent);
@@ -10712,7 +10712,7 @@ namespace Allors.Database.Adapters
                 // Class - Wrong RelationType
 
                 // Between -10 and 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -10727,7 +10727,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Between 0 and 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10742,7 +10742,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Between 1 and 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10757,7 +10757,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Between 3 and 10
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10780,12 +10780,12 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
 
                 // Less Than 1
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddLessThan(m.C1.C1AllorsDouble, 1);
 
                 Assert.Empty(extent);
@@ -10795,7 +10795,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddLessThan(m.C1.C1AllorsDouble, 2);
 
                 Assert.Single(extent);
@@ -10805,7 +10805,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddLessThan(m.C1.C1AllorsDouble, 3);
 
                 Assert.Equal(3, extent.Count);
@@ -10817,7 +10817,7 @@ namespace Allors.Database.Adapters
                 // Interface
 
                 // Less Than 1
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddLessThan(m.I12.I12AllorsDouble, 1);
 
                 Assert.Empty(extent);
@@ -10827,7 +10827,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddLessThan(m.I12.I12AllorsDouble, 2);
 
                 Assert.Equal(2, extent.Count);
@@ -10837,7 +10837,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddLessThan(m.I12.I12AllorsDouble, 3);
 
                 Assert.Equal(6, extent.Count);
@@ -10849,7 +10849,7 @@ namespace Allors.Database.Adapters
                 // Super Interface
 
                 // Less Than 1
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddLessThan(m.S1234.S1234AllorsDouble, 1);
 
                 Assert.Empty(extent);
@@ -10859,7 +10859,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddLessThan(m.S1234.S1234AllorsDouble, 2);
 
                 Assert.Equal(4, extent.Count);
@@ -10869,7 +10869,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, false, false);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddLessThan(m.S1234.S1234AllorsDouble, 3);
 
                 Assert.Equal(12, extent.Count);
@@ -10881,7 +10881,7 @@ namespace Allors.Database.Adapters
                 // Class - Wrong RelationType
 
                 // Less Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -10896,7 +10896,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10911,7 +10911,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10928,7 +10928,7 @@ namespace Allors.Database.Adapters
                 // Interface - Wrong RelationType
 
                 // Less Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10943,7 +10943,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10958,7 +10958,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10975,7 +10975,7 @@ namespace Allors.Database.Adapters
                 // Super Interface - Wrong RelationType
 
                 // Less Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -10990,7 +10990,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -11005,7 +11005,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -11028,12 +11028,12 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
 
                 // Greater Than 0
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddGreaterThan(m.C1.C1AllorsDouble, 0);
 
                 Assert.Equal(3, extent.Count);
@@ -11043,7 +11043,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddGreaterThan(m.C1.C1AllorsDouble, 1);
 
                 Assert.Equal(2, extent.Count);
@@ -11053,7 +11053,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddGreaterThan(m.C1.C1AllorsDouble, 2);
 
                 Assert.Empty(extent);
@@ -11065,7 +11065,7 @@ namespace Allors.Database.Adapters
                 // Interface
 
                 // Greater Than 0
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddGreaterThan(m.I12.I12AllorsDouble, 0);
 
                 Assert.Equal(6, extent.Count);
@@ -11075,7 +11075,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddGreaterThan(m.I12.I12AllorsDouble, 1);
 
                 Assert.Equal(4, extent.Count);
@@ -11085,7 +11085,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddGreaterThan(m.I12.I12AllorsDouble, 2);
 
                 Assert.Empty(extent);
@@ -11097,7 +11097,7 @@ namespace Allors.Database.Adapters
                 // Super Interface
 
                 // Greater Than 0
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddGreaterThan(m.S1234.S1234AllorsDouble, 0);
 
                 Assert.Equal(12, extent.Count);
@@ -11107,7 +11107,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, true, true);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddGreaterThan(m.S1234.S1234AllorsDouble, 1);
 
                 Assert.Equal(8, extent.Count);
@@ -11117,7 +11117,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, true, true);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddGreaterThan(m.S1234.S1234AllorsDouble, 2);
 
                 Assert.Empty(extent);
@@ -11129,7 +11129,7 @@ namespace Allors.Database.Adapters
                 // Class - Wrong RelationType
 
                 // Greater Than 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -11144,7 +11144,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -11159,7 +11159,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -11176,7 +11176,7 @@ namespace Allors.Database.Adapters
                 // Interface - Wrong RelationType
 
                 // Greater Than 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -11191,7 +11191,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -11206,7 +11206,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -11223,7 +11223,7 @@ namespace Allors.Database.Adapters
                 // Super Interface - Wrong RelationType
 
                 // Greater Than 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -11238,7 +11238,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -11253,7 +11253,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -11276,11 +11276,11 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
                 // Equal 0
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddEquals(m.C1.C1AllorsDouble, 0);
 
                 Assert.Empty(extent);
@@ -11290,7 +11290,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddEquals(m.C1.C1AllorsDouble, 1);
 
                 Assert.Single(extent);
@@ -11300,7 +11300,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddEquals(m.C1.C1AllorsDouble, 2);
 
                 Assert.Equal(2, extent.Count);
@@ -11311,7 +11311,7 @@ namespace Allors.Database.Adapters
 
                 // Interface
                 // Equal 0
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddEquals(m.I12.I12AllorsDouble, 0);
 
                 Assert.Empty(extent);
@@ -11321,7 +11321,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal 1
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddEquals(m.I12.I12AllorsDouble, 1);
 
                 Assert.Equal(2, extent.Count);
@@ -11331,7 +11331,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal 2
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddEquals(m.I12.I12AllorsDouble, 2);
 
                 Assert.Equal(4, extent.Count);
@@ -11342,7 +11342,7 @@ namespace Allors.Database.Adapters
 
                 // Super Interface
                 // Equal 0
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddEquals(m.S1234.S1234AllorsDouble, 0);
 
                 Assert.Empty(extent);
@@ -11352,7 +11352,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal 1
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddEquals(m.S1234.S1234AllorsDouble, 1);
 
                 Assert.Equal(4, extent.Count);
@@ -11362,7 +11362,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, false, false);
 
                 // Equal 2
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddEquals(m.S1234.S1234AllorsDouble, 2);
 
                 Assert.Equal(8, extent.Count);
@@ -11373,7 +11373,7 @@ namespace Allors.Database.Adapters
 
                 // Class - Wrong RelationType
                 // Equal 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -11388,7 +11388,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -11403,7 +11403,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -11419,7 +11419,7 @@ namespace Allors.Database.Adapters
 
                 // Interface - Wrong RelationType
                 // Equal 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -11434,7 +11434,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -11449,7 +11449,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -11465,7 +11465,7 @@ namespace Allors.Database.Adapters
 
                 // Super Interface - Wrong RelationType
                 // Equal 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -11480,7 +11480,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -11495,7 +11495,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -11518,7 +11518,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var flag in TrueFalse)
                 {
@@ -11545,7 +11545,7 @@ namespace Allors.Database.Adapters
 
                     // Class
                     // Between 1 and 3
-                    var extent = this.Session.Extent(m.C1.ObjectType);
+                    var extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddBetween(m.C1.C1AllorsDateTime, dateTime1, dateTime3);
 
                     Assert.Empty(extent);
@@ -11567,7 +11567,7 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4D));
 
                     // Between 3 and 4
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddBetween(m.C1.C1AllorsDateTime, dateTime3, dateTime4);
 
                     Assert.Single(extent);
@@ -11589,7 +11589,7 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4D));
 
                     // Between 4 and 5
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddBetween(m.C1.C1AllorsDateTime, dateTime4, dateTime5);
 
                     Assert.Equal(3, extent.Count);
@@ -11611,7 +11611,7 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4D));
 
                     // Between 6 and 10
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddBetween(m.C1.C1AllorsDateTime, dateTime6, dateTime10);
 
                     Assert.Empty(extent);
@@ -11634,7 +11634,7 @@ namespace Allors.Database.Adapters
 
                     // Interface
                     // Between 1 and 3
-                    extent = this.Session.Extent(m.I12.ObjectType);
+                    extent = this.Transaction.Extent(m.I12.ObjectType);
                     extent.Filter.AddBetween(m.I12.I12AllorsDateTime, dateTime1, dateTime3);
 
                     Assert.Empty(extent);
@@ -11656,7 +11656,7 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4D));
 
                     // Between 3 and 4
-                    extent = this.Session.Extent(m.I12.ObjectType);
+                    extent = this.Transaction.Extent(m.I12.ObjectType);
                     extent.Filter.AddBetween(m.I12.I12AllorsDateTime, dateTime3, dateTime4);
 
                     Assert.Equal(2, extent.Count);
@@ -11678,7 +11678,7 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4D));
 
                     // Between 4 and 5
-                    extent = this.Session.Extent(m.I12.ObjectType);
+                    extent = this.Transaction.Extent(m.I12.ObjectType);
                     extent.Filter.AddBetween(m.I12.I12AllorsDateTime, dateTime4, dateTime5);
 
                     Assert.Equal(6, extent.Count);
@@ -11700,7 +11700,7 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4D));
 
                     // Between 6 and 10
-                    extent = this.Session.Extent(m.I12.ObjectType);
+                    extent = this.Transaction.Extent(m.I12.ObjectType);
                     extent.Filter.AddBetween(m.I12.I12AllorsDateTime, dateTime6, dateTime10);
 
                     Assert.Empty(extent);
@@ -11723,7 +11723,7 @@ namespace Allors.Database.Adapters
 
                     // Super Interface
                     // Between 1 and 3
-                    extent = this.Session.Extent(m.S1234.ObjectType);
+                    extent = this.Transaction.Extent(m.S1234.ObjectType);
                     extent.Filter.AddBetween(m.S1234.S1234AllorsDateTime, dateTime1, dateTime3);
 
                     Assert.Empty(extent);
@@ -11745,7 +11745,7 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4D));
 
                     // Between 3 and 4
-                    extent = this.Session.Extent(m.S1234.ObjectType);
+                    extent = this.Transaction.Extent(m.S1234.ObjectType);
                     extent.Filter.AddBetween(m.S1234.S1234AllorsDateTime, dateTime3, dateTime4);
 
                     Assert.Equal(4, extent.Count);
@@ -11767,7 +11767,7 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4D));
 
                     // Between 4 and 5
-                    extent = this.Session.Extent(m.S1234.ObjectType);
+                    extent = this.Transaction.Extent(m.S1234.ObjectType);
                     extent.Filter.AddBetween(m.S1234.S1234AllorsDateTime, dateTime4, dateTime5);
 
                     Assert.Equal(12, extent.Count);
@@ -11789,7 +11789,7 @@ namespace Allors.Database.Adapters
                     Assert.True(extent.Contains(this.c4D));
 
                     // Between 6 and 10
-                    extent = this.Session.Extent(m.S1234.ObjectType);
+                    extent = this.Transaction.Extent(m.S1234.ObjectType);
                     extent.Filter.AddBetween(m.S1234.S1234AllorsDateTime, dateTime6, dateTime10);
 
                     Assert.Empty(extent);
@@ -11812,7 +11812,7 @@ namespace Allors.Database.Adapters
 
                     // Class - Wrong RelationType0
                     // Between 1 and 3
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     var exception = false;
                     try
@@ -11827,7 +11827,7 @@ namespace Allors.Database.Adapters
                     Assert.True(exception);
 
                     // Between 3 and 4
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     exception = false;
                     try
@@ -11842,7 +11842,7 @@ namespace Allors.Database.Adapters
                     Assert.True(exception);
 
                     // Between 4 and 5
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     exception = false;
                     try
@@ -11857,7 +11857,7 @@ namespace Allors.Database.Adapters
                     Assert.True(exception);
 
                     // Between 6 and 10
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     exception = false;
                     try
@@ -11881,7 +11881,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var flag in TrueFalse)
                 {
@@ -11908,7 +11908,7 @@ namespace Allors.Database.Adapters
 
                     // Class
                     // Less Than 4
-                    var extent = this.Session.Extent(m.C1.ObjectType);
+                    var extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddLessThan(m.C1.C1AllorsDateTime, dateTime4);
 
                     Assert.Empty(extent);
@@ -11930,7 +11930,7 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4D));
 
                     // Less Than 5
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddLessThan(m.C1.C1AllorsDateTime, dateTime5);
 
                     Assert.Single(extent);
@@ -11952,7 +11952,7 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4D));
 
                     // Less Than 6
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddLessThan(m.C1.C1AllorsDateTime, dateTime6);
 
                     Assert.Equal(3, extent.Count);
@@ -11975,7 +11975,7 @@ namespace Allors.Database.Adapters
 
                     // Interface
                     // Less Than 4
-                    extent = this.Session.Extent(m.I12.ObjectType);
+                    extent = this.Transaction.Extent(m.I12.ObjectType);
                     extent.Filter.AddLessThan(m.I12.I12AllorsDateTime, dateTime4);
 
                     Assert.Empty(extent);
@@ -11997,7 +11997,7 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4D));
 
                     // Less Than 5
-                    extent = this.Session.Extent(m.I12.ObjectType);
+                    extent = this.Transaction.Extent(m.I12.ObjectType);
                     extent.Filter.AddLessThan(m.I12.I12AllorsDateTime, dateTime5);
 
                     Assert.Equal(2, extent.Count);
@@ -12019,7 +12019,7 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4D));
 
                     // Less Than 6
-                    extent = this.Session.Extent(m.I12.ObjectType);
+                    extent = this.Transaction.Extent(m.I12.ObjectType);
                     extent.Filter.AddLessThan(m.I12.I12AllorsDateTime, dateTime6);
 
                     Assert.Equal(6, extent.Count);
@@ -12042,7 +12042,7 @@ namespace Allors.Database.Adapters
 
                     // Super Interface
                     // Less Than 4
-                    extent = this.Session.Extent(m.S1234.ObjectType);
+                    extent = this.Transaction.Extent(m.S1234.ObjectType);
                     extent.Filter.AddLessThan(m.S1234.S1234AllorsDateTime, dateTime4);
 
                     Assert.Empty(extent);
@@ -12064,7 +12064,7 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4D));
 
                     // Less Than 5
-                    extent = this.Session.Extent(m.S1234.ObjectType);
+                    extent = this.Transaction.Extent(m.S1234.ObjectType);
                     extent.Filter.AddLessThan(m.S1234.S1234AllorsDateTime, dateTime5);
 
                     Assert.Equal(4, extent.Count);
@@ -12086,7 +12086,7 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4D));
 
                     // Less Than 6
-                    extent = this.Session.Extent(m.S1234.ObjectType);
+                    extent = this.Transaction.Extent(m.S1234.ObjectType);
                     extent.Filter.AddLessThan(m.S1234.S1234AllorsDateTime, dateTime6);
 
                     Assert.Equal(12, extent.Count);
@@ -12110,7 +12110,7 @@ namespace Allors.Database.Adapters
                     // Class - Wrong RelationType
 
                     // Less Than 4
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     var exception = false;
                     try
@@ -12125,7 +12125,7 @@ namespace Allors.Database.Adapters
                     Assert.True(exception);
 
                     // Less Than 5
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     exception = false;
                     try
@@ -12140,7 +12140,7 @@ namespace Allors.Database.Adapters
                     Assert.True(exception);
 
                     // Less Than 6
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     exception = false;
                     try
@@ -12156,7 +12156,7 @@ namespace Allors.Database.Adapters
 
                     // Interface - Wrong RelationType
                     // Less Than 4
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     exception = false;
                     try
@@ -12171,7 +12171,7 @@ namespace Allors.Database.Adapters
                     Assert.True(exception);
 
                     // Less Than 5
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     exception = false;
                     try
@@ -12186,7 +12186,7 @@ namespace Allors.Database.Adapters
                     Assert.True(exception);
 
                     // Less Than 6
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     exception = false;
                     try
@@ -12202,7 +12202,7 @@ namespace Allors.Database.Adapters
 
                     // Super Interface - Wrong RelationType
                     // Less Than 4
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     exception = false;
                     try
@@ -12217,7 +12217,7 @@ namespace Allors.Database.Adapters
                     Assert.True(exception);
 
                     // Less Than 5
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     exception = false;
                     try
@@ -12232,7 +12232,7 @@ namespace Allors.Database.Adapters
                     Assert.True(exception);
 
                     // Less Than 6
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     exception = false;
                     try
@@ -12256,7 +12256,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var flag in TrueFalse)
                 {
@@ -12283,7 +12283,7 @@ namespace Allors.Database.Adapters
 
                     // Class
                     // Greater Than 3
-                    var extent = this.Session.Extent(m.C1.ObjectType);
+                    var extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddGreaterThan(m.C1.C1AllorsDateTime, dateTime3);
 
                     Assert.Equal(3, extent.Count);
@@ -12305,7 +12305,7 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4D));
 
                     // Greater Than 4
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddGreaterThan(m.C1.C1AllorsDateTime, dateTime4);
 
                     Assert.Equal(2, extent.Count);
@@ -12327,7 +12327,7 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4D));
 
                     // Greater Than 5
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddGreaterThan(m.C1.C1AllorsDateTime, dateTime5);
 
                     Assert.Empty(extent);
@@ -12350,7 +12350,7 @@ namespace Allors.Database.Adapters
 
                     // Interface
                     // Greater Than 3
-                    extent = this.Session.Extent(m.I12.ObjectType);
+                    extent = this.Transaction.Extent(m.I12.ObjectType);
                     extent.Filter.AddGreaterThan(m.I12.I12AllorsDateTime, dateTime3);
 
                     Assert.Equal(6, extent.Count);
@@ -12372,7 +12372,7 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4D));
 
                     // Greater Than 4
-                    extent = this.Session.Extent(m.I12.ObjectType);
+                    extent = this.Transaction.Extent(m.I12.ObjectType);
                     extent.Filter.AddGreaterThan(m.I12.I12AllorsDateTime, dateTime4);
 
                     Assert.Equal(4, extent.Count);
@@ -12394,7 +12394,7 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4D));
 
                     // Greater Than 5
-                    extent = this.Session.Extent(m.I12.ObjectType);
+                    extent = this.Transaction.Extent(m.I12.ObjectType);
                     extent.Filter.AddGreaterThan(m.I12.I12AllorsDateTime, dateTime5);
 
                     Assert.Empty(extent);
@@ -12417,7 +12417,7 @@ namespace Allors.Database.Adapters
 
                     // Super Interface
                     // Greater Than 3
-                    extent = this.Session.Extent(m.S1234.ObjectType);
+                    extent = this.Transaction.Extent(m.S1234.ObjectType);
                     extent.Filter.AddGreaterThan(m.S1234.S1234AllorsDateTime, dateTime3);
 
                     Assert.Equal(12, extent.Count);
@@ -12439,7 +12439,7 @@ namespace Allors.Database.Adapters
                     Assert.True(extent.Contains(this.c4D));
 
                     // Greater Than 4
-                    extent = this.Session.Extent(m.S1234.ObjectType);
+                    extent = this.Transaction.Extent(m.S1234.ObjectType);
                     extent.Filter.AddGreaterThan(m.S1234.S1234AllorsDateTime, dateTime4);
 
                     Assert.Equal(8, extent.Count);
@@ -12461,7 +12461,7 @@ namespace Allors.Database.Adapters
                     Assert.True(extent.Contains(this.c4D));
 
                     // Greater Than 5
-                    extent = this.Session.Extent(m.S1234.ObjectType);
+                    extent = this.Transaction.Extent(m.S1234.ObjectType);
                     extent.Filter.AddGreaterThan(m.S1234.S1234AllorsDateTime, dateTime5);
 
                     Assert.Empty(extent);
@@ -12485,7 +12485,7 @@ namespace Allors.Database.Adapters
                     // Class - Wrong RelationType
 
                     // Greater Than 3
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     var exception = false;
                     try
@@ -12500,7 +12500,7 @@ namespace Allors.Database.Adapters
                     Assert.True(exception);
 
                     // Greater Than 4
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     exception = false;
                     try
@@ -12515,7 +12515,7 @@ namespace Allors.Database.Adapters
                     Assert.True(exception);
 
                     // Greater Than 5
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     exception = false;
                     try
@@ -12532,7 +12532,7 @@ namespace Allors.Database.Adapters
                     // Interface - Wrong RelationType
 
                     // Greater Than 3
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     exception = false;
                     try
@@ -12547,7 +12547,7 @@ namespace Allors.Database.Adapters
                     Assert.True(exception);
 
                     // Greater Than 4
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     exception = false;
                     try
@@ -12562,7 +12562,7 @@ namespace Allors.Database.Adapters
                     Assert.True(exception);
 
                     // Greater Than 5
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     exception = false;
                     try
@@ -12579,7 +12579,7 @@ namespace Allors.Database.Adapters
                     // Super Interface - Wrong RelationType
 
                     // Greater Than 3
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     exception = false;
                     try
@@ -12594,7 +12594,7 @@ namespace Allors.Database.Adapters
                     Assert.True(exception);
 
                     // Greater Than 4
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     exception = false;
                     try
@@ -12609,7 +12609,7 @@ namespace Allors.Database.Adapters
                     Assert.True(exception);
 
                     // Greater Than 5
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     exception = false;
                     try
@@ -12633,7 +12633,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var flag in TrueFalse)
                 {
@@ -12660,7 +12660,7 @@ namespace Allors.Database.Adapters
 
                     // Class
                     // Equal 3
-                    var extent = this.Session.Extent(m.C1.ObjectType);
+                    var extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddEquals(m.C1.C1AllorsDateTime, dateTime3);
 
                     Assert.Empty(extent);
@@ -12682,7 +12682,7 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4D));
 
                     // Equal 4
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddEquals(m.C1.C1AllorsDateTime, dateTime4);
 
                     Assert.Single(extent);
@@ -12704,7 +12704,7 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4D));
 
                     // Equal 5
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddEquals(m.C1.C1AllorsDateTime, dateTime5);
 
                     Assert.Equal(2, extent.Count);
@@ -12727,7 +12727,7 @@ namespace Allors.Database.Adapters
 
                     // Interface
                     // Equal 3
-                    extent = this.Session.Extent(m.I12.ObjectType);
+                    extent = this.Transaction.Extent(m.I12.ObjectType);
                     extent.Filter.AddEquals(m.I12.I12AllorsDateTime, dateTime3);
 
                     Assert.Empty(extent);
@@ -12749,7 +12749,7 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4D));
 
                     // Equal 4
-                    extent = this.Session.Extent(m.I12.ObjectType);
+                    extent = this.Transaction.Extent(m.I12.ObjectType);
                     extent.Filter.AddEquals(m.I12.I12AllorsDateTime, dateTime4);
 
                     Assert.Equal(2, extent.Count);
@@ -12771,7 +12771,7 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4D));
 
                     // Equal 5
-                    extent = this.Session.Extent(m.I12.ObjectType);
+                    extent = this.Transaction.Extent(m.I12.ObjectType);
                     extent.Filter.AddEquals(m.I12.I12AllorsDateTime, dateTime5);
 
                     Assert.Equal(4, extent.Count);
@@ -12794,7 +12794,7 @@ namespace Allors.Database.Adapters
 
                     // Super Interface
                     // Equal 3
-                    extent = this.Session.Extent(m.S1234.ObjectType);
+                    extent = this.Transaction.Extent(m.S1234.ObjectType);
                     extent.Filter.AddEquals(m.S1234.S1234AllorsDateTime, dateTime3);
 
                     Assert.Empty(extent);
@@ -12816,7 +12816,7 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4D));
 
                     // Equal 4
-                    extent = this.Session.Extent(m.S1234.ObjectType);
+                    extent = this.Transaction.Extent(m.S1234.ObjectType);
                     extent.Filter.AddEquals(m.S1234.S1234AllorsDateTime, dateTime4);
 
                     Assert.Equal(4, extent.Count);
@@ -12838,7 +12838,7 @@ namespace Allors.Database.Adapters
                     Assert.False(extent.Contains(this.c4D));
 
                     // Equal 5
-                    extent = this.Session.Extent(m.S1234.ObjectType);
+                    extent = this.Transaction.Extent(m.S1234.ObjectType);
                     extent.Filter.AddEquals(m.S1234.S1234AllorsDateTime, dateTime5);
 
                     Assert.Equal(8, extent.Count);
@@ -12861,7 +12861,7 @@ namespace Allors.Database.Adapters
 
                     // Class - Wrong RelationType
                     // Equal 3
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     var exception = false;
                     try
@@ -12876,7 +12876,7 @@ namespace Allors.Database.Adapters
                     Assert.True(exception);
 
                     // Equal 4
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     exception = false;
                     try
@@ -12891,7 +12891,7 @@ namespace Allors.Database.Adapters
                     Assert.True(exception);
 
                     // Equal 5
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     exception = false;
                     try
@@ -12907,7 +12907,7 @@ namespace Allors.Database.Adapters
 
                     // Interface - Wrong RelationType
                     // Equal 3
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     exception = false;
                     try
@@ -12922,7 +12922,7 @@ namespace Allors.Database.Adapters
                     Assert.True(exception);
 
                     // Equal 4
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     exception = false;
                     try
@@ -12937,7 +12937,7 @@ namespace Allors.Database.Adapters
                     Assert.True(exception);
 
                     // Equal 5
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     exception = false;
                     try
@@ -12953,7 +12953,7 @@ namespace Allors.Database.Adapters
 
                     // Super Interface - Wrong RelationType
                     // Equal 3
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     exception = false;
                     try
@@ -12968,7 +12968,7 @@ namespace Allors.Database.Adapters
                     Assert.True(exception);
 
                     // Equal 4
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     exception = false;
                     try
@@ -12983,7 +12983,7 @@ namespace Allors.Database.Adapters
                     Assert.True(exception);
 
                     // Equal 5
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
 
                     exception = false;
                     try
@@ -13007,12 +13007,12 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
 
                 // Between -10 and 0
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddBetween(m.C1.C1AllorsDecimal, -10, 0);
 
                 Assert.Empty(extent);
@@ -13022,7 +13022,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 0 and 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddBetween(m.C1.C1AllorsDecimal, 0, 1);
 
                 Assert.Single(extent);
@@ -13032,7 +13032,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 1 and 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddBetween(m.C1.C1AllorsDecimal, 1, 2);
 
                 Assert.Equal(3, extent.Count);
@@ -13042,7 +13042,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 3 and 10
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddBetween(m.C1.C1AllorsDecimal, 3, 10);
 
                 Assert.Empty(extent);
@@ -13054,7 +13054,7 @@ namespace Allors.Database.Adapters
                 // Interface
 
                 // Between -10 and 0
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddBetween(m.I12.I12AllorsDecimal, -10, 0);
 
                 Assert.Empty(extent);
@@ -13064,7 +13064,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 0 and 1
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddBetween(m.I12.I12AllorsDecimal, 0, 1);
 
                 Assert.Equal(2, extent.Count);
@@ -13074,7 +13074,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 1 and 2
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddBetween(m.I12.I12AllorsDecimal, 1, 2);
 
                 Assert.Equal(6, extent.Count);
@@ -13084,7 +13084,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 3 and 10
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddBetween(m.I12.I12AllorsDecimal, 3, 10);
 
                 Assert.Empty(extent);
@@ -13096,7 +13096,7 @@ namespace Allors.Database.Adapters
                 // Super Interface
 
                 // Between -10 and 0
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddBetween(m.S1234.S1234AllorsDecimal, -10, 0);
 
                 Assert.Empty(extent);
@@ -13106,7 +13106,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Between 0 and 1
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddBetween(m.S1234.S1234AllorsDecimal, 0, 1);
 
                 Assert.Equal(4, extent.Count);
@@ -13116,7 +13116,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, false, false);
 
                 // Between 1 and 2
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddBetween(m.S1234.S1234AllorsDecimal, 1, 2);
 
                 Assert.Equal(12, extent.Count);
@@ -13126,7 +13126,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, true, true);
 
                 // Between 3 and 10
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddBetween(m.S1234.S1234AllorsDecimal, 3, 10);
 
                 Assert.Empty(extent);
@@ -13138,7 +13138,7 @@ namespace Allors.Database.Adapters
                 // Class - Wrong RelationType
 
                 // Between -10 and 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -13153,7 +13153,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Between 0 and 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -13168,7 +13168,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Between 1 and 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -13183,7 +13183,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Between 3 and 10
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -13206,12 +13206,12 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
 
                 // Less Than 1
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddLessThan(m.C1.C1AllorsDecimal, 1);
 
                 Assert.Empty(extent);
@@ -13221,7 +13221,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddLessThan(m.C1.C1AllorsDecimal, 2);
 
                 Assert.Single(extent);
@@ -13231,7 +13231,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddLessThan(m.C1.C1AllorsDecimal, 3);
 
                 Assert.Equal(3, extent.Count);
@@ -13243,7 +13243,7 @@ namespace Allors.Database.Adapters
                 // Interface
 
                 // Less Than 1
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddLessThan(m.I12.I12AllorsDecimal, 1);
 
                 Assert.Empty(extent);
@@ -13253,7 +13253,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddLessThan(m.I12.I12AllorsDecimal, 2);
 
                 Assert.Equal(2, extent.Count);
@@ -13263,7 +13263,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddLessThan(m.I12.I12AllorsDecimal, 3);
 
                 Assert.Equal(6, extent.Count);
@@ -13275,7 +13275,7 @@ namespace Allors.Database.Adapters
                 // Super Interface
 
                 // Less Than 1
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddLessThan(m.S1234.S1234AllorsDecimal, 1);
 
                 Assert.Empty(extent);
@@ -13285,7 +13285,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddLessThan(m.S1234.S1234AllorsDecimal, 2);
 
                 Assert.Equal(4, extent.Count);
@@ -13295,7 +13295,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, false, false);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddLessThan(m.S1234.S1234AllorsDecimal, 3);
 
                 Assert.Equal(12, extent.Count);
@@ -13307,7 +13307,7 @@ namespace Allors.Database.Adapters
                 // Class - Wrong RelationType
 
                 // Less Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -13322,7 +13322,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -13337,7 +13337,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -13354,7 +13354,7 @@ namespace Allors.Database.Adapters
                 // Interface - Wrong RelationType
 
                 // Less Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -13369,7 +13369,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -13384,7 +13384,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -13401,7 +13401,7 @@ namespace Allors.Database.Adapters
                 // Super Interface - Wrong RelationType
 
                 // Less Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -13416,7 +13416,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -13431,7 +13431,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Less Than 3
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -13454,12 +13454,12 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
 
                 // Greater Than 0
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddGreaterThan(m.C1.C1AllorsDecimal, 0);
 
                 Assert.Equal(3, extent.Count);
@@ -13469,7 +13469,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddGreaterThan(m.C1.C1AllorsDecimal, 1);
 
                 Assert.Equal(2, extent.Count);
@@ -13479,7 +13479,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddGreaterThan(m.C1.C1AllorsDecimal, 2);
 
                 Assert.Empty(extent);
@@ -13491,7 +13491,7 @@ namespace Allors.Database.Adapters
                 // Interface
 
                 // Greater Than 0
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddGreaterThan(m.I12.I12AllorsDecimal, 0);
 
                 Assert.Equal(6, extent.Count);
@@ -13501,7 +13501,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddGreaterThan(m.I12.I12AllorsDecimal, 1);
 
                 Assert.Equal(4, extent.Count);
@@ -13511,7 +13511,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddGreaterThan(m.I12.I12AllorsDecimal, 2);
 
                 Assert.Empty(extent);
@@ -13523,7 +13523,7 @@ namespace Allors.Database.Adapters
                 // Super Interface
 
                 // Greater Than 0
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddGreaterThan(m.S1234.S1234AllorsDecimal, 0);
 
                 Assert.Equal(12, extent.Count);
@@ -13533,7 +13533,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, true, true);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddGreaterThan(m.S1234.S1234AllorsDecimal, 1);
 
                 Assert.Equal(8, extent.Count);
@@ -13543,7 +13543,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, true, true);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddGreaterThan(m.S1234.S1234AllorsDecimal, 2);
 
                 Assert.Empty(extent);
@@ -13555,7 +13555,7 @@ namespace Allors.Database.Adapters
                 // Class - Wrong RelationType
 
                 // Greater Than 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -13570,7 +13570,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -13585,7 +13585,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -13602,7 +13602,7 @@ namespace Allors.Database.Adapters
                 // Interface - Wrong RelationType
 
                 // Greater Than 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -13617,7 +13617,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -13632,7 +13632,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -13649,7 +13649,7 @@ namespace Allors.Database.Adapters
                 // Super Interface - Wrong RelationType
 
                 // Greater Than 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -13664,7 +13664,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -13679,7 +13679,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Greater Than 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -13702,11 +13702,11 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
                 // Equal 0
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddEquals(m.C1.C1AllorsDecimal, 0);
 
                 Assert.Empty(extent);
@@ -13716,7 +13716,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddEquals(m.C1.C1AllorsDecimal, 1);
 
                 Assert.Single(extent);
@@ -13726,7 +13726,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddEquals(m.C1.C1AllorsDecimal, 2);
 
                 Assert.Equal(2, extent.Count);
@@ -13737,7 +13737,7 @@ namespace Allors.Database.Adapters
 
                 // Interface
                 // Equal 0
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddEquals(m.I12.I12AllorsDecimal, 0);
 
                 Assert.Empty(extent);
@@ -13747,7 +13747,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal 1
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddEquals(m.I12.I12AllorsDecimal, 1);
 
                 Assert.Equal(2, extent.Count);
@@ -13757,7 +13757,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal 2
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddEquals(m.I12.I12AllorsDecimal, 2);
 
                 Assert.Equal(4, extent.Count);
@@ -13768,7 +13768,7 @@ namespace Allors.Database.Adapters
 
                 // Super Interface
                 // Equal 0
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddEquals(m.S1234.S1234AllorsDecimal, 0);
 
                 Assert.Empty(extent);
@@ -13778,7 +13778,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal 1
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddEquals(m.S1234.S1234AllorsDecimal, 1);
 
                 Assert.Equal(4, extent.Count);
@@ -13788,7 +13788,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, false, false);
 
                 // Equal 2
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddEquals(m.S1234.S1234AllorsDecimal, 2);
 
                 Assert.Equal(8, extent.Count);
@@ -13799,7 +13799,7 @@ namespace Allors.Database.Adapters
 
                 // Class - Wrong RelationType
                 // Equal 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -13814,7 +13814,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -13829,7 +13829,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -13845,7 +13845,7 @@ namespace Allors.Database.Adapters
 
                 // Interface - Wrong RelationType
                 // Equal 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -13860,7 +13860,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -13875,7 +13875,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -13891,7 +13891,7 @@ namespace Allors.Database.Adapters
 
                 // Super Interface - Wrong RelationType
                 // Equal 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -13906,7 +13906,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -13921,7 +13921,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -13944,13 +13944,13 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // AllorsInteger
                 // Class
 
                 // Equal 0
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddEquals(m.C1.C1AllorsInteger, Zero2Four.Zero);
 
                 Assert.Empty(extent);
@@ -13960,7 +13960,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddEquals(m.C1.C1AllorsInteger, Zero2Four.One);
 
                 Assert.Single(extent);
@@ -13970,7 +13970,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddEquals(m.C1.C1AllorsInteger, Zero2Four.Two);
 
                 Assert.Equal(2, extent.Count);
@@ -13982,7 +13982,7 @@ namespace Allors.Database.Adapters
                 // Interface
 
                 // Equal 0
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddEquals(m.I12.I12AllorsInteger, Zero2Four.Zero);
 
                 Assert.Empty(extent);
@@ -13992,7 +13992,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal 1
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddEquals(m.I12.I12AllorsInteger, Zero2Four.One);
 
                 Assert.Equal(2, extent.Count);
@@ -14002,7 +14002,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal 2
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddEquals(m.I12.I12AllorsInteger, Zero2Four.Two);
 
                 Assert.Equal(4, extent.Count);
@@ -14014,7 +14014,7 @@ namespace Allors.Database.Adapters
                 // Super Interface
 
                 // Equal 0
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddEquals(m.S1234.S1234AllorsInteger, Zero2Four.Zero);
 
                 Assert.Empty(extent);
@@ -14024,7 +14024,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal 1
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddEquals(m.S1234.S1234AllorsInteger, Zero2Four.One);
 
                 Assert.Equal(4, extent.Count);
@@ -14034,7 +14034,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, false, false);
 
                 // Equal 2
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddEquals(m.S1234.S1234AllorsInteger, Zero2Four.Two);
 
                 Assert.Equal(8, extent.Count);
@@ -14046,7 +14046,7 @@ namespace Allors.Database.Adapters
                 // Class - Wrong RelationType
 
                 // Equal 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -14061,7 +14061,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -14076,7 +14076,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -14093,7 +14093,7 @@ namespace Allors.Database.Adapters
                 // Interface - Wrong RelationType
 
                 // Equal 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -14108,7 +14108,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -14123,7 +14123,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -14140,7 +14140,7 @@ namespace Allors.Database.Adapters
                 // Super Interface - Wrong RelationType
 
                 // Equal 0
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -14155,7 +14155,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal 1
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -14170,7 +14170,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal 2
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -14185,7 +14185,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Wrong type
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exceptionThrown = false;
                 C1 first = null;
@@ -14211,12 +14211,12 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 var exceptionThrown = false;
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 try
                 {
                     extent.Filter.AddEquals(m.C1.C1C2one2one, m.I1.I1C1one2one);
@@ -14237,7 +14237,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -14246,18 +14246,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Class
                     // Empty
-                    var inExtent = this.Session.Extent(m.C1.ObjectType);
+                    var inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    var extent = this.Session.Extent(m.C1.ObjectType);
+                    var extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1C1many2manies, inExtent);
 
                     Assert.Empty(extent);
@@ -14267,15 +14267,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1C1many2manies, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -14285,18 +14285,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1C1many2manies, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -14312,9 +14312,9 @@ namespace Allors.Database.Adapters
                     // {
                     // var inExtentA = c1_1.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
                     // var inExtentB = c1_1.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
-                    // inExtent = Session.Union(inExtentA, inExtentB);
+                    // inExtent = Transaction.Union(inExtentA, inExtentB);
                     // }
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1C1many2manies, inExtent);
 
                     Assert.Equal(2, extent.Count);
@@ -14325,18 +14325,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Interface
                     // Empty
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1C1many2manies, inExtent);
 
                     Assert.Empty(extent);
@@ -14346,15 +14346,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1C1many2manies, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -14364,18 +14364,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1C1many2manies, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -14388,18 +14388,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Class
                     // Empty
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1I12many2manies, inExtent);
 
                     Assert.Empty(extent);
@@ -14409,15 +14409,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1I12many2manies, inExtent);
 
                     Assert.Single(extent);
@@ -14427,18 +14427,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1I12many2manies, inExtent);
 
                     Assert.Single(extent);
@@ -14449,18 +14449,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Interface
                     // Empty
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1I12many2manies, inExtent);
 
                     Assert.Empty(extent);
@@ -14470,15 +14470,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1I12many2manies, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -14488,18 +14488,18 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Filtered
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1I12many2manies, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -14518,10 +14518,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddContains(m.C1.C1C2many2manies, this.c2C);
 
                 Assert.Equal(2, extent.Count);
@@ -14530,7 +14530,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddContains(m.C1.C1C2many2manies, this.c2B);
                 extent.Filter.AddContains(m.C1.C1C2many2manies, this.c2C);
 
@@ -14541,7 +14541,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Interface
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddContains(m.C1.C1I12many2manies, this.c2C);
 
                 Assert.Equal(2, extent.Count);
@@ -14551,7 +14551,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddContains(m.S1234.S1234many2manies, this.c1A);
 
                 Assert.Equal(9, extent.Count);
@@ -14571,10 +14571,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddExists(m.C1.C1C2many2manies);
 
                 Assert.Equal(3, extent.Count);
@@ -14584,7 +14584,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Interface
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddExists(m.I12.I12C2many2manies);
 
                 Assert.Equal(4, extent.Count);
@@ -14594,7 +14594,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddExists(m.S1234.S1234C2many2manies);
 
                 Assert.Equal(4, extent.Count);
@@ -14604,7 +14604,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Class - Wrong RelationType
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -14619,7 +14619,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Interface - Wrong RelationType
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
 
                 exception = false;
                 try
@@ -14634,7 +14634,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Super Interface - Wrong RelationType
-                extent = this.Session.Extent(m.S12.ObjectType);
+                extent = this.Transaction.Extent(m.S12.ObjectType);
 
                 exception = false;
                 try
@@ -14657,7 +14657,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -14667,18 +14667,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Class
                     // Emtpy Extent
-                    var inExtent = this.Session.Extent(m.C1.ObjectType);
+                    var inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    var extent = this.Session.Extent(m.C1.ObjectType);
+                    var extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1C1one2manies, inExtent);
 
                     Assert.Empty(extent);
@@ -14688,15 +14688,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full Extent
-                    inExtent = this.Session.Extent(m.C1.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1C1one2manies, inExtent);
 
                     Assert.Equal(2, extent.Count);
@@ -14705,15 +14705,15 @@ namespace Allors.Database.Adapters
                     this.AssertC3(extent, false, false, false, false);
                     this.AssertC4(extent, false, false, false, false);
 
-                    inExtent = this.Session.Extent(m.C2.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C2.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C2.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C2.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C2.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C2.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1C2one2manies, inExtent);
 
                     Assert.Equal(2, extent.Count);
@@ -14722,15 +14722,15 @@ namespace Allors.Database.Adapters
                     this.AssertC3(extent, false, false, false, false);
                     this.AssertC4(extent, false, false, false, false);
 
-                    inExtent = this.Session.Extent(m.C4.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C4.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C4.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C4.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C4.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C4.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C3.ObjectType);
+                    extent = this.Transaction.Extent(m.C3.ObjectType);
                     extent.Filter.AddContainedIn(m.C3.C3C4one2manies, inExtent);
 
                     Assert.Equal(2, extent.Count);
@@ -14741,18 +14741,18 @@ namespace Allors.Database.Adapters
 
                     // ContainedIn Extent over Shared Interface
                     // Emtpy Extent
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     inExtent.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentA.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
                         inExtentB.Filter.AddEquals(m.I12.I12AllorsString, "Nothing here!");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1C1one2manies, inExtent);
 
                     Assert.Empty(extent);
@@ -14762,15 +14762,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full Extent
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1C1one2manies, inExtent);
 
                     Assert.Equal(2, extent.Count);
@@ -14779,15 +14779,15 @@ namespace Allors.Database.Adapters
                     this.AssertC3(extent, false, false, false, false);
                     this.AssertC4(extent, false, false, false, false);
 
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1C2one2manies, inExtent);
 
                     Assert.Equal(2, extent.Count);
@@ -14796,15 +14796,15 @@ namespace Allors.Database.Adapters
                     this.AssertC3(extent, false, false, false, false);
                     this.AssertC4(extent, false, false, false, false);
 
-                    inExtent = this.Session.Extent(m.I34.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I34.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I34.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I34.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I34.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I34.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C3.ObjectType);
+                    extent = this.Transaction.Extent(m.C3.ObjectType);
                     extent.Filter.AddContainedIn(m.C3.C3C4one2manies, inExtent);
 
                     Assert.Equal(2, extent.Count);
@@ -14816,15 +14816,15 @@ namespace Allors.Database.Adapters
                     // RelationType from Interface to Class
 
                     // ContainedIn Extent over Class
-                    inExtent = this.Session.Extent(m.C2.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C2.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C2.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C2.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C2.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C2.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.I12.I12C2one2manies, inExtent);
 
                     Assert.Single(extent);
@@ -14834,15 +14834,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // ContainedIn Extent over Interface
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.I12.I12C2one2manies, inExtent);
 
                     Assert.Single(extent);
@@ -14861,10 +14861,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddContains(m.C1.C1C2one2manies, this.c2C);
 
                 Assert.Single(extent);
@@ -14874,7 +14874,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Interface
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddContains(m.C1.C1I12one2manies, this.c2C);
 
                 Assert.Single(extent);
@@ -14884,7 +14884,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddContains(m.S1234.S1234one2manies, this.c1B);
 
                 Assert.Single(extent);
@@ -14904,10 +14904,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddExists(m.C1.C1C2one2manies);
 
                 Assert.Equal(2, extent.Count);
@@ -14917,7 +14917,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Interface
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddExists(m.I12.I12C2one2manies);
 
                 Assert.Equal(2, extent.Count);
@@ -14927,7 +14927,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddExists(m.S1234.S1234C2one2manies);
 
                 Assert.Equal(2, extent.Count);
@@ -14937,7 +14937,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Class - Wrong RelationType
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -14952,7 +14952,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Interface - Wrong RelationType
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
 
                 exception = false;
                 try
@@ -14967,7 +14967,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Super Interface - Wrong RelationType
-                extent = this.Session.Extent(m.S12.ObjectType);
+                extent = this.Transaction.Extent(m.S12.ObjectType);
 
                 exception = false;
                 try
@@ -14990,7 +14990,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -14999,15 +14999,15 @@ namespace Allors.Database.Adapters
                     // RelationType from Class to Class
 
                     // ContainedIn Extent over Class
-                    var inExtent = this.Session.Extent(m.C1.ObjectType);
+                    var inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    var extent = this.Session.Extent(m.C1.ObjectType);
+                    var extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1C1one2one, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -15016,15 +15016,15 @@ namespace Allors.Database.Adapters
                     this.AssertC3(extent, false, false, false, false);
                     this.AssertC4(extent, false, false, false, false);
 
-                    inExtent = this.Session.Extent(m.C2.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C2.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C2.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C2.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C2.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C2.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1C2one2one, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -15033,15 +15033,15 @@ namespace Allors.Database.Adapters
                     this.AssertC3(extent, false, false, false, false);
                     this.AssertC4(extent, false, false, false, false);
 
-                    inExtent = this.Session.Extent(m.C4.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C4.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C4.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C4.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C4.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C4.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C3.ObjectType);
+                    extent = this.Transaction.Extent(m.C3.ObjectType);
                     extent.Filter.AddContainedIn(m.C3.C3C4one2one, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -15051,15 +15051,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // ContainedIn Extent over Shared Interface
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1C1one2one, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -15068,15 +15068,15 @@ namespace Allors.Database.Adapters
                     this.AssertC3(extent, false, false, false, false);
                     this.AssertC4(extent, false, false, false, false);
 
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1C2one2one, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -15085,15 +15085,15 @@ namespace Allors.Database.Adapters
                     this.AssertC3(extent, false, false, false, false);
                     this.AssertC4(extent, false, false, false, false);
 
-                    inExtent = this.Session.Extent(m.I34.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I34.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I34.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I34.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I34.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I34.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C3.ObjectType);
+                    extent = this.Transaction.Extent(m.C3.ObjectType);
                     extent.Filter.AddContainedIn(m.C3.C3C4one2one, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -15105,15 +15105,15 @@ namespace Allors.Database.Adapters
                     // RelationType from Class to Interface
 
                     // ContainedIn Extent over Class
-                    inExtent = this.Session.Extent(m.C2.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C2.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C2.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C2.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C2.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C2.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1I12one2one, inExtent);
 
                     Assert.Equal(2, extent.Count);
@@ -15123,15 +15123,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // ContainedIn Extent over Shared Interface
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1I12one2one, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -15150,16 +15150,16 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Extent over Class
 
                 // RelationType from Class to Class
 
                 // ContainedIn Extent over Class
-                var inExtent = this.Session.Extent(m.C1.ObjectType).ToArray();
+                var inExtent = this.Transaction.Extent(m.C1.ObjectType).ToArray();
 
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddContainedIn(m.C1.C1C1one2one, (IEnumerable<IObject>)inExtent);
 
                 Assert.Equal(3, extent.Count);
@@ -15168,9 +15168,9 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                inExtent = this.Session.Extent(m.C2.ObjectType).ToArray();
+                inExtent = this.Transaction.Extent(m.C2.ObjectType).ToArray();
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddContainedIn(m.C1.C1C2one2one, (IEnumerable<IObject>)inExtent);
 
                 Assert.Equal(3, extent.Count);
@@ -15179,9 +15179,9 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                inExtent = this.Session.Extent(m.C4.ObjectType).ToArray();
+                inExtent = this.Transaction.Extent(m.C4.ObjectType).ToArray();
 
-                extent = this.Session.Extent(m.C3.ObjectType);
+                extent = this.Transaction.Extent(m.C3.ObjectType);
                 extent.Filter.AddContainedIn(m.C3.C3C4one2one, (IEnumerable<IObject>)inExtent);
 
                 Assert.Equal(3, extent.Count);
@@ -15191,9 +15191,9 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // ContainedIn Extent over Shared Interface
-                inExtent = this.Session.Extent(m.I12.ObjectType).ToArray();
+                inExtent = this.Transaction.Extent(m.I12.ObjectType).ToArray();
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddContainedIn(m.C1.C1C1one2one, (IEnumerable<IObject>)inExtent);
 
                 Assert.Equal(3, extent.Count);
@@ -15202,9 +15202,9 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                inExtent = this.Session.Extent(m.I12.ObjectType).ToArray();
+                inExtent = this.Transaction.Extent(m.I12.ObjectType).ToArray();
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddContainedIn(m.C1.C1C2one2one, (IEnumerable<IObject>)inExtent);
 
                 Assert.Equal(3, extent.Count);
@@ -15213,9 +15213,9 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                inExtent = this.Session.Extent(m.I34.ObjectType).ToArray();
+                inExtent = this.Transaction.Extent(m.I34.ObjectType).ToArray();
 
-                extent = this.Session.Extent(m.C3.ObjectType);
+                extent = this.Transaction.Extent(m.C3.ObjectType);
                 extent.Filter.AddContainedIn(m.C3.C3C4one2one, (IEnumerable<IObject>)inExtent);
 
                 Assert.Equal(3, extent.Count);
@@ -15227,9 +15227,9 @@ namespace Allors.Database.Adapters
                 // RelationType from Class to Interface
 
                 // ContainedIn Extent over Class
-                inExtent = this.Session.Extent(m.C2.ObjectType).ToArray();
+                inExtent = this.Transaction.Extent(m.C2.ObjectType).ToArray();
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddContainedIn(m.C1.C1I12one2one, (IEnumerable<IObject>)inExtent);
 
                 Assert.Equal(2, extent.Count);
@@ -15239,9 +15239,9 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // ContainedIn Extent over Shared Interface
-                inExtent = this.Session.Extent(m.I12.ObjectType);
+                inExtent = this.Transaction.Extent(m.I12.ObjectType);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddContainedIn(m.C1.C1I12one2one, (IEnumerable<IObject>)inExtent);
 
                 Assert.Equal(3, extent.Count);
@@ -15259,7 +15259,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -15270,18 +15270,18 @@ namespace Allors.Database.Adapters
                     // ContainedIn Extent over Shared Interface
 
                     // With filter
-                    var inExtent = this.Session.Extent(m.C1.ObjectType);
+                    var inExtent = this.Transaction.Extent(m.C1.ObjectType);
                     inExtent.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentA = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentA.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        var inExtentB = this.Session.Extent(m.C1.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C1.ObjectType);
                         inExtentB.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    var extent = this.Session.Extent(m.C1.ObjectType);
+                    var extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1C1many2one, inExtent);
 
                     Assert.Single(extent);
@@ -15291,15 +15291,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Full
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1C1many2one, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -15308,15 +15308,15 @@ namespace Allors.Database.Adapters
                     this.AssertC3(extent, false, false, false, false);
                     this.AssertC4(extent, false, false, false, false);
 
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1C2many2one, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -15325,15 +15325,15 @@ namespace Allors.Database.Adapters
                     this.AssertC3(extent, false, false, false, false);
                     this.AssertC4(extent, false, false, false, false);
 
-                    inExtent = this.Session.Extent(m.I34.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I34.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I34.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I34.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I34.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I34.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C3.ObjectType);
+                    extent = this.Transaction.Extent(m.C3.ObjectType);
                     extent.Filter.AddContainedIn(m.C3.C3C4many2one, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -15345,15 +15345,15 @@ namespace Allors.Database.Adapters
                     // RelationType from Class to Interface
 
                     // ContainedIn Extent over Class
-                    inExtent = this.Session.Extent(m.C2.ObjectType);
+                    inExtent = this.Transaction.Extent(m.C2.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.C2.ObjectType);
-                        var inExtentB = this.Session.Extent(m.C2.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.C2.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.C2.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1I12many2one, inExtent);
 
                     Assert.Equal(2, extent.Count);
@@ -15363,15 +15363,15 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // ContainedIn Extent over Shared Interface
-                    inExtent = this.Session.Extent(m.I12.ObjectType);
+                    inExtent = this.Transaction.Extent(m.I12.ObjectType);
                     if (useOperator)
                     {
-                        var inExtentA = this.Session.Extent(m.I12.ObjectType);
-                        var inExtentB = this.Session.Extent(m.I12.ObjectType);
-                        inExtent = this.Session.Union(inExtentA, inExtentB);
+                        var inExtentA = this.Transaction.Extent(m.I12.ObjectType);
+                        var inExtentB = this.Transaction.Extent(m.I12.ObjectType);
+                        inExtent = this.Transaction.Union(inExtentA, inExtentB);
                     }
 
-                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1I12many2one, inExtent);
 
                     Assert.Equal(3, extent.Count);
@@ -15390,10 +15390,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddEquals(m.C1.C1C1one2one, this.c1B);
 
                 Assert.Single(extent);
@@ -15402,7 +15402,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddEquals(m.C1.C1C2one2one, this.c2B);
 
                 Assert.Single(extent);
@@ -15412,7 +15412,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Interface
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddEquals(m.I12.I12C2one2one, this.c2A);
 
                 Assert.Single(extent);
@@ -15422,7 +15422,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddEquals(m.S1234.S1234C2one2one, this.c2A);
 
                 Assert.Single(extent);
@@ -15432,7 +15432,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Class - Wrong RelationType
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -15447,7 +15447,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Interface - Wrong RelationType
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
 
                 exception = false;
                 try
@@ -15462,7 +15462,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Super Interface - Wrong RelationType
-                extent = this.Session.Extent(m.S12.ObjectType);
+                extent = this.Transaction.Extent(m.S12.ObjectType);
 
                 exception = false;
                 try
@@ -15485,10 +15485,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddExists(m.C1.C1C1one2one);
 
                 Assert.Equal(3, extent.Count);
@@ -15497,7 +15497,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddExists(m.C1.C1C2one2one);
 
                 Assert.Equal(3, extent.Count);
@@ -15506,7 +15506,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C3.ObjectType);
+                extent = this.Transaction.Extent(m.C3.ObjectType);
                 extent.Filter.AddExists(m.C3.C3C4one2one);
 
                 Assert.Equal(3, extent.Count);
@@ -15516,7 +15516,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Interface
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddExists(m.I12.I12C2one2one);
 
                 Assert.Equal(4, extent.Count);
@@ -15526,7 +15526,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddExists(m.S1234.S1234C2one2one);
 
                 Assert.Equal(4, extent.Count);
@@ -15536,7 +15536,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Class - Wrong RelationType
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -15551,7 +15551,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Interface - Wrong RelationType
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
 
                 exception = false;
                 try
@@ -15566,7 +15566,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Super Interface - Wrong RelationType
-                extent = this.Session.Extent(m.S12.ObjectType);
+                extent = this.Transaction.Extent(m.S12.ObjectType);
 
                 exception = false;
                 try
@@ -15589,12 +15589,12 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddInstanceof(m.C1.C1C1one2one, m.C1.ObjectType);
 
                 Assert.Equal(3, extent.Count);
@@ -15603,7 +15603,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddInstanceof(m.C1.C1C2one2one, m.C2.ObjectType);
 
                 Assert.Equal(3, extent.Count);
@@ -15613,7 +15613,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Interface
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddInstanceof(m.C1.C1I12one2one, m.C2.ObjectType);
 
                 Assert.Equal(2, extent.Count);
@@ -15623,7 +15623,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddInstanceof(m.S1234.S1234one2one, m.C2.ObjectType);
 
                 Assert.Equal(3, extent.Count);
@@ -15635,7 +15635,7 @@ namespace Allors.Database.Adapters
                 // Interface
 
                 // Class
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddInstanceof(m.C1.C1C2one2one, m.I2.ObjectType);
 
                 Assert.Equal(3, extent.Count);
@@ -15645,7 +15645,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Interface
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddInstanceof(m.C1.C1I12one2one, m.I2.ObjectType);
 
                 Assert.Equal(2, extent.Count);
@@ -15654,7 +15654,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddInstanceof(m.C1.C1I12one2one, m.I12.ObjectType);
 
                 Assert.Equal(3, extent.Count);
@@ -15664,7 +15664,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddInstanceof(m.S1234.S1234one2one, m.S1234.ObjectType);
 
                 Assert.Equal(9, extent.Count);
@@ -15684,10 +15684,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddEquals(m.C1.C1AllorsString, m.C1.C1AllorsString);
 
                 Assert.Equal(3, extent.Count);
@@ -15707,12 +15707,12 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
 
                 // Equal ""
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddEquals(m.C1.C1AllorsString, string.Empty);
 
                 Assert.Empty(extent);
@@ -15721,7 +15721,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C3.ObjectType);
+                extent = this.Transaction.Extent(m.C3.ObjectType);
                 extent.Filter.AddEquals(m.C3.C3AllorsString, string.Empty);
 
                 Assert.Empty(extent);
@@ -15731,7 +15731,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal "ᴀbra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
 
                 Assert.Single(extent);
@@ -15740,7 +15740,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C3.ObjectType);
+                extent = this.Transaction.Extent(m.C3.ObjectType);
                 extent.Filter.AddEquals(m.C3.C3AllorsString, "ᴀbra");
 
                 Assert.Single(extent);
@@ -15750,7 +15750,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal "ᴀbracadabra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbracadabra");
 
                 Assert.Equal(2, extent.Count);
@@ -15759,7 +15759,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C3.ObjectType);
+                extent = this.Transaction.Extent(m.C3.ObjectType);
                 extent.Filter.AddEquals(m.C3.C3AllorsString, "ᴀbracadabra");
 
                 Assert.Equal(2, extent.Count);
@@ -15771,7 +15771,7 @@ namespace Allors.Database.Adapters
                 // Exclusive Interface
 
                 // Equal ""
-                extent = this.Session.Extent(m.I1.ObjectType);
+                extent = this.Transaction.Extent(m.I1.ObjectType);
                 extent.Filter.AddEquals(m.I1.I1AllorsString, string.Empty);
 
                 Assert.Empty(extent);
@@ -15780,7 +15780,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.I3.ObjectType);
+                extent = this.Transaction.Extent(m.I3.ObjectType);
                 extent.Filter.AddEquals(m.I3.I3AllorsString, string.Empty);
 
                 Assert.Empty(extent);
@@ -15790,7 +15790,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal "ᴀbra"
-                extent = this.Session.Extent(m.I1.ObjectType);
+                extent = this.Transaction.Extent(m.I1.ObjectType);
                 extent.Filter.AddEquals(m.I1.I1AllorsString, "ᴀbra");
 
                 Assert.Single(extent);
@@ -15799,7 +15799,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.I3.ObjectType);
+                extent = this.Transaction.Extent(m.I3.ObjectType);
                 extent.Filter.AddEquals(m.I3.I3AllorsString, "ᴀbra");
 
                 Assert.Single(extent);
@@ -15809,7 +15809,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal "ᴀbracadabra"
-                extent = this.Session.Extent(m.I1.ObjectType);
+                extent = this.Transaction.Extent(m.I1.ObjectType);
                 extent.Filter.AddEquals(m.I1.I1AllorsString, "ᴀbracadabra");
 
                 Assert.Equal(2, extent.Count);
@@ -15818,7 +15818,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.I3.ObjectType);
+                extent = this.Transaction.Extent(m.I3.ObjectType);
                 extent.Filter.AddEquals(m.I3.I3AllorsString, "ᴀbracadabra");
 
                 Assert.Equal(2, extent.Count);
@@ -15830,7 +15830,7 @@ namespace Allors.Database.Adapters
                 // Shared Interface
 
                 // Equal ""
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddEquals(m.I12.I12AllorsString, string.Empty);
 
                 Assert.Empty(extent);
@@ -15839,7 +15839,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.I34.ObjectType);
+                extent = this.Transaction.Extent(m.I34.ObjectType);
                 extent.Filter.AddEquals(m.I34.I34AllorsString, string.Empty);
 
                 Assert.Empty(extent);
@@ -15849,7 +15849,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal "ᴀbra"
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
 
                 Assert.Equal(2, extent.Count);
@@ -15858,7 +15858,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbra");
 
                 Assert.Single(extent);
@@ -15867,7 +15867,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.I23.ObjectType);
+                extent = this.Transaction.Extent(m.I23.ObjectType);
                 extent.Filter.AddEquals(m.I23.I23AllorsString, "ᴀbra");
 
                 Assert.Equal(2, extent.Count);
@@ -15876,7 +15876,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, true, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C2.ObjectType);
+                extent = this.Transaction.Extent(m.C2.ObjectType);
                 extent.Filter.AddEquals(m.I23.I23AllorsString, "ᴀbra");
 
                 Assert.Single(extent);
@@ -15885,7 +15885,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C3.ObjectType);
+                extent = this.Transaction.Extent(m.C3.ObjectType);
                 extent.Filter.AddEquals(m.I23.I23AllorsString, "ᴀbra");
 
                 Assert.Single(extent);
@@ -15894,7 +15894,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, true, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.I34.ObjectType);
+                extent = this.Transaction.Extent(m.I34.ObjectType);
                 extent.Filter.AddEquals(m.I34.I34AllorsString, "ᴀbra");
 
                 Assert.Equal(2, extent.Count);
@@ -15903,7 +15903,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, true, false, false);
                 this.AssertC4(extent, false, true, false, false);
 
-                extent = this.Session.Extent(m.C3.ObjectType);
+                extent = this.Transaction.Extent(m.C3.ObjectType);
                 extent.Filter.AddEquals(m.I34.I34AllorsString, "ᴀbra");
 
                 Assert.Single(extent);
@@ -15913,7 +15913,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal "ᴀbracadabra"
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbracadabra");
 
                 Assert.Equal(4, extent.Count);
@@ -15922,7 +15922,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddEquals(m.I12.I12AllorsString, "ᴀbracadabra");
 
                 Assert.Equal(2, extent.Count);
@@ -15931,7 +15931,7 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                extent = this.Session.Extent(m.I34.ObjectType);
+                extent = this.Transaction.Extent(m.I34.ObjectType);
                 extent.Filter.AddEquals(m.I34.I34AllorsString, "ᴀbracadabra");
 
                 Assert.Equal(4, extent.Count);
@@ -15943,7 +15943,7 @@ namespace Allors.Database.Adapters
                 // Super Interface
 
                 // Equal ""
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddEquals(m.S1234.S1234AllorsString, string.Empty);
 
                 Assert.Empty(extent);
@@ -15953,7 +15953,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal "ᴀbra"
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddEquals(m.S1234.S1234AllorsString, "ᴀbra");
 
                 Assert.Equal(4, extent.Count);
@@ -15963,7 +15963,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, false, false);
 
                 // Equal "ᴀbracadabra"
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddEquals(m.S1234.S1234AllorsString, "ᴀbracadabra");
 
                 Assert.Equal(8, extent.Count);
@@ -15975,7 +15975,7 @@ namespace Allors.Database.Adapters
                 // Class - Wrong RelationType
 
                 // Equal ""
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -15990,7 +15990,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal "ᴀbra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -16005,7 +16005,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal "ᴀbracadabra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -16022,7 +16022,7 @@ namespace Allors.Database.Adapters
                 // Interface - Wrong RelationType
 
                 // Equal ""
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -16037,7 +16037,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal "ᴀbra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -16052,7 +16052,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal "ᴀbracadabra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -16069,7 +16069,7 @@ namespace Allors.Database.Adapters
                 // Super Interface - Wrong RelationType
 
                 // Equal ""
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -16084,7 +16084,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal "ᴀbra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -16099,7 +16099,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Equal "ᴀbracadabra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -16122,10 +16122,10 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddExists(m.C1.C1AllorsString);
 
                 Assert.Equal(3, extent.Count);
@@ -16135,7 +16135,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Interface
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddExists(m.I12.I12AllorsString);
 
                 Assert.Equal(6, extent.Count);
@@ -16145,7 +16145,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Super Interface
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddExists(m.S1234.S1234AllorsString);
 
                 Assert.Equal(12, extent.Count);
@@ -16155,7 +16155,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, true, true);
 
                 // Class - Wrong RelationType
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -16170,7 +16170,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Interface - Wrong RelationType
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -16185,7 +16185,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Super Interface - Wrong RelationType
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -16208,12 +16208,12 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
 
                 // Like ""
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddLike(m.C1.C1AllorsString, string.Empty);
 
                 Assert.Empty(extent);
@@ -16223,7 +16223,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Like "ᴀbra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddLike(m.C1.C1AllorsString, "ᴀbra");
 
                 Assert.Single(extent);
@@ -16233,7 +16233,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Like "ᴀbracadabra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddLike(m.C1.C1AllorsString, "ᴀbracadabra");
 
                 Assert.Equal(2, extent.Count);
@@ -16243,7 +16243,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Like "notfound"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddLike(m.C1.C1AllorsString, "notfound");
 
                 Assert.Empty(extent);
@@ -16253,7 +16253,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Like "%ra%"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddLike(m.C1.C1AllorsString, "%ra%");
 
                 Assert.Equal(3, extent.Count);
@@ -16263,7 +16263,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Like "%bra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddLike(m.C1.C1AllorsString, "%bra");
 
                 Assert.Equal(3, extent.Count);
@@ -16273,7 +16273,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Like "%cadabra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.Filter.AddLike(m.C1.C1AllorsString, "%cadabra");
 
                 Assert.Equal(2, extent.Count);
@@ -16285,7 +16285,7 @@ namespace Allors.Database.Adapters
                 // Interface
 
                 // Like ""
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddLike(m.I12.I12AllorsString, string.Empty);
 
                 Assert.Empty(extent);
@@ -16295,7 +16295,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Like "ᴀbra"
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddLike(m.I12.I12AllorsString, "ᴀbra");
 
                 Assert.Equal(2, extent.Count);
@@ -16305,7 +16305,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Like "ᴀbracadabra"
-                extent = this.Session.Extent(m.I12.ObjectType);
+                extent = this.Transaction.Extent(m.I12.ObjectType);
                 extent.Filter.AddLike(m.I12.I12AllorsString, "ᴀbracadabra");
 
                 Assert.Equal(4, extent.Count);
@@ -16317,7 +16317,7 @@ namespace Allors.Database.Adapters
                 // Super Interface
 
                 // Like ""
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddLike(m.S1234.S1234AllorsString, string.Empty);
 
                 Assert.Empty(extent);
@@ -16327,7 +16327,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Like "ᴀbra"
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddLike(m.S1234.S1234AllorsString, "ᴀbra");
 
                 Assert.Equal(4, extent.Count);
@@ -16337,7 +16337,7 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, true, false, false);
 
                 // Like "ᴀbracadabra"
-                extent = this.Session.Extent(m.S1234.ObjectType);
+                extent = this.Transaction.Extent(m.S1234.ObjectType);
                 extent.Filter.AddLike(m.S1234.S1234AllorsString, "ᴀbracadabra");
 
                 Assert.Equal(8, extent.Count);
@@ -16349,7 +16349,7 @@ namespace Allors.Database.Adapters
                 // Class - Wrong RelationType
 
                 // Like ""
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 var exception = false;
                 try
@@ -16364,7 +16364,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Like "ᴀbra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -16379,7 +16379,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Like "ᴀbracadabra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -16396,7 +16396,7 @@ namespace Allors.Database.Adapters
                 // Interface - Wrong RelationType
 
                 // Like ""
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -16411,7 +16411,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Like "ᴀbra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -16426,7 +16426,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Like "ᴀbracadabra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -16443,7 +16443,7 @@ namespace Allors.Database.Adapters
                 // Super Interface - Wrong RelationType
 
                 // Like ""
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -16458,7 +16458,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Like "ᴀbra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -16473,7 +16473,7 @@ namespace Allors.Database.Adapters
                 Assert.True(exception);
 
                 // Like "ᴀbracadabra"
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
 
                 exception = false;
                 try
@@ -16496,15 +16496,15 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var sharedExtent = this.Session.Extent(m.C2.ObjectType);
+                var sharedExtent = this.Transaction.Extent(m.C2.ObjectType);
                 sharedExtent.Filter.AddLike(m.C2.C2AllorsString, "%");
-                var firstExtent = this.Session.Extent(m.C1.ObjectType);
+                var firstExtent = this.Transaction.Extent(m.C1.ObjectType);
                 firstExtent.Filter.AddContainedIn(m.C1.C1C2many2manies, sharedExtent);
-                var secondExtent = this.Session.Extent(m.C1.ObjectType);
+                var secondExtent = this.Transaction.Extent(m.C1.ObjectType);
                 secondExtent.Filter.AddContainedIn(m.C1.C1C2many2manies, sharedExtent);
-                var intersectExtent = this.Session.Intersect(firstExtent, secondExtent);
+                var intersectExtent = this.Transaction.Intersect(firstExtent, secondExtent);
                 intersectExtent.ToArray(typeof(C1));
             }
         }
@@ -16516,15 +16516,15 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 this.c1B.C1AllorsString = "3";
                 this.c1C.C1AllorsString = "1";
                 this.c1D.C1AllorsString = "2";
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.AddSort(m.C1.C1AllorsString);
 
                 var sortedObjects = (C1[])extent.ToArray(typeof(C1));
@@ -16534,7 +16534,7 @@ namespace Allors.Database.Adapters
                 Assert.Equal(this.c1B, sortedObjects[2]);
                 Assert.Equal(this.c1A, sortedObjects[3]);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.AddSort(m.C1.C1AllorsString, SortDirection.Ascending);
 
                 sortedObjects = (C1[])extent.ToArray(typeof(C1));
@@ -16544,7 +16544,7 @@ namespace Allors.Database.Adapters
                 Assert.Equal(this.c1B, sortedObjects[2]);
                 Assert.Equal(this.c1A, sortedObjects[3]);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.AddSort(m.C1.C1AllorsString, SortDirection.Descending);
 
                 sortedObjects = (C1[])extent.ToArray(typeof(C1));
@@ -16558,10 +16558,10 @@ namespace Allors.Database.Adapters
                 {
                     if (useOperator)
                     {
-                        var firstExtent = this.Session.Extent(m.C1.ObjectType);
+                        var firstExtent = this.Transaction.Extent(m.C1.ObjectType);
                         firstExtent.Filter.AddLike(m.C1.C1AllorsString, "1");
-                        var secondExtent = this.Session.Extent(m.C1.ObjectType);
-                        extent = this.Session.Union(firstExtent, secondExtent);
+                        var secondExtent = this.Transaction.Extent(m.C1.ObjectType);
+                        extent = this.Transaction.Union(firstExtent, secondExtent);
                         secondExtent.Filter.AddLike(m.C1.C1AllorsString, "3");
                         extent.AddSort(m.C1.C1AllorsString);
 
@@ -16581,7 +16581,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 this.c1B.C1AllorsString = "a";
                 this.c1C.C1AllorsString = "b";
@@ -16591,9 +16591,9 @@ namespace Allors.Database.Adapters
                 this.c1C.C1AllorsInteger = 1;
                 this.c1D.C1AllorsInteger = 0;
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                var extent = this.Session.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.AddSort(m.C1.C1AllorsString);
                 extent.AddSort(m.C1.C1AllorsInteger);
 
@@ -16604,7 +16604,7 @@ namespace Allors.Database.Adapters
                 Assert.Equal(this.c1C, sortedObjects[2]);
                 Assert.Equal(this.c1A, sortedObjects[3]);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.AddSort(m.C1.C1AllorsString);
                 extent.AddSort(m.C1.C1AllorsInteger, SortDirection.Ascending);
 
@@ -16615,7 +16615,7 @@ namespace Allors.Database.Adapters
                 Assert.Equal(this.c1C, sortedObjects[2]);
                 Assert.Equal(this.c1A, sortedObjects[3]);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.AddSort(m.C1.C1AllorsString);
                 extent.AddSort(m.C1.C1AllorsInteger, SortDirection.Descending);
 
@@ -16626,7 +16626,7 @@ namespace Allors.Database.Adapters
                 Assert.Equal(this.c1C, sortedObjects[2]);
                 Assert.Equal(this.c1A, sortedObjects[3]);
 
-                extent = this.Session.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1.ObjectType);
                 extent.AddSort(m.C1.C1AllorsString, SortDirection.Descending);
                 extent.AddSort(m.C1.C1AllorsInteger, SortDirection.Descending);
 
@@ -16640,23 +16640,23 @@ namespace Allors.Database.Adapters
         }
 
         [Fact]
-        public virtual void SortDifferentSession()
+        public virtual void SortDifferentTransaction()
         {
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var c1A = C1.Create(this.Session);
-                var c1B = C1.Create(this.Session);
-                var c1C = C1.Create(this.Session);
-                var c1D = C1.Create(this.Session);
+                var c1A = C1.Create(this.Transaction);
+                var c1B = C1.Create(this.Transaction);
+                var c1C = C1.Create(this.Transaction);
+                var c1D = C1.Create(this.Transaction);
 
                 c1A.C1AllorsString = "2";
                 c1B.C1AllorsString = "1";
                 c1C.C1AllorsString = "3";
 
-                var extent = this.Session.Extent(m.C1.Class);
+                var extent = this.Transaction.Extent(m.C1.Class);
                 extent.AddSort(m.C1.C1AllorsString, SortDirection.Ascending);
 
                 var sortedObjects = (C1[])extent.ToArray(typeof(C1));
@@ -16671,13 +16671,13 @@ namespace Allors.Database.Adapters
 
                 var c1AId = c1A.Id;
 
-                this.Session.Commit();
+                this.Transaction.Commit();
 
-                using (var session2 = this.CreateSession())
+                using (var transaction2 = this.CreateTransaction())
                 {
-                    c1A = (C1)session2.Instantiate(c1AId);
+                    c1A = (C1)transaction2.Instantiate(c1AId);
 
-                    extent = session2.Extent(m.C1.Class);
+                    extent = transaction2.Extent(m.C1.Class);
                     extent.AddSort(m.C1.C1AllorsString, SortDirection.Ascending);
 
                     sortedObjects = (C1[])extent.ToArray(typeof(C1));
@@ -16700,9 +16700,9 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
-                var extent = this.Session.Extent(m.I4.ObjectType);
+                var extent = this.Transaction.Extent(m.I4.ObjectType);
                 Assert.Equal(4, extent.Count);
                 this.AssertC4(extent, true, true, true, true);
             }
@@ -16715,18 +16715,18 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Class
 
                 // Filtered
-                var firstExtent = this.Session.Extent(m.C1.ObjectType);
+                var firstExtent = this.Transaction.Extent(m.C1.ObjectType);
                 firstExtent.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
 
-                var secondExtent = this.Session.Extent(m.C1.ObjectType);
+                var secondExtent = this.Transaction.Extent(m.C1.ObjectType);
                 secondExtent.Filter.AddLike(m.C1.C1AllorsString, "ᴀbracadabra");
 
-                var extent = this.Session.Union(firstExtent, secondExtent);
+                var extent = this.Transaction.Union(firstExtent, secondExtent);
 
                 Assert.Equal(3, extent.Count);
                 this.AssertC1(extent, false, true, true, true);
@@ -16737,7 +16737,7 @@ namespace Allors.Database.Adapters
                 // Shortcut
                 firstExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
                 secondExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
-                extent = this.Session.Union(firstExtent, secondExtent);
+                extent = this.Transaction.Union(firstExtent, secondExtent);
 
                 Assert.Single(extent);
                 this.AssertC1(extent, false, true, false, false);
@@ -16747,7 +16747,7 @@ namespace Allors.Database.Adapters
 
                 firstExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
                 secondExtent = this.c1C.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
-                extent = this.Session.Union(firstExtent, secondExtent);
+                extent = this.Transaction.Union(firstExtent, secondExtent);
 
                 Assert.Equal(3, extent.Count);
                 this.AssertC1(extent, false, true, true, true);
@@ -16756,13 +16756,13 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Different Classes
-                firstExtent = this.Session.Extent(m.C1.ObjectType);
-                secondExtent = this.Session.Extent(m.C2.ObjectType);
+                firstExtent = this.Transaction.Extent(m.C1.ObjectType);
+                secondExtent = this.Transaction.Extent(m.C2.ObjectType);
 
                 var exceptionThrown = false;
                 try
                 {
-                    this.Session.Union(firstExtent, secondExtent);
+                    this.Transaction.Union(firstExtent, secondExtent);
                 }
                 catch (ArgumentException)
                 {
@@ -16772,14 +16772,14 @@ namespace Allors.Database.Adapters
                 Assert.True(exceptionThrown);
 
                 // Name clashes
-                Extent<Company> parents = this.Session.Extent(m.Company.ObjectType);
+                Extent<Company> parents = this.Transaction.Extent(m.Company.ObjectType);
 
-                Extent<Company> children = this.Session.Extent(m.Company.ObjectType);
+                Extent<Company> children = this.Transaction.Extent(m.Company.ObjectType);
                 children.Filter.AddContainedIn(m.Company.CompanyWhereChild, (Extent)parents);
 
-                Extent<Company> allCompanies = this.Session.Union(parents, children);
+                Extent<Company> allCompanies = this.Transaction.Union(parents, children);
 
-                Extent<Person> persons = this.Session.Extent(m.Person.ObjectType);
+                Extent<Person> persons = this.Transaction.Extent(m.Person.ObjectType);
                 persons.Filter.AddContainedIn(m.Person.Company, (Extent)allCompanies);
 
                 Assert.Empty(persons);
@@ -16793,15 +16793,15 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Wrong Parameters
                 var exceptionThrown = false;
                 try
                 {
-                    var inExtent = this.Session.Extent(m.C1.ObjectType);
+                    var inExtent = this.Transaction.Extent(m.C1.ObjectType);
 
-                    var extent = this.Session.Extent(m.C2.ObjectType);
+                    var extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.I12AllorsBoolean.RelationType.AssociationType, inExtent);
                     extent.ToArray();
                 }
@@ -16821,13 +16821,13 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Wrong Parameters
                 var exceptionThrown = false;
                 try
                 {
-                    var extent = this.Session.Extent(m.C2.ObjectType);
+                    var extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContains(m.C2.C1WhereC1C2one2many, this.c1C);
                 }
                 catch (ArgumentException)
@@ -16840,7 +16840,7 @@ namespace Allors.Database.Adapters
                 exceptionThrown = false;
                 try
                 {
-                    var extent = this.Session.Extent(m.C2.ObjectType);
+                    var extent = this.Transaction.Extent(m.C2.ObjectType);
                     extent.Filter.AddContains(m.C2.C1WhereC1C2one2one, this.c1C);
                 }
                 catch (ArgumentException)
@@ -16859,13 +16859,13 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Wrong Parameters
                 var exceptionThrown = false;
                 try
                 {
-                    var extent = this.Session.Extent(m.C1.ObjectType);
+                    var extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddEquals(m.C1.C1sWhereC1C1many2many, this.c1B);
                 }
                 catch (ArgumentException)
@@ -16878,7 +16878,7 @@ namespace Allors.Database.Adapters
                 exceptionThrown = false;
                 try
                 {
-                    var extent = this.Session.Extent(m.C1.ObjectType);
+                    var extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddEquals(m.C1.C1sWhereC1C1many2one, this.c1B);
                 }
                 catch (ArgumentException)
@@ -16909,13 +16909,13 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Wrong Parameters
                 var exceptionThrown = false;
                 try
                 {
-                    var extent = this.Session.Extent(m.C1.ObjectType);
+                    var extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddBetween(m.C1.C1C2one2one, 0, 1);
                 }
                 catch (ArgumentException)
@@ -16934,13 +16934,13 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Wrong Parameters
                 var exceptionThrown = false;
                 try
                 {
-                    var extent = this.Session.Extent(m.C1.ObjectType);
+                    var extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContains(m.C1.C1AllorsString, this.c2C);
                 }
                 catch (ArgumentException)
@@ -16959,13 +16959,13 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Wrong Parameters
                 var exceptionThrown = false;
                 try
                 {
-                    var extent = this.Session.Extent(m.C1.ObjectType);
+                    var extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddEquals(m.C1.C1C2one2manies, this.c2B);
                 }
                 catch (ArgumentException)
@@ -16979,7 +16979,7 @@ namespace Allors.Database.Adapters
                 exceptionThrown = false;
                 try
                 {
-                    var extent = this.Session.Extent(m.C1.ObjectType);
+                    var extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddEquals(m.C1.C1C2many2manies, this.c2B);
                 }
                 catch (ArgumentException)
@@ -17004,13 +17004,13 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Wrong Parameters
                 var exceptionThrown = false;
                 try
                 {
-                    var extent = this.Session.Extent(m.C1.ObjectType);
+                    var extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddGreaterThan(m.C1.C1C2one2one, 0);
                 }
                 catch (ArgumentException)
@@ -17029,15 +17029,15 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Wrong Parameters
                 var exceptionThrown = false;
                 try
                 {
-                    var inExtent = this.Session.Extent(m.C1.ObjectType);
+                    var inExtent = this.Transaction.Extent(m.C1.ObjectType);
 
-                    var extent = this.Session.Extent(m.C1.ObjectType);
+                    var extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddContainedIn(m.C1.C1AllorsString, inExtent);
                 }
                 catch (ArgumentException)
@@ -17056,13 +17056,13 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Wrong Parameters
                 var exceptionThrown = false;
                 try
                 {
-                    var extent = this.Session.Extent(m.C1.ObjectType);
+                    var extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddLessThan(m.C1.C1C2one2one, 1);
                 }
                 catch (ArgumentException)
@@ -17081,13 +17081,13 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Wrong Parameters
                 var exceptionThrown = false;
                 try
                 {
-                    var extent = this.Session.Extent(m.C1.ObjectType);
+                    var extent = this.Transaction.Extent(m.C1.ObjectType);
                     extent.Filter.AddLike(m.C1.C1AllorsBoolean, string.Empty);
                 }
                 catch (ArgumentException)
@@ -17112,7 +17112,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // Sortcut
                 // Shortcut
@@ -17155,20 +17155,20 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // many2many contains
-                var c1 = C1.Create(this.Session);
-                var c2 = C2.Create(this.Session);
-                var c3 = C3.Create(this.Session);
+                var c1 = C1.Create(this.Transaction);
+                var c2 = C2.Create(this.Transaction);
+                var c3 = C3.Create(this.Transaction);
 
                 c2.AddC3Many2Many(c3);
                 c1.C1C2many2one = c2;
 
-                var c2s = this.Session.Extent(m.C2.ObjectType);
+                var c2s = this.Transaction.Extent(m.C2.ObjectType);
                 c2s.Filter.AddContains(m.C2.C3Many2Manies, c3);
 
-                Extent<C1> c1s = this.Session.Extent(m.C1.ObjectType);
+                Extent<C1> c1s = this.Transaction.Extent(m.C1.ObjectType);
                 c1s.Filter.AddContainedIn(m.C1.C1C2many2one, c2s);
 
                 Assert.Single(c1s);
@@ -17183,20 +17183,20 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // manymany contains
-                var c2 = C2.Create(this.Session);
-                var c3 = C3.Create(this.Session);
-                var c4 = C4.Create(this.Session);
+                var c2 = C2.Create(this.Transaction);
+                var c3 = C3.Create(this.Transaction);
+                var c4 = C4.Create(this.Transaction);
 
                 c3.AddC3C4one2many(c4);
                 c2.C3Many2One = c3;
 
-                var c3s = this.Session.Extent(m.C3.ObjectType);
+                var c3s = this.Transaction.Extent(m.C3.ObjectType);
                 c3s.Filter.AddContains(m.C3.C3C4one2manies, c4);
 
-                Extent<C2> c2s = this.Session.Extent(m.C2.ObjectType);
+                Extent<C2> c2s = this.Transaction.Extent(m.C2.ObjectType);
                 c2s.Filter.AddContainedIn(m.C2.C3Many2One, c3s);
 
                 Assert.Single(c2s);
@@ -17211,20 +17211,20 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Context().M;
+                var m = this.Transaction.Database.Context().M;
 
                 // many2many contains
-                var c1 = C1.Create(this.Session);
-                var c2 = C2.Create(this.Session);
-                var c3 = C3.Create(this.Session);
+                var c1 = C1.Create(this.Transaction);
+                var c2 = C2.Create(this.Transaction);
+                var c3 = C3.Create(this.Transaction);
 
                 c3.AddC3C2many2many(c2);
                 c1.C1C2many2one = c2;
 
-                var c2s = this.Session.Extent(m.C2.ObjectType);
+                var c2s = this.Transaction.Extent(m.C2.ObjectType);
                 c2s.Filter.AddContains(m.C2.C3sWhereC3C2many2many, c3);
 
-                Extent<C1> c1s = this.Session.Extent(m.C1.ObjectType);
+                Extent<C1> c1s = this.Transaction.Extent(m.C1.ObjectType);
                 c1s.Filter.AddContainedIn(m.C1.C1C2many2one, c2s);
 
                 Assert.Single(c1s);
@@ -17232,11 +17232,11 @@ namespace Allors.Database.Adapters
             }
         }
 
-        protected abstract ISession CreateSession();
+        protected abstract ITransaction CreateTransaction();
 
         protected void Populate()
         {
-            var population = new TestPopulation(this.Session);
+            var population = new TestPopulation(this.Transaction);
 
             this.c1A = population.C1A;
             this.c1B = population.C1B;
@@ -17259,8 +17259,6 @@ namespace Allors.Database.Adapters
             this.c4D = population.C4D;
         }
 
-        // ISession.Extent for Repositories and
-        // IWorkspaceSession.WorkspaceExtent for Workspaces.
         private static Unit GetAllorsString(IObjectType objectType) => (Unit)objectType.MetaPopulation.Find(UnitIds.String);
 
         private void AssertC1(Extent extent, bool assert0, bool assert1, bool assert2, bool assert3)

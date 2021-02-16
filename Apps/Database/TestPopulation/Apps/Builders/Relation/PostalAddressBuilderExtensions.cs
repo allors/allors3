@@ -11,15 +11,15 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static PostalAddressBuilder WithDefaults(this PostalAddressBuilder @this)
         {
-            var m = @this.Session.Database.Context().M;
-            var faker = @this.Session.Faker();
+            var m = @this.Transaction.Database.Context().M;
+            var faker = @this.Transaction.Faker();
 
             @this.WithAddress1(faker.Address.StreetAddress());
             @this.WithAddress2(faker.Address.SecondaryAddress());
             @this.WithAddress3(faker.Address.BuildingNumber());
             @this.WithPostalCode(faker.Address.ZipCode());
             @this.WithLocality(faker.Address.City());
-            @this.WithCountry(new Countries(@this.Session).FindBy(m.Country.IsoCode, faker.Address.CountryCode()));
+            @this.WithCountry(new Countries(@this.Transaction).FindBy(m.Country.IsoCode, faker.Address.CountryCode()));
             @this.WithLatitude(faker.Address.Latitude());
             @this.WithLongitude(faker.Address.Longitude());
 

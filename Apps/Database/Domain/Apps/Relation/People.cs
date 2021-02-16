@@ -10,9 +10,9 @@ namespace Allors.Database.Domain
 
     public partial class People
     {
-        public static void Daily(ISession session)
+        public static void Daily(ITransaction transaction)
         {
-            var people = new People(session).Extent();
+            var people = new People(transaction).Extent();
 
             foreach (Person person in people)
             {
@@ -33,12 +33,12 @@ namespace Allors.Database.Domain
 
         protected override void AppsSetup(Setup setup)
         {
-            var employeeUserGroup = new UserGroups(this.Session).Employees;
-            var internalOrganisations = new Organisations(this.Session).InternalOrganisations();
+            var employeeUserGroup = new UserGroups(this.Transaction).Employees;
+            var internalOrganisations = new Organisations(this.Transaction).InternalOrganisations();
 
-            var people = new People(this.Session).Extent();
+            var people = new People(this.Transaction).Extent();
 
-            var employeesByEmployer = new Employments(this.Session).Extent()
+            var employeesByEmployer = new Employments(this.Transaction).Extent()
                 .GroupBy(v => v.Employer)
                 .ToDictionary(v => v.Key, v => new HashSet<Person>(v.Select(w => w.Employee).ToArray()));
 
@@ -56,7 +56,7 @@ namespace Allors.Database.Domain
                         }
                     }
 
-                    new EmploymentBuilder(this.Session).WithEmployer(internalOrganisation).WithEmployee(person).Build();
+                    new EmploymentBuilder(this.Transaction).WithEmployer(internalOrganisation).WithEmployee(person).Build();
                 }
             }
         }

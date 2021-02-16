@@ -24,9 +24,9 @@ namespace Allors.Database.Domain
         {
             base.CustomSetup(setup);
 
-            new UserGroupBuilder(this.Session).WithName("operations").WithUniqueId(OperationsId).Build();
-            new UserGroupBuilder(this.Session).WithName("sales").WithUniqueId(SalesId).Build();
-            new UserGroupBuilder(this.Session).WithName("procurement").WithUniqueId(ProcurementId).Build();
+            new UserGroupBuilder(this.Transaction).WithName("operations").WithUniqueId(OperationsId).Build();
+            new UserGroupBuilder(this.Transaction).WithName("sales").WithUniqueId(SalesId).Build();
+            new UserGroupBuilder(this.Transaction).WithName("procurement").WithUniqueId(ProcurementId).Build();
         }
     }
 }

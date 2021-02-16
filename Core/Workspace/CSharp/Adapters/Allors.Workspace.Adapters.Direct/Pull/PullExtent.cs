@@ -16,16 +16,16 @@ namespace Allors.Workspace.Adapters.Direct
 
     public class PullExtent
     {
-        private readonly ISession session;
+        private readonly ITransaction transaction;
         private readonly Database.Data.Pull pull;
         private readonly IAccessControlLists acls;
         private readonly IPreparedExtents preparedExtents;
         private readonly IPreparedFetches preparedFetches;
 
-        public PullExtent(ISession session, Database.Data.Pull pull, IAccessControlLists acls, IPreparedFetches preparedFetches,
+        public PullExtent(ITransaction transaction, Database.Data.Pull pull, IAccessControlLists acls, IPreparedFetches preparedFetches,
             IPreparedExtents preparedExtents)
         {
-            this.session = session;
+            this.transaction = transaction;
             this.pull = pull;
             this.acls = acls;
             this.preparedExtents = preparedExtents;
@@ -41,7 +41,7 @@ namespace Allors.Workspace.Adapters.Direct
             }
 
             var extent = this.pull.Extent ?? this.preparedExtents.Get(this.pull.ExtentRef.Value);
-            var objects = extent.Build(this.session, this.pull.Parameters).ToArray();
+            var objects = extent.Build(this.transaction, this.pull.Parameters).ToArray();
 
             if (this.pull.Results != null)
             {
@@ -87,7 +87,7 @@ namespace Allors.Workspace.Adapters.Direct
 
                                 paged = paged.ToArray();
 
-                                response.AddValue(name + "_total", extent.Build(this.session, this.pull.Parameters).Count.ToString());
+                                response.AddValue(name + "_total", extent.Build(this.transaction, this.pull.Parameters).Count.ToString());
                                 response.AddCollection(name, paged, include);
                             }
                             else

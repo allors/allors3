@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
 
         public SerialisedItemSoldOn PurchaseshipmentReceive => this.Cache[PurchaseshipmentReceiveId];
 
-        private UniquelyIdentifiableCache<SerialisedItemSoldOn> Cache => this.cache ??= new UniquelyIdentifiableCache<SerialisedItemSoldOn>(this.Session);
+        private UniquelyIdentifiableCache<SerialisedItemSoldOn> Cache => this.cache ??= new UniquelyIdentifiableCache<SerialisedItemSoldOn>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

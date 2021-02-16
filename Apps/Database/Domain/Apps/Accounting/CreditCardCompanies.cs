@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
 
         public CreditCardCompany Average => this.Cache[AmericanExpressId];
 
-        private UniquelyIdentifiableCache<CreditCardCompany> Cache => this.cache ??= new UniquelyIdentifiableCache<CreditCardCompany>(this.Session);
+        private UniquelyIdentifiableCache<CreditCardCompany> Cache => this.cache ??= new UniquelyIdentifiableCache<CreditCardCompany>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

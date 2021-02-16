@@ -17,7 +17,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void IsSync()
         {
-            var metaPopulation = this.Session.Database.MetaPopulation;
+            var metaPopulation = this.Transaction.Database.MetaPopulation;
             foreach (var composite in metaPopulation.DatabaseComposites)
             {
                 switch (composite.Name)

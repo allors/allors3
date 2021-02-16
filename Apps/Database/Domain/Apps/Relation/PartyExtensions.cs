@@ -12,11 +12,11 @@ namespace Allors.Database.Domain
     {
         public static void AppsOnBuild(this Party @this, ObjectOnBuild method)
         {
-            var session = @this.Strategy.Session;
+            var transaction = @this.Strategy.Transaction;
 
             if (!@this.ExistPreferredCurrency)
             {
-                var singleton = session.GetSingleton();
+                var singleton = transaction.GetSingleton();
                 @this.PreferredCurrency = singleton.Settings.PreferredCurrency;
             }
         }
@@ -28,7 +28,7 @@ namespace Allors.Database.Domain
                 return false;
             }
 
-            var m = @this.Strategy.Session.Database.Context().M;
+            var m = @this.Strategy.Transaction.Database.Context().M;
 
             var customerRelationships = @this.CustomerRelationshipsWhereCustomer;
             customerRelationships.Filter.AddEquals(m.CustomerRelationship.InternalOrganisation, internalOrganisation);
@@ -39,7 +39,7 @@ namespace Allors.Database.Domain
 
         public static CustomerShipment AppsGetPendingCustomerShipmentForStore(this Party @this, PostalAddress address, Store store, ShipmentMethod shipmentMethod)
         {
-            var m = @this.Strategy.Session.Database.Context().M;
+            var m = @this.Strategy.Transaction.Database.Context().M;
 
             var shipments = @this.ShipmentsWhereShipToParty;
             if (address != null)
@@ -59,11 +59,11 @@ namespace Allors.Database.Domain
 
             foreach (CustomerShipment shipment in shipments)
             {
-                if (shipment.ShipmentState.Equals(new ShipmentStates(@this.Strategy.Session).Created) ||
-                    shipment.ShipmentState.Equals(new ShipmentStates(@this.Strategy.Session).Picking) ||
-                    shipment.ShipmentState.Equals(new ShipmentStates(@this.Strategy.Session).Picked) ||
-                    shipment.ShipmentState.Equals(new ShipmentStates(@this.Strategy.Session).OnHold) ||
-                    shipment.ShipmentState.Equals(new ShipmentStates(@this.Strategy.Session).Packed))
+                if (shipment.ShipmentState.Equals(new ShipmentStates(@this.Strategy.Transaction).Created) ||
+                    shipment.ShipmentState.Equals(new ShipmentStates(@this.Strategy.Transaction).Picking) ||
+                    shipment.ShipmentState.Equals(new ShipmentStates(@this.Strategy.Transaction).Picked) ||
+                    shipment.ShipmentState.Equals(new ShipmentStates(@this.Strategy.Transaction).OnHold) ||
+                    shipment.ShipmentState.Equals(new ShipmentStates(@this.Strategy.Transaction).Packed))
                 {
                     return shipment;
                 }
@@ -74,7 +74,7 @@ namespace Allors.Database.Domain
 
         public static void DeriveRelationships(this Party @this)
         {
-            var now = @this.Session().Now();
+            var now = @this.Transaction().Now();
 
             @this.CurrentPartyContactMechanisms = @this.PartyContactMechanisms
                 .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))

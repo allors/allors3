@@ -18,59 +18,59 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnCreatedThrowValidationError()
         {
-            var basePrice = new BasePriceBuilder(this.Session).Build();
+            var basePrice = new BasePriceBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.StartsWith("BasePrice.Part, BasePrice.Product, BasePrice.ProductFeature at least one"));
         }
 
         [Fact]
         public void ChangedPartThrowValidationError()
         {
-            var basePrice = new BasePriceBuilder(this.Session).WithPart(new UnifiedGoodBuilder(this.Session).Build()).Build();
-            this.Session.Derive(false);
+            var basePrice = new BasePriceBuilder(this.Transaction).WithPart(new UnifiedGoodBuilder(this.Transaction).Build()).Build();
+            this.Transaction.Derive(false);
 
             basePrice.RemovePart();
 
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.StartsWith("BasePrice.Part, BasePrice.Product, BasePrice.ProductFeature at least one"));
         }
 
         [Fact]
         public void ChangedOrderQuantityBreakThrowValidationError()
         {
-            var basePrice = new BasePriceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var basePrice = new BasePriceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            basePrice.OrderQuantityBreak = new OrderQuantityBreakBuilder(this.Session).Build();
+            basePrice.OrderQuantityBreak = new OrderQuantityBreakBuilder(this.Transaction).Build();
 
             var expectedMessage = $"{basePrice} { this.M.BasePrice.OrderQuantityBreak} { ErrorMessages.BasePriceOrderQuantityBreakNotAllowed}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
 
         [Fact]
         public void ChangedOrderValueThrowValidationError()
         {
-            var basePrice = new BasePriceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var basePrice = new BasePriceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            basePrice.OrderValue = new OrderValueBuilder(this.Session).Build();
+            basePrice.OrderValue = new OrderValueBuilder(this.Transaction).Build();
 
             var expectedMessage = $"{basePrice} { this.M.BasePrice.OrderValue} { ErrorMessages.BasePriceOrderValueNotAllowed}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
 
         [Fact]
         public void ChangedProductDeriveProductBasePrices()
         {
-            var basePrice = new BasePriceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var basePrice = new BasePriceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var product = new UnifiedGoodBuilder(this.Session).Build();
+            var product = new UnifiedGoodBuilder(this.Transaction).Build();
             basePrice.Product = product;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains(basePrice, product.BasePrices);
         }
@@ -78,12 +78,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedProductFeatureDeriveProductBasePrices()
         {
-            var basePrice = new BasePriceBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var basePrice = new BasePriceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var productFeature = new ColourBuilder(this.Session).Build();
+            var productFeature = new ColourBuilder(this.Transaction).Build();
             basePrice.ProductFeature = productFeature;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains(basePrice, productFeature.BasePrices);
         }

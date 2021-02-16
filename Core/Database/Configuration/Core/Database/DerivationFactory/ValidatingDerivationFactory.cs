@@ -11,6 +11,6 @@ namespace Allors.Database.Configuration
 
     public class ValidatingDerivationFactory : IDerivationFactory
     {
-        public IDerivation CreateDerivation(ISession session) => new ValidatingDerivation(session);
+        public IDerivation CreateDerivation(ITransaction transaction) => new ValidatingDerivation(transaction);
     }
 }

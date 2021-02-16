@@ -9,13 +9,13 @@ namespace Allors.Database.Domain
 
     public class Upgrade
     {
-        private readonly ISession session;
+        private readonly ITransaction transaction;
 
         private readonly DirectoryInfo dataPath;
 
-        public Upgrade(ISession session, DirectoryInfo dataPath)
+        public Upgrade(ITransaction transaction, DirectoryInfo dataPath)
         {
-            this.session = session;
+            this.transaction = transaction;
             this.dataPath = dataPath;
         }
 

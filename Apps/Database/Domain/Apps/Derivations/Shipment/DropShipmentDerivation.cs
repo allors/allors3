@@ -28,12 +28,12 @@ namespace Allors.Database.Domain
             {
                 if (!@this.ExistShipmentNumber && @this.ExistStore)
                 {
-                    var year = @this.Session().Now().Year;
+                    var year = @this.Transaction().Now().Year;
                     @this.ShipmentNumber = @this.Store.NextDropShipmentNumber(year);
 
                     var fiscalYearStoreSequenceNumbers = @this.Store.FiscalYearsStoreSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
                     var prefix = ((InternalOrganisation)@this.ShipFromParty).DropShipmentSequence.IsEnforcedSequence ? @this.Store.DropShipmentNumberPrefix : fiscalYearStoreSequenceNumbers.DropShipmentNumberPrefix;
-                    @this.SortableShipmentNumber = @this.Session().GetSingleton().SortableNumber(prefix, @this.ShipmentNumber, year.ToString());
+                    @this.SortableShipmentNumber = @this.Transaction().GetSingleton().SortableNumber(prefix, @this.ShipmentNumber, year.ToString());
                 }
 
                 if (!@this.ExistShipToAddress && @this.ExistShipToParty)

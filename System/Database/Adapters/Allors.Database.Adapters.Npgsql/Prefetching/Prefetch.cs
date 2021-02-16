@@ -2,7 +2,6 @@
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
-// <summary>Defines the Session type.</summary>
 
 namespace Allors.Database.Adapters.Npgsql
 {
@@ -66,7 +65,7 @@ namespace Allors.Database.Adapters.Npgsql
                                 var referencesWithoutCachedRole = new HashSet<Reference>();
                                 foreach (var reference in classedReferences)
                                 {
-                                    var roles = this.prefetcher.Session.State.GetOrCreateRoles(reference);
+                                    var roles = this.prefetcher.Transaction.State.GetOrCreateRoles(reference);
                                     if (!roles.TryGetUnitRole(roleType, out var role))
                                     {
                                         referencesWithoutCachedRole.Add(reference);

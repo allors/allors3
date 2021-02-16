@@ -23,7 +23,7 @@ namespace Allors.Database.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            var session = cycle.Session;
+            var transaction = cycle.Transaction;
             var validation = cycle.Validation;
 
             foreach (var @this in matches.Cast<SalesOrderItem>())
@@ -34,7 +34,7 @@ namespace Allors.Database.Domain
                 {
                     var deniablePermissionByOperandTypeId = new Dictionary<OperandType, Permission>();
 
-                    foreach (Permission permission in @this.Session().Extent<Permission>())
+                    foreach (Permission permission in @this.Transaction().Extent<Permission>())
                     {
                         if (permission.ClassPointer == @this.Strategy.Class.Id
                             && (permission.Operation == Operations.Write || permission.Operation == Operations.Execute))
@@ -49,7 +49,7 @@ namespace Allors.Database.Domain
                     }
                 }
 
-                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta.ObjectType, @this.Meta.Delete);
                 if (@this.IsDeletable)
                 {
                     @this.RemoveDeniedPermission(deletePermission);

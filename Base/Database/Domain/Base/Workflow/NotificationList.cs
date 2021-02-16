@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
             {
                 if (this.ExistUserWhereNotificationList)
                 {
-                    var defaultSecurityToken = new SecurityTokens(this.Session()).DefaultSecurityToken;
+                    var defaultSecurityToken = new SecurityTokens(this.Transaction()).DefaultSecurityToken;
                     this.SecurityTokens = new[] { this.UserWhereNotificationList.OwnerSecurityToken, defaultSecurityToken };
                 }
             }

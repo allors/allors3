@@ -182,20 +182,20 @@ namespace Allors.Database.Adapters.Npgsql
             }
         }
 
-        public ISession CreateSession()
+        public ITransaction CreateTransaction()
         {
             var connection = this.ConnectionFactory.Create(this);
-            return this.CreateSession(connection);
+            return this.CreateTransaction(connection);
         }
 
-        public ISession CreateSession(Connection connection)
+        public ITransaction CreateTransaction(Connection connection)
         {
             if (!this.IsValid)
             {
                 throw new Exception(this.validationMessage);
             }
 
-            return new Session(this, connection, this.StateLifecycle.CreateSessionInstance());
+            return new Transaction(this, connection, this.StateLifecycle.CreateTransactionInstance());
         }
 
         public void AddDerivation(IDomainDerivation derivation) => this.Derivations = new List<IDomainDerivation>(this.Derivations) { derivation }.ToArray();
@@ -251,15 +251,15 @@ namespace Allors.Database.Adapters.Npgsql
         {
             lock (this)
             {
-                var session = new ManagementSession(this, this.ManagementConnectionFactory);
+                var transaction = new ManagementTransaction(this, this.ManagementConnectionFactory);
                 try
                 {
                     var save = new Save(this, writer);
-                    save.Execute(session);
+                    save.Execute(transaction);
                 }
                 finally
                 {
-                    session.Rollback();
+                    transaction.Rollback();
                 }
             }
         }
@@ -273,7 +273,7 @@ namespace Allors.Database.Adapters.Npgsql
             return validateResult;
         }
 
-        ISession IDatabase.CreateSession() => this.CreateSession();
+        ITransaction IDatabase.CreateTransaction() => this.CreateTransaction();
 
         internal bool ContainsClass(IObjectType container, IObjectType containee)
         {

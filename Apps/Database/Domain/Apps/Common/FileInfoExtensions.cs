@@ -9,11 +9,11 @@ namespace Allors.Database.Domain
 
     public static class FileInfoExtensions
     {
-        public static Media CreateMedia(this FileInfo fileInfo, ISession session)
+        public static Media CreateMedia(this FileInfo fileInfo, ITransaction transaction)
         {
             fileInfo.Refresh();
             var content = File.ReadAllBytes(fileInfo.FullName);
-            return new MediaBuilder(session).WithInFileName(fileInfo.FullName).WithInData(content).Build();
+            return new MediaBuilder(transaction).WithInFileName(fileInfo.FullName).WithInData(content).Build();
         }
     }
 }

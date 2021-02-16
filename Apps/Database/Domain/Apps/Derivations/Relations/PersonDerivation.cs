@@ -34,34 +34,34 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<Person>())
             {
-                var now = @this.Session().Now();
+                var now = @this.Transaction().Now();
 
-                @this.Strategy.Session.Prefetch(@this.PrefetchPolicy);
+                @this.Strategy.Transaction.Prefetch(@this.PrefetchPolicy);
 
                 if (@this.ExistSalutation
-                    && (@this.Salutation.Equals(new Salutations(@this.Session()).Mr)
-                        || @this.Salutation.Equals(new Salutations(@this.Session()).Dr)))
+                    && (@this.Salutation.Equals(new Salutations(@this.Transaction()).Mr)
+                        || @this.Salutation.Equals(new Salutations(@this.Transaction()).Dr)))
                 {
-                    @this.Gender = new GenderTypes(@this.Session()).Male;
+                    @this.Gender = new GenderTypes(@this.Transaction()).Male;
                 }
 
                 if (@this.ExistSalutation
-                    && (@this.Salutation.Equals(new Salutations(@this.Session()).Mrs)
-                        || @this.Salutation.Equals(new Salutations(@this.Session()).Ms)
-                        || @this.Salutation.Equals(new Salutations(@this.Session()).Mme)))
+                    && (@this.Salutation.Equals(new Salutations(@this.Transaction()).Mrs)
+                        || @this.Salutation.Equals(new Salutations(@this.Transaction()).Ms)
+                        || @this.Salutation.Equals(new Salutations(@this.Transaction()).Mme)))
                 {
-                    @this.Gender = new GenderTypes(@this.Session()).Female;
+                    @this.Gender = new GenderTypes(@this.Transaction()).Female;
                 }
 
                 @this.PartyName = DerivePartyName(@this);
 
-                @this.VatRegime = new VatRegimes(@this.Session()).PrivatePerson;
+                @this.VatRegime = new VatRegimes(@this.Transaction()).PrivatePerson;
 
                 @this.DeriveRelationships();
 
                 if (!@this.ExistTimeSheetWhereWorker && (@this.AppsIsActiveEmployee(now) || @this.CurrentOrganisationContactRelationships.Count > 0))
                 {
-                    new TimeSheetBuilder(@this.Strategy.Session).WithWorker(@this).Build();
+                    new TimeSheetBuilder(@this.Strategy.Transaction).WithWorker(@this).Build();
                 }
             }
         }

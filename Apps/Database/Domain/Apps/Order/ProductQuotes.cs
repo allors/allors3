@@ -14,14 +14,14 @@ namespace Allors.Database.Domain
 
         protected override void AppsSecure(Security config)
         {
-            var created = new QuoteStates(this.Session).Created;
-            var awaitingApproval = new QuoteStates(this.Session).AwaitingApproval;
-            var inProcess = new QuoteStates(this.Session).InProcess;
-            var awaitingAcceptance = new QuoteStates(this.Session).AwaitingAcceptance;
-            var accepted = new QuoteStates(this.Session).Accepted;
-            var ordered = new QuoteStates(this.Session).Ordered;
-            var rejected = new QuoteStates(this.Session).Rejected;
-            var cancelled = new QuoteStates(this.Session).Cancelled;
+            var created = new QuoteStates(this.Transaction).Created;
+            var awaitingApproval = new QuoteStates(this.Transaction).AwaitingApproval;
+            var inProcess = new QuoteStates(this.Transaction).InProcess;
+            var awaitingAcceptance = new QuoteStates(this.Transaction).AwaitingAcceptance;
+            var accepted = new QuoteStates(this.Transaction).Accepted;
+            var ordered = new QuoteStates(this.Transaction).Ordered;
+            var rejected = new QuoteStates(this.Transaction).Rejected;
+            var cancelled = new QuoteStates(this.Transaction).Cancelled;
 
             var setReadyForProcessing = this.Meta.SetReadyForProcessing;
             var approve = this.Meta.Approve;

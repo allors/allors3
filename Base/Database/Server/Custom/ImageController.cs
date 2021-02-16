@@ -10,7 +10,7 @@ namespace Allors.Database.Server.Controllers
 
     public class ImageController : BaseImageController
     {
-        public ImageController(ISessionService sessionService)
+        public ImageController(ITransactionService sessionService)
             : base(sessionService)
         {
         }

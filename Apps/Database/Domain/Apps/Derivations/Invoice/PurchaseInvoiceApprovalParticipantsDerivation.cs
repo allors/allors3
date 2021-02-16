@@ -26,7 +26,7 @@ namespace Allors.Database.Domain
             {
                 var participants = @this.ExistDateClosed
                     ? (IEnumerable<Person>)Array.Empty<Person>()
-                    : new UserGroups(@this.Session()).Administrators.Members.Select(v => (Person)v).ToArray();
+                    : new UserGroups(@this.Transaction()).Administrators.Members.Select(v => (Person)v).ToArray();
                 @this.AssignParticipants(participants);
             }
         }

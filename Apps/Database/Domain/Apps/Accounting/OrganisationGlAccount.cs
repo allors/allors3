@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         public bool IsBankAccount()
         {
             if (this.ExistJournalWhereContraAccount &&
-                this.JournalWhereContraAccount.JournalType.Equals(new JournalTypes(this.Strategy.Session).Bank))
+                this.JournalWhereContraAccount.JournalType.Equals(new JournalTypes(this.Strategy.Transaction).Bank))
             {
                 return true;
             }
@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
             {
                 foreach (AccountingTransactionDetail accountingTransactionDetail in organisationGlAccountBalance.AccountingTransactionDetailsWhereOrganisationGlAccountBalance)
                 {
-                    if (accountingTransactionDetail.AccountingTransactionWhereAccountingTransactionDetail.AccountingTransactionNumber.AccountingTransactionType.Equals(new AccountingTransactionTypes(this.Strategy.Session).BankStatement))
+                    if (accountingTransactionDetail.AccountingTransactionWhereAccountingTransactionDetail.AccountingTransactionNumber.AccountingTransactionType.Equals(new AccountingTransactionTypes(this.Strategy.Transaction).BankStatement))
                     {
                         this.HasBankStatementTransactions = true;
                         return true;
@@ -57,7 +57,7 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistFromDate)
             {
-                this.FromDate = this.Session().Now();
+                this.FromDate = this.Transaction().Now();
             }
 
             this.HasBankStatementTransactions = false;
@@ -65,7 +65,7 @@ namespace Allors.Database.Domain
 
         public void AppsOnInit(ObjectOnInit method)
         {
-            var internalOrganisations = new Organisations(this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
+            var internalOrganisations = new Organisations(this.Strategy.Transaction).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
 
             if (!this.ExistInternalOrganisation && internalOrganisations.Count() == 1)
             {

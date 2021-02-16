@@ -15,20 +15,20 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenCase_WhenBuild_ThenLastObjectStateEqualsCurrencObjectState()
         {
-            var complaint = new CaseBuilder(this.Session).WithDescription("Complaint").Build();
+            var complaint = new CaseBuilder(this.Transaction).WithDescription("Complaint").Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Equal(new CaseStates(this.Session).Opened, complaint.CaseState);
+            Assert.Equal(new CaseStates(this.Transaction).Opened, complaint.CaseState);
             Assert.Equal(complaint.LastCaseState, complaint.CaseState);
         }
 
         [Fact]
         public void GivenCase_WhenBuild_ThenPreviousObjectStateIsNull()
         {
-            var complaint = new CaseBuilder(this.Session).WithDescription("Complaint").Build();
+            var complaint = new CaseBuilder(this.Transaction).WithDescription("Complaint").Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Null(complaint.PreviousCaseState);
         }
@@ -36,19 +36,19 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenCase_WhenConfirmed_ThenCurrentCaseStatusMustBeDerived()
         {
-            var complaint = new CaseBuilder(this.Session).WithDescription("Complaint").Build();
+            var complaint = new CaseBuilder(this.Transaction).WithDescription("Complaint").Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Single(complaint.AllVersions);
-            Assert.Equal(new CaseStates(this.Session).Opened, complaint.CaseState);
+            Assert.Equal(new CaseStates(this.Transaction).Opened, complaint.CaseState);
 
             complaint.AppsClose();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(2, complaint.AllVersions.Count);
-            Assert.Equal(new CaseStates(this.Session).Closed, complaint.CaseState);
+            Assert.Equal(new CaseStates(this.Transaction).Closed, complaint.CaseState);
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<SerialisedItemCharacteristicType>())
             {
-                var defaultLocale = @this.Strategy.Session.GetSingleton().DefaultLocale;
+                var defaultLocale = @this.Strategy.Transaction.GetSingleton().DefaultLocale;
 
                 if (@this.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))
                 {

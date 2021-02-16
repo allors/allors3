@@ -1,20 +1,20 @@
-// <copyright file="ISessionExtensions.cs" company="Allors bvba">
+// <copyright file="ITransactionExtensions.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
-// <summary>Defines the ISessionExtension type.</summary>
+
 
 namespace Allors.Database.Domain
 {
     using System;
     using Derivations;
 
-    public static partial class ISessionExtensions
+    public static partial class ITransactionExtensions
     {
-        public static IValidation Derive(this ISession session, bool throwExceptionOnError = true)
+        public static IValidation Derive(this ITransaction transaction, bool throwExceptionOnError = true)
         {
-            var derivationService = session.Database.Context().DerivationFactory;
-            var derivation = derivationService.CreateDerivation(session);
+            var derivationService = transaction.Database.Context().DerivationFactory;
+            var derivation = derivationService.CreateDerivation(transaction);
             var validation = derivation.Derive();
             if (throwExceptionOnError && validation.HasErrors)
             {
@@ -24,11 +24,11 @@ namespace Allors.Database.Domain
             return validation;
         }
 
-        public static DateTime Now(this ISession session)
+        public static DateTime Now(this ITransaction transaction)
         {
             var now = DateTime.UtcNow;
 
-            var timeService = session.Database.Context().Time;
+            var timeService = transaction.Database.Context().Time;
             var timeShift = timeService.Shift;
             if (timeShift != null)
             {

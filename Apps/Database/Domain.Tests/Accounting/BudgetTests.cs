@@ -15,28 +15,28 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenOperatingBudget_WhenBuild_ThenLastObjectStateEqualsCurrencObjectState()
         {
-            var budget = new OperatingBudgetBuilder(this.Session)
+            var budget = new OperatingBudgetBuilder(this.Transaction)
                 .WithDescription("Budget")
-                .WithFromDate(this.Session.Now())
-                .WithThroughDate(this.Session.Now().AddYears(1))
+                .WithFromDate(this.Transaction.Now())
+                .WithThroughDate(this.Transaction.Now().AddYears(1))
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            Assert.Equal(new BudgetStates(this.Session).Opened, budget.BudgetState);
+            Assert.Equal(new BudgetStates(this.Transaction).Opened, budget.BudgetState);
             Assert.Equal(budget.LastBudgetState, budget.BudgetState);
         }
 
         [Fact]
         public void GivenOperatingBudget_WhenBuild_ThenPreviousObjectStateIsNUll()
         {
-            var budget = new OperatingBudgetBuilder(this.Session)
+            var budget = new OperatingBudgetBuilder(this.Transaction)
                 .WithDescription("Budget")
-                .WithFromDate(this.Session.Now())
-                .WithThroughDate(this.Session.Now().AddYears(1))
+                .WithFromDate(this.Transaction.Now())
+                .WithThroughDate(this.Transaction.Now().AddYears(1))
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Null(budget.PreviousBudgetState);
         }
@@ -44,17 +44,17 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenOperatingBudget_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var builder = new OperatingBudgetBuilder(this.Session);
+            var builder = new OperatingBudgetBuilder(this.Transaction);
             var budget = builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithDescription("Budget");
             budget = builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
     }
 }

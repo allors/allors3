@@ -1,4 +1,4 @@
-// <copyright file="Session.cs" company="Allors bvba">
+// <copyright file="Transaction.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -14,7 +14,7 @@ namespace Allors.Database.Adapters.Memory
     using Tracing;
     using Version = Allors.Version;
 
-    public class Session : ISession, IOnAccess
+    public class Transaction : ITransaction, IOnAccess
     {
         private static readonly HashSet<Strategy> EmptyStrategies = new HashSet<Strategy>();
         private static readonly IObject[] EmptyObjects = { };
@@ -27,7 +27,7 @@ namespace Allors.Database.Adapters.Memory
 
         private long currentId;
 
-        internal Session(Database database, ISessionLifecycle scope)
+        internal Transaction(Database database, ITransactionLifecycle scope)
         {
             this.Database = database;
             this.StateLifecycle = scope;
@@ -45,9 +45,9 @@ namespace Allors.Database.Adapters.Memory
 
         public IDatabase Population => this.Database;
 
-        IDatabase ISession.Database => this.Database;
+        IDatabase ITransaction.Database => this.Database;
 
-        public ISessionLifecycle StateLifecycle { get; }
+        public ITransactionLifecycle StateLifecycle { get; }
 
         public Action<IStrategy, IRoleType> OnAccessUnitRole { get; set; }
 

@@ -12,28 +12,28 @@ namespace Allors.Database.Adapters.SqlClient
 
     internal class ExtentFiltered : SqlExtent
     {
-        private readonly Session session;
+        private readonly Transaction transaction;
         private readonly IComposite objectType;
 
         private AndPredicate filter;
 
-        internal ExtentFiltered(Session session, Strategy strategy, IRoleType roleType)
-            : this(session, (IComposite)roleType.ObjectType)
+        internal ExtentFiltered(Transaction transaction, Strategy strategy, IRoleType roleType)
+            : this(transaction, (IComposite)roleType.ObjectType)
         {
             this.Strategy = strategy;
             this.RoleType = roleType;
         }
 
-        internal ExtentFiltered(Session session, Strategy strategy, IAssociationType associationType)
-            : this(session, associationType.ObjectType)
+        internal ExtentFiltered(Transaction transaction, Strategy strategy, IAssociationType associationType)
+            : this(transaction, associationType.ObjectType)
         {
             this.Strategy = strategy;
             this.AssociationType = associationType;
         }
 
-        internal ExtentFiltered(Session session, IComposite objectType)
+        internal ExtentFiltered(Transaction transaction, IComposite objectType)
         {
-            this.session = session;
+            this.transaction = transaction;
             this.objectType = objectType;
         }
 
@@ -46,11 +46,11 @@ namespace Allors.Database.Adapters.SqlClient
             }
         }
 
-        internal Mapping Mapping => this.session.Database.Mapping;
+        internal Mapping Mapping => this.transaction.Database.Mapping;
 
         public override IComposite ObjectType => this.objectType;
 
-        internal override Session Session => this.session;
+        internal override Transaction Transaction => this.transaction;
 
         internal IAssociationType AssociationType { get; private set; }
 
@@ -106,7 +106,7 @@ namespace Allors.Database.Adapters.SqlClient
                 }
             }
 
-            this.session.Flush();
+            this.transaction.Flush();
 
             var statement = new ExtentStatementRoot(this);
             var objectIds = new List<long>();
@@ -121,7 +121,7 @@ namespace Allors.Database.Adapters.SqlClient
                     {
                         while (reader.Read())
                         {
-                            var objectId = this.session.State.GetObjectIdForExistingObject(reader.GetValue(0).ToString());
+                            var objectId = this.transaction.State.GetObjectIdForExistingObject(reader.GetValue(0).ToString());
                             objectIds.Add(objectId);
                         }
                     }

@@ -45,7 +45,7 @@ namespace Allors.Database.Domain
                                 break;
 
                             case UnitTags.DateTime:
-                                @this.Strategy.SetUnitRole(roleType, @this.Strategy.Session.Now());
+                                @this.Strategy.SetUnitRole(roleType, @this.Strategy.Transaction.Now());
                                 break;
                         }
                     }
@@ -57,10 +57,10 @@ namespace Allors.Database.Domain
         public static T Clone<T>(this T @this, params IRoleType[] deepClone) where T : IObject
         {
             var strategy = @this.Strategy;
-            var session = strategy.Session;
+            var transaction = strategy.Transaction;
             var @class = strategy.Class;
 
-            var clone = (T)DefaultObjectBuilder.Build(session, @class);
+            var clone = (T)DefaultObjectBuilder.Build(transaction, @class);
 
             foreach (var roleType in @class.DatabaseRoleTypes.Where(v => !(v.RelationType.IsDerived || v.RelationType.IsSynced) && !deepClone.Contains(v) && (v.ObjectType.IsUnit || v.AssociationType.IsMany)))
             {

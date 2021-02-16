@@ -19,13 +19,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnPostBuild()
         {
-            var before = this.Session.Now();
+            var before = this.Transaction.Now();
 
-            var units = new UnitSampleBuilder(this.Session).Build();
+            var units = new UnitSampleBuilder(this.Transaction).Build();
 
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var after = this.Session.Now();
+            var after = this.Transaction.Now();
 
             Assert.False(units.ExistRequiredBinary);
             Assert.False(units.ExistRequiredString);

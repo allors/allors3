@@ -23,14 +23,14 @@ namespace Allors.Database.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            var session = cycle.Session;
+            var transaction = cycle.Transaction;
             var validation = cycle.Validation;
 
             foreach (var @this in matches.Cast<WorkTask>())
             {
                 // when proforma invoice is deleted then WorkEffortBillingsWhereWorkEffort do not exist and WorkEffortState is Finished
-                if (@this.WorkEffortState.Equals(new WorkEffortStates(@this.Strategy.Session).Completed)
-                    || @this.WorkEffortState.Equals(new WorkEffortStates(@this.Strategy.Session).Finished))
+                if (@this.WorkEffortState.Equals(new WorkEffortStates(@this.Strategy.Transaction).Completed)
+                    || @this.WorkEffortState.Equals(new WorkEffortStates(@this.Strategy.Transaction).Finished))
                 {
                     @this.CanInvoice = true;
 
@@ -70,8 +70,8 @@ namespace Allors.Database.Domain
                     {
                         foreach (WorkEffort child in @this.Children)
                         {
-                            if (!(child.WorkEffortState.Equals(new WorkEffortStates(@this.Strategy.Session).Completed)
-                                || child.WorkEffortState.Equals(new WorkEffortStates(@this.Strategy.Session).Finished)))
+                            if (!(child.WorkEffortState.Equals(new WorkEffortStates(@this.Strategy.Transaction).Completed)
+                                || child.WorkEffortState.Equals(new WorkEffortStates(@this.Strategy.Transaction).Finished)))
                             {
                                 @this.CanInvoice = false;
                                 break;

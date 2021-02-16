@@ -13,18 +13,18 @@ namespace Allors.Database.Domain
         {
             if (!@this.ExistRequestState && !@this.ExistOriginator)
             {
-                @this.RequestState = new RequestStates(@this.Session()).Anonymous;
+                @this.RequestState = new RequestStates(@this.Transaction()).Anonymous;
             }
 
             if (!@this.ExistRequestState && @this.ExistOriginator)
             {
-                @this.RequestState = new RequestStates(@this.Session()).Submitted;
+                @this.RequestState = new RequestStates(@this.Transaction()).Submitted;
             }
         }
 
         public static void AppsOnInit(this Request @this, ObjectOnInit method)
         {
-            var internalOrganisations = new Organisations(@this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
+            var internalOrganisations = new Organisations(@this.Strategy.Transaction).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
 
             if (!@this.ExistRecipient && internalOrganisations.Count() == 1)
             {
@@ -33,9 +33,9 @@ namespace Allors.Database.Domain
         }
 
         public static bool IsDeletable(this Request @this) =>
-            (@this.RequestState.Equals(new RequestStates(@this.Strategy.Session).Submitted)
-                || @this.RequestState.Equals(new RequestStates(@this.Strategy.Session).Cancelled)
-                || @this.RequestState.Equals(new RequestStates(@this.Strategy.Session).Rejected))
+            (@this.RequestState.Equals(new RequestStates(@this.Strategy.Transaction).Submitted)
+                || @this.RequestState.Equals(new RequestStates(@this.Strategy.Transaction).Cancelled)
+                || @this.RequestState.Equals(new RequestStates(@this.Strategy.Transaction).Rejected))
             && !@this.ExistQuoteWhereRequest
             && @this.RequestItems.All(v => v.IsDeletable);
 
@@ -50,12 +50,12 @@ namespace Allors.Database.Domain
             }
         }
 
-        public static void AppsCancel(this Request @this, RequestCancel method) => @this.RequestState = new RequestStates(@this.Strategy.Session).Cancelled;
+        public static void AppsCancel(this Request @this, RequestCancel method) => @this.RequestState = new RequestStates(@this.Strategy.Transaction).Cancelled;
 
-        public static void AppsReject(this Request @this, RequestReject method) => @this.RequestState = new RequestStates(@this.Strategy.Session).Rejected;
+        public static void AppsReject(this Request @this, RequestReject method) => @this.RequestState = new RequestStates(@this.Strategy.Transaction).Rejected;
 
-        public static void AppsSubmit(this Request @this, RequestSubmit method) => @this.RequestState = new RequestStates(@this.Strategy.Session).Submitted;
+        public static void AppsSubmit(this Request @this, RequestSubmit method) => @this.RequestState = new RequestStates(@this.Strategy.Transaction).Submitted;
 
-        public static void AppsHold(this Request @this, RequestHold method) => @this.RequestState = new RequestStates(@this.Strategy.Session).PendingCustomer;
+        public static void AppsHold(this Request @this, RequestHold method) => @this.RequestState = new RequestStates(@this.Strategy.Transaction).PendingCustomer;
     }
 }

@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
 
         public CaseState Completed => this.Cache[CompletedId];
 
-        private UniquelyIdentifiableCache<CaseState> Cache => this.cache ??= new UniquelyIdentifiableCache<CaseState>(this.Session);
+        private UniquelyIdentifiableCache<CaseState> Cache => this.cache ??= new UniquelyIdentifiableCache<CaseState>(this.Transaction);
 
         protected override void AppsSetup(Setup setup)
         {

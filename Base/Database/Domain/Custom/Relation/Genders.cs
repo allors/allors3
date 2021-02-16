@@ -22,27 +22,27 @@ namespace Allors.Database.Domain
 
         public Gender Other => this.Cache[OtherId];
 
-        private UniquelyIdentifiableCache<Gender> Cache => this.cache ?? (this.cache = new UniquelyIdentifiableCache<Gender>(this.Session));
+        private UniquelyIdentifiableCache<Gender> Cache => this.cache ?? (this.cache = new UniquelyIdentifiableCache<Gender>(this.Transaction));
 
         protected override void CustomSetup(Setup setup)
         {
             base.CustomSetup(setup);
 
-            var dutchLocale = new Locales(this.Session).DutchNetherlands;
+            var dutchLocale = new Locales(this.Transaction).DutchNetherlands;
 
-            new GenderBuilder(this.Session)
+            new GenderBuilder(this.Transaction)
                 .WithName("Male")
                 .WithUniqueId(MaleId)
                 .WithIsActive(true)
                 .Build();
 
-            new GenderBuilder(this.Session)
+            new GenderBuilder(this.Transaction)
                 .WithName("Female")
                 .WithUniqueId(FemaleId)
                 .WithIsActive(true)
                 .Build();
 
-            new GenderBuilder(this.Session)
+            new GenderBuilder(this.Transaction)
                 .WithName("Other")
                 .WithUniqueId(FemaleId)
                 .WithIsActive(true)

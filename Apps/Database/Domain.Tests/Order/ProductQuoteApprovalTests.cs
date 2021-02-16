@@ -19,11 +19,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedProductQuoteDeriveTitle()
         {
-            var quote = new ProductQuoteBuilder(this.Session).WithIssuer(this.InternalOrganisation).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithIssuer(this.InternalOrganisation).Build();
+            this.Transaction.Derive(false);
 
-            var approval = new ProductQuoteApprovalBuilder(this.Session).WithProductQuote(quote).Build();
-            this.Session.Derive(false);
+            var approval = new ProductQuoteApprovalBuilder(this.Transaction).WithProductQuote(quote).Build();
+            this.Transaction.Derive(false);
 
             Assert.Equal(approval.Title, "Approval of " + quote.WorkItemDescription);
         }
@@ -31,11 +31,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedProductQuoteDeriveWorkItem()
         {
-            var quote = new ProductQuoteBuilder(this.Session).WithIssuer(this.InternalOrganisation).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithIssuer(this.InternalOrganisation).Build();
+            this.Transaction.Derive(false);
 
-            var approval = new ProductQuoteApprovalBuilder(this.Session).WithProductQuote(quote).Build();
-            this.Session.Derive(false);
+            var approval = new ProductQuoteApprovalBuilder(this.Transaction).WithProductQuote(quote).Build();
+            this.Transaction.Derive(false);
 
             Assert.Equal(approval.WorkItem, quote);
         }
@@ -43,11 +43,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedProductQuoteDeriveDateClosed()
         {
-            var quote = new ProductQuoteBuilder(this.Session).WithIssuer(this.InternalOrganisation).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithIssuer(this.InternalOrganisation).Build();
+            this.Transaction.Derive(false);
 
-            var approval = new ProductQuoteApprovalBuilder(this.Session).WithProductQuote(quote).Build();
-            this.Session.Derive(false);
+            var approval = new ProductQuoteApprovalBuilder(this.Transaction).WithProductQuote(quote).Build();
+            this.Transaction.Derive(false);
 
             Assert.True(approval.ExistDateClosed);
         }
@@ -55,11 +55,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedProductQuoteQuoteStateDeriveDateClosed()
         {
-            var quote = this.InternalOrganisation.CreateB2BProductQuoteWithSerialisedItem(this.Session.Faker());
-            this.Session.Derive(false);
+            var quote = this.InternalOrganisation.CreateB2BProductQuoteWithSerialisedItem(this.Transaction.Faker());
+            this.Transaction.Derive(false);
 
-            quote.QuoteState = new QuoteStates(this.Session).AwaitingApproval;
-            this.Session.Derive(false);
+            quote.QuoteState = new QuoteStates(this.Transaction).AwaitingApproval;
+            this.Transaction.Derive(false);
 
             Assert.False(quote.ProductQuoteApprovalsWhereProductQuote.First().ExistDateClosed);
         }
@@ -74,11 +74,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedProductQuoteDeriveEmptyParticipants()
         {
-            var quote = new ProductQuoteBuilder(this.Session).WithIssuer(this.InternalOrganisation).Build();
-            this.Session.Derive(false);
+            var quote = new ProductQuoteBuilder(this.Transaction).WithIssuer(this.InternalOrganisation).Build();
+            this.Transaction.Derive(false);
 
-            var approval = new ProductQuoteApprovalBuilder(this.Session).WithProductQuote(quote).Build();
-            this.Session.Derive(false);
+            var approval = new ProductQuoteApprovalBuilder(this.Transaction).WithProductQuote(quote).Build();
+            this.Transaction.Derive(false);
 
             Assert.Empty(approval.Participants);
         }
@@ -86,11 +86,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedProductQuoteQuoteStateDeriveParticipants()
         {
-            var quote = this.InternalOrganisation.CreateB2BProductQuoteWithSerialisedItem(this.Session.Faker());
-            this.Session.Derive(false);
+            var quote = this.InternalOrganisation.CreateB2BProductQuoteWithSerialisedItem(this.Transaction.Faker());
+            this.Transaction.Derive(false);
 
-            quote.QuoteState = new QuoteStates(this.Session).AwaitingApproval;
-            this.Session.Derive(false);
+            quote.QuoteState = new QuoteStates(this.Transaction).AwaitingApproval;
+            this.Transaction.Derive(false);
 
             Assert.NotEmpty(quote.ProductQuoteApprovalsWhereProductQuote.First().Participants);
         }

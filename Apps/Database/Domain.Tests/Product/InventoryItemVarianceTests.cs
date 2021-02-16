@@ -16,16 +16,16 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenInventoryItem_WhenPositiveVariance_ThenQuantityOnHandIsRaised()
         {
-            var nonSerialized = new InventoryItemKinds(this.Session).NonSerialised;
-            var unknown = new InventoryTransactionReasons(this.Session).Unknown;
-            var vatRate21 = new VatRateBuilder(this.Session).WithRate(21).Build();
-            var piece = new UnitsOfMeasure(this.Session).Piece;
-            var category = this.Session.Extent<ProductCategory>().First;
+            var nonSerialized = new InventoryItemKinds(this.Transaction).NonSerialised;
+            var unknown = new InventoryTransactionReasons(this.Transaction).Unknown;
+            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
+            var piece = new UnitsOfMeasure(this.Transaction).Piece;
+            var category = this.Transaction.Extent<ProductCategory>().First;
 
             var finishedGood = this.CreatePart("FG1", nonSerialized);
 
-            this.Session.Derive(true);
-            this.Session.Commit();
+            this.Transaction.Derive(true);
+            this.Transaction.Commit();
 
             var inventoryItem = (NonSerialisedInventoryItem)finishedGood.InventoryItemsWherePart.First();
 
@@ -33,7 +33,7 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(0, inventoryItem.QuantityOnHand);
 
             var transaction = this.CreateInventoryTransaction(10, unknown, finishedGood);
-            this.Session.Derive(true);
+            this.Transaction.Derive(true);
 
             Assert.Equal(10, finishedGood.QuantityOnHand);
             Assert.Equal(10, inventoryItem.QuantityOnHand);
@@ -43,19 +43,19 @@ namespace Allors.Database.Domain.Tests
         public void GivenSerializedInventoryItems_WhenVarianceContainsInvalidQuantity_ThenDerivationExceptionRaised()
         {
             // Arrange
-            var kinds = new InventoryItemKinds(this.Session);
-            var unitsOfMeasure = new UnitsOfMeasure(this.Session);
-            var unknown = new InventoryTransactionReasons(this.Session).Unknown;
+            var kinds = new InventoryItemKinds(this.Transaction);
+            var unitsOfMeasure = new UnitsOfMeasure(this.Transaction);
+            var unknown = new InventoryTransactionReasons(this.Transaction).Unknown;
 
-            var vatRate21 = new VatRateBuilder(this.Session).WithRate(21).Build();
-            var category = new ProductCategoryBuilder(this.Session).WithName("category").Build();
+            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
+            var category = new ProductCategoryBuilder(this.Transaction).WithName("category").Build();
             var finishedGood = this.CreatePart("FG1", kinds.Serialised);
             var good = this.CreateGood("10101", vatRate21, "good1", unitsOfMeasure.Piece, category, finishedGood);
-            var serialItem = new SerialisedItemBuilder(this.Session).WithSerialNumber("1").Build();
+            var serialItem = new SerialisedItemBuilder(this.Transaction).WithSerialNumber("1").Build();
             var variance = this.CreateInventoryTransaction(10, unknown, finishedGood, serialItem);
 
             // Act
-            var derivation = this.Session.Derive(false);
+            var derivation = this.Transaction.Derive(false);
 
             // Assert
             Assert.True(derivation.HasErrors);
@@ -67,7 +67,7 @@ namespace Allors.Database.Domain.Tests
             variance.Quantity = -10;
 
             // Act
-            derivation = this.Session.Derive(false);
+            derivation = this.Transaction.Derive(false);
 
             // Assert
             Assert.True(derivation.HasErrors);
@@ -77,16 +77,16 @@ namespace Allors.Database.Domain.Tests
         }
 
         private Part CreatePart(string partId, InventoryItemKind kind)
-            => new NonUnifiedPartBuilder(this.Session)
-                .WithProductIdentification(new PartNumberBuilder(this.Session)
+            => new NonUnifiedPartBuilder(this.Transaction)
+                .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                     .WithIdentification(partId)
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build()).WithInventoryItemKind(kind).Build();
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build()).WithInventoryItemKind(kind).Build();
 
         private Good CreateGood(string sku, VatRate vatRate, string name, UnitOfMeasure uom, ProductCategory category, Part part)
-            => new NonUnifiedGoodBuilder(this.Session)
-                .WithProductIdentification(new SkuIdentificationBuilder(this.Session)
+            => new NonUnifiedGoodBuilder(this.Transaction)
+                .WithProductIdentification(new SkuIdentificationBuilder(this.Transaction)
                     .WithIdentification(sku)
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Sku).Build())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Sku).Build())
                 .WithVatRate(vatRate)
                 .WithName(name)
                 .WithUnitOfMeasure(uom)
@@ -94,9 +94,9 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
         private InventoryItemTransaction CreateInventoryTransaction(int quantity, InventoryTransactionReason reason, Part part)
-           => new InventoryItemTransactionBuilder(this.Session).WithQuantity(quantity).WithReason(reason).WithPart(part).Build();
+           => new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(quantity).WithReason(reason).WithPart(part).Build();
 
         private InventoryItemTransaction CreateInventoryTransaction(int quantity, InventoryTransactionReason reason, Part part, SerialisedItem serialisedItem)
-           => new InventoryItemTransactionBuilder(this.Session).WithQuantity(quantity).WithReason(reason).WithPart(part).WithSerialisedItem(serialisedItem).Build();
+           => new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(quantity).WithReason(reason).WithPart(part).WithSerialisedItem(serialisedItem).Build();
     }
 }

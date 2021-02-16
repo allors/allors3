@@ -18,53 +18,53 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPartyWithOpenOrders_WhenDeriving_ThenOpenOrderAmountIsUpdated()
         {
-            var store = this.Session.Extent<Store>().First;
+            var store = this.Transaction.Extent<Store>().First;
             store.IsImmediatelyPicked = false;
 
-            var organisation = new OrganisationBuilder(this.Session).WithName("customer").Build();
-            var customerRelationship = new CustomerRelationshipBuilder(this.Session).WithCustomer(organisation).Build();
+            var organisation = new OrganisationBuilder(this.Transaction).WithName("customer").Build();
+            var customerRelationship = new CustomerRelationshipBuilder(this.Transaction).WithCustomer(organisation).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var partyFinancial = organisation.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, customerRelationship.InternalOrganisation));
 
-            var mechelen = new CityBuilder(this.Session).WithName("Mechelen").Build();
+            var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
 
-            var postalAddress = new PostalAddressBuilder(this.Session)
+            var postalAddress = new PostalAddressBuilder(this.Transaction)
                   .WithAddress1("Kleine Nieuwedijkstraat 2")
                   .WithPostalAddressBoundary(mechelen)
                   .Build();
 
-            var good = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
+            var good = new Goods(this.Transaction).FindBy(this.M.Good.Name, "good1");
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var salesOrder1 = new SalesOrderBuilder(this.Session).WithBillToCustomer(organisation).WithAssignedShipToAddress(postalAddress).WithComment("salesorder1").Build();
-            this.Session.Derive();
+            var salesOrder1 = new SalesOrderBuilder(this.Transaction).WithBillToCustomer(organisation).WithAssignedShipToAddress(postalAddress).WithComment("salesorder1").Build();
+            this.Transaction.Derive();
 
-            var orderItem1 = new SalesOrderItemBuilder(this.Session)
+            var orderItem1 = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(good)
                 .WithQuantityOrdered(10)
                 .WithAssignedUnitPrice(10)
                 .Build();
             salesOrder1.AddSalesOrderItem(orderItem1);
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var salesOrder2 = new SalesOrderBuilder(this.Session).WithBillToCustomer(organisation).WithAssignedShipToAddress(postalAddress).WithComment("salesorder2").Build();
-            this.Session.Derive();
+            var salesOrder2 = new SalesOrderBuilder(this.Transaction).WithBillToCustomer(organisation).WithAssignedShipToAddress(postalAddress).WithComment("salesorder2").Build();
+            this.Transaction.Derive();
 
-            var orderItem2 = new SalesOrderItemBuilder(this.Session)
+            var orderItem2 = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(good)
                 .WithQuantityOrdered(10)
                 .WithAssignedUnitPrice(10)
                 .Build();
             salesOrder2.AddSalesOrderItem(orderItem2);
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var salesOrder3 = new SalesOrderBuilder(this.Session).WithBillToCustomer(organisation).WithAssignedShipToAddress(postalAddress).WithComment("salesorder3").Build();
-            this.Session.Derive();
+            var salesOrder3 = new SalesOrderBuilder(this.Transaction).WithBillToCustomer(organisation).WithAssignedShipToAddress(postalAddress).WithComment("salesorder3").Build();
+            this.Transaction.Derive();
 
-            var orderItem3 = new SalesOrderItemBuilder(this.Session)
+            var orderItem3 = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(good)
                 .WithQuantityOrdered(10)
                 .WithAssignedUnitPrice(10)
@@ -72,7 +72,7 @@ namespace Allors.Database.Domain.Tests
             salesOrder3.AddSalesOrderItem(orderItem3);
 
             salesOrder3.Cancel();
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(200M, partyFinancial.OpenOrderAmount);
         }
@@ -85,14 +85,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPartyContactMechanismsDeriveBillingAddress()
         {
-            var party = new PersonBuilder(this.Session).Build();
-            var partyContactMechanism = new PartyContactMechanismBuilder(this.Session)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).BillingAddress)
-                .WithContactMechanism(new EmailAddressBuilder(this.Session).Build())
+            var party = new PersonBuilder(this.Transaction).Build();
+            var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
+                .WithContactMechanism(new EmailAddressBuilder(this.Transaction).Build())
                 .WithUseAsDefault(true)
                 .Build();
             party.AddPartyContactMechanism(partyContactMechanism);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(partyContactMechanism.ContactMechanism, party.BillingAddress);
         }
@@ -100,17 +100,17 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPartyContactMechanismContactPurposesDeriveBillingAddress()
         {
-            var party = new PersonBuilder(this.Session).Build();
-            var partyContactMechanism = new PartyContactMechanismBuilder(this.Session)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).SalesOffice)
-                .WithContactMechanism(new EmailAddressBuilder(this.Session).Build())
+            var party = new PersonBuilder(this.Transaction).Build();
+            var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).SalesOffice)
+                .WithContactMechanism(new EmailAddressBuilder(this.Transaction).Build())
                 .WithUseAsDefault(true)
                 .Build();
             party.AddPartyContactMechanism(partyContactMechanism);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            partyContactMechanism.AddContactPurpose(new ContactMechanismPurposes(this.Session).BillingAddress);
-            this.Session.Derive(false);
+            partyContactMechanism.AddContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress);
+            this.Transaction.Derive(false);
 
             Assert.Equal(partyContactMechanism.ContactMechanism, party.BillingAddress);
         }
@@ -118,15 +118,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedCustomerRelationshipEmployerDeriveCurrentPartyRelationships()
         {
-            var customer = new PersonBuilder(this.Session).Build();
-            var customerRelationship = new CustomerRelationshipBuilder(this.Session).WithCustomer(customer).WithFromDate(this.Session.Now()).Build();
-            this.Session.Derive(false);
+            var customer = new PersonBuilder(this.Transaction).Build();
+            var customerRelationship = new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithFromDate(this.Transaction.Now()).Build();
+            this.Transaction.Derive(false);
 
-            var internalOrganisation = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
-            this.Session.Derive(false);
+            var internalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
+            this.Transaction.Derive(false);
 
             customerRelationship.InternalOrganisation = internalOrganisation;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains(customerRelationship, internalOrganisation.CurrentPartyRelationships);
         }
@@ -134,13 +134,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedCustomerRelationshipFromDateDeriveCurrentPartyRelationships()
         {
-            var customer = new PersonBuilder(this.Session).Build();
-            var internalOrganisation = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
-            var customerRelationship = new CustomerRelationshipBuilder(this.Session).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
-            this.Session.Derive(false);
+            var customer = new PersonBuilder(this.Transaction).Build();
+            var internalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
+            var customerRelationship = new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
+            this.Transaction.Derive(false);
 
-            customerRelationship.FromDate = this.Session.Now();
-            this.Session.Derive(false);
+            customerRelationship.FromDate = this.Transaction.Now();
+            this.Transaction.Derive(false);
 
             Assert.Contains(customerRelationship, internalOrganisation.CurrentPartyRelationships);
         }
@@ -148,15 +148,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedCustomerRelationshipThroughDateDeriveCurrentPartyRelationships()
         {
-            var customer = new PersonBuilder(this.Session).Build();
-            var internalOrganisation = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
-            var customerRelationship = new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
-            this.Session.Derive(false);
+            var customer = new PersonBuilder(this.Transaction).Build();
+            var internalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
+            var customerRelationship = new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
+            this.Transaction.Derive(false);
 
             Assert.Contains(customerRelationship, internalOrganisation.CurrentPartyRelationships);
 
             customerRelationship.ThroughDate = customerRelationship.FromDate;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.DoesNotContain(customerRelationship, internalOrganisation.CurrentPartyRelationships);
         }
@@ -164,14 +164,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPartyContactMechanismsDeriveCurrentPartyContactMechanisms()
         {
-            var party = new PersonBuilder(this.Session).Build();
-            var partyContactMechanism = new PartyContactMechanismBuilder(this.Session)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).SalesOffice)
-                .WithContactMechanism(new EmailAddressBuilder(this.Session).Build())
+            var party = new PersonBuilder(this.Transaction).Build();
+            var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).SalesOffice)
+                .WithContactMechanism(new EmailAddressBuilder(this.Transaction).Build())
                 .WithUseAsDefault(true)
                 .Build();
             party.AddPartyContactMechanism(partyContactMechanism);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains(partyContactMechanism, party.CurrentPartyContactMechanisms);
         }
@@ -179,20 +179,20 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPartyContactMechanismFromDateDeriveCurrentPartyContactMechanisms()
         {
-            var party = new PersonBuilder(this.Session).Build();
-            var partyContactMechanism = new PartyContactMechanismBuilder(this.Session)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).SalesOffice)
-                .WithContactMechanism(new EmailAddressBuilder(this.Session).Build())
+            var party = new PersonBuilder(this.Transaction).Build();
+            var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).SalesOffice)
+                .WithContactMechanism(new EmailAddressBuilder(this.Transaction).Build())
                 .WithUseAsDefault(true)
-                .WithFromDate(this.Session.Now().AddDays(1))
+                .WithFromDate(this.Transaction.Now().AddDays(1))
                 .Build();
             party.AddPartyContactMechanism(partyContactMechanism);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.DoesNotContain(partyContactMechanism, party.CurrentPartyContactMechanisms);
 
-            partyContactMechanism.FromDate = this.Session.Now();
-            this.Session.Derive(false);
+            partyContactMechanism.FromDate = this.Transaction.Now();
+            this.Transaction.Derive(false);
 
             Assert.Contains(partyContactMechanism, party.CurrentPartyContactMechanisms);
         }
@@ -200,19 +200,19 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPartyContactMechanismThroughDateDeriveCurrentPartyContactMechanisms()
         {
-            var party = new PersonBuilder(this.Session).Build();
-            var partyContactMechanism = new PartyContactMechanismBuilder(this.Session)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).SalesOffice)
-                .WithContactMechanism(new EmailAddressBuilder(this.Session).Build())
+            var party = new PersonBuilder(this.Transaction).Build();
+            var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).SalesOffice)
+                .WithContactMechanism(new EmailAddressBuilder(this.Transaction).Build())
                 .WithUseAsDefault(true)
                 .Build();
             party.AddPartyContactMechanism(partyContactMechanism);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Contains(partyContactMechanism, party.CurrentPartyContactMechanisms);
 
             partyContactMechanism.ThroughDate = partyContactMechanism.FromDate;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.DoesNotContain(partyContactMechanism, party.CurrentPartyContactMechanisms);
         }
@@ -220,8 +220,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedDerivationTriggerCreatePartyFinancialRelationship()
         {
-            var party = new PersonBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var party = new PersonBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.True(party.ExistPartyFinancialRelationshipsWhereFinancialParty);
         }

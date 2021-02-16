@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
 
         private UniquelyIdentifiableCache<ShipmentState> cache;
 
-        public Cache<Guid, ShipmentState> Cache => this.cache ??= new UniquelyIdentifiableCache<ShipmentState>(this.Session);
+        public Cache<Guid, ShipmentState> Cache => this.cache ??= new UniquelyIdentifiableCache<ShipmentState>(this.Transaction);
 
         public ShipmentState NotShipped => this.Cache[NotShippedId];
 

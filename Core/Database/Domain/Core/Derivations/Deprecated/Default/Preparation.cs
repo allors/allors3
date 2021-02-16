@@ -15,9 +15,9 @@ namespace Allors.Database.Domain.Derivations.Default
             this.Iteration = iteration;
             var cycle = this.Iteration.Cycle;
             var derivation = cycle.Derivation;
-            var session = derivation.Session;
+            var transaction = derivation.Transaction;
 
-            var changeSet = domainAccumulatedChangeSet ?? session.Checkpoint();
+            var changeSet = domainAccumulatedChangeSet ?? transaction.Checkpoint();
 
             iteration.ChangeSet.Add(changeSet);
             cycle.ChangeSet.Add(changeSet);
@@ -38,7 +38,7 @@ namespace Allors.Database.Domain.Derivations.Default
             changedObjectIds.UnionWith(changeSet.Roles);
             changedObjectIds.UnionWith(changeSet.Created.Select(v => v.ObjectId));
 
-            this.Objects = new HashSet<Object>(derivation.Session.Instantiate(changedObjectIds).Cast<Object>());
+            this.Objects = new HashSet<Object>(derivation.Transaction.Instantiate(changedObjectIds).Cast<Object>());
             this.Objects.ExceptWith(this.Iteration.Cycle.Derivation.DerivedObjects);
 
             if (marked != null)

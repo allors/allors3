@@ -36,7 +36,7 @@ namespace Allors.Database.Adapters.SqlClient
         [Fact(Skip = "Explicit")]
         public void Recover()
         {
-            // this.InitAndCreateSession();
+            // this.InitAndCreateTransaction();
 
             // this.DropProcedure("_GC");
 
@@ -45,7 +45,7 @@ namespace Allors.Database.Adapters.SqlClient
             // var exceptionThrown = false;
             // try
             // {
-            //    repository.CreateSession();
+            //    repository.CreateTransaction();
             // }
             // catch
             // {
@@ -61,7 +61,7 @@ namespace Allors.Database.Adapters.SqlClient
             // exceptionThrown = false;
             // try
             // {
-            //    repository.CreateSession();
+            //    repository.CreateTransaction();
             // }
             // catch
             // {

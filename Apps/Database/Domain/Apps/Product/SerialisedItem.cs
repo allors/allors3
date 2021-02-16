@@ -24,12 +24,12 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistSerialisedItemState)
             {
-                this.SerialisedItemState = new SerialisedItemStates(this.Strategy.Session).NA;
+                this.SerialisedItemState = new SerialisedItemStates(this.Strategy.Transaction).NA;
             }
 
             if (!this.ExistItemNumber)
             {
-                this.ItemNumber = this.Strategy.Session.GetSingleton().Settings.NextSerialisedItemNumber();
+                this.ItemNumber = this.Strategy.Transaction.GetSingleton().Settings.NextSerialisedItemNumber();
             }
 
             this.DerivationTrigger = Guid.NewGuid();

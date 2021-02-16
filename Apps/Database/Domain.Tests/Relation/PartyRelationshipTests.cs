@@ -15,36 +15,36 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenOrganisationContactRelationship_WhenRelationshipPeriodIsNotValid_ThenContactIsNotInCustomerContactUserGroup()
         {
-            var party = new OrganisationBuilder(this.Session).WithName("customer").Build();
+            var party = new OrganisationBuilder(this.Transaction).WithName("customer").Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var customerRelationship = new CustomerRelationshipBuilder(this.Session)
+            var customerRelationship = new CustomerRelationshipBuilder(this.Transaction)
                 .WithInternalOrganisation(this.InternalOrganisation)
                 .WithCustomer(party)
-                .WithFromDate(this.Session.Now().AddYears(-1))
+                .WithFromDate(this.Transaction.Now().AddYears(-1))
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Contains(customerRelationship, party.CurrentPartyRelationships);
             Assert.Empty(party.InactivePartyRelationships);
 
-            var supplierRelationship = new SupplierRelationshipBuilder(this.Session)
+            var supplierRelationship = new SupplierRelationshipBuilder(this.Transaction)
                 .WithInternalOrganisation(this.InternalOrganisation)
                 .WithSupplier(party)
-                .WithFromDate(this.Session.Now().AddYears(-1))
+                .WithFromDate(this.Transaction.Now().AddYears(-1))
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Contains(customerRelationship, party.CurrentPartyRelationships);
             Assert.Contains(supplierRelationship, party.CurrentPartyRelationships);
             Assert.Empty(party.InactivePartyRelationships);
 
-            customerRelationship.ThroughDate = this.Session.Now().AddDays(-1);
+            customerRelationship.ThroughDate = this.Transaction.Now().AddDays(-1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Contains(supplierRelationship, party.CurrentPartyRelationships);
             Assert.Contains(customerRelationship, party.InactivePartyRelationships);

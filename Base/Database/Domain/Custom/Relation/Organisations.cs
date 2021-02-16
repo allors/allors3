@@ -12,6 +12,6 @@ namespace Allors.Database.Domain
     {
         private UniquelyIdentifiableCache<Organisation> cache;
 
-        public UniquelyIdentifiableCache<Organisation> Cache => this.cache ??= new UniquelyIdentifiableCache<Organisation>(this.Session);
+        public UniquelyIdentifiableCache<Organisation> Cache => this.cache ??= new UniquelyIdentifiableCache<Organisation>(this.Transaction);
     }
 }

@@ -11,12 +11,12 @@ namespace Allors.Database.Domain
 
         protected override void AppsSecure(Security config)
         {
-            var anonymous = new RequestStates(this.Session).Anonymous;
-            var cancelled = new RequestStates(this.Session).Cancelled;
-            var quoted = new RequestStates(this.Session).Quoted;
-            var pendingCustomer = new RequestStates(this.Session).PendingCustomer;
-            var rejected = new RequestStates(this.Session).Rejected;
-            var submitted = new RequestStates(this.Session).Submitted;
+            var anonymous = new RequestStates(this.Transaction).Anonymous;
+            var cancelled = new RequestStates(this.Transaction).Cancelled;
+            var quoted = new RequestStates(this.Transaction).Quoted;
+            var pendingCustomer = new RequestStates(this.Transaction).PendingCustomer;
+            var rejected = new RequestStates(this.Transaction).Rejected;
+            var submitted = new RequestStates(this.Transaction).Submitted;
 
             var cancel = this.Meta.Cancel;
             var hold = this.Meta.Hold;

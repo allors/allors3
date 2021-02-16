@@ -36,7 +36,7 @@ namespace Allors.Database.Domain
                         }
 
                         if (invoiceItem.ExistSerialisedItem
-                            && @this.BilledTo.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(@this.Session()).PurchaseInvoiceConfirm))
+                            && @this.BilledTo.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(@this.Transaction()).PurchaseInvoiceConfirm))
                         {
                             if ((@this.BilledFrom as InternalOrganisation)?.IsInternalOrganisation == false)
                             {
@@ -48,7 +48,7 @@ namespace Allors.Database.Domain
                             if (!invoiceItem.SerialisedItem.SalesInvoiceItemsWhereSerialisedItem.Any(v => (v.SalesInvoiceWhereSalesInvoiceItem.BillToCustomer as Organisation)?.IsInternalOrganisation == false))
                             {
                                 invoiceItem.SerialisedItem.OwnedBy = @this.BilledTo;
-                                invoiceItem.SerialisedItem.Ownership = new Ownerships(@this.Session()).Own;
+                                invoiceItem.SerialisedItem.Ownership = new Ownerships(@this.Transaction()).Own;
                             }
                         }
                     }

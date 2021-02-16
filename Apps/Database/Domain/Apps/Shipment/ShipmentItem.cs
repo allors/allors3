@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistShipmentItemState)
             {
-                this.ShipmentItemState = new ShipmentItemStates(this.Strategy.Session).Created;
+                this.ShipmentItemState = new ShipmentItemStates(this.Strategy.Transaction).Created;
             }
 
             this.DerivationTrigger = Guid.NewGuid();

@@ -39,7 +39,7 @@ namespace Allors.Database.Adapters
 
         protected abstract IProfile Profile { get; }
 
-        protected ISession Session => this.Profile.Session;
+        protected ITransaction Transaction => this.Profile.Transaction;
 
         protected Action[] Markers => this.Profile.Markers;
 
@@ -56,8 +56,8 @@ namespace Allors.Database.Adapters
             // this.domain = new Domain(new m.Population(), Guid.NewGuid()) { Name = "MyDomain" };
 
             // var Database = this.CreateDatabase(this.domain.MetaPopulation, true);
-            // ISession session = Database.CreateSession();
-            // session.Rollback();
+            // ITransaction transaction = Database.CreateTransaction();
+            // transaction.Rollback();
 
             // var tableName = "_o";
             // Assert.True(this.ExistTable("allors", tableName));
@@ -73,7 +73,7 @@ namespace Allors.Database.Adapters
             // var exceptionThrown = false;
             // try
             // {
-            //    Database.CreateSession();
+            //    Database.CreateTransaction();
             // }
             // catch
             // {
@@ -750,10 +750,10 @@ namespace Allors.Database.Adapters
 
         // var Database = this.CreateDatabase(this.domain.MetaPopulation, false);
 
-        // ISession session = null;
+        // ITransaction transaction = null;
         //    try
         //    {
-        //        session = Database.CreateSession();
+        //        transaction = Database.CreateTransaction();
         //        Assert.True(false); // Fail
         //    }
         //    catch (SchemaValidationException e)
@@ -763,9 +763,9 @@ namespace Allors.Database.Adapters
         //    }
         //    finally
         //    {
-        //        if (session != null)
+        //        if (transaction != null)
         //        {
-        //            session.Rollback();
+        //            transaction.Rollback();
         //        }
         //    }
         // }
@@ -798,11 +798,11 @@ namespace Allors.Database.Adapters
 
         protected abstract bool ExistProcedure(string schema, string procedure);
 
-        protected bool CreateSessionThrowsException(IDatabase database)
+        protected bool CreateTransactionThrowsException(IDatabase database)
         {
             try
             {
-                using (database.CreateSession())
+                using (database.CreateTransaction())
                 {
                 }
 

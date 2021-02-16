@@ -16,39 +16,39 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPart_WhenBuild_ThenPostBuildRelationsMustExist()
         {
-            var finishedGood = new NonUnifiedPartBuilder(this.Session)
-                .WithProductIdentification(new PartNumberBuilder(this.Session)
+            var finishedGood = new NonUnifiedPartBuilder(this.Transaction)
+                .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                     .WithIdentification("1")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised)
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
                 .Build();
 
-            Assert.Equal(new InventoryItemKinds(this.Session).NonSerialised, finishedGood.InventoryItemKind);
+            Assert.Equal(new InventoryItemKinds(this.Transaction).NonSerialised, finishedGood.InventoryItemKind);
         }
 
         [Fact]
         public void GivenNewPart_WhenDeriving_ThenInventoryItemIsCreated()
         {
-            var finishedGood = new NonUnifiedPartBuilder(this.Session)
-                .WithProductIdentification(new PartNumberBuilder(this.Session)
+            var finishedGood = new NonUnifiedPartBuilder(this.Transaction)
+                .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                     .WithIdentification("1")
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised)
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Single(finishedGood.InventoryItemsWherePart);
-            Assert.Equal(new Facilities(this.Session).FindBy(this.M.Facility.FacilityType, new FacilityTypes(this.Session).Warehouse), finishedGood.InventoryItemsWherePart.First.Facility);
+            Assert.Equal(new Facilities(this.Transaction).FindBy(this.M.Facility.FacilityType, new FacilityTypes(this.Transaction).Warehouse), finishedGood.InventoryItemsWherePart.First.Facility);
         }
 
         [Fact]
         public void OnInitAddProductIdentification()
         {
-            this.Session.GetSingleton().Settings.UsePartNumberCounter = true;
+            this.Transaction.GetSingleton().Settings.UsePartNumberCounter = true;
 
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.Single(nonUnifiedPart.ProductIdentifications);
         }
@@ -61,11 +61,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedNameDeriveDisplayName()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             nonUnifiedPart.Name = "anotherName";
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal("anotherName", nonUnifiedPart.DisplayName);
         }
@@ -73,12 +73,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedUnitOfMeasureDeriveNonSerialisedInventoryItemWherePart()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
+            this.Transaction.Derive(false);
 
-            var piece = new UnitsOfMeasure(this.Session).Piece;
+            var piece = new UnitsOfMeasure(this.Transaction).Piece;
             nonUnifiedPart.UnitOfMeasure = piece;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.NotNull(nonUnifiedPart.InventoryItemsWherePart.Single(v => v.UnitOfMeasure.Equals(piece)));
         }
@@ -86,12 +86,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedDefaultFacilityDeriveNonSerialisedInventoryItemWherePart()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
+            this.Transaction.Derive(false);
 
-            var facility = new FacilityBuilder(this.Session).Build();
+            var facility = new FacilityBuilder(this.Transaction).Build();
             nonUnifiedPart.DefaultFacility = facility;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.NotNull(nonUnifiedPart.InventoryItemsWherePart.Single(v => v.Facility.Equals(facility)));
         }
@@ -99,18 +99,18 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedProductTypeDeriveSerialisedItemCharacteristics()
         {
-            var productType = new ProductTypeBuilder(this.Session).Build();
-            var characteristicType = new SerialisedItemCharacteristicTypeBuilder(this.Session).Build();
+            var productType = new ProductTypeBuilder(this.Transaction).Build();
+            var characteristicType = new SerialisedItemCharacteristicTypeBuilder(this.Transaction).Build();
             productType.AddSerialisedItemCharacteristicType(characteristicType);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.Empty(nonUnifiedPart.SerialisedItemCharacteristics);
 
             nonUnifiedPart.ProductType = productType;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(characteristicType, nonUnifiedPart.SerialisedItemCharacteristics.First.SerialisedItemCharacteristicType);
         }
@@ -118,17 +118,17 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedProductTypeSerialisedItemCharacteristicTypesDeriveSerialisedItemCharacteristics()
         {
-            var productType = new ProductTypeBuilder(this.Session).Build();
+            var productType = new ProductTypeBuilder(this.Transaction).Build();
 
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).WithProductType(productType).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithProductType(productType).Build();
+            this.Transaction.Derive(false);
 
             Assert.Empty(nonUnifiedPart.SerialisedItemCharacteristics);
 
-            var characteristicType = new SerialisedItemCharacteristicTypeBuilder(this.Session).Build();
+            var characteristicType = new SerialisedItemCharacteristicTypeBuilder(this.Transaction).Build();
             productType.AddSerialisedItemCharacteristicType(characteristicType);
-            this.Session.Derive(false);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(characteristicType, nonUnifiedPart.SerialisedItemCharacteristics.First.SerialisedItemCharacteristicType);
         }
@@ -141,11 +141,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedNonSerialisedInventoryItemQuantityOnHandDeriveQuantityOnHand()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
+            this.Transaction.Derive(false);
 
             ((NonSerialisedInventoryItem)nonUnifiedPart.InventoryItemsWherePart.First).QuantityOnHand = 1;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, nonUnifiedPart.QuantityOnHand);
         }
@@ -153,17 +153,17 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSerialisedInventoryItemQuantityDeriveQuantityOnHand()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised).Build();
-            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             nonUnifiedPart.AddSerialisedItem(serialisedItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            new InventoryItemTransactionBuilder(this.Session)
-                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+            new InventoryItemTransactionBuilder(this.Transaction)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
                 .WithSerialisedItem(serialisedItem)
                 .WithQuantity(1)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, nonUnifiedPart.QuantityOnHand);
         }
@@ -171,11 +171,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedNonSerialisedInventoryItemAvailableToPromiseDeriveAvailableToPromise()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
+            this.Transaction.Derive(false);
 
             ((NonSerialisedInventoryItem)nonUnifiedPart.InventoryItemsWherePart.First).AvailableToPromise = 1;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, nonUnifiedPart.AvailableToPromise);
         }
@@ -183,18 +183,18 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSerialisedInventoryItemAvailableToPromiseDeriveAvailableToPromise()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised).Build();
-            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             nonUnifiedPart.AddSerialisedItem(serialisedItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            new InventoryItemTransactionBuilder(this.Session)
-                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+            new InventoryItemTransactionBuilder(this.Transaction)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
                 .WithSerialisedItem(serialisedItem)
-                .WithSerialisedInventoryItemState(new SerialisedInventoryItemStates(this.Session).Good)
+                .WithSerialisedInventoryItemState(new SerialisedInventoryItemStates(this.Transaction).Good)
                 .WithQuantity(1)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, nonUnifiedPart.AvailableToPromise);
         }
@@ -202,23 +202,23 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSerialisedInventoryItemSerialisedInventoryItemStateDeriveAvailableToPromise()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised).Build();
-            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             nonUnifiedPart.AddSerialisedItem(serialisedItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
-            new InventoryItemTransactionBuilder(this.Session)
-                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+            new InventoryItemTransactionBuilder(this.Transaction)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
                 .WithSerialisedItem(serialisedItem)
-                .WithSerialisedInventoryItemState(new SerialisedInventoryItemStates(this.Session).Scrap)
+                .WithSerialisedInventoryItemState(new SerialisedInventoryItemStates(this.Transaction).Scrap)
                 .WithQuantity(1)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(0, nonUnifiedPart.AvailableToPromise);
 
-            serialisedItem.SerialisedInventoryItemsWhereSerialisedItem.First.SerialisedInventoryItemState = new SerialisedInventoryItemStates(this.Session).Good;
-            this.Session.Derive(false);
+            serialisedItem.SerialisedInventoryItemsWhereSerialisedItem.First.SerialisedInventoryItemState = new SerialisedInventoryItemStates(this.Transaction).Good;
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, nonUnifiedPart.AvailableToPromise);
         }
@@ -226,11 +226,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedNonSerialisedInventoryItemQuantityCommittedOutDeriveQuantityCommittedOut()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
+            this.Transaction.Derive(false);
 
             ((NonSerialisedInventoryItem)nonUnifiedPart.InventoryItemsWherePart.First).QuantityCommittedOut = 1;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, nonUnifiedPart.QuantityCommittedOut);
         }
@@ -238,11 +238,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedNonSerialisedInventoryItemQuantityExpectedInDeriveQuantityExpectedIn()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
+            this.Transaction.Derive(false);
 
             ((NonSerialisedInventoryItem)nonUnifiedPart.InventoryItemsWherePart.First).QuantityExpectedIn = 1;
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, nonUnifiedPart.QuantityExpectedIn);
         }
@@ -255,11 +255,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSupplierOfferingPartDeriveSuppliedBy()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            new SupplierOfferingBuilder(this.Session).WithPart(nonUnifiedPart).WithSupplier(new OrganisationBuilder(this.Session).Build()).Build();
-            this.Session.Derive(false);
+            new SupplierOfferingBuilder(this.Transaction).WithPart(nonUnifiedPart).WithSupplier(new OrganisationBuilder(this.Transaction).Build()).Build();
+            this.Transaction.Derive(false);
 
             Assert.Single(nonUnifiedPart.SuppliedBy);
         }
@@ -267,11 +267,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSupplierOfferingPartDeriveSuppliedBy_2()
         {
-            var unifiedGood = new UnifiedGoodBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            new SupplierOfferingBuilder(this.Session).WithPart(unifiedGood).WithSupplier(new OrganisationBuilder(this.Session).Build()).Build();
-            this.Session.Derive(false);
+            new SupplierOfferingBuilder(this.Transaction).WithPart(unifiedGood).WithSupplier(new OrganisationBuilder(this.Transaction).Build()).Build();
+            this.Transaction.Derive(false);
 
             Assert.Single(unifiedGood.SuppliedBy);
         }
@@ -279,21 +279,21 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSupplierOfferingAllVersionsDeriveSuppliedBy()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var supplier = new OrganisationBuilder(this.Session).Build();
-            var supplierOffering = new SupplierOfferingBuilder(this.Session)
-                .WithFromDate(this.Session.Now().AddDays(-1))
+            var supplier = new OrganisationBuilder(this.Transaction).Build();
+            var supplierOffering = new SupplierOfferingBuilder(this.Transaction)
+                .WithFromDate(this.Transaction.Now().AddDays(-1))
                 .WithPart(nonUnifiedPart)
                 .WithSupplier(supplier)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Single(nonUnifiedPart.SuppliedBy);
 
-            supplierOffering.Part = new NonUnifiedPartBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            supplierOffering.Part = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.DoesNotContain(supplier, nonUnifiedPart.SuppliedBy);
         }
@@ -301,21 +301,21 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSupplierOfferingAllVersionsDeriveSuppliedBy_2()
         {
-            var unifiedGood = new UnifiedGoodBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var supplier = new OrganisationBuilder(this.Session).Build();
-            var supplierOffering = new SupplierOfferingBuilder(this.Session)
-                .WithFromDate(this.Session.Now().AddDays(-1))
+            var supplier = new OrganisationBuilder(this.Transaction).Build();
+            var supplierOffering = new SupplierOfferingBuilder(this.Transaction)
+                .WithFromDate(this.Transaction.Now().AddDays(-1))
                 .WithPart(unifiedGood)
                 .WithSupplier(supplier)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Single(unifiedGood.SuppliedBy);
 
-            supplierOffering.Part = new UnifiedGoodBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            supplierOffering.Part = new UnifiedGoodBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             Assert.DoesNotContain(supplier, unifiedGood.SuppliedBy);
         }
@@ -323,20 +323,20 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSupplierOfferingFromDateDeriveSuppliedBy()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var supplierOffering = new SupplierOfferingBuilder(this.Session)
-                .WithFromDate(this.Session.Now().AddDays(1))
+            var supplierOffering = new SupplierOfferingBuilder(this.Transaction)
+                .WithFromDate(this.Transaction.Now().AddDays(1))
                 .WithPart(nonUnifiedPart)
-                .WithSupplier(new OrganisationBuilder(this.Session).Build())
+                .WithSupplier(new OrganisationBuilder(this.Transaction).Build())
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Empty(nonUnifiedPart.SuppliedBy);
 
-            supplierOffering.FromDate = this.Session.Now().AddDays(-1);
-            this.Session.Derive(false);
+            supplierOffering.FromDate = this.Transaction.Now().AddDays(-1);
+            this.Transaction.Derive(false);
 
             Assert.Single(nonUnifiedPart.SuppliedBy);
         }
@@ -344,20 +344,20 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSupplierOfferingThroughDateDeriveSuppliedBy()
         {
-            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var supplierOffering = new SupplierOfferingBuilder(this.Session)
-                .WithFromDate(this.Session.Now().AddDays(-1))
+            var supplierOffering = new SupplierOfferingBuilder(this.Transaction)
+                .WithFromDate(this.Transaction.Now().AddDays(-1))
                 .WithPart(nonUnifiedPart)
-                .WithSupplier(new OrganisationBuilder(this.Session).Build())
+                .WithSupplier(new OrganisationBuilder(this.Transaction).Build())
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Single(nonUnifiedPart.SuppliedBy);
 
-            supplierOffering.ThroughDate = this.Session.Now().AddDays(-1);
-            this.Session.Derive(false);
+            supplierOffering.ThroughDate = this.Transaction.Now().AddDays(-1);
+            this.Transaction.Derive(false);
 
             Assert.Empty(nonUnifiedPart.SuppliedBy);
         }

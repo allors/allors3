@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
         {
             var derivation = method.Derivation;
 
-            this.Second = new SecondBuilder(this.Strategy.Session).Build();
+            this.Second = new SecondBuilder(this.Strategy.Transaction).Build();
 
             this.IsDerived = true;
         }

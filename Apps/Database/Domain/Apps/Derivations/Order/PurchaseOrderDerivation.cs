@@ -50,7 +50,7 @@ namespace Allors.Database.Domain
 
                     var fiscalYearInternalOrganisationSequenceNumbers = @this.OrderedBy?.FiscalYearsInternalOrganisationSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
                     var prefix = @this.OrderedBy.InvoiceSequence.IsEnforcedSequence ? @this.OrderedBy?.PurchaseOrderNumberPrefix : fiscalYearInternalOrganisationSequenceNumbers.PurchaseOrderNumberPrefix;
-                    @this.SortableOrderNumber = @this.Session().GetSingleton().SortableNumber(prefix, @this.OrderNumber, year.ToString());
+                    @this.SortableOrderNumber = @this.Transaction().GetSingleton().SortableNumber(prefix, @this.OrderNumber, year.ToString());
                 }
 
                 if (@this.TakenViaSupplier is Organisation supplier

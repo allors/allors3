@@ -17,21 +17,21 @@ namespace Allors.Database.Domain.Tests
         public void GivenTimeSheet_WhenDeriving_ThenRequiredRelationsMustExist()
         {
             // Arrange
-            var timeSheet = new TimeSheetBuilder(this.Session).Build();
+            var timeSheet = new TimeSheetBuilder(this.Transaction).Build();
 
             // Act
-            var derivation = this.Session.Derive(false);
+            var derivation = this.Transaction.Derive(false);
             var originalCount = derivation.Errors.Count();
 
             // Assert
             Assert.True(derivation.HasErrors);
 
             //// Re-arrange
-            var worker = new PersonBuilder(this.Session).WithFirstName("Good").WithLastName("Worker").Build();
+            var worker = new PersonBuilder(this.Transaction).WithFirstName("Good").WithLastName("Worker").Build();
             timeSheet.Worker = worker;
 
             // Act
-            derivation = this.Session.Derive(false);
+            derivation = this.Transaction.Derive(false);
 
             // Assert
             Assert.False(derivation.HasErrors);

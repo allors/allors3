@@ -19,8 +19,8 @@ namespace Allors.Database.Domain.Tests
             store.RemovePurchaseReturnNumberPrefix();
             var number = this.InternalOrganisation.StoresWhereInternalOrganisation.First.PurchaseReturnNumberCounter.Value;
 
-            var shipment = new PurchaseReturnBuilder(this.Session).WithStore(store).Build();
-            this.Session.Derive(false);
+            var shipment = new PurchaseReturnBuilder(this.Transaction).WithStore(store).Build();
+            this.Transaction.Derive(false);
 
             Assert.Equal(shipment.ShipmentNumber, (number + 1).ToString());
         }
@@ -31,8 +31,8 @@ namespace Allors.Database.Domain.Tests
             var store = this.InternalOrganisation.StoresWhereInternalOrganisation.First;
             var number = store.PurchaseReturnNumberCounter.Value;
 
-            var shipment = new PurchaseReturnBuilder(this.Session).WithStore(store).Build();
-            this.Session.Derive(false);
+            var shipment = new PurchaseReturnBuilder(this.Transaction).WithStore(store).Build();
+            this.Transaction.Derive(false);
 
             Assert.Equal(shipment.SortableShipmentNumber.Value, number + 1);
         }
@@ -40,10 +40,10 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipToPartyDeriveShipToAddress()
         {
-            var shipment = new PurchaseReturnBuilder(this.Session)
+            var shipment = new PurchaseReturnBuilder(this.Transaction)
                 .WithShipToParty(this.InternalOrganisation.ActiveSuppliers.First)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(this.InternalOrganisation.ActiveSuppliers.First.ShippingAddress, shipment.ShipToAddress);
         }
@@ -51,13 +51,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipToAddressDeriveShipToAddress()
         {
-            var shipment = new PurchaseReturnBuilder(this.Session)
+            var shipment = new PurchaseReturnBuilder(this.Transaction)
                 .WithShipToParty(this.InternalOrganisation.ActiveSuppliers.First)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             shipment.RemoveShipToAddress();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(this.InternalOrganisation.ActiveSuppliers.First.ShippingAddress, shipment.ShipToAddress);
         }
@@ -65,10 +65,10 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipFromPartyDeriveShipFromAddress()
         {
-            var shipment = new PurchaseReturnBuilder(this.Session)
+            var shipment = new PurchaseReturnBuilder(this.Transaction)
                 .WithShipFromParty(this.InternalOrganisation)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(this.InternalOrganisation.ShippingAddress, shipment.ShipFromAddress);
         }
@@ -76,13 +76,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipFromAddressDeriveShipFromAddress()
         {
-            var shipment = new PurchaseReturnBuilder(this.Session)
+            var shipment = new PurchaseReturnBuilder(this.Transaction)
                 .WithShipFromParty(this.InternalOrganisation)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             shipment.RemoveShipFromAddress();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(this.InternalOrganisation.ShippingAddress, shipment.ShipFromAddress);
         }

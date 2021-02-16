@@ -18,8 +18,8 @@ namespace Allors.Database.Domain.Tests
             this.InternalOrganisation.RemoveCustomerReturnNumberPrefix();
             var number = this.InternalOrganisation.CustomerReturnNumberCounter.Value;
 
-            var shipment = new CustomerReturnBuilder(this.Session).WithShipToParty(this.InternalOrganisation).Build();
-            this.Session.Derive(false);
+            var shipment = new CustomerReturnBuilder(this.Transaction).WithShipToParty(this.InternalOrganisation).Build();
+            this.Transaction.Derive(false);
 
             Assert.Equal(shipment.ShipmentNumber, (number + 1).ToString());
         }
@@ -28,8 +28,8 @@ namespace Allors.Database.Domain.Tests
         public void ChangedShipToPartyDeriveSortableShipmentNumber()
         {
             var number = this.InternalOrganisation.CustomerReturnNumberCounter.Value;
-            var shipment = new CustomerReturnBuilder(this.Session).WithShipToParty(this.InternalOrganisation).Build();
-            this.Session.Derive(false);
+            var shipment = new CustomerReturnBuilder(this.Transaction).WithShipToParty(this.InternalOrganisation).Build();
+            this.Transaction.Derive(false);
 
             Assert.Equal(shipment.SortableShipmentNumber.Value, number + 1);
         }
@@ -37,10 +37,10 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipToPartyDeriveShipToAddress()
         {
-            var shipment = new CustomerReturnBuilder(this.Session)
+            var shipment = new CustomerReturnBuilder(this.Transaction)
                 .WithShipToParty(this.InternalOrganisation)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(this.InternalOrganisation.ShippingAddress, shipment.ShipToAddress);
         }
@@ -48,13 +48,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipToAddressDeriveShipToAddress()
         {
-            var shipment = new CustomerReturnBuilder(this.Session)
+            var shipment = new CustomerReturnBuilder(this.Transaction)
                 .WithShipToParty(this.InternalOrganisation)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             shipment.RemoveShipToAddress();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(this.InternalOrganisation.ShippingAddress, shipment.ShipToAddress);
         }
@@ -62,10 +62,10 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipFromPartyDeriveShipFromAddress()
         {
-            var shipment = new CustomerReturnBuilder(this.Session)
+            var shipment = new CustomerReturnBuilder(this.Transaction)
                 .WithShipFromParty(this.InternalOrganisation.ActiveCustomers.First)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(this.InternalOrganisation.ActiveCustomers.First.ShippingAddress, shipment.ShipFromAddress);
         }
@@ -73,13 +73,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipFromAddressDeriveShipFromAddress()
         {
-            var shipment = new CustomerReturnBuilder(this.Session)
+            var shipment = new CustomerReturnBuilder(this.Transaction)
                 .WithShipFromParty(this.InternalOrganisation.ActiveCustomers.First)
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             shipment.RemoveShipFromAddress();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(this.InternalOrganisation.ActiveCustomers.First.ShippingAddress, shipment.ShipFromAddress);
         }
@@ -87,12 +87,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipmentItemsSyncShipmentItem()
         {
-            var shipment = new CustomerReturnBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var shipment = new CustomerReturnBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var shipmentItem = new ShipmentItemBuilder(this.Session).Build();
+            var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.Equal(shipment, shipmentItem.SyncedShipment);
         }

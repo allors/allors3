@@ -27,20 +27,20 @@ namespace Allors.Database.Domain
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
-            var session = cycle.Session;
+            var transaction = cycle.Transaction;
 
             foreach (var @this in matches.Cast<SalesOrder>())
             {
                 @this.ValidOrderItems = @this.SalesOrderItems.Where(v => v.IsValid).ToArray();
                 var validOrderItems = @this.SalesOrderItems.Where(v => v.IsValid).ToArray();
 
-                var salesOrderShipmentStates = new SalesOrderShipmentStates(@this.Strategy.Session);
-                var salesOrderPaymentStates = new SalesOrderPaymentStates(@this.Strategy.Session);
-                var salesOrderInvoiceStates = new SalesOrderInvoiceStates(@this.Strategy.Session);
+                var salesOrderShipmentStates = new SalesOrderShipmentStates(@this.Strategy.Transaction);
+                var salesOrderPaymentStates = new SalesOrderPaymentStates(@this.Strategy.Transaction);
+                var salesOrderInvoiceStates = new SalesOrderInvoiceStates(@this.Strategy.Transaction);
 
-                var salesOrderItemShipmentStates = new SalesOrderItemShipmentStates(session);
-                var salesOrderItemPaymentStates = new SalesOrderItemPaymentStates(session);
-                var salesOrderItemInvoiceStates = new SalesOrderItemInvoiceStates(session);
+                var salesOrderItemShipmentStates = new SalesOrderItemShipmentStates(transaction);
+                var salesOrderItemPaymentStates = new SalesOrderItemPaymentStates(transaction);
+                var salesOrderItemInvoiceStates = new SalesOrderItemInvoiceStates(transaction);
 
                 // SalesOrder Shipment State
                 if (validOrderItems.Any())
@@ -96,18 +96,18 @@ namespace Allors.Database.Domain
                         && !@this.SalesOrderState.IsCompleted
                         && !@this.SalesOrderState.IsFinished)
                     {
-                        @this.SalesOrderState = new SalesOrderStates(@this.Strategy.Session).Completed;
+                        @this.SalesOrderState = new SalesOrderStates(@this.Strategy.Transaction).Completed;
                     }
 
                     if (@this.SalesOrderState.IsCompleted && @this.SalesOrderPaymentState.IsPaid)
                     {
-                        @this.SalesOrderState = new SalesOrderStates(@this.Strategy.Session).Finished;
+                        @this.SalesOrderState = new SalesOrderStates(@this.Strategy.Transaction).Finished;
                     }
                 }
 
                 if (@this.SalesOrderState.IsInProcess
                     && (!@this.ExistLastSalesOrderState || !@this.LastSalesOrderState.IsInProcess)
-                    && @this.TakenBy.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(@this.Session()).SalesOrderAccept))
+                    && @this.TakenBy.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(@this.Transaction()).SalesOrderAccept))
                 {
                     foreach (SalesOrderItem item in @this.ValidOrderItems.Where(v => ((SalesOrderItem)v).ExistSerialisedItem))
                     {
@@ -115,10 +115,10 @@ namespace Allors.Database.Domain
                         {
                             item.SerialisedItem.SerialisedItemAvailability = item.NextSerialisedItemAvailability;
 
-                            if (item.NextSerialisedItemAvailability.Equals(new SerialisedItemAvailabilities(@this.Session()).Sold))
+                            if (item.NextSerialisedItemAvailability.Equals(new SerialisedItemAvailabilities(@this.Transaction()).Sold))
                             {
                                 item.SerialisedItem.OwnedBy = @this.ShipToCustomer;
-                                item.SerialisedItem.Ownership = new Ownerships(@this.Session()).ThirdParty;
+                                item.SerialisedItem.Ownership = new Ownerships(@this.Transaction()).ThirdParty;
                             }
                         }
 

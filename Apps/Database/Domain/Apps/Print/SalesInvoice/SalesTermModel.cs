@@ -26,7 +26,7 @@ namespace Allors.Database.Domain.Print.SalesInvoiceModel
 
             this.Value = salesTerm.TermValue;
 
-            var other = new InvoiceTermTypes(salesTerm.Strategy.Session).Other;
+            var other = new InvoiceTermTypes(salesTerm.Strategy.Transaction).Other;
             if (salesTerm.ExistTermType && !salesTerm.TermType.Equals(other))
             {
                 this.Value = salesTerm.TermType.Name + " " + this.Value;

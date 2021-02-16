@@ -15,13 +15,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSerialisedItemCharacteristicTypeDeriveLocalisedValue()
         {
-            var locales = this.Session.GetSingleton().AdditionalLocales;
+            var locales = this.Transaction.GetSingleton().AdditionalLocales;
 
-            var characteristic = new SerialisedItemCharacteristicBuilder(this.Session).Build();
-            this.Session.Derive(false);
+            var characteristic = new SerialisedItemCharacteristicBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            characteristic.SerialisedItemCharacteristicType = new SerialisedItemCharacteristicTypeBuilder(this.Session).WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Kilogram).Build();
-            this.Session.Derive(false);
+            characteristic.SerialisedItemCharacteristicType = new SerialisedItemCharacteristicTypeBuilder(this.Transaction).WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Kilogram).Build();
+            this.Transaction.Derive(false);
 
             foreach(Locale locale in locales)
             {
@@ -32,14 +32,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSerialisedItemCharacteristicTypeUnitOfMeasureDeriveLocalisedValue()
         {
-            var locales = this.Session.GetSingleton().AdditionalLocales;
+            var locales = this.Transaction.GetSingleton().AdditionalLocales;
 
-            var characteristicType = new SerialisedItemCharacteristicTypeBuilder(this.Session).Build();
-            var characteristic = new SerialisedItemCharacteristicBuilder(this.Session).WithSerialisedItemCharacteristicType(characteristicType).Build();
-            this.Session.Derive(false);
+            var characteristicType = new SerialisedItemCharacteristicTypeBuilder(this.Transaction).Build();
+            var characteristic = new SerialisedItemCharacteristicBuilder(this.Transaction).WithSerialisedItemCharacteristicType(characteristicType).Build();
+            this.Transaction.Derive(false);
 
-            characteristicType.UnitOfMeasure = new UnitsOfMeasure(this.Session).Kilogram;
-            this.Session.Derive(false);
+            characteristicType.UnitOfMeasure = new UnitsOfMeasure(this.Transaction).Kilogram;
+            this.Transaction.Derive(false);
 
             foreach (Locale locale in locales)
             {
@@ -50,15 +50,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedValueDeriveLocalisedValue()
         {
-            var locales = this.Session.GetSingleton().AdditionalLocales;
+            var locales = this.Transaction.GetSingleton().AdditionalLocales;
 
-            var characteristic = new SerialisedItemCharacteristicBuilder(this.Session)
-                .WithSerialisedItemCharacteristicType(new SerialisedItemCharacteristicTypeBuilder(this.Session).WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Kilogram).Build())
+            var characteristic = new SerialisedItemCharacteristicBuilder(this.Transaction)
+                .WithSerialisedItemCharacteristicType(new SerialisedItemCharacteristicTypeBuilder(this.Transaction).WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Kilogram).Build())
                 .Build();
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             characteristic.Value = "value";
-            this.Session.Derive(false);
+            this.Transaction.Derive(false);
 
             foreach (Locale locale in locales)
             {

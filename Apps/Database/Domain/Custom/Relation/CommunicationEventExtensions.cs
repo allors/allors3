@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
     {
         public static void AppsOnPostDerive(this CommunicationEvent @this, ObjectOnPostDerive method)
         {
-            @this.AddSecurityToken(new SecurityTokens(@this.Session()).DefaultSecurityToken);
+            @this.AddSecurityToken(new SecurityTokens(@this.Transaction()).DefaultSecurityToken);
             @this.AddSecurityToken(@this.Owner?.OwnerSecurityToken);
         }
     }

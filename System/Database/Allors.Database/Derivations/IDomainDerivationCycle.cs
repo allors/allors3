@@ -8,7 +8,7 @@ namespace Allors.Database.Derivations
 {
     public interface IDomainDerivationCycle
     {
-        ISession Session { get; }
+        ITransaction Transaction { get; }
 
         IChangeSet ChangeSet { get; }
 

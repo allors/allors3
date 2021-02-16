@@ -1,4 +1,4 @@
-// <copyright file="ISession.cs" company="Allors bvba">
+// <copyright file="ITransaction.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -11,9 +11,9 @@ namespace Allors.Database
     using Meta;
 
     /// <summary>
-    /// Extends the <see cref="ISession"/> with database capabilities.
+    /// Extends the <see cref="ITransaction"/> with database capabilities.
     /// </summary>
-    public interface ISession : IDisposable
+    public interface ITransaction : IDisposable
     {
         /// <summary>
         /// Gets the database.
@@ -21,9 +21,9 @@ namespace Allors.Database
         IDatabase Database { get; }
 
         /// <summary>
-        /// The scope for this session.
+        /// The lifecycle for this transaction.
         /// </summary>
-        ISessionLifecycle StateLifecycle { get; }
+        ITransactionLifecycle StateLifecycle { get; }
         
         /// <summary>
         /// Creates a change set of all changes up to this checkpoint,

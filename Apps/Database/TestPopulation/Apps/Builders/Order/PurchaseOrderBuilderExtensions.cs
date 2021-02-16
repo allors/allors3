@@ -12,9 +12,9 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static PurchaseOrderBuilder WithDefaults(this PurchaseOrderBuilder @this, Organisation internalOrganisation)
         {
-            var faker = @this.Session.Faker();
+            var faker = @this.Transaction.Faker();
 
-            var postalAddress = new PostalAddressBuilder(@this.Session).WithDefaults().Build();
+            var postalAddress = new PostalAddressBuilder(@this.Transaction).WithDefaults().Build();
             var supplier = faker.Random.ListItem(internalOrganisation.ActiveSuppliers);
 
             @this.WithDescription(faker.Lorem.Sentence());
