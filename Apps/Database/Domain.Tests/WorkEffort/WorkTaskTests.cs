@@ -1099,4 +1099,327 @@ namespace Allors.Database.Domain.Tests
             Assert.True(workTask.CanInvoice);
         }
     }
+
+    public class WorkEffortTotalRevenueDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public WorkEffortTotalRevenueDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedTimeEntryWorkEffortDeriveTotalLabourRevenue()
+        {
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var timeEntry = new TimeEntryBuilder(this.Transaction)
+                .WithIsBillable(true)
+                .WithBillingFrequency(new TimeFrequencies(this.Transaction).Hour)
+                .WithAssignedBillingRate(10)
+                .WithAssignedAmountOfTime(1)
+                .Build();
+            this.Transaction.Derive(false);
+
+            timeEntry.WorkEffort = workEffort;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(10, workEffort.TotalLabourRevenue);
+        }
+
+        [Fact]
+        public void ChangedTimeEntryBillingAmountDeriveTotalLabourRevenue()
+        {
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var timeEntry = new TimeEntryBuilder(this.Transaction)
+                .WithWorkEffort(workEffort)
+                .WithIsBillable(true)
+                .WithBillingFrequency(new TimeFrequencies(this.Transaction).Hour)
+                .WithAssignedBillingRate(10)
+                .WithAssignedAmountOfTime(1)
+                .Build();
+            this.Transaction.Derive(false);
+
+            timeEntry.AssignedBillingRate = 11;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(11, workEffort.TotalLabourRevenue);
+        }
+
+        [Fact]
+        public void ChangedTimeEntryIsBillableDeriveTotalLabourRevenue()
+        {
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var timeEntry = new TimeEntryBuilder(this.Transaction)
+                .WithWorkEffort(workEffort)
+                .WithIsBillable(false)
+                .WithBillingFrequency(new TimeFrequencies(this.Transaction).Hour)
+                .WithAssignedBillingRate(10)
+                .WithAssignedAmountOfTime(1)
+                .Build();
+            this.Transaction.Derive(false);
+
+            timeEntry.IsBillable = true;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(10, workEffort.TotalLabourRevenue);
+        }
+
+        [Fact]
+        public void ChangedTimeEntryAmountOfTimeDeriveTotalLabourRevenue()
+        {
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var timeEntry = new TimeEntryBuilder(this.Transaction)
+                .WithWorkEffort(workEffort)
+                .WithIsBillable(true)
+                .WithBillingFrequency(new TimeFrequencies(this.Transaction).Hour)
+                .WithAssignedBillingRate(10)
+                .WithAssignedAmountOfTime(1)
+                .Build();
+            this.Transaction.Derive(false);
+
+            timeEntry.RemoveThroughDate();
+            timeEntry.AssignedAmountOfTime = 2;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(20, workEffort.TotalLabourRevenue);
+        }
+
+        [Fact]
+        public void ChangedTimeEntryBillableAmountOfTimeDeriveTotalLabourRevenue()
+        {
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var timeEntry = new TimeEntryBuilder(this.Transaction)
+                .WithWorkEffort(workEffort)
+                .WithIsBillable(true)
+                .WithBillingFrequency(new TimeFrequencies(this.Transaction).Hour)
+                .WithAssignedBillingRate(10)
+                .WithAssignedAmountOfTime(1)
+                .Build();
+            this.Transaction.Derive(false);
+
+            timeEntry.BillableAmountOfTime = 2;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(20, workEffort.TotalLabourRevenue);
+        }
+
+        [Fact]
+        public void ChangedWorkEffortInventoryAssignmentAssignmentDeriveTotalMaterialRevenue()
+        {
+            var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
+            this.Transaction.Derive(false);
+
+            new SupplierOfferingBuilder(this.Transaction)
+                .WithSupplier(this.InternalOrganisation.ActiveSuppliers.First)
+                .WithPart(part)
+                .Build();
+            this.Transaction.Derive(false);
+
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var workEffortInventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
+                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithQuantity(1)
+                .WithAssignedUnitSellingPrice(10)
+                .Build();
+            this.Transaction.Derive(false);
+
+            workEffortInventoryAssignment.Assignment = workEffort;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(10, workEffort.TotalMaterialRevenue);
+        }
+
+        [Fact]
+        public void ChangedWorkEffortInventoryAssignmentAssignedBillableQuantityDeriveTotalMaterialRevenue()
+        {
+            var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
+            this.Transaction.Derive(false);
+
+            new SupplierOfferingBuilder(this.Transaction)
+                .WithSupplier(this.InternalOrganisation.ActiveSuppliers.First)
+                .WithPart(part)
+                .Build();
+            this.Transaction.Derive(false);
+
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var workEffortInventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
+                .WithAssignment(workEffort)
+                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithQuantity(1)
+                .WithAssignedUnitSellingPrice(10)
+                .Build();
+            this.Transaction.Derive(false);
+
+            workEffortInventoryAssignment.AssignedBillableQuantity = 2;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(20, workEffort.TotalMaterialRevenue);
+        }
+
+        [Fact]
+        public void ChangedWorkEffortInventoryAssignmentQuantityDeriveTotalMaterialRevenue()
+        {
+            var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
+            this.Transaction.Derive(false);
+
+            new SupplierOfferingBuilder(this.Transaction)
+                .WithSupplier(this.InternalOrganisation.ActiveSuppliers.First)
+                .WithPart(part)
+                .Build();
+            this.Transaction.Derive(false);
+
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var workEffortInventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
+                .WithAssignment(workEffort)
+                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithQuantity(1)
+                .WithAssignedUnitSellingPrice(10)
+                .Build();
+            this.Transaction.Derive(false);
+
+            workEffortInventoryAssignment.Quantity = 2;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(20, workEffort.TotalMaterialRevenue);
+        }
+
+        [Fact]
+        public void ChangedWorkEffortInventoryAssignmentUnitSellingPriceDeriveTotalMaterialRevenue()
+        {
+            var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
+            this.Transaction.Derive(false);
+
+            new SupplierOfferingBuilder(this.Transaction)
+                .WithSupplier(this.InternalOrganisation.ActiveSuppliers.First)
+                .WithPart(part)
+                .Build();
+            this.Transaction.Derive(false);
+
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var workEffortInventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
+                .WithAssignment(workEffort)
+                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithQuantity(1)
+                .WithAssignedUnitSellingPrice(10)
+                .Build();
+            this.Transaction.Derive(false);
+
+            workEffortInventoryAssignment.AssignedUnitSellingPrice = 11;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(11, workEffort.TotalMaterialRevenue);
+        }
+
+        [Fact]
+        public void ChangedWorkEffortPurchaseOrderItemAssignmentAssignmentDeriveTotalSubContractedRevenue()
+        {
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var purchaseOrderItemAssignment = new WorkEffortPurchaseOrderItemAssignmentBuilder(this.Transaction)
+                .WithQuantity(2)
+                .WithAssignedUnitSellingPrice(10)
+                .Build();
+            this.Transaction.Derive(false);
+
+            purchaseOrderItemAssignment.Assignment = workEffort;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(20, workEffort.TotalSubContractedRevenue);
+        }
+
+        [Fact]
+        public void ChangedWorkEffortPurchaseOrderItemAssignmentQuantityDeriveTotalSubContractedRevenue()
+        {
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var purchaseOrderItemAssignment = new WorkEffortPurchaseOrderItemAssignmentBuilder(this.Transaction)
+                .WithAssignment(workEffort)
+                .WithQuantity(2)
+                .WithAssignedUnitSellingPrice(10)
+                .Build();
+            this.Transaction.Derive(false);
+
+            purchaseOrderItemAssignment.Quantity = 1;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(10, workEffort.TotalSubContractedRevenue);
+        }
+
+        [Fact]
+        public void ChangedWorkEffortPurchaseOrderItemAssignmentUnitPurchasePriceDeriveTotalSubContractedRevenue()
+        {
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var purchaseOrderItemAssignment = new WorkEffortPurchaseOrderItemAssignmentBuilder(this.Transaction)
+                .WithAssignment(workEffort)
+                .WithQuantity(2)
+                .WithAssignedUnitSellingPrice(10)
+                .Build();
+            this.Transaction.Derive(false);
+
+            purchaseOrderItemAssignment.AssignedUnitSellingPrice = 5;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(10, workEffort.TotalSubContractedRevenue);
+        }
+
+        [Fact]
+        public void ChangedWorkEffortCustomerDeriveTotalRevenue()
+        {
+            var workEffort = new WorkTaskBuilder(this.Transaction)
+                .WithExecutedBy(this.InternalOrganisation)
+                .Build();
+            this.Transaction.Derive(false);
+
+            new WorkEffortPurchaseOrderItemAssignmentBuilder(this.Transaction)
+                .WithAssignment(workEffort)
+                .WithQuantity(1)
+                .WithAssignedUnitSellingPrice(10)
+                .Build();
+            this.Transaction.Derive(false);
+
+            workEffort.Customer = this.InternalOrganisation.ActiveCustomers.First;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(10, workEffort.TotalRevenue);
+        }
+
+        [Fact]
+        public void ChangedWorkEffortExecutedByDeriveTotalRevenue()
+        {
+            var workEffort = new WorkTaskBuilder(this.Transaction)
+                .WithCustomer(this.InternalOrganisation.ActiveCustomers.First)
+                .Build();
+            this.Transaction.Derive(false);
+
+            new WorkEffortPurchaseOrderItemAssignmentBuilder(this.Transaction)
+                .WithAssignment(workEffort)
+                .WithQuantity(1)
+                .WithAssignedUnitSellingPrice(10)
+                .Build();
+            this.Transaction.Derive(false);
+
+            workEffort.ExecutedBy = this.InternalOrganisation;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(10, workEffort.TotalRevenue);
+        }
+    }
 }
