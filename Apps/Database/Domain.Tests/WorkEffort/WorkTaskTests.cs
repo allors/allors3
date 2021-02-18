@@ -1100,9 +1100,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class WorkEffortTotalRevenueDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class WorkEffortTotalLabourRevenueDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public WorkEffortTotalRevenueDerivationTests(Fixture fixture) : base(fixture) { }
+        public WorkEffortTotalLabourRevenueDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedTimeEntryWorkEffortDeriveTotalLabourRevenue()
@@ -1208,6 +1208,11 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(20, workEffort.TotalLabourRevenue);
         }
+    }
+
+    public class WorkEffortTotalMaterialRevenueDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public WorkEffortTotalMaterialRevenueDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedWorkEffortInventoryAssignmentAssignmentDeriveTotalMaterialRevenue()
@@ -1323,6 +1328,11 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(11, workEffort.TotalMaterialRevenue);
         }
+    }
+
+    public class WorkEffortTotalSubContractedRevenueDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public WorkEffortTotalSubContractedRevenueDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedWorkEffortPurchaseOrderItemAssignmentAssignmentDeriveTotalSubContractedRevenue()
@@ -1379,6 +1389,82 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(10, workEffort.TotalSubContractedRevenue);
         }
+    }
+
+    public class WorkEffortGrandTotalDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public WorkEffortGrandTotalDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedTimeEntryWorkEffortDeriveGrandTotal()
+        {
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var timeEntry = new TimeEntryBuilder(this.Transaction)
+                .WithIsBillable(true)
+                .WithBillingFrequency(new TimeFrequencies(this.Transaction).Hour)
+                .WithAssignedBillingRate(10)
+                .WithAssignedAmountOfTime(1)
+                .Build();
+            this.Transaction.Derive(false);
+
+            timeEntry.WorkEffort = workEffort;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(10, workEffort.GrandTotal);
+        }
+
+        [Fact]
+        public void ChangedWorkEffortInventoryAssignmentAssignmentDeriveGrandTotal()
+        {
+            var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
+            this.Transaction.Derive(false);
+
+            new SupplierOfferingBuilder(this.Transaction)
+                .WithSupplier(this.InternalOrganisation.ActiveSuppliers.First)
+                .WithPart(part)
+                .Build();
+            this.Transaction.Derive(false);
+
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var workEffortInventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
+                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithQuantity(1)
+                .WithAssignedUnitSellingPrice(10)
+                .Build();
+            this.Transaction.Derive(false);
+
+            workEffortInventoryAssignment.Assignment = workEffort;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(10, workEffort.GrandTotal);
+        }
+
+        [Fact]
+        public void ChangedWorkEffortPurchaseOrderItemAssignmentAssignmentDeriveGrandTotal()
+        {
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var purchaseOrderItemAssignment = new WorkEffortPurchaseOrderItemAssignmentBuilder(this.Transaction)
+                .WithQuantity(2)
+                .WithAssignedUnitSellingPrice(10)
+                .Build();
+            this.Transaction.Derive(false);
+
+            purchaseOrderItemAssignment.Assignment = workEffort;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(20, workEffort.GrandTotal);
+        }
+    }
+
+    public class WorkEffortTotalRevenueDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public WorkEffortTotalRevenueDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedWorkEffortCustomerDeriveTotalRevenue()
