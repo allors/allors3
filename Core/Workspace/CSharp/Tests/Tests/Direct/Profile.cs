@@ -20,7 +20,7 @@ namespace Tests.Workspace.Direct
     {
         IWorkspace IProfile.Workspace => this.Workspace;
 
-        public Workspace Workspace { get; }
+        public LocalWorkspace Workspace { get; }
 
         public Database Database { get; }
 
@@ -41,7 +41,7 @@ namespace Tests.Workspace.Direct
 
             this.Database.RegisterDerivations();
 
-            this.Workspace = new Workspace(
+            this.Workspace = new LocalWorkspace(
                 "Default",
                 new Allors.Workspace.Meta.MetaBuilder().Build(),
                  typeof(Allors.Workspace.Domain.User),

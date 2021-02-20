@@ -21,8 +21,8 @@ namespace Allors.Workspace.Adapters.Remote
             this.StateLifecycle = state;
 
             this.ObjectFactory = new ObjectFactory(this.MetaPopulation, instance);
-            this.DatabaseStore = new DatabaseStore(this.MetaPopulation, httpClient);
-            this.Sessions = new HashSet<Session>();
+            this.Database = new RemoteDatabase(this.MetaPopulation, httpClient);
+            this.Sessions = new HashSet<RemoteSession>();
 
             this.State = new State();
             this.WorkspaceOrSessionClassByWorkspaceId = new Dictionary<long, IClass>();
@@ -36,7 +36,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public IWorkspaceLifecycle StateLifecycle { get; }
 
-        internal ISet<Session> Sessions { get; }
+        internal ISet<RemoteSession> Sessions { get; }
         IEnumerable<ISession> IWorkspace.Sessions => this.Sessions;
 
         public IDictionary<Guid, IDomainDerivation> DomainDerivationById { get; }
@@ -44,13 +44,13 @@ namespace Allors.Workspace.Adapters.Remote
         IObjectFactory IWorkspace.ObjectFactory => this.ObjectFactory;
         internal ObjectFactory ObjectFactory { get; }
 
-        internal DatabaseStore DatabaseStore { get; }
+        internal RemoteDatabase Database { get; }
 
         internal State State { get; }
 
         internal Dictionary<long, IClass> WorkspaceOrSessionClassByWorkspaceId { get; }
 
-        public ISession CreateSession() => new Session(this, this.StateLifecycle.CreateSessionContext());
+        public ISession CreateSession() => new RemoteSession(this, this.StateLifecycle.CreateSessionContext());
 
         public IChangeSet[] Checkpoint()
         {
@@ -58,9 +58,9 @@ namespace Allors.Workspace.Adapters.Remote
             return this.Sessions.Select(v => v.Checkpoint(workspaceChangeSet)).ToArray();
         }
 
-        internal void RegisterSession(Session session) => this.Sessions.Add(session);
+        internal void RegisterSession(RemoteSession session) => this.Sessions.Add(session);
 
-        internal void UnregisterSession(Session session) => this.Sessions.Remove(session);
+        internal void UnregisterSession(RemoteSession session) => this.Sessions.Remove(session);
 
         internal void RegisterWorkspaceIdForWorkspaceObject(IClass @class, long workspaceId) => this.WorkspaceOrSessionClassByWorkspaceId.Add(workspaceId, @class);
 
