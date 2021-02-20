@@ -1160,5 +1160,41 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(3, timeEntry.AmountOfTime);
         }
+
+        [Fact]
+        public void ChangedBillableAmountOfTimeDeriveBillableAmountOfTimeInMinutes()
+        {
+            var timeEntry = new TimeEntryBuilder(this.Transaction)
+                .WithBillingFrequency(new TimeFrequencies(this.Transaction).Hour)
+                .WithAssignedBillingRate(10)
+                .WithAssignedAmountOfTime(1)
+                .Build();
+            this.Transaction.Derive(false);
+
+            Assert.Equal(60, timeEntry.BillableAmountOfTimeInMinutes);
+
+            timeEntry.BillableAmountOfTime = 2;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(120, timeEntry.BillableAmountOfTimeInMinutes);
+        }
+
+        [Fact]
+        public void ChangedBillableAmountOfTimeDeriveBillingAmount()
+        {
+            var timeEntry = new TimeEntryBuilder(this.Transaction)
+                .WithBillingFrequency(new TimeFrequencies(this.Transaction).Hour)
+                .WithAssignedBillingRate(10)
+                .WithAssignedAmountOfTime(1)
+                .Build();
+            this.Transaction.Derive(false);
+
+            Assert.Equal(10, timeEntry.BillingAmount);
+
+            timeEntry.BillableAmountOfTime = 2;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(20, timeEntry.BillingAmount);
+        }
     }
 }

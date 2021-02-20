@@ -94,8 +94,8 @@ namespace Allors.Database.Domain
                             || v.SalesOrderItemState.IsReadyForPosting || v.SalesOrderItemState.IsRequestsApproval
                             || v.SalesOrderItemState.IsAwaitingAcceptance || v.SalesOrderItemState.IsOnHold || v.SalesOrderItemState.IsInProcess);
 
-                @this.OnWorkEffort = @this.WorkEffortFixedAssetAssignmentsWhereFixedAsset.Any(v => v.Assignment.WorkEffortState.IsCreated
-                            || v.Assignment.WorkEffortState.IsInProgress);
+                @this.OnWorkEffort = @this.WorkEffortFixedAssetAssignmentsWhereFixedAsset.Any(v => v.ExistAssignment
+                            && (v.Assignment.WorkEffortState.IsCreated || v.Assignment.WorkEffortState.IsInProgress));
 
                 var characteristicsToDelete = @this.SerialisedItemCharacteristics.ToList();
                 var part = @this.PartWhereSerialisedItem;

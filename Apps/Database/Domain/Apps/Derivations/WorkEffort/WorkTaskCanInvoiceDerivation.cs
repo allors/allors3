@@ -34,7 +34,7 @@ namespace Allors.Database.Domain
                 {
                     @this.CanInvoice = true;
 
-                    if (@this.ExecutedBy.Equals(@this.Customer))
+                    if (@this.ExistExecutedBy && @this.ExecutedBy.Equals(@this.Customer))
                     {
                         @this.CanInvoice = false;
                     }

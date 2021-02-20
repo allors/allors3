@@ -26,6 +26,7 @@ namespace Allors.Database.Domain
             new ChangedPattern(m.TimeEntry.FromDate),
             new ChangedPattern(m.TimeEntry.ThroughDate),
             new ChangedPattern(m.TimeEntry.AssignedAmountOfTime),
+            new ChangedPattern(m.TimeEntry.BillableAmountOfTime),
             new ChangedPattern(m.WorkEffort.Customer) { Steps = new IPropertyType[] { m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
             new ChangedPattern(m.WorkEffort.ExecutedBy) { Steps = new IPropertyType[] { m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
             new ChangedPattern(m.TimeSheet.TimeEntries) { Steps = new IPropertyType[] { m.TimeSheet.TimeEntries } },

@@ -38,7 +38,7 @@ namespace Allors.Database.Domain
                     validation.AddError($"{@this} {this.M.PurchaseInvoice.BilledTo} {ErrorMessages.InternalOrganisationChanged}");
                 }
 
-                if (!@this.ExistInvoiceNumber)
+                if (!@this.ExistInvoiceNumber && @this.ExistBilledTo)
                 {
                     var year = @this.InvoiceDate.Year;
                     @this.InvoiceNumber = @this.BilledTo.NextPurchaseInvoiceNumber(year);

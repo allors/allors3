@@ -167,21 +167,5 @@ namespace Allors.Database.Domain
                     .Build();
             }
         }
-
-        private static void AppsCalculateTotalRevenue(this WorkEffort @this, WorkEffortCalculateTotalRevenue method)
-        {
-            if (!method.Result.HasValue)
-            {
-                @this.TotalLabourRevenue = Math.Round(@this.BillableTimeEntries().Sum(v => v.BillingAmount), 2);
-                @this.TotalMaterialRevenue = Math.Round(@this.WorkEffortInventoryAssignmentsWhereAssignment.Where(v => v.DerivedBillableQuantity > 0).Sum(v => v.DerivedBillableQuantity * v.UnitSellingPrice), 2);
-                @this.TotalSubContractedRevenue = Math.Round(@this.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment.Sum(v => v.Quantity * v.UnitSellingPrice), 2);
-                var totalRevenue = Math.Round(@this.TotalLabourRevenue + @this.TotalMaterialRevenue + @this.TotalSubContractedRevenue, 2);
-
-                method.Result = true;
-
-                @this.GrandTotal = totalRevenue;
-                @this.TotalRevenue = @this.Customer.Equals(@this.ExecutedBy) ? 0M : totalRevenue;
-            }
-        }
     }
 }
