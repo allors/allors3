@@ -3,18 +3,18 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Workspace.Adapters.Direct
+namespace Allors.Workspace.Adapters.Remote
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
 
-    public abstract class Strategy : IStrategy
+    public abstract class RemoteStrategy : IStrategy
     {
         private IObject @object;
 
-        protected Strategy(LocalSession session, long workspaceId, IClass @class)
+        protected RemoteStrategy(RemoteSession session, long workspaceId, IClass @class)
         {
             this.Session = session;
             this.WorkspaceId = workspaceId;
@@ -23,7 +23,7 @@ namespace Allors.Workspace.Adapters.Direct
 
         ISession IStrategy.Session => this.Session;
 
-        public LocalSession Session { get; }
+        public RemoteSession Session { get; }
 
         public IObject Object
         {

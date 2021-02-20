@@ -1,20 +1,20 @@
-// <copyright file="Object.cs" company="Allors bvba">
+// <copyright file="LocalStrategy.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Workspace.Adapters.Remote
+namespace Allors.Workspace.Adapters.Local
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
 
-    public abstract class Strategy : IStrategy
+    public abstract class LocalStrategy : IStrategy
     {
         private IObject @object;
 
-        protected Strategy(RemoteSession session, long workspaceId, IClass @class)
+        protected LocalStrategy(LocalSession session, long workspaceId, IClass @class)
         {
             this.Session = session;
             this.WorkspaceId = workspaceId;
@@ -23,7 +23,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         ISession IStrategy.Session => this.Session;
 
-        public RemoteSession Session { get; }
+        public LocalSession Session { get; }
 
         public IObject Object
         {

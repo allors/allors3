@@ -1,4 +1,4 @@
-// <copyright file="Object.cs" company="Allors bvba">
+// <copyright file="RemoteWorkspaceStrategy.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -8,9 +8,9 @@ namespace Allors.Workspace.Adapters.Remote
     using System;
     using Meta;
 
-    public class WorkspaceStrategy : Strategy
+    public class RemoteWorkspaceStrategy : RemoteStrategy
     {
-        public WorkspaceStrategy(RemoteSession session, IClass @class, long workspaceId) : base(session, workspaceId, @class)
+        public RemoteWorkspaceStrategy(RemoteSession session, IClass @class, long workspaceId) : base(session, workspaceId, @class)
         {
         }
 

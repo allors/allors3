@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Workspace.Adapters.Direct
+namespace Allors.Workspace.Adapters.Local
 {
     using System;
     using System.Collections;
@@ -11,7 +11,7 @@ namespace Allors.Workspace.Adapters.Direct
     using System.Linq;
     using Meta;
 
-    public class LocalDatabaseStrategy : Strategy, IDatabaseStrategy
+    public class LocalDatabaseStrategy : LocalStrategy, IDatabaseStrategy
     {
         private Dictionary<IRoleType, object> changedRoleByRoleType;
 

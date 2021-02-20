@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the DomainTest type.</summary>
 
-namespace Tests.Workspace.Remote
+namespace Tests.Workspace.Local
 {
     using System;
     using Allors.Database.Meta;

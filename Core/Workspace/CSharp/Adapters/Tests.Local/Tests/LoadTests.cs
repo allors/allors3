@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.Remote
+namespace Tests.Workspace.Local
 {
     using Allors.Workspace;
     using Allors.Workspace.Data;

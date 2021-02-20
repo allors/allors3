@@ -1,4 +1,4 @@
-// <copyright file="Session.cs" company="Allors bvba">
+// <copyright file="RemoteWorkspace.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -13,9 +13,9 @@ namespace Allors.Workspace.Adapters.Remote
     using Derivations;
     using Meta;
 
-    public class Workspace : IWorkspace
+    public class RemoteWorkspace : IWorkspace
     {
-        public Workspace(IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, HttpClient httpClient)
+        public RemoteWorkspace(IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, HttpClient httpClient)
         {
             this.MetaPopulation = metaPopulation;
             this.StateLifecycle = state;

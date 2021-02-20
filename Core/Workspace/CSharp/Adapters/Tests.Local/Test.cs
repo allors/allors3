@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the DomainTest type.</summary>
 
-namespace Tests.Workspace.Remote
+namespace Tests.Workspace.Local
 {
     using System;
     using Allors.Database;
@@ -12,7 +12,7 @@ namespace Tests.Workspace.Remote
     using Allors.Database.Domain;
     using Allors.Database.Adapters.Memory;
     using Allors.Workspace;
-    using Allors.Workspace.Adapters.Direct;
+    using Allors.Workspace.Adapters.Local;
 
     public class Test : IDisposable
     {

@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the ISessionExtension type.</summary>
 
-namespace Allors.Workspace.Adapters.Direct
+namespace Allors.Workspace.Adapters.Local
 {
     using System;
     using System.Collections.Generic;
@@ -33,7 +33,7 @@ namespace Allors.Workspace.Adapters.Direct
         }
 
 
-        public void Execute(Direct.LocalPullResult response)
+        public void Execute(LocalPullResult response)
         {
             if (this.pull.Extent == null && !this.pull.ExtentRef.HasValue)
             {

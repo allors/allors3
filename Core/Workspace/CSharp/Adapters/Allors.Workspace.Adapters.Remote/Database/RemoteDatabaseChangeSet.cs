@@ -87,7 +87,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.RoleTypes(association).Add(roleType);
         }
 
-        internal void OnChangingCompositesRole(long association, IRoleType roleType, Strategy changedRole)
+        internal void OnChangingCompositesRole(long association, IRoleType roleType, RemoteStrategy changedRole)
         {
             this.associations.Add(association);
 

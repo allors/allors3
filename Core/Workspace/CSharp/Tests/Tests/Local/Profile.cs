@@ -1,9 +1,9 @@
-// <copyright file="ObjectTests.cs" company="Allors bvba">
+// <copyright file="Profile.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.Direct
+namespace Tests.Workspace.Local
 {
     using System;
     using System.Threading.Tasks;
@@ -12,7 +12,7 @@ namespace Tests.Workspace.Direct
     using Allors.Database.Configuration;
     using Allors.Database.Domain;
     using Allors.Database.Adapters.Memory;
-    using Allors.Workspace.Adapters.Direct;
+    using Allors.Workspace.Adapters.Local;
     using Remote;
     using Person = Allors.Database.Domain.Person;
 

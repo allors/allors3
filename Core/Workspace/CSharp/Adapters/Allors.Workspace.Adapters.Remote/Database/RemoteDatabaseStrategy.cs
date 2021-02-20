@@ -12,7 +12,7 @@ namespace Allors.Workspace.Adapters.Remote
     using Meta;
     using Allors.Protocol.Json.Api.Push;
 
-    public class RemoteDatabaseStrategy : Strategy, IDatabaseStrategy
+    public class RemoteDatabaseStrategy : RemoteStrategy, IDatabaseStrategy
     {
         private Dictionary<IRoleType, object> changedRoleByRoleType;
 

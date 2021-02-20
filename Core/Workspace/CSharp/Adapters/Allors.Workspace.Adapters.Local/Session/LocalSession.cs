@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Workspace.Adapters.Direct
+namespace Allors.Workspace.Adapters.Local
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -11,7 +11,7 @@ namespace Allors.Workspace.Adapters.Direct
 
     public class LocalSession : ISession
     {
-        private readonly Dictionary<long, Strategy> strategyByWorkspaceId;
+        private readonly Dictionary<long, LocalStrategy> strategyByWorkspaceId;
 
         private readonly IList<LocalDatabaseStrategy> existingDatabaseStrategies;
         private ISet<LocalDatabaseStrategy> newDatabaseStrategies;
@@ -22,7 +22,7 @@ namespace Allors.Workspace.Adapters.Direct
             this.SessionLifecycle = sessionLifecycle;
             this.Workspace.RegisterSession(this);
 
-            this.strategyByWorkspaceId = new Dictionary<long, Strategy>();
+            this.strategyByWorkspaceId = new Dictionary<long, LocalStrategy>();
             this.existingDatabaseStrategies = new List<LocalDatabaseStrategy>();
 
             this.State = new State();

@@ -1,4 +1,4 @@
-// <copyright file="ObjectTests.cs" company="Allors bvba">
+// <copyright file="Profile.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -23,14 +23,14 @@ namespace Tests.Workspace.Remote
 
         IWorkspace IProfile.Workspace => this.Workspace;
 
-        public Workspace Workspace { get; }
+        public RemoteWorkspace Workspace { get; }
 
         public RemoteDatabase Database => this.Workspace.Database;
 
         public M M => this.Workspace.Context().M;
 
         public Profile() =>
-            this.Workspace = new Workspace(
+            this.Workspace = new RemoteWorkspace(
                 new MetaBuilder().Build(),
                 typeof(User),
                 new WorkspaceContext(),

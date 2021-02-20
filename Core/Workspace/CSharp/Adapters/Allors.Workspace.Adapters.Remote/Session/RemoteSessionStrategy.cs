@@ -8,7 +8,7 @@ namespace Allors.Workspace.Adapters.Remote
     using System;
     using Meta;
 
-    public class RemoteSessionStrategy : Strategy
+    public class RemoteSessionStrategy : RemoteStrategy
     {
         public RemoteSessionStrategy(RemoteSession session, IClass @class, long workspaceId) : base(session, workspaceId, @class)
         {

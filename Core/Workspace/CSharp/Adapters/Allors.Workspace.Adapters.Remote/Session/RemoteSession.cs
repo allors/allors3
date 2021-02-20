@@ -19,20 +19,20 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class RemoteSession : ISession
     {
-        private readonly Dictionary<long, Strategy> strategyByWorkspaceId;
+        private readonly Dictionary<long, RemoteStrategy> strategyByWorkspaceId;
 
         private readonly IList<RemoteDatabaseStrategy> existingDatabaseStrategies;
         private ISet<RemoteDatabaseStrategy> newDatabaseStrategies;
         private RemoteSessionChangeSet sessionChangeSet;
 
-        public RemoteSession(Workspace workspace, ISessionLifecycle sessionLifecycle)
+        public RemoteSession(RemoteWorkspace workspace, ISessionLifecycle sessionLifecycle)
         {
             this.Workspace = workspace;
             this.Database = this.Workspace.Database;
             this.SessionLifecycle = sessionLifecycle;
             this.Workspace.RegisterSession(this);
 
-            this.strategyByWorkspaceId = new Dictionary<long, Strategy>();
+            this.strategyByWorkspaceId = new Dictionary<long, RemoteStrategy>();
             this.existingDatabaseStrategies = new List<RemoteDatabaseStrategy>();
 
             this.State = new State();
@@ -45,7 +45,7 @@ namespace Allors.Workspace.Adapters.Remote
         public ISessionLifecycle SessionLifecycle { get; }
 
         IWorkspace ISession.Workspace => this.Workspace;
-        internal Workspace Workspace { get; }
+        internal RemoteWorkspace Workspace { get; }
 
         internal RemoteDatabase Database { get; }
 
@@ -107,7 +107,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 if (this.Workspace.WorkspaceOrSessionClassByWorkspaceId.TryGetValue(workspaceId, out var @class))
                 {
-                    strategy = new WorkspaceStrategy(this, @class, workspaceId);
+                    strategy = new RemoteWorkspaceStrategy(this, @class, workspaceId);
                     this.strategyByWorkspaceId[workspaceId] = strategy;
                 }
                 else
@@ -326,7 +326,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var workspaceId = this.Database.NextWorkspaceId();
             this.Workspace.RegisterWorkspaceIdForWorkspaceObject(@class, workspaceId);
-            var strategy = new WorkspaceStrategy(this, @class, workspaceId);
+            var strategy = new RemoteWorkspaceStrategy(this, @class, workspaceId);
             this.strategyByWorkspaceId[strategy.WorkspaceId] = strategy;
             return strategy.Object;
         }
