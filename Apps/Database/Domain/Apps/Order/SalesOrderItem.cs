@@ -85,8 +85,6 @@ namespace Allors.Database.Domain
             {
                 this.SalesOrderItemPaymentState = new SalesOrderItemPaymentStates(this.Strategy.Transaction).NotPaid;
             }
-
-            this.DerivationTrigger = Guid.NewGuid();
         }
 
         public void AppsOnInit(ObjectOnInit method)
@@ -110,17 +108,9 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void AppsCancel(OrderItemCancel method)
-        {
-            this.SalesOrderItemState = new SalesOrderItemStates(this.Strategy.Transaction).Cancelled;
-            this.DerivationTrigger = Guid.NewGuid();
-        }
+        public void AppsCancel(OrderItemCancel method) => this.SalesOrderItemState = new SalesOrderItemStates(this.Strategy.Transaction).Cancelled;
 
-        public void AppsReject(OrderItemReject method)
-        {
-            this.SalesOrderItemState = new SalesOrderItemStates(this.Strategy.Transaction).Rejected;
-            this.DerivationTrigger = Guid.NewGuid();
-        }
+        public void AppsReject(OrderItemReject method) => this.SalesOrderItemState = new SalesOrderItemStates(this.Strategy.Transaction).Rejected;
 
         public void AppsApprove(OrderItemApprove method) => this.SalesOrderItemState = new SalesOrderItemStates(this.Strategy.Transaction).ReadyForPosting;
 
