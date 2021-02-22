@@ -18,6 +18,7 @@ namespace Allors.Database.Domain
         public SalesOrderProvisionalDerivation(M m) : base(m, new Guid("bb9b637c-4594-4f9e-927c-bd47236ab515")) =>
             this.Patterns = new Pattern[]
             {
+                new ChangedPattern(this.M.SalesOrder.SalesOrderState),
                 new ChangedPattern(this.M.SalesOrder.TakenBy),
                 new ChangedPattern(this.M.SalesOrder.Store),
                 new ChangedPattern(this.M.SalesOrder.BillToCustomer),

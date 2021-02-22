@@ -17,6 +17,7 @@ namespace Allors.Database.Domain
         public PurchaseInvoicePriceDerivation(M m) : base(m, new Guid("cde03f3a-9151-4bb7-a3a5-5bc238f3cc54")) =>
             this.Patterns = new Pattern[]
             {
+                new ChangedPattern(this.M.PurchaseInvoice.PurchaseInvoiceState),
                 new ChangedPattern(this.M.PurchaseInvoice.DerivationTrigger),
                 new ChangedPattern(this.M.PurchaseInvoice.ValidInvoiceItems),
                 new ChangedPattern(this.M.PurchaseInvoice.BilledFrom),

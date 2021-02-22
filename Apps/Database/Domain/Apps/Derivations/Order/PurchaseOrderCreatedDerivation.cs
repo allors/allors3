@@ -18,6 +18,7 @@ namespace Allors.Database.Domain
         public PurchaseOrderCreatedDerivation(M m) : base(m, new Guid("ccff8770-2854-4def-8918-37ab823dbf95")) =>
             this.Patterns = new Pattern[]
             {
+                new ChangedPattern(m.PurchaseOrder.PurchaseOrderState),
                 new ChangedPattern(m.PurchaseOrder.OrderedBy),
                 new ChangedPattern(m.PurchaseOrder.TakenViaSupplier),
                 new ChangedPattern(m.PurchaseOrder.AssignedIrpfRegime),

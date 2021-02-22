@@ -69,8 +69,6 @@ namespace Allors.Database.Domain
             {
                 this.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Transaction).ProductItem;
             }
-
-            this.DerivationTrigger = Guid.NewGuid();
         }
 
         public void AppsOnInit(ObjectOnInit method)
@@ -81,17 +79,9 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void AppsWriteOff()
-        {
-            this.SalesInvoiceItemState = new SalesInvoiceItemStates(this.Strategy.Transaction).WrittenOff;
-            this.DerivationTrigger = Guid.NewGuid();
-        }
+        public void AppsWriteOff() => this.SalesInvoiceItemState = new SalesInvoiceItemStates(this.Strategy.Transaction).WrittenOff;
 
-        public void CancelFromInvoice()
-        {
-            this.SalesInvoiceItemState = new SalesInvoiceItemStates(this.Strategy.Transaction).CancelledByInvoice;
-            this.DerivationTrigger = Guid.NewGuid();
-        }
+        public void CancelFromInvoice() => this.SalesInvoiceItemState = new SalesInvoiceItemStates(this.Strategy.Transaction).CancelledByInvoice;
 
         public void AppsDelete(DeletableDelete method)
         {

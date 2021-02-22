@@ -16,6 +16,7 @@ namespace Allors.Database.Domain
         public SalesOrderItemProvisionalDerivation(M m) : base(m, new Guid("2d5fad32-da2f-436a-a4fa-04b3a6f1b894")) =>
             this.Patterns = new Pattern[]
             {
+                new ChangedPattern(m.SalesOrderItem.SalesOrderItemState),
                 new ChangedPattern(m.SalesOrderItem.AssignedShipFromAddress),
                 new ChangedPattern(m.SalesOrderItem.AssignedShipToAddress),
                 new ChangedPattern(m.SalesOrderItem.AssignedShipToParty),
@@ -41,13 +42,13 @@ namespace Allors.Database.Domain
             {
                 var salesOrder = @this.SalesOrderWhereSalesOrderItem;
 
-                @this.DerivedShipFromAddress = @this.AssignedShipFromAddress ?? salesOrder.DerivedShipFromAddress;
-                @this.DerivedShipToAddress = @this.AssignedShipToAddress ?? @this.AssignedShipToParty?.ShippingAddress ?? salesOrder.DerivedShipToAddress;
-                @this.DerivedShipToParty = @this.AssignedShipToParty ?? salesOrder.ShipToCustomer;
-                @this.DerivedDeliveryDate = @this.AssignedDeliveryDate ?? salesOrder.DeliveryDate;
-                @this.DerivedVatRegime = @this.AssignedVatRegime ?? salesOrder.DerivedVatRegime;
+                @this.DerivedShipFromAddress = @this.AssignedShipFromAddress ?? salesOrder?.DerivedShipFromAddress;
+                @this.DerivedShipToAddress = @this.AssignedShipToAddress ?? @this.AssignedShipToParty?.ShippingAddress ?? salesOrder?.DerivedShipToAddress;
+                @this.DerivedShipToParty = @this.AssignedShipToParty ?? salesOrder?.ShipToCustomer;
+                @this.DerivedDeliveryDate = @this.AssignedDeliveryDate ?? salesOrder?.DeliveryDate;
+                @this.DerivedVatRegime = @this.AssignedVatRegime ?? salesOrder?.DerivedVatRegime;
                 @this.VatRate = @this.DerivedVatRegime?.VatRate;
-                @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? salesOrder.DerivedIrpfRegime;
+                @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? salesOrder?.DerivedIrpfRegime;
                 @this.IrpfRate = @this.DerivedIrpfRegime?.IrpfRate;
             }
         }

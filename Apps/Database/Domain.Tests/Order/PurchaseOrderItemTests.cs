@@ -455,9 +455,25 @@ namespace Allors.Database.Domain.Tests
         public PurchaseOrderItemCreatedDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
+        public void ChangedPurchaseOrderItemStateDeriveDerivedDeliveryDate()
+        {
+            var order = new PurchaseOrderBuilder(this.Transaction).WithDeliveryDate(this.Transaction.Now().Date).Build();
+            this.Transaction.Derive(false);
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction).WithPurchaseOrderItemState(new PurchaseOrderItemStates(this.Transaction).Finished).Build();
+            order.AddPurchaseOrderItem(orderItem);
+            this.Transaction.Derive(false);
+
+            orderItem.PurchaseOrderItemState = new PurchaseOrderItemStates(this.Transaction).Created;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(orderItem.DerivedDeliveryDate, order.DeliveryDate);
+        }
+
+        [Fact]
         public void ChangedPurchaseOrderPurchaseOrderItemsDeriveDerivedDeliveryDate()
         {
-            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            var order = new PurchaseOrderBuilder(this.Transaction).WithDeliveryDate(this.Transaction.Now().Date).Build();
             this.Transaction.Derive(false);
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
@@ -483,7 +499,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedsalesOrderDerivedDeliveryDateDeriveDerivedDeliveryDate()
         {
-            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            var order = new PurchaseOrderBuilder(this.Transaction).WithDeliveryDate(this.Transaction.Now().Date).Build();
             this.Transaction.Derive(false);
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();

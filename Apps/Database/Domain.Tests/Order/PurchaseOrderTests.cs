@@ -317,6 +317,28 @@ namespace Allors.Database.Domain.Tests
         public PurchaseOrderCreatedDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
+        public void ChangedPurchaseOrderStateDeriveDerivedLocale()
+        {
+            var swedishLocale = new LocaleBuilder(this.Transaction)
+               .WithCountry(new Countries(this.Transaction).FindBy(this.M.Country.IsoCode, "SE"))
+               .WithLanguage(new Languages(this.Transaction).FindBy(this.M.Language.IsoCode, "sv"))
+               .Build();
+
+            var order = new PurchaseOrderBuilder(this.Transaction).WithPurchaseOrderState(new PurchaseOrderStates(this.Transaction).Cancelled).Build();
+            this.Transaction.Derive(false);
+
+            this.InternalOrganisation.Locale = swedishLocale;
+            this.Transaction.Derive(false);
+
+            Assert.False(order.ExistDerivedLocale);
+
+            order.PurchaseOrderState = new PurchaseOrderStates(this.Transaction).Created;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(order.DerivedLocale, swedishLocale);
+        }
+
+        [Fact]
         public void ChangedOrderedByDeriveDerivedLocaleFromOrderedByLocale()
         {
             var swedishLocale = new LocaleBuilder(this.Transaction)

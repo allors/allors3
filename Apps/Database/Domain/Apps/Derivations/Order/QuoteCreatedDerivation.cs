@@ -16,6 +16,7 @@ namespace Allors.Database.Domain
         public QuoteCreatedDerivation(M m) : base(m, new Guid("b66c0721-4aa5-4ca7-91a0-534f6cfc6718")) =>
             this.Patterns = new Pattern[]
             {
+                new ChangedPattern(m.Quote.QuoteState),
                 new ChangedPattern(m.Quote.Issuer),
                 new ChangedPattern(m.Quote.Receiver),
                 new ChangedPattern(m.Quote.Locale),

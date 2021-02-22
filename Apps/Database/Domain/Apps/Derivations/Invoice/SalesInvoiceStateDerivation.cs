@@ -19,6 +19,7 @@ namespace Allors.Database.Domain
             new ChangedPattern(this.M.PaymentApplication.AmountApplied) { Steps =  new IPropertyType[] {m.PaymentApplication.Invoice}, OfType = m.SalesInvoice.Class },
             new ChangedPattern(this.M.SalesInvoice.SalesInvoiceItems),
             new ChangedPattern(this.M.SalesInvoice.AdvancePayment),
+            new ChangedPattern(this.M.SalesInvoiceItem.SalesInvoiceItemState) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
             new ChangedPattern(this.M.SalesInvoiceItem.TotalIncVat) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
             new ChangedPattern(this.M.SalesInvoiceItem.DerivationTrigger) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
             new ChangedPattern(this.M.SalesInvoiceItem.AmountPaid) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },

@@ -17,6 +17,7 @@ namespace Allors.Database.Domain
         public QuotePriceDerivation(M m) : base(m, new Guid("21c53b93-36a1-4d8c-a003-e34ade4feca6")) =>
             this.Patterns = new Pattern[]
             {
+                new ChangedPattern(this.M.Quote.QuoteState),
                 new ChangedPattern(this.M.Quote.DerivationTrigger),
                 new ChangedPattern(this.M.Quote.ValidQuoteItems),
                 new ChangedPattern(this.M.Quote.QuoteItems),
