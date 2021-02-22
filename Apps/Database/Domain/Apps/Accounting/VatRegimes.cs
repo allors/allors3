@@ -101,7 +101,7 @@ namespace Allors.Database.Domain
                 v.Name = "Intracommunautair";
                 localisedName.Set(v, dutchLocale, "Intracommunautair");
                 v.VatRate = vatRate0;
-                v.VatClause = new VatClauses(this.Transaction).Intracommunautair;
+                v.VatClause = new VatClauses(this.Transaction).IntraCommunautair;
                 v.IsActive = true;
             });
 
