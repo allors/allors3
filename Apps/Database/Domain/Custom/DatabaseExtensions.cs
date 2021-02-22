@@ -232,6 +232,7 @@ namespace Allors.Database.Domain
                 new WorkEffortInventoryAssignmentDerivation(m),
                 new WorkEffortPartyAssignmentDerivation(m),
                 new WorkEffortPurchaseOrderItemAssignmentDerivation(m),
+                new WorkEffortPurchaseOrderItemAssignmentUnitSellingPriceDerivation(m),
                 new WorkEffortTotalLabourRevenueDerivation(m),
                 new WorkEffortTotalMaterialRevenueDerivation(m),
                 new WorkEffortTotalSubContractedRevenueDerivation(m),

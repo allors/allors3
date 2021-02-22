@@ -21,38 +21,5 @@ namespace Allors.Database.Domain
                 method.DeniedPermissions = this.Assignment?.DeniedPermissions.ToArray();
             }
         }
-
-        public void AppsCalculateSellingPrice(WorkEffortPurchaseOrderItemAssignmentCalculateSellingPrice method)
-        {
-            if (!method.Result.HasValue)
-            {
-                if (this.AssignedUnitSellingPrice.HasValue)
-                {
-                    this.UnitSellingPrice = this.AssignedUnitSellingPrice.Value;
-                }
-                else
-                {
-                    var part = this.PurchaseOrderItem.Part;
-
-                    var currentPriceComponents = this.Assignment?.TakenBy?.PriceComponentsWherePricedBy
-                        .Where(v => v.FromDate <= this.Assignment.ScheduledStart && (!v.ExistThroughDate || v.ThroughDate >= this.Assignment.ScheduledStart))
-                        .ToArray();
-
-                    if (currentPriceComponents != null)
-                    {
-                        var currentPartPriceComponents = part.GetPriceComponents(currentPriceComponents);
-
-                        var price = currentPartPriceComponents.OfType<BasePrice>().Max(v => v.Price);
-                        this.UnitSellingPrice = price ?? 0M;
-                    }
-                    else
-                    {
-                        this.UnitSellingPrice = 0M;
-                    }
-                }
-
-                method.Result = true;
-            }
-        }
     }
 }

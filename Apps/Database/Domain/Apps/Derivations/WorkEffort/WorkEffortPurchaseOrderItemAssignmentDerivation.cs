@@ -18,7 +18,6 @@ namespace Allors.Database.Domain
         {
             new ChangedPattern(m.WorkEffortPurchaseOrderItemAssignment.Assignment),
             new ChangedPattern(m.WorkEffortPurchaseOrderItemAssignment.PurchaseOrderItem),
-            new ChangedPattern(m.WorkEffortPurchaseOrderItemAssignment.AssignedUnitSellingPrice),
             new ChangedPattern(m.PurchaseOrderItem.UnitPrice) { Steps = new IPropertyType[] { m.PurchaseOrderItem.WorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrderItem } },
         };
 
@@ -34,8 +33,6 @@ namespace Allors.Database.Domain
                     @this.PurchaseOrder = @this.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem;
                     @this.UnitPurchasePrice = @this.PurchaseOrderItem.UnitPrice;
                 }
-
-                @this.CalculateSellingPrice();
 
                 if (@this.ExistAssignment)
                 {
