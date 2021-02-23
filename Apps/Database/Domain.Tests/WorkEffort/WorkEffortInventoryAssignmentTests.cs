@@ -541,6 +541,11 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(3, part1.QuantityOnHand);
             Assert.Equal(2, part2.QuantityOnHand);
         }
+    }
+
+    public class WorkEffortInventoryAssignmentCostOfGoodsSoldDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public WorkEffortInventoryAssignmentCostOfGoodsSoldDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedInventoryItemDeriveCostOfGoodsSold()
@@ -598,6 +603,52 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(30, inventoryAssignment.CostOfGoodsSold);
         }
+    }
+
+    public class WorkEffortInventoryAssignmentDerivedBillableQuantityDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public WorkEffortInventoryAssignmentDerivedBillableQuantityDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedAssignedBillableQuantityDeriveDerivedBillableQuantity()
+        {
+            var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
+            this.Transaction.Derive(false);
+
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
+                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithQuantity(2)
+                .Build();
+            this.Transaction.Derive(false);
+
+            inventoryAssignment.AssignedBillableQuantity = 1;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(1, inventoryAssignment.DerivedBillableQuantity);
+        }
+
+        [Fact]
+        public void ChangedQuantityDeriveDerivedBillableQuantity()
+        {
+            var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
+            this.Transaction.Derive(false);
+
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
+                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithQuantity(2)
+                .Build();
+            this.Transaction.Derive(false);
+
+            inventoryAssignment.Quantity = 1;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(1, inventoryAssignment.DerivedBillableQuantity);
+        }
+    }
+
+    public class WorkEffortInventoryAssignmentUnitSellingPriceDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public WorkEffortInventoryAssignmentUnitSellingPriceDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedAssignedUnitSellingPriceDeriveUnitSellingPrice()
@@ -653,42 +704,6 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(false);
 
             Assert.Equal(11, inventoryAssignment.UnitSellingPrice);
-        }
-
-        [Fact]
-        public void ChangedAssignedBillableQuantityDeriveDerivedBillableQuantity()
-        {
-            var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
-            this.Transaction.Derive(false);
-
-            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
-                .WithInventoryItem(part.InventoryItemsWherePart.First)
-                .WithQuantity(2)
-                .Build();
-            this.Transaction.Derive(false);
-
-            inventoryAssignment.AssignedBillableQuantity = 1;
-            this.Transaction.Derive(false);
-
-            Assert.Equal(1, inventoryAssignment.DerivedBillableQuantity);
-        }
-
-        [Fact]
-        public void ChangedQuantityDeriveDerivedBillableQuantity()
-        {
-            var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
-            this.Transaction.Derive(false);
-
-            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
-                .WithInventoryItem(part.InventoryItemsWherePart.First)
-                .WithQuantity(2)
-                .Build();
-            this.Transaction.Derive(false);
-
-            inventoryAssignment.Quantity = 1;
-            this.Transaction.Derive(false);
-
-            Assert.Equal(1, inventoryAssignment.DerivedBillableQuantity);
         }
     }
 }

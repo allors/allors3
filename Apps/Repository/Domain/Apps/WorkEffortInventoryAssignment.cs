@@ -154,29 +154,5 @@ namespace Allors.Repository
         public void DelegateAccess() { }
 
         #endregion
-
-        #region Allors
-
-        [Id("0f837793-fa7c-47de-893a-b24bfdb869a9")]
-        #endregion
-        public void CalculatePurchasePrice()
-        {
-        }
-
-        #region Allors
-
-        [Id("8f817fcb-1655-4d54-9a68-844d8a7f5017")]
-        #endregion
-        public void CalculateSellingPrice()
-        {
-        }
-
-        #region Allors
-        [Id("cdcec858-2046-44dd-afcf-9308d8b87213")]
-        #endregion
-        [Workspace]
-        public void CalculateBillableQuantity()
-        {
-        }
     }
 }

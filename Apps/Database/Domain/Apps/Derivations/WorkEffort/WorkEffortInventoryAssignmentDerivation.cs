@@ -19,9 +19,6 @@ namespace Allors.Database.Domain
         {
             new ChangedPattern(m.WorkEffortInventoryAssignment.Assignment),
             new ChangedPattern(m.WorkEffortInventoryAssignment.InventoryItem),
-            new ChangedPattern(m.WorkEffortInventoryAssignment.Quantity),
-            new ChangedPattern(m.WorkEffortInventoryAssignment.AssignedUnitSellingPrice),
-            new ChangedPattern(m.WorkEffortInventoryAssignment.AssignedBillableQuantity),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -50,10 +47,6 @@ namespace Allors.Database.Domain
                         this.SyncInventoryTransactions(@this, validation, previousInventoryItem, previousQuantity, cancelReason, true);
                     }
                 }
-
-                @this.CalculatePurchasePrice();
-                @this.CalculateSellingPrice();
-                @this.CalculateBillableQuantity();
 
                 if (@this.ExistAssignment)
                 {
