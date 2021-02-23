@@ -46,7 +46,6 @@ namespace Allors.Database.Domain
                 new ChangedPattern(m.Part.Model) { Steps = new IPropertyType[] { m.Part.SerialisedItems } },
                 new ChangedPattern(m.Brand.Name) { Steps = new IPropertyType[] { m.Brand.PartsWhereBrand, m.Part.SerialisedItems } },
                 new ChangedPattern(m.Model.Name) { Steps = new IPropertyType[] { m.Model.PartsWhereModel, m.Part.SerialisedItems } },
-                new ChangedPattern(m.ProductCategory.AllProducts) { Steps = new IPropertyType[]{ m.ProductCategory.AllProducts, m.Part.SerialisedItems } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -161,8 +160,6 @@ namespace Allors.Database.Domain
 
                 builder.Append(string.Join(" ", @this.Keywords));
                 @this.SearchString = builder.ToString();
-
-                @this.DeriveDisplayProductCategories();
             }
         }
     }

@@ -558,6 +558,11 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains("changedModelName", serialisedItem.SearchString);
         }
+    }
+
+    public class SerialisedItemDisplayProductCategoriesDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SerialisedItemDisplayProductCategoriesDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedProductCategoryAllProductsDeriveDisplayProductCategories()

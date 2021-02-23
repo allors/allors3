@@ -99,6 +99,7 @@ namespace Allors.Database.Domain
                 new StatementOfWorkDerivation(m),
                 new SurchargeComponentDerivation(m),
                 new SerialisedItemDerivation(m),
+                new SerialisedItemDisplayProductCategoriesDerivation(m),
                 new SerialisedItemDeniedPermissionDerivation(m),
                 new QuoteItemDerivation(m),
                 new QuoteItemCreatedDerivation(m),

@@ -35,20 +35,6 @@ namespace Allors.Database.Domain
             this.DerivationTrigger = Guid.NewGuid();
         }
 
-        public void AppsDeriveDisplayProductCategories(SerialisedItemDeriveDisplayProductCategories method)
-        {
-            if (!method.Result.HasValue)
-            {
-                if (this.ExistPartWhereSerialisedItem && this.PartWhereSerialisedItem.GetType().Name == typeof(UnifiedGood).Name)
-                {
-                    var unifiedGood = this.PartWhereSerialisedItem as UnifiedGood;
-                    this.DisplayProductCategories = string.Join(", ", unifiedGood.ProductCategoriesWhereProduct.Select(v => v.DisplayName));
-                }
-
-                method.Result = true;
-            }
-        }
-
         public void AppsDelete(DeletableDelete method)
         {
             if (this.IsDeletable)
