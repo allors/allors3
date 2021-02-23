@@ -126,15 +126,6 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void AppsIsSubTotalItem(SalesInvoiceItemIsSubTotalItem method)
-        {
-            if (!method.Result.HasValue)
-            {
-                method.Result = this.InvoiceItemType.Equals(new InvoiceItemTypes(this.Strategy.Transaction).ProductItem)
-                    || this.InvoiceItemType.Equals(new InvoiceItemTypes(this.Strategy.Transaction).PartItem);
-            }
-        }
-
         public void Sync(Invoice invoice) => this.SyncedInvoice = invoice;
     }
 }

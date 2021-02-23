@@ -72,11 +72,6 @@ namespace Allors.Database.Domain
                 @this.DerivedIrpfRegime = @this.ExistAssignedIrpfRegime ? @this.AssignedIrpfRegime : @this.SalesInvoiceWhereSalesInvoiceItem?.DerivedIrpfRegime;
                 @this.IrpfRate = @this.DerivedIrpfRegime?.IrpfRate;
 
-                if (@this.ExistInvoiceItemType && @this.IsSubTotalItem().Result == true && @this.Quantity <= 0)
-                {
-                    validation.AssertExists(@this, @this.Meta.Quantity);
-                }
-
                 var amountPaid = 0M;
                 foreach (PaymentApplication paymentApplication in @this.PaymentApplicationsWhereInvoiceItem)
                 {

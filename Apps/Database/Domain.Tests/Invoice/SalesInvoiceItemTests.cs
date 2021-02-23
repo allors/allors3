@@ -2357,6 +2357,37 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
+    public class SalesInvoiceItemSubTotalItemDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesInvoiceItemSubTotalItemDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedItemInvoiceItemTypeThrowvalidationError()
+        {
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithQuantity(0).Build();
+            this.Transaction.Derive(false);
+
+            invoiceItem.InvoiceItemType = new InvoiceItemTypes(this.Transaction).PartItem;
+
+            var expectedMessage = $"{invoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}";
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+        }
+
+        [Fact]
+        public void ChangedQuantityThrowvalidationError()
+        {
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).PartItem).WithQuantity(1).Build();
+            this.Transaction.Derive(false);
+
+            invoiceItem.Quantity = 0;
+
+            var expectedMessage = $"{invoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}";
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+        }
+    }
+
     [Trait("Category", "Security")]
     public class SalesInvoiceItemDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
     {

@@ -191,6 +191,7 @@ namespace Allors.Database.Domain
                 new PaymentDerivation(m),
                 new PurchaseInvoiceApprovalDerivation(m),
                 new SalesInvoiceItemDerivation(m),
+                new SalesInvoiceItemSubTotalItemDerivation(m),
                 new RepeatingPurchaseInvoiceDerivation(m),
                 new RepeatingSalesInvoiceDerivation(m),
                 new SalesInvoiceDerivation(m),
