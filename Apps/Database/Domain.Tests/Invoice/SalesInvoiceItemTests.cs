@@ -199,36 +199,11 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void GivenInvoiceItem_WhenDeriving_ThenRequiredRelationsMustExist()
-        {
-            this.InstantiateObjects(this.Transaction);
-
-            var builder = new SalesInvoiceItemBuilder(this.Transaction);
-            builder.Build();
-
-            Assert.True(this.Transaction.Derive(false).HasErrors);
-
-            this.Transaction.Rollback();
-
-            builder.WithProduct(this.good);
-            builder.Build();
-
-            Assert.False(this.Transaction.Derive(false).HasErrors);
-
-            this.Transaction.Rollback();
-
-            builder.WithProductFeature(this.feature1);
-            builder.Build();
-
-            Assert.True(this.Transaction.Derive(false).HasErrors);
-        }
-
-        [Fact]
         public void GivenInvoiceItem_WhenBuild_ThenPostBuildRelationsMustExist()
         {
             this.InstantiateObjects(this.Transaction);
 
-            var item = new SalesInvoiceItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(this.good).Build();
+            var item = new SalesInvoiceItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(this.good).WithQuantity(1).Build();
 
             this.Transaction.Derive();
 
