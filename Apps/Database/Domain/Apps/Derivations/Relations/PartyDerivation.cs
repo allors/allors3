@@ -16,14 +16,14 @@ namespace Allors.Database.Domain
         public PartyDerivation(M m) : base(m, new Guid("C57CD79C-F75E-4282-BFAD-B2F5F54FD4A4")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.Party.DerivationTrigger),
-                new ChangedPattern(m.Party.PartyContactMechanisms),
-                new ChangedPattern(m.PartyContactMechanism.ContactPurposes) {Steps = new IPropertyType[] { this.M.PartyContactMechanism.PartyWherePartyContactMechanism } },
-                new ChangedPattern(m.PartyContactMechanism.FromDate) {Steps = new IPropertyType[]{ m.PartyContactMechanism.PartyWherePartyContactMechanism } },
-                new ChangedPattern(m.PartyContactMechanism.ThroughDate) {Steps = new IPropertyType[]{ m.PartyContactMechanism.PartyWherePartyContactMechanism } },
-                new ChangedPattern(m.PartyRelationship.Parties) {Steps = new IPropertyType[]{ m.PartyRelationship.Parties } },
-                new ChangedPattern(m.PartyRelationship.FromDate) {Steps = new IPropertyType[]{ m.PartyRelationship.Parties } },
-                new ChangedPattern(m.PartyRelationship.ThroughDate) {Steps = new IPropertyType[]{ m.PartyRelationship.Parties } },
+                new AssociationPattern(m.Party.DerivationTrigger),
+                new AssociationPattern(m.Party.PartyContactMechanisms),
+                new AssociationPattern(m.PartyContactMechanism.ContactPurposes) {Steps = new IPropertyType[] { this.M.PartyContactMechanism.PartyWherePartyContactMechanism } },
+                new AssociationPattern(m.PartyContactMechanism.FromDate) {Steps = new IPropertyType[]{ m.PartyContactMechanism.PartyWherePartyContactMechanism } },
+                new AssociationPattern(m.PartyContactMechanism.ThroughDate) {Steps = new IPropertyType[]{ m.PartyContactMechanism.PartyWherePartyContactMechanism } },
+                new AssociationPattern(m.PartyRelationship.Parties) {Steps = new IPropertyType[]{ m.PartyRelationship.Parties } },
+                new AssociationPattern(m.PartyRelationship.FromDate) {Steps = new IPropertyType[]{ m.PartyRelationship.Parties } },
+                new AssociationPattern(m.PartyRelationship.ThroughDate) {Steps = new IPropertyType[]{ m.PartyRelationship.Parties } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -16,10 +16,10 @@ namespace Allors.Database.Domain
         public PartSuppliedByDerivation(M m) : base(m, new Guid("9bdcfcf1-3140-4e89-bea7-41b1662148b1")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.SupplierOffering.Part) { Steps = new IPropertyType[]{ m.SupplierOffering.Part } },
-                new ChangedPattern(m.SupplierOffering.FromDate) { Steps = new IPropertyType[]{ m.SupplierOffering.Part }},
-                new ChangedPattern(m.SupplierOffering.ThroughDate) { Steps = new IPropertyType[]{ m.SupplierOffering.Part } },
-                new ChangedPattern(m.SupplierOffering.AllVersions) { Steps = new IPropertyType[]{ m.SupplierOffering.AllVersions, m.SupplierOfferingVersion.Part } },
+                new AssociationPattern(m.SupplierOffering.Part) { Steps = new IPropertyType[]{ m.SupplierOffering.Part } },
+                new AssociationPattern(m.SupplierOffering.FromDate) { Steps = new IPropertyType[]{ m.SupplierOffering.Part }},
+                new AssociationPattern(m.SupplierOffering.ThroughDate) { Steps = new IPropertyType[]{ m.SupplierOffering.Part } },
+                new AssociationPattern(m.SupplierOffering.AllVersions) { Steps = new IPropertyType[]{ m.SupplierOffering.AllVersions, m.SupplierOfferingVersion.Part } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

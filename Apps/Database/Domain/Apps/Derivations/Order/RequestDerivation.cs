@@ -16,11 +16,11 @@ namespace Allors.Database.Domain
         public RequestDerivation(M m) : base(m, new Guid("AF5D09BF-9ACF-4C29-9445-6D24BE2F04E6")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.Request.AssignedCurrency),
-                new ChangedPattern(this.M.Request.Recipient),
-                new ChangedPattern(this.M.Request.Originator),
-                new ChangedPattern(this.M.Party.PreferredCurrency) { Steps = new IPropertyType[] { this.M.Party.RequestsWhereOriginator}},
-                new ChangedPattern(this.M.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { this.M.Organisation.RequestsWhereRecipient}},
+                new AssociationPattern(this.M.Request.AssignedCurrency),
+                new AssociationPattern(this.M.Request.Recipient),
+                new AssociationPattern(this.M.Request.Originator),
+                new AssociationPattern(this.M.Party.PreferredCurrency) { Steps = new IPropertyType[] { this.M.Party.RequestsWhereOriginator}},
+                new AssociationPattern(this.M.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { this.M.Organisation.RequestsWhereRecipient}},
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

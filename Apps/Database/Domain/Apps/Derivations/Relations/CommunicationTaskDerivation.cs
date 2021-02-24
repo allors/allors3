@@ -16,9 +16,9 @@ namespace Allors.Database.Domain
         public CommunicationTaskDerivation(M m) : base(m, new Guid("0001CEF2-6A6F-4DB7-A932-07F854C66478")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.CommunicationTask.CommunicationEvent),
-                new ChangedPattern(this.M.CommunicationEvent.WorkItemDescription) { Steps = new IPropertyType[] {m.CommunicationEvent.CommunicationTasksWhereCommunicationEvent} },
-                new ChangedPattern(this.M.CommunicationEvent.ActualEnd) { Steps = new IPropertyType[] {m.CommunicationEvent.CommunicationTasksWhereCommunicationEvent} },
+                new AssociationPattern(this.M.CommunicationTask.CommunicationEvent),
+                new AssociationPattern(this.M.CommunicationEvent.WorkItemDescription) { Steps = new IPropertyType[] {m.CommunicationEvent.CommunicationTasksWhereCommunicationEvent} },
+                new AssociationPattern(this.M.CommunicationEvent.ActualEnd) { Steps = new IPropertyType[] {m.CommunicationEvent.CommunicationTasksWhereCommunicationEvent} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

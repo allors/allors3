@@ -76,7 +76,7 @@ namespace Allors.Database.Domain.Derivations.Default
                         var source = pattern switch
                         {
                             // RoleDefault
-                            ChangedPattern {RoleType: RoleDefault roleInterface} => changeSet
+                            AssociationPattern {RoleType: RoleDefault roleInterface} => changeSet
                                 .AssociationsByRoleType
                                 .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
                                 .SelectMany(v => this.Transaction.Instantiate(v.Value)),
@@ -87,7 +87,7 @@ namespace Allors.Database.Domain.Derivations.Default
                                 .SelectMany(v => this.Transaction.Instantiate(v.Value)),
 
                             // RoleInterface
-                            ChangedPattern {RoleType: RoleInterface roleInterface} => changeSet
+                            AssociationPattern {RoleType: RoleInterface roleInterface} => changeSet
                                 .AssociationsByRoleType
                                 .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
                                 .SelectMany(v => this.Transaction.Instantiate(v.Value))
@@ -99,7 +99,7 @@ namespace Allors.Database.Domain.Derivations.Default
                                 .SelectMany(v => this.Transaction.Instantiate(v.Value)),
 
                             // Association RoleClass
-                            ChangedPattern {RoleType: RoleClass roleClass} => changeSet
+                            AssociationPattern {RoleType: RoleClass roleClass} => changeSet
                                 .AssociationsByRoleType
                                 .Where(v => v.Key.Equals(roleClass))
                                 .SelectMany(v => this.Transaction.Instantiate(v.Value))

@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public TransitionalDeniedPermissionDerivation(M m) : base(m, new Guid("5affa463-9365-4916-89ef-cfc18d41b4fb")) =>
             this.Patterns = new[]
             {
-                new ChangedPattern(m.Transitional.ObjectStates) ,
-                new ChangedPattern(m.ObjectState.DeniedPermissions) { Steps = new []{ m.ObjectState.TransitionalsWhereObjectState} },
+                new AssociationPattern(m.Transitional.ObjectStates) ,
+                new AssociationPattern(m.ObjectState.DeniedPermissions) { Steps = new []{ m.ObjectState.TransitionalsWhereObjectState} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

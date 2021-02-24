@@ -18,11 +18,11 @@ namespace Allors.Database.Domain
         public PurchaseOrderStateDerivation(M m) : base(m, new Guid("96a20d70-69d3-4750-bc44-5551ca5b1c78")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.PurchaseOrder.PurchaseOrderState),
-                new ChangedPattern(m.PurchaseOrder.PurchaseOrderItems),
-                new ChangedPattern(m.PurchaseOrderItem.DerivationTrigger) { Steps =  new IPropertyType[] {m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem } },
-                new ChangedPattern(m.PurchaseOrderItem.PurchaseOrderItemShipmentState) { Steps =  new IPropertyType[] {m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem } },
-                new ChangedPattern(m.PurchaseOrderItem.PurchaseOrderItemPaymentState) { Steps =  new IPropertyType[] {m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem } },
+                new AssociationPattern(m.PurchaseOrder.PurchaseOrderState),
+                new AssociationPattern(m.PurchaseOrder.PurchaseOrderItems),
+                new AssociationPattern(m.PurchaseOrderItem.DerivationTrigger) { Steps =  new IPropertyType[] {m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem } },
+                new AssociationPattern(m.PurchaseOrderItem.PurchaseOrderItemShipmentState) { Steps =  new IPropertyType[] {m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem } },
+                new AssociationPattern(m.PurchaseOrderItem.PurchaseOrderItemPaymentState) { Steps =  new IPropertyType[] {m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

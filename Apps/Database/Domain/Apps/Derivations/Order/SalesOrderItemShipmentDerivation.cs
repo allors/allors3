@@ -18,9 +18,9 @@ namespace Allors.Database.Domain
         public SalesOrderItemShipmentDerivation(M m) : base(m, new Guid("0fc6919a-45d3-4e71-bf4d-1baca964f204")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.SalesOrderItem.QuantityOrdered),
-                new ChangedPattern(m.OrderShipment.Quantity) {Steps = new IPropertyType[]{ m.OrderShipment.OrderItem}, OfType = m.SalesOrderItem.Class },
-                new ChangedPattern(m.ShipmentItem.ShipmentItemState) {Steps = new IPropertyType[]{m.ShipmentItem.OrderShipmentsWhereShipmentItem, m.OrderShipment.OrderItem}, OfType = m.SalesOrderItem.Class },
+                new AssociationPattern(m.SalesOrderItem.QuantityOrdered),
+                new AssociationPattern(m.OrderShipment.Quantity) {Steps = new IPropertyType[]{ m.OrderShipment.OrderItem}, OfType = m.SalesOrderItem.Class },
+                new AssociationPattern(m.ShipmentItem.ShipmentItemState) {Steps = new IPropertyType[]{m.ShipmentItem.OrderShipmentsWhereShipmentItem, m.OrderShipment.OrderItem}, OfType = m.SalesOrderItem.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

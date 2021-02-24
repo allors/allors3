@@ -16,9 +16,9 @@ namespace Allors.Database.Domain
         public LetterCorrespondenceDerivation(M m) : base(m, new Guid("7C1C3F73-2FE2-4713-8006-682E979E38CE")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.LetterCorrespondence.Subject),
-                new ChangedPattern(m.LetterCorrespondence.ToParty),
-                new ChangedPattern(m.Party.PartyName) { Steps = new IPropertyType[] { m.Party.CommunicationEventsWhereToParty}, OfType = m.LetterCorrespondence.Class },
+                new AssociationPattern(this.M.LetterCorrespondence.Subject),
+                new AssociationPattern(m.LetterCorrespondence.ToParty),
+                new AssociationPattern(m.Party.PartyName) { Steps = new IPropertyType[] { m.Party.CommunicationEventsWhereToParty}, OfType = m.LetterCorrespondence.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

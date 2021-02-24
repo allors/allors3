@@ -17,16 +17,16 @@ namespace Allors.Database.Domain
         public GeneralLedgerAccountDerivation(M m) : base(m, new Guid("e916d6c3-b31b-41e2-b7ef-3265977e0fea")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.GeneralLedgerAccount.AccountNumber),
-                new ChangedPattern(m.GeneralLedgerAccount.DefaultCostCenter),
-                new ChangedPattern(m.GeneralLedgerAccount.AssignedCostCentersAllowed),
-                new ChangedPattern(m.GeneralLedgerAccount.CostCenterAccount),
-                new ChangedPattern(m.GeneralLedgerAccount.CostCenterRequired),
-                new ChangedPattern(m.GeneralLedgerAccount.DefaultCostUnit),
-                new ChangedPattern(m.GeneralLedgerAccount.AssignedCostUnitsAllowed),
-                new ChangedPattern(m.GeneralLedgerAccount.CostUnitAccount),
-                new ChangedPattern(m.GeneralLedgerAccount.CostUnitRequired),
-                new ChangedPattern(m.ChartOfAccounts.GeneralLedgerAccounts) { Steps =  new IPropertyType[] { m.ChartOfAccounts.GeneralLedgerAccounts } },
+                new AssociationPattern(m.GeneralLedgerAccount.AccountNumber),
+                new AssociationPattern(m.GeneralLedgerAccount.DefaultCostCenter),
+                new AssociationPattern(m.GeneralLedgerAccount.AssignedCostCentersAllowed),
+                new AssociationPattern(m.GeneralLedgerAccount.CostCenterAccount),
+                new AssociationPattern(m.GeneralLedgerAccount.CostCenterRequired),
+                new AssociationPattern(m.GeneralLedgerAccount.DefaultCostUnit),
+                new AssociationPattern(m.GeneralLedgerAccount.AssignedCostUnitsAllowed),
+                new AssociationPattern(m.GeneralLedgerAccount.CostUnitAccount),
+                new AssociationPattern(m.GeneralLedgerAccount.CostUnitRequired),
+                new AssociationPattern(m.ChartOfAccounts.GeneralLedgerAccounts) { Steps =  new IPropertyType[] { m.ChartOfAccounts.GeneralLedgerAccounts } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

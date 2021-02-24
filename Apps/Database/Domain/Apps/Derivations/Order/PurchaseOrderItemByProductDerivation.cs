@@ -16,10 +16,10 @@ namespace Allors.Database.Domain
         public PurchaseOrderItemByProductDerivation(M m) : base(m, new Guid("dbd7f09a-aa32-44a6-a671-e7269d47ae81")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.PurchaseOrderItemVersion.Part) { Steps = new IPropertyType[] {m.PurchaseOrderItemVersion.PurchaseOrderItemWhereCurrentVersion, m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem, m.PurchaseOrder.PurchaseOrderItemsByProduct } },
-                new ChangedPattern(this.M.PurchaseOrderItem.Part) { Steps = new IPropertyType[] {m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem, m.PurchaseOrder.PurchaseOrderItemsByProduct } },
-                new ChangedPattern(this.M.PurchaseOrderItem.QuantityOrdered) { Steps = new IPropertyType[] {m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem, m.PurchaseOrder.PurchaseOrderItemsByProduct } },
-                new ChangedPattern(this.M.PurchaseOrderItem.TotalBasePrice) { Steps = new IPropertyType[] {m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem, m.PurchaseOrder.PurchaseOrderItemsByProduct } },
+                new AssociationPattern(this.M.PurchaseOrderItemVersion.Part) { Steps = new IPropertyType[] {m.PurchaseOrderItemVersion.PurchaseOrderItemWhereCurrentVersion, m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem, m.PurchaseOrder.PurchaseOrderItemsByProduct } },
+                new AssociationPattern(this.M.PurchaseOrderItem.Part) { Steps = new IPropertyType[] {m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem, m.PurchaseOrder.PurchaseOrderItemsByProduct } },
+                new AssociationPattern(this.M.PurchaseOrderItem.QuantityOrdered) { Steps = new IPropertyType[] {m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem, m.PurchaseOrder.PurchaseOrderItemsByProduct } },
+                new AssociationPattern(this.M.PurchaseOrderItem.TotalBasePrice) { Steps = new IPropertyType[] {m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem, m.PurchaseOrder.PurchaseOrderItemsByProduct } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -12,9 +12,9 @@ namespace Allors.Database.Domain.Derivations.Validating
     using Database.Derivations;
     using Meta;
 
-    public static class ChangedPatternExtensions
+    public static class AssociationPatternExtensions
     {
-        public static IEnumerable<IStrategy> CreatePropertyMatches(this ChangedPattern @this, IStrategy rootMatch, Matcher matcher)
+        public static IEnumerable<IStrategy> CreatePropertyMatches(this AssociationPattern @this, IStrategy rootMatch, Matcher matcher)
         {
             IEnumerable<IStrategy> matches = new[] { rootMatch };
 

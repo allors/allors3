@@ -20,8 +20,8 @@ namespace Allors.Database.Domain
         public BankAccountDerivation(M m) : base(m, new Guid("633f58cd-ca1b-4a2e-8f6e-e1642466a9f7")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.OwnBankAccount.BankAccount) { Steps =  new IPropertyType[] { m.OwnBankAccount.BankAccount} },
-                new ChangedPattern(m.BankAccount.Iban),
+                new AssociationPattern(m.OwnBankAccount.BankAccount) { Steps =  new IPropertyType[] { m.OwnBankAccount.BankAccount} },
+                new AssociationPattern(m.BankAccount.Iban),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

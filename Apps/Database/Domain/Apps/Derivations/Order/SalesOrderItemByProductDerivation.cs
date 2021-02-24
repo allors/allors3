@@ -16,10 +16,10 @@ namespace Allors.Database.Domain
         public SalesOrderItemByProductDerivation(M m) : base(m, new Guid("89dc8d53-d4a2-4e03-aa87-cbde9659cf87")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.SalesOrderItemVersion.Product) { Steps = new IPropertyType[] {m.SalesOrderItemVersion.SalesOrderItemWhereCurrentVersion, m.SalesOrderItem.SalesOrderWhereSalesOrderItem, m.SalesOrder.SalesOrderItemsByProduct} },
-                new ChangedPattern(this.M.SalesOrderItem.Product) { Steps = new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem, m.SalesOrder.SalesOrderItemsByProduct} },
-                new ChangedPattern(this.M.SalesOrderItem.QuantityOrdered) { Steps = new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem, m.SalesOrder.SalesOrderItemsByProduct} },
-                new ChangedPattern(this.M.SalesOrderItem.TotalBasePrice) { Steps = new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem, m.SalesOrder.SalesOrderItemsByProduct} },
+                new AssociationPattern(this.M.SalesOrderItemVersion.Product) { Steps = new IPropertyType[] {m.SalesOrderItemVersion.SalesOrderItemWhereCurrentVersion, m.SalesOrderItem.SalesOrderWhereSalesOrderItem, m.SalesOrder.SalesOrderItemsByProduct} },
+                new AssociationPattern(this.M.SalesOrderItem.Product) { Steps = new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem, m.SalesOrder.SalesOrderItemsByProduct} },
+                new AssociationPattern(this.M.SalesOrderItem.QuantityOrdered) { Steps = new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem, m.SalesOrder.SalesOrderItemsByProduct} },
+                new AssociationPattern(this.M.SalesOrderItem.TotalBasePrice) { Steps = new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem, m.SalesOrder.SalesOrderItemsByProduct} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

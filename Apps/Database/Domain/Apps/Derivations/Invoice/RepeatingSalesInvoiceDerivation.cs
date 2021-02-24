@@ -18,9 +18,9 @@ namespace Allors.Database.Domain
         public RepeatingSalesInvoiceDerivation(M m) : base(m, new Guid("BEC1F9FD-71CF-4B74-BF40-CDA30AB4C3FB")) =>
             this.Patterns = new[]
             {
-                new ChangedPattern(m.RepeatingSalesInvoice.Frequency),
-                new ChangedPattern(m.RepeatingSalesInvoice.DayOfWeek),
-                new ChangedPattern(m.RepeatingSalesInvoice.NextExecutionDate)
+                new AssociationPattern(m.RepeatingSalesInvoice.Frequency),
+                new AssociationPattern(m.RepeatingSalesInvoice.DayOfWeek),
+                new AssociationPattern(m.RepeatingSalesInvoice.NextExecutionDate)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

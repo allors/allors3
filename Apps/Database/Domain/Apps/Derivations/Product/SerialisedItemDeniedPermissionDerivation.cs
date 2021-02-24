@@ -16,14 +16,14 @@ namespace Allors.Database.Domain
         public SerialisedItemDeniedPermissionDerivation(M m) : base(m, new Guid("14466d15-63cb-4ef2-9725-f93a361ec24c")) =>
             this.Patterns = new Pattern[]
         {
-            new ChangedPattern(m.InventoryItemTransaction.SerialisedItem) { Steps =  new IPropertyType[] { m.InventoryItemTransaction.SerialisedItem } },
-            new ChangedPattern(m.PurchaseInvoiceItem.SerialisedItem) { Steps =  new IPropertyType[] { m.PurchaseInvoiceItem.SerialisedItem } },
-            new ChangedPattern(m.PurchaseOrderItem.SerialisedItem) { Steps =  new IPropertyType[] { m.PurchaseOrderItem.SerialisedItem } },
-            new ChangedPattern(m.QuoteItem.SerialisedItem) { Steps =  new IPropertyType[] { m.QuoteItem.SerialisedItem } },
-            new ChangedPattern(m.SalesInvoiceItem.SerialisedItem) { Steps =  new IPropertyType[] { m.SalesInvoiceItem.SerialisedItem } },
-            new ChangedPattern(m.SalesOrderItem.SerialisedItem) { Steps =  new IPropertyType[] { m.SalesOrderItem.SerialisedItem } },
-            new ChangedPattern(m.SerialisedInventoryItem.SerialisedItem) { Steps =  new IPropertyType[] { m.SerialisedInventoryItem.SerialisedItem } },
-            new ChangedPattern(m.ShipmentItem.SerialisedItem) { Steps =  new IPropertyType[] { m.ShipmentItem.SerialisedItem } },
+            new AssociationPattern(m.InventoryItemTransaction.SerialisedItem) { Steps =  new IPropertyType[] { m.InventoryItemTransaction.SerialisedItem } },
+            new AssociationPattern(m.PurchaseInvoiceItem.SerialisedItem) { Steps =  new IPropertyType[] { m.PurchaseInvoiceItem.SerialisedItem } },
+            new AssociationPattern(m.PurchaseOrderItem.SerialisedItem) { Steps =  new IPropertyType[] { m.PurchaseOrderItem.SerialisedItem } },
+            new AssociationPattern(m.QuoteItem.SerialisedItem) { Steps =  new IPropertyType[] { m.QuoteItem.SerialisedItem } },
+            new AssociationPattern(m.SalesInvoiceItem.SerialisedItem) { Steps =  new IPropertyType[] { m.SalesInvoiceItem.SerialisedItem } },
+            new AssociationPattern(m.SalesOrderItem.SerialisedItem) { Steps =  new IPropertyType[] { m.SalesOrderItem.SerialisedItem } },
+            new AssociationPattern(m.SerialisedInventoryItem.SerialisedItem) { Steps =  new IPropertyType[] { m.SerialisedInventoryItem.SerialisedItem } },
+            new AssociationPattern(m.ShipmentItem.SerialisedItem) { Steps =  new IPropertyType[] { m.ShipmentItem.SerialisedItem } },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

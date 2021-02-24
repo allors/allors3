@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         public PersonGreetingDerivation(M m) =>
             this.Patterns = new[]
             {
-                new ChangedPattern(m.Person.DomainFullName)
+                new AssociationPattern(m.Person.DomainFullName)
             };
 
         public Guid Id => new Guid("5FFD5696-E735-4D05-8405-3A444B6F591E");

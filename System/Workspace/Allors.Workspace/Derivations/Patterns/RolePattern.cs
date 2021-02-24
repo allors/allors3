@@ -8,9 +8,9 @@ namespace Allors.Workspace
 {
     using Meta;
 
-    public class ChangedPattern : Pattern
+    public class RolePattern : Pattern
     {
-        public ChangedPattern(IRoleType roleType) => this.RoleType = roleType;
+        public RolePattern(IRoleType roleType) => this.RoleType = roleType;
 
         public IRoleType RoleType { get; }
     }

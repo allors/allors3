@@ -17,17 +17,17 @@ namespace Allors.Database.Domain
         public PersonDerivation(M m) : base(m, new Guid("BC3969F4-4050-47A1-B80C-8F23879E3B10")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.Person.DerivationTrigger),
-                new ChangedPattern(m.Person.Salutation),
-                new ChangedPattern(m.Person.FirstName),
-                new ChangedPattern(m.Person.MiddleName),
-                new ChangedPattern(m.Person.LastName),
-                new ChangedPattern(m.Person.UserName),
-                new ChangedPattern(m.OrganisationContactRelationship.Contact) {Steps = new IPropertyType[]{ m.OrganisationContactRelationship.Contact} },
-                new ChangedPattern(m.OrganisationContactRelationship.FromDate) {Steps = new IPropertyType[]{ m.OrganisationContactRelationship.Contact } },
-                new ChangedPattern(m.OrganisationContactRelationship.ThroughDate) {Steps = new IPropertyType[]{ m.OrganisationContactRelationship.Contact } },
-                new ChangedPattern(m.Employment.FromDate) { Steps =  new IPropertyType[] {m.Employment.Employee} },
-                new ChangedPattern(m.Employment.ThroughDate) { Steps =  new IPropertyType[] {m.Employment.Employee} },
+                new AssociationPattern(m.Person.DerivationTrigger),
+                new AssociationPattern(m.Person.Salutation),
+                new AssociationPattern(m.Person.FirstName),
+                new AssociationPattern(m.Person.MiddleName),
+                new AssociationPattern(m.Person.LastName),
+                new AssociationPattern(m.Person.UserName),
+                new AssociationPattern(m.OrganisationContactRelationship.Contact) {Steps = new IPropertyType[]{ m.OrganisationContactRelationship.Contact} },
+                new AssociationPattern(m.OrganisationContactRelationship.FromDate) {Steps = new IPropertyType[]{ m.OrganisationContactRelationship.Contact } },
+                new AssociationPattern(m.OrganisationContactRelationship.ThroughDate) {Steps = new IPropertyType[]{ m.OrganisationContactRelationship.Contact } },
+                new AssociationPattern(m.Employment.FromDate) { Steps =  new IPropertyType[] {m.Employment.Employee} },
+                new AssociationPattern(m.Employment.ThroughDate) { Steps =  new IPropertyType[] {m.Employment.Employee} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

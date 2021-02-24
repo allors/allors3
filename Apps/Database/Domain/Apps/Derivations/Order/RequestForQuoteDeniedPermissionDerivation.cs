@@ -16,10 +16,10 @@ namespace Allors.Database.Domain
         public RequestForQuoteDeniedPermissionDerivation(M m) : base(m, new Guid("eb67ef60-1a60-4b52-85ac-979fb9346242")) =>
             this.Patterns = new Pattern[]
         {
-            new ChangedPattern(this.M.RequestForQuote.TransitionalDeniedPermissions),
-            new ChangedPattern(m.RequestForQuote.RequestItems),
-            new ChangedPattern(m.RequestItem.RequestItemState) { Steps =  new IPropertyType[] { m.RequestItem.RequestWhereRequestItem}, OfType = m.RequestForQuote.Class },
-            new ChangedPattern(m.Quote.Request) { Steps =  new IPropertyType[] { m.Quote.Request }, OfType = m.RequestForQuote.Class },
+            new AssociationPattern(this.M.RequestForQuote.TransitionalDeniedPermissions),
+            new AssociationPattern(m.RequestForQuote.RequestItems),
+            new AssociationPattern(m.RequestItem.RequestItemState) { Steps =  new IPropertyType[] { m.RequestItem.RequestWhereRequestItem}, OfType = m.RequestForQuote.Class },
+            new AssociationPattern(m.Quote.Request) { Steps =  new IPropertyType[] { m.Quote.Request }, OfType = m.RequestForQuote.Class },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

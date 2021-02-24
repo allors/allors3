@@ -18,11 +18,11 @@ namespace Allors.Database.Domain
         public NonUnifiedGoodDerivation(M m) : base(m, new Guid("1D67AC19-4D77-441D-AC98-3F274FADFB2C")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.NonUnifiedGood.ProductIdentifications),
-                new ChangedPattern(m.NonUnifiedGood.Keywords),
-                new ChangedPattern(m.NonUnifiedGood.Variants),
-                new ChangedPattern(m.ProductCategory.AllProducts) { Steps = new IPropertyType[]{ m.ProductCategory.AllProducts }, OfType = m.NonUnifiedGood.Class },
-                new ChangedPattern(m.PriceComponent.Product) { Steps = new IPropertyType[] {m.PriceComponent.Product }, OfType = m.NonUnifiedGood.Class },
+                new AssociationPattern(m.NonUnifiedGood.ProductIdentifications),
+                new AssociationPattern(m.NonUnifiedGood.Keywords),
+                new AssociationPattern(m.NonUnifiedGood.Variants),
+                new AssociationPattern(m.ProductCategory.AllProducts) { Steps = new IPropertyType[]{ m.ProductCategory.AllProducts }, OfType = m.NonUnifiedGood.Class },
+                new AssociationPattern(m.PriceComponent.Product) { Steps = new IPropertyType[] {m.PriceComponent.Product }, OfType = m.NonUnifiedGood.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

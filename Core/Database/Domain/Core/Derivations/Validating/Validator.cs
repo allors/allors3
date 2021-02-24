@@ -25,7 +25,7 @@ namespace Allors.Database.Domain.Derivations.Validating
                 {
                     switch (pattern)
                     {
-                        case ChangedPattern changedRolePattern:
+                        case AssociationPattern changedRolePattern:
                             foreach (var changedPropertyMatch in changedRolePattern.CreatePropertyMatches(match.Strategy, this.Matcher))
                             {
                                 this.Matcher.Add(changedPropertyMatch, changedRolePattern.RoleType);

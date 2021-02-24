@@ -16,10 +16,10 @@ namespace Allors.Database.Domain
         public PurchaseInvoiceItemStateDerivation(M m) : base(m, new Guid("17686122-4e0d-4a4f-ad5c-6b3c77b969c4")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.PurchaseInvoiceItem.AmountPaid),
-                new ChangedPattern(m.PurchaseInvoiceItem.TotalIncVat),
-                new ChangedPattern(m.PurchaseInvoice.PurchaseInvoiceState) { Steps =  new IPropertyType[] {m.PurchaseInvoice.PurchaseInvoiceItems} },
-                new ChangedPattern(m.PurchaseInvoice.AmountPaid) { Steps =  new IPropertyType[] {m.PurchaseInvoice.PurchaseInvoiceItems} },
+                new AssociationPattern(m.PurchaseInvoiceItem.AmountPaid),
+                new AssociationPattern(m.PurchaseInvoiceItem.TotalIncVat),
+                new AssociationPattern(m.PurchaseInvoice.PurchaseInvoiceState) { Steps =  new IPropertyType[] {m.PurchaseInvoice.PurchaseInvoiceItems} },
+                new AssociationPattern(m.PurchaseInvoice.AmountPaid) { Steps =  new IPropertyType[] {m.PurchaseInvoice.PurchaseInvoiceItems} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public ProductQuoteDeniedPermissionDerivation(M m) : base(m, new Guid("5629cded-4afb-4ca7-9c78-24c998b8698c")) =>
             this.Patterns = new Pattern[]
         {
-            new ChangedPattern(this.M.ProductQuote.TransitionalDeniedPermissions),
-            new ChangedPattern(this.M.ProductQuote.ValidQuoteItems),
+            new AssociationPattern(this.M.ProductQuote.TransitionalDeniedPermissions),
+            new AssociationPattern(this.M.ProductQuote.ValidQuoteItems),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

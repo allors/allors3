@@ -18,17 +18,17 @@ namespace Allors.Database.Domain
         public RequestItemDerivation(M m) : base(m, new Guid("764C2996-50E5-4C53-A6DA-A527BCECF221")) =>
             this.Patterns = new[]
             {
-                new ChangedPattern(this.M.RequestItem.RequestItemState),
-                new ChangedPattern(this.M.RequestItem.Product),
-                new ChangedPattern(this.M.RequestItem.ProductFeature),
-                new ChangedPattern(this.M.RequestItem.Description),
-                new ChangedPattern(this.M.RequestItem.NeededSkill),
-                new ChangedPattern(this.M.RequestItem.Deliverable),
-                new ChangedPattern(this.M.RequestItem.SerialisedItem),
-                new ChangedPattern(this.M.RequestItem.UnitOfMeasure),
-                new ChangedPattern(this.M.RequestItem.Quantity),
-                new ChangedPattern(this.M.Request.RequestItems) { Steps = new IPropertyType[] {m.Request.RequestItems } },
-                new ChangedPattern(this.M.Request.RequestState) { Steps = new IPropertyType[] {m.Request.RequestItems } },
+                new AssociationPattern(this.M.RequestItem.RequestItemState),
+                new AssociationPattern(this.M.RequestItem.Product),
+                new AssociationPattern(this.M.RequestItem.ProductFeature),
+                new AssociationPattern(this.M.RequestItem.Description),
+                new AssociationPattern(this.M.RequestItem.NeededSkill),
+                new AssociationPattern(this.M.RequestItem.Deliverable),
+                new AssociationPattern(this.M.RequestItem.SerialisedItem),
+                new AssociationPattern(this.M.RequestItem.UnitOfMeasure),
+                new AssociationPattern(this.M.RequestItem.Quantity),
+                new AssociationPattern(this.M.Request.RequestItems) { Steps = new IPropertyType[] {m.Request.RequestItems } },
+                new AssociationPattern(this.M.Request.RequestState) { Steps = new IPropertyType[] {m.Request.RequestItems } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

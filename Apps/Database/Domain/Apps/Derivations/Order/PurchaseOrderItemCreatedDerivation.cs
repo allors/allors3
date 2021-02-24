@@ -18,14 +18,14 @@ namespace Allors.Database.Domain
         public PurchaseOrderItemCreatedDerivation(M m) : base(m, new Guid("7559bffd-7685-4023-bef7-9f5ff96b6f41")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.PurchaseOrderItem.PurchaseOrderItemState),
-                new ChangedPattern(m.PurchaseOrderItem.AssignedDeliveryDate),
-                new ChangedPattern(m.PurchaseOrderItem.AssignedVatRegime),
-                new ChangedPattern(m.PurchaseOrderItem.AssignedIrpfRegime),
-                new ChangedPattern(this.M.PurchaseOrder.PurchaseOrderItems) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
-                new ChangedPattern(this.M.PurchaseOrder.DeliveryDate) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
-                new ChangedPattern(this.M.PurchaseOrder.DerivedVatRegime) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
-                new ChangedPattern(this.M.PurchaseOrder.DerivedIrpfRegime) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
+                new AssociationPattern(m.PurchaseOrderItem.PurchaseOrderItemState),
+                new AssociationPattern(m.PurchaseOrderItem.AssignedDeliveryDate),
+                new AssociationPattern(m.PurchaseOrderItem.AssignedVatRegime),
+                new AssociationPattern(m.PurchaseOrderItem.AssignedIrpfRegime),
+                new AssociationPattern(this.M.PurchaseOrder.PurchaseOrderItems) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
+                new AssociationPattern(this.M.PurchaseOrder.DeliveryDate) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
+                new AssociationPattern(this.M.PurchaseOrder.DerivedVatRegime) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
+                new AssociationPattern(this.M.PurchaseOrder.DerivedIrpfRegime) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

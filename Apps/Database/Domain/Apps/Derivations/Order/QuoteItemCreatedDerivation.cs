@@ -16,11 +16,11 @@ namespace Allors.Database.Domain
         public QuoteItemCreatedDerivation(M m) : base(m, new Guid("b66c0721-4aa5-4ca7-91a0-534f6cfc6718")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.QuoteItem.AssignedVatRegime),
-                new ChangedPattern(m.QuoteItem.AssignedIrpfRegime),
-                new ChangedPattern(m.Quote.QuoteItems) { Steps = new IPropertyType[] { m.Quote.QuoteItems }},
-                new ChangedPattern(m.Quote.DerivedVatRegime) { Steps = new IPropertyType[] { m.Quote.QuoteItems }},
-                new ChangedPattern(m.Quote.DerivedIrpfRegime) { Steps = new IPropertyType[] { m.Quote.QuoteItems }},
+                new AssociationPattern(m.QuoteItem.AssignedVatRegime),
+                new AssociationPattern(m.QuoteItem.AssignedIrpfRegime),
+                new AssociationPattern(m.Quote.QuoteItems) { Steps = new IPropertyType[] { m.Quote.QuoteItems }},
+                new AssociationPattern(m.Quote.DerivedVatRegime) { Steps = new IPropertyType[] { m.Quote.QuoteItems }},
+                new AssociationPattern(m.Quote.DerivedIrpfRegime) { Steps = new IPropertyType[] { m.Quote.QuoteItems }},
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

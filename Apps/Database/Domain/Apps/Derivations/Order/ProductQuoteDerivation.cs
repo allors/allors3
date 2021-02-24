@@ -17,8 +17,8 @@ namespace Allors.Database.Domain
         public ProductQuoteDerivation(M m) : base(m, new Guid("6F421122-37A0-4F8E-A08A-996F16CC0218")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.ProductQuote.Issuer),
-                new ChangedPattern(this.M.ProductQuote.QuoteNumber),
+                new AssociationPattern(this.M.ProductQuote.Issuer),
+                new AssociationPattern(this.M.ProductQuote.QuoteNumber),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

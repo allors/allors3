@@ -17,8 +17,8 @@ namespace Allors.Database.Domain
         public WorkTaskCanInvoiceDerivation(M m) : base(m, new Guid("17ee3e8a-2430-48db-b712-ba305d488459")) =>
             this.Patterns = new Pattern[]
         {
-            new ChangedPattern(m.WorkTask.WorkEffortState),
-            new ChangedPattern(m.TimeSheet.TimeEntries) { Steps = new IPropertyType[] { m.TimeSheet.TimeEntries, m.TimeEntry.WorkEffort} },
+            new AssociationPattern(m.WorkTask.WorkEffortState),
+            new AssociationPattern(m.TimeSheet.TimeEntries) { Steps = new IPropertyType[] { m.TimeSheet.TimeEntries, m.TimeEntry.WorkEffort} },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

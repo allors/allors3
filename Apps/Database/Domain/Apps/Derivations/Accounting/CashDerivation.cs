@@ -17,9 +17,9 @@ namespace Allors.Database.Domain
         public CashDerivation(M m) : base(m, new Guid("5b0365cc-0b8e-4ee1-89c5-c5955e3ce44c")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.Cash.GeneralLedgerAccount),
-                new ChangedPattern(m.Cash.Journal),
-                new ChangedPattern(m.InternalOrganisation.DerivedActiveCollectionMethods) { Steps =  new IPropertyType[] {this.M.InternalOrganisation.DerivedActiveCollectionMethods }, OfType = m.Cash.Class  },
+                new AssociationPattern(m.Cash.GeneralLedgerAccount),
+                new AssociationPattern(m.Cash.Journal),
+                new AssociationPattern(m.InternalOrganisation.DerivedActiveCollectionMethods) { Steps =  new IPropertyType[] {this.M.InternalOrganisation.DerivedActiveCollectionMethods }, OfType = m.Cash.Class  },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
