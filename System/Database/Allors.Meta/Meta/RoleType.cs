@@ -72,7 +72,7 @@ namespace Allors.Database.Meta
         /// Gets the full singular name.
         /// </summary>
         /// <value>The full singular name.</value>
-        public string SingularFullName => this.RelationType.AssociationType.SingularName + this.SingularName;
+        public string SingularFullName => this.RelationType.AssociationType.ObjectType + this.SingularName;
 
         public abstract string PluralName { get; set; }
 
@@ -80,7 +80,7 @@ namespace Allors.Database.Meta
         /// Gets the full plural name.
         /// </summary>
         /// <value>The full plural name.</value>
-        public string PluralFullName => this.RelationType.AssociationType.SingularName + this.PluralName;
+        public string PluralFullName => this.RelationType.AssociationType.ObjectType + this.PluralName;
 
         public bool IsMany
         {

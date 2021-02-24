@@ -30,7 +30,7 @@ namespace Allors.Database.Adapters.Npgsql
             this.Prefetcher = new Prefetcher(this);
             this.Commands = new Commands(this, connection);
 
-            this.StateLifecycle = scope;
+            this.StateLifecycle.OnInit(this);
         }
 
         public Connection Connection { get; }
@@ -42,7 +42,7 @@ namespace Allors.Database.Adapters.Npgsql
         IDatabase ITransaction.Database => this.Database;
 
         public ITransactionLifecycle StateLifecycle { get; }
-        
+
         public Database Database { get; }
 
         private Prefetcher Prefetcher { get; }
