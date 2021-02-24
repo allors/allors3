@@ -134,7 +134,7 @@ namespace Allors.Repository
         [Origin(Origin.Session)]
         [Derived]
         public string WorkingFullName { get; set; }
-        
+
         #region Allors
         [Id("105CF367-F076-45F8-8E2A-2431BB2D65C7")]
         [Size(256)]
@@ -206,6 +206,13 @@ namespace Allors.Repository
 
         [Id("FAF120ED-09D1-4E42-86A6-F0D9FF75E03C")]
         public void Method() { }
+
+
+        #region Allors
+        [Id("46395751-D63E-4D84-9110-197BA6930ACC")]
+        #endregion
+        [Derived]
+        public bool Owning { get; set; }
 
         #region inherited methods
 

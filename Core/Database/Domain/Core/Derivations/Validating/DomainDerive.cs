@@ -44,7 +44,8 @@ namespace Allors.Database.Domain.Derivations.Validating
             var changeSet = this.Transaction.Checkpoint();
             domainAccumulatedChangeSet.Add(changeSet);
 
-            while (changeSet.Associations.Any() || changeSet.Roles.Any() || changeSet.Created.Any() || changeSet.Deleted.Any())
+            while (changeSet.Associations.Any() || changeSet.Roles.Any() || changeSet.Created.Any() ||
+                   changeSet.Deleted.Any())
             {
                 if (++domainCycles > maxDomainDerivationCycles)
                 {
@@ -60,7 +61,10 @@ namespace Allors.Database.Domain.Derivations.Validating
                     }
                 }
 
-                var domainCycle = new DomainDerivationCycle { ChangeSet = changeSet, Transaction = this.Transaction, Validation = domainValidation };
+                var domainCycle = new DomainDerivationCycle
+                {
+                    ChangeSet = changeSet, Transaction = this.Transaction, Validation = domainValidation
+                };
 
                 foreach (var domainDerivation in derivations)
                 {
@@ -71,23 +75,39 @@ namespace Allors.Database.Domain.Derivations.Validating
                         var source = pattern switch
                         {
                             // RoleDefault
-                            ChangedPattern changedRolePattern when changedRolePattern.RoleType is RoleDefault roleInterface => changeSet
+                            ChangedPattern {RoleType: RoleDefault roleType} => changeSet
                                 .AssociationsByRoleType
-                                .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
+                                .Where(v => v.Key.RelationType.Equals(roleType.RelationType))
+                                .SelectMany(v => this.Transaction.Instantiate(v.Value)),
+
+                            RolePattern {RoleType: RoleDefault roleType} => changeSet
+                                .RolesByAssociationType
+                                .Where(v => v.Key.RelationType.Equals(roleType.RelationType))
                                 .SelectMany(v => this.Transaction.Instantiate(v.Value)),
 
                             // RoleInterface
-                            ChangedPattern changedRolePattern when changedRolePattern.RoleType is RoleInterface roleInterface => changeSet
+                            ChangedPattern {RoleType: RoleInterface roleInterface} => changeSet
                                 .AssociationsByRoleType
                                 .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
                                 .SelectMany(v => this.Transaction.Instantiate(v.Value))
                                 .Where(v => roleInterface.AssociationTypeComposite.IsAssignableFrom(v.Strategy.Class)),
 
+                            RolePattern {RoleType: RoleInterface roleInterface} => changeSet
+                                .RolesByAssociationType
+                                .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
+                                .SelectMany(v => this.Transaction.Instantiate(v.Value)),
+
                             // RoleClass
-                            ChangedPattern changedRolePattern when changedRolePattern.RoleType is RoleClass roleClass => changeSet
-                                .AssociationsByRoleType.Where(v => v.Key.Equals(roleClass))
+                            ChangedPattern {RoleType: RoleClass roleClass} => changeSet
+                                .AssociationsByRoleType
+                                .Where(v => v.Key.Equals(roleClass))
                                 .SelectMany(v => this.Transaction.Instantiate(v.Value))
                                 .Where(v => v.Strategy.Class.Equals(roleClass.AssociationTypeComposite)),
+
+                            RolePattern {RoleType: RoleClass roleClass} => changeSet
+                                .RolesByAssociationType
+                                .Where(v => v.Key.RoleType.Equals(roleClass))
+                                .SelectMany(v => this.Transaction.Instantiate(v.Value)),
 
                             _ => Array.Empty<IObject>()
                         };
@@ -111,7 +131,8 @@ namespace Allors.Database.Domain.Derivations.Validating
 
                     if (matches.Count > 0)
                     {
-                        using var validator = new Validator((IOnAccess)this.Transaction, domainDerivation.Patterns, matches);
+                        using var validator = new Validator((IOnAccess)this.Transaction, domainDerivation.Patterns,
+                            matches);
                         domainDerivation.Derive(domainCycle, matches);
                     }
                 }

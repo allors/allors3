@@ -43,7 +43,8 @@ namespace Allors.Database.Domain.Derivations.Default
             var changeSet = this.Transaction.Checkpoint();
             domainAccumulatedChangeSet.Add(changeSet);
 
-            while (changeSet.Associations.Any() || changeSet.Roles.Any() || changeSet.Created.Any() || changeSet.Deleted.Any())
+            while (changeSet.Associations.Any() || changeSet.Roles.Any() || changeSet.Created.Any() ||
+                   changeSet.Deleted.Any())
             {
                 if (++domainCycles > maxDomainDerivationCycles)
                 {
@@ -60,7 +61,10 @@ namespace Allors.Database.Domain.Derivations.Default
                     }
                 }
 
-                var domainCycle = new DomainDerivationCycle { ChangeSet = changeSet, Transaction = this.Transaction, Validation = domainValidation };
+                var domainCycle = new DomainDerivationCycle
+                {
+                    ChangeSet = changeSet, Transaction = this.Transaction, Validation = domainValidation
+                };
 
                 var matchesByDerivation = new Dictionary<IDomainDerivation, IEnumerable<IObject>>();
                 foreach (var domainDerivation in derivations)
@@ -72,23 +76,39 @@ namespace Allors.Database.Domain.Derivations.Default
                         var source = pattern switch
                         {
                             // RoleDefault
-                            ChangedPattern changedRolePattern when changedRolePattern.RoleType is RoleDefault roleInterface => changeSet
-                                    .AssociationsByRoleType
-                                    .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
-                                    .SelectMany(v => this.Transaction.Instantiate(v.Value)),
+                            ChangedPattern {RoleType: RoleDefault roleInterface} => changeSet
+                                .AssociationsByRoleType
+                                .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
+                                .SelectMany(v => this.Transaction.Instantiate(v.Value)),
+
+                            RolePattern {RoleType: RoleDefault roleInterface} => changeSet
+                                .RolesByAssociationType
+                                .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
+                                .SelectMany(v => this.Transaction.Instantiate(v.Value)),
 
                             // RoleInterface
-                            ChangedPattern changedRolePattern when changedRolePattern.RoleType is RoleInterface roleInterface => changeSet
-                                    .AssociationsByRoleType
-                                    .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
-                                    .SelectMany(v => this.Transaction.Instantiate(v.Value))
-                                    .Where(v => roleInterface.AssociationTypeComposite.IsAssignableFrom(v.Strategy.Class)),
+                            ChangedPattern {RoleType: RoleInterface roleInterface} => changeSet
+                                .AssociationsByRoleType
+                                .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
+                                .SelectMany(v => this.Transaction.Instantiate(v.Value))
+                                .Where(v => roleInterface.AssociationTypeComposite.IsAssignableFrom(v.Strategy.Class)),
 
-                            // RoleClass
-                            ChangedPattern changedRolePattern when changedRolePattern.RoleType is RoleClass roleClass => changeSet
-                                    .AssociationsByRoleType.Where(v => v.Key.Equals(roleClass))
-                                    .SelectMany(v => this.Transaction.Instantiate(v.Value))
-                                    .Where(v => v.Strategy.Class.Equals(roleClass.AssociationTypeComposite)),
+                            RolePattern {RoleType: RoleInterface roleInterface} => changeSet
+                                .RolesByAssociationType
+                                .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
+                                .SelectMany(v => this.Transaction.Instantiate(v.Value)),
+
+                            // Association RoleClass
+                            ChangedPattern {RoleType: RoleClass roleClass} => changeSet
+                                .AssociationsByRoleType
+                                .Where(v => v.Key.Equals(roleClass))
+                                .SelectMany(v => this.Transaction.Instantiate(v.Value))
+                                .Where(v => v.Strategy.Class.Equals(roleClass.AssociationTypeComposite)),
+
+                            RolePattern {RoleType: RoleClass roleClass} => changeSet
+                                .RolesByAssociationType
+                                .Where(v => v.Key.RoleType.Equals(roleClass))
+                                .SelectMany(v => this.Transaction.Instantiate(v.Value)),
 
                             _ => Array.Empty<IObject>()
                         };

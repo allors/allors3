@@ -19,6 +19,7 @@ namespace Allors.Database.Domain
                 // Custom
                 new PersonFullNameDerivation(m),
                 new PersonGreetingDerivation(m),
+                new PersonOwningDerivation(m),
                 // Validation
                 new RoleOne2OneDerivation(m),
                 new RoleOne2ManyDerivation(m),
