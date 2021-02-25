@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public NonSerialisedInventoryItemDerivation(M m) : base(m, new Guid("DDB383AD-3B4C-43BE-8F30-7E3A8D16F6BE")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.NonSerialisedInventoryItem.Part),
-                new ChangedPattern(m.NonSerialisedInventoryItem.Facility),
+                new AssociationPattern(m.NonSerialisedInventoryItem.Part),
+                new AssociationPattern(m.NonSerialisedInventoryItem.Facility),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -16,11 +16,11 @@ namespace Allors.Database.Domain
         public CatalogueDerivation(M m) : base(m, new Guid("7B3BA380-A703-4E29-8D2D-0D2F74C6E7D8")) =>
             this.Patterns = new[]
             {
-                new ChangedPattern(this.M.Catalogue.CatalogueImage),
-                new ChangedPattern(this.M.Catalogue.LocalisedNames),
-                new ChangedPattern(this.M.Catalogue.LocalisedDescriptions),
-                new ChangedPattern(this.M.LocalisedText.Text) { Steps = new IPropertyType[]{ this.M.LocalisedText.CatalogueWhereLocalisedName } },
-                new ChangedPattern(this.M.LocalisedText.Text) { Steps = new IPropertyType[]{ this.M.LocalisedText.CatalogueWhereLocalisedDescription } },
+                new AssociationPattern(this.M.Catalogue.CatalogueImage),
+                new AssociationPattern(this.M.Catalogue.LocalisedNames),
+                new AssociationPattern(this.M.Catalogue.LocalisedDescriptions),
+                new AssociationPattern(this.M.LocalisedText.Text) { Steps = new IPropertyType[]{ this.M.LocalisedText.CatalogueWhereLocalisedName } },
+                new AssociationPattern(this.M.LocalisedText.Text) { Steps = new IPropertyType[]{ this.M.LocalisedText.CatalogueWhereLocalisedDescription } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

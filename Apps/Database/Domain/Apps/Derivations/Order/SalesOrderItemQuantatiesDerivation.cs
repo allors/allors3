@@ -16,11 +16,11 @@ namespace Allors.Database.Domain
         public SalesOrderItemQuantatiesDerivation(M m) : base(m, new Guid("5790f640-2435-466e-8f34-6cb817008e3d")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.SalesOrderItem.SalesOrderItemState),
-                new ChangedPattern(m.SalesOrderItem.QuantityPendingShipment),
-                new ChangedPattern(m.SalesOrderItem.QuantityShipped),
-                new ChangedPattern(m.InventoryItemTransaction.InventoryItem) { Steps = new IPropertyType[] {m.InventoryItemTransaction.InventoryItem, m.NonSerialisedInventoryItem.SalesOrderItemInventoryAssignmentsWhereInventoryItem, m.SalesOrderItemInventoryAssignment.SalesOrderItemWhereSalesOrderItemInventoryAssignment } },
-                new ChangedPattern(m.PickListItem.InventoryItem) { Steps = new IPropertyType[] {m.PickListItem.InventoryItem, m.NonSerialisedInventoryItem.SalesOrderItemInventoryAssignmentsWhereInventoryItem, m.SalesOrderItemInventoryAssignment.SalesOrderItemWhereSalesOrderItemInventoryAssignment } },
+                new AssociationPattern(m.SalesOrderItem.SalesOrderItemState),
+                new AssociationPattern(m.SalesOrderItem.QuantityPendingShipment),
+                new AssociationPattern(m.SalesOrderItem.QuantityShipped),
+                new AssociationPattern(m.InventoryItemTransaction.InventoryItem) { Steps = new IPropertyType[] {m.InventoryItemTransaction.InventoryItem, m.NonSerialisedInventoryItem.SalesOrderItemInventoryAssignmentsWhereInventoryItem, m.SalesOrderItemInventoryAssignment.SalesOrderItemWhereSalesOrderItemInventoryAssignment } },
+                new AssociationPattern(m.PickListItem.InventoryItem) { Steps = new IPropertyType[] {m.PickListItem.InventoryItem, m.NonSerialisedInventoryItem.SalesOrderItemInventoryAssignmentsWhereInventoryItem, m.SalesOrderItemInventoryAssignment.SalesOrderItemWhereSalesOrderItemInventoryAssignment } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -42,7 +42,7 @@ namespace Allors.Database.Domain
                             @this.Product.SalesOrderItemsWhereProduct
                                 .Where(v => !Equals(v, @this))
                                 .Sum(v => v.QuantityRequestsShipping) :
-                            0; 
+                            0;
 
                         var qoh = @this.ReservedFromNonSerialisedInventoryItem.CalculateQuantityOnHand(settings);
                         var initialAtp = @this.ReservedFromNonSerialisedInventoryItem.CalculateAvailableToPromise(settings);

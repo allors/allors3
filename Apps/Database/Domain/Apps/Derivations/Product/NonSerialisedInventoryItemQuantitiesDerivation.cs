@@ -16,14 +16,14 @@ namespace Allors.Database.Domain
         public NonSerialisedInventoryItemQuantitiesDerivation(M m) : base(m, new Guid("36bb6207-ff7d-4bc1-afaf-a2c12d649c1c")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.NonSerialisedInventoryItem.NonSerialisedInventoryItemState),
-                new ChangedPattern(m.InventoryItemTransaction.InventoryItem) { Steps = new IPropertyType[] {m.InventoryItemTransaction.InventoryItem }, OfType = m.NonSerialisedInventoryItem.Class },
-                new ChangedPattern(m.InventoryItemTransaction.Quantity) { Steps = new IPropertyType[] {m.InventoryItemTransaction.InventoryItem }, OfType = m.NonSerialisedInventoryItem.Class },
-                new ChangedPattern(m.PickList.PickListState) { Steps = new IPropertyType[] { m.PickList.PickListItems, m.PickListItem.InventoryItem }, OfType = m.NonSerialisedInventoryItem.Class },
-                new ChangedPattern(m.PickListItem.InventoryItem) { Steps = new IPropertyType[] {m.PickListItem.InventoryItem }, OfType = m.NonSerialisedInventoryItem.Class },
-                new ChangedPattern(m.PickListItem.QuantityPicked) { Steps = new IPropertyType[] {m.PickListItem.InventoryItem }, OfType = m.NonSerialisedInventoryItem.Class },
-                new ChangedPattern(m.PurchaseOrderItem.QuantityOrdered) { Steps = new IPropertyType[] {m.PurchaseOrderItem.Part, m.Part.InventoryItemsWherePart }, OfType = m.NonSerialisedInventoryItem.Class },
-                new ChangedPattern(m.PurchaseOrderItem.PurchaseOrderItemState) { Steps = new IPropertyType[] {m.PurchaseOrderItem.Part, m.Part.InventoryItemsWherePart }, OfType = m.NonSerialisedInventoryItem.Class },
+                new AssociationPattern(m.NonSerialisedInventoryItem.NonSerialisedInventoryItemState),
+                new AssociationPattern(m.InventoryItemTransaction.InventoryItem) { Steps = new IPropertyType[] {m.InventoryItemTransaction.InventoryItem }, OfType = m.NonSerialisedInventoryItem.Class },
+                new AssociationPattern(m.InventoryItemTransaction.Quantity) { Steps = new IPropertyType[] {m.InventoryItemTransaction.InventoryItem }, OfType = m.NonSerialisedInventoryItem.Class },
+                new AssociationPattern(m.PickList.PickListState) { Steps = new IPropertyType[] { m.PickList.PickListItems, m.PickListItem.InventoryItem }, OfType = m.NonSerialisedInventoryItem.Class },
+                new AssociationPattern(m.PickListItem.InventoryItem) { Steps = new IPropertyType[] {m.PickListItem.InventoryItem }, OfType = m.NonSerialisedInventoryItem.Class },
+                new AssociationPattern(m.PickListItem.QuantityPicked) { Steps = new IPropertyType[] {m.PickListItem.InventoryItem }, OfType = m.NonSerialisedInventoryItem.Class },
+                new AssociationPattern(m.PurchaseOrderItem.QuantityOrdered) { Steps = new IPropertyType[] {m.PurchaseOrderItem.Part, m.Part.InventoryItemsWherePart }, OfType = m.NonSerialisedInventoryItem.Class },
+                new AssociationPattern(m.PurchaseOrderItem.PurchaseOrderItemState) { Steps = new IPropertyType[] {m.PurchaseOrderItem.Part, m.Part.InventoryItemsWherePart }, OfType = m.NonSerialisedInventoryItem.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

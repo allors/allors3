@@ -16,18 +16,18 @@ namespace Allors.Database.Domain
         public CustomerShipmentStateDerivation(M m) : base(m, new Guid("7ff771c2-af69-427a-aeb0-4ceb73e699c7")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.CustomerShipment.DerivationTrigger),
-                new ChangedPattern(m.CustomerShipment.ShipToParty),
-                new ChangedPattern(m.CustomerShipment.ShipmentItems),
-                new ChangedPattern(m.CustomerShipment.ShipmentState),
-                new ChangedPattern(m.CustomerShipment.ShipmentValue),
-                new ChangedPattern(m.CustomerShipment.ReleasedManually),
-                new ChangedPattern(m.ShipmentItem.Quantity) { Steps =  new IPropertyType[] {m.ShipmentItem.ShipmentWhereShipmentItem}, OfType = m.CustomerShipment.Class },
-                new ChangedPattern(m.PackagingContent.Quantity) { Steps =  new IPropertyType[] {m.PackagingContent.ShipmentItem, m.ShipmentItem.ShipmentWhereShipmentItem}, OfType = m.CustomerShipment.Class },
-                new ChangedPattern(m.PickList.ShipToParty) { Steps = new IPropertyType[] { m.PickList.ShipToParty, m.Party.ShipmentsWhereShipToParty }, OfType = m.CustomerShipment.Class },
-                new ChangedPattern(m.PickList.PickListState) { Steps = new IPropertyType[] { m.PickList.ShipToParty, m.Party.ShipmentsWhereShipToParty }, OfType = m.CustomerShipment.Class },
-                new ChangedPattern(m.PickList.CurrentVersion) { Steps = new IPropertyType[] { m.PickList.AllVersions, m.PickListVersion.ShipToParty, m.Party.ShipmentsWhereShipToParty }, OfType = m.CustomerShipment.Class },
-                new ChangedPattern(m.Store.ShipmentThreshold) { Steps = new IPropertyType[] { m.Store.ShipmentsWhereStore }, OfType = m.CustomerShipment.Class },
+                new AssociationPattern(m.CustomerShipment.DerivationTrigger),
+                new AssociationPattern(m.CustomerShipment.ShipToParty),
+                new AssociationPattern(m.CustomerShipment.ShipmentItems),
+                new AssociationPattern(m.CustomerShipment.ShipmentState),
+                new AssociationPattern(m.CustomerShipment.ShipmentValue),
+                new AssociationPattern(m.CustomerShipment.ReleasedManually),
+                new AssociationPattern(m.ShipmentItem.Quantity) { Steps =  new IPropertyType[] {m.ShipmentItem.ShipmentWhereShipmentItem}, OfType = m.CustomerShipment.Class },
+                new AssociationPattern(m.PackagingContent.Quantity) { Steps =  new IPropertyType[] {m.PackagingContent.ShipmentItem, m.ShipmentItem.ShipmentWhereShipmentItem}, OfType = m.CustomerShipment.Class },
+                new AssociationPattern(m.PickList.ShipToParty) { Steps = new IPropertyType[] { m.PickList.ShipToParty, m.Party.ShipmentsWhereShipToParty }, OfType = m.CustomerShipment.Class },
+                new AssociationPattern(m.PickList.PickListState) { Steps = new IPropertyType[] { m.PickList.ShipToParty, m.Party.ShipmentsWhereShipToParty }, OfType = m.CustomerShipment.Class },
+                new AssociationPattern(m.PickList.CurrentVersion) { Steps = new IPropertyType[] { m.PickList.AllVersions, m.PickListVersion.ShipToParty, m.Party.ShipmentsWhereShipToParty }, OfType = m.CustomerShipment.Class },
+                new AssociationPattern(m.Store.ShipmentThreshold) { Steps = new IPropertyType[] { m.Store.ShipmentsWhereStore }, OfType = m.CustomerShipment.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

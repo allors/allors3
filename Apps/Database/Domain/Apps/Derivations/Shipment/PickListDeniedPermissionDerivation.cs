@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         public PickListDeniedPermissionDerivation(M m) : base(m, new Guid("5650fa14-e2bb-4b7c-b08d-976b11994dea")) =>
             this.Patterns = new Pattern[]
         {
-            new ChangedPattern(this.M.PickList.TransitionalDeniedPermissions),
+            new AssociationPattern(this.M.PickList.TransitionalDeniedPermissions),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

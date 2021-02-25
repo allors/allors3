@@ -8,9 +8,9 @@ namespace Allors.Database.Derivations
 {
     using Meta;
 
-    public class ChangedPattern : Pattern
+    public class AssociationPattern : Pattern
     {
-        public ChangedPattern(IRoleType roleType) => this.RoleType = roleType;
+        public AssociationPattern(IRoleType roleType) => this.RoleType = roleType;
 
         public IRoleType RoleType { get; }
     }

@@ -17,11 +17,11 @@ namespace Allors.Database.Domain
         public CustomerShipmentShipDerivation(M m) : base(m, new Guid("09c6d242-b089-4fe3-860c-3df2e39c00f3")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.CustomerShipment.ShipmentState),
-                new ChangedPattern(m.PickList.ShipToParty) { Steps = new IPropertyType[] { m.PickList.ShipToParty, m.Party.ShipmentsWhereShipToParty }, OfType = m.CustomerShipment.Class },
-                new ChangedPattern(m.PickList.PickListState) { Steps = new IPropertyType[] { m.PickList.ShipToParty, m.Party.ShipmentsWhereShipToParty }, OfType = m.CustomerShipment.Class },
-                new ChangedPattern(m.PickListVersion.ShipToParty) { Steps = new IPropertyType[] { m.PickListVersion.PickListWhereCurrentVersion, m.PickList.ShipToParty, m.Party.ShipmentsWhereShipToParty }, OfType = m.CustomerShipment.Class },
-                new ChangedPattern(m.SalesOrder.SalesOrderState) { Steps = new IPropertyType[] { m.SalesOrder.SalesOrderItems, m.SalesOrderItem.OrderShipmentsWhereOrderItem, m.OrderShipment.ShipmentItem, m.ShipmentItem.ShipmentWhereShipmentItem }, OfType = m.CustomerShipment.Class },
+                new AssociationPattern(m.CustomerShipment.ShipmentState),
+                new AssociationPattern(m.PickList.ShipToParty) { Steps = new IPropertyType[] { m.PickList.ShipToParty, m.Party.ShipmentsWhereShipToParty }, OfType = m.CustomerShipment.Class },
+                new AssociationPattern(m.PickList.PickListState) { Steps = new IPropertyType[] { m.PickList.ShipToParty, m.Party.ShipmentsWhereShipToParty }, OfType = m.CustomerShipment.Class },
+                new AssociationPattern(m.PickListVersion.ShipToParty) { Steps = new IPropertyType[] { m.PickListVersion.PickListWhereCurrentVersion, m.PickList.ShipToParty, m.Party.ShipmentsWhereShipToParty }, OfType = m.CustomerShipment.Class },
+                new AssociationPattern(m.SalesOrder.SalesOrderState) { Steps = new IPropertyType[] { m.SalesOrder.SalesOrderItems, m.SalesOrderItem.OrderShipmentsWhereOrderItem, m.OrderShipment.ShipmentItem, m.ShipmentItem.ShipmentWhereShipmentItem }, OfType = m.CustomerShipment.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

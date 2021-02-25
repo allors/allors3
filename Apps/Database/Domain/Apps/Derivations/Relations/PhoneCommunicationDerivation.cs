@@ -16,9 +16,9 @@ namespace Allors.Database.Domain
         public PhoneCommunicationDerivation(M m) : base(m, new Guid("6C8EB5C8-1E8C-41CF-B127-53C88E200F65")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.PhoneCommunication.Subject),
-                new ChangedPattern(m.PhoneCommunication.ToParty),
-                new ChangedPattern(m.Party.PartyName) { Steps = new IPropertyType[] { m.Party.CommunicationEventsWhereToParty}, OfType = m.PhoneCommunication.Class },
+                new AssociationPattern(m.PhoneCommunication.Subject),
+                new AssociationPattern(m.PhoneCommunication.ToParty),
+                new AssociationPattern(m.Party.PartyName) { Steps = new IPropertyType[] { m.Party.CommunicationEventsWhereToParty}, OfType = m.PhoneCommunication.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

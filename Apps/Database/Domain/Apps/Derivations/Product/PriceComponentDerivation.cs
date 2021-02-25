@@ -17,15 +17,15 @@ namespace Allors.Database.Domain
         public PriceComponentDerivation(M m) : base(m, new Guid("34F7833F-170D-45C3-92F0-B8AD33C3A028")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.PriceComponent.FromDate),
-                new ChangedPattern(m.PriceComponent.ThroughDate),
-                new ChangedPattern(m.PriceComponent.PricedBy),
-                new ChangedPattern(m.PriceComponent.Price),
-                new ChangedPattern(m.PriceComponent.Product),
-                new ChangedPattern(m.PriceComponent.Part),
-                new ChangedPattern(m.PriceComponent.ProductFeature),
-                new ChangedPattern(m.DiscountComponent.Percentage),
-                new ChangedPattern(m.SurchargeComponent.Percentage)
+                new AssociationPattern(m.PriceComponent.FromDate),
+                new AssociationPattern(m.PriceComponent.ThroughDate),
+                new AssociationPattern(m.PriceComponent.PricedBy),
+                new AssociationPattern(m.PriceComponent.Price),
+                new AssociationPattern(m.PriceComponent.Product),
+                new AssociationPattern(m.PriceComponent.Part),
+                new AssociationPattern(m.PriceComponent.ProductFeature),
+                new AssociationPattern(m.DiscountComponent.Percentage),
+                new AssociationPattern(m.SurchargeComponent.Percentage)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

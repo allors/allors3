@@ -17,21 +17,21 @@ namespace Allors.Database.Domain
         public SalesInvoiceDerivation(M m) : base(m, new Guid("5F9E688C-1805-4982-87EC-CE45100BDD30")) =>
             this.Patterns = new Pattern[]
         {
-            new ChangedPattern(this.M.SalesInvoice.BilledFrom),
-            new ChangedPattern(this.M.SalesInvoice.Store),
-            new ChangedPattern(this.M.SalesInvoice.BillToCustomer),
-            new ChangedPattern(this.M.SalesInvoice.BillToEndCustomer),
-            new ChangedPattern(this.M.SalesInvoice.ShipToCustomer),
-            new ChangedPattern(this.M.SalesInvoice.ShipToEndCustomer),
-            new ChangedPattern(this.M.SalesInvoice.InvoiceDate),
-            new ChangedPattern(this.M.SalesInvoice.SalesInvoiceItems),
-            new ChangedPattern(this.M.RepeatingSalesInvoice.NextExecutionDate) { Steps =  new IPropertyType[] {m.RepeatingSalesInvoice.Source} },
-            new ChangedPattern(this.M.RepeatingSalesInvoice.FinalExecutionDate) { Steps =  new IPropertyType[] {m.RepeatingSalesInvoice.Source} },
-            new ChangedPattern(this.M.InvoiceTerm.TermValue) { Steps =  new IPropertyType[] {m.InvoiceTerm.InvoiceWhereSalesTerm} },
-            new ChangedPattern(this.M.CustomerRelationship.FromDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesInvoicesWhereBillToCustomer} },
-            new ChangedPattern(this.M.CustomerRelationship.ThroughDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesInvoicesWhereBillToCustomer} },
-            new ChangedPattern(this.M.CustomerRelationship.FromDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesInvoicesWhereShipToCustomer} },
-            new ChangedPattern(this.M.CustomerRelationship.ThroughDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesInvoicesWhereShipToCustomer} },
+            new AssociationPattern(this.M.SalesInvoice.BilledFrom),
+            new AssociationPattern(this.M.SalesInvoice.Store),
+            new AssociationPattern(this.M.SalesInvoice.BillToCustomer),
+            new AssociationPattern(this.M.SalesInvoice.BillToEndCustomer),
+            new AssociationPattern(this.M.SalesInvoice.ShipToCustomer),
+            new AssociationPattern(this.M.SalesInvoice.ShipToEndCustomer),
+            new AssociationPattern(this.M.SalesInvoice.InvoiceDate),
+            new AssociationPattern(this.M.SalesInvoice.SalesInvoiceItems),
+            new AssociationPattern(this.M.RepeatingSalesInvoice.NextExecutionDate) { Steps =  new IPropertyType[] {m.RepeatingSalesInvoice.Source} },
+            new AssociationPattern(this.M.RepeatingSalesInvoice.FinalExecutionDate) { Steps =  new IPropertyType[] {m.RepeatingSalesInvoice.Source} },
+            new AssociationPattern(this.M.InvoiceTerm.TermValue) { Steps =  new IPropertyType[] {m.InvoiceTerm.InvoiceWhereSalesTerm} },
+            new AssociationPattern(this.M.CustomerRelationship.FromDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesInvoicesWhereBillToCustomer} },
+            new AssociationPattern(this.M.CustomerRelationship.ThroughDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesInvoicesWhereBillToCustomer} },
+            new AssociationPattern(this.M.CustomerRelationship.FromDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesInvoicesWhereShipToCustomer} },
+            new AssociationPattern(this.M.CustomerRelationship.ThroughDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesInvoicesWhereShipToCustomer} },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

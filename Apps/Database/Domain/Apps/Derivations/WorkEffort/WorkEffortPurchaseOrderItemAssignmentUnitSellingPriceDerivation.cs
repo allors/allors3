@@ -16,13 +16,13 @@ namespace Allors.Database.Domain
         public WorkEffortPurchaseOrderItemAssignmentUnitSellingPriceDerivation(M m) : base(m, new Guid("077db1a1-e1ae-4af1-be2f-5bd2c25c1df1")) =>
             this.Patterns = new Pattern[]
         {
-            new ChangedPattern(m.WorkEffortPurchaseOrderItemAssignment.Assignment),
-            new ChangedPattern(m.WorkEffortPurchaseOrderItemAssignment.PurchaseOrderItem),
-            new ChangedPattern(m.WorkEffortPurchaseOrderItemAssignment.AssignedUnitSellingPrice),
-            new ChangedPattern(m.WorkEffort.TakenBy) { Steps = new IPropertyType[] { m.WorkEffort.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment } },
-            new ChangedPattern(m.PriceComponent.PricedBy) { Steps = new IPropertyType[] { m.PriceComponent.PricedBy, m.Organisation.WorkEffortsWhereTakenBy, m.WorkEffort.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment } },
-            new ChangedPattern(m.PriceComponent.FromDate) { Steps = new IPropertyType[] { m.PriceComponent.PricedBy, m.Organisation.WorkEffortsWhereTakenBy, m.WorkEffort.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment } },
-            new ChangedPattern(m.PriceComponent.ThroughDate) { Steps = new IPropertyType[] { m.PriceComponent.PricedBy, m.Organisation.WorkEffortsWhereTakenBy, m.WorkEffort.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment } },
+            new AssociationPattern(m.WorkEffortPurchaseOrderItemAssignment.Assignment),
+            new AssociationPattern(m.WorkEffortPurchaseOrderItemAssignment.PurchaseOrderItem),
+            new AssociationPattern(m.WorkEffortPurchaseOrderItemAssignment.AssignedUnitSellingPrice),
+            new AssociationPattern(m.WorkEffort.TakenBy) { Steps = new IPropertyType[] { m.WorkEffort.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment } },
+            new AssociationPattern(m.PriceComponent.PricedBy) { Steps = new IPropertyType[] { m.PriceComponent.PricedBy, m.Organisation.WorkEffortsWhereTakenBy, m.WorkEffort.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment } },
+            new AssociationPattern(m.PriceComponent.FromDate) { Steps = new IPropertyType[] { m.PriceComponent.PricedBy, m.Organisation.WorkEffortsWhereTakenBy, m.WorkEffort.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment } },
+            new AssociationPattern(m.PriceComponent.ThroughDate) { Steps = new IPropertyType[] { m.PriceComponent.PricedBy, m.Organisation.WorkEffortsWhereTakenBy, m.WorkEffort.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment } },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

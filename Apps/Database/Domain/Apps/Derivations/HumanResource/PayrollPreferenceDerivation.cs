@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public PayrollPreferenceDerivation(M m) : base(m, new Guid("7223fce9-2df6-48bd-89a2-261fff4772de")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.PayrollPreference.Percentage),
+                new AssociationPattern(m.PayrollPreference.Percentage),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

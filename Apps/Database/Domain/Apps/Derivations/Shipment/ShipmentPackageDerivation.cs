@@ -17,9 +17,9 @@ namespace Allors.Database.Domain
         public ShipmentPackageDerivation(M m) : base(m, new Guid("9CB50263-5EA0-4B16-85A2-117BEE8A570A")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.ShipmentPackage.SequenceNumber),
-                new ChangedPattern(this.M.PickList.PickListState) { Steps = new IPropertyType[] { m.PickList.PickListItems, m.PickListItem.ItemIssuancesWherePickListItem, m.ItemIssuance.ShipmentItem, m.ShipmentItem.ShipmentWhereShipmentItem, m.Shipment.ShipmentPackages } },
-                new ChangedPattern(this.M.ItemIssuance.ShipmentItem) { Steps = new IPropertyType[] { m.ItemIssuance.ShipmentItem, m.ShipmentItem.ShipmentWhereShipmentItem, m.Shipment.ShipmentPackages } },
+                new AssociationPattern(this.M.ShipmentPackage.SequenceNumber),
+                new AssociationPattern(this.M.PickList.PickListState) { Steps = new IPropertyType[] { m.PickList.PickListItems, m.PickListItem.ItemIssuancesWherePickListItem, m.ItemIssuance.ShipmentItem, m.ShipmentItem.ShipmentWhereShipmentItem, m.Shipment.ShipmentPackages } },
+                new AssociationPattern(this.M.ItemIssuance.ShipmentItem) { Steps = new IPropertyType[] { m.ItemIssuance.ShipmentItem, m.ShipmentItem.ShipmentWhereShipmentItem, m.Shipment.ShipmentPackages } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

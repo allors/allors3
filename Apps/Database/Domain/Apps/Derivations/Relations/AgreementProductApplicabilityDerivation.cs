@@ -17,8 +17,8 @@ namespace Allors.Database.Domain
         public AgreementProductApplicabilityDerivation(M m) : base(m, new Guid("43ca02e8-a35b-4249-bb48-ca980ac3e648")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.AgreementProductApplicability.Agreement),
-                new ChangedPattern(m.AgreementProductApplicability.AgreementItem),
+                new AssociationPattern(m.AgreementProductApplicability.Agreement),
+                new AssociationPattern(m.AgreementProductApplicability.AgreementItem),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

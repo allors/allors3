@@ -16,13 +16,13 @@ namespace Allors.Database.Domain
         public PurchaseOrderDeniedPermissionDerivation(M m) : base(m, new Guid("23ec4c76-b156-406f-ad16-4b83a17db3c6")) =>
             this.Patterns = new Pattern[]
         {
-            new ChangedPattern(m.PurchaseOrder.TransitionalDeniedPermissions),
-            new ChangedPattern(m.PurchaseOrder.PurchaseOrderShipmentState),
-            new ChangedPattern(m.WorkEffortPurchaseOrderItemAssignment.PurchaseOrder) { Steps =  new IPropertyType[] {m.WorkEffortPurchaseOrderItemAssignment.PurchaseOrder} },
-            new ChangedPattern(m.PurchaseInvoice.PurchaseOrders) { Steps =  new IPropertyType[] {m.PurchaseInvoice.PurchaseOrders} },
-            new ChangedPattern(m.SerialisedItem.PurchaseOrder) { Steps =  new IPropertyType[] {m.SerialisedItem.PurchaseOrder} },
-            new ChangedPattern(m.PurchaseOrderItem.PurchaseOrderItemState) { Steps =  new IPropertyType[] {m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem} },
-            new ChangedPattern(m.OrderItemBilling.OrderItem) { Steps =  new IPropertyType[] {m.OrderItemBilling.OrderItem, m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem }, OfType = m.PurchaseOrder.Class },
+            new AssociationPattern(m.PurchaseOrder.TransitionalDeniedPermissions),
+            new AssociationPattern(m.PurchaseOrder.PurchaseOrderShipmentState),
+            new AssociationPattern(m.WorkEffortPurchaseOrderItemAssignment.PurchaseOrder) { Steps =  new IPropertyType[] {m.WorkEffortPurchaseOrderItemAssignment.PurchaseOrder} },
+            new AssociationPattern(m.PurchaseInvoice.PurchaseOrders) { Steps =  new IPropertyType[] {m.PurchaseInvoice.PurchaseOrders} },
+            new AssociationPattern(m.SerialisedItem.PurchaseOrder) { Steps =  new IPropertyType[] {m.SerialisedItem.PurchaseOrder} },
+            new AssociationPattern(m.PurchaseOrderItem.PurchaseOrderItemState) { Steps =  new IPropertyType[] {m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem} },
+            new AssociationPattern(m.OrderItemBilling.OrderItem) { Steps =  new IPropertyType[] {m.OrderItemBilling.OrderItem, m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem }, OfType = m.PurchaseOrder.Class },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

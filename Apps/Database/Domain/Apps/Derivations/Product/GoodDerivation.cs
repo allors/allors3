@@ -18,11 +18,11 @@ namespace Allors.Database.Domain
         public GoodDerivation(M m) : base(m, new Guid("1e9d2e93-5f3d-4682-9051-a0fd3f89d68e")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.Good.ProductIdentifications),
-                new ChangedPattern(m.Good.LocalisedNames),
-                new ChangedPattern(m.Good.LocalisedDescriptions),
-                new ChangedPattern(m.LocalisedText.Text) { Steps = new IPropertyType[]{ m.LocalisedText.UnifiedProductWhereLocalisedName }, OfType = m.Good.Interface },
-                new ChangedPattern(m.LocalisedText.Text) { Steps = new IPropertyType[]{ m.LocalisedText.UnifiedProductWhereLocalisedDescription}, OfType = m.Good.Interface  },
+                new AssociationPattern(m.Good.ProductIdentifications),
+                new AssociationPattern(m.Good.LocalisedNames),
+                new AssociationPattern(m.Good.LocalisedDescriptions),
+                new AssociationPattern(m.LocalisedText.Text) { Steps = new IPropertyType[]{ m.LocalisedText.UnifiedProductWhereLocalisedName }, OfType = m.Good.Interface },
+                new AssociationPattern(m.LocalisedText.Text) { Steps = new IPropertyType[]{ m.LocalisedText.UnifiedProductWhereLocalisedDescription}, OfType = m.Good.Interface  },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

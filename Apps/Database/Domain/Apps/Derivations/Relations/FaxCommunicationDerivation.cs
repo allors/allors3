@@ -16,9 +16,9 @@ namespace Allors.Database.Domain
         public FaxCommunicationDerivation(M m) : base(m, new Guid("A6D89A8A-641F-4D11-8E92-CC10A7A2A89E")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.FaxCommunication.Subject),
-                new ChangedPattern(m.FaxCommunication.ToParty),
-                new ChangedPattern(m.Party.PartyName) { Steps = new IPropertyType[] { m.Party.CommunicationEventsWhereToParty}, OfType = m.FaxCommunication.Class },
+                new AssociationPattern(m.FaxCommunication.Subject),
+                new AssociationPattern(m.FaxCommunication.ToParty),
+                new AssociationPattern(m.Party.PartyName) { Steps = new IPropertyType[] { m.Party.CommunicationEventsWhereToParty}, OfType = m.FaxCommunication.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

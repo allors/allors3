@@ -375,6 +375,14 @@ namespace Allors.Repository
         public PaymentMethod DerivedPaymentMethod { get; set; }
 
         #region Allors
+        [Id("3e1631d0-40bb-457f-aa04-2351cac53dc4")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Workspace]
+        public SalesInvoice CreditedFromInvoice { get; set; }
+
+        #region Allors
         [Id("C6F95A7F-C812-42A3-B215-7A110D9D6862")]
         [Indexed]
         #endregion

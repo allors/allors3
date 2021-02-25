@@ -16,11 +16,11 @@ namespace Allors.Database.Domain
         public SupplierOfferingDerivation(M m) : base(m, new Guid("0927C224-0233-4211-BB4F-5F62506D9635")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.SupplierOffering.FromDate),
-                new ChangedPattern(m.SupplierOffering.ThroughDate),
-                new ChangedPattern(m.SupplierOffering.Price),
-                new ChangedPattern(m.SupplierOffering.Part),
-                new ChangedPattern(m.SupplierOffering.Supplier),
+                new AssociationPattern(m.SupplierOffering.FromDate),
+                new AssociationPattern(m.SupplierOffering.ThroughDate),
+                new AssociationPattern(m.SupplierOffering.Price),
+                new AssociationPattern(m.SupplierOffering.Part),
+                new AssociationPattern(m.SupplierOffering.Supplier),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

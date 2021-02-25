@@ -16,13 +16,13 @@ namespace Allors.Database.Domain
         public PartQuantitiesDerivation(M m) : base(m, new Guid("d0fc5096-5ea8-4c50-8979-0ac66d43e6d0")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.InventoryItemTransaction.Quantity) { Steps = new IPropertyType[]{ m.InventoryItemTransaction.InventoryItem, m.InventoryItem.Part } },
-                new ChangedPattern(m.NonSerialisedInventoryItem.QuantityOnHand) { Steps = new IPropertyType[]{ m.NonSerialisedInventoryItem.Part } },
-                new ChangedPattern(m.SerialisedInventoryItem.Quantity) { Steps = new IPropertyType[]{ m.SerialisedInventoryItem.Part } },
-                new ChangedPattern(m.NonSerialisedInventoryItem.AvailableToPromise) { Steps = new IPropertyType[]{ m.NonSerialisedInventoryItem.Part } },
-                new ChangedPattern(m.SerialisedInventoryItem.SerialisedInventoryItemState) { Steps = new IPropertyType[]{ m.SerialisedInventoryItem.Part } },
-                new ChangedPattern(m.NonSerialisedInventoryItem.QuantityCommittedOut) { Steps = new IPropertyType[]{ m.NonSerialisedInventoryItem.Part } },
-                new ChangedPattern(m.NonSerialisedInventoryItem.QuantityExpectedIn) { Steps = new IPropertyType[]{ m.NonSerialisedInventoryItem.Part } },
+                new AssociationPattern(m.InventoryItemTransaction.Quantity) { Steps = new IPropertyType[]{ m.InventoryItemTransaction.InventoryItem, m.InventoryItem.Part } },
+                new AssociationPattern(m.NonSerialisedInventoryItem.QuantityOnHand) { Steps = new IPropertyType[]{ m.NonSerialisedInventoryItem.Part } },
+                new AssociationPattern(m.SerialisedInventoryItem.Quantity) { Steps = new IPropertyType[]{ m.SerialisedInventoryItem.Part } },
+                new AssociationPattern(m.NonSerialisedInventoryItem.AvailableToPromise) { Steps = new IPropertyType[]{ m.NonSerialisedInventoryItem.Part } },
+                new AssociationPattern(m.SerialisedInventoryItem.SerialisedInventoryItemState) { Steps = new IPropertyType[]{ m.SerialisedInventoryItem.Part } },
+                new AssociationPattern(m.NonSerialisedInventoryItem.QuantityCommittedOut) { Steps = new IPropertyType[]{ m.NonSerialisedInventoryItem.Part } },
+                new AssociationPattern(m.NonSerialisedInventoryItem.QuantityExpectedIn) { Steps = new IPropertyType[]{ m.NonSerialisedInventoryItem.Part } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

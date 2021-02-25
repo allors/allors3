@@ -15,10 +15,10 @@ namespace Allors.Database.Domain
         public WorkEffortTotalMaterialRevenueDerivation(M m) : base(m, new Guid("ccc168df-8e92-4635-8449-7b375d2bfb94")) =>
             this.Patterns = new[]
             {
-                new ChangedPattern(m.WorkEffortInventoryAssignment.Assignment) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
-                new ChangedPattern(m.WorkEffortInventoryAssignment.AssignedBillableQuantity) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
-                new ChangedPattern(m.WorkEffortInventoryAssignment.Quantity) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
-                new ChangedPattern(m.WorkEffortInventoryAssignment.UnitSellingPrice) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
+                new AssociationPattern(m.WorkEffortInventoryAssignment.Assignment) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
+                new AssociationPattern(m.WorkEffortInventoryAssignment.AssignedBillableQuantity) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
+                new AssociationPattern(m.WorkEffortInventoryAssignment.Quantity) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
+                new AssociationPattern(m.WorkEffortInventoryAssignment.UnitSellingPrice) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

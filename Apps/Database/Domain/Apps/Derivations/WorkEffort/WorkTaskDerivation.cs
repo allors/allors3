@@ -18,17 +18,17 @@ namespace Allors.Database.Domain
         public WorkTaskDerivation(M m) : base(m, new Guid("12794dc5-8a79-4983-b480-4324602ae717")) =>
             this.Patterns = new Pattern[]
         {
-            new ChangedPattern(m.WorkTask.TakenBy),
-            new ChangedPattern(m.WorkTask.ExecutedBy),
-            new ChangedPattern(m.WorkTask.ActualStart),
-            new ChangedPattern(m.WorkTask.WorkEffortState),
-            new ChangedPattern(m.TimeEntry.FromDate) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
-            new ChangedPattern(m.TimeEntry.ThroughDate) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
-            new ChangedPattern(m.TimeEntry.WorkEffort) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
-            new ChangedPattern(m.TimeSheet.TimeEntries) { Steps = new IPropertyType[] { m.TimeSheet.TimeEntries, m.TimeEntry.WorkEffort} },
-            new ChangedPattern(m.WorkEffortInventoryAssignment.Assignment) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
-            new ChangedPattern(m.WorkEffortInventoryAssignment.Quantity) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
-            new ChangedPattern(m.WorkEffortInventoryAssignment.InventoryItem) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
+            new AssociationPattern(m.WorkTask.TakenBy),
+            new AssociationPattern(m.WorkTask.ExecutedBy),
+            new AssociationPattern(m.WorkTask.ActualStart),
+            new AssociationPattern(m.WorkTask.WorkEffortState),
+            new AssociationPattern(m.TimeEntry.FromDate) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
+            new AssociationPattern(m.TimeEntry.ThroughDate) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
+            new AssociationPattern(m.TimeEntry.WorkEffort) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
+            new AssociationPattern(m.TimeSheet.TimeEntries) { Steps = new IPropertyType[] { m.TimeSheet.TimeEntries, m.TimeEntry.WorkEffort} },
+            new AssociationPattern(m.WorkEffortInventoryAssignment.Assignment) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
+            new AssociationPattern(m.WorkEffortInventoryAssignment.Quantity) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
+            new AssociationPattern(m.WorkEffortInventoryAssignment.InventoryItem) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

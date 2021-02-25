@@ -16,19 +16,19 @@ namespace Allors.Database.Domain
         public QuoteCreatedDerivation(M m) : base(m, new Guid("b66c0721-4aa5-4ca7-91a0-534f6cfc6718")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.Quote.QuoteState),
-                new ChangedPattern(m.Quote.Issuer),
-                new ChangedPattern(m.Quote.Receiver),
-                new ChangedPattern(m.Quote.Locale),
-                new ChangedPattern(m.Quote.AssignedVatRegime),
-                new ChangedPattern(m.Quote.AssignedIrpfRegime),
-                new ChangedPattern(m.Quote.AssignedCurrency),
-                new ChangedPattern(m.Organisation.Locale) { Steps = new IPropertyType[] { m.Organisation.QuotesWhereIssuer }},
-                new ChangedPattern(m.Party.Locale) { Steps = new IPropertyType[] { m.Party.QuotesWhereReceiver }},
-                new ChangedPattern(m.Party.PreferredCurrency) { Steps = new IPropertyType[] { m.Party.QuotesWhereReceiver }},
-                new ChangedPattern(m.Party.VatRegime) { Steps = new IPropertyType[] { m.Party.QuotesWhereReceiver }},
-                new ChangedPattern(m.Party.IrpfRegime) { Steps = new IPropertyType[] { m.Party.QuotesWhereReceiver }},
-                new ChangedPattern(m.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { m.Organisation.QuotesWhereReceiver }},
+                new AssociationPattern(m.Quote.QuoteState),
+                new AssociationPattern(m.Quote.Issuer),
+                new AssociationPattern(m.Quote.Receiver),
+                new AssociationPattern(m.Quote.Locale),
+                new AssociationPattern(m.Quote.AssignedVatRegime),
+                new AssociationPattern(m.Quote.AssignedIrpfRegime),
+                new AssociationPattern(m.Quote.AssignedCurrency),
+                new AssociationPattern(m.Organisation.Locale) { Steps = new IPropertyType[] { m.Organisation.QuotesWhereIssuer }},
+                new AssociationPattern(m.Party.Locale) { Steps = new IPropertyType[] { m.Party.QuotesWhereReceiver }},
+                new AssociationPattern(m.Party.PreferredCurrency) { Steps = new IPropertyType[] { m.Party.QuotesWhereReceiver }},
+                new AssociationPattern(m.Party.VatRegime) { Steps = new IPropertyType[] { m.Party.QuotesWhereReceiver }},
+                new AssociationPattern(m.Party.IrpfRegime) { Steps = new IPropertyType[] { m.Party.QuotesWhereReceiver }},
+                new AssociationPattern(m.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { m.Organisation.QuotesWhereReceiver }},
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

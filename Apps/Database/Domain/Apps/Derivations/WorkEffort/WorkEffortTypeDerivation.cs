@@ -17,9 +17,9 @@ namespace Allors.Database.Domain
         public WorkEffortTypeDerivation(M m) : base(m, new Guid("765b3252-66a0-4358-8f7b-1765a1d8cf53")) =>
             this.Patterns = new Pattern[]
         {
-            new ChangedPattern(m.WorkEffortType.WorkEffortPartStandards),
-            new ChangedPattern(m.WorkEffortPartStandard.FromDate) { Steps = new IPropertyType[] { m.WorkEffortPartStandard .WorkEffortTypeWhereWorkEffortPartStandard } },
-            new ChangedPattern(m.WorkEffortPartStandard.ThroughDate) { Steps = new IPropertyType[] { m.WorkEffortPartStandard .WorkEffortTypeWhereWorkEffortPartStandard } },
+            new AssociationPattern(m.WorkEffortType.WorkEffortPartStandards),
+            new AssociationPattern(m.WorkEffortPartStandard.FromDate) { Steps = new IPropertyType[] { m.WorkEffortPartStandard .WorkEffortTypeWhereWorkEffortPartStandard } },
+            new AssociationPattern(m.WorkEffortPartStandard.ThroughDate) { Steps = new IPropertyType[] { m.WorkEffortPartStandard .WorkEffortTypeWhereWorkEffortPartStandard } },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

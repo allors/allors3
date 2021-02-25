@@ -16,15 +16,15 @@ namespace Allors.Database.Domain
         public PurchaseInvoiceCreatedDerivation(M m) : base(m, new Guid("1982652b-9855-4f32-92b7-a2c46a887051")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.PurchaseInvoice.PurchaseInvoiceState),
-                new ChangedPattern(m.PurchaseInvoice.AssignedVatRegime),
-                new ChangedPattern(m.PurchaseInvoice.AssignedIrpfRegime),
-                new ChangedPattern(m.PurchaseInvoice.AssignedCurrency),
-                new ChangedPattern(m.PurchaseInvoice.BilledFrom),
-                new ChangedPattern(m.Party.VatRegime) { Steps = new IPropertyType[] { m.Party.PurchaseInvoicesWhereBilledFrom}},
-                new ChangedPattern(m.Party.IrpfRegime) { Steps = new IPropertyType[] { m.Party.PurchaseInvoicesWhereBilledFrom }},
-                new ChangedPattern(m.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { m.Organisation.PurchaseInvoicesWhereBilledTo }},
-                new ChangedPattern(m.OrderItemBilling.InvoiceItem) { Steps = new IPropertyType[] { m.OrderItemBilling.InvoiceItem, m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem }},
+                new AssociationPattern(m.PurchaseInvoice.PurchaseInvoiceState),
+                new AssociationPattern(m.PurchaseInvoice.AssignedVatRegime),
+                new AssociationPattern(m.PurchaseInvoice.AssignedIrpfRegime),
+                new AssociationPattern(m.PurchaseInvoice.AssignedCurrency),
+                new AssociationPattern(m.PurchaseInvoice.BilledFrom),
+                new AssociationPattern(m.Party.VatRegime) { Steps = new IPropertyType[] { m.Party.PurchaseInvoicesWhereBilledFrom}},
+                new AssociationPattern(m.Party.IrpfRegime) { Steps = new IPropertyType[] { m.Party.PurchaseInvoicesWhereBilledFrom }},
+                new AssociationPattern(m.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { m.Organisation.PurchaseInvoicesWhereBilledTo }},
+                new AssociationPattern(m.OrderItemBilling.InvoiceItem) { Steps = new IPropertyType[] { m.OrderItemBilling.InvoiceItem, m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem }},
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

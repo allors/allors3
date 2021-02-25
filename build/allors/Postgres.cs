@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
 using MysticMind.PostgresEmbed;
 using Nuke.Common;
-using Nuke.Common.IO;
 using Nuke.Common.Tools.Docker;
 using static Nuke.Common.Tools.Docker.DockerTasks;
 
@@ -18,7 +16,7 @@ partial class Build
                 .SetImage($"postgres")
                 .SetName($"pg")
                 .SetPublish("5432:5432")
-                .AddEnv("POSTGRES_USER=test")
+                .AddEnv("POSTGRES_USER=allors")
                 .AddEnv("POSTGRES_PASSWORD=Password1234"));
         });
 
@@ -28,15 +26,11 @@ partial class Build
 
         public Postgres()
         {
-            var pgServerParams = new Dictionary<string, string>
-            {
-                { "timezone", "UTC" },
-                { "synchronous_commit", "off" },
-            };
+            var pgServerParams = new Dictionary<string, string> {{"timezone", "UTC"}, {"synchronous_commit", "off"},};
 
             this.pgServer = new PgServer(
                 "10.7.1",
-                "test",
+                "allors",
                 port: 5432,
                 pgServerParams: pgServerParams,
                 addLocalUserAccessPermission: true,
@@ -50,6 +44,20 @@ partial class Build
             this.pgServer.Stop();
             this.pgServer.Dispose();
         }
+
+        public void Init(string database)
+        {
+            using var conn = new Npgsql.NpgsqlConnection($"Server=localhost;User Id=allors;Database=postgres");
+
+            using var cmd =
+                new Npgsql.NpgsqlCommand(
+                    @$"DROP DATABASE IF EXISTS {database};
+                            CREATE DATABASE {database};",
+                    conn);
+
+            conn.Open();
+            cmd.ExecuteNonQuery();
+            conn.Close();
+        }
     }
 }
-

@@ -17,10 +17,10 @@ namespace Allors.Database.Domain
         public PurchaseShipmentDerivation(M m) : base(m, new Guid("89A2FB27-6839-40D4-AFAB-79E25259B1C8")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.PurchaseShipment.ShipFromParty),
-                new ChangedPattern(m.PurchaseShipment.ShipFromAddress),
-                new ChangedPattern(m.PurchaseShipment.ShipToParty),
-                new ChangedPattern(m.PurchaseShipment.ShipToAddress),
+                new AssociationPattern(m.PurchaseShipment.ShipFromParty),
+                new AssociationPattern(m.PurchaseShipment.ShipFromAddress),
+                new AssociationPattern(m.PurchaseShipment.ShipToParty),
+                new AssociationPattern(m.PurchaseShipment.ShipToAddress),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
