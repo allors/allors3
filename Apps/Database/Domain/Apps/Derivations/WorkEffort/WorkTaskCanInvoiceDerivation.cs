@@ -39,9 +39,14 @@ namespace Allors.Database.Domain
                         @this.CanInvoice = false;
                     }
 
-                    if (@this.ExistWorkEffortBillingsWhereWorkEffort)
+                    foreach (WorkEffortBilling workEffortBilling in @this.WorkEffortBillingsWhereWorkEffort)
                     {
-                        @this.CanInvoice = false;
+                        if (workEffortBilling.InvoiceItem is SalesInvoiceItem invoiceItem
+                            && invoiceItem.SalesInvoiceWhereSalesInvoiceItem.SalesInvoiceType.IsSalesInvoice
+                            && !invoiceItem.SalesInvoiceWhereSalesInvoiceItem.ExistSalesInvoiceWhereCreditedFromInvoice)
+                        {
+                            @this.CanInvoice = false;
+                        }
                     }
 
                     if (@this.CanInvoice)
@@ -52,11 +57,6 @@ namespace Allors.Database.Domain
                             {
                                 @this.CanInvoice = false;
                                 break;
-                            }
-
-                            if (timeEntry.ExistTimeEntryBillingsWhereTimeEntry)
-                            {
-                                @this.CanInvoice = false;
                             }
                         }
                     }
