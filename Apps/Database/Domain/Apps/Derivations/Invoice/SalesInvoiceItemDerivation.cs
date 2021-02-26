@@ -18,18 +18,18 @@ namespace Allors.Database.Domain
         public SalesInvoiceItemDerivation(M m) : base(m, new Guid("37C0910B-7C48-46B5-8F7A-F6B2E70BE05C")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.SalesInvoiceItem.Product),
-                new ChangedPattern(m.SalesInvoiceItem.ProductFeatures),
-                new ChangedPattern(m.SalesInvoiceItem.Part),
-                new ChangedPattern(m.SalesInvoiceItem.SerialisedItem),
-                new ChangedPattern(m.SalesInvoiceItem.InvoiceItemType),
-                new ChangedPattern(m.SalesInvoiceItem.AssignedVatRegime),
-                new ChangedPattern(m.SalesInvoiceItem.AssignedIrpfRegime),
-                new ChangedPattern(m.SalesInvoice.SalesInvoiceItems) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
-                new ChangedPattern(m.SalesInvoice.SalesInvoiceState) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
-                new ChangedPattern(m.SalesInvoice.DerivedVatRegime) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
-                new ChangedPattern(m.SalesInvoice.DerivedIrpfRegime) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
-                new ChangedPattern(m.PaymentApplication.AmountApplied) { Steps =  new IPropertyType[] {this.M.PaymentApplication.InvoiceItem}, OfType = m.SalesInvoiceItem.Class },
+                new AssociationPattern(m.SalesInvoiceItem.Product),
+                new AssociationPattern(m.SalesInvoiceItem.ProductFeatures),
+                new AssociationPattern(m.SalesInvoiceItem.Part),
+                new AssociationPattern(m.SalesInvoiceItem.SerialisedItem),
+                new AssociationPattern(m.SalesInvoiceItem.InvoiceItemType),
+                new AssociationPattern(m.SalesInvoiceItem.AssignedVatRegime),
+                new AssociationPattern(m.SalesInvoiceItem.AssignedIrpfRegime),
+                new AssociationPattern(m.SalesInvoice.SalesInvoiceItems) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
+                new AssociationPattern(m.SalesInvoice.SalesInvoiceState) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
+                new AssociationPattern(m.SalesInvoice.DerivedVatRegime) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
+                new AssociationPattern(m.SalesInvoice.DerivedIrpfRegime) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
+                new AssociationPattern(m.PaymentApplication.AmountApplied) { Steps =  new IPropertyType[] {this.M.PaymentApplication.InvoiceItem}, OfType = m.SalesInvoiceItem.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -71,11 +71,6 @@ namespace Allors.Database.Domain
 
                 @this.DerivedIrpfRegime = @this.ExistAssignedIrpfRegime ? @this.AssignedIrpfRegime : @this.SalesInvoiceWhereSalesInvoiceItem?.DerivedIrpfRegime;
                 @this.IrpfRate = @this.DerivedIrpfRegime?.IrpfRate;
-
-                if (@this.ExistInvoiceItemType && @this.IsSubTotalItem().Result == true && @this.Quantity <= 0)
-                {
-                    validation.AssertExists(@this, @this.Meta.Quantity);
-                }
 
                 var amountPaid = 0M;
                 foreach (PaymentApplication paymentApplication in @this.PaymentApplicationsWhereInvoiceItem)

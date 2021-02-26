@@ -15,11 +15,11 @@ namespace Allors.Database.Domain
         public WorkEffortTotalLabourRevenueDerivation(M m) : base(m, new Guid("fb6c7fc1-e090-4c17-a799-1c562b258ec7")) =>
             this.Patterns = new[]
             {
-                new ChangedPattern(m.TimeEntry.WorkEffort) { Steps = new IPropertyType[] { m.ServiceEntry.WorkEffort } },
-                new ChangedPattern(m.TimeEntry.BillingAmount) { Steps = new IPropertyType[] { m.ServiceEntry.WorkEffort } },
-                new ChangedPattern(m.TimeEntry.IsBillable) { Steps = new IPropertyType[] { m.ServiceEntry.WorkEffort } },
-                new ChangedPattern(m.TimeEntry.AmountOfTime) { Steps = new IPropertyType[] { m.ServiceEntry.WorkEffort } },
-                new ChangedPattern(m.TimeEntry.BillableAmountOfTime) { Steps = new IPropertyType[] { m.ServiceEntry.WorkEffort } },
+                new AssociationPattern(m.TimeEntry.WorkEffort) { Steps = new IPropertyType[] { m.ServiceEntry.WorkEffort } },
+                new AssociationPattern(m.TimeEntry.BillingAmount) { Steps = new IPropertyType[] { m.ServiceEntry.WorkEffort } },
+                new AssociationPattern(m.TimeEntry.IsBillable) { Steps = new IPropertyType[] { m.ServiceEntry.WorkEffort } },
+                new AssociationPattern(m.TimeEntry.AmountOfTime) { Steps = new IPropertyType[] { m.ServiceEntry.WorkEffort } },
+                new AssociationPattern(m.TimeEntry.BillableAmountOfTime) { Steps = new IPropertyType[] { m.ServiceEntry.WorkEffort } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

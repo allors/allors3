@@ -19,34 +19,33 @@ namespace Allors.Database.Domain
         public SerialisedItemDerivation(M m) : base(m, new Guid("A871B4BB-3285-418F-9E10-5A786A6284DA")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.SerialisedItem.Name),
-                new ChangedPattern(m.SerialisedItem.ItemNumber),
-                new ChangedPattern(m.SerialisedItem.AcquiredDate),
-                new ChangedPattern(m.SerialisedItem.AcquisitionYear),
-                new ChangedPattern(m.SerialisedItem.SerialNumber),
-                new ChangedPattern(m.SerialisedItem.AssignedSuppliedBy),
-                new ChangedPattern(m.SerialisedItem.PurchaseOrder),
-                new ChangedPattern(m.SerialisedItem.OwnedBy),
-                new ChangedPattern(m.SerialisedItem.RentedBy),
-                new ChangedPattern(m.SerialisedItem.Ownership),
-                new ChangedPattern(m.SerialisedItem.Buyer),
-                new ChangedPattern(m.SerialisedItem.Seller),
-                new ChangedPattern(m.SerialisedItem.SerialisedItemAvailability),
-                new ChangedPattern(m.Part.SerialisedItems) { Steps = new IPropertyType[] { m.Part.SerialisedItems } },
-                new ChangedPattern(m.SupplierOffering.Part) { Steps = new IPropertyType[] { m.SupplierOffering.Part, m.Part.SerialisedItems } },
-                new ChangedPattern(m.QuoteItem.SerialisedItem) { Steps = new IPropertyType[] { m.QuoteItem.SerialisedItem } },
-                new ChangedPattern(m.QuoteItem.QuoteItemState) { Steps = new IPropertyType[] { m.QuoteItem.SerialisedItem } },
-                new ChangedPattern(m.SalesOrderItem.SerialisedItem) { Steps = new IPropertyType[] { m.SalesOrderItem.SerialisedItem } },
-                new ChangedPattern(m.SalesOrderItem.SalesOrderItemState) { Steps = new IPropertyType[] { m.SalesOrderItem.SerialisedItem } },
-                new ChangedPattern(m.WorkEffortFixedAssetAssignment.FixedAsset) { Steps = new IPropertyType[] { m.WorkEffortFixedAssetAssignment.FixedAsset } },
-                new ChangedPattern(m.WorkEffort.WorkEffortState) { Steps = new IPropertyType[] { m.WorkEffort.WorkEffortFixedAssetAssignmentsWhereAssignment, m.WorkEffortFixedAssetAssignment.FixedAsset } },
-                new ChangedPattern(m.Part.ProductType) { Steps = new IPropertyType[] { m.Part.SerialisedItems } },
-                new ChangedPattern(m.ProductType.SerialisedItemCharacteristicTypes) { Steps = new IPropertyType[]{ this.M.ProductType.PartsWhereProductType, m.Part.SerialisedItems } },
-                new ChangedPattern(m.Part.Brand) { Steps = new IPropertyType[] { m.Part.SerialisedItems } },
-                new ChangedPattern(m.Part.Model) { Steps = new IPropertyType[] { m.Part.SerialisedItems } },
-                new ChangedPattern(m.Brand.Name) { Steps = new IPropertyType[] { m.Brand.PartsWhereBrand, m.Part.SerialisedItems } },
-                new ChangedPattern(m.Model.Name) { Steps = new IPropertyType[] { m.Model.PartsWhereModel, m.Part.SerialisedItems } },
-                new ChangedPattern(m.ProductCategory.AllProducts) { Steps = new IPropertyType[]{ m.ProductCategory.AllProducts, m.Part.SerialisedItems } },
+                new AssociationPattern(m.SerialisedItem.Name),
+                new AssociationPattern(m.SerialisedItem.ItemNumber),
+                new AssociationPattern(m.SerialisedItem.AcquiredDate),
+                new AssociationPattern(m.SerialisedItem.AcquisitionYear),
+                new AssociationPattern(m.SerialisedItem.SerialNumber),
+                new AssociationPattern(m.SerialisedItem.AssignedSuppliedBy),
+                new AssociationPattern(m.SerialisedItem.PurchaseOrder),
+                new AssociationPattern(m.SerialisedItem.OwnedBy),
+                new AssociationPattern(m.SerialisedItem.RentedBy),
+                new AssociationPattern(m.SerialisedItem.Ownership),
+                new AssociationPattern(m.SerialisedItem.Buyer),
+                new AssociationPattern(m.SerialisedItem.Seller),
+                new AssociationPattern(m.SerialisedItem.SerialisedItemAvailability),
+                new AssociationPattern(m.Part.SerialisedItems) { Steps = new IPropertyType[] { m.Part.SerialisedItems } },
+                new AssociationPattern(m.SupplierOffering.Part) { Steps = new IPropertyType[] { m.SupplierOffering.Part, m.Part.SerialisedItems } },
+                new AssociationPattern(m.QuoteItem.SerialisedItem) { Steps = new IPropertyType[] { m.QuoteItem.SerialisedItem } },
+                new AssociationPattern(m.QuoteItem.QuoteItemState) { Steps = new IPropertyType[] { m.QuoteItem.SerialisedItem } },
+                new AssociationPattern(m.SalesOrderItem.SerialisedItem) { Steps = new IPropertyType[] { m.SalesOrderItem.SerialisedItem } },
+                new AssociationPattern(m.SalesOrderItem.SalesOrderItemState) { Steps = new IPropertyType[] { m.SalesOrderItem.SerialisedItem } },
+                new AssociationPattern(m.WorkEffortFixedAssetAssignment.FixedAsset) { Steps = new IPropertyType[] { m.WorkEffortFixedAssetAssignment.FixedAsset } },
+                new AssociationPattern(m.WorkEffort.WorkEffortState) { Steps = new IPropertyType[] { m.WorkEffort.WorkEffortFixedAssetAssignmentsWhereAssignment, m.WorkEffortFixedAssetAssignment.FixedAsset } },
+                new AssociationPattern(m.Part.ProductType) { Steps = new IPropertyType[] { m.Part.SerialisedItems } },
+                new AssociationPattern(m.ProductType.SerialisedItemCharacteristicTypes) { Steps = new IPropertyType[]{ this.M.ProductType.PartsWhereProductType, m.Part.SerialisedItems } },
+                new AssociationPattern(m.Part.Brand) { Steps = new IPropertyType[] { m.Part.SerialisedItems } },
+                new AssociationPattern(m.Part.Model) { Steps = new IPropertyType[] { m.Part.SerialisedItems } },
+                new AssociationPattern(m.Brand.Name) { Steps = new IPropertyType[] { m.Brand.PartsWhereBrand, m.Part.SerialisedItems } },
+                new AssociationPattern(m.Model.Name) { Steps = new IPropertyType[] { m.Model.PartsWhereModel, m.Part.SerialisedItems } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -161,8 +160,6 @@ namespace Allors.Database.Domain
 
                 builder.Append(string.Join(" ", @this.Keywords));
                 @this.SearchString = builder.ToString();
-
-                @this.DeriveDisplayProductCategories();
             }
         }
     }

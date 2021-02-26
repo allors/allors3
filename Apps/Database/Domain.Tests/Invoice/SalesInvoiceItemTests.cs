@@ -199,36 +199,11 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void GivenInvoiceItem_WhenDeriving_ThenRequiredRelationsMustExist()
-        {
-            this.InstantiateObjects(this.Transaction);
-
-            var builder = new SalesInvoiceItemBuilder(this.Transaction);
-            builder.Build();
-
-            Assert.True(this.Transaction.Derive(false).HasErrors);
-
-            this.Transaction.Rollback();
-
-            builder.WithProduct(this.good);
-            builder.Build();
-
-            Assert.False(this.Transaction.Derive(false).HasErrors);
-
-            this.Transaction.Rollback();
-
-            builder.WithProductFeature(this.feature1);
-            builder.Build();
-
-            Assert.True(this.Transaction.Derive(false).HasErrors);
-        }
-
-        [Fact]
         public void GivenInvoiceItem_WhenBuild_ThenPostBuildRelationsMustExist()
         {
             this.InstantiateObjects(this.Transaction);
 
-            var item = new SalesInvoiceItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(this.good).Build();
+            var item = new SalesInvoiceItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(this.good).WithQuantity(1).Build();
 
             this.Transaction.Derive();
 
@@ -2354,6 +2329,37 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(false);
 
             Assert.Equal(new SalesInvoiceItemStates(this.Transaction).ReadyForPosting, invoiceItem.SalesInvoiceItemState);
+        }
+    }
+
+    public class SalesInvoiceItemSubTotalItemDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesInvoiceItemSubTotalItemDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedItemInvoiceItemTypeThrowvalidationError()
+        {
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithQuantity(0).Build();
+            this.Transaction.Derive(false);
+
+            invoiceItem.InvoiceItemType = new InvoiceItemTypes(this.Transaction).PartItem;
+
+            var expectedMessage = $"{invoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}";
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+        }
+
+        [Fact]
+        public void ChangedQuantityThrowvalidationError()
+        {
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).PartItem).WithQuantity(1).Build();
+            this.Transaction.Derive(false);
+
+            invoiceItem.Quantity = 0;
+
+            var expectedMessage = $"{invoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}";
+            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
     }
 

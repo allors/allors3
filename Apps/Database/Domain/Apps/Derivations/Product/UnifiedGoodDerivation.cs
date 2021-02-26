@@ -18,17 +18,17 @@ namespace Allors.Database.Domain
         public UnifiedGoodDerivation(M m) : base(m, new Guid("B1C14106-C300-453D-989B-81E05767CFC4")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.UnifiedGood.DerivationTrigger),
-                new ChangedPattern(m.UnifiedGood.ProductIdentifications),
-                new ChangedPattern(m.UnifiedGood.Keywords),
-                new ChangedPattern(m.UnifiedGood.Variants),
-                new ChangedPattern(m.UnifiedGood.SerialisedItems),
-                new ChangedPattern(m.UnifiedGood.ProductType),
-                new ChangedPattern(m.UnifiedGood.Brand),
-                new ChangedPattern(m.UnifiedGood.Model),
-                new ChangedPattern(m.ProductCategory.AllProducts) { Steps = new IPropertyType[]{ m.ProductCategory.AllProducts }, OfType = m.UnifiedGood.Class },
-                new ChangedPattern(m.PriceComponent.Product) { Steps = new IPropertyType[] {m.PriceComponent.Product }, OfType = m.UnifiedGood.Class },
-                new ChangedPattern(m.SupplierOffering.Part) { Steps = new IPropertyType[] {m.SupplierOffering.Part }, OfType = m.UnifiedGood.Class },
+                new AssociationPattern(m.UnifiedGood.DerivationTrigger),
+                new AssociationPattern(m.UnifiedGood.ProductIdentifications),
+                new AssociationPattern(m.UnifiedGood.Keywords),
+                new AssociationPattern(m.UnifiedGood.Variants),
+                new AssociationPattern(m.UnifiedGood.SerialisedItems),
+                new AssociationPattern(m.UnifiedGood.ProductType),
+                new AssociationPattern(m.UnifiedGood.Brand),
+                new AssociationPattern(m.UnifiedGood.Model),
+                new AssociationPattern(m.ProductCategory.AllProducts) { Steps = new IPropertyType[]{ m.ProductCategory.AllProducts }, OfType = m.UnifiedGood.Class },
+                new AssociationPattern(m.PriceComponent.Product) { Steps = new IPropertyType[] {m.PriceComponent.Product }, OfType = m.UnifiedGood.Class },
+                new AssociationPattern(m.SupplierOffering.Part) { Steps = new IPropertyType[] {m.SupplierOffering.Part }, OfType = m.UnifiedGood.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

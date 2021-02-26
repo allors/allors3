@@ -33,6 +33,26 @@ namespace Allors.Database.Domain.Tests
         public QuoteCreatedDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
+        public void ChangedQuoteStateDeriveDerivedLocaleFromLocale()
+        {
+            var swedishLocale = new LocaleBuilder(this.Transaction)
+               .WithCountry(new Countries(this.Transaction).FindBy(this.M.Country.IsoCode, "SE"))
+               .WithLanguage(new Languages(this.Transaction).FindBy(this.M.Language.IsoCode, "sv"))
+               .Build();
+
+            var quote = new ProductQuoteBuilder(this.Transaction).WithQuoteState(new QuoteStates(this.Transaction).Cancelled).Build();
+            this.Transaction.Derive(false);
+
+            quote.Locale = swedishLocale;
+            this.Transaction.Derive(false);
+
+            quote.QuoteState = new QuoteStates(this.Transaction).Created;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(quote.DerivedLocale, swedishLocale);
+        }
+
+        [Fact]
         public void ChangedReceiverDeriveDerivedLocaleFromReceiverLocale()
         {
             var swedishLocale = new LocaleBuilder(this.Transaction)
@@ -337,6 +357,32 @@ namespace Allors.Database.Domain.Tests
     public class QuotePriceDerivationTests : DomainTest, IClassFixture<Fixture>
     {
         public QuotePriceDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void OnChangedQuoteStateCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
+
+            new BasePriceBuilder(this.Transaction)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .Build();
+
+            var quote = new ProductQuoteBuilder(this.Transaction).WithQuoteState(new QuoteStates(this.Transaction).Cancelled).Build();
+            this.Transaction.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Transaction.Derive(false);
+
+            Assert.Equal(0, quote.TotalIncVat);
+
+            quote.QuoteState = new QuoteStates(this.Transaction).Created;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(1, quote.TotalIncVat);
+        }
 
         [Fact]
         public void OnChangedValidQuoteItemsCalculatePrice()

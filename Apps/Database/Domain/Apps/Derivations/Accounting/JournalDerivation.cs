@@ -18,8 +18,8 @@ namespace Allors.Database.Domain
         public JournalDerivation(M m) : base(m, new Guid("c52af46b-1cbd-47cd-a00f-76aa5c232db3")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.Journal.ContraAccount),
-                new ChangedPattern(m.Journal.JournalType),
+                new AssociationPattern(m.Journal.ContraAccount),
+                new AssociationPattern(m.Journal.JournalType),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

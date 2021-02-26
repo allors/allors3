@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
         public BankDerivation(M m) : base(m, new Guid("ee111e64-2d19-445a-b451-d2b23aadbf10")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.Bank.Bic),
+                new AssociationPattern(m.Bank.Bic),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

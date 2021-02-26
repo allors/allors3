@@ -182,7 +182,7 @@ namespace Allors.Database.Domain
         {
             if (@this.InvoiceSequence.Equals(new InvoiceSequences(@this.Transaction()).EnforcedSequence))
             {
-                return string.Concat(@this.PurchaseInvoiceNumberPrefix, @this.PurchaseInvoiceNumberCounter.NextValue()).Replace("{year}", year.ToString());
+                return string.Concat(@this.PurchaseInvoiceNumberPrefix, @this.PurchaseInvoiceNumberCounter?.NextValue()).Replace("{year}", year.ToString());
             }
             else
             {
@@ -202,7 +202,7 @@ namespace Allors.Database.Domain
         {
             if (@this.QuoteSequence.Equals(new QuoteSequences(@this.Transaction()).EnforcedSequence))
             {
-                return string.Concat(@this.QuoteNumberPrefix, @this.QuoteNumberCounter.NextValue()).Replace("{year}", year.ToString());
+                return string.Concat(@this.QuoteNumberPrefix, @this.QuoteNumberCounter?.NextValue()).Replace("{year}", year.ToString());
             }
             else
             {
@@ -222,7 +222,7 @@ namespace Allors.Database.Domain
         {
             if (@this.RequestSequence.Equals(new RequestSequences(@this.Transaction()).EnforcedSequence))
             {
-                return string.Concat(@this.RequestNumberPrefix, @this.RequestNumberCounter.NextValue()).Replace("{year}", year.ToString());
+                return string.Concat(@this.RequestNumberPrefix, @this.RequestNumberCounter?.NextValue()).Replace("{year}", year.ToString());
             }
             else
             {
@@ -242,7 +242,7 @@ namespace Allors.Database.Domain
         {
             if (@this.PurchaseShipmentSequence.Equals(new PurchaseShipmentSequences(@this.Transaction()).EnforcedSequence))
             {
-                return string.Concat(@this.PurchaseShipmentNumberPrefix, @this.PurchaseShipmentNumberCounter.NextValue()).Replace("{year}", year.ToString());
+                return string.Concat(@this.PurchaseShipmentNumberPrefix, @this.PurchaseShipmentNumberCounter?.NextValue()).Replace("{year}", year.ToString());
             }
             else
             {
@@ -262,7 +262,7 @@ namespace Allors.Database.Domain
         {
             if (@this.PurchaseShipmentSequence.Equals(new PurchaseShipmentSequences(@this.Transaction()).EnforcedSequence))
             {
-                return string.Concat(@this.CustomerReturnNumberPrefix, @this.CustomerReturnNumberCounter.NextValue()).Replace("{year}", year.ToString());
+                return string.Concat(@this.CustomerReturnNumberPrefix, @this.CustomerReturnNumberCounter?.NextValue()).Replace("{year}", year.ToString());
             }
             else
             {
@@ -282,7 +282,7 @@ namespace Allors.Database.Domain
         {
             if (@this.InvoiceSequence.Equals(new InvoiceSequences(@this.Transaction()).EnforcedSequence))
             {
-                return string.Concat(@this.PurchaseOrderNumberPrefix, @this.PurchaseOrderNumberCounter.NextValue()).Replace("{year}", year.ToString());
+                return string.Concat(@this.PurchaseOrderNumberPrefix, @this.PurchaseOrderNumberCounter?.NextValue()).Replace("{year}", year.ToString());
             }
             else
             {
@@ -302,7 +302,7 @@ namespace Allors.Database.Domain
         {
             if (@this.WorkEffortSequence.Equals(new WorkEffortSequences(@this.Transaction()).EnforcedSequence))
             {
-                return string.Concat(@this.WorkEffortNumberPrefix, @this.WorkEffortNumberCounter.NextValue()).Replace("{year}", year.ToString());
+                return string.Concat(@this.WorkEffortNumberPrefix, @this.WorkEffortNumberCounter?.NextValue()).Replace("{year}", year.ToString());
             }
             else
             {

@@ -233,15 +233,6 @@ namespace Allors.Repository
         [Workspace(Default)]
         public decimal CostOfGoodsSold { get; set; }
 
-        #region Allors
-
-        [Id("5EFBB240-3B6B-47C4-8696-C7063ACBE074")]
-
-        #endregion
-        public void IsSubTotalItem()
-        {
-        }
-
         #region inherited methods
 
         public void OnBuild() { }

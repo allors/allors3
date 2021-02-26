@@ -17,16 +17,16 @@ namespace Allors.Database.Domain
         public NonUnifiedPartDerivation(M m) : base(m, new Guid("280E12F5-C2EA-4D9A-BEDA-D30F229D46A3")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.NonUnifiedPart.ProductIdentifications),
-                new ChangedPattern(m.NonUnifiedPart.Keywords),
-                new ChangedPattern(m.NonUnifiedPart.LocalisedNames),
-                new ChangedPattern(m.NonUnifiedPart.SerialisedItems),
-                new ChangedPattern(m.NonUnifiedPart.ProductType),
-                new ChangedPattern(m.NonUnifiedPart.Brand),
-                new ChangedPattern(m.NonUnifiedPart.Model),
-                new ChangedPattern(m.LocalisedText.Text) { Steps = new IPropertyType[]{ m.LocalisedText.UnifiedProductWhereLocalisedName }, OfType = m.NonUnifiedPart.Class },
-                new ChangedPattern(m.PartCategory.Parts) { Steps = new IPropertyType[]{ m.PartCategory.Parts }, OfType = m.NonUnifiedPart.Class  },
-                new ChangedPattern(m.SupplierOffering.Part) { Steps = new IPropertyType[] {m.SupplierOffering.Part }, OfType = m.NonUnifiedPart.Class },
+                new AssociationPattern(m.NonUnifiedPart.ProductIdentifications),
+                new AssociationPattern(m.NonUnifiedPart.Keywords),
+                new AssociationPattern(m.NonUnifiedPart.LocalisedNames),
+                new AssociationPattern(m.NonUnifiedPart.SerialisedItems),
+                new AssociationPattern(m.NonUnifiedPart.ProductType),
+                new AssociationPattern(m.NonUnifiedPart.Brand),
+                new AssociationPattern(m.NonUnifiedPart.Model),
+                new AssociationPattern(m.LocalisedText.Text) { Steps = new IPropertyType[]{ m.LocalisedText.UnifiedProductWhereLocalisedName }, OfType = m.NonUnifiedPart.Class },
+                new AssociationPattern(m.PartCategory.Parts) { Steps = new IPropertyType[]{ m.PartCategory.Parts }, OfType = m.NonUnifiedPart.Class  },
+                new AssociationPattern(m.SupplierOffering.Part) { Steps = new IPropertyType[] {m.SupplierOffering.Part }, OfType = m.NonUnifiedPart.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

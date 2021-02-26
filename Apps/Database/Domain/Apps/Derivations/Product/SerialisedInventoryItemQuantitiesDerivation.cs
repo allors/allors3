@@ -16,10 +16,10 @@ namespace Allors.Database.Domain
         public SerialisedInventoryItemQuantitiesDerivation(M m) : base(m, new Guid("0dd99432-c8e6-4278-8f49-fb1a4d7d6ddc")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.SerialisedInventoryItem.SerialisedInventoryItemState),
-                new ChangedPattern(m.InventoryItemTransaction.InventoryItem) { Steps = new IPropertyType[] {m.InventoryItemTransaction.InventoryItem }, OfType = m.SerialisedInventoryItem.Class },
-                new ChangedPattern(m.InventoryItemTransaction.Quantity) { Steps = new IPropertyType[] {m.InventoryItemTransaction.InventoryItem }, OfType = m.SerialisedInventoryItem.Class },
-                new ChangedPattern(m.PickListItem.InventoryItem) { Steps = new IPropertyType[] {m.PickListItem.InventoryItem }, OfType = m.SerialisedInventoryItem.Class },
+                new AssociationPattern(m.SerialisedInventoryItem.SerialisedInventoryItemState),
+                new AssociationPattern(m.InventoryItemTransaction.InventoryItem) { Steps = new IPropertyType[] {m.InventoryItemTransaction.InventoryItem }, OfType = m.SerialisedInventoryItem.Class },
+                new AssociationPattern(m.InventoryItemTransaction.Quantity) { Steps = new IPropertyType[] {m.InventoryItemTransaction.InventoryItem }, OfType = m.SerialisedInventoryItem.Class },
+                new AssociationPattern(m.PickListItem.InventoryItem) { Steps = new IPropertyType[] {m.PickListItem.InventoryItem }, OfType = m.SerialisedInventoryItem.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

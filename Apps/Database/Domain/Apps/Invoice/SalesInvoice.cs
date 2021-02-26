@@ -400,6 +400,7 @@ namespace Allors.Database.Domain
         public SalesInvoice BaseCredit(SalesInvoiceCredit method)
         {
             var salesInvoice = new SalesInvoiceBuilder(this.Strategy.Transaction)
+                .WithCreditedFromInvoice(this)
                 .WithPurchaseInvoice(this.PurchaseInvoice)
                 .WithBilledFrom(this.BilledFrom)
                 .WithAssignedBilledFromContactMechanism(this.DerivedBilledFromContactMechanism)
@@ -479,6 +480,16 @@ namespace Allors.Database.Domain
 
                 invoiceItem.ProductFeatures = salesInvoiceItem.ProductFeatures;
                 salesInvoice.AddSalesInvoiceItem(invoiceItem);
+
+                foreach (WorkEffortBilling workEffortBilling in salesInvoiceItem.WorkEffortBillingsWhereInvoiceItem)
+                {
+                    new WorkEffortBillingBuilder(this.Strategy.Transaction)
+                        .WithWorkEffort(workEffortBilling.WorkEffort)
+                        .WithInvoiceItem(invoiceItem)
+                        .Build();
+
+                    workEffortBilling.WorkEffort.CanInvoice = true;
+                }
             }
 
             return salesInvoice;

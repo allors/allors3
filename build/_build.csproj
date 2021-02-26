@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Npgsql" Version="5.0.3" />
     <PackageReference Include="NuGet.Packaging.Core" Version="5.8.1" />
     <PackageReference Include="Nuke.Common" Version="5.0.2" />
     <PackageReference Include="MartinCostello.SqlLocalDb" Version="3.0.0" />

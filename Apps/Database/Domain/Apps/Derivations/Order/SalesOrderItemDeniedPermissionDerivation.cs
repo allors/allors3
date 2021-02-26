@@ -16,9 +16,9 @@ namespace Allors.Database.Domain
         public SalesOrderItemDeniedPermissionDerivation(M m) : base(m, new Guid("84ff5d0c-c15d-426d-a019-ad8ab0bdbcf2")) =>
             this.Patterns = new Pattern[]
         {
-            new ChangedPattern(this.M.SalesOrderItem.TransitionalDeniedPermissions),
-            new ChangedPattern(this.M.SalesOrderItem.SalesOrderItemInvoiceState),
-            new ChangedPattern(this.M.SalesOrderItem.SalesOrderItemShipmentState),
+            new AssociationPattern(this.M.SalesOrderItem.TransitionalDeniedPermissions),
+            new AssociationPattern(this.M.SalesOrderItem.SalesOrderItemInvoiceState),
+            new AssociationPattern(this.M.SalesOrderItem.SalesOrderItemShipmentState),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

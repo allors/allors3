@@ -1,4 +1,4 @@
-// <copyright file="CreatedPattern.cs" company="Allors bvba">
+// <copyright file="ChangedRoles.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -8,10 +8,10 @@ namespace Allors.Workspace
 {
     using Meta;
 
-    public class CreatedPattern : Pattern
+    public class AssociationPattern : Pattern
     {
-        public CreatedPattern(IComposite composite) => this.Composite = composite;
+        public AssociationPattern(IRoleType roleType) => this.RoleType = roleType;
 
-        public IComposite Composite { get; set; }
+        public IRoleType RoleType { get; }
     }
 }

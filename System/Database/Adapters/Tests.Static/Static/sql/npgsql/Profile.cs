@@ -41,7 +41,7 @@ namespace Allors.Database.Adapters.Npgsql
             }
         }
 
-        protected string ConnectionString => $"Server=localhost; User Id=test; Password=Password1234; Database={this.database}; Pooling=false; CommandTimeout=300";
+        protected string ConnectionString => $"Server=localhost; User Id=allors; Database={this.database}; Pooling=false; CommandTimeout=300";
 
         public override IDatabase CreateDatabase()
         {
@@ -104,7 +104,7 @@ namespace Allors.Database.Adapters.Npgsql
                 using (var command = connection.CreateCommand())
                 {
                     var sql =
-@"SELECT ROUTINE_NAME, ROUTINE_DEFINITION 
+@"SELECT ROUTINE_NAME, ROUTINE_DEFINITION
 FROM INFORMATION_SCHEMA.ROUTINES
 WHERE lower(ROUTINE_NAME) = '" + procedure.ToLower() + @"'";
 
@@ -124,8 +124,8 @@ WHERE lower(ROUTINE_NAME) = '" + procedure.ToLower() + @"'";
                 using (var command = connection.CreateCommand())
                 {
                     var sql =
-@"select count(*) 
-from information_schema.constraint_column_usage 
+@"select count(*)
+from information_schema.constraint_column_usage
 where lower(table_name) = '" + table.ToLowerInvariant() + "' and lower(constraint_name) = '" + table.ToLowerInvariant() + "_pk'";
 
                     command.CommandText = sql;

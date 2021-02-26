@@ -10,7 +10,7 @@ namespace Allors.Database.Domain
     public partial class VatClauses
     {
         private static readonly Guid ServiceB2BId = new Guid("E4D1A217-2E99-4C6E-8D96-8050F99AABB4");
-        private static readonly Guid IntracommunautairId = new Guid("0FDBA90F-7E00-4E75-96A5-824CF2400ABE");
+        private static readonly Guid IntraCommunautairId = new Guid("0FDBA90F-7E00-4E75-96A5-824CF2400ABE");
         private static readonly Guid BeArt15Par2Id = new Guid("FE7D4204-B328-42F2-8C65-DE8A17AE3F5A");
         private static readonly Guid BeArt39Par1Item1Id = new Guid("5743B957-3C30-4EDB-B09F-D01D58D01F2E");
         private static readonly Guid BeArt39Par1Item2Id = new Guid("103F00B9-C6F9-4717-992B-26ADA4894912");
@@ -20,7 +20,7 @@ namespace Allors.Database.Domain
 
         public VatClause ServiceB2B => this.Cache[ServiceB2BId];
 
-        public VatClause Intracommunautair => this.Cache[IntracommunautairId];
+        public VatClause IntraCommunautair => this.Cache[IntraCommunautairId];
 
         public VatClause BeArt39Par1Item1 => this.Cache[BeArt39Par1Item1Id];
 
@@ -49,7 +49,7 @@ namespace Allors.Database.Domain
                 v.IsActive = true;
             });
 
-            merge(IntracommunautairId, v =>
+            merge(IntraCommunautairId, v =>
             {
                 v.Name = "Intracommunautair";
                 localisedName.Set(v, dutchBelgium, "Intracommunautair");

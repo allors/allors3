@@ -16,16 +16,16 @@ namespace Allors.Database.Domain
         public InternalOrganisationDerivation(M m) : base(m, new Guid("258A6E3B-7940-4FCC-A33E-AE07C6FBFC32")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.InternalOrganisation.DefaultCollectionMethod),
-                new ChangedPattern(this.M.InternalOrganisation.AssignedActiveCollectionMethods),
-                new ChangedPattern(this.M.InternalOrganisation.IsInternalOrganisation),
-                new ChangedPattern(this.M.InternalOrganisation.InvoiceSequence),
-                new ChangedPattern(this.M.InternalOrganisation.RequestSequence),
-                new ChangedPattern(this.M.InternalOrganisation.QuoteSequence),
-                new ChangedPattern(this.M.InternalOrganisation.WorkEffortSequence),
-                new ChangedPattern(this.M.InternalOrganisation.PurchaseShipmentSequence),
-                new ChangedPattern(this.M.InternalOrganisation.CustomerReturnSequence),
-                new ChangedPattern(this.M.InternalOrganisation.IncomingTransferSequence),
+                new AssociationPattern(this.M.InternalOrganisation.DefaultCollectionMethod),
+                new AssociationPattern(this.M.InternalOrganisation.AssignedActiveCollectionMethods),
+                new AssociationPattern(this.M.InternalOrganisation.IsInternalOrganisation),
+                new AssociationPattern(this.M.InternalOrganisation.InvoiceSequence),
+                new AssociationPattern(this.M.InternalOrganisation.RequestSequence),
+                new AssociationPattern(this.M.InternalOrganisation.QuoteSequence),
+                new AssociationPattern(this.M.InternalOrganisation.WorkEffortSequence),
+                new AssociationPattern(this.M.InternalOrganisation.PurchaseShipmentSequence),
+                new AssociationPattern(this.M.InternalOrganisation.CustomerReturnSequence),
+                new AssociationPattern(this.M.InternalOrganisation.IncomingTransferSequence),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

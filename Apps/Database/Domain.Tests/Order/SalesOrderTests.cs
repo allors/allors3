@@ -2501,6 +2501,31 @@ namespace Allors.Database.Domain.Tests
         public SalesOrderProvisionalDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
+        public void ChangedSalesOrderStateDeriveDerivedLocaleFromBillToCustomerLocale()
+        {
+            var swedishLocale = new LocaleBuilder(this.Transaction)
+               .WithCountry(new Countries(this.Transaction).FindBy(this.M.Country.IsoCode, "SE"))
+               .WithLanguage(new Languages(this.Transaction).FindBy(this.M.Language.IsoCode, "sv"))
+               .Build();
+
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.Locale = swedishLocale;
+
+            var order = new SalesOrderBuilder(this.Transaction).WithSalesOrderState(new SalesOrderStates(this.Transaction).Cancelled).Build();
+            this.Transaction.Derive(false);
+
+            order.BillToCustomer = customer;
+            this.Transaction.Derive(false);
+
+            Assert.False(order.ExistDerivedLocale);
+
+            order.SalesOrderState = new SalesOrderStates(this.Transaction).Provisional;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(order.DerivedLocale, customer.Locale);
+        }
+
+        [Fact]
         public void ChangedBillToCustomerDeriveDerivedLocaleFromBillToCustomerLocale()
         {
             var swedishLocale = new LocaleBuilder(this.Transaction)

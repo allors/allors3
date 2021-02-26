@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         public S12ChangedRoleDerivation(M m) : base(m, new Guid("475E8B38-21BB-40F9-AD67-9A7432F73CDD")) =>
             this.Patterns = new[]
             {
-                new ChangedPattern(this.M.S12.ChangedRolePing)
+                new AssociationPattern(this.M.S12.ChangedRolePing)
             };
 
 

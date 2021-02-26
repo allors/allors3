@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public SupplierRelationshipDerivation(M m) : base(m, new Guid("D0B8E2E4-3A11-474A-99FC-B39E4DDAD6E5")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.SupplierRelationship.Supplier),
-                new ChangedPattern(this.M.SupplierRelationship.InternalOrganisation),
+                new AssociationPattern(this.M.SupplierRelationship.Supplier),
+                new AssociationPattern(this.M.SupplierRelationship.InternalOrganisation),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

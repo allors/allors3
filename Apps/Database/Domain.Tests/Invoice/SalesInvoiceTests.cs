@@ -2381,6 +2381,32 @@ namespace Allors.Database.Domain.Tests
         public SalesInvoicePriceDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
+        public void OnChangedSalesInvoiceStateCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
+
+            var invoice = new SalesInvoiceBuilder(this.Transaction)
+                .WithSalesInvoiceState(new SalesInvoiceStates(this.Transaction).WrittenOff)
+                .WithInvoiceDate(this.Transaction.Now())
+                .Build();
+            this.Transaction.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(product).WithQuantity(1).WithAssignedUnitPrice(1).Build();
+            invoice.AddSalesInvoiceItem(invoiceItem);
+            this.Transaction.Derive(false);
+
+            Assert.Equal(0, invoice.TotalIncVat);
+
+            invoiceItem.SalesInvoiceItemState = new SalesInvoiceItemStates(this.Transaction).ReadyForPosting;
+            this.Transaction.Derive(false);
+
+            invoice.SalesInvoiceState = new SalesInvoiceStates(this.Transaction).ReadyForPosting;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+        }
+
+        [Fact]
         public void OnChangedValidInvoiceItemsCalculatePrice()
         {
             var invoice = new SalesInvoiceBuilder(this.Transaction).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();

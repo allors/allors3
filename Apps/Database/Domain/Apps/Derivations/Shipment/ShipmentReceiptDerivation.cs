@@ -16,12 +16,12 @@ namespace Allors.Database.Domain
         public ShipmentReceiptDerivation(M m) : base(m, new Guid("BE525828-2AAC-4996-98A0-08293485D7DD")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.ShipmentReceipt.ShipmentItem),
-                new ChangedPattern(this.M.ShipmentReceipt.OrderItem),
-                new ChangedPattern(this.M.ShipmentReceipt.QuantityAccepted),
-                new ChangedPattern(this.M.ShipmentReceipt.Facility),
-                new ChangedPattern(this.M.ShipmentItem.SerialisedItem) { Steps = new IPropertyType[] { m.ShipmentItem.ShipmentReceiptWhereShipmentItem } },
-                new ChangedPattern(this.M.ShipmentItem.Part) { Steps = new IPropertyType[] { m.ShipmentItem.ShipmentReceiptWhereShipmentItem } },
+                new AssociationPattern(this.M.ShipmentReceipt.ShipmentItem),
+                new AssociationPattern(this.M.ShipmentReceipt.OrderItem),
+                new AssociationPattern(this.M.ShipmentReceipt.QuantityAccepted),
+                new AssociationPattern(this.M.ShipmentReceipt.Facility),
+                new AssociationPattern(this.M.ShipmentItem.SerialisedItem) { Steps = new IPropertyType[] { m.ShipmentItem.ShipmentReceiptWhereShipmentItem } },
+                new AssociationPattern(this.M.ShipmentItem.Part) { Steps = new IPropertyType[] { m.ShipmentItem.ShipmentReceiptWhereShipmentItem } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

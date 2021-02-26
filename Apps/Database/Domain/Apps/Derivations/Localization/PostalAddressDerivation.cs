@@ -17,12 +17,12 @@ namespace Allors.Database.Domain
         public PostalAddressDerivation(M m) : base(m, new Guid("412c754a-4806-40ab-ac49-b5569bb9b9a9")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.PostalAddress.Address1),
-                new ChangedPattern(m.PostalAddress.Locality),
-                new ChangedPattern(m.PostalAddress.Region),
-                new ChangedPattern(m.PostalAddress.PostalCode),
-                new ChangedPattern(m.PostalAddress.Country),
-                new ChangedPattern(m.PostalAddress.PostalAddressBoundaries),
+                new AssociationPattern(m.PostalAddress.Address1),
+                new AssociationPattern(m.PostalAddress.Locality),
+                new AssociationPattern(m.PostalAddress.Region),
+                new AssociationPattern(m.PostalAddress.PostalCode),
+                new AssociationPattern(m.PostalAddress.Country),
+                new AssociationPattern(m.PostalAddress.PostalAddressBoundaries),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

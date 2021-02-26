@@ -16,10 +16,9 @@ namespace Allors.Database.Domain
         public WorkEffortPurchaseOrderItemAssignmentDerivation(M m) : base(m, new Guid("db1b303e-40e2-446a-a04c-a51521bc8fcd")) =>
             this.Patterns = new Pattern[]
         {
-            new ChangedPattern(m.WorkEffortPurchaseOrderItemAssignment.Assignment),
-            new ChangedPattern(m.WorkEffortPurchaseOrderItemAssignment.PurchaseOrderItem),
-            new ChangedPattern(m.WorkEffortPurchaseOrderItemAssignment.AssignedUnitSellingPrice),
-            new ChangedPattern(m.PurchaseOrderItem.UnitPrice) { Steps = new IPropertyType[] { m.PurchaseOrderItem.WorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrderItem } },
+            new AssociationPattern(m.WorkEffortPurchaseOrderItemAssignment.Assignment),
+            new AssociationPattern(m.WorkEffortPurchaseOrderItemAssignment.PurchaseOrderItem),
+            new AssociationPattern(m.PurchaseOrderItem.UnitPrice) { Steps = new IPropertyType[] { m.PurchaseOrderItem.WorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrderItem } },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -34,8 +33,6 @@ namespace Allors.Database.Domain
                     @this.PurchaseOrder = @this.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem;
                     @this.UnitPurchasePrice = @this.PurchaseOrderItem.UnitPrice;
                 }
-
-                @this.CalculateSellingPrice();
 
                 if (@this.ExistAssignment)
                 {

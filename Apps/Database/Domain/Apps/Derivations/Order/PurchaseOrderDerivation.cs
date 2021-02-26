@@ -18,16 +18,16 @@ namespace Allors.Database.Domain
         public PurchaseOrderDerivation(M m) : base(m, new Guid("C98B629B-12F8-4297-B6DA-FB0C36C56C39")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.PurchaseOrder.OrderedBy),
-                new ChangedPattern(m.PurchaseOrder.TakenViaSupplier),
-                new ChangedPattern(m.PurchaseOrder.TakenViaSubcontractor),
-                new ChangedPattern(m.PurchaseOrder.PurchaseOrderItems),
-                new ChangedPattern(m.PurchaseOrder.OrderDate),
-                new ChangedPattern(m.PurchaseOrderItem.PurchaseOrderItemState)  { Steps = new IPropertyType[] { m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem}},
-                new ChangedPattern(m.SupplierRelationship.FromDate) { Steps =  new IPropertyType[] {m.SupplierRelationship.Supplier, m.Organisation.PurchaseOrdersWhereTakenViaSupplier } },
-                new ChangedPattern(m.SupplierRelationship.ThroughDate) { Steps =  new IPropertyType[] {m.SupplierRelationship.Supplier, m.Organisation.PurchaseOrdersWhereTakenViaSupplier } },
-                new ChangedPattern(m.SubContractorRelationship.FromDate) { Steps =  new IPropertyType[] {m.SubContractorRelationship.SubContractor, m.Organisation.PurchaseOrdersWhereTakenViaSubcontractor } },
-                new ChangedPattern(m.SubContractorRelationship.ThroughDate) { Steps =  new IPropertyType[] {m.SubContractorRelationship.SubContractor, m.Organisation.PurchaseOrdersWhereTakenViaSubcontractor } },
+                new AssociationPattern(m.PurchaseOrder.OrderedBy),
+                new AssociationPattern(m.PurchaseOrder.TakenViaSupplier),
+                new AssociationPattern(m.PurchaseOrder.TakenViaSubcontractor),
+                new AssociationPattern(m.PurchaseOrder.PurchaseOrderItems),
+                new AssociationPattern(m.PurchaseOrder.OrderDate),
+                new AssociationPattern(m.PurchaseOrderItem.PurchaseOrderItemState)  { Steps = new IPropertyType[] { m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem}},
+                new AssociationPattern(m.SupplierRelationship.FromDate) { Steps =  new IPropertyType[] {m.SupplierRelationship.Supplier, m.Organisation.PurchaseOrdersWhereTakenViaSupplier } },
+                new AssociationPattern(m.SupplierRelationship.ThroughDate) { Steps =  new IPropertyType[] {m.SupplierRelationship.Supplier, m.Organisation.PurchaseOrdersWhereTakenViaSupplier } },
+                new AssociationPattern(m.SubContractorRelationship.FromDate) { Steps =  new IPropertyType[] {m.SubContractorRelationship.SubContractor, m.Organisation.PurchaseOrdersWhereTakenViaSubcontractor } },
+                new AssociationPattern(m.SubContractorRelationship.ThroughDate) { Steps =  new IPropertyType[] {m.SubContractorRelationship.SubContractor, m.Organisation.PurchaseOrdersWhereTakenViaSubcontractor } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -16,15 +16,15 @@ namespace Allors.Database.Domain
         public CommunicationEventDerivation(M m) : base(m, new Guid("6ABC8FDF-B4BC-40A2-9396-04292779E5F5")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.CommunicationEvent.Owner),
-                new ChangedPattern(m.CommunicationEvent.ActualStart),
-                new ChangedPattern(m.CommunicationEvent.ActualEnd),
-                new ChangedPattern(m.CommunicationEvent.ScheduledStart),
-                new ChangedPattern(m.CommunicationEvent.ScheduledEnd),
-                new ChangedPattern(m.CommunicationEvent.InitialScheduledStart),
-                new ChangedPattern(m.CommunicationEvent.InitialScheduledEnd),
-                new ChangedPattern(m.CommunicationEvent.FromParty),
-                new ChangedPattern(m.CommunicationEvent.ToParty),
+                new AssociationPattern(m.CommunicationEvent.Owner),
+                new AssociationPattern(m.CommunicationEvent.ActualStart),
+                new AssociationPattern(m.CommunicationEvent.ActualEnd),
+                new AssociationPattern(m.CommunicationEvent.ScheduledStart),
+                new AssociationPattern(m.CommunicationEvent.ScheduledEnd),
+                new AssociationPattern(m.CommunicationEvent.InitialScheduledStart),
+                new AssociationPattern(m.CommunicationEvent.InitialScheduledEnd),
+                new AssociationPattern(m.CommunicationEvent.FromParty),
+                new AssociationPattern(m.CommunicationEvent.ToParty),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

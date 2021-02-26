@@ -18,18 +18,18 @@ namespace Allors.Database.Domain
         public ShipmentItemDerivation(M m) : base(m, new Guid("472FF004-E087-4237-8BE4-D9B9194D3BB3")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.ShipmentItem.NextSerialisedItemAvailability),
-                new ChangedPattern(m.ShipmentItem.SerialisedItem),
-                new ChangedPattern(m.ShipmentItem.Quantity),
-                new ChangedPattern(m.ShipmentItem.UnitPurchasePrice),
-                new ChangedPattern(m.ShipmentItem.Part),
-                new ChangedPattern(m.ShipmentItem.StoredInFacility),
-                new ChangedPattern(m.ItemIssuance.Quantity) { Steps = new IPropertyType[] {m.ItemIssuance.ShipmentItem } },
-                new ChangedPattern(m.PickList.PickListState) { Steps = new IPropertyType[] {m.PickList.PickListItems, m.PickListItem.ItemIssuancesWherePickListItem, m.ItemIssuance.ShipmentItem } },
-                new ChangedPattern(m.Shipment.ShipmentState) { Steps = new IPropertyType[] {m.Shipment.ShipmentItems } },
-                new ChangedPattern(m.Shipment.ShipToFacility) { Steps = new IPropertyType[] {m.Shipment.ShipmentItems } },
-                new ChangedPattern(m.ShipmentReceipt.QuantityAccepted) { Steps = new IPropertyType[] {m.ShipmentReceipt.ShipmentItem } },
-                new ChangedPattern(m.ShipmentReceipt.QuantityRejected) { Steps = new IPropertyType[] {m.ShipmentReceipt.ShipmentItem } },
+                new AssociationPattern(m.ShipmentItem.NextSerialisedItemAvailability),
+                new AssociationPattern(m.ShipmentItem.SerialisedItem),
+                new AssociationPattern(m.ShipmentItem.Quantity),
+                new AssociationPattern(m.ShipmentItem.UnitPurchasePrice),
+                new AssociationPattern(m.ShipmentItem.Part),
+                new AssociationPattern(m.ShipmentItem.StoredInFacility),
+                new AssociationPattern(m.ItemIssuance.Quantity) { Steps = new IPropertyType[] {m.ItemIssuance.ShipmentItem } },
+                new AssociationPattern(m.PickList.PickListState) { Steps = new IPropertyType[] {m.PickList.PickListItems, m.PickListItem.ItemIssuancesWherePickListItem, m.ItemIssuance.ShipmentItem } },
+                new AssociationPattern(m.Shipment.ShipmentState) { Steps = new IPropertyType[] {m.Shipment.ShipmentItems } },
+                new AssociationPattern(m.Shipment.ShipToFacility) { Steps = new IPropertyType[] {m.Shipment.ShipmentItems } },
+                new AssociationPattern(m.ShipmentReceipt.QuantityAccepted) { Steps = new IPropertyType[] {m.ShipmentReceipt.ShipmentItem } },
+                new AssociationPattern(m.ShipmentReceipt.QuantityRejected) { Steps = new IPropertyType[] {m.ShipmentReceipt.ShipmentItem } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

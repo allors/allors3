@@ -17,9 +17,9 @@ namespace Allors.Database.Domain
         public InvoiceItemTotalIncVatDerivation(M m) : base(m, new Guid("DB8D8C77-4E1A-4775-A243-79C7A558CFE4")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.SalesInvoiceItem.TotalIncVat),
-                new ChangedPattern(m.PurchaseInvoiceItem.TotalIncVat),
-                new ChangedPattern(m.PaymentApplication.AmountApplied) { Steps =  new IPropertyType[] {this.M.PaymentApplication.InvoiceItem} },
+                new AssociationPattern(m.SalesInvoiceItem.TotalIncVat),
+                new AssociationPattern(m.PurchaseInvoiceItem.TotalIncVat),
+                new AssociationPattern(m.PaymentApplication.AmountApplied) { Steps =  new IPropertyType[] {this.M.PaymentApplication.InvoiceItem} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

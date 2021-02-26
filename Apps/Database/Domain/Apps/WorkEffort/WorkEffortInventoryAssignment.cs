@@ -17,59 +17,6 @@ namespace Allors.Database.Domain
             this.SyncInventoryTransactions(derivation, this.InventoryItem, this.Quantity, new InventoryTransactionReasons(transaction).Consumption, true);
         }
 
-        public void AppsCalculateBillableQuantity(WorkEffortInventoryAssignmentCalculateBillableQuantity method)
-        {
-            if (!method.Result.HasValue)
-            {
-                this.DerivedBillableQuantity = this.AssignedBillableQuantity ?? this.Quantity;
-
-                method.Result = true;
-            }
-        }
-
-        public void AppsCalculatePurchasePrice(WorkEffortInventoryAssignmentCalculatePurchasePrice method)
-        {
-            if (!method.Result.HasValue)
-            {
-                this.CostOfGoodsSold = this.Quantity * this.InventoryItem.Part.PartWeightedAverage.AverageCost;
-
-                method.Result = true;
-            }
-        }
-
-        public void AppsCalculateSellingPrice(WorkEffortInventoryAssignmentCalculateSellingPrice method)
-        {
-            if (!method.Result.HasValue)
-            {
-                if (this.AssignedUnitSellingPrice.HasValue)
-                {
-                    this.UnitSellingPrice = this.AssignedUnitSellingPrice.Value;
-                }
-                else
-                {
-                    var part = this.InventoryItem.Part;
-
-                    var currentPriceComponents = this.Assignment?.TakenBy?.PriceComponentsWherePricedBy
-                        .Where(v => v.FromDate <= this.Assignment.ScheduledStart && (!v.ExistThroughDate || v.ThroughDate >= this.Assignment.ScheduledStart))
-                        .ToArray();
-
-                    if (currentPriceComponents != null)
-                    {
-                        var currentPartPriceComponents = part.GetPriceComponents(currentPriceComponents);
-
-                        var price = currentPartPriceComponents.OfType<BasePrice>().Max(v => v.Price);
-                        this.UnitSellingPrice = price ?? 0M;
-                    }
-                    else
-                    {
-                        this.UnitSellingPrice = 0M;
-                    }
-                }
-
-                method.Result = true;
-            }
-        }
-
         public void AppsDelegateAccess(DelegatedAccessControlledObjectDelegateAccess method)
         {
             if (method.SecurityTokens == null)

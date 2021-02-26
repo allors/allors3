@@ -17,11 +17,8 @@ namespace Allors.Database.Domain
         public WorkEffortInventoryAssignmentDerivation(M m) : base(m, new Guid("cd533d3e-922c-4938-a12d-cfacd6c3b9d9")) =>
             this.Patterns = new Pattern[]
         {
-            new ChangedPattern(m.WorkEffortInventoryAssignment.Assignment),
-            new ChangedPattern(m.WorkEffortInventoryAssignment.InventoryItem),
-            new ChangedPattern(m.WorkEffortInventoryAssignment.Quantity),
-            new ChangedPattern(m.WorkEffortInventoryAssignment.AssignedUnitSellingPrice),
-            new ChangedPattern(m.WorkEffortInventoryAssignment.AssignedBillableQuantity),
+            new AssociationPattern(m.WorkEffortInventoryAssignment.Assignment),
+            new AssociationPattern(m.WorkEffortInventoryAssignment.InventoryItem),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -51,10 +48,6 @@ namespace Allors.Database.Domain
                     }
                 }
 
-                @this.CalculatePurchasePrice();
-                @this.CalculateSellingPrice();
-                @this.CalculateBillableQuantity();
-
                 if (@this.ExistAssignment)
                 {
                     @this.Assignment.ResetPrintDocument();
@@ -64,7 +57,7 @@ namespace Allors.Database.Domain
 
         public void SyncInventoryTransactions(WorkEffortInventoryAssignment @this,IDomainValidation validation, InventoryItem inventoryItem, decimal initialQuantity, InventoryTransactionReason reason, bool isCancellation)
         {
-            // TODO: Move sync to new derivations  
+            // TODO: Move sync to new derivations
 
             var adjustmentQuantity = 0M;
             var existingQuantity = 0M;
