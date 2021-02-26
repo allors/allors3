@@ -14,6 +14,10 @@ namespace Allors.Workspace
 
         long WorkspaceId { get; }
 
+        long? DatabaseId { get; }
+
+        long? Version { get; }
+
         IClass Class { get; }
 
         ISession Session { get; }
@@ -31,5 +35,11 @@ namespace Allors.Workspace
         IObject GetAssociation(IAssociationType associationType);
 
         IEnumerable<IObject> GetAssociations(IAssociationType associationType);
+
+        bool CanRead(IRoleType roleType);
+
+        bool CanWrite(IRoleType roleType);
+
+        bool CanExecute(IMethodType methodType);
     }
 }

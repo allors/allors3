@@ -100,7 +100,7 @@ namespace Allors.Workspace.Adapters
                 if (objectType is IClass)
                 {
                     var parameterTypes = new[] { typeof(IStrategy) };
-                    var databaseParameterTypes = new[] { typeof(IDatabaseStrategy) };
+                    var databaseParameterTypes = new[] { typeof(IStrategy) };
                     this.contructorInfoByObjectType[objectType] = type.GetTypeInfo().GetConstructor(parameterTypes)
                                                                   ?? type.GetTypeInfo().GetConstructor(databaseParameterTypes)
                                                                   ?? throw new ArgumentException($"{objectType.Name} has no Allors constructor.");

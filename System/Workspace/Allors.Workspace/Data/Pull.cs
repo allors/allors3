@@ -19,7 +19,7 @@ namespace Allors.Workspace.Data
 
         public IObjectType ObjectType { get; set; }
 
-        public IDatabaseObject Object { get; set; }
+        public IObject Object { get; set; }
 
         public string ObjectId { get; set; }
 

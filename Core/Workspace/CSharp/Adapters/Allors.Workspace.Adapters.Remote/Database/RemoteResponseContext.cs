@@ -33,7 +33,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 foreach (var accessControlId in value
                     .Split(Encoding.SeparatorChar)
-                    .Select(v => long.Parse(v))
+                    .Select(long.Parse)
                     .Where(v => !this.accessControlById.ContainsKey(v)))
                 {
                     this.MissingAccessControlIds.Add(accessControlId);
@@ -49,7 +49,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 foreach (var permissionId in value
                     .Split(Encoding.SeparatorChar)
-                    .Select(v => long.Parse(v))
+                    .Select(long.Parse)
                     .Where(v => !this.permissionById.ContainsKey(v)))
                 {
                     this.MissingPermissionIds.Add(permissionId);
