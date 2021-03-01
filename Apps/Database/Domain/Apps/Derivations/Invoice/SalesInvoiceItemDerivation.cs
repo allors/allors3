@@ -25,7 +25,7 @@ namespace Allors.Database.Domain
                 new AssociationPattern(m.SalesInvoiceItem.InvoiceItemType),
                 new AssociationPattern(m.SalesInvoiceItem.AssignedVatRegime),
                 new AssociationPattern(m.SalesInvoiceItem.AssignedIrpfRegime),
-                new AssociationPattern(m.SalesInvoice.SalesInvoiceItems) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
+                new RolePattern(m.SalesInvoice.SalesInvoiceItems),
                 new AssociationPattern(m.SalesInvoice.SalesInvoiceState) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
                 new AssociationPattern(m.SalesInvoice.DerivedVatRegime) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
                 new AssociationPattern(m.SalesInvoice.DerivedIrpfRegime) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },

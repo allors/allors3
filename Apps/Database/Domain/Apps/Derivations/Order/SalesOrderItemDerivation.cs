@@ -32,8 +32,8 @@ namespace Allors.Database.Domain
                 new AssociationPattern(m.SalesOrderItem.DiscountAdjustments),
                 new AssociationPattern(m.SalesOrderItem.SurchargeAdjustments),
                 new AssociationPattern(m.SalesOrderItem.SalesOrderItemInventoryAssignments),
-                new AssociationPattern(m.SerialisedInventoryItem.Quantity) { Steps = new IPropertyType[] {m.SerialisedInventoryItem.SerialisedItem, m.SerialisedItem.SalesOrderItemsWhereSerialisedItem }},
-                new AssociationPattern(m.InventoryItemTransaction.Part) { Steps = new IPropertyType[] {m.InventoryItemTransaction.Part, m.UnifiedGood.SalesOrderItemsWhereProduct }},
+                new AssociationPattern(m.SerialisedInventoryItem.Quantity) { Steps = new IPropertyType[] { m.SerialisedInventoryItem.SerialisedItem, m.SerialisedItem.SalesOrderItemsWhereSerialisedItem }},
+                new RolePattern(m.InventoryItemTransaction.Part) { Steps = new IPropertyType[] { m.UnifiedGood.SalesOrderItemsWhereProduct }},
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

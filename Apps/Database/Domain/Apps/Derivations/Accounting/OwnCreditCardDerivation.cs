@@ -23,7 +23,7 @@ namespace Allors.Database.Domain
                 new AssociationPattern(m.OwnCreditCard.CreditCard),
                 new AssociationPattern(m.CreditCard.ExpirationYear) { Steps =  new IPropertyType[] {m.CreditCard.OwnCreditCardsWhereCreditCard} },
                 new AssociationPattern(m.CreditCard.ExpirationMonth) { Steps =  new IPropertyType[] {m.CreditCard.OwnCreditCardsWhereCreditCard} },
-                new AssociationPattern(m.InternalOrganisation.PaymentMethods) { Steps =  new IPropertyType[] {m.InternalOrganisation.PaymentMethods }, OfType = m.OwnCreditCard.Class },
+                new RolePattern(m.InternalOrganisation.PaymentMethods) { OfType = m.OwnCreditCard.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -17,9 +17,9 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new AssociationPattern(m.SerialisedInventoryItem.SerialisedInventoryItemState),
-                new AssociationPattern(m.InventoryItemTransaction.InventoryItem) { Steps = new IPropertyType[] {m.InventoryItemTransaction.InventoryItem }, OfType = m.SerialisedInventoryItem.Class },
+                new RolePattern(m.InventoryItemTransaction.InventoryItem) { OfType = m.SerialisedInventoryItem.Class },
                 new AssociationPattern(m.InventoryItemTransaction.Quantity) { Steps = new IPropertyType[] {m.InventoryItemTransaction.InventoryItem }, OfType = m.SerialisedInventoryItem.Class },
-                new AssociationPattern(m.PickListItem.InventoryItem) { Steps = new IPropertyType[] {m.PickListItem.InventoryItem }, OfType = m.SerialisedInventoryItem.Class },
+                new RolePattern(m.PickListItem.InventoryItem) { OfType = m.SerialisedInventoryItem.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

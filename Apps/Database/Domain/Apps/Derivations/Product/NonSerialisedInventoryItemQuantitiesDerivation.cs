@@ -20,7 +20,7 @@ namespace Allors.Database.Domain
                 new AssociationPattern(m.InventoryItemTransaction.InventoryItem) { Steps = new IPropertyType[] {m.InventoryItemTransaction.InventoryItem }, OfType = m.NonSerialisedInventoryItem.Class },
                 new AssociationPattern(m.InventoryItemTransaction.Quantity) { Steps = new IPropertyType[] {m.InventoryItemTransaction.InventoryItem }, OfType = m.NonSerialisedInventoryItem.Class },
                 new AssociationPattern(m.PickList.PickListState) { Steps = new IPropertyType[] { m.PickList.PickListItems, m.PickListItem.InventoryItem }, OfType = m.NonSerialisedInventoryItem.Class },
-                new AssociationPattern(m.PickListItem.InventoryItem) { Steps = new IPropertyType[] {m.PickListItem.InventoryItem }, OfType = m.NonSerialisedInventoryItem.Class },
+                new RolePattern(m.PickListItem.InventoryItem) { OfType = m.NonSerialisedInventoryItem.Class },
                 new AssociationPattern(m.PickListItem.QuantityPicked) { Steps = new IPropertyType[] {m.PickListItem.InventoryItem }, OfType = m.NonSerialisedInventoryItem.Class },
                 new AssociationPattern(m.PurchaseOrderItem.QuantityOrdered) { Steps = new IPropertyType[] {m.PurchaseOrderItem.Part, m.Part.InventoryItemsWherePart }, OfType = m.NonSerialisedInventoryItem.Class },
                 new AssociationPattern(m.PurchaseOrderItem.PurchaseOrderItemState) { Steps = new IPropertyType[] {m.PurchaseOrderItem.Part, m.Part.InventoryItemsWherePart }, OfType = m.NonSerialisedInventoryItem.Class },

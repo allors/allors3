@@ -19,7 +19,7 @@ namespace Allors.Database.Domain
             {
                 new AssociationPattern(this.M.ShipmentPackage.SequenceNumber),
                 new AssociationPattern(this.M.PickList.PickListState) { Steps = new IPropertyType[] { m.PickList.PickListItems, m.PickListItem.ItemIssuancesWherePickListItem, m.ItemIssuance.ShipmentItem, m.ShipmentItem.ShipmentWhereShipmentItem, m.Shipment.ShipmentPackages } },
-                new AssociationPattern(this.M.ItemIssuance.ShipmentItem) { Steps = new IPropertyType[] { m.ItemIssuance.ShipmentItem, m.ShipmentItem.ShipmentWhereShipmentItem, m.Shipment.ShipmentPackages } },
+                new RolePattern(this.M.ItemIssuance.ShipmentItem) { Steps = new IPropertyType[] { m.ShipmentItem.ShipmentWhereShipmentItem, m.Shipment.ShipmentPackages } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
         {
             new AssociationPattern(this.M.SalesInvoice.TransitionalDeniedPermissions),
             new AssociationPattern(this.M.SalesInvoiceItem.SalesInvoiceItemState) { Steps = new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem } },
-            new AssociationPattern(this.M.RepeatingSalesInvoice.Source) { Steps = new IPropertyType[] {m.RepeatingSalesInvoice.Source} },
+            new RolePattern(this.M.RepeatingSalesInvoice.Source),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

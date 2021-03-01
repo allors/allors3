@@ -23,14 +23,14 @@ namespace Allors.Database.Domain
                 new AssociationPattern(m.SalesOrderItem.AssignedDeliveryDate),
                 new AssociationPattern(m.SalesOrderItem.AssignedVatRegime),
                 new AssociationPattern(m.SalesOrderItem.AssignedIrpfRegime),
-                new AssociationPattern(this.M.SalesOrder.SalesOrderItems) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems} },
-                new AssociationPattern(this.M.SalesOrder.DerivedShipFromAddress) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems} },
-                new AssociationPattern(this.M.SalesOrder.DerivedShipToAddress) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems} },
-                new AssociationPattern(this.M.SalesOrder.ShipToCustomer) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems} },
-                new AssociationPattern(this.M.SalesOrder.DeliveryDate) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems} },
-                new AssociationPattern(this.M.SalesOrder.DerivedVatRegime) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems} },
-                new AssociationPattern(this.M.SalesOrder.DerivedIrpfRegime) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems} },
-                new AssociationPattern(this.M.Organisation.ShippingAddress) { Steps = new IPropertyType[] { this.M.Organisation.SalesOrderItemsWhereAssignedShipToParty  }},
+                new RolePattern(m.SalesOrder.SalesOrderItems),
+                new AssociationPattern(m.SalesOrder.DerivedShipFromAddress) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems} },
+                new AssociationPattern(m.SalesOrder.DerivedShipToAddress) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems} },
+                new AssociationPattern(m.SalesOrder.ShipToCustomer) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems} },
+                new AssociationPattern(m.SalesOrder.DeliveryDate) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems} },
+                new AssociationPattern(m.SalesOrder.DerivedVatRegime) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems} },
+                new AssociationPattern(m.SalesOrder.DerivedIrpfRegime) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems} },
+                new AssociationPattern(m.Organisation.ShippingAddress) { Steps = new IPropertyType[] { m.Organisation.SalesOrderItemsWhereAssignedShipToParty  }},
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

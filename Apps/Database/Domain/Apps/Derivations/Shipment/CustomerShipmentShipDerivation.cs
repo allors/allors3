@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new AssociationPattern(m.CustomerShipment.ShipmentState),
-                new AssociationPattern(m.PickList.ShipToParty) { Steps = new IPropertyType[] { m.PickList.ShipToParty, m.Party.ShipmentsWhereShipToParty }, OfType = m.CustomerShipment.Class },
+                new RolePattern(m.PickList.ShipToParty) { Steps = new IPropertyType[] { m.Party.ShipmentsWhereShipToParty }, OfType = m.CustomerShipment.Class },
                 new AssociationPattern(m.PickList.PickListState) { Steps = new IPropertyType[] { m.PickList.ShipToParty, m.Party.ShipmentsWhereShipToParty }, OfType = m.CustomerShipment.Class },
                 new AssociationPattern(m.PickListVersion.ShipToParty) { Steps = new IPropertyType[] { m.PickListVersion.PickListWhereCurrentVersion, m.PickList.ShipToParty, m.Party.ShipmentsWhereShipToParty }, OfType = m.CustomerShipment.Class },
                 new AssociationPattern(m.SalesOrder.SalesOrderState) { Steps = new IPropertyType[] { m.SalesOrder.SalesOrderItems, m.SalesOrderItem.OrderShipmentsWhereOrderItem, m.OrderShipment.ShipmentItem, m.ShipmentItem.ShipmentWhereShipmentItem }, OfType = m.CustomerShipment.Class },

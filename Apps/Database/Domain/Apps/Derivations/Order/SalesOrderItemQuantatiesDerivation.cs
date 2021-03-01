@@ -19,8 +19,8 @@ namespace Allors.Database.Domain
                 new AssociationPattern(m.SalesOrderItem.SalesOrderItemState),
                 new AssociationPattern(m.SalesOrderItem.QuantityPendingShipment),
                 new AssociationPattern(m.SalesOrderItem.QuantityShipped),
-                new AssociationPattern(m.InventoryItemTransaction.InventoryItem) { Steps = new IPropertyType[] {m.InventoryItemTransaction.InventoryItem, m.NonSerialisedInventoryItem.SalesOrderItemInventoryAssignmentsWhereInventoryItem, m.SalesOrderItemInventoryAssignment.SalesOrderItemWhereSalesOrderItemInventoryAssignment } },
-                new AssociationPattern(m.PickListItem.InventoryItem) { Steps = new IPropertyType[] {m.PickListItem.InventoryItem, m.NonSerialisedInventoryItem.SalesOrderItemInventoryAssignmentsWhereInventoryItem, m.SalesOrderItemInventoryAssignment.SalesOrderItemWhereSalesOrderItemInventoryAssignment } },
+                new RolePattern(m.InventoryItemTransaction.InventoryItem) { Steps = new IPropertyType[] { m.NonSerialisedInventoryItem.SalesOrderItemInventoryAssignmentsWhereInventoryItem, m.SalesOrderItemInventoryAssignment.SalesOrderItemWhereSalesOrderItemInventoryAssignment } },
+                new RolePattern(m.PickListItem.InventoryItem) { Steps = new IPropertyType[] { m.NonSerialisedInventoryItem.SalesOrderItemInventoryAssignmentsWhereInventoryItem, m.SalesOrderItemInventoryAssignment.SalesOrderItemWhereSalesOrderItemInventoryAssignment } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

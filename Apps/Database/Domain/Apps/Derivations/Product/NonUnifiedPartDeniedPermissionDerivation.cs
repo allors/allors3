@@ -16,11 +16,11 @@ namespace Allors.Database.Domain
         public NonUnifiedPartDeniedPermissionDerivation(M m) : base(m, new Guid("ec943224-e151-4b7a-9ed9-6bb47f285932")) =>
             this.Patterns = new Pattern[]
         {
-            new AssociationPattern(m.WorkEffortInventoryProduced.Part){ Steps =  new IPropertyType[] {m.WorkEffortInventoryProduced.Part}, OfType = m.NonUnifiedPart.Class },
-            new AssociationPattern(m.WorkEffortPartStandard.Part){ Steps =  new IPropertyType[] {m.WorkEffortPartStandard.Part}, OfType = m.NonUnifiedPart.Class },
-            new AssociationPattern(m.PartBillOfMaterial.Part){ Steps =  new IPropertyType[] {m.PartBillOfMaterial.Part}, OfType = m.NonUnifiedPart.Class },
-            new AssociationPattern(m.PartBillOfMaterial.ComponentPart){ Steps =  new IPropertyType[] {m.PartBillOfMaterial.ComponentPart}, OfType = m.NonUnifiedPart.Class },
-            new AssociationPattern(m.InventoryItemTransaction.Part){ Steps =  new IPropertyType[] {m.InventoryItemTransaction.Part}, OfType = m.NonUnifiedPart.Class },
+            new RolePattern(m.WorkEffortInventoryProduced.Part) { OfType = m.NonUnifiedPart.Class },
+            new RolePattern(m.WorkEffortPartStandard.Part) { OfType = m.NonUnifiedPart.Class },
+            new RolePattern(m.PartBillOfMaterial.Part) { OfType = m.NonUnifiedPart.Class },
+            new RolePattern(m.PartBillOfMaterial.ComponentPart) { OfType = m.NonUnifiedPart.Class },
+            new RolePattern(m.InventoryItemTransaction.Part) { OfType = m.NonUnifiedPart.Class },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

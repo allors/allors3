@@ -20,9 +20,9 @@ namespace Allors.Database.Domain
                 new AssociationPattern(m.PurchaseInvoice.BilledTo),
                 new AssociationPattern(m.PurchaseInvoice.BilledFrom),
                 new AssociationPattern(m.PurchaseInvoice.PurchaseInvoiceItems),
-                new AssociationPattern(this.M.PurchaseInvoiceItem.PurchaseInvoiceItemState) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem} },
-                new AssociationPattern(this.M.PurchaseInvoiceItem.AmountPaid) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem} },
-                new AssociationPattern(this.M.PaymentApplication.Invoice) { Steps =  new IPropertyType[] {m.PaymentApplication.Invoice}, OfType = m.PurchaseInvoice.Class },
+                new AssociationPattern(m.PurchaseInvoiceItem.PurchaseInvoiceItemState) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem} },
+                new AssociationPattern(m.PurchaseInvoiceItem.AmountPaid) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem} },
+                new RolePattern(m.PaymentApplication.Invoice) { OfType = m.PurchaseInvoice.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -21,8 +21,8 @@ namespace Allors.Database.Domain
                 new AssociationPattern(m.NonUnifiedGood.ProductIdentifications),
                 new AssociationPattern(m.NonUnifiedGood.Keywords),
                 new AssociationPattern(m.NonUnifiedGood.Variants),
-                new AssociationPattern(m.ProductCategory.AllProducts) { Steps = new IPropertyType[]{ m.ProductCategory.AllProducts }, OfType = m.NonUnifiedGood.Class },
-                new AssociationPattern(m.PriceComponent.Product) { Steps = new IPropertyType[] {m.PriceComponent.Product }, OfType = m.NonUnifiedGood.Class },
+                new RolePattern(m.ProductCategory.AllProducts) { OfType = m.NonUnifiedGood.Class },
+                new RolePattern(m.PriceComponent.Product) { OfType = m.NonUnifiedGood.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -20,7 +20,7 @@ namespace Allors.Database.Domain
                 new AssociationPattern(m.Part.DefaultFacility),
                 new AssociationPattern(m.Part.UnitOfMeasure),
                 new AssociationPattern(m.Part.ProductType),
-                new AssociationPattern(m.InventoryItem.Part) { Steps = new IPropertyType[] {m.InventoryItem.Part } },
+                new RolePattern(m.InventoryItem.Part),
                 new AssociationPattern(m.ProductType.SerialisedItemCharacteristicTypes) { Steps = new IPropertyType[]{ this.M.ProductType.PartsWhereProductType } },
             };
 

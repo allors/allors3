@@ -19,7 +19,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new AssociationPattern(this.M.DeliverableBasedService.Variants),
-                new AssociationPattern(m.PriceComponent.Product) { Steps = new IPropertyType[] {m.PriceComponent.Product }, OfType = m.DeliverableBasedService.Class },
+                new RolePattern(m.PriceComponent.Product) { OfType = m.DeliverableBasedService.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
