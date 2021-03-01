@@ -59,9 +59,14 @@ namespace Allors.Database.Domain
                                 break;
                             }
 
-                            if (timeEntry.ExistTimeEntryBillingsWhereTimeEntry)
+                            foreach (TimeEntryBilling timeEntryBilling in timeEntry.TimeEntryBillingsWhereTimeEntry)
                             {
-                                @this.CanInvoice = false;
+                                if (timeEntryBilling.InvoiceItem is SalesInvoiceItem invoiceItem
+                                    && invoiceItem.SalesInvoiceWhereSalesInvoiceItem.SalesInvoiceType.IsSalesInvoice
+                                    && !invoiceItem.SalesInvoiceWhereSalesInvoiceItem.ExistSalesInvoiceWhereCreditedFromInvoice)
+                                {
+                                    @this.CanInvoice = false;
+                                }
                             }
                         }
                     }
