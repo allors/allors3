@@ -21,11 +21,11 @@ namespace Allors.Workspace.Adapters.Remote
             this.StateLifecycle = state;
 
             this.ObjectFactory = new ObjectFactory(this.MetaPopulation, instance);
-            this.Database = new RemoteDatabase(this.MetaPopulation, httpClient);
+            this.Database = new RemoteDatabase(this.MetaPopulation, httpClient, new Identities());
             this.Sessions = new HashSet<RemoteSession>();
 
             this.State = new State();
-            this.WorkspaceOrSessionClassByWorkspaceId = new Dictionary<long, IClass>();
+            this.WorkspaceOrSessionClassByWorkspaceId = new Dictionary<Identity, IClass>();
 
             this.DomainDerivationById = new ConcurrentDictionary<Guid, IDomainDerivation>();
 
@@ -48,7 +48,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal State State { get; }
 
-        internal Dictionary<long, IClass> WorkspaceOrSessionClassByWorkspaceId { get; }
+        internal Dictionary<Identity, IClass> WorkspaceOrSessionClassByWorkspaceId { get; }
 
         public ISession CreateSession() => new RemoteSession(this, this.StateLifecycle.CreateSessionContext());
 
@@ -62,8 +62,8 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal void UnregisterSession(RemoteSession session) => this.Sessions.Remove(session);
 
-        internal void RegisterWorkspaceIdForWorkspaceObject(IClass @class, long workspaceId) => this.WorkspaceOrSessionClassByWorkspaceId.Add(workspaceId, @class);
+        internal void RegisterWorkspaceIdForWorkspaceObject(IClass @class, Identity workspaceId) => this.WorkspaceOrSessionClassByWorkspaceId.Add(workspaceId, @class);
 
-        internal void RegisterWorkspaceIdForSessionObject(IClass @class, long workspaceId) => this.WorkspaceOrSessionClassByWorkspaceId.Add(workspaceId, @class);
+        internal void RegisterWorkspaceIdForSessionObject(IClass @class, Identity workspaceId) => this.WorkspaceOrSessionClassByWorkspaceId.Add(workspaceId, @class);
     }
 }

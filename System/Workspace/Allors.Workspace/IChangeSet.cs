@@ -37,31 +37,31 @@ namespace Allors.Workspace
         /// <summary>
         /// Gets the changed associations.
         /// </summary>
-        ISet<long> Associations { get; }
+        ISet<Identity> Associations { get; }
 
         /// <summary>
         /// Gets the changed roles.
         /// </summary>
-        ISet<long> Roles { get; }
+        ISet<Identity> Roles { get; }
 
         /// <summary>
         /// Gets the changed role types by association.
         /// </summary>
-        IDictionary<long, ISet<IRoleType>> RoleTypesByAssociation { get; }
+        IDictionary<Identity, ISet<IRoleType>> RoleTypesByAssociation { get; }
 
         /// <summary>
         /// Gets the changed association types by role.
         /// </summary>
-        IDictionary<long, ISet<IAssociationType>> AssociationTypesByRole { get; }
+        IDictionary<Identity, ISet<IAssociationType>> AssociationTypesByRole { get; }
 
         /// <summary>
         /// Gets the changed associations by role type.
         /// </summary>
-        IDictionary<IRoleType, ISet<long>> AssociationsByRoleType { get; }
+        IDictionary<IRoleType, ISet<Identity>> AssociationsByRoleType { get; }
 
         /// <summary>
         /// Gets the changed roles by association type.
         /// </summary>
-        IDictionary<IAssociationType, ISet<long>> RolesByAssociationType { get; }
+        IDictionary<IAssociationType, ISet<Identity>> RolesByAssociationType { get; }
     }
 }

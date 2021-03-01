@@ -20,10 +20,10 @@ namespace Allors.Workspace.Adapters.Remote
         private Dictionary<Guid, object> roleByRelationTypeId;
         private SyncResponseRole[] syncResponseRoles;
 
-        internal RemoteDatabaseRoles(RemoteDatabase database, long databaseId, IClass @class)
+        internal RemoteDatabaseRoles(RemoteDatabase database, Identity identity, IClass @class)
         {
             this.Database = database;
-            this.DatabaseId = databaseId;
+            this.Identity = identity;
             this.Class = @class;
             this.Version = 0;
         }
@@ -31,7 +31,7 @@ namespace Allors.Workspace.Adapters.Remote
         internal RemoteDatabaseRoles(RemoteDatabase database, RemoteResponseContext ctx, SyncResponseObject syncResponseObject)
         {
             this.Database = database;
-            this.DatabaseId = long.Parse(syncResponseObject.Id);
+            this.Identity = database.Identities.GetOrCreate(long.Parse(syncResponseObject.Id));
             this.Class = (IClass)this.Database.MetaPopulation.Find(Guid.Parse(syncResponseObject.ObjectTypeOrKey));
             this.Version = !string.IsNullOrEmpty(syncResponseObject.Version) ? long.Parse(syncResponseObject.Version) : 0;
             this.syncResponseRoles = syncResponseObject.Roles;
@@ -43,7 +43,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public IClass Class { get; }
 
-        public long DatabaseId { get; }
+        public Identity Identity { get; }
 
         public long Version { get; private set; }
 
@@ -57,6 +57,8 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 if (this.syncResponseRoles != null)
                 {
+                    var identities = this.Database.Identities;
+
                     var metaPopulation = this.Database.MetaPopulation;
                     this.roleByRelationTypeId = this.syncResponseRoles.ToDictionary(
                         v => Guid.Parse(v.RoleType),
@@ -74,13 +76,13 @@ namespace Allors.Workspace.Adapters.Remote
                             {
                                 if (RoleType.IsOne)
                                 {
-                                    return value != null ? long.Parse(value) : (long?)null;
+                                    return value != null ? identities.Get(long.Parse(value)) : (Identity)null;
                                 }
                                 else
                                 {
                                     return value != null
-                                        ? value.Split(Encoding.SeparatorChar).Select(long.Parse).ToArray()
-                                        : Array.Empty<long>();
+                                        ? value.Split(Encoding.SeparatorChar).Select(w => identities.Get(long.Parse(w))).ToArray()
+                                        : Array.Empty<Identity>();
                                 }
                             }
                         });

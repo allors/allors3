@@ -6,6 +6,7 @@
 namespace Tests.Workspace
 {
     using System;
+    using Allors.Workspace.Domain;
     using Remote;
     using Xunit;
 
@@ -20,7 +21,7 @@ namespace Tests.Workspace
         {
             var session = this.Workspace.CreateSession();
 
-            var newObject = session.Create(this.M.C1.Class);
+            var newObject = session.Create<C1>();
 
             var saved = await session.Save();
 

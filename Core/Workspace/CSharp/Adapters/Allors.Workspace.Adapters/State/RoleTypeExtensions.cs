@@ -39,21 +39,5 @@ Use DateTimeKind.Utc or DateTimeKind.Local.");
 
             return role;
         }
-
-        internal static long NormalizeComposite(this IRoleType @this, object role) =>
-            role switch
-            {
-                long @long => @long,
-                IObject @object => @object.WorkspaceId,
-                _ => throw new ArgumentException("Illegal composite role: ${role}")
-            };
-
-        internal static long[] NormalizeComposites(this IRoleType @this, object role) =>
-            role switch
-            {
-                long[] longs => longs,
-                IEnumerable<IObject> objects => objects.Select(v => v.WorkspaceId).ToArray(),
-                _ => throw new ArgumentException("Illegal composites role: ${role}")
-            };
     }
 }

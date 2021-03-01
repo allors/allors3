@@ -11,10 +11,10 @@ namespace Allors.Workspace.Adapters
 
     public class StateChangeSet
     {
-        private readonly Dictionary<IRoleType, Dictionary<long, object>> roleByAssociationByRoleType;
-        private readonly Dictionary<IAssociationType, Dictionary<long, object>> associationByRoleByRoleType;
+        private readonly Dictionary<IRoleType, Dictionary<Identity, object>> roleByAssociationByRoleType;
+        private readonly Dictionary<IAssociationType, Dictionary<Identity, object>> associationByRoleByRoleType;
 
-        public StateChangeSet(Dictionary<IRoleType, Dictionary<long, object>> roleByAssociationByRoleType, Dictionary<IAssociationType, Dictionary<long, object>> associationByRoleByAssociationType)
+        public StateChangeSet(Dictionary<IRoleType, Dictionary<Identity, object>> roleByAssociationByRoleType, Dictionary<IAssociationType, Dictionary<Identity, object>> associationByRoleByAssociationType)
         {
             this.roleByAssociationByRoleType = roleByAssociationByRoleType;
             this.associationByRoleByRoleType = associationByRoleByAssociationType;
@@ -31,7 +31,7 @@ namespace Allors.Workspace.Adapters
         //    return this.ChangedRoles(roleType);
         //}
 
-        public Dictionary<long, object> ChangedRoles(IRoleType roleType)
+        public Dictionary<Identity, object> ChangedRoles(IRoleType roleType)
         {
             this.roleByAssociationByRoleType.TryGetValue(roleType, out var changedRelations);
             return changedRelations;

@@ -24,18 +24,17 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class RemoteDatabase
     {
-        private readonly Dictionary<long, RemoteDatabaseRoles> databaseObjectByDatabaseId;
+        private readonly Dictionary<Identity, RemoteDatabaseRoles> databaseObjectByDatabaseId;
 
         private readonly Dictionary<IClass, Dictionary<IOperandType, RemotePermission>> readPermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, RemotePermission>> writePermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, RemotePermission>> executePermissionByOperandTypeByClass;
 
-        private long worskpaceIdCounter;
-
-        public RemoteDatabase(IMetaPopulation metaPopulation, HttpClient httpClient)
+        public RemoteDatabase(IMetaPopulation metaPopulation, HttpClient httpClient, Identities identities)
         {
             this.MetaPopulation = metaPopulation;
             this.HttpClient = httpClient;
+            this.Identities = identities;
 
             this.HttpClient.DefaultRequestHeaders.Accept.Clear();
             this.HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -43,15 +42,11 @@ namespace Allors.Workspace.Adapters.Remote
             this.AccessControlById = new Dictionary<long, RemoteAccessControl>();
             this.PermissionById = new Dictionary<long, RemotePermission>();
 
-            this.databaseObjectByDatabaseId = new Dictionary<long, RemoteDatabaseRoles>();
+            this.databaseObjectByDatabaseId = new Dictionary<Identity, RemoteDatabaseRoles>();
 
             this.readPermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, RemotePermission>>();
             this.writePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, RemotePermission>>();
             this.executePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, RemotePermission>>();
-
-            this.worskpaceIdCounter = 0;
-            this.WorkspaceIdByDatabaseId = new Dictionary<long, long>();
-            this.DatabaseIdByWorkspaceId = new Dictionary<long, long>();
         }
 
         ~RemoteDatabase() => this.HttpClient.Dispose();
@@ -60,15 +55,13 @@ namespace Allors.Workspace.Adapters.Remote
 
         public HttpClient HttpClient { get; }
 
+        public Identities Identities { get; }
+
         public IAsyncPolicy Policy { get; set; } = Polly.Policy
            .Handle<HttpRequestException>()
            .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
 
         public string UserId { get; private set; }
-
-        internal Dictionary<long, long> WorkspaceIdByDatabaseId { get; }
-
-        internal Dictionary<long, long> DatabaseIdByWorkspaceId { get; }
 
         internal Dictionary<long, RemoteAccessControl> AccessControlById { get; }
 
@@ -93,10 +86,10 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        internal RemoteDatabaseRoles PushResponse(long databaseId, IClass @class)
+        internal RemoteDatabaseRoles PushResponse(Identity identity, IClass @class)
         {
-            var databaseObject = new RemoteDatabaseRoles(this, databaseId, @class);
-            this.databaseObjectByDatabaseId[databaseId] = databaseObject;
+            var databaseObject = new RemoteDatabaseRoles(this, identity, @class);
+            this.databaseObjectByDatabaseId[identity] = databaseObject;
             return databaseObject;
         }
 
@@ -105,14 +98,8 @@ namespace Allors.Workspace.Adapters.Remote
             var ctx = new RemoteResponseContext(this.AccessControlById, this.PermissionById);
             foreach (var syncResponseObject in syncResponse.Objects)
             {
-                var databaseObject = new RemoteDatabaseRoles(this, ctx, syncResponseObject);
-                this.databaseObjectByDatabaseId[databaseObject.DatabaseId] = databaseObject;
-                if (!this.DatabaseIdByWorkspaceId.TryGetValue(databaseObject.DatabaseId, out var workspaceId))
-                {
-                    workspaceId = this.NextWorkspaceId();
-                    this.WorkspaceIdByDatabaseId[databaseObject.DatabaseId] = workspaceId;
-                    this.DatabaseIdByWorkspaceId[workspaceId] = databaseObject.DatabaseId;
-                }
+                var databaseRoles = new RemoteDatabaseRoles(this, ctx, syncResponseObject);
+                this.databaseObjectByDatabaseId[databaseRoles.Identity] = databaseRoles;
             }
 
             if (ctx.MissingAccessControlIds.Count > 0 || ctx.MissingPermissionIds.Count > 0)
@@ -137,7 +124,8 @@ namespace Allors.Workspace.Adapters.Remote
                     .Where(v =>
                     {
                         var id = long.Parse(v[0]);
-                        this.databaseObjectByDatabaseId.TryGetValue(id, out var databaseObject);
+                        var identity = this.Identities.GetOrCreate(id);
+                        this.databaseObjectByDatabaseId.TryGetValue(identity, out var databaseObject);
                         if (databaseObject == null)
                         {
                             return true;
@@ -174,20 +162,7 @@ namespace Allors.Workspace.Adapters.Remote
             };
         }
 
-        internal long NextWorkspaceId() => --this.worskpaceIdCounter;
-
-        internal long ToWorkspaceId(long id)
-        {
-            if (id <= 0)
-            {
-                return id;
-            }
-
-            this.WorkspaceIdByDatabaseId.TryGetValue(id, out var workspaceId);
-            return workspaceId;
-        }
-
-        internal RemoteDatabaseRoles Get(long databaseId)
+        internal RemoteDatabaseRoles Get(Identity databaseId)
         {
             var databaseObject = this.databaseObjectByDatabaseId[databaseId];
             if (databaseObject == null)

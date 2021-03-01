@@ -2,7 +2,7 @@ delimiters "$", "$"
 
 TemplateId() ::= <<07F63139-1791-4F55-AAED-F1A6D8D40055>>
 TemplateName() ::= <<Allors C# Workspace Domain>>
-TemplateVersion() ::= <<3.0.0>>
+TemplateVersion() ::= <<3.0.1>>
 TemplateAllors() ::= <<1.0>>
 TemplateConfiguration(meta, workspaceName) ::= <<
 $!
@@ -156,25 +156,13 @@ $endif$
 
         public IStrategy Strategy { get; }
 
-		public long WorkspaceId
+		public Identity Identity
 		{
 			get
 			{
-				return this.Strategy.WorkspaceId;
+				return this.Strategy.Identity;
 			}
 		}
-
-$if(class.HasDatabaseOrigin)$
-		public long? DatabaseId
-		{
-			get
-			{
-				return this.Strategy.DatabaseId;
-			}
-		}
-$else$
-		public long? DatabaseId => null;
-$endif$
 
 		public Allors.Workspace.Meta.Meta$class.name$ Meta
 		{
@@ -192,12 +180,12 @@ $endif$
 		        return false;
 		    }
 
-		    return this.WorkspaceId.Equals(that.WorkspaceId);
+		    return this.Identity.Equals(that.Identity);
         }
 
 		public override int GetHashCode()
         {
-            return this.WorkspaceId.GetHashCode();
+            return this.Identity.GetHashCode();
         }
 
 $class.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{concreteRoleType|$classConcreteRoleType_Class()$}$

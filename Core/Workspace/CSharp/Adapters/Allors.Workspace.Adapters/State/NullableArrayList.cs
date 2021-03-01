@@ -9,9 +9,9 @@ namespace Allors.Workspace.Adapters
 
     internal static class NullableArrayList
     {
-        internal static long?[] Add(object set, long? item) => Add((long?[])set, item);
+        internal static Identity[] Add(object set, Identity item) => Add((Identity[])set, item);
 
-        internal static long?[] Add(long?[] set, long? item)
+        internal static Identity[] Add(Identity[] set, Identity item)
         {
             if (set == null)
             {
@@ -23,9 +23,9 @@ namespace Allors.Workspace.Adapters
             return set;
         }
 
-        internal static long?[] Remove(object set, long? item) => Remove((long?[])set, item);
+        internal static Identity[] Remove(object set, Identity item) => Remove((Identity[])set, item);
 
-        internal static long?[] Remove(long?[] set, long? item)
+        internal static Identity[] Remove(Identity[] set, Identity item)
         {
             if (set != null)
             {

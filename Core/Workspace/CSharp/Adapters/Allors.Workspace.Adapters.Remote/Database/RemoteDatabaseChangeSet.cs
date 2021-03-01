@@ -19,104 +19,104 @@ namespace Allors.Workspace.Adapters.Remote
 
         private readonly HashSet<IStrategy> deleted;
 
-        private readonly HashSet<long> associations;
-        private readonly HashSet<long> roles;
+        private readonly HashSet<Identity> associations;
+        private readonly HashSet<Identity> roles;
 
-        private readonly Dictionary<long, ISet<IRoleType>> roleTypesByAssociation;
-        private readonly Dictionary<long, ISet<IAssociationType>> associationTypesByRole;
+        private readonly Dictionary<Identity, ISet<IRoleType>> roleTypesByAssociation;
+        private readonly Dictionary<Identity, ISet<IAssociationType>> associationTypesByRole;
 
-        private IDictionary<IRoleType, ISet<long>> associationsByRoleType;
-        private IDictionary<IAssociationType, ISet<long>> rolesByAssociationType;
+        private IDictionary<IRoleType, ISet<Identity>> associationsByRoleType;
+        private IDictionary<IAssociationType, ISet<Identity>> rolesByAssociationType;
 
         internal RemoteDatabaseChangeSet()
         {
             this.deleted = new HashSet<IStrategy>();
-            this.associations = new HashSet<long>();
-            this.roles = new HashSet<long>();
-            this.roleTypesByAssociation = new Dictionary<long, ISet<IRoleType>>();
-            this.associationTypesByRole = new Dictionary<long, ISet<IAssociationType>>();
+            this.associations = new HashSet<Identity>();
+            this.roles = new HashSet<Identity>();
+            this.roleTypesByAssociation = new Dictionary<Identity, ISet<IRoleType>>();
+            this.associationTypesByRole = new Dictionary<Identity, ISet<IAssociationType>>();
         }
 
         public ISet<IStrategy> Deleted => this.deleted;
 
-        public ISet<long> Associations => this.associations;
+        public ISet<Identity> Associations => this.associations;
 
-        public ISet<long> Roles => this.roles;
+        public ISet<Identity> Roles => this.roles;
 
-        public IDictionary<long, ISet<IRoleType>> RoleTypesByAssociation => this.roleTypesByAssociation;
+        public IDictionary<Identity, ISet<IRoleType>> RoleTypesByAssociation => this.roleTypesByAssociation;
 
-        public IDictionary<long, ISet<IAssociationType>> AssociationTypesByRole => this.associationTypesByRole;
+        public IDictionary<Identity, ISet<IAssociationType>> AssociationTypesByRole => this.associationTypesByRole;
 
-        public IDictionary<IRoleType, ISet<long>> AssociationsByRoleType => this.associationsByRoleType ??=
+        public IDictionary<IRoleType, ISet<Identity>> AssociationsByRoleType => this.associationsByRoleType ??=
             (from kvp in this.RoleTypesByAssociation
              from value in kvp.Value
              group kvp.Key by value)
-                 .ToDictionary(grp => grp.Key, grp => new HashSet<long>(grp) as ISet<long>);
+                 .ToDictionary(grp => grp.Key, grp => new HashSet<Identity>(grp) as ISet<Identity>);
 
-        public IDictionary<IAssociationType, ISet<long>> RolesByAssociationType => this.rolesByAssociationType ??=
+        public IDictionary<IAssociationType, ISet<Identity>> RolesByAssociationType => this.rolesByAssociationType ??=
             (from kvp in this.AssociationTypesByRole
              from value in kvp.Value
              group kvp.Key by value)
-                   .ToDictionary(grp => grp.Key, grp => new HashSet<long>(grp) as ISet<long>);
+                   .ToDictionary(grp => grp.Key, grp => new HashSet<Identity>(grp) as ISet<Identity>);
 
         internal void OnDeleted(IStrategy strategy) => this.deleted.Add(strategy);
 
-        internal void OnChangingUnitRole(long association, IRoleType roleType)
+        internal void OnChangingUnitRole(Identity association, IRoleType roleType)
         {
             this.associations.Add(association);
 
             this.RoleTypes(association).Add(roleType);
         }
 
-        internal void OnChangingCompositeRole(long association, IRoleType roleType, long? previousRole, long? newRole)
+        internal void OnChangingCompositeRole(Identity association, IRoleType roleType, Identity previousRole, Identity newRole)
         {
             this.associations.Add(association);
 
             if (previousRole != null)
             {
-                this.roles.Add(previousRole.Value);
-                this.AssociationTypes(previousRole.Value).Add(roleType.AssociationType);
+                this.roles.Add(previousRole);
+                this.AssociationTypes(previousRole).Add(roleType.AssociationType);
             }
 
             if (newRole != null)
             {
-                this.roles.Add(newRole.Value);
-                this.AssociationTypes(newRole.Value).Add(roleType.AssociationType);
+                this.roles.Add(newRole);
+                this.AssociationTypes(newRole).Add(roleType.AssociationType);
             }
 
             this.RoleTypes(association).Add(roleType);
         }
 
-        internal void OnChangingCompositesRole(long association, IRoleType roleType, RemoteStrategy changedRole)
+        internal void OnChangingCompositesRole(Identity association, IRoleType roleType, RemoteStrategy changedRole)
         {
             this.associations.Add(association);
 
             if (changedRole != null)
             {
-                this.roles.Add(changedRole.WorkspaceId);
-                this.AssociationTypes(changedRole.WorkspaceId).Add(roleType.AssociationType);
+                this.roles.Add(changedRole.Identity);
+                this.AssociationTypes(changedRole.Identity).Add(roleType.AssociationType);
             }
 
             this.RoleTypes(association).Add(roleType);
         }
 
-        private ISet<IRoleType> RoleTypes(long associationId)
+        private ISet<IRoleType> RoleTypes(Identity association)
         {
-            if (!this.RoleTypesByAssociation.TryGetValue(associationId, out var roleTypes))
+            if (!this.RoleTypesByAssociation.TryGetValue(association, out var roleTypes))
             {
                 roleTypes = new HashSet<IRoleType>();
-                this.RoleTypesByAssociation[associationId] = roleTypes;
+                this.RoleTypesByAssociation[association] = roleTypes;
             }
 
             return roleTypes;
         }
 
-        private ISet<IAssociationType> AssociationTypes(long roleId)
+        private ISet<IAssociationType> AssociationTypes(Identity role)
         {
-            if (!this.AssociationTypesByRole.TryGetValue(roleId, out var associationTypes))
+            if (!this.AssociationTypesByRole.TryGetValue(role, out var associationTypes))
             {
                 associationTypes = new HashSet<IAssociationType>();
-                this.AssociationTypesByRole[roleId] = associationTypes;
+                this.AssociationTypesByRole[role] = associationTypes;
             }
 
             return associationTypes;

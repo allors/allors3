@@ -8,22 +8,23 @@ namespace Allors.Workspace.Adapters.Remote
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Remote;
     using Allors.Protocol.Json.Api.Pull;
 
     public class RemoteLoadResult : RemoteResult, ILoadResult
     {
-        public RemoteLoadResult(ISession session, PullResponse response) : base(response)
+        public RemoteLoadResult(RemoteSession session, PullResponse response) : base(response)
         {
             this.Workspace = session.Workspace;
 
+            var identities = session.Database.Identities;
+
             this.Objects = response.NamedObjects.ToDictionary(
                 pair => pair.Key,
-                pair => session.Instantiate(long.Parse(pair.Value)),
+                pair => session.Instantiate<IObject>(identities.GetOrCreate(long.Parse(pair.Value))),
                 StringComparer.OrdinalIgnoreCase);
             this.Collections = response.NamedCollections.ToDictionary(
                 pair => pair.Key,
-                pair => pair.Value.Select(v => session.Instantiate(long.Parse(v))).ToArray(),
+                pair => pair.Value.Select(v => session.Instantiate<IObject>(identities.GetOrCreate(long.Parse(v)))).ToArray(),
                 StringComparer.OrdinalIgnoreCase);
             this.Values = response.NamedValues.ToDictionary(
                 pair => pair.Key,

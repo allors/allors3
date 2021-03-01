@@ -18,13 +18,21 @@ namespace Allors.Workspace
 
         T Create<T>() where T : class, IObject;
 
-        IObject Create(IClass @class);
+        T Create<T>(IClass @class) where T : IObject;
+
+        T Instantiate<T>(IObject @object) where T : IObject;
 
         T Instantiate<T>(T @object) where T : IObject;
 
-        IObject Instantiate(long id);
+        T Instantiate<T>(long id) where T : IObject;
 
-        IEnumerable<IObject> Instantiate(IEnumerable<long> ids);
+        T Instantiate<T>(Identity identity) where T : IObject;
+
+        IEnumerable<T> Instantiate<T>(IEnumerable<IObject> objects) where T : IObject;
+
+        IEnumerable<T> Instantiate<T>(IEnumerable<long> ids) where T : IObject;
+
+        IEnumerable<T> Instantiate<T>(IEnumerable<Identity> identities) where T : IObject;
 
         void Reset();
 

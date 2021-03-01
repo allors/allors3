@@ -12,9 +12,7 @@ namespace Allors.Workspace
     {
         IObject Object { get; }
 
-        long WorkspaceId { get; }
-
-        long? DatabaseId { get; }
+        Identity Identity { get; }
 
         long? Version { get; }
 

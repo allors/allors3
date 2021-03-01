@@ -13,19 +13,19 @@ namespace Allors.Workspace.Adapters
 
     public class State
     {
-        private readonly Dictionary<IRoleType, Dictionary<long, object>> roleByAssociationByRoleType;
-        private readonly Dictionary<IAssociationType, Dictionary<long, object>> associationByRoleByAssociationType;
+        private readonly Dictionary<IRoleType, Dictionary<Identity, object>> roleByAssociationByRoleType;
+        private readonly Dictionary<IAssociationType, Dictionary<Identity, object>> associationByRoleByAssociationType;
 
-        private Dictionary<IRoleType, Dictionary<long, object>> changedRoleByAssociationByRoleType;
-        private Dictionary<IAssociationType, Dictionary<long, object>> changedAssociationByRoleByAssociationType;
+        private Dictionary<IRoleType, Dictionary<Identity, object>> changedRoleByAssociationByRoleType;
+        private Dictionary<IAssociationType, Dictionary<Identity, object>> changedAssociationByRoleByAssociationType;
 
         public State()
         {
-            this.roleByAssociationByRoleType = new Dictionary<IRoleType, Dictionary<long, object>>();
-            this.associationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<long, object>>();
+            this.roleByAssociationByRoleType = new Dictionary<IRoleType, Dictionary<Identity, object>>();
+            this.associationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Identity, object>>();
 
-            this.changedRoleByAssociationByRoleType = new Dictionary<IRoleType, Dictionary<long, object>>();
-            this.changedAssociationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<long, object>>();
+            this.changedRoleByAssociationByRoleType = new Dictionary<IRoleType, Dictionary<Identity, object>>();
+            this.changedAssociationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Identity, object>>();
         }
 
         public StateChangeSet Checkpoint()
@@ -90,13 +90,13 @@ namespace Allors.Workspace.Adapters
 
             var changeSet = new StateChangeSet(this.changedRoleByAssociationByRoleType, this.changedAssociationByRoleByAssociationType);
 
-            this.changedRoleByAssociationByRoleType = new Dictionary<IRoleType, Dictionary<long, object>>();
-            this.changedAssociationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<long, object>>();
+            this.changedRoleByAssociationByRoleType = new Dictionary<IRoleType, Dictionary<Identity, object>>();
+            this.changedAssociationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Identity, object>>();
 
             return changeSet;
         }
 
-        public void GetRole(long association, IRoleType roleType, out object role)
+        public void GetRole(Identity association, IRoleType roleType, out object role)
         {
             if (this.changedRoleByAssociationByRoleType.TryGetValue(roleType, out var changedRoleByAssociation) &&
                 changedRoleByAssociation.TryGetValue(association, out role))
@@ -107,7 +107,7 @@ namespace Allors.Workspace.Adapters
             this.RoleByAssociation(roleType).TryGetValue(association, out role);
         }
 
-        public void SetRole(long association, IRoleType roleType, object role)
+        public void SetRole(Identity association, IRoleType roleType, object role)
         {
             if (role == null)
             {
@@ -127,41 +127,41 @@ namespace Allors.Workspace.Adapters
                 this.GetRole(association, roleType, out var previousRole);
                 if (roleType.IsOne)
                 {
-                    var compositeRole = roleType.NormalizeComposite(role);
-                    this.GetAssociation(compositeRole, associationType, out var previousAssociation);
+                    var roleIdentity = ((IObject)role).Identity;
+                    this.GetAssociation(roleIdentity, associationType, out var previousAssociation);
 
                     // Role
                     var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
-                    changedRoleByAssociation[association] = compositeRole;
+                    changedRoleByAssociation[association] = roleIdentity;
 
                     // Association
                     var changedAssociationByRole = this.ChangedAssociationByRole(associationType);
                     if (associationType.IsOne)
                     {
                         // One to One
-                        var previousAssociationObject = (long?)previousAssociation;
+                        var previousAssociationObject = (Identity)previousAssociation;
                         if (previousAssociationObject != null)
                         {
-                            changedRoleByAssociation[previousAssociationObject.Value] = null;
+                            changedRoleByAssociation[previousAssociationObject] = null;
                         }
 
                         if (previousRole != null)
                         {
-                            var previousRoleObject = (long)previousRole;
+                            var previousRoleObject = (Identity)previousRole;
                             changedAssociationByRole[previousRoleObject] = null;
                         }
 
-                        changedAssociationByRole[compositeRole] = association;
+                        changedAssociationByRole[roleIdentity] = association;
                     }
                     else
                     {
-                        changedAssociationByRole[compositeRole] = NullableArrayList.Remove(previousAssociation, compositeRole);
+                        changedAssociationByRole[roleIdentity] = NullableArrayList.Remove(previousAssociation, roleIdentity);
                     }
                 }
                 else
                 {
-                    var compositesRole = roleType.NormalizeComposites(role);
-                    var previousRoles = (long[])previousRole ?? Array.Empty<long>();
+                    var compositesRole = (Identity[])role;
+                    var previousRoles = (Identity[])previousRole ?? Array.Empty<Identity>();
 
                     // Use Diff (Add/Remove)
                     var addedRoles = compositesRole.Except(previousRoles);
@@ -180,7 +180,7 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public void AddRole(long association, IRoleType roleType, long role)
+        public void AddRole(Identity association, IRoleType roleType, Identity role)
         {
             var associationType = roleType.AssociationType;
             this.GetAssociation(role, associationType, out var previousAssociation);
@@ -188,7 +188,7 @@ namespace Allors.Workspace.Adapters
             // Role
             var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
             this.GetRole(association, roleType, out var previousRole);
-            var roleArray = (long?[])previousRole;
+            var roleArray = (Identity[])previousRole;
             roleArray = NullableArrayList.Add(roleArray, role);
             changedRoleByAssociation[association] = roleArray;
 
@@ -197,11 +197,11 @@ namespace Allors.Workspace.Adapters
             if (associationType.IsOne)
             {
                 // One to Many
-                var previousAssociationObject = (long?)previousAssociation;
+                var previousAssociationObject = (Identity)previousAssociation;
                 if (previousAssociationObject != null)
                 {
-                    this.GetRole(previousAssociationObject.Value, roleType, out var previousAssociationRole);
-                    changedRoleByAssociation[previousAssociationObject.Value] = NullableArrayList.Remove(previousAssociationRole, role);
+                    this.GetRole(previousAssociationObject, roleType, out var previousAssociationRole);
+                    changedRoleByAssociation[previousAssociationObject] = NullableArrayList.Remove(previousAssociationRole, role);
                 }
 
                 changedAssociationByRole[role] = association;
@@ -213,7 +213,7 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public void RemoveRole(long association, IRoleType roleType, long role)
+        public void RemoveRole(Identity association, IRoleType roleType, Identity role)
         {
             var associationType = roleType.AssociationType;
             this.GetAssociation(role, associationType, out var previousAssociation);
@@ -240,7 +240,7 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public void RemoveRole(long association, IRoleType roleType)
+        public void RemoveRole(Identity association, IRoleType roleType)
         {
             if (roleType.ObjectType.IsUnit)
             {
@@ -265,14 +265,14 @@ namespace Allors.Workspace.Adapters
                         // One to One
                         if (previousRole != null)
                         {
-                            var previousRoleObject = (long)previousRole;
+                            var previousRoleObject = (Identity)previousRole;
                             changedAssociationByRole[previousRoleObject] = null;
                         }
                     }
                 }
                 else
                 {
-                    var previousRoles = (long[])previousRole ?? Array.Empty<long>();
+                    var previousRoles = (Identity[])previousRole ?? Array.Empty<Identity>();
 
                     // Use Diff (Remove)
                     foreach (var removeRole in previousRoles)
@@ -283,7 +283,7 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public void GetAssociation(long role, IAssociationType associationType, out object association)
+        public void GetAssociation(Identity role, IAssociationType associationType, out object association)
         {
             if (this.changedAssociationByRoleByAssociationType.TryGetValue(associationType, out var changedAssociationByRole) &&
                 changedAssociationByRole.TryGetValue(role, out association))
@@ -294,44 +294,44 @@ namespace Allors.Workspace.Adapters
             this.AssociationByRole(associationType).TryGetValue(role, out association);
         }
 
-        private Dictionary<long, object> AssociationByRole(IAssociationType asscociationType)
+        private Dictionary<Identity, object> AssociationByRole(IAssociationType asscociationType)
         {
             if (!this.associationByRoleByAssociationType.TryGetValue(asscociationType, out var associationByRole))
             {
-                associationByRole = new Dictionary<long, object>();
+                associationByRole = new Dictionary<Identity, object>();
                 this.associationByRoleByAssociationType[asscociationType] = associationByRole;
             }
 
             return associationByRole;
         }
 
-        private Dictionary<long, object> RoleByAssociation(IRoleType roleType)
+        private Dictionary<Identity, object> RoleByAssociation(IRoleType roleType)
         {
             if (!this.roleByAssociationByRoleType.TryGetValue(roleType, out var roleByAssociation))
             {
-                roleByAssociation = new Dictionary<long, object>();
+                roleByAssociation = new Dictionary<Identity, object>();
                 this.roleByAssociationByRoleType[roleType] = roleByAssociation;
             }
 
             return roleByAssociation;
         }
 
-        private Dictionary<long, object> ChangedAssociationByRole(IAssociationType associationType)
+        private Dictionary<Identity, object> ChangedAssociationByRole(IAssociationType associationType)
         {
             if (!this.changedAssociationByRoleByAssociationType.TryGetValue(associationType, out var changedAssociationByRole))
             {
-                changedAssociationByRole = new Dictionary<long, object>();
+                changedAssociationByRole = new Dictionary<Identity, object>();
                 this.changedAssociationByRoleByAssociationType[associationType] = changedAssociationByRole;
             }
 
             return changedAssociationByRole;
         }
 
-        private Dictionary<long, object> ChangedRoleByAssociation(IRoleType roleType)
+        private Dictionary<Identity, object> ChangedRoleByAssociation(IRoleType roleType)
         {
             if (!this.changedRoleByAssociationByRoleType.TryGetValue(roleType, out var changedRoleByAssociation))
             {
-                changedRoleByAssociation = new Dictionary<long, object>();
+                changedRoleByAssociation = new Dictionary<Identity, object>();
                 this.changedRoleByAssociationByRoleType[roleType] = changedRoleByAssociation;
             }
 
