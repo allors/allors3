@@ -16,7 +16,7 @@ namespace Allors.Workspace.Data
 
         public IPropertyType PropertyType { get; set; }
 
-        public IDatabaseStrategy Object { get; set; }
+        public IStrategy Object { get; set; }
 
         public string Parameter { get; set; }
 

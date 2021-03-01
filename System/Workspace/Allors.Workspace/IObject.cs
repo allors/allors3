@@ -9,6 +9,8 @@ namespace Allors.Workspace
     {
         long WorkspaceId { get; }
 
+        long? DatabaseId { get; }
+
         IStrategy Strategy { get; }
     }
 }
