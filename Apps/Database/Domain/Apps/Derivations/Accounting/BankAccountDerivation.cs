@@ -20,7 +20,7 @@ namespace Allors.Database.Domain
         public BankAccountDerivation(M m) : base(m, new Guid("633f58cd-ca1b-4a2e-8f6e-e1642466a9f7")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.OwnBankAccount.BankAccount) { Steps =  new IPropertyType[] { m.OwnBankAccount.BankAccount} },
+                new RolePattern(m.OwnBankAccount.BankAccount),
                 new AssociationPattern(m.BankAccount.Iban),
             };
 

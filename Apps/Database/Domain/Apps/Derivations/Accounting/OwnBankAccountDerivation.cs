@@ -19,7 +19,7 @@ namespace Allors.Database.Domain
             {
                 new AssociationPattern(m.OwnBankAccount.GeneralLedgerAccount),
                 new AssociationPattern(m.OwnBankAccount.Journal),
-                new AssociationPattern(m.InternalOrganisation.DerivedActiveCollectionMethods) { Steps =  new IPropertyType[] {this.M.InternalOrganisation.DerivedActiveCollectionMethods }, OfType = m.OwnBankAccount.Class  },
+                new RolePattern(m.InternalOrganisation.DerivedActiveCollectionMethods) { OfType = m.OwnBankAccount.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

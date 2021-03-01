@@ -26,7 +26,7 @@ namespace Allors.Database.Domain
                 new AssociationPattern(m.GeneralLedgerAccount.AssignedCostUnitsAllowed),
                 new AssociationPattern(m.GeneralLedgerAccount.CostUnitAccount),
                 new AssociationPattern(m.GeneralLedgerAccount.CostUnitRequired),
-                new AssociationPattern(m.ChartOfAccounts.GeneralLedgerAccounts) { Steps =  new IPropertyType[] { m.ChartOfAccounts.GeneralLedgerAccounts } },
+                new RolePattern(m.ChartOfAccounts.GeneralLedgerAccounts),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

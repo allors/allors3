@@ -18,8 +18,8 @@ namespace Allors.Database.Domain
         {
             new AssociationPattern(m.WorkTask.TransitionalDeniedPermissions),
             new AssociationPattern(m.WorkTask.CanInvoice),
-            new AssociationPattern(m.ServiceEntry.WorkEffort){ Steps =  new IPropertyType[] {m.ServiceEntry.WorkEffort} },
-            new AssociationPattern(m.ServiceEntry.ThroughDate){ Steps =  new IPropertyType[] {m.ServiceEntry.WorkEffort} },
+            new RolePattern(m.ServiceEntry.WorkEffort),
+            new AssociationPattern(m.ServiceEntry.ThroughDate) { Steps =  new IPropertyType[] {m.ServiceEntry.WorkEffort} },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

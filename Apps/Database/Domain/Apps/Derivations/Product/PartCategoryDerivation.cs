@@ -23,9 +23,9 @@ namespace Allors.Database.Domain
                 new AssociationPattern(m.PartCategory.Parts),
                 new AssociationPattern(m.LocalisedText.Text) {Steps = new IPropertyType[] {m.LocalisedText.PartCategoryWhereLocalisedName } },
                 new AssociationPattern(m.LocalisedText.Text) {Steps = new IPropertyType[] {m.LocalisedText.PartCategoryWhereLocalisedDescription } },
-                new AssociationPattern(m.PartCategory.PrimaryParent) {Steps = new IPropertyType[] {m.PartCategory.PrimaryParent} },
+                new RolePattern(m.PartCategory.PrimaryParent),
                 new AssociationPattern(m.PartCategory.PrimaryParent) {Steps = new IPropertyType[] {m.PartCategory.PartCategoriesWhereDescendant } },
-                new AssociationPattern(m.PartCategory.SecondaryParents) {Steps = new IPropertyType[] {m.PartCategory.SecondaryParents} },
+                new RolePattern(m.PartCategory.SecondaryParents),
                 new AssociationPattern(m.PartCategory.SecondaryParents) {Steps = new IPropertyType[] {m.PartCategory.PartCategoriesWhereDescendant } },
                 new AssociationPattern(m.PartCategory.Parts) {Steps = new IPropertyType[] {m.PartCategory.PartCategoriesWhereDescendant } },
             };

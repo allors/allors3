@@ -11,13 +11,14 @@ namespace Allors.Database.Domain
 
     public partial class SalesInvoice
     {
-        private bool IsDeletable =>
-                    this.SalesInvoiceState.Equals(new SalesInvoiceStates(this.Strategy.Transaction).ReadyForPosting) &&
-            this.SalesInvoiceItems.All(v => v.IsDeletable) &&
-            !this.ExistSalesOrders &&
-            !this.ExistPurchaseInvoice &&
-            !this.ExistRepeatingSalesInvoiceWhereSource &&
-            !this.IsRepeatingInvoice;
+        public bool IsDeletable =>
+            this.ExistSalesInvoiceState
+            && this.SalesInvoiceState.Equals(new SalesInvoiceStates(this.Strategy.Transaction).ReadyForPosting)
+            && this.SalesInvoiceItems.All(v => v.IsDeletable)
+            && !this.ExistSalesOrders
+            && !this.ExistPurchaseInvoice
+            && !this.ExistRepeatingSalesInvoiceWhereSource
+            && !this.IsRepeatingInvoice;
 
         // TODO: Cache
         public TransitionalConfiguration[] TransitionalConfigurations => new[] {

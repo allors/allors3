@@ -18,11 +18,14 @@ namespace Allors.Database.Domain
         {
             new AssociationPattern(m.PurchaseOrder.TransitionalDeniedPermissions),
             new AssociationPattern(m.PurchaseOrder.PurchaseOrderShipmentState),
-            new AssociationPattern(m.WorkEffortPurchaseOrderItemAssignment.PurchaseOrder) { Steps =  new IPropertyType[] {m.WorkEffortPurchaseOrderItemAssignment.PurchaseOrder} },
-            new AssociationPattern(m.PurchaseInvoice.PurchaseOrders) { Steps =  new IPropertyType[] {m.PurchaseInvoice.PurchaseOrders} },
-            new AssociationPattern(m.SerialisedItem.PurchaseOrder) { Steps =  new IPropertyType[] {m.SerialisedItem.PurchaseOrder} },
+            new RolePattern(m.WorkEffortPurchaseOrderItemAssignment.PurchaseOrder),
+            new RolePattern(m.PurchaseInvoice.PurchaseOrders),
+            new RolePattern(m.SerialisedItem.PurchaseOrder),
             new AssociationPattern(m.PurchaseOrderItem.PurchaseOrderItemState) { Steps =  new IPropertyType[] {m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem} },
-            new AssociationPattern(m.OrderItemBilling.OrderItem) { Steps =  new IPropertyType[] {m.OrderItemBilling.OrderItem, m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem }, OfType = m.PurchaseOrder.Class },
+            new RolePattern(m.OrderItemBilling.OrderItem) { Steps =  new IPropertyType[] { m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem }, OfType = m.PurchaseOrder.Class },
+            new RolePattern(m.OrderShipment.OrderItem) { Steps =  new IPropertyType[] { m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem }, OfType = m.PurchaseOrder.Class },
+            new RolePattern(m.OrderRequirementCommitment.OrderItem) { Steps =  new IPropertyType[] { m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem }, OfType = m.PurchaseOrder.Class },
+            new RolePattern(m.WorkEffort.OrderItemFulfillment) { Steps =  new IPropertyType[] { m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem }, OfType = m.PurchaseOrder.Class },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

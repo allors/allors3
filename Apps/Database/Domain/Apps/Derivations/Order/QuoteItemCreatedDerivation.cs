@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
             {
                 new AssociationPattern(m.QuoteItem.AssignedVatRegime),
                 new AssociationPattern(m.QuoteItem.AssignedIrpfRegime),
-                new AssociationPattern(m.Quote.QuoteItems) { Steps = new IPropertyType[] { m.Quote.QuoteItems }},
+                new RolePattern(m.Quote.QuoteItems),
                 new AssociationPattern(m.Quote.DerivedVatRegime) { Steps = new IPropertyType[] { m.Quote.QuoteItems }},
                 new AssociationPattern(m.Quote.DerivedIrpfRegime) { Steps = new IPropertyType[] { m.Quote.QuoteItems }},
             };

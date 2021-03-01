@@ -18,6 +18,8 @@ namespace Allors.Database.Domain
         {
             new AssociationPattern(this.M.ProductQuote.TransitionalDeniedPermissions),
             new AssociationPattern(this.M.ProductQuote.ValidQuoteItems),
+            new AssociationPattern(this.M.ProductQuote.Request),
+            new RolePattern(this.M.SalesOrder.Quote) { OfType = m.ProductQuote.Class},
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

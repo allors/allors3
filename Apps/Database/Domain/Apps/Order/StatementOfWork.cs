@@ -7,11 +7,6 @@ namespace Allors.Database.Domain
 {
     public partial class StatementOfWork
     {
-        public bool IsDeletable =>
-            (this.QuoteState.Equals(new QuoteStates(this.Strategy.Transaction).Created)
-                || this.QuoteState.Equals(new QuoteStates(this.Strategy.Transaction).Cancelled)
-                || this.QuoteState.Equals(new QuoteStates(this.Strategy.Transaction).Rejected));
-
         // TODO: Cache
         public TransitionalConfiguration[] TransitionalConfigurations => new[] {
             new TransitionalConfiguration(this.M.StatementOfWork, this.M.StatementOfWork.QuoteState),
