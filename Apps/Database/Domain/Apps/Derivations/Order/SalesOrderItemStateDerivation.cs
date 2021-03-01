@@ -23,7 +23,7 @@ namespace Allors.Database.Domain
                 new AssociationPattern(m.SalesOrderItem.TotalExVat),
                 new AssociationPattern(m.SalesOrder.SalesOrderState) {Steps = new IPropertyType[]{ m.SalesOrder.SalesOrderItems} },
                 new AssociationPattern(m.OrderItemBilling.OrderItem) {Steps = new IPropertyType[]{ m.OrderItemBilling.OrderItem}, OfType = m.SalesOrderItem.Class },
-                new AssociationPattern(m.ShipmentItemBilling.ShipmentItem) {Steps = new IPropertyType[]{ m.ShipmentItemBilling.ShipmentItem, m.ShipmentItem.OrderShipmentsWhereShipmentItem, m.OrderShipment.OrderItem}, OfType = m.SalesOrderItem.Class },
+                new RolePattern(m.ShipmentItemBilling.ShipmentItem) {Steps = new IPropertyType[]{ m.ShipmentItem.OrderShipmentsWhereShipmentItem, m.OrderShipment.OrderItem}, OfType = m.SalesOrderItem.Class },
                 new AssociationPattern(m.NonSerialisedInventoryItem.QuantityOnHand) {Steps = new IPropertyType[]{ m.NonSerialisedInventoryItem.SalesOrderItemsWhereReservedFromNonSerialisedInventoryItem} },
                 new AssociationPattern(m.SalesInvoiceItem.SalesInvoiceItemState) {Steps = new IPropertyType[]{ m.SalesInvoiceItem.OrderItemBillingsWhereInvoiceItem, m.OrderItemBilling.OrderItem }, OfType = m.SalesOrderItem.Class },
                 new AssociationPattern(m.SalesInvoiceItem.SalesInvoiceItemState) {Steps = new IPropertyType[]{ m.SalesInvoiceItem.ShipmentItemBillingsWhereInvoiceItem, m.ShipmentItemBilling.ShipmentItem, m.ShipmentItem.OrderShipmentsWhereShipmentItem, m.OrderShipment.OrderItem }, OfType = m.SalesOrderItem.Class },

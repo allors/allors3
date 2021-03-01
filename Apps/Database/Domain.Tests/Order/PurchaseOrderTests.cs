@@ -1719,12 +1719,21 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedPurchaseInvoicePurchaseOrdersDeriveRevisePermission()
         {
-            var order = new PurchaseOrderBuilder(this.Transaction)
-                .WithPurchaseOrderState(new PurchaseOrderStates(this.Transaction).Completed)
-                .Build();
+            var order = new PurchaseOrderBuilder(this.Transaction).WithPurchaseOrderState(new PurchaseOrderStates(this.Transaction).Completed).Build();
             this.Transaction.Derive(false);
 
-            new PurchaseInvoiceBuilder(this.Transaction).WithPurchaseOrder(order).Build();
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
+            order.AddPurchaseOrderItem(orderItem);
+            this.Transaction.Derive(false);
+
+            var invoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction).Build();
+            invoice.AddPurchaseInvoiceItem(invoiceItem);
+            this.Transaction.Derive(false);
+
+            new OrderItemBillingBuilder(this.Transaction).WithOrderItem(orderItem).WithInvoiceItem(invoiceItem).Build();
             this.Transaction.Derive(false);
 
             Assert.Contains(this.revisePermission, order.DeniedPermissions);
@@ -1817,10 +1826,20 @@ namespace Allors.Database.Domain.Tests
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            new PurchaseInvoiceBuilder(this.Transaction).WithPurchaseOrder(order).Build();
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
+            order.AddPurchaseOrderItem(orderItem);
             this.Transaction.Derive(false);
 
-            Assert.True(order.PurchaseOrderState.IsCreated);
+            var invoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction).Build();
+            invoice.AddPurchaseInvoiceItem(invoiceItem);
+            this.Transaction.Derive(false);
+
+            new OrderItemBillingBuilder(this.Transaction).WithOrderItem(orderItem).WithInvoiceItem(invoiceItem).Build();
+            this.Transaction.Derive(false);
+
             Assert.Contains(this.deletePermission, order.DeniedPermissions);
         }
 

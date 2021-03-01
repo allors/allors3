@@ -19,7 +19,7 @@ namespace Allors.Database.Domain
             new AssociationPattern(this.M.RequestForProposal.TransitionalDeniedPermissions),
             new AssociationPattern(m.RequestForProposal.RequestItems),
             new AssociationPattern(m.RequestItem.RequestItemState) { Steps =  new IPropertyType[] { m.RequestItem.RequestWhereRequestItem}, OfType = m.RequestForProposal.Class },
-            new AssociationPattern(m.Quote.Request) { Steps =  new IPropertyType[] { m.Quote.Request }, OfType = m.RequestForProposal.Class },
+            new RolePattern(m.Quote.Request) { OfType = m.RequestForProposal.Class },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

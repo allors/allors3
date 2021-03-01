@@ -19,7 +19,7 @@ namespace Allors.Database.Domain
                 new AssociationPattern(m.PurchaseOrderItem.IsReceivable),
                 new AssociationPattern(m.PurchaseOrder.PurchaseOrderState) {Steps = new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
                 new AssociationPattern(m.ShipmentReceipt.QuantityAccepted) {Steps = new IPropertyType[] {m.ShipmentReceipt.OrderItem }, OfType = m.PurchaseOrderItem.Class },
-                new AssociationPattern(m.OrderItemBilling.OrderItem) { Steps = new IPropertyType[] { m.OrderItemBilling.OrderItem}, OfType = m.PurchaseOrderItem.Class },
+                new RolePattern(m.OrderItemBilling.OrderItem) { OfType = m.PurchaseOrderItem.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

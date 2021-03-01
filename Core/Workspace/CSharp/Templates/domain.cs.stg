@@ -140,11 +140,11 @@ namespace Allors.Workspace.Domain
 {
     using System.Linq;
 
-	public partial class $class.name$ : $object(class)$ $class.WorkspaceDirectSupertypesByWorkspaceName.(workspaceName):{directSupertype|, $directSupertype.SingularName$}$
+	public partial class $class.name$ : IObject $class.WorkspaceDirectSupertypesByWorkspaceName.(workspaceName):{directSupertype|, $directSupertype.SingularName$}$
 	{
         private readonly Allors.Workspace.Meta.M m;
 
-		public $class.name$(Allors.Workspace.$strategy(class)$ strategy)
+		public $class.name$(IStrategy strategy)
 		{
             this.Strategy = strategy;
             this.m = strategy.Session.Workspace.Context().M;
@@ -154,7 +154,7 @@ $if(class.HasDatabaseOrigin)$
         IStrategy IObject.Strategy => this.Strategy;
 $endif$
 
-        public $strategy(class)$ Strategy { get; }
+        public IStrategy Strategy { get; }
 
 		public long WorkspaceId
 		{
@@ -172,6 +172,8 @@ $if(class.HasDatabaseOrigin)$
 				return this.Strategy.DatabaseId;
 			}
 		}
+$else$
+		public long? DatabaseId => null;
 $endif$
 
 		public Allors.Workspace.Meta.Meta$class.name$ Meta
@@ -355,9 +357,6 @@ $else$
 $endif$
 >>
 
-object(object) ::= "$if(object.HasDatabaseOrigin)$IDatabaseObject$else$IObject$endif$"
-
-strategy(object) ::= "$if(object.HasDatabaseOrigin)$IDatabaseStrategy$else$IStrategy$endif$"
 
 roleType_ObjectType(roleType) ::= <%
 $if(roleType.IsRequired)$

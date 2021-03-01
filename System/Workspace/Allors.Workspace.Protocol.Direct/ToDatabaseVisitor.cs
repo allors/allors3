@@ -53,7 +53,7 @@ namespace Allors.Workspace.Protocol.Direct
 
         private Database.Meta.IObjectType Visit(Meta.IObjectType ws) => ws != null ? (IObjectType)this.metaPopulation.Find(ws.Id) : null;
 
-        private Database.IObject Visit(IDatabaseObject ws)
+        private Database.IObject Visit(Workspace.IObject ws)
         {
             if (ws != null)
             {

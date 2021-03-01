@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
         {
             new AssociationPattern(m.WorkTask.WorkEffortState),
-            new AssociationPattern(m.TimeSheet.TimeEntries) { Steps = new IPropertyType[] { m.TimeSheet.TimeEntries, m.TimeEntry.WorkEffort} },
+            new RolePattern(m.TimeSheet.TimeEntries) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -57,6 +57,16 @@ namespace Allors.Database.Domain
                             {
                                 @this.CanInvoice = false;
                                 break;
+                            }
+
+                            foreach (TimeEntryBilling timeEntryBilling in timeEntry.TimeEntryBillingsWhereTimeEntry)
+                            {
+                                if (timeEntryBilling.InvoiceItem is SalesInvoiceItem invoiceItem
+                                    && invoiceItem.SalesInvoiceWhereSalesInvoiceItem.SalesInvoiceType.IsSalesInvoice
+                                    && !invoiceItem.SalesInvoiceWhereSalesInvoiceItem.ExistSalesInvoiceWhereCreditedFromInvoice)
+                                {
+                                    @this.CanInvoice = false;
+                                }
                             }
                         }
                     }

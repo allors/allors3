@@ -24,7 +24,7 @@ namespace Allors.Database.Domain
                 new AssociationPattern(m.PurchaseOrderItem.QuantityOrdered),
                 new AssociationPattern(m.PurchaseOrderItem.DerivationTrigger),
                 new AssociationPattern(m.PurchaseOrder.StoredInFacility) { Steps = new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems} },
-                new AssociationPattern(m.OrderItemBilling.OrderItem) { Steps = new IPropertyType[] { m.OrderItemBilling.OrderItem}, OfType = m.PurchaseOrderItem.Class },
+                new RolePattern(m.OrderItemBilling.OrderItem) { OfType = m.PurchaseOrderItem.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

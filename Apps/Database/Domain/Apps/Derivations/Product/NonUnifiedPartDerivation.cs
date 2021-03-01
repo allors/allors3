@@ -25,8 +25,8 @@ namespace Allors.Database.Domain
                 new AssociationPattern(m.NonUnifiedPart.Brand),
                 new AssociationPattern(m.NonUnifiedPart.Model),
                 new AssociationPattern(m.LocalisedText.Text) { Steps = new IPropertyType[]{ m.LocalisedText.UnifiedProductWhereLocalisedName }, OfType = m.NonUnifiedPart.Class },
-                new AssociationPattern(m.PartCategory.Parts) { Steps = new IPropertyType[]{ m.PartCategory.Parts }, OfType = m.NonUnifiedPart.Class  },
-                new AssociationPattern(m.SupplierOffering.Part) { Steps = new IPropertyType[] {m.SupplierOffering.Part }, OfType = m.NonUnifiedPart.Class },
+                new RolePattern(m.PartCategory.Parts) { OfType = m.NonUnifiedPart.Class  },
+                new RolePattern(m.SupplierOffering.Part) { OfType = m.NonUnifiedPart.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

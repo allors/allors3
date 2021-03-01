@@ -23,7 +23,7 @@ namespace Allors.Database.Domain
                 new AssociationPattern(m.Person.MiddleName),
                 new AssociationPattern(m.Person.LastName),
                 new AssociationPattern(m.Person.UserName),
-                new AssociationPattern(m.OrganisationContactRelationship.Contact) {Steps = new IPropertyType[]{ m.OrganisationContactRelationship.Contact} },
+                new RolePattern(m.OrganisationContactRelationship.Contact),
                 new AssociationPattern(m.OrganisationContactRelationship.FromDate) {Steps = new IPropertyType[]{ m.OrganisationContactRelationship.Contact } },
                 new AssociationPattern(m.OrganisationContactRelationship.ThroughDate) {Steps = new IPropertyType[]{ m.OrganisationContactRelationship.Contact } },
                 new AssociationPattern(m.Employment.FromDate) { Steps =  new IPropertyType[] {m.Employment.Employee} },

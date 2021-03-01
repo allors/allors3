@@ -19,8 +19,8 @@ namespace Allors.Database.Domain
             new AssociationPattern(m.PurchaseOrderItem.TransitionalDeniedPermissions),
             new AssociationPattern(m.OrderItemBilling.OrderItem) { Steps = new IPropertyType[] { m.OrderItemBilling.OrderItem}, OfType = m.PurchaseOrderItem.Class },
             new AssociationPattern(m.OrderRequirementCommitment.OrderItem) { Steps = new IPropertyType[] { m.OrderRequirementCommitment.OrderItem}, OfType = m.PurchaseOrderItem.Class},
-            new AssociationPattern(m.WorkEffort.OrderItemFulfillment) { Steps = new IPropertyType[] { m.WorkEffort.OrderItemFulfillment}, OfType = m.PurchaseOrderItem.Class },
-            new AssociationPattern(m.OrderShipment.OrderItem) { Steps = new IPropertyType[] { m.OrderShipment.OrderItem}, OfType = m.PurchaseOrderItem.Class },
+            new RolePattern(m.WorkEffort.OrderItemFulfillment) { OfType = m.PurchaseOrderItem.Class },
+            new RolePattern(m.OrderShipment.OrderItem) { OfType = m.PurchaseOrderItem.Class },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

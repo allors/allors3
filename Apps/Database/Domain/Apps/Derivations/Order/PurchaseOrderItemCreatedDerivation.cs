@@ -22,7 +22,7 @@ namespace Allors.Database.Domain
                 new AssociationPattern(m.PurchaseOrderItem.AssignedDeliveryDate),
                 new AssociationPattern(m.PurchaseOrderItem.AssignedVatRegime),
                 new AssociationPattern(m.PurchaseOrderItem.AssignedIrpfRegime),
-                new AssociationPattern(this.M.PurchaseOrder.PurchaseOrderItems) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
+                new RolePattern(this.M.PurchaseOrder.PurchaseOrderItems),
                 new AssociationPattern(this.M.PurchaseOrder.DeliveryDate) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
                 new AssociationPattern(this.M.PurchaseOrder.DerivedVatRegime) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
                 new AssociationPattern(this.M.PurchaseOrder.DerivedIrpfRegime) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },

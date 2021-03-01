@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
                 new AssociationPattern(m.PartyContactMechanism.ContactPurposes) {Steps = new IPropertyType[] { this.M.PartyContactMechanism.PartyWherePartyContactMechanism } },
                 new AssociationPattern(m.PartyContactMechanism.FromDate) {Steps = new IPropertyType[]{ m.PartyContactMechanism.PartyWherePartyContactMechanism } },
                 new AssociationPattern(m.PartyContactMechanism.ThroughDate) {Steps = new IPropertyType[]{ m.PartyContactMechanism.PartyWherePartyContactMechanism } },
-                new AssociationPattern(m.PartyRelationship.Parties) {Steps = new IPropertyType[]{ m.PartyRelationship.Parties } },
+                new RolePattern(m.PartyRelationship.Parties),
                 new AssociationPattern(m.PartyRelationship.FromDate) {Steps = new IPropertyType[]{ m.PartyRelationship.Parties } },
                 new AssociationPattern(m.PartyRelationship.ThroughDate) {Steps = new IPropertyType[]{ m.PartyRelationship.Parties } },
             };
