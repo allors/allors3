@@ -1305,7 +1305,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedPurchaseInvoiceStateCreatedWithSalesInvoiceDeriveDeletePermission()
+        public void OnChangedPurchaseInvoiceStateCreatedWithSalesInvoiceDeriveDeletePermissionDenied()
         {
             var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
 
@@ -1314,6 +1314,20 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, purchaseInvoice.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseInvoiceStateCreatedWithSalesInvoiceDeriveDeletePermissionAllowed()
+        {
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
+
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).WithPurchaseInvoice(purchaseInvoice).Build();
+            this.Transaction.Derive(false);
+
+            salesInvoice.RemovePurchaseInvoice();
+            this.Transaction.Derive(false);
+
+            Assert.DoesNotContain(this.deletePermission, purchaseInvoice.DeniedPermissions);
         }
 
         [Fact]

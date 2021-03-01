@@ -17,6 +17,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
         {
             new AssociationPattern(this.M.StatementOfWork.TransitionalDeniedPermissions),
+            new AssociationPattern(this.M.StatementOfWork.Request),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -30,7 +31,7 @@ namespace Allors.Database.Domain
 
                 var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta.ObjectType, @this.Meta.Delete);
 
-                if (@this.IsDeletable)
+                if (@this.IsDeletable())
                 {
                     @this.RemoveDeniedPermission(deletePermission);
                 }

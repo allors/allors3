@@ -17,6 +17,9 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
         {
             new AssociationPattern(this.M.SalesInvoice.TransitionalDeniedPermissions),
+            new AssociationPattern(this.M.SalesInvoice.IsRepeatingInvoice),
+            new AssociationPattern(this.M.SalesInvoice.SalesOrders),
+            new AssociationPattern(this.M.SalesInvoice.PurchaseInvoice),
             new AssociationPattern(this.M.SalesInvoiceItem.SalesInvoiceItemState) { Steps = new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem } },
             new RolePattern(this.M.RepeatingSalesInvoice.Source),
         };
@@ -30,12 +33,8 @@ namespace Allors.Database.Domain
             {
                 @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
                 var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta.ObjectType, @this.Meta.Delete);
-                if (@this.ExistSalesInvoiceState &&
-                    @this.SalesInvoiceState.Equals(new SalesInvoiceStates(@this.Strategy.Transaction).ReadyForPosting) &&
-                    @this.SalesInvoiceItems.All(v => v.IsDeletable) &&
-                    !@this.ExistSalesOrders &&
-                    !@this.ExistPurchaseInvoice &&
-                    !@this.ExistRepeatingSalesInvoiceWhereSource)
+
+                if (@this.IsDeletable)
                 {
                     @this.RemoveDeniedPermission(deletePermission);
                 }

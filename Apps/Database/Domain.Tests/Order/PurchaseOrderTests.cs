@@ -1601,7 +1601,7 @@ namespace Allors.Database.Domain.Tests
         private readonly Permission cancelPermission;
 
         [Fact]
-        public void OnChangedPurchaseOrderStateIsCompletedDeriveInvoicePermission()
+        public void OnChangedTransitionalDeniedPermissionsDeriveInvoicePermissionAllowed()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
@@ -1610,18 +1610,14 @@ namespace Allors.Database.Domain.Tests
             order.AddPurchaseOrderItem(orderItem);
             this.Transaction.Derive(false);
 
-            order.Approve();
+            order.PurchaseOrderState = new PurchaseOrderStates(this.Transaction).Completed;
             this.Transaction.Derive(false);
 
-            order.Send();
-            this.Transaction.Derive(false);
-
-            Assert.True(order.PurchaseOrderState.IsCompleted);
             Assert.DoesNotContain(this.invoicePermission, order.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPurchaseOrderStateInProcessDeriveInvoicePermission()
+        public void OnChangedTransitionalDeniedPermissionsDeriveInvoicePermissionDenied()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
@@ -1630,27 +1626,19 @@ namespace Allors.Database.Domain.Tests
             order.AddPurchaseOrderItem(orderItem);
             this.Transaction.Derive(false);
 
-            order.SetReadyForProcessing();
+            order.PurchaseOrderState = new PurchaseOrderStates(this.Transaction).Completed;
             this.Transaction.Derive(false);
 
-            Assert.True(order.PurchaseOrderState.IsInProcess);
+            Assert.DoesNotContain(this.invoicePermission, order.DeniedPermissions);
+
+            order.PurchaseOrderState = new PurchaseOrderStates(this.Transaction).AwaitingApprovalLevel1;
+            this.Transaction.Derive(false);
+
             Assert.Contains(this.invoicePermission, order.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPurchaseOrderStateIsCompletedWithoutValidItemsDeriveInvoicePermission()
-        {
-            var order = new PurchaseOrderBuilder(this.Transaction)
-                .WithPurchaseOrderState(new PurchaseOrderStates(this.Transaction).Completed)
-                .Build();
-            this.Transaction.Derive(false);
-
-            Assert.True(order.PurchaseOrderState.IsCompleted);
-            Assert.Contains(this.invoicePermission, order.DeniedPermissions);
-        }
-
-        [Fact]
-        public void OnChangedPurchaseOrderItemBillingDeriveInvoicePermission()
+        public void OnChangedOrderItemBillingOrderItemDeriveInvoicePermission()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
@@ -1659,11 +1647,10 @@ namespace Allors.Database.Domain.Tests
             order.AddPurchaseOrderItem(orderItem);
             this.Transaction.Derive(false);
 
-            order.Approve();
+            order.PurchaseOrderState = new PurchaseOrderStates(this.Transaction).Completed;
             this.Transaction.Derive(false);
 
-            order.Send();
-            this.Transaction.Derive(false);
+            Assert.DoesNotContain(this.invoicePermission, order.DeniedPermissions);
 
             new OrderItemBillingBuilder(this.Transaction).WithOrderItem(orderItem).Build();
             this.Transaction.Derive(false);
@@ -1672,43 +1659,19 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedPurchaseOrderStateIsInProcessDeriveRevisePermission()
+        public void OnChangedTransitionalDeniedPermissionsDeriveRevisePermissionAllowed()
         {
-            var order = new PurchaseOrderBuilder(this.Transaction)
-                .WithPurchaseOrderState(new PurchaseOrderStates(this.Transaction).InProcess)
-                .Build();
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            Assert.True(order.PurchaseOrderState.IsInProcess);
+            order.PurchaseOrderState = new PurchaseOrderStates(this.Transaction).InProcess;
+            this.Transaction.Derive(false);
+
             Assert.DoesNotContain(this.revisePermission, order.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPurchaseOrderStateIsSentDeriveRevisePermission()
-        {
-            var order = new PurchaseOrderBuilder(this.Transaction)
-                .WithPurchaseOrderState(new PurchaseOrderStates(this.Transaction).Sent)
-                .Build();
-            this.Transaction.Derive(false);
-
-            Assert.True(order.PurchaseOrderState.IsSent);
-            Assert.DoesNotContain(this.revisePermission, order.DeniedPermissions);
-        }
-
-        [Fact]
-        public void OnChangedPurchaseOrderStateIsCompletedDeriveRevisePermission()
-        {
-            var order = new PurchaseOrderBuilder(this.Transaction)
-                .WithPurchaseOrderState(new PurchaseOrderStates(this.Transaction).Completed)
-                .Build();
-            this.Transaction.Derive(false);
-
-            Assert.True(order.PurchaseOrderState.IsCompleted);
-            Assert.DoesNotContain(this.revisePermission, order.DeniedPermissions);
-        }
-
-        [Fact]
-        public void OnChangedPurchaseOrderStateCreatedDeriveRevisePermission()
+        public void TransitionalDeniedPermissionsDeriveRevisePermissionDenied()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
@@ -1719,33 +1682,36 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedPurchaseInvoicePurchaseOrdersDeriveRevisePermission()
         {
-            var order = new PurchaseOrderBuilder(this.Transaction).WithPurchaseOrderState(new PurchaseOrderStates(this.Transaction).Completed).Build();
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
             order.AddPurchaseOrderItem(orderItem);
             this.Transaction.Derive(false);
 
+            order.PurchaseOrderState = new PurchaseOrderStates(this.Transaction).InProcess;
+            this.Transaction.Derive(false);
+
+            Assert.DoesNotContain(this.revisePermission, order.DeniedPermissions);
+
             var invoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction).Build();
-            invoice.AddPurchaseInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
-
-            new OrderItemBillingBuilder(this.Transaction).WithOrderItem(orderItem).WithInvoiceItem(invoiceItem).Build();
+            invoice.AddPurchaseOrder(order);
             this.Transaction.Derive(false);
 
             Assert.Contains(this.revisePermission, order.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPurchaseOrderShipmentStateReceivedDeriveRevisePermission()
+        public void OnChangedPurchaseOrderShipmentStateDeriveRevisePermission()
         {
             var order = new PurchaseOrderBuilder(this.Transaction)
                 .WithPurchaseOrderState(new PurchaseOrderStates(this.Transaction).Completed)
                 .Build();
             this.Transaction.Derive(false);
+
+            Assert.DoesNotContain(this.revisePermission, order.DeniedPermissions);
 
             order.PurchaseOrderShipmentState = new PurchaseOrderShipmentStates(this.Transaction).Received;
             this.Transaction.Derive(false);
@@ -1754,21 +1720,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedPurchaseOrderShipmentStateNotReceivedDeriveRevisePermission()
-        {
-            var order = new PurchaseOrderBuilder(this.Transaction)
-                .WithPurchaseOrderState(new PurchaseOrderStates(this.Transaction).Completed)
-                .Build();
-            this.Transaction.Derive(false);
-
-            order.PurchaseOrderShipmentState = new PurchaseOrderShipmentStates(this.Transaction).NotReceived;
-            this.Transaction.Derive(false);
-
-            Assert.DoesNotContain(this.revisePermission, order.DeniedPermissions);
-        }
-
-        [Fact]
-        public void OnChangedPurchaseOrderStateCreatedDeriveQuickReceivePermission()
+        public void OnChangedTransitionalDeniedPermissionsDeriveQuickReceivePermissionAllowed()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
@@ -1777,46 +1729,48 @@ namespace Allors.Database.Domain.Tests
             order.AddPurchaseOrderItem(orderItem);
             this.Transaction.Derive(false);
 
-            Assert.True(orderItem.IsReceivable);
             Assert.Contains(this.quickReceivePermission, order.DeniedPermissions);
+
+            order.PurchaseOrderState = new PurchaseOrderStates(this.Transaction).Sent;
+            this.Transaction.Derive(false);
+
+            Assert.DoesNotContain(this.quickReceivePermission, order.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPurchaseOrderStateSentDeriveQuickReceivePermission()
+        public void OnChangedTransitionalDeniedPermissionsDeriveQuickReceivePermissionDenied()
         {
-            var order = new PurchaseOrderBuilder(this.Transaction)
-                .WithPurchaseOrderState(new PurchaseOrderStates(this.Transaction).Sent)
-                .Build();
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).WithIsReceivable(true).Build();
             order.AddPurchaseOrderItem(orderItem);
             this.Transaction.Derive(false);
 
-            Assert.True(orderItem.IsReceivable);
-            Assert.True(order.PurchaseOrderState.IsSent);
+            order.PurchaseOrderState = new PurchaseOrderStates(this.Transaction).AwaitingApprovalLevel1;
+            this.Transaction.Derive(false);
+
             Assert.Contains(this.quickReceivePermission, order.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPurchaseOrderStateCreatedDeriveDeletePermission()
+        public void OnChangedTransitionalDeniedPermissionsDeriveDeletePermissionAllowed()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            Assert.True(order.PurchaseOrderState.IsCreated);
             Assert.DoesNotContain(this.deletePermission, order.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPurchaseOrderStateSentDeriveDeletePermission()
+        public void OnChangedTransitionalDeniedPermissionsDeriveDeletePermissionDenied()
         {
-            var order = new PurchaseOrderBuilder(this.Transaction)
-                .WithPurchaseOrderState(new PurchaseOrderStates(this.Transaction).Sent)
-                .Build();
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            Assert.True(order.PurchaseOrderState.IsSent);
+            order.PurchaseOrderState = new PurchaseOrderStates(this.Transaction).Sent;
+            this.Transaction.Derive(false);
+
             Assert.Contains(this.deletePermission, order.DeniedPermissions);
         }
 
@@ -1826,18 +1780,12 @@ namespace Allors.Database.Domain.Tests
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
-            order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
-
             var invoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction).Build();
-            invoice.AddPurchaseInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            Assert.DoesNotContain(this.deletePermission, order.DeniedPermissions);
 
-            new OrderItemBillingBuilder(this.Transaction).WithOrderItem(orderItem).WithInvoiceItem(invoiceItem).Build();
+            invoice.AddPurchaseOrder(order);
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, order.DeniedPermissions);
@@ -1849,10 +1797,14 @@ namespace Allors.Database.Domain.Tests
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            new SerialisedItemBuilder(this.Transaction).WithPurchaseOrder(order).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            Assert.True(order.PurchaseOrderState.IsCreated);
+            Assert.DoesNotContain(this.deletePermission, order.DeniedPermissions);
+
+            serialisedItem.PurchaseOrder = order;
+            this.Transaction.Derive(false);
+
             Assert.Contains(this.deletePermission, order.DeniedPermissions);
         }
 
@@ -1862,15 +1814,19 @@ namespace Allors.Database.Domain.Tests
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            new WorkEffortPurchaseOrderItemAssignmentBuilder(this.Transaction).WithPurchaseOrder(order).Build();
+            var assignment = new WorkEffortPurchaseOrderItemAssignmentBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            Assert.True(order.PurchaseOrderState.IsCreated);
+            Assert.DoesNotContain(this.deletePermission, order.DeniedPermissions);
+
+            assignment.PurchaseOrder = order;
+            this.Transaction.Derive(false);
+
             Assert.Contains(this.deletePermission, order.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPurchaseOrderItemBillingDeriveDeletePermission()
+        public void OnChangedOrderItemBillingOrderItemDeriveDeletePermission()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
@@ -1879,21 +1835,106 @@ namespace Allors.Database.Domain.Tests
             order.AddPurchaseOrderItem(orderItem);
             this.Transaction.Derive(false);
 
-            new OrderItemBillingBuilder(this.Transaction).WithOrderItem(orderItem).Build();
+            var orderItemBilling = new OrderItemBillingBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            Assert.DoesNotContain(this.deletePermission, order.DeniedPermissions);
+
+            orderItemBilling.OrderItem = orderItem;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, order.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPurchaseOrderPurchaseOrderShipmentStateDeriveMultiplePermissions()
+        public void OnChangedPurchaseOrderItemPurchaseOrderItemStateDeriveDeletePermission()
         {
-            var order = new PurchaseOrderBuilder(this.Transaction)
-                .WithPurchaseOrderShipmentState(new PurchaseOrderShipmentStates(this.Transaction).Received)
-                .Build();
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            Assert.True(order.PurchaseOrderShipmentState.IsReceived);
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
+            order.AddPurchaseOrderItem(orderItem);
+            this.Transaction.Derive(false);
+
+            Assert.DoesNotContain(this.deletePermission, order.DeniedPermissions);
+
+            orderItem.PurchaseOrderItemState = new PurchaseOrderItemStates(this.Transaction).InProcess;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, order.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedOrderShipmentOrderItemDeriveDeletePermission()
+        {
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
+            order.AddPurchaseOrderItem(orderItem);
+            this.Transaction.Derive(false);
+
+            var orderShipment = new OrderShipmentBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            Assert.DoesNotContain(this.deletePermission, order.DeniedPermissions);
+
+            orderShipment.OrderItem = orderItem;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, order.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedOrderRequirementCommitmentOrderItemDeriveDeletePermission()
+        {
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
+            order.AddPurchaseOrderItem(orderItem);
+            this.Transaction.Derive(false);
+
+            var requirementCommitment = new OrderRequirementCommitmentBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            Assert.DoesNotContain(this.deletePermission, order.DeniedPermissions);
+
+            requirementCommitment.OrderItem = orderItem;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, order.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedWorkEffortOrderItemFulfillmentDeriveDeletePermission()
+        {
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
+            order.AddPurchaseOrderItem(orderItem);
+            this.Transaction.Derive(false);
+
+            var worktask = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            Assert.DoesNotContain(this.deletePermission, order.DeniedPermissions);
+
+            worktask.OrderItemFulfillment = orderItem;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, order.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseOrderShipmentStateDeriveMultiplePermissions()
+        {
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            order.PurchaseOrderShipmentState = new PurchaseOrderShipmentStates(this.Transaction).Received;
+            this.Transaction.Derive(false);
 
             Assert.Contains(this.rejectPermission, order.DeniedPermissions);
             Assert.Contains(this.cancelPermission, order.DeniedPermissions);

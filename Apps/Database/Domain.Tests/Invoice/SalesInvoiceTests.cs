@@ -3144,6 +3144,54 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deletePermission, invoice.DeniedPermissions);
         }
+
+        [Fact]
+        public void OnChangedIsRepeatingInvoiceDeriveDeletePermissionDenied()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            invoice.IsRepeatingInvoice = true;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, invoice.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedIsRepeatingInvoiceDeriveDeletePermissionAllowed()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Transaction).WithIsRepeatingInvoice(true).Build();
+            this.Transaction.Derive(false);
+
+            invoice.IsRepeatingInvoice = false;
+            this.Transaction.Derive(false);
+
+            Assert.DoesNotContain(this.deletePermission, invoice.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedSalesOrdersDeriveDeletePermission()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            invoice.AddSalesOrder(new SalesOrderBuilder(this.Transaction).Build());
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, invoice.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseInvoiceDeriveDeletePermission()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            invoice.PurchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, invoice.DeniedPermissions);
+        }
     }
 
     [Trait("Category", "Security")]

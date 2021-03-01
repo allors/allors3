@@ -239,7 +239,7 @@ namespace Allors.Database.Domain.Tests
         private readonly Permission setReadyPermission;
 
         [Fact]
-        public void OnChangedProductQuoteQuoteItemStateCreatedDeriveSetReadyPermission()
+        public void OnChangedProductQuoteValidQuoteItemsDeriveSetReadyPermissionAllowed()
         {
             var productQuote = new ProductQuoteBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
@@ -256,9 +256,19 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedProductQuoteWithoutQuoteItemStateCreatedDeriveSetReadyPermission()
+        public void OnChangedProductQuoteValidQuoteItemsDeriveSetReadyPermissionDenied()
         {
             var productQuote = new ProductQuoteBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Transaction)
+                    .WithInvoiceItemType(new InvoiceItemTypeBuilder(this.Transaction).Build())
+                    .WithAssignedUnitPrice(1)
+                    .Build();
+            productQuote.AddQuoteItem(quoteItem);
+            this.Transaction.Derive(false);
+
+            quoteItem.Cancel();
             this.Transaction.Derive(false);
 
             Assert.Contains(this.setReadyPermission, productQuote.DeniedPermissions);
@@ -278,91 +288,82 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedProductQuoteStateCreatedDeriveDeletePermission()
+        public void OnChangedProductQuoteTransitionalDeniedPermissionsDeriveDeletePermissionAllowed()
         {
             var productQuote = new ProductQuoteBuilder(this.Transaction).Build();
-
             this.Transaction.Derive(false);
 
             Assert.DoesNotContain(this.deletePermission, productQuote.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedProductQuoteStateCreatedWithRequestDeriveDeletePermission()
-        {
-            var request = new RequestForQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
-
-            var productQuote = new ProductQuoteBuilder(this.Transaction).WithRequest(request).Build();
-            this.Transaction.Derive(false);
-
-            Assert.Contains(this.deletePermission, productQuote.DeniedPermissions);
-        }
-
-        [Fact]
-        public void OnChangedProductQuoteStateApprovalDeriveDeletePermission()
+        public void OnChangedProductQuoteStateTransitionalDeniedPermissionsDeriveDeletePermissionDenied()
         {
             var productQuote = new ProductQuoteBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            productQuote.Send();
-            this.Transaction.Derive(false);
-
-            productQuote.Accept();
+            productQuote.QuoteState = new QuoteStates(this.Transaction).Accepted;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, productQuote.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedProductQuoteStateOrderedWithSalesOrderDeriveDeletePermission()
+        public void OnChangedRequestDeriveDeletePermissionDenied()
         {
-            var party = new PersonBuilder(this.Transaction).WithLastName("party").Build();
-
-            var good = new Goods(this.Transaction).FindBy(this.M.Good.Name, "good1");
-             
-            var quote = new ProductQuoteBuilder(this.Transaction)
-                .WithReceiver(party)
-                .WithFullfillContactMechanism(new WebAddressBuilder(this.Transaction).WithElectronicAddressString("test").Build())
-                .Build();
-
-            var item1 = new QuoteItemBuilder(this.Transaction).WithProduct(good).WithQuantity(1).WithAssignedUnitPrice(1000).Build();
-            var item2 = new QuoteItemBuilder(this.Transaction).WithProduct(good).WithQuantity(3).WithAssignedUnitPrice(100).Build();
-
-            quote.AddQuoteItem(item1);
-            quote.AddQuoteItem(item2);
-
+            var productQuote = new ProductQuoteBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            quote.Send();
+            productQuote.Request = new RequestForQuoteBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            quote.Accept();
+            Assert.Contains(this.deletePermission, productQuote.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedRequestDeriveDeletePermissionDeniedAllowed()
+        {
+            var productQuote = new ProductQuoteBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            quote.Send();
+            productQuote.Request = new RequestForQuoteBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var productQuoteOrder = quote.Order();
+            productQuote.RemoveRequest();
+            this.Transaction.Derive(false);
+
+            Assert.DoesNotContain(this.deletePermission, productQuote.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedSalesOrderQuoteDeriveDeletePermissionDenied()
+        {
+            var quote = new ProductQuoteBuilder(this.Transaction).Build();
+
+            var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            salesOrder.Quote = quote;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, quote.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedProductQuoteWithRequestDeriveDeletePermission()
+        public void OnChangedSalesOrderQuoteDeriveDeletePermissionAllowed()
         {
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
+
+            var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            quote.Request = new RequestForQuoteBuilder(this.Transaction).Build();
+            salesOrder.Quote = quote;
             this.Transaction.Derive(false);
 
-            var item = new QuoteItemBuilder(this.Transaction).Build();
-            quote.AddQuoteItem(item);
+            salesOrder.RemoveQuote();
             this.Transaction.Derive(false);
 
-            Assert.Contains(this.deletePermission, quote.DeniedPermissions);
+            Assert.DoesNotContain(this.deletePermission, quote.DeniedPermissions);
         }
     }
 }

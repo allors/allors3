@@ -35,27 +35,52 @@ namespace Allors.Database.Domain.Tests
 
         private readonly Permission deletePermission;
 
-
         [Fact]
-        public void OnChangedProposalStateCreatedDeriveDeletePermission()
+        public void OnChangedProposalTransitionalDeniedPermissionsDeriveDeletePermissionAllowed()
         {
-            var proposal = new ProposalBuilder(this.Transaction).Build();
-
+            var quote = new ProposalBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            Assert.DoesNotContain(this.deletePermission, proposal.DeniedPermissions);
+            Assert.DoesNotContain(this.deletePermission, quote.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedProposalStateZDeriveDeletePermission()
+        public void OnChangedProposalStateTransitionalDeniedPermissionsDeriveDeletePermissionDenied()
         {
-            var proposal = new ProposalBuilder(this.Transaction).Build();
+            var quote = new ProposalBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            proposal.Accept();
+            quote.QuoteState = new QuoteStates(this.Transaction).Accepted;
             this.Transaction.Derive(false);
 
-            Assert.Contains(this.deletePermission, proposal.DeniedPermissions);
+            Assert.Contains(this.deletePermission, quote.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedRequestDeriveDeletePermissionDenied()
+        {
+            var quote = new ProposalBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            quote.Request = new RequestForQuoteBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, quote.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedRequestDeriveDeletePermissionDeniedAllowed()
+        {
+            var quote = new ProposalBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            quote.Request = new RequestForQuoteBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            quote.RemoveRequest();
+            this.Transaction.Derive(false);
+
+            Assert.DoesNotContain(this.deletePermission, quote.DeniedPermissions);
         }
     }
 }
