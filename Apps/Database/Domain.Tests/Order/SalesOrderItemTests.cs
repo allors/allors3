@@ -3485,7 +3485,7 @@ namespace Allors.Database.Domain.Tests
         public override Config Config => new Config { SetupSecurity = true };
 
         [Fact]
-        public void OnChangedSalesOrderItemStateProvisionalDeriveDeletePermission()
+        public void OnChangedTransitionalDeniedPermissionsDeriveDeletePermissionAllowed()
         {
             var item = new SalesOrderItemBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
@@ -3495,7 +3495,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedSalesOrderItemStateCancelledDeriveDeletePermission()
+        public void OnChangedTransitionalDeniedPermissionsDeriveDeletePermissionDenied()
         {
             var item = new SalesOrderItemBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
@@ -3505,6 +3505,78 @@ namespace Allors.Database.Domain.Tests
 
             var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrderItem.ObjectType, this.M.SalesOrderItem.Delete);
             Assert.Contains(deletePermission, item.DeniedPermissions);
+        }
+
+        [Fact]
+        public void ChangedOrderItemBillingOrderItemDeriveDeletePermissionDenied()
+        {
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var orderItemBilling = new OrderItemBillingBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrderItem.ObjectType, this.M.SalesOrderItem.Delete);
+            Assert.DoesNotContain(deletePermission, orderItem.DeniedPermissions);
+
+            orderItemBilling.OrderItem = orderItem;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(deletePermission, orderItem.DeniedPermissions);
+        }
+
+        [Fact]
+        public void ChangedOrderShipmentOrderItemDeriveDeletePermissionDenied()
+        {
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var orderShipment = new OrderShipmentBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrderItem.ObjectType, this.M.SalesOrderItem.Delete);
+            Assert.DoesNotContain(deletePermission, orderItem.DeniedPermissions);
+
+            orderShipment.OrderItem = orderItem;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(deletePermission, orderItem.DeniedPermissions);
+        }
+
+        [Fact]
+        public void ChangedOrderRequirementCommitmentOrderItemDeriveDeletePermissionDenied()
+        {
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var orderRequirementCommitment = new OrderRequirementCommitmentBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrderItem.ObjectType, this.M.SalesOrderItem.Delete);
+            Assert.DoesNotContain(deletePermission, orderItem.DeniedPermissions);
+
+            orderRequirementCommitment.OrderItem = orderItem;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(deletePermission, orderItem.DeniedPermissions);
+        }
+
+        [Fact]
+        public void ChangedWorkEffortOrderItemFulfillmentDeriveDeletePermissionDenied()
+        {
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var workTask = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrderItem.ObjectType, this.M.SalesOrderItem.Delete);
+            Assert.DoesNotContain(deletePermission, orderItem.DeniedPermissions);
+
+            workTask.OrderItemFulfillment = orderItem;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(deletePermission, orderItem.DeniedPermissions);
         }
 
         [Fact]

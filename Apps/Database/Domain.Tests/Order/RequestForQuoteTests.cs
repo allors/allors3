@@ -59,18 +59,16 @@ namespace Allors.Database.Domain.Tests
         private readonly Permission submitPermission;
 
         [Fact]
-        public void OnChangedRequestForQuoteStateCreatedDeriveDeletePermissionAllowed()
+        public void OnChangedTransitionalDeniedPermissionsDeriveDeletePermissionDenied()
         {
-            var request = new RequestForQuoteBuilder(this.Transaction)
-                .WithRequestState(new RequestStates(this.Transaction).Anonymous)
-                .Build();
+            var request = new RequestForQuoteBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, request.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedRequestForQuoteStateDeriveDeletePermission()
+        public void OnChangedTransitionalDeniedPermissionsDeriveDeletePermissionAllowed()
         {
             var request = new RequestForQuoteBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
@@ -87,7 +85,10 @@ namespace Allors.Database.Domain.Tests
             var request = new RequestForQuoteBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            new ProductQuoteBuilder(this.Transaction).WithRequest(request).Build();
+            var quote = new ProductQuoteBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            quote.Request = request;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, request.DeniedPermissions);
@@ -114,12 +115,26 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRequestForQuoteStateCreatedDeriveSubmitPermission()
+        public void OnChangedTransitionalDeniedPermissionsDeriveSubmitPermissionDenied()
         {
             var requestForQuote = new RequestForQuoteBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
             Assert.Contains(this.submitPermission, requestForQuote.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedTransitionalDeniedPermissionsDeriveSubmitPermissionAllowed()
+        {
+            var requestForQuote = new RequestForQuoteBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.submitPermission, requestForQuote.DeniedPermissions);
+
+            requestForQuote.Originator = this.InternalOrganisation.ActiveCustomers.First;
+            this.Transaction.Derive(false);
+
+            Assert.DoesNotContain(this.submitPermission, requestForQuote.DeniedPermissions);
         }
     }
 }

@@ -211,7 +211,11 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedWorkEffortInventoryProducedPartDeletePermission()
         {
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
-            new WorkEffortInventoryProducedBuilder(this.Transaction).WithPart(nonUnifiedPart).Build();
+
+            var inventoryProduced = new WorkEffortInventoryProducedBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            inventoryProduced.Part = nonUnifiedPart;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, nonUnifiedPart.DeniedPermissions);
@@ -223,7 +227,10 @@ namespace Allors.Database.Domain.Tests
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            new WorkEffortPartStandardBuilder(this.Transaction).WithPart(nonUnifiedPart).Build();
+            var workEffortStandard = new WorkEffortPartStandardBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            workEffortStandard.Part = nonUnifiedPart;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, nonUnifiedPart.DeniedPermissions);
@@ -235,7 +242,10 @@ namespace Allors.Database.Domain.Tests
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            new ManufacturingBomBuilder(this.Transaction).WithPart(nonUnifiedPart).Build();
+            var bom = new ManufacturingBomBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            bom.Part = nonUnifiedPart;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, nonUnifiedPart.DeniedPermissions);
@@ -247,7 +257,10 @@ namespace Allors.Database.Domain.Tests
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            new ManufacturingBomBuilder(this.Transaction).WithComponentPart(nonUnifiedPart).Build();
+            var bom = new ManufacturingBomBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            bom.ComponentPart = nonUnifiedPart;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, nonUnifiedPart.DeniedPermissions);
@@ -259,7 +272,10 @@ namespace Allors.Database.Domain.Tests
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            new InventoryItemTransactionBuilder(this.Transaction).WithPart(nonUnifiedPart).Build();
+            var transaction = new InventoryItemTransactionBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            transaction.Part = nonUnifiedPart;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, nonUnifiedPart.DeniedPermissions);

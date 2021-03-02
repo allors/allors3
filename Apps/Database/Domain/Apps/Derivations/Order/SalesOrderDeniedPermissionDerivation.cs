@@ -17,9 +17,16 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
         {
             new AssociationPattern(this.M.SalesOrder.TransitionalDeniedPermissions),
-            new AssociationPattern(this.M.SalesOrder.SalesOrderShipmentState),
+            new AssociationPattern(this.M.SalesOrder.CanShip),
+            new AssociationPattern(this.M.SalesOrder.CanInvoice),
+            new AssociationPattern(this.M.SalesOrder.Quote),
             new AssociationPattern(this.M.SalesOrder.SalesOrderInvoiceState),
+            new AssociationPattern(this.M.SalesOrder.SalesOrderShipmentState),
             new AssociationPattern(this.M.SalesOrderItem.SalesOrderItemState) { Steps = new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
+            new RolePattern(m.OrderItemBilling.OrderItem) { Steps =  new IPropertyType[] { m.SalesOrderItem.SalesOrderWhereSalesOrderItem }, OfType = m.SalesOrder.Class },
+            new RolePattern(m.OrderShipment.OrderItem) { Steps =  new IPropertyType[] { m.SalesOrderItem.SalesOrderWhereSalesOrderItem }, OfType = m.SalesOrder.Class },
+            new RolePattern(m.OrderRequirementCommitment.OrderItem) { Steps =  new IPropertyType[] { m.SalesOrderItem.SalesOrderWhereSalesOrderItem }, OfType = m.SalesOrder.Class },
+            new RolePattern(m.WorkEffort.OrderItemFulfillment) { Steps =  new IPropertyType[] { m.SalesOrderItem.SalesOrderWhereSalesOrderItem }, OfType = m.SalesOrder.Class },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

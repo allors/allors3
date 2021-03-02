@@ -227,7 +227,7 @@ namespace Allors.Database.Domain.Tests
         private readonly Permission deletePermission;
 
         [Fact]
-        public void OnChangedRequestItemStateDraftDeriveDeletePermission()
+        public void OnChangedTransitionalDeniedPermissionsDeriveDeletePermissionAllowed()
         {
             var requestItem = new RequestItemBuilder(this.Transaction).WithRequestItemState(new RequestItemStates(this.Transaction).Draft).Build();
             this.Transaction.Derive(false);
@@ -236,7 +236,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRequestItemStateSubmitDeriveDeletePermission()
+        public void OnChangedTransitionalDeniedPermissionsDeriveDeletePermissionDenied()
         {
             var requestItem = new RequestItemBuilder(this.Transaction).WithRequestItemState(new RequestItemStates(this.Transaction).Quoted).Build();
             this.Transaction.Derive(false);

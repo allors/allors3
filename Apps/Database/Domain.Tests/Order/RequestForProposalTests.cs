@@ -54,18 +54,16 @@ namespace Allors.Database.Domain.Tests
         private readonly Permission deletePermission;
 
         [Fact]
-        public void OnChangedRequestForProposalStateCreatedDeriveDeletePermissionAllowed()
+        public void OnChangedTransitionalDeniedPermissionsDeriveDeletePermissionDenied()
         {
-            var request = new RequestForProposalBuilder(this.Transaction)
-                .WithRequestState(new RequestStates(this.Transaction).Anonymous)
-                .Build();
+            var request = new RequestForProposalBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, request.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedRequestForProposalStateDeriveDeletePermission()
+        public void OnChangedTransitionalDeniedPermissionsDeriveDeletePermissionAllowed()
         {
             var request = new RequestForProposalBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
@@ -82,7 +80,10 @@ namespace Allors.Database.Domain.Tests
             var request = new RequestForProposalBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            new ProductQuoteBuilder(this.Transaction).WithRequest(request).Build();
+            var quote = new ProductQuoteBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            quote.Request = request;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, request.DeniedPermissions);

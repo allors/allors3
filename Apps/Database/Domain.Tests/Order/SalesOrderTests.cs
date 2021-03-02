@@ -4965,124 +4965,53 @@ namespace Allors.Database.Domain.Tests
         public override Config Config => new Config { SetupSecurity = true };
 
         [Fact]
-        public void ChangedTransitionalDeniedPermissionsDeriveShipPermissionIsTrue()
+        public void ChangedTransitionalDeniedPermissionsDeriveShipDenied()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateShipmentPackage = true;
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPicked = true;
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPacked = true;
-
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
-            order.PartiallyShip = true;
+            var order = new SalesOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
-
-            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
-            new InventoryItemTransactionBuilder(this.Transaction)
-                .WithQuantity(item.QuantityOrdered)
-                .WithReason(new InventoryTransactionReasons(this.Transaction).Unknown)
-                .WithPart(item.Part)
-                .Build();
-            this.Transaction.Derive(false);
-
-            order.SetReadyForPosting();
-            this.Transaction.Derive();
-
-            order.Post();
-            this.Transaction.Derive();
-
-            order.Accept();
-            this.Transaction.Derive();
-
-            var shipPermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Ship);
-            Assert.DoesNotContain(shipPermission, order.DeniedPermissions);
-        }
-
-        [Fact]
-        public void ChangedTransitionalDeniedPermissionsDeriveShipPermissionIsFalse()
-        {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateShipmentPackage = true;
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPicked = true;
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPacked = true;
-
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
-            order.PartiallyShip = true;
-            this.Transaction.Derive(false);
-
-            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
-            new InventoryItemTransactionBuilder(this.Transaction)
-                .WithQuantity(item.QuantityOrdered)
-                .WithReason(new InventoryTransactionReasons(this.Transaction).Unknown)
-                .WithPart(item.Part)
-                .Build();
-            this.Transaction.Derive(false);
-
-            order.SetReadyForPosting();
-            this.Transaction.Derive();
-
-            order.Post();
-            this.Transaction.Derive();
-
-            order.Accept();
-            this.Transaction.Derive();
-
-            order.Ship();
-            this.Transaction.Derive();
 
             var shipPermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Ship);
             Assert.Contains(shipPermission, order.DeniedPermissions);
         }
 
         [Fact]
-        public void ChangedTransitionalDeniedPermissionsDeriveInvoicePermissionIsTrue()
+        public void ChangedCanShipDeriveShipAllowed()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First().BillingProcess = new BillingProcesses(this.Transaction).BillingForOrderItems;
-
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
-            order.PartiallyShip = false;
+            var order = new SalesOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            order.CanShip = true;
+            this.Transaction.Derive(false);
 
-            order.SetReadyForPosting();
-            this.Transaction.Derive();
-
-            order.Post();
-            this.Transaction.Derive();
-
-            order.Accept();
-            this.Transaction.Derive();
-
-            var invoicePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Invoice);
-            Assert.DoesNotContain(invoicePermission, order.DeniedPermissions);
+            var shipPermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Ship);
+            Assert.DoesNotContain(shipPermission, order.DeniedPermissions);
         }
 
         [Fact]
-        public void ChangedTransitionalDeniedPermissionsDeriveInvoicePermissionIsFalse()
+        public void ChangedTransitionalDeniedPermissionsDeriveInvoiceDenied()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First().BillingProcess = new BillingProcesses(this.Transaction).BillingForOrderItems;
-
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
+            var order = new SalesOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
-
-            order.SetReadyForPosting();
-            this.Transaction.Derive();
-
-            order.Post();
-            this.Transaction.Derive();
-
-            order.Accept();
-            this.Transaction.Derive();
-
-            order.Invoice();
-            this.Transaction.Derive();
 
             var invoicePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Invoice);
             Assert.Contains(invoicePermission, order.DeniedPermissions);
         }
 
         [Fact]
-        public void ChangedSalesOrderStateProvisionalDeriveDeletePermission()
+        public void ChangedCanInvoiceDeriveInvoiceAllowed()
+        {
+            var order = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            order.CanShip = true;
+            this.Transaction.Derive(false);
+
+            var invoicePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Invoice);
+            Assert.Contains(invoicePermission, order.DeniedPermissions);
+        }
+
+        [Fact]
+        public void ChangedTransitionalDeniedPermissionslDeriveDeletePermissionAllowed()
         {
             var order = new SalesOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
@@ -5092,106 +5021,200 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedSalesOrderStateCancelledDeriveDeletePermission()
+        public void ChangedTransitionalDeniedPermissionslDeriveDeletePermissionDenied()
         {
             var order = new SalesOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            order.Cancel();
+            order.SalesOrderState = new SalesOrderStates(this.Transaction).OnHold;
             this.Transaction.Derive(false);
-
-            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Delete);
-            Assert.DoesNotContain(deletePermission, order.DeniedPermissions);
-        }
-
-        [Fact]
-        public void ChangedSalesOrderStateRejectedDeriveDeletePermission()
-        {
-            var order = new SalesOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
-
-            order.Reject();
-            this.Transaction.Derive(false);
-
-            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Delete);
-            Assert.DoesNotContain(deletePermission, order.DeniedPermissions);
-        }
-
-        [Fact]
-        public void ChangedQuoteDeriveDeletePermission()
-        {
-            var quote = this.InternalOrganisation.CreateB2BProductQuoteWithSerialisedItem(this.Transaction.Faker());
-
-            quote.SetReadyForProcessing();
-            this.Transaction.Derive(false);
-
-            quote.Order();
-            this.Transaction.Derive(false);
-
-            var order = quote.SalesOrderWhereQuote;
 
             var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Delete);
             Assert.Contains(deletePermission, order.DeniedPermissions);
         }
 
         [Fact]
+        public void ChangedQuoteDeriveDeletePermission()
+        {
+            var order = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            order.Quote = new ProductQuoteBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Delete);
+            Assert.Contains(deletePermission, order.DeniedPermissions);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderItemSalesOrderItemStateDeriveDeletePermissionAllowed()
+        {
+            var order = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Delete);
+            Assert.DoesNotContain(deletePermission, order.DeniedPermissions);
+
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Transaction.Derive(false);
+
+            Assert.DoesNotContain(deletePermission, order.DeniedPermissions);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderItemSalesOrderItemStateDeriveDeletePermissionDenied()
+        {
+            var order = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Transaction.Derive(false);
+
+            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Delete);
+            Assert.DoesNotContain(deletePermission, order.DeniedPermissions);
+
+            orderItem.SalesOrderItemState = new SalesOrderItemStates(this.Transaction).InProcess;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(deletePermission, order.DeniedPermissions);
+        }
+
+        [Fact]
+        public void ChangedOrderItemBillingOrderItemDeriveDeletePermissionDenied()
+        {
+            var order = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Transaction.Derive(false);
+
+            var orderItemBilling = new OrderItemBillingBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Delete);
+            Assert.DoesNotContain(deletePermission, order.DeniedPermissions);
+
+            orderItemBilling.OrderItem = orderItem;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(deletePermission, order.DeniedPermissions);
+        }
+
+        [Fact]
+        public void ChangedOrderShipmentOrderItemDeriveDeletePermissionDenied()
+        {
+            var order = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Transaction.Derive(false);
+
+            var orderShipment = new OrderShipmentBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Delete);
+            Assert.DoesNotContain(deletePermission, order.DeniedPermissions);
+
+            orderShipment.OrderItem = orderItem;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(deletePermission, order.DeniedPermissions);
+        }
+
+        [Fact]
+        public void ChangedOrderRequirementCommitmentOrderItemDeriveDeletePermissionDenied()
+        {
+            var order = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Transaction.Derive(false);
+
+            var orderRequirementCommitment = new OrderRequirementCommitmentBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Delete);
+            Assert.DoesNotContain(deletePermission, order.DeniedPermissions);
+
+            orderRequirementCommitment.OrderItem = orderItem;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(deletePermission, order.DeniedPermissions);
+        }
+
+        [Fact]
+        public void ChangedWorkEffortOrderItemFulfillmentDeriveDeletePermissionDenied()
+        {
+            var order = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Transaction.Derive(false);
+
+            var workTask = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Delete);
+            Assert.DoesNotContain(deletePermission, order.DeniedPermissions);
+
+            workTask.OrderItemFulfillment = orderItem;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(deletePermission, order.DeniedPermissions);
+        }
+
+        [Fact]
         public void ChangedSalesOrderShipmentStateDeriveCancelPermission()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateShipmentPackage = true;
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPicked = true;
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPacked = true;
-
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
-            order.PartiallyShip = true;
+            var order = new SalesOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
-
-            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
-            new InventoryItemTransactionBuilder(this.Transaction)
-                .WithQuantity(item.QuantityOrdered)
-                .WithReason(new InventoryTransactionReasons(this.Transaction).Unknown)
-                .WithPart(item.Part)
-                .Build();
-            this.Transaction.Derive(false);
-
-            order.SetReadyForPosting();
-            this.Transaction.Derive();
-
-            order.Post();
-            this.Transaction.Derive();
-
-            order.Accept();
-            this.Transaction.Derive();
-
-            order.Ship();
-            this.Transaction.Derive();
 
             var cancelPermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Cancel);
+            Assert.DoesNotContain(cancelPermission, order.DeniedPermissions);
+
+            order.SalesOrderShipmentState = new SalesOrderShipmentStates(this.Transaction).Shipped;
+            this.Transaction.Derive(false);
+
             Assert.Contains(cancelPermission, order.DeniedPermissions);
         }
 
         [Fact]
-        public void ChangedSalesOrderInvoiceStateDeriveCancelPermission()
+        public void ChangedSalesOrderInvoiceStateDeriveCancelPermissionDenied()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First().BillingProcess = new BillingProcesses(this.Transaction).BillingForOrderItems;
-
-            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
+            var order = new SalesOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            order.SetReadyForPosting();
-            this.Transaction.Derive();
+            var cancelPermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Cancel);
+            Assert.DoesNotContain(cancelPermission, order.DeniedPermissions);
 
-            order.Post();
-            this.Transaction.Derive();
+            order.SalesOrderInvoiceState = new SalesOrderInvoiceStates(this.Transaction).Invoiced;
+            this.Transaction.Derive(false);
 
-            order.Accept();
-            this.Transaction.Derive();
+            Assert.Contains(cancelPermission, order.DeniedPermissions);
+        }
 
-            order.Invoice();
-            this.Transaction.Derive();
+        [Fact]
+        public void ChangedSalesOrderInvoiceStateDeriveCancelPermissionAllowed()
+        {
+            var order = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            order.SalesOrderInvoiceState = new SalesOrderInvoiceStates(this.Transaction).Invoiced;
+            this.Transaction.Derive(false);
 
             var cancelPermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Cancel);
             Assert.Contains(cancelPermission, order.DeniedPermissions);
+
+            order.SalesOrderInvoiceState = new SalesOrderInvoiceStates(this.Transaction).NotInvoiced;
+            this.Transaction.Derive(false);
+
+            Assert.DoesNotContain(cancelPermission, order.DeniedPermissions);
         }
     }
 

@@ -18,6 +18,8 @@ namespace Allors.Database.Domain
         {
             new AssociationPattern(m.WorkTask.TransitionalDeniedPermissions),
             new AssociationPattern(m.WorkTask.CanInvoice),
+            new AssociationPattern(m.WorkTask.Customer),
+            new AssociationPattern(m.WorkTask.ExecutedBy),
             new RolePattern(m.ServiceEntry.WorkEffort),
             new AssociationPattern(m.ServiceEntry.ThroughDate) { Steps =  new IPropertyType[] {m.ServiceEntry.WorkEffort} },
         };

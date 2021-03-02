@@ -17,7 +17,6 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
         {
             new AssociationPattern(this.M.RequestForQuote.TransitionalDeniedPermissions),
-            new AssociationPattern(m.RequestForQuote.RequestItems),
             new AssociationPattern(m.RequestItem.RequestItemState) { Steps =  new IPropertyType[] { m.RequestItem.RequestWhereRequestItem}, OfType = m.RequestForQuote.Class },
             new RolePattern(m.Quote.Request) { OfType = m.RequestForQuote.Class },
         };
@@ -31,7 +30,11 @@ namespace Allors.Database.Domain
             {
                 @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
 
-                if (!@this.ExistOriginator)
+                if (@this.ExistOriginator)
+                {
+                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta.Class, @this.Meta.Submit));
+                }
+                else
                 {
                     @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta.Class, @this.Meta.Submit));
                 }
