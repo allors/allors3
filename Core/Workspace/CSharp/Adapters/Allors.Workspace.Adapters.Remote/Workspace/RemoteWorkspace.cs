@@ -15,6 +15,8 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class RemoteWorkspace : IWorkspace
     {
+        private readonly Dictionary<Identity, RemoteWorkspaceRoles> workspaceRolesByIdentity;
+
         public RemoteWorkspace(IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, HttpClient httpClient)
         {
             this.MetaPopulation = metaPopulation;
@@ -24,10 +26,11 @@ namespace Allors.Workspace.Adapters.Remote
             this.Database = new RemoteDatabase(this.MetaPopulation, httpClient, new Identities());
             this.Sessions = new HashSet<RemoteSession>();
 
-            this.State = new State();
             this.WorkspaceOrSessionClassByWorkspaceId = new Dictionary<Identity, IClass>();
 
             this.DomainDerivationById = new ConcurrentDictionary<Guid, IDomainDerivation>();
+
+            this.workspaceRolesByIdentity = new Dictionary<Identity, RemoteWorkspaceRoles>();
 
             this.StateLifecycle.OnInit(this);
         }
@@ -46,17 +49,15 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal RemoteDatabase Database { get; }
 
-        internal State State { get; }
-
         internal Dictionary<Identity, IClass> WorkspaceOrSessionClassByWorkspaceId { get; }
 
-        public ISession CreateSession() => new RemoteSession(this, this.StateLifecycle.CreateSessionContext());
-
-        public IChangeSet[] Checkpoint()
+        internal RemoteWorkspaceRoles Get(Identity identity)
         {
-            var workspaceChangeSet = this.State.Checkpoint();
-            return this.Sessions.Select(v => v.Checkpoint(workspaceChangeSet)).ToArray();
+            this.workspaceRolesByIdentity.TryGetValue(identity, out var workspaceRoles);
+            return workspaceRoles;
         }
+
+        public ISession CreateSession() => new RemoteSession(this, this.StateLifecycle.CreateSessionContext());
 
         internal void RegisterSession(RemoteSession session) => this.Sessions.Add(session);
 
@@ -65,5 +66,17 @@ namespace Allors.Workspace.Adapters.Remote
         internal void RegisterWorkspaceIdForWorkspaceObject(IClass @class, Identity workspaceId) => this.WorkspaceOrSessionClassByWorkspaceId.Add(workspaceId, @class);
 
         internal void RegisterWorkspaceIdForSessionObject(IClass @class, Identity workspaceId) => this.WorkspaceOrSessionClassByWorkspaceId.Add(workspaceId, @class);
+
+        public void Push(Identity identity, IClass @class, long version, Dictionary<Guid, object> changedRoleByRoleType)
+        {
+            if (!this.workspaceRolesByIdentity.TryGetValue(identity, out var originalWorkspaceRoles))
+            {
+                this.workspaceRolesByIdentity[identity] = new RemoteWorkspaceRoles(this.Database, identity, @class, ++version, changedRoleByRoleType);
+            }
+            else
+            {
+                this.workspaceRolesByIdentity[identity] = originalWorkspaceRoles.Update(changedRoleByRoleType);
+            }
+        }
     }
 }

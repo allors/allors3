@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Allors.Workspace.Adapters.Remote.RemoteDatabase">
+    <Position X="17" Y="1.25" Width="3" />
+    <TypeIdentifier>
+      <HashCode>YAAAICCAgAAIAADAgQIAAAgAGgAgAAAAAAAUAAjAyAA=</HashCode>
+      <FileName>Database\RemoteDatabase.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Identities" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Field Name="databaseRolesByDatabaseId" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Allors.Workspace.Adapters.Remote.RemoteSession">
+    <Position X="5.5" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AQQAwMAAAUBABgQgAAQEAAgAAAAgAEAAAIAQBQBAAAA=</HashCode>
+      <FileName>Session\RemoteSession.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Workspace" />
+      <Property Name="Database" />
+      <Property Name="State" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Allors.Workspace.Adapters.State" Collapsed="true">
+    <Position X="9.5" Y="0.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Allors.Workspace.Adapters.Identities" Collapsed="true">
+    <Position X="21.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Allors.Workspace.Adapters.Remote.RemoteWorkspace">
+    <Position X="9.25" Y="2.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>gEQBAEAAAEAAABBAACAAAAAEAAEAAAAAAAAAAAZAAIA=</HashCode>
+      <FileName>Workspace\RemoteWorkspace.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Database" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Field Name="workspaceRolesByDatabaseId" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Allors.Workspace.Adapters.Remote.RemoteDatabaseRoles">
+    <Position X="22.25" Y="4.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>IACAgAEAAEAAAAAAAAIAAIAoAAAAMACAAEAAAIAAAAg=</HashCode>
+      <FileName>Database\RemoteDatabaseRoles.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Allors.Workspace.Adapters.Remote.RemoteWorkspaceRoles">
+    <Position X="14.5" Y="4.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAEAAEAAAAAAAAIAAAAgAAAAAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>Workspace\RemoteWorkspaceRoles.cs</FileName>
+      <NewMemberFileName>Database\RemoteDatabaseRoles.cs</NewMemberFileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Allors.Workspace.Adapters.Remote.RemoteDatabaseStrategy">
+    <Position X="0.5" Y="0.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAIAAAQAkAAIAAEAAAAAAAAEAAEAEIABAAAA=</HashCode>
+      <FileName>Database\RemoteDatabaseStrategy.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Session" />
+      <Property Name="DatabaseRoles" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -14,6 +14,8 @@ namespace Allors.Workspace.Meta
 
         IEnumerable<IRoleType> DatabaseRoleTypes { get; }
 
+        IEnumerable<IRoleType> WorkspaceRoleTypes { get; }
+
         bool ExistDatabaseClass { get; }
 
         IEnumerable<IClass> DatabaseClasses { get; }

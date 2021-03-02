@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Allors.Workspace.Adapters.Remote.RemoteSession">
+    <Position X="5.5" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AQQAwMAAAUBABgQgAAQEAAgAAAAgAEAAAIAQBQBAAAA=</HashCode>
+      <FileName>Session\RemoteSession.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Workspace" />
+      <Property Name="State" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Allors.Workspace.Adapters.State" Collapsed="true">
+    <Position X="9.5" Y="0.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Allors.Workspace.Adapters.Identities" Collapsed="true">
+    <Position X="21.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Allors.Workspace.Adapters.Remote.RemoteWorkspace">
+    <Position X="9.25" Y="2" Width="3" />
+    <TypeIdentifier>
+      <HashCode>gEQBAEAAAEAAABBAACAAAAAEAAEAAAAAAAAAAAZAAIA=</HashCode>
+      <FileName>Workspace\RemoteWorkspace.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="workspaceRolesByDatabaseId" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Allors.Workspace.Adapters.Remote.RemoteDatabaseRoles">
+    <Position X="22.25" Y="4.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>IACAgAEAAEAAAAAAAAIAAIAoAAAAMACAAEAAAIAAAAg=</HashCode>
+      <FileName>Database\RemoteDatabaseRoles.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Allors.Workspace.Adapters.Remote.RemoteWorkspaceRoles">
+    <Position X="14.5" Y="5.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAEAAEAAAAAAAAIAAAAgAAAAAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>Workspace\RemoteWorkspaceRoles.cs</FileName>
+      <NewMemberFileName>Database\RemoteDatabaseRoles.cs</NewMemberFileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Allors.Workspace.Adapters.Remote.RemoteWorkspaceStrategy">
+    <Position X="0.75" Y="0.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>JAIAAABASIAABQBgEEIABEAAAAACAAAAAEAUIAEIAAQ=</HashCode>
+      <FileName>Workspace\RemoteWorkspaceStrategy.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Session" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

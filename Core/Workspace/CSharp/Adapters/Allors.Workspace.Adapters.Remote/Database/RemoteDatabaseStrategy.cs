@@ -12,7 +12,7 @@ namespace Allors.Workspace.Adapters.Remote
     using Allors.Protocol.Json.Api.Push;
     using Meta;
 
-    public sealed class RemoteStrategy : IStrategy
+    public sealed class RemoteDatabaseStrategy : RemoteStrategy
     {
         private IObject @object;
 
@@ -20,29 +20,22 @@ namespace Allors.Workspace.Adapters.Remote
 
         private Dictionary<IRoleType, object> roleByRoleType = new Dictionary<IRoleType, object>();
 
-        private RemoteStrategy(RemoteSession session, Identity identity, IClass @class)
+        private RemoteDatabaseStrategy(RemoteSession session, Identity identity, IClass @class)
         {
             this.Session = session;
             this.Identity = identity;
             this.Class = @class;
         }
 
-        public RemoteStrategy(RemoteSession session, IClass @class, Identity identity) : this(session, identity, @class) { }
+        public RemoteDatabaseStrategy(RemoteSession session, IClass @class, Identity identity) : this(session, identity, @class) { }
 
-        public RemoteStrategy(RemoteSession session, RemoteDatabaseRoles databaseRoles, Identity identity) : this(session, identity, databaseRoles.Class) => this.DatabaseRoles = databaseRoles;
+        public RemoteDatabaseStrategy(RemoteSession session, RemoteDatabaseRoles databaseRoles, Identity identity) : this(session, identity, databaseRoles.Class) => this.DatabaseRoles = databaseRoles;
 
         ISession IStrategy.Session => this.Session;
 
         public RemoteSession Session { get; }
 
-        public IObject Object
-        {
-            get
-            {
-                this.@object ??= this.Session.Workspace.ObjectFactory.Create(this);
-                return this.@object;
-            }
-        }
+        public IObject Object => this.@object ??= this.Session.Workspace.ObjectFactory.Create(this);
 
         public IClass Class { get; }
 
@@ -81,10 +74,10 @@ namespace Allors.Workspace.Adapters.Remote
 
         public object Get(IRoleType roleType)
         {
-            if (roleType.Origin != Origin.Database)
+            if (roleType.Origin == Origin.Session)
             {
-                var population = this.GetPopulation(roleType.Origin);
-                population.GetRole(this.Identity, roleType, out var role);
+                var state = this.Session.State;
+                state.GetRole(this.Identity, roleType, out var role);
                 if (roleType.ObjectType.IsUnit)
                 {
                     return role;
@@ -144,9 +137,9 @@ namespace Allors.Workspace.Adapters.Remote
 
         public void Set(IRoleType roleType, object value)
         {
-            if (roleType.Origin != Origin.Database)
+            if (roleType.Origin == Origin.Session)
             {
-                var population = this.GetPopulation(roleType.Origin);
+                var population = this.Session.State;
                 population.SetRole(this.Identity, roleType, value);
                 return;
             }
@@ -210,9 +203,9 @@ namespace Allors.Workspace.Adapters.Remote
 
         public IObject GetAssociation(IAssociationType associationType)
         {
-            if (associationType.Origin != Origin.Database)
+            if (associationType.Origin == Origin.Session)
             {
-                var population = this.GetPopulation(associationType.Origin);
+                var population = this.Session.State;
                 population.GetAssociation(this.Identity, associationType, out var association);
                 var id = (Identity)association;
                 return id != null ? this.Session.Instantiate<IObject>(id) : null;
@@ -223,9 +216,9 @@ namespace Allors.Workspace.Adapters.Remote
 
         public IEnumerable<IObject> GetAssociations(IAssociationType associationType)
         {
-            if (associationType.Origin != Origin.Database)
+            if (associationType.Origin == Origin.Session)
             {
-                var population = this.GetPopulation(associationType.Origin);
+                var population = this.Session.State;
                 population.GetAssociation(this.Identity, associationType, out var association);
                 var ids = (IEnumerable<Identity>)association;
                 return ids?.Select(v => this.Session.Instantiate<IObject>(v)).ToArray() ?? Array.Empty<IObject>();
@@ -266,14 +259,6 @@ namespace Allors.Workspace.Adapters.Remote
             var permission = this.Session.Workspace.Database.GetPermission(this.Class, methodType, Operations.Execute);
             return this.DatabaseRoles.IsPermitted(permission);
         }
-
-        internal State GetPopulation(Origin origin) =>
-            origin switch
-            {
-                Origin.Workspace => this.Session.Workspace.State,
-                Origin.Session => this.Session.State,
-                _ => throw new Exception($"Unsupported origin: {origin}")
-            };
 
         internal PushRequestNewObject SaveNew() => new PushRequestNewObject
         {

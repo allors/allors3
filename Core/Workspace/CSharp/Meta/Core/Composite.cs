@@ -26,6 +26,8 @@ namespace Allors.Workspace.Meta
         private HashSet<AssociationType> derivedDatabaseAssociationTypes;
         private HashSet<RoleType> derivedDatabaseRoleTypes;
 
+        private HashSet<RoleType> derivedWorkspaceRoleTypes;
+
         protected Composite(MetaPopulation metaPopulation, Guid id) : base(metaPopulation, id) => this.AssignedOrigin = Origin.Database;
 
         //public Dictionary<string, bool> Workspace => this.WorkspaceNames.ToDictionary(k => k, v => true);
@@ -281,6 +283,15 @@ namespace Allors.Workspace.Meta
             }
         }
 
+        public IEnumerable<IRoleType> WorkspaceRoleTypes
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.derivedWorkspaceRoleTypes;
+            }
+        }
+
         public bool ExistDatabaseClass => this.DatabaseClasses.Any();
 
         public bool ExistExclusiveDatabaseClass => this.DatabaseClasses.Count() == 1;
@@ -512,6 +523,7 @@ namespace Allors.Workspace.Meta
 
             this.derivedRoleTypes = new HashSet<RoleType>(roleTypes);
             this.derivedDatabaseRoleTypes = new HashSet<RoleType>(roleTypes.Where(v => v.Origin == Origin.Database));
+            this.derivedWorkspaceRoleTypes = new HashSet<RoleType>(roleTypes.Where(v => v.Origin == Origin.Workspace));
         }
 
         /// <summary>
