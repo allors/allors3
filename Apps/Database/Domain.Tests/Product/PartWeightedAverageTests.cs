@@ -956,6 +956,24 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(150, part.QuantityOnHand);
             Assert.Equal(8, part.PartWeightedAverage.AverageCost);
+
+            // Purchase 150 items at 4 euro
+            purchaseItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(150).WithAssignedUnitPrice(4M).Build();
+            purchaseOrder1.AddPurchaseOrderItem(purchaseItem);
+
+            this.Transaction.Derive();
+
+            purchaseOrder1.SetReadyForProcessing();
+            this.Transaction.Derive();
+
+            purchaseOrder1.Send();
+            this.Transaction.Derive();
+
+            purchaseItem.QuickReceive();
+            this.Transaction.Derive();
+
+            Assert.Equal(300, part.QuantityOnHand);
+            Assert.Equal(6, part.PartWeightedAverage.AverageCost);
         }
     }
 }
