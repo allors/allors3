@@ -401,256 +401,294 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangeOrganisationIsInternalOrganisationDeriveDeletePermission()
-        {
-            var organisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
-            this.Transaction.Derive(false);
-
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
-        }
-
-        [Fact]
-        public void OnChangeOrganisationWithExternalAccountingTransactionFromPartyDeriveDeletePermission()
+        public void OnChangeIsInternalOrganisationDeriveDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            new SalesAccountingTransactionBuilder(this.Transaction).WithFromParty(organisation).Build();
+            organisation.IsInternalOrganisation = true;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithExternalAccountingTransactionToPartyDeriveDeletePermission()
+        public void OnChangeExternalAccountingTransactionFromPartyDeriveDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var externalAccountingTransaction = new SalesAccountingTransactionBuilder(this.Transaction)
-                .WithToParty(organisation).Build();
+            var accountingTransaction = new SalesAccountingTransactionBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
+            accountingTransaction.FromParty = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithShipmentFromPartyDeriveDeletePermission()
+        public void OnChangeExternalAccountingTransactionToPartyDeriveDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var shipment = new TransferBuilder(this.Transaction).WithShipFromParty(organisation).Build();
+            var accountingTransaction = new SalesAccountingTransactionBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            accountingTransaction.ToParty = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithShipmentToPartyDeriveDeletePermission()
+        public void OnChangeShipmentShipFromPartyDeriveDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var shipment = new TransferBuilder(this.Transaction).WithShipToParty(organisation).Build();
+            var shipment = new TransferBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            shipment.ShipFromParty = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithPaymentReceiverDeriveDeletePermission()
+        public void OnChangeShipmentShipToPartyDeriveDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var payment = new ReceiptBuilder(this.Transaction).WithReceiver(organisation).Build();
+            var shipment = new TransferBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            shipment.ShipToParty = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithPaymentSenderDeriveDeletePermission()
+        public void OnChangePaymentReceiverDeriveDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var payment = new ReceiptBuilder(this.Transaction).WithSender(organisation).Build();
+            var payment = new ReceiptBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            payment.Receiver = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithEmploymentDeriveDeletePermission()
+        public void OnChangePaymentSenderDeriveDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var employment = new EmploymentBuilder(this.Transaction).WithEmployer(organisation).Build();
+            var payment = new ReceiptBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            payment.Sender = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithEngagementBillToPartyDeletePermission()
+        public void OnChangeEmploymentEmployerDeriveDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var engagement = new EngagementBuilder(this.Transaction).WithBillToParty(organisation).Build();
+            var employment = new EmploymentBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            employment.Employer = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithEngagementPlacingPartyDeletePermission()
+        public void OnChangeEngagementBillToPartyDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var engagement = new EngagementBuilder(this.Transaction).WithPlacingParty(organisation).Build();
+            var engagement = new EngagementBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            engagement.BillToParty = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithPartManufacturedByDeletePermission()
+        public void OnChangeEngagementPlacingPartyDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var part = new NonUnifiedPartBuilder(this.Transaction).WithManufacturedBy(organisation).Build();
+            var engagement = new EngagementBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            engagement.PlacingParty = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithPartSuppliedByDeletePermission()
+        public void OnChangePartManufacturedByDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
             var part = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
-            var supplierOffering = new SupplierOfferingBuilder(this.Transaction)
-                .WithFromDate(DateTime.Now.AddDays(-1))
-                .WithThroughDate(DateTime.Now.AddDays(5))
-                .WithSupplier(organisation)
-                .WithPart(part)
-                .Build();
+            part.ManufacturedBy = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithOrganisationGlAccountDeletePermission()
+        public void OnChangePartSuppliedByDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var organisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction).WithInternalOrganisation(organisation).Build();
+            var part = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            part.AddSuppliedBy(organisation);
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithOrganisationRollUpDeletePermission()
+        public void OnChangeOrganisationGlAccountInternalOrganisationDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var organisationRollUp = new OrganisationRollUpBuilder(this.Transaction).WithParent(organisation).Build();
+            var organisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            organisationGlAccount.InternalOrganisation = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithPartyFixedAssetAssignmentDeletePermission()
+        public void OnChangeOrganisationRollUpParentDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var partyFixedAssetAssignment = new PartyFixedAssetAssignmentBuilder(this.Transaction).WithParty(organisation).Build();
+            var organisationRollUp = new OrganisationRollUpBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            organisationRollUp.Parent = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithPickListDeletePermission()
+        public void OnChangePartyFixedAssetAssignmentPartyDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var pickList = new PickListBuilder(this.Transaction).WithShipToParty(organisation).Build();
+            var partyFixedAssetAssignment = new PartyFixedAssetAssignmentBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            partyFixedAssetAssignment.Party = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithQuoteIssuerDeletePermission()
+        public void OnChangePickListShipToPartyDeletePermission()
         {
-            var organisation = new OrganisationBuilder(this.Transaction)
-                .WithQuoteNumberCounter(new CounterBuilder(this.Transaction).Build())
-                .WithIsInternalOrganisation(true)
-                .Build();
+            var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            new ProposalBuilder(this.Transaction).WithIssuer(organisation).Build();
+            var pickList = new PickListBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            pickList.ShipToParty = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithQuoteReceiverDeletePermission()
+        public void OnChangeQuoteIssuerDeletePermission()
         {
-            var organisation = new OrganisationBuilder(this.Transaction)
-                .WithQuoteNumberCounter(new CounterBuilder(this.Transaction).Build()).Build();
+            var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var quote = new ProposalBuilder(this.Transaction).WithReceiver(organisation).Build();
+            var quote = new ProposalBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            quote.Issuer = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithPurchaseInvoiceBilledToDeletePermission()
+        public void OnChangeQuoteReceiverDeletePermission()
         {
-            var organisation = new OrganisationBuilder(this.Transaction)
-                .WithPurchaseInvoiceNumberCounter(new CounterBuilder(this.Transaction).Build())
-                .WithIsInternalOrganisation(true)
-                .Build();
+            var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).WithBilledTo(organisation).Build();
+            var quote = new ProposalBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            quote.Receiver = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithPurchaseInvoiceBilledFromDeletePermission()
+        public void OnChangePurchaseInvoiceBilledToDeletePermission()
         {
-            var organisation = new OrganisationBuilder(this.Transaction)
-                .WithPurchaseInvoiceNumberCounter(new CounterBuilder(this.Transaction).Build())
-                .WithIsInternalOrganisation(true)
-                .Build();
+            var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).WithBilledTo(this.InternalOrganisation).Build();
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            purchaseInvoice.BilledTo = organisation;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangePurchaseInvoiceBilledFromDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
             purchaseInvoice.BilledFrom = organisation;
@@ -660,385 +698,464 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangeOrganisationWithPurchaseInvoiceShipToCustomerDeletePermission()
-        {
-            var organisation = new OrganisationBuilder(this.Transaction)
-                .WithPurchaseInvoiceNumberCounter(new CounterBuilder(this.Transaction).Build())
-                .WithIsInternalOrganisation(true)
-                .Build();
-            this.Transaction.Derive(false);
-
-            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).WithShipToCustomer(organisation).Build();
-            this.Transaction.Derive(false);
-
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
-        }
-
-        [Fact]
-        public void OnChangeOrganisationWithPurchaseInvoiceBillToEndCustomerDeletePermission()
-        {
-            var organisation = new OrganisationBuilder(this.Transaction)
-                .WithPurchaseInvoiceNumberCounter(new CounterBuilder(this.Transaction).Build())
-                .Build();
-            this.Transaction.Derive(false);
-
-            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).WithBillToEndCustomer(organisation).Build();
-            this.Transaction.Derive(false);
-
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
-        }
-
-        [Fact]
-        public void OnChangeOrganisationWithPurchaseInvoiceShipToEndCustomerDeletePermission()
-        {
-            var organisation = new OrganisationBuilder(this.Transaction)
-                .WithPurchaseInvoiceNumberCounter(new CounterBuilder(this.Transaction).Build())
-                .Build();
-            this.Transaction.Derive(false);
-
-            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).WithShipToEndCustomer(organisation).Build();
-            this.Transaction.Derive(false);
-
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
-        }
-
-        [Fact]
-        public void OnChangeOrganisationWithPurchaseOrderTakenViaSupplierDeletePermission()
+        public void OnChangePurchaseInvoiceShipToCustomerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var purchaseOrder = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(organisation).Build();
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            purchaseInvoice.ShipToCustomer = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithPurchaseOrderTakenViaSubcontractorDeletePermission()
+        public void OnChangePurchaseInvoiceBillToEndCustomerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var purchaseOrder = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSubcontractor(organisation).Build();
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            purchaseInvoice.BillToEndCustomer = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithRequestOriginatorDeletePermission()
-        {
-            var organisation = new OrganisationBuilder(this.Transaction)
-                .WithRequestNumberCounter(new CounterBuilder(this.Transaction).Build())
-                .Build();
-            this.Transaction.Derive(false);
-
-            var request = new RequestForQuoteBuilder(this.Transaction).WithOriginator(organisation).Build();
-            this.Transaction.Derive(false);
-
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
-        }
-
-        [Fact]
-        public void OnChangeOrganisationWithRequestRecipientDeletePermission()
-        {
-            var organisation = new OrganisationBuilder(this.Transaction)
-                .WithRequestNumberCounter(new CounterBuilder(this.Transaction).Build())
-                .WithIsInternalOrganisation(true)
-                .Build();
-            this.Transaction.Derive(false);
-
-            new RequestForQuoteBuilder(this.Transaction).WithRecipient(organisation).Build();
-            this.Transaction.Derive(false);
-
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
-        }
-
-        [Fact]
-        public void OnChangeOrganisationWithRequirementAuthorizerDeletePermission()
+        public void OnChangePurchaseInvoiceShipToEndCustomerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var requirement = new RequirementBuilder(this.Transaction).WithAuthorizer(organisation).Build();
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            purchaseInvoice.ShipToEndCustomer = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithRequirementNeededForDeletePermission()
+        public void OnChangePurchaseOrderTakenViaSupplierDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var requirement = new RequirementBuilder(this.Transaction).WithNeededFor(organisation).Build();
+            var purchaseOrder = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            purchaseOrder.TakenViaSupplier = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithRequirementOriginatorDeletePermission()
+        public void OnChangePurchaseOrderTakenViaSubcontractorDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var requirement = new RequirementBuilder(this.Transaction).WithOriginator(organisation).Build();
+            var purchaseOrder = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            purchaseOrder.TakenViaSubcontractor = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithRequirementServicedByDeletePermission()
+        public void OnChangeRequestOriginatorDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var requirement = new RequirementBuilder(this.Transaction).WithServicedBy(organisation).Build();
+            var request = new RequestForQuoteBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            request.Originator = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithSalesInvoiceBilledFromDeletePermission()
+        public void OnChangeRequestRecipientDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).WithBilledFrom(organisation).Build();
+            var request = new RequestForQuoteBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            request.Recipient = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithSalesInvoiceBillToCustomerDeletePermission()
+        public void OnChangeRequirementAuthorizerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).WithBillToCustomer(organisation).Build();
+            var requirement = new RequirementBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            requirement.Authorizer = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithSalesInvoiceBillToEndCustomerDeletePermission()
+        public void OnChangeRequirementNeededForDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).WithBillToEndCustomer(organisation).Build();
+            var requirement = new RequirementBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            requirement.NeededFor = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithSalesInvoiceShipToCustomerDeletePermission()
+        public void OnChangeRequirementOriginatorDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).WithShipToCustomer(organisation).Build();
+            var requirement = new RequirementBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            requirement.Originator = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithSalesInvoiceShipToEndCustomerDeletePermission()
+        public void OnChangeRequirementServicedByDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).WithShipToEndCustomer(organisation).Build();
+            var requirement = new RequirementBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            requirement.ServicedBy = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithSalesOrderBillToCustomerDeletePermission()
+        public void OnChangeSalesInvoiceBilledFromDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var salesOrder = new SalesOrderBuilder(this.Transaction).WithBillToCustomer(organisation).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            salesInvoice.BilledFrom = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithSalesOrderBillToEndCustomerDeletePermission()
+        public void OnChangeSalesInvoiceBillToCustomerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var salesOrder = new SalesOrderBuilder(this.Transaction).WithBillToEndCustomer(organisation).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            salesInvoice.BillToCustomer = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithSalesOrderShipToCustomerDeletePermission()
+        public void OnChangeSalesInvoiceBillToEndCustomerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var salesOrder = new SalesOrderBuilder(this.Transaction).WithShipToCustomer(organisation).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            salesInvoice.BillToEndCustomer = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithSalesOrderShipToEndCustomerDeletePermission()
+        public void OnChangeSalesInvoiceShipToCustomerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var salesOrder = new SalesOrderBuilder(this.Transaction).WithShipToEndCustomer(organisation).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            salesInvoice.ShipToCustomer = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithSalesOrderPlacingCustomerDeletePermission()
+        public void OnChangeSalesInvoiceShipToEndCustomerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var salesOrder = new SalesOrderBuilder(this.Transaction).WithPlacingCustomer(organisation).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            salesInvoice.ShipToEndCustomer = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithSalesOrderTakenByDeletePermission()
+        public void OnChangeSalesOrderBillToCustomerDeletePermission()
         {
-            var salesOrder = new SalesOrderBuilder(this.Transaction).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
+            var organisation = new OrganisationBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            salesOrder.BillToCustomer = organisation;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeSalesOrderBillToEndCustomerDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            salesOrder.BillToEndCustomer = organisation;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeSalesOrderShipToCustomerDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            salesOrder.ShipToCustomer = organisation;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeSalesOrderShipToEndCustomerDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            salesOrder.ShipToEndCustomer = organisation;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeSalesOrderPlacingCustomerDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            salesOrder.PlacingCustomer = organisation;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeSalesOrderTakenByDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            salesOrder.TakenBy = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, this.InternalOrganisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithSalesOrderItemAssignedShipToPartyDeletePermission()
+        public void OnChangeSalesOrderItemAssignedShipToPartyDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
+            var salesOrderItem = new SalesOrderItemBuilder(this.Transaction).Build();
 
-            var salesOrderItem = new SalesOrderItemBuilder(this.Transaction).WithAssignedShipToParty(organisation).Build();
-
-            salesOrder.AddSalesOrderItem(salesOrderItem);
+            salesOrderItem.AssignedShipToParty = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithSerialisedItemSuppliedByDeletePermission()
+        public void OnChangeSerialisedItemSuppliedByDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var serialisedItem = new SerialisedItemBuilder(this.Transaction).WithAssignedSuppliedBy(organisation).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            serialisedItem.AssignedSuppliedBy = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithSerialisedItemOwnedByDeletePermission()
+        public void OnChangeSerialisedItemOwnedByDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var serialisedItem = new SerialisedItemBuilder(this.Transaction).WithOwnedBy(organisation).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            serialisedItem.OwnedBy = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithSerialisedItemRentedByDeletePermission()
+        public void OnChangeSerialisedItemRentedByDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var serialisedItem = new SerialisedItemBuilder(this.Transaction).WithRentedBy(organisation).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            serialisedItem.RentedBy = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithSerialisedItemBuyerDeletePermission()
+        public void OnChangeSerialisedItemBuyerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var serialisedItem = new SerialisedItemBuilder(this.Transaction).WithBuyer(organisation).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            serialisedItem.Buyer = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithSerialisedItemSellerDeletePermission()
+        public void OnChangeSerialisedItemSellerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var serialisedItem = new SerialisedItemBuilder(this.Transaction).WithSeller(organisation).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            serialisedItem.Seller = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithWorkTaskCustomerDeletePermission()
+        public void OnChangeWorkTaskCustomerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var workTask = new WorkTaskBuilder(this.Transaction).WithCustomer(organisation).Build();
+            var workTask = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            workTask.Customer = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithWorkTaskExecutedByDeletePermission()
+        public void OnChangeWorkTaskExecutedByDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var workTask = new WorkTaskBuilder(this.Transaction).WithExecutedBy(organisation).Build();
+            var workTask = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            workTask.ExecutedBy = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeOrganisationWithWorkEffortPartyAssignmentPartyDeletePermission()
+        public void OnChangeWorkEffortPartyAssignmentPartyDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var workTask = new WorkEffortPartyAssignmentBuilder(this.Transaction).WithParty(organisation).Build();
+            var partyAssignment = new WorkEffortPartyAssignmentBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            partyAssignment.Party = organisation;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);

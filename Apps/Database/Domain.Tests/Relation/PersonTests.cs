@@ -392,19 +392,22 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedPersonWithTimeSheetWhereWorkerDeriveDeletePermission()
+        public void OnChangedTimeSheetWorkerDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var timeSheet = new TimeSheetBuilder(this.Transaction).WithWorker(person).Build();
+            var timeSheet = new TimeSheetBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            timeSheet.Worker = person;
             this.Transaction.Derive(false);
 
             Assert.DoesNotContain(this.deletePermission, person.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPersonWithTimeSheetWhereWorkerWithTimeEntriesDeriveDeletePermission()
+        public void OnChangedTimeSheetWhereWorkerWithTimeEntriesDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
@@ -427,503 +430,624 @@ namespace Allors.Database.Domain.Tests
         }
         
         [Fact]
-        public void OnChangedPersonWithExternalAccountingTransactionsWhereFromPartyDeriveDeletePermission()
+        public void OnChangedExternalAccountingTransactionFromPartyDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var externalAccountingTransaction = new CreditLineBuilder(this.Transaction).WithFromParty(person).Build();
+            var externalAccountingTransaction = new CreditLineBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            externalAccountingTransaction.FromParty = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPersonWithExternalAccountingTransactionsWhereToPartyDeriveDeletePermission()
+        public void OnChangedExternalAccountingTransactionToPartyDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var externalAccountingTransaction = new CreditLineBuilder(this.Transaction).WithToParty(person).Build();
+            var externalAccountingTransaction = new CreditLineBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            externalAccountingTransaction.ToParty = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPersonWithShipmentsWhereShipFromPartyDeriveDeletePermission()
+        public void OnChangedShipmentShipFromPartyDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var shipment = new PurchaseShipmentBuilder(this.Transaction).WithShipFromParty(person).Build();
+            var shipment = new PurchaseShipmentBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            shipment.ShipFromParty = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
 
        [Fact]
-        public void OnChangedPersonWithShipmentsWhereShipToPartyDeriveDeletePermission()
+        public void OnChangedShipmentShipToPartyDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var shipment = new PurchaseShipmentBuilder(this.Transaction).WithShipToParty(person).Build();
+            var shipment = new PurchaseShipmentBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            shipment.ShipToParty = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPersonWithPaymentsWhereReceiverDeriveDeletePermission()
+        public void OnChangedPaymentReceiverDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var receipt = new ReceiptBuilder(this.Transaction).WithReceiver(person).Build();
+            var receipt = new ReceiptBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            receipt.Receiver = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
 
        [Fact]
-        public void OnChangedPersonWithPaymentsWhereSenderDeriveDeletePermission()
+        public void OnChangedPaymentSenderDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var receipt = new ReceiptBuilder(this.Transaction).WithSender(person).Build();
+            var receipt = new ReceiptBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            receipt.Sender = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPersonWithEngagementsWhereBillToPartyDeriveDeletePermission()
+        public void OnChangedEngagementBillToPartyDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var engagement = new EngagementBuilder(this.Transaction).WithBillToParty(person).Build();
+            var engagement = new EngagementBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            engagement.BillToParty = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
         
        [Fact]
-        public void OnChangedPersonWithEngagementsWherePlacingPartyDeriveDeletePermission()
+        public void OnChangedEngagementPlacingPartyDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var engagement = new EngagementBuilder(this.Transaction).WithPlacingParty(person).Build();
+            var engagement = new EngagementBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            engagement.PlacingParty = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
 
        [Fact]
-        public void OnChangedPersonWithPartsWhereManufacturedByDeriveDeletePermission()
+        public void OnChangedPartManufacturedByDeriveDeletePermission()
         {
             //PartsWhereManufacturedBy
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var unifiedGood = new UnifiedGoodBuilder(this.Transaction).WithManufacturedBy(person).Build();
+            var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            unifiedGood.ManufacturedBy = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPersonWithPartsWhereSuppliedByDeriveDeletePermission()
+        public void OnChangedPartSuppliedByDeriveDeletePermission()
         {
             //PartsWhereManufacturedBy
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var unifiedGood = new UnifiedGoodBuilder(this.Transaction).WithSuppliedBy(person).Build();
+            var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            unifiedGood.AddSuppliedBy(person);
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPersonWithPartyFixedAssetAssignmentsWherePartyDeriveDeletePermission()
+        public void OnChangedPartyFixedAssetAssignmentPartyDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var partyFixedAssetAssignment = new PartyFixedAssetAssignmentBuilder(this.Transaction).WithParty(person).Build();
+            var partyFixedAssetAssignment = new PartyFixedAssetAssignmentBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            partyFixedAssetAssignment.Party = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPersonWithPickListsWhereShipToPartyDeriveDeletePermission()
+        public void OnChangedPickListShipToPartyDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var pickList = new PickListBuilder(this.Transaction).WithShipToParty(person).Build();
+            var pickList = new PickListBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            pickList.ShipToParty = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPersonWithQuotesWhereReceiverDeriveDeletePermission()
+        public void OnChangedQuoteReceiverDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var quotes = new ProposalBuilder(this.Transaction).WithReceiver(person).Build();
+            var quote = new ProposalBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            quote.Receiver = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
         
         [Fact]
-        public void OnChangedPersonWithPurchaseInvoicesWhereBilledFromDeriveDeletePermission()
+        public void OnChangedPurchaseInvoiceBilledFromDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var purchaseInvoice= new PurchaseInvoiceBuilder(this.Transaction).WithBilledFrom(person).Build();
+            var purchaseInvoice= new PurchaseInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            purchaseInvoice.BilledFrom = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
         
         [Fact]
-        public void OnChangedPersonWithPurchaseInvoicesWhereShipToCustomerDeriveDeletePermission()
+        public void OnChangedPurchaseInvoiceShipToCustomerDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).WithShipToCustomer(person).Build();
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            purchaseInvoice.ShipToCustomer = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
         
         [Fact]
-        public void OnChangedPersonWithPurchaseInvoicesWhereBillToEndCustomerDeriveDeletePermission()
+        public void OnChangedPurchaseInvoiceBillToEndCustomerDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
             
-            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).WithBillToEndCustomer(person).Build();
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            purchaseInvoice.BillToEndCustomer = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
         
         [Fact]
-        public void OnChangedPersonWithPurchaseInvoicesWhereShipToEndCustomerDeriveDeletePermission()
+        public void OnChangedPurchaseInvoiceShipToEndCustomerDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).WithShipToEndCustomer(person).Build();
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            purchaseInvoice.ShipToEndCustomer = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
         
         [Fact]
-        public void OnChangedPersonWithRequestsWhereOriginatorDeriveDeletePermission()
+        public void OnChangedRequestOriginatorDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var request = new RequestForQuoteBuilder(this.Transaction).WithOriginator(person).Build();
+            var request = new RequestForQuoteBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            request.Originator = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPersonWithRequirementsWhereAuthorizerDeriveDeletePermission()
+        public void OnChangedRequirementAuthorizerDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var requirement = new RequirementBuilder(this.Transaction).WithAuthorizer(person).Build();
+            var requirement = new RequirementBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            Assert.Contains(this.deletePermission, person.DeniedPermissions);
-        }
-        
-        [Fact]
-        public void OnChangedPersonWithRequirementsWhereNeededForDeriveDeletePermission()
-        {
-            var person = new PersonBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
-
-            var requirement = new RequirementBuilder(this.Transaction).WithNeededFor(person).Build();
-            this.Transaction.Derive(false);
-
-            Assert.Contains(this.deletePermission, person.DeniedPermissions);
-        }
-
-        [Fact]
-        public void OnChangedPersonWithRequirementsWhereOriginatorDeriveDeletePermission()
-        {
-            var person = new PersonBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
-
-            var requirement = new RequirementBuilder(this.Transaction).WithOriginator(person).Build();
+            requirement.Authorizer = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
         
         [Fact]
-        public void OnChangedPersonWithRequirementsWhereServicedByDeriveDeletePermission()
+        public void OnChangedRequirementNeededForDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var requirement = new RequirementBuilder(this.Transaction).WithServicedBy(person).Build();
+            var requirement = new RequirementBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            requirement.NeededFor = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPersonWithSalesInvoicesWhereBillToCustomerDeriveDeletePermission()
+        public void OnChangedRequirementOriginatorDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).WithBillToCustomer(person).Build();
+            var requirement = new RequirementBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            Assert.Contains(this.deletePermission, person.DeniedPermissions);
-        }
-
-        [Fact]
-        public void OnChangedPersonWithSalesInvoicesWhereBillToEndCustomerDeriveDeletePermission()
-        {
-            var person = new PersonBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
-
-            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).WithBillToEndCustomer(person).Build();
-            this.Transaction.Derive(false);
-
-            Assert.Contains(this.deletePermission, person.DeniedPermissions);
-        }
-
-        [Fact]
-        public void OnChangedPersonWithSalesInvoicesWhereShipToCustomerDeriveDeletePermission()
-        {
-            var person = new PersonBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
-
-            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).WithShipToCustomer(person).Build();
+            requirement.Originator = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
         
         [Fact]
-        public void OnChangedPersonWithSalesInvoicesWhereShipToEndCustomerDeriveDeletePermission()
+        public void OnChangedRequirementServicedByDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).WithShipToEndCustomer(person).Build();
+            var requirement = new RequirementBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            requirement.ServicedBy = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPersonWithSalesOrdersWhereBillToCustomerDeriveDeletePermission()
+        public void OnChangedSalesInvoiceBillToCustomerDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var salesOrder = new SalesOrderBuilder(this.Transaction).WithBillToCustomer(person).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            salesInvoice.BillToCustomer = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPersonWithSalesOrdersWhereShipToCustomerDeriveDeletePermission()
+        public void OnChangedSalesInvoiceBillToEndCustomerDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var salesOrder = new SalesOrderBuilder(this.Transaction).WithShipToCustomer(person).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            salesInvoice.BillToEndCustomer = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPersonWithSalesOrdersWhereShipToEndCustomerDeriveDeletePermission()
+        public void OnChangedSalesInvoiceShipToCustomerDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var salesOrder = new SalesOrderBuilder(this.Transaction).WithShipToEndCustomer(person).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            Assert.Contains(this.deletePermission, person.DeniedPermissions);
-        }
-        
-        [Fact]
-        public void OnChangedPersonWithSalesOrdersWherePlacingCustomerDeriveDeletePermission()
-        {
-            var person = new PersonBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
-
-            var salesOrder = new SalesOrderBuilder(this.Transaction).WithPlacingCustomer(person).Build();
-            this.Transaction.Derive(false);
-
-            Assert.Contains(this.deletePermission, person.DeniedPermissions);
-        }
-        
-        [Fact]
-        public void OnChangedPersonWithSalesOrderItemsWhereAssignedShipToPartyDeriveDeletePermission()
-        {
-            var person = new PersonBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
-
-            var salesOrderItem = new SalesOrderItemBuilder(this.Transaction).WithAssignedShipToParty(person).Build();
-            var salesOrder = new SalesOrderBuilder(this.Transaction).WithSalesOrderItem(salesOrderItem).Build();
+            salesInvoice.ShipToCustomer = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
         
         [Fact]
-        public void OnChangedPersonWithSerialisedItemsWhereSuppliedByDeriveDeletePermission()
+        public void OnChangedSalesInvoiceShipToEndCustomerDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var serialisedItem = new SerialisedItemBuilder(this.Transaction).WithAssignedSuppliedBy(person).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            salesInvoice.ShipToEndCustomer = person;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, person.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedSalesOrderBillToCustomerDeriveDeletePermission()
+        {
+            var person = new PersonBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            salesOrder.BillToCustomer = person;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, person.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedSalesOrderShipToCustomerDeriveDeletePermission()
+        {
+            var person = new PersonBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            salesOrder.ShipToCustomer = person;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, person.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedSalesOrderShipToEndCustomerDeriveDeletePermission()
+        {
+            var person = new PersonBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            salesOrder.ShipToEndCustomer = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
         
         [Fact]
-        public void OnChangedPersonWithSerialisedItemsWhereOwnedByDeriveDeletePermission()
+        public void OnChangedSalesOrderPlacingCustomerDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var serialisedItem = new SerialisedItemBuilder(this.Transaction).WithOwnedBy(person).Build();
+            var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            salesOrder.PlacingCustomer = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
         
         [Fact]
-        public void OnChangedPersonWithSerialisedItemsWhereRentedByDeriveDeletePermission()
+        public void OnChangedSalesOrderItemAssignedShipToPartyDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var serialisedItem = new SerialisedItemBuilder(this.Transaction).WithRentedBy(person).Build();
+            var salesOrderItem = new SalesOrderItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            salesOrderItem.AssignedShipToParty = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
         
         [Fact]
-        public void OnChangedPersonWithWorkEffortsWhereCustomerDeriveDeletePermission()
+        public void OnChangedSerialisedItemSuppliedByDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var workEffort = new WorkTaskBuilder(this.Transaction).WithCustomer(person).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            serialisedItem.AssignedSuppliedBy = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
         
         [Fact]
-        public void OnChangedPersonWithWorkEffortPartyAssignmentsWherePartyDeletePermission()
+        public void OnChangedSerialisedItemOwnedByDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var workEffortPartyAssignment = new WorkEffortPartyAssignmentBuilder(this.Transaction).WithParty(person).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            Assert.Contains(this.deletePermission, person.DeniedPermissions);
-        }
-
-        [Fact]
-        public void OnChangedPersonWithCashesWherePersonResponsibleDeletePermission()
-        {
-            var person = new PersonBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
-
-            var cash = new CashBuilder(this.Transaction).WithPersonResponsible(person).Build();
+            serialisedItem.OwnedBy = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
         
         [Fact]
-        public void OnChangedPersonWithCommunicationEventsWhereOwnerDeletePermission()
+        public void OnChangedSerialisedItemRentedByDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var communicationEvent = new EmailCommunicationBuilder(this.Transaction).WithOwner(person).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            serialisedItem.RentedBy = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
         
         [Fact]
-        public void OnChangedPersonWithEngagementItemsWhereCurrentAssignedProfessionalDeletePermission()
+        public void OnChangedWorkEffortCustomerDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var engagementItem = new CustomEngagementItemBuilder(this.Transaction).WithCurrentAssignedProfessional(person).Build();
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            workEffort.Customer = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
         
         [Fact]
-        public void OnChangedPersonWithEmploymentsWhereEmployeeDeletePermission()
+        public void OnChangedWorkEffortPartyAssignmentPartyDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var engagementItem = new EmploymentBuilder(this.Transaction).WithEmployee(person).Build();
+            var workEffortPartyAssignment = new WorkEffortPartyAssignmentBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            Assert.Contains(this.deletePermission, person.DeniedPermissions);
-        }
-
-        // TODO: Relooking in EngineeringChange
-        [Fact]
-        public void OnChangedPersonWithEngineeringChangesWhereAuthorizerDeletePermission()
-        {
-            var person = new PersonBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
-
-            var engineeringChange = new EngineeringChangeBuilder(this.Transaction).WithAuthorizer(person).Build();
+            workEffortPartyAssignment.Party = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPersonWithEngineeringChangesWhereDesignerDeletePermission()
+        public void OnChangedCashePersonResponsibleDeletePermission()
+        {
+            var person = new PersonBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var cash = new CashBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            cash.PersonResponsible = person;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, person.DeniedPermissions);
+        }
+        
+        [Fact]
+        public void OnChangedCommunicationEventOwnerDeletePermission()
+        {
+            var person = new PersonBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var communicationEvent = new EmailCommunicationBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            communicationEvent.Owner = person;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, person.DeniedPermissions);
+        }
+        
+        [Fact]
+        public void OnChangedEngagementItemCurrentAssignedProfessionalDeletePermission()
+        {
+            var person = new PersonBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var engagementItem = new CustomEngagementItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            engagementItem.CurrentAssignedProfessional = person;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, person.DeniedPermissions);
+        }
+        
+        [Fact]
+        public void OnChangedEmploymentEmployeeDeletePermission()
+        {
+            var person = new PersonBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var employment = new EmploymentBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            employment.Employee = person;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, person.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedEngineeringChangeAuthorizerDeletePermission()
+        {
+            var person = new PersonBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var engineeringChange = new EngineeringChangeBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            engineeringChange.Authorizer = person;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, person.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedEngineeringChangeDesignerDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
@@ -931,136 +1055,172 @@ namespace Allors.Database.Domain.Tests
             var engineeringChange = new EngineeringChangeBuilder(this.Transaction).WithDesigner(person).Build();
             this.Transaction.Derive(false);
 
-            Assert.Contains(this.deletePermission, person.DeniedPermissions);
-        }
-
-        [Fact]
-        public void OnChangedPersonWithEngineeringChangesWhereRequestorDeletePermission()
-        {
-            var person = new PersonBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
-
-            var engineeringChange = new EngineeringChangeBuilder(this.Transaction).WithRequestor(person).Build();
+            engineeringChange.Designer = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPersonWithEngineeringChangesWhereTesterDeletePermission()
+        public void OnChangedEngineeringChangeRequestorDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var engineeringChange = new EngineeringChangeBuilder(this.Transaction).WithTester(person).Build();
+            var engineeringChange = new EngineeringChangeBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            engineeringChange.Requestor = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPersonWithEventRegistrationsWherePersonDeletePermission()
+        public void OnChangedEngineeringChangeTesterDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var eventRegistration = new EventRegistrationBuilder(this.Transaction).WithPerson(person).Build();
+            var engineeringChange = new EngineeringChangeBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            engineeringChange.Tester = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
-        
+
         [Fact]
-        public void OnChangedPersonWithOwnCreditCardsWhereOwnerDeletePermission()
+        public void OnChangedEventRegistrationPersonDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var eventRegistration = new OwnCreditCardBuilder(this.Transaction).WithOwner(person).Build();
+            var eventRegistration = new EventRegistrationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            Assert.Contains(this.deletePermission, person.DeniedPermissions);
-        }
-        
-        [Fact]
-        public void OnChangedPersonWithPerformanceNotesWhereEmployeeDeletePermission()
-        {
-            var person = new PersonBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
-
-            var performanceNote = new PerformanceNoteBuilder(this.Transaction).WithEmployee(person).Build();
+            eventRegistration.Person = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
         
         [Fact]
-        public void OnChangedPersonWithPerformanceNotesWhereGivenByManagerDeletePermission()
+        public void OnChangedOwnCreditCardOwnerDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var performanceNote = new PerformanceNoteBuilder(this.Transaction).WithGivenByManager(person).Build();
+            var creditCard = new OwnCreditCardBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            creditCard.Owner = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
         
         [Fact]
-        public void OnChangedPersonWithPerformanceReviewsWhereEmployeeDeletePermission()
+        public void OnChangedPerformanceNoteEmployeeDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var performanceReview = new PerformanceReviewBuilder(this.Transaction).WithEmployee(person).Build();
+            var performanceNote = new PerformanceNoteBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            performanceNote.Employee = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
         
         [Fact]
-        public void OnChangedPersonWithPerformanceReviewsWhereManagerDeletePermission()
+        public void OnChangedPerformanceNoteGivenByManagerDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var performanceReview = new PerformanceReviewBuilder(this.Transaction).WithManager(person).Build();
+            var performanceNote = new PerformanceNoteBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            performanceNote.GivenByManager = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
         
         [Fact]
-        public void OnChangedPersonWithPickListsWherePickerDeletePermission()
+        public void OnChangedPerformanceReviewEmployeeDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var pickList = new PickListBuilder(this.Transaction).WithPicker(person).Build();
+            var performanceReview = new PerformanceReviewBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            performanceReview.Employee = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
         
         [Fact]
-        public void OnChangedPersonWithPositionFulfillmentsWherePersonDeletePermission()
+        public void OnChangedPerformanceReviewManagerDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var positionFulfillment = new PositionFulfillmentBuilder(this.Transaction).WithPerson(person).Build();
+            var performanceReview = new PerformanceReviewBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            performanceReview.Manager = person;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, person.DeniedPermissions);
+        }
+        
+        [Fact]
+        public void OnChangedPickListPickerDeletePermission()
+        {
+            var person = new PersonBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var pickList = new PickListBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            pickList.Picker = person;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, person.DeniedPermissions);
+        }
+        
+        [Fact]
+        public void OnChangedPositionFulfillmentPersonDeletePermission()
+        {
+            var person = new PersonBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var positionFulfillment = new PositionFulfillmentBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            positionFulfillment.Person = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPersonWithProfessionalAssignmentsWhereProfessionalDeletePermission()
+        public void OnChangedProfessionalAssignmentProfessionalDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var professionalAssignment = new ProfessionalAssignmentBuilder(this.Transaction).WithProfessional(person).Build();
+            var professionalAssignment = new ProfessionalAssignmentBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            professionalAssignment.Professional = person;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);

@@ -1508,4 +1508,133 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(10, workEffort.TotalRevenue);
         }
     }
+
+    [Trait("Category", "Security")]
+    public class WorkTaskDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public WorkTaskDeniedPermissionDerivationTests(Fixture fixture) : base(fixture)
+        {
+        }
+
+        public override Config Config => new Config { SetupSecurity = true };
+
+        [Fact]
+        public void OnChangedCanInvoiceDeriveInvoicePermissionDenied()
+        {
+            var workTask = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var invoicePermission = new Permissions(this.Transaction).Get(this.M.WorkTask.ObjectType, this.M.WorkTask.Invoice);
+            Assert.Contains(invoicePermission, workTask.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedCanInvoiceDeriveInvoicePermissionAllowed()
+        {
+            var workTask = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            workTask.CanInvoice = true;
+            this.Transaction.Derive(false);
+
+            var invoicePermission = new Permissions(this.Transaction).Get(this.M.WorkTask.ObjectType, this.M.WorkTask.Invoice);
+            Assert.DoesNotContain(invoicePermission, workTask.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedTransitionalDeniedPermissionsDeriveCompletePermission()
+        {
+            var workTask = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            workTask.WorkEffortState = new WorkEffortStates(this.Transaction).InProgress;
+            this.Transaction.Derive(false);
+
+            var completePermission = new Permissions(this.Transaction).Get(this.M.WorkTask.ObjectType, this.M.WorkTask.Complete);
+            Assert.DoesNotContain(completePermission, workTask.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedServiceEntryWorkEffortDeriveCompletePermission()
+        {
+            var workTask = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var timeEntry = new TimeEntryBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            timeEntry.WorkEffort = workTask;
+            this.Transaction.Derive(false);
+
+            var completePermission = new Permissions(this.Transaction).Get(this.M.WorkTask.ObjectType, this.M.WorkTask.Complete);
+            Assert.Contains(completePermission, workTask.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedServiceEntryThroughDateDeriveCompletePermission()
+        {
+            var workTask = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var timeEntry = new TimeEntryBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithWorkEffort(workTask).Build();
+            this.Transaction.Derive(false);
+
+            var completePermission = new Permissions(this.Transaction).Get(this.M.WorkTask.ObjectType, this.M.WorkTask.Complete);
+            Assert.Contains(completePermission, workTask.DeniedPermissions);
+
+            timeEntry.ThroughDate = timeEntry.FromDate;
+            this.Transaction.Derive(false);
+
+            Assert.DoesNotContain(completePermission, workTask.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedTransitionalDeniedPermissionsDeriveRevisePermission()
+        {
+            var workTask = new WorkTaskBuilder(this.Transaction).WithCustomer(this.InternalOrganisation).WithExecutedBy(this.InternalOrganisation).Build();
+            this.Transaction.Derive(false);
+
+            var revisePermission = new Permissions(this.Transaction).Get(this.M.WorkTask.ObjectType, this.M.WorkTask.Revise);
+            Assert.Contains(revisePermission, workTask.DeniedPermissions);
+
+            workTask.WorkEffortState = new WorkEffortStates(this.Transaction).Finished;
+            this.Transaction.Derive(false);
+
+            Assert.DoesNotContain(revisePermission, workTask.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedCustomerDeriveRevisePermission()
+        {
+            var workTask = new WorkTaskBuilder(this.Transaction).WithExecutedBy(this.InternalOrganisation).WithWorkEffortState(new WorkEffortStates(this.Transaction).Finished).Build();
+            this.Transaction.Derive(false);
+
+            var revisePermission = new Permissions(this.Transaction).Get(this.M.WorkTask.ObjectType, this.M.WorkTask.Revise);
+            Assert.Contains(revisePermission, workTask.DeniedPermissions);
+
+            workTask.Customer = this.InternalOrganisation;
+            this.Transaction.Derive(false);
+
+            Assert.DoesNotContain(revisePermission, workTask.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedExecutedByDeriveRevisePermission()
+        {
+            var workTask = new WorkTaskBuilder(this.Transaction)
+                .WithCustomer(this.InternalOrganisation.ActiveSuppliers.First)
+                .WithExecutedBy(this.InternalOrganisation)
+                .WithWorkEffortState(new WorkEffortStates(this.Transaction).Finished)
+                .Build();
+            this.Transaction.Derive(false);
+
+            var revisePermission = new Permissions(this.Transaction).Get(this.M.WorkTask.ObjectType, this.M.WorkTask.Revise);
+            Assert.Contains(revisePermission, workTask.DeniedPermissions);
+
+            workTask.ExecutedBy = this.InternalOrganisation.ActiveSuppliers.First;
+            this.Transaction.Derive(false);
+
+            Assert.DoesNotContain(revisePermission, workTask.DeniedPermissions);
+        }
+    }
 }

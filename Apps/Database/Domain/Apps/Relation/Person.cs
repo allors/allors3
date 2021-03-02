@@ -60,10 +60,10 @@ namespace Allors.Database.Domain
             && !this.ExistCommunicationEventsWhereOwner
             && !this.ExistEngagementItemsWhereCurrentAssignedProfessional
             && !this.ExistEmploymentsWhereEmployee
-            && !this.ExistEngineeringChangesWhereAuthorizer // Test Not Done
-            && !this.ExistEngineeringChangesWhereDesigner // Test Not Made
-            && !this.ExistEngineeringChangesWhereRequestor // Test Not Made
-            && !this.ExistEngineeringChangesWhereTester // Test Not Made
+            && !this.ExistEngineeringChangesWhereAuthorizer
+            && !this.ExistEngineeringChangesWhereDesigner
+            && !this.ExistEngineeringChangesWhereRequestor
+            && !this.ExistEngineeringChangesWhereTester
             && !this.ExistEventRegistrationsWherePerson
             && !this.ExistOwnCreditCardsWhereOwner
             && !this.ExistPerformanceNotesWhereEmployee

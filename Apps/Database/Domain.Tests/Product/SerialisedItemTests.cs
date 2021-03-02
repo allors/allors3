@@ -812,132 +812,120 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangeSerialisedItemWithInventoryItemTransactionDeriveDeletePermission()
+        public void OnChangeInventoryItemTransactionSerialisedItemDeriveDeletePermission()
         {
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var inventoryItemTransaction = new InventoryItemTransactionBuilder(this.Transaction)
-                .WithReason(new InventoryTransactionReasonBuilder(this.Transaction).Build())
-                .WithPart(new NonUnifiedPartBuilder(this.Transaction).Build())
-                .WithSerialisedItem(serialisedItem).Build();
+            var inventoryItemTransaction = new InventoryItemTransactionBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
+            inventoryItemTransaction.SerialisedItem = serialisedItem;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeSerialisedItemWithPurchaseInvoiceItemDeriveDeletePermission()
+        public void OnChangePurchaseInvoiceItemSerialisedItemDeriveDeletePermission()
         {
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var purchaseInvoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction).WithSerialisedItem(serialisedItem).Build();
+            var purchaseInvoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            purchaseInvoiceItem.SerialisedItem = serialisedItem;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeSerialisedItemWithPurchaseOrderItemDeriveDeletePermission()
+        public void OnChangePurchaseOrderItemSerialisedItemDeriveDeletePermission()
         {
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var purchaseOrder = new PurchaseOrderBuilder(this.Transaction).Build();
+            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Transaction)
-                .WithAssignedUnitPrice(1)
-                .WithInvoiceItemType(new InvoiceItemTypeBuilder(this.Transaction).Build())
-                .WithSerialisedItem(serialisedItem).Build();
-
-            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
+            purchaseOrderItem.SerialisedItem = serialisedItem;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeSerialisedItemWithQuoteItemDeriveDeletePermission()
+        public void OnChangeQuoteItemSerialisedItemDeriveDeletePermission()
         {
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var quote = new ProposalBuilder(this.Transaction).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var quoteItem = new QuoteItemBuilder(this.Transaction)
-                .WithInvoiceItemType(new InvoiceItemTypeBuilder(this.Transaction).Build())
-                .WithSerialisedItem(serialisedItem).Build();
-
-            quote.AddQuoteItem(quoteItem);
+            quoteItem.SerialisedItem = serialisedItem;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeSerialisedItemWithSalesInvoiceItemDeriveDeletePermission()
+        public void OnChangeSalesInvoiceItemSerialisedItemDeriveDeletePermission()
         {
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
+            var salesInvoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var salesInvoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithSerialisedItem(serialisedItem).Build();
-
-            salesInvoice.AddSalesInvoiceItem(salesInvoiceItem);
+            salesInvoiceItem.SerialisedItem = serialisedItem;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeSerialisedItemWithSalesOrderItemDeriveDeletePermission()
+        public void OnChangeSalesOrderItemSerialisedItemDeriveDeletePermission()
         {
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
+            var salesOrderItem = new SalesOrderItemBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var salesOrderItem = new SalesOrderItemBuilder(this.Transaction).WithSerialisedItem(serialisedItem).Build();
-
-            salesOrder.AddSalesOrderItem(salesOrderItem);
+            salesOrderItem.SerialisedItem = serialisedItem;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeSerialisedItemWithSerialisedInventoryItemDeriveDeletePermission()
+        public void OnChangeSerialisedInventoryItemSerialisedItemDeriveDeletePermission()
         {
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var serialisedInventoryItem = new SerialisedInventoryItemBuilder(this.Transaction)
-                .WithPart(new NonUnifiedPartBuilder(this.Transaction).Build())
-                .WithSerialisedItem(serialisedItem).Build();
+            var serialisedInventoryItem = new SerialisedInventoryItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            serialisedInventoryItem.SerialisedItem = serialisedItem;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangeSerialisedItemWithShipmentItemDeriveDeletePermission()
+        public void OnChangeShipmentItemSerialisedItemDeriveDeletePermission()
         {
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
-
-            var shipment = new TransferBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithSerialisedItem(serialisedItem).Build();
+            this.Transaction.Derive(false);
 
-            shipment.AddShipmentItem(shipmentItem);
+            shipmentItem.SerialisedItem = serialisedItem;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);

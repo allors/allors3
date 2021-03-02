@@ -46,7 +46,11 @@ namespace Allors.Database.Domain
                 validation.AssertExistsAtMostOne(@this, this.M.SalesInvoiceItem.Product, this.M.SalesInvoiceItem.ProductFeatures, this.M.SalesInvoiceItem.Part);
                 validation.AssertExistsAtMostOne(@this, this.M.SalesInvoiceItem.SerialisedItem, this.M.SalesInvoiceItem.ProductFeatures, this.M.SalesInvoiceItem.Part);
 
-                if (@this.ExistSerialisedItem && !@this.ExistNextSerialisedItemAvailability && salesInvoice.SalesInvoiceType.Equals(new SalesInvoiceTypes(@this.Transaction()).SalesInvoice))
+                if (@this.ExistSerialisedItem
+                    && salesInvoice != null
+                    && salesInvoice.ExistSalesInvoiceType
+                    && !@this.ExistNextSerialisedItemAvailability
+                    && salesInvoice.SalesInvoiceType.Equals(new SalesInvoiceTypes(@this.Transaction()).SalesInvoice))
                 {
                     validation.AssertExists(@this, @this.Meta.NextSerialisedItemAvailability);
                 }

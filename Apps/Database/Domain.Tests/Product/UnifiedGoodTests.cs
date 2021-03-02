@@ -217,246 +217,307 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedNonUnifiedGoodWithDeploymentDeriveDeletePermission()
+        public void OnChangedDeploymentProductOfferingDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var deployments = new DeploymentBuilder(this.Transaction).WithProductOffering(unifiedGood).Build();
+            var deployment = new DeploymentBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            deployment.ProductOffering = unifiedGood;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedNonUnifiedGoodWithEngagementItemDeriveDeletePermission()
+        public void OnChangedEngagementItemProductDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var engagementItems = new GoodOrderItemBuilder(this.Transaction).WithProduct(unifiedGood).Build();
+            var engagementItem = new GoodOrderItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            engagementItem.Product = unifiedGood;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedNonUnifiedGoodWithGeneralLedgerAccountDeriveDeletePermission()
+        public void OnChangedGeneralLedgerAccountDerivedCostUnitsAllowedDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var generalLedgerAccounts = new GeneralLedgerAccountBuilder(this.Transaction).WithAssignedCostUnitsAllowed(unifiedGood).Build();
+            var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            generalLedgerAccount.AddAssignedCostUnitsAllowed(unifiedGood);
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedNonUnifiedGoodWithQuoteItemDeriveDeletePermission()
+        public void OnChangedGeneralLedgerAccountDefaultCostUnitDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var quote = new ProposalBuilder(this.Transaction).Build();
+            var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var quoteItems = new QuoteItemBuilder(this.Transaction).WithProduct(unifiedGood).Build();
-            quote.AddQuoteItem(quoteItems);
+            generalLedgerAccount.DefaultCostUnit = unifiedGood;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedNonUnifiedGoodWithShipmentItemDeriveDeletePermission()
+        public void OnChangedQuoteItemProductDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var shipment = new TransferBuilder(this.Transaction).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var shipmentItems = new ShipmentItemBuilder(this.Transaction).WithGood(unifiedGood).Build();
-            shipment.AddShipmentItem(shipmentItems);
+            quoteItem.Product = unifiedGood;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedNonUnifiedGoodWithWorkEffortGoodStandardDeriveDeletePermission()
+        public void OnChangedShipmentItemGoodDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var workEffortGoodStandards = new WorkEffortGoodStandardBuilder(this.Transaction).WithUnifiedProduct(unifiedGood).Build();
+            var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            shipmentItem.Good = unifiedGood;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedNonUnifiedGoodWithMarketingPackageProductUsedInDeriveDeletePermission()
+        public void OnChangedWorkEffortGoodStandardUnifiedProductDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var marketingPackage = new MarketingPackageBuilder(this.Transaction).WithProductsUsedIn(unifiedGood).Build();
+            var workEffortGoodStandard = new WorkEffortGoodStandardBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            workEffortGoodStandard.UnifiedProduct = unifiedGood;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedNonUnifiedGoodWithMarketingPackageProductDeriveDeletePermission()
+        public void OnChangedMarketingPackageProductUsedInDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var marketingPackage = new MarketingPackageBuilder(this.Transaction).WithProduct(unifiedGood).Build();
+            var marketingPackage = new MarketingPackageBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            marketingPackage.AddProductsUsedIn(unifiedGood);
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedNonUnifiedGoodWithOrganisationGlAccountDeriveDeletePermission()
+        public void OnChangedMarketingPackageProductDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var organisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction).WithProduct(unifiedGood).Build();
+            var marketingPackage = new MarketingPackageBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            marketingPackage.Product = unifiedGood;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedNonUnifiedGoodWithProductConfigurationProductUsedInDeriveDeletePermission()
+        public void OnChangedOrganisationGlAccountProductDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var productConfiguration = new ProductConfigurationBuilder(this.Transaction).WithProductsUsedIn(unifiedGood).Build();
+            var organisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            organisationGlAccount.Product = unifiedGood;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedNonUnifiedGoodWithProductConfigurationProductDeriveDeletePermission()
+        public void OnChangedProductConfigurationProductUsedInDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var productConfiguration = new ProductConfigurationBuilder(this.Transaction).WithProduct(unifiedGood).Build();
+            var productConfiguration = new ProductConfigurationBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            productConfiguration.AddProductsUsedIn(unifiedGood);
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedNonUnifiedGoodWithrequestItemDeriveDeletePermission()
+        public void OnChangedProductConfigurationProductDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var request = new RequestForQuoteBuilder(this.Transaction).Build();
+            var productConfiguration = new ProductConfigurationBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var requestItem = new RequestItemBuilder(this.Transaction).WithProduct(unifiedGood).Build();
-            request.AddRequestItem(requestItem);
+            productConfiguration.Product = unifiedGood;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedNonUnifiedGoodWithSalesInvoiceItemDeriveDeletePermission()
+        public void OnChangedRequestItemProductDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var salesInvoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(unifiedGood).Build();
+            var requestItem = new RequestItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            requestItem.Product = unifiedGood;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedNonUnifiedGoodWithSalesOrderItemDeriveDeletePermission()
-        {
-            var salesOrder = this.InternalOrganisation.CreateB2BSalesOrder(this.Transaction.Faker());
-            this.Transaction.Derive(false);
-
-            var item = salesOrder.SalesOrderItems.Where(v => v.Product.GetType().Name == typeof(UnifiedGood).Name).Select(v => v.Product).First();
-
-            Assert.Contains(this.deletePermission, item.DeniedPermissions);
-        }
-
-        [Fact]
-        public void OnChangedNonUnifiedGoodWithWorkEffortTypeDeriveDeletePermission()
+        public void OnChangedSalesInvoiceItemProductDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var workEffortType = new WorkEffortTypeBuilder(this.Transaction).WithProductToProduce(unifiedGood).Build();          
+            var salesInvoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            salesInvoiceItem.Product = unifiedGood;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedNonUnifiedGoodWithWorkEffortInventoryProducedDeriveDeletePermission()
+        public void OnChangedSalesOrderItemProductDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var workEffortInventoryProduced = new WorkEffortInventoryProducedBuilder(this.Transaction).WithPart(unifiedGood).Build();
+            var salesOrderItem = new SalesOrderItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            salesOrderItem.Product = unifiedGood;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedNonUnifiedGoodWithWorkEffortPartStandardDeriveDeletePermission()
+        public void OnChangedWorkEffortTypeProductToProduceDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var workEffortPartStandard = new WorkEffortPartStandardBuilder(this.Transaction).WithPart(unifiedGood).Build();
+            var workEffortType = new WorkEffortTypeBuilder(this.Transaction).Build();          
+            this.Transaction.Derive(false);
+
+            workEffortType.ProductToProduce = unifiedGood;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedNonUnifiedGoodWithPartBillOfMaterialPartDeriveDeletePermission()
+        public void OnChangedWorkEffortInventoryProducedPartDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var partBillOfMaterial = new EngineeringBomBuilder(this.Transaction).WithPart(unifiedGood).Build();
+            var workEffortInventoryProduced = new WorkEffortInventoryProducedBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            workEffortInventoryProduced.Part = unifiedGood;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedNonUnifiedGoodWithPartBillOfMaterialComponentPartDeriveDeletePermission()
+        public void OnChangedWorkEffortPartStandardPartDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var partBillOfMaterial = new EngineeringBomBuilder(this.Transaction).WithComponentPart(unifiedGood).Build();
+            var workEffortPartStandard = new WorkEffortPartStandardBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            workEffortPartStandard.Part = unifiedGood;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedNonUnifiedGoodWithInventoryItemTransactionDeriveDeletePermission()
+        public void OnChangedPartBillOfMaterialPartDeriveDeletePermission()
+        {
+            var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var partBillOfMaterial = new EngineeringBomBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            partBillOfMaterial.Part = unifiedGood;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPartBillOfMaterialComponentPartDeriveDeletePermission()
+        {
+            var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var partBillOfMaterial = new EngineeringBomBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            partBillOfMaterial.ComponentPart = unifiedGood;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedInventoryItemTransactionPartDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
@@ -468,7 +529,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedNonUnifiedGoodWithSerialisedItemDeriveDeletePermission()
+        public void OnChangedSerialisedItemDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);

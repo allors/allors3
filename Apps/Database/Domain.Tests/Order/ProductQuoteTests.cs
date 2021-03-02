@@ -288,7 +288,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedProductQuoteTransitionalDeniedPermissionsDeriveDeletePermissionAllowed()
+        public void OnChangedTransitionalDeniedPermissionsDeriveDeletePermissionAllowed()
         {
             var productQuote = new ProductQuoteBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
@@ -297,7 +297,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedProductQuoteStateTransitionalDeniedPermissionsDeriveDeletePermissionDenied()
+        public void OnChangedTransitionalDeniedPermissionsDeriveDeletePermissionDenied()
         {
             var productQuote = new ProductQuoteBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
