@@ -398,102 +398,109 @@ namespace Allors.Database.Domain
             return salesInvoice;
         }
 
-        public SalesInvoice BaseCredit(SalesInvoiceCredit method)
+        public SalesInvoice AppsCredit(SalesInvoiceCredit method)
         {
-            var salesInvoice = new SalesInvoiceBuilder(this.Strategy.Transaction)
-                .WithCreditedFromInvoice(this)
-                .WithPurchaseInvoice(this.PurchaseInvoice)
-                .WithBilledFrom(this.BilledFrom)
-                .WithAssignedBilledFromContactMechanism(this.DerivedBilledFromContactMechanism)
-                .WithBilledFromContactPerson(this.BilledFromContactPerson)
-                .WithBillToCustomer(this.BillToCustomer)
-                .WithAssignedBillToContactMechanism(this.DerivedBillToContactMechanism)
-                .WithBillToContactPerson(this.BillToContactPerson)
-                .WithBillToEndCustomer(this.BillToEndCustomer)
-                .WithAssignedBillToEndCustomerContactMechanism(this.DerivedBillToEndCustomerContactMechanism)
-                .WithBillToEndCustomerContactPerson(this.BillToEndCustomerContactPerson)
-                .WithShipToCustomer(this.ShipToCustomer)
-                .WithAssignedShipToAddress(this.DerivedShipToAddress)
-                .WithShipToContactPerson(this.ShipToContactPerson)
-                .WithShipToEndCustomer(this.ShipToEndCustomer)
-                .WithAssignedShipToEndCustomerAddress(this.DerivedShipToEndCustomerAddress)
-                .WithShipToEndCustomerContactPerson(this.ShipToEndCustomerContactPerson)
-                .WithDescription(this.Description)
-                .WithStore(this.Store)
-                .WithInvoiceDate(this.Transaction().Now())
-                .WithSalesChannel(this.SalesChannel)
-                .WithSalesInvoiceType(new SalesInvoiceTypes(this.Strategy.Transaction).CreditNote)
-                .WithAssignedVatRegime(this.AssignedVatRegime)
-                .WithAssignedIrpfRegime(this.AssignedIrpfRegime)
-                .WithCustomerReference(this.CustomerReference)
-                .WithAssignedPaymentMethod(this.DerivedPaymentMethod)
-                .WithBillingAccount(this.BillingAccount)
-                .Build();
-
-            foreach (OrderAdjustment orderAdjustment in this.OrderAdjustments)
+            if (!method.Result.HasValue)
             {
-                OrderAdjustment newAdjustment = null;
-                if (orderAdjustment.GetType().Name.Equals(typeof(DiscountAdjustment).Name))
-                {
-                    newAdjustment = new DiscountAdjustmentBuilder(this.Transaction()).Build();
-                }
-
-                if (orderAdjustment.GetType().Name.Equals(typeof(SurchargeAdjustment).Name))
-                {
-                    newAdjustment = new SurchargeAdjustmentBuilder(this.Transaction()).Build();
-                }
-
-                if (orderAdjustment.GetType().Name.Equals(typeof(Fee).Name))
-                {
-                    newAdjustment = new FeeBuilder(this.Transaction()).Build();
-                }
-
-                if (orderAdjustment.GetType().Name.Equals(typeof(ShippingAndHandlingCharge).Name))
-                {
-                    newAdjustment = new ShippingAndHandlingChargeBuilder(this.Transaction()).Build();
-                }
-
-                if (orderAdjustment.GetType().Name.Equals(typeof(MiscellaneousCharge).Name))
-                {
-                    newAdjustment = new MiscellaneousChargeBuilder(this.Transaction()).Build();
-                }
-
-                newAdjustment.Amount ??= orderAdjustment.Amount * -1;
-                salesInvoice.AddOrderAdjustment(newAdjustment);
-            }
-
-            foreach (SalesInvoiceItem salesInvoiceItem in this.SalesInvoiceItems)
-            {
-                var invoiceItem = new SalesInvoiceItemBuilder(this.Strategy.Transaction)
-                    .WithInvoiceItemType(salesInvoiceItem.InvoiceItemType)
-                    .WithAssignedUnitPrice(salesInvoiceItem.UnitPrice)
-                    .WithProduct(salesInvoiceItem.Product)
-                    .WithQuantity(salesInvoiceItem.Quantity)
-                    .WithAssignedVatRegime(salesInvoiceItem.DerivedVatRegime)
-                    .WithAssignedIrpfRegime(salesInvoiceItem.DerivedIrpfRegime)
-                    .WithDescription(salesInvoiceItem.Description)
-                    .WithSerialisedItem(salesInvoiceItem.SerialisedItem)
-                    .WithComment(salesInvoiceItem.Comment)
-                    .WithInternalComment(salesInvoiceItem.InternalComment)
-                    .WithFacility(salesInvoiceItem.Facility)
-                    .WithSerialisedItemVersionBeforeSale(salesInvoiceItem.SerialisedItemVersionBeforeSale)
+                var creditNote = new SalesInvoiceBuilder(this.Strategy.Transaction)
+                    .WithCreditedFromInvoice(this)
+                    .WithPurchaseInvoice(this.PurchaseInvoice)
+                    .WithBilledFrom(this.BilledFrom)
+                    .WithAssignedBilledFromContactMechanism(this.DerivedBilledFromContactMechanism)
+                    .WithBilledFromContactPerson(this.BilledFromContactPerson)
+                    .WithBillToCustomer(this.BillToCustomer)
+                    .WithAssignedBillToContactMechanism(this.DerivedBillToContactMechanism)
+                    .WithBillToContactPerson(this.BillToContactPerson)
+                    .WithBillToEndCustomer(this.BillToEndCustomer)
+                    .WithAssignedBillToEndCustomerContactMechanism(this.DerivedBillToEndCustomerContactMechanism)
+                    .WithBillToEndCustomerContactPerson(this.BillToEndCustomerContactPerson)
+                    .WithShipToCustomer(this.ShipToCustomer)
+                    .WithAssignedShipToAddress(this.DerivedShipToAddress)
+                    .WithShipToContactPerson(this.ShipToContactPerson)
+                    .WithShipToEndCustomer(this.ShipToEndCustomer)
+                    .WithAssignedShipToEndCustomerAddress(this.DerivedShipToEndCustomerAddress)
+                    .WithShipToEndCustomerContactPerson(this.ShipToEndCustomerContactPerson)
+                    .WithDescription(this.Description)
+                    .WithStore(this.Store)
+                    .WithInvoiceDate(this.Transaction().Now())
+                    .WithSalesChannel(this.SalesChannel)
+                    .WithSalesInvoiceType(new SalesInvoiceTypes(this.Strategy.Transaction).CreditNote)
+                    .WithAssignedVatRegime(this.AssignedVatRegime)
+                    .WithAssignedIrpfRegime(this.AssignedIrpfRegime)
+                    .WithCustomerReference(this.CustomerReference)
+                    .WithAssignedPaymentMethod(this.DerivedPaymentMethod)
+                    .WithBillingAccount(this.BillingAccount)
                     .Build();
 
-                invoiceItem.ProductFeatures = salesInvoiceItem.ProductFeatures;
-                salesInvoice.AddSalesInvoiceItem(invoiceItem);
-
-                foreach (WorkEffortBilling workEffortBilling in salesInvoiceItem.WorkEffortBillingsWhereInvoiceItem)
+                foreach (OrderAdjustment orderAdjustment in this.OrderAdjustments)
                 {
-                    new WorkEffortBillingBuilder(this.Strategy.Transaction)
-                        .WithWorkEffort(workEffortBilling.WorkEffort)
-                        .WithInvoiceItem(invoiceItem)
+                    OrderAdjustment newAdjustment = null;
+                    if (orderAdjustment.GetType().Name.Equals(typeof(DiscountAdjustment).Name))
+                    {
+                        newAdjustment = new DiscountAdjustmentBuilder(this.Transaction()).Build();
+                    }
+
+                    if (orderAdjustment.GetType().Name.Equals(typeof(SurchargeAdjustment).Name))
+                    {
+                        newAdjustment = new SurchargeAdjustmentBuilder(this.Transaction()).Build();
+                    }
+
+                    if (orderAdjustment.GetType().Name.Equals(typeof(Fee).Name))
+                    {
+                        newAdjustment = new FeeBuilder(this.Transaction()).Build();
+                    }
+
+                    if (orderAdjustment.GetType().Name.Equals(typeof(ShippingAndHandlingCharge).Name))
+                    {
+                        newAdjustment = new ShippingAndHandlingChargeBuilder(this.Transaction()).Build();
+                    }
+
+                    if (orderAdjustment.GetType().Name.Equals(typeof(MiscellaneousCharge).Name))
+                    {
+                        newAdjustment = new MiscellaneousChargeBuilder(this.Transaction()).Build();
+                    }
+
+                    newAdjustment.Amount ??= orderAdjustment.Amount * -1;
+                    creditNote.AddOrderAdjustment(newAdjustment);
+                }
+
+                foreach (SalesInvoiceItem salesInvoiceItem in this.SalesInvoiceItems)
+                {
+                    var invoiceItem = new SalesInvoiceItemBuilder(this.Strategy.Transaction)
+                        .WithInvoiceItemType(salesInvoiceItem.InvoiceItemType)
+                        .WithAssignedUnitPrice(salesInvoiceItem.UnitPrice)
+                        .WithProduct(salesInvoiceItem.Product)
+                        .WithQuantity(salesInvoiceItem.Quantity)
+                        .WithAssignedVatRegime(salesInvoiceItem.DerivedVatRegime)
+                        .WithAssignedIrpfRegime(salesInvoiceItem.DerivedIrpfRegime)
+                        .WithDescription(salesInvoiceItem.Description)
+                        .WithSerialisedItem(salesInvoiceItem.SerialisedItem)
+                        .WithComment(salesInvoiceItem.Comment)
+                        .WithInternalComment(salesInvoiceItem.InternalComment)
+                        .WithFacility(salesInvoiceItem.Facility)
+                        .WithSerialisedItemVersionBeforeSale(salesInvoiceItem.SerialisedItemVersionBeforeSale)
                         .Build();
 
-                    workEffortBilling.WorkEffort.CanInvoice = true;
+                    invoiceItem.ProductFeatures = salesInvoiceItem.ProductFeatures;
+                    creditNote.AddSalesInvoiceItem(invoiceItem);
+
+                    foreach (WorkEffortBilling workEffortBilling in salesInvoiceItem.WorkEffortBillingsWhereInvoiceItem)
+                    {
+                        new WorkEffortBillingBuilder(this.Strategy.Transaction)
+                            .WithWorkEffort(workEffortBilling.WorkEffort)
+                            .WithInvoiceItem(invoiceItem)
+                            .Build();
+
+                        workEffortBilling.WorkEffort.CanInvoice = true;
+                    }
                 }
+
+                method.Result = true;
+
+                return creditNote;
             }
 
-            return salesInvoice;
+            return null;
         }
 
         public void AppsDelete(DeletableDelete method)
