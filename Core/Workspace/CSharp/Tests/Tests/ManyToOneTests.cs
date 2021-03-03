@@ -35,6 +35,8 @@ namespace Tests.Workspace
 
             workspaceOrganisation1.WorkspaceDatabaseOwner = databasePerson1;
 
+            await session1.Save();
+
             var session2 = this.Workspace.CreateSession();
 
             var workspaceOrganisation2 = session2.Instantiate(workspaceOrganisation1);
@@ -73,7 +75,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public void WorkspaceWorkspace_SetRole()
+        public async void WorkspaceWorkspace_SetRole()
         {
             var session1 = this.Workspace.CreateSession();
 
@@ -81,6 +83,8 @@ namespace Tests.Workspace
             var workspacePerson1 = session1.Create<WorkspacePerson>();
 
             workspaceOrganisation1.WorkspaceWorkspaceOwner = workspacePerson1;
+
+            await session1.Save();
 
             var session2 = this.Workspace.CreateSession();
 

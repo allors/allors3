@@ -49,5 +49,7 @@ namespace Allors.Workspace
         Task<ILoadResult> Load(string service, object args);
 
         Task<ISaveResult> Save();
+
+        IEnumerable<IChangeSet> Checkpoint();
     }
 }

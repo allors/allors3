@@ -15,15 +15,15 @@ namespace Allors.Workspace.Derivations.Default
 
     public class DomainDerive
     {
-        public DomainDerive(IWorkspace workspace, int maxDomainDerivationCycles)
+        public DomainDerive(ISession session, int maxDomainDerivationCycles)
         {
-            this.Workspace = workspace;
+            this.Session = session;
             this.MaxDomainDerivationCycles = maxDomainDerivationCycles;
 
             this.Validation = new DomainValidation();
         }
 
-        public IWorkspace Workspace { get; }
+        public ISession Session { get; }
 
         public int MaxDomainDerivationCycles { get; }
 
@@ -34,10 +34,10 @@ namespace Allors.Workspace.Derivations.Default
             // Domain Derivations
             var domainCycles = 0;
 
-            var domainDerivationById = this.Workspace.DomainDerivationById;
+            var domainDerivationById = this.Session.Workspace.DomainDerivationById;
             if (domainDerivationById.Any())
             {
-                var changeSets = this.Workspace.Checkpoint();
+                var changeSets = this.Session.Checkpoint();
 
                 while (changeSets.Any(v => v.Associations.Any() || v.Roles.Any() || v.Created.Any() || v.Deleted.Any()))
                 {
@@ -126,7 +126,7 @@ namespace Allors.Workspace.Derivations.Default
                         }
                     }
 
-                    changeSets = this.Workspace.Checkpoint();
+                    changeSets = this.Session.Checkpoint();
                 }
             }
         }

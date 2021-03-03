@@ -14,8 +14,6 @@ namespace Allors.Workspace
 
         Identity Identity { get; }
 
-        long? Version { get; }
-
         IClass Class { get; }
 
         ISession Session { get; }
