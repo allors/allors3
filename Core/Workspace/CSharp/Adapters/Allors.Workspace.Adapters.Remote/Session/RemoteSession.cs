@@ -264,6 +264,25 @@ namespace Allors.Workspace.Adapters.Remote
 
         public IEnumerable<IChangeSet> Checkpoint() => throw new NotImplementedException();
 
+        internal object GetRole(Identity association, IRoleType roleType)
+        {
+            this.State.GetRole(association, roleType, out var role);
+            if (roleType.ObjectType.IsUnit)
+            {
+                return role;
+            }
+
+            if (roleType.IsOne)
+            {
+                return this.Instantiate<IObject>((Identity)role);
+            }
+
+            var ids = (IEnumerable<Identity>)role;
+            return ids?.Select(this.Instantiate<IObject>).ToArray() ?? this.Workspace.ObjectFactory.EmptyArray(roleType.ObjectType);
+        }
+
+        internal void SetRole(Identity association, IRoleType roleType, object role) => this.State.SetRole(association, roleType, role);
+
         internal IChangeSet Checkpoint(StateChangeSet workspaceChangeSet)
         {
             try

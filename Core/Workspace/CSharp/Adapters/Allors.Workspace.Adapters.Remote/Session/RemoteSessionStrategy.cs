@@ -14,6 +14,7 @@ namespace Allors.Workspace.Adapters.Remote
 
     public sealed class RemoteSessionStrategy : RemoteStrategy
     {
+        // TODO: use record for object
         private IObject @object;
 
         private RemoteSessionStrategy(RemoteSession session, Identity identity, IClass @class)
@@ -25,17 +26,16 @@ namespace Allors.Workspace.Adapters.Remote
 
         public RemoteSessionStrategy(RemoteSession session, IClass @class, Identity identity) : this(session, identity, @class) { }
 
-        ISession IStrategy.Session => this.Session;
 
-        public RemoteSession Session { get; }
+        public override RemoteSession Session { get; }
 
-        public IObject Object => this.@object ??= this.Session.Workspace.ObjectFactory.Create(this);
+        public override IObject Object => this.@object ??= this.Session.Workspace.ObjectFactory.Create(this);
 
-        public IClass Class { get; }
+        public override IClass Class { get; }
 
-        public Identity Identity { get; }
+        public override Identity Identity { get; }
 
-        public bool Exist(IRoleType roleType)
+        public override bool Exist(IRoleType roleType)
         {
             var value = this.Get(roleType);
 
@@ -47,39 +47,33 @@ namespace Allors.Workspace.Adapters.Remote
             return value != null;
         }
 
-        public object Get(IRoleType roleType)
+        public override object Get(IRoleType roleType)
         {
-            if (roleType.Origin == Origin.Session)
+            switch (roleType.Origin)
             {
-                var state = this.Session.State;
-                state.GetRole(this.Identity, roleType, out var role);
-                if (roleType.ObjectType.IsUnit)
-                {
-                    return role;
-                }
+                case Origin.Session:
+                    return this.Session.GetRole(this.Identity, roleType);
 
-                if (roleType.IsOne)
-                {
-                    return this.Session.Instantiate<IObject>((Identity)role);
-                }
+                default:
+                    throw new ArgumentException($"Origin {roleType.Origin} not supported");
 
-                var ids = (IEnumerable<Identity>)role;
-                return ids?.Select(v => this.Session.Instantiate<IObject>(v)).ToArray() ?? this.Session.Workspace.ObjectFactory.EmptyArray(roleType.ObjectType);
-            }
-
-            return null;
-        }
-
-        public void Set(IRoleType roleType, object value)
-        {
-            if (roleType.Origin == Origin.Session)
-            {
-                var state = this.Session.State;
-                state.SetRole(this.Identity, roleType, value);
             }
         }
 
-        public void Add(IRoleType roleType, IObject value)
+        public override void Set(IRoleType roleType, object value)
+        {
+            switch (roleType.Origin)
+            {
+                case Origin.Session:
+                    this.Session.SetRole(this.Identity, roleType, value);
+                    break;
+
+                default:
+                    throw new ArgumentException($"Origin {roleType.Origin} not supported");
+            }
+        }
+
+        public override void Add(IRoleType roleType, IObject value)
         {
             var roles = (IObject[])this.Get(roleType);
             if (!roles.Contains(value))
@@ -90,7 +84,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.Set(roleType, roles);
         }
 
-        public void Remove(IRoleType roleType, IObject value)
+        public override void Remove(IRoleType roleType, IObject value)
         {
             var roles = (IStrategy[])this.Get(roleType);
             if (roles.Contains(value.Strategy))
@@ -103,7 +97,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.Set(roleType, roles);
         }
 
-        public IObject GetAssociation(IAssociationType associationType)
+        public override IObject GetAssociation(IAssociationType associationType)
         {
             if (associationType.Origin == Origin.Session)
             {
@@ -116,7 +110,7 @@ namespace Allors.Workspace.Adapters.Remote
             return null;
         }
 
-        public IEnumerable<IObject> GetAssociations(IAssociationType associationType)
+        public override IEnumerable<IObject> GetAssociations(IAssociationType associationType)
         {
             if (associationType.Origin == Origin.Session)
             {
@@ -129,10 +123,10 @@ namespace Allors.Workspace.Adapters.Remote
             return Array.Empty<IObject>();
         }
 
-        public bool CanRead(IRoleType roleType) => true;
+        public override bool CanRead(IRoleType roleType) => true;
 
-        public bool CanWrite(IRoleType roleType) => true;
+        public override bool CanWrite(IRoleType roleType) => true;
 
-        public bool CanExecute(IMethodType methodType) => false;
+        public override bool CanExecute(IMethodType methodType) => false;
     }
 }

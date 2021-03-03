@@ -31,15 +31,13 @@ namespace Allors.Workspace.Adapters.Remote
 
         public RemoteDatabaseStrategy(RemoteSession session, RemoteDatabaseRoles databaseRoles, Identity identity) : this(session, identity, databaseRoles.Class) => this.DatabaseRoles = databaseRoles;
 
-        ISession IStrategy.Session => this.Session;
+        public override RemoteSession Session { get; }
 
-        public RemoteSession Session { get; }
+        public override IObject Object => this.@object ??= this.Session.Workspace.ObjectFactory.Create(this);
 
-        public IObject Object => this.@object ??= this.Session.Workspace.ObjectFactory.Create(this);
+        public override IClass Class { get; }
 
-        public IClass Class { get; }
-
-        public Identity Identity { get; }
+        public override Identity Identity { get; }
 
         public long? Version => this.DatabaseRoles?.Version;
 
@@ -60,7 +58,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         private bool ExistDatabaseRoles => this.DatabaseRoles != null;
 
-        public bool Exist(IRoleType roleType)
+        public override bool Exist(IRoleType roleType)
         {
             var value = this.Get(roleType);
 
@@ -72,7 +70,7 @@ namespace Allors.Workspace.Adapters.Remote
             return value != null;
         }
 
-        public object Get(IRoleType roleType)
+        public override object Get(IRoleType roleType)
         {
             if (roleType.Origin == Origin.Session)
             {
@@ -135,7 +133,7 @@ namespace Allors.Workspace.Adapters.Remote
             return value;
         }
 
-        public void Set(IRoleType roleType, object value)
+        public override void Set(IRoleType roleType, object value)
         {
             if (roleType.Origin == Origin.Session)
             {
@@ -177,7 +175,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.changedRoleByRoleType[roleType] = value;
         }
 
-        public void Add(IRoleType roleType, IObject value)
+        public override void Add(IRoleType roleType, IObject value)
         {
             var roles = (IObject[])this.Get(roleType);
             if (!roles.Contains(value))
@@ -188,7 +186,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.Set(roleType, roles);
         }
 
-        public void Remove(IRoleType roleType, IObject value)
+        public override void Remove(IRoleType roleType, IObject value)
         {
             var roles = (IStrategy[])this.Get(roleType);
             if (roles.Contains(value.Strategy))
@@ -201,7 +199,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.Set(roleType, roles);
         }
 
-        public IObject GetAssociation(IAssociationType associationType)
+        public override IObject GetAssociation(IAssociationType associationType)
         {
             if (associationType.Origin == Origin.Session)
             {
@@ -214,7 +212,7 @@ namespace Allors.Workspace.Adapters.Remote
             return this.Session.GetAssociation(this.Object, associationType).FirstOrDefault();
         }
 
-        public IEnumerable<IObject> GetAssociations(IAssociationType associationType)
+        public override IEnumerable<IObject> GetAssociations(IAssociationType associationType)
         {
             if (associationType.Origin == Origin.Session)
             {
@@ -227,7 +225,7 @@ namespace Allors.Workspace.Adapters.Remote
             return this.Session.GetAssociation(this.Object, associationType);
         }
 
-        public bool CanRead(IRoleType roleType)
+        public override bool CanRead(IRoleType roleType)
         {
             if (!this.ExistDatabaseRoles)
             {
@@ -238,7 +236,7 @@ namespace Allors.Workspace.Adapters.Remote
             return this.DatabaseRoles.IsPermitted(permission);
         }
 
-        public bool CanWrite(IRoleType roleType)
+        public override bool CanWrite(IRoleType roleType)
         {
             if (!this.ExistDatabaseRoles)
             {
@@ -249,7 +247,7 @@ namespace Allors.Workspace.Adapters.Remote
             return this.DatabaseRoles.IsPermitted(permission);
         }
 
-        public bool CanExecute(IMethodType methodType)
+        public override bool CanExecute(IMethodType methodType)
         {
             if (!this.ExistDatabaseRoles)
             {
