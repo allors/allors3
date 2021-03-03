@@ -29,14 +29,14 @@ namespace Allors.Workspace.Adapters.Remote
             this.databaseState = new RemoteDatabaseState(this);
         }
 
-        public RemoteDatabaseStrategy(RemoteSession session, RemoteDatabaseRoles databaseRoles)
+        public RemoteDatabaseStrategy(RemoteSession session, RemoteDatabaseObject databaseObject)
         {
             this.Session = session;
-            this.Identity = databaseRoles.Identity;
-            this.Class = databaseRoles.Class;
+            this.Identity = databaseObject.Identity;
+            this.Class = databaseObject.Class;
 
             this.workspaceState = new RemoteWorkspaceState(this);
-            this.databaseState = new RemoteDatabaseState(this, databaseRoles);
+            this.databaseState = new RemoteDatabaseState(this, databaseObject);
         }
 
         public override RemoteSession Session { get; }
@@ -161,6 +161,6 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal PushRequestObject SaveExisting() => this.databaseState.SaveExisting();
 
-        internal void PushResponse(RemoteDatabaseRoles databaseRoles) => this.databaseState.PushResponse(databaseRoles);
+        internal void PushResponse(RemoteDatabaseObject databaseObject) => this.databaseState.PushResponse(databaseObject);
     }
 }

@@ -3,7 +3,7 @@
   <Class Name="Allors.Workspace.Adapters.Remote.RemoteSession">
     <Position X="5.5" Y="0.5" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>ARAAwMEAAUBABgQAAAQEAEgAAAAggEAAAIAQBQBAAAA=</HashCode>
+      <HashCode>ARAAwMEAAUBAAgQAAAQEAEgAAAAggEAAAIAQBQBAAAA=</HashCode>
       <FileName>Session\RemoteSession.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -31,40 +31,39 @@
     </ShowAsCollectionAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Allors.Workspace.Adapters.Remote.RemoteDatabaseRoles">
+  <Class Name="Allors.Workspace.Adapters.Remote.RemoteDatabaseObject">
     <Position X="22.25" Y="4.75" Width="2.75" />
     <TypeIdentifier>
       <HashCode>IACAgAEAAEAAAAAAAAIAAIAoAAAAMACAAEAAAIAAAAg=</HashCode>
-      <FileName>Database\RemoteDatabaseRoles.cs</FileName>
+      <FileName>Database\RemoteDatabaseObject.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Allors.Workspace.Adapters.Remote.RemoteWorkspaceRoles">
+  <Class Name="Allors.Workspace.Adapters.Remote.RemoteWorkspaceObject">
     <Position X="14.5" Y="5.25" Width="2" />
     <TypeIdentifier>
       <HashCode>IAQAAAEAAEAAAAAAAAIAAAAgAAAAAAAAAEAAAAAAAAA=</HashCode>
-      <FileName>Workspace\RemoteWorkspaceRoles.cs</FileName>
-      <NewMemberFileName>Database\RemoteDatabaseRoles.cs</NewMemberFileName>
+      <FileName>Workspace\RemoteWorkspaceObject.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.RemoteWorkspaceState">
     <Position X="1" Y="6.75" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>EBAAAAFACABABQAAAAIAAAAAAAAAAAAAAEAEAAAACAA=</HashCode>
+      <HashCode>EBAAAAFAAABABQAAgAIAAAAAAAAAAAAAAEAEAAAACAA=</HashCode>
       <FileName>Workspace\RemoteWorkspaceState.cs</FileName>
       <NewMemberFileName>Workspace\RemoteWorkspaceStrategy.cs</NewMemberFileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="WorkspaceRoles" />
+      <Property Name="WorkspaceObject" />
     </ShowAsAssociation>
   </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.RemoteWorkspaceStrategy">
     <Position X="1" Y="0.5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAIAAIAAAAAABQBgEEIABEAAAAAAAAAEAEAQAAEIAAA=</HashCode>
+      <HashCode>AAIAAIAAAAAABQBgEEIABEAAAAAAAEAAAEAQAAEIAAA=</HashCode>
       <FileName>Workspace\RemoteWorkspaceStrategy.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Field Name="state" />
+      <Field Name="workspaceState" />
       <Property Name="Session" />
     </ShowAsAssociation>
   </Class>

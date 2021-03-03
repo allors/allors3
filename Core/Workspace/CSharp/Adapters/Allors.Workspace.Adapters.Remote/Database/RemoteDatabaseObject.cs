@@ -12,15 +12,15 @@ namespace Allors.Workspace.Adapters.Remote
     using Allors.Protocol.Json.Api;
     using Allors.Protocol.Json.Api.Sync;
 
-    public class RemoteDatabaseRoles
+    public class RemoteDatabaseObject
     {
         private RemotePermission[] deniedPermissions;
         private RemoteAccessControl[] accessControls;
 
-        private Dictionary<Guid, object> roleByRelationTypeId;
+        private Dictionary<IRelationType, object> roleByRelationType;
         private SyncResponseRole[] syncResponseRoles;
 
-        internal RemoteDatabaseRoles(RemoteDatabase database, Identity identity, IClass @class)
+        internal RemoteDatabaseObject(RemoteDatabase database, Identity identity, IClass @class)
         {
             this.Database = database;
             this.Identity = identity;
@@ -28,7 +28,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.Version = 0;
         }
 
-        internal RemoteDatabaseRoles(RemoteDatabase database, RemoteResponseContext ctx, SyncResponseObject syncResponseObject)
+        internal RemoteDatabaseObject(RemoteDatabase database, RemoteResponseContext ctx, SyncResponseObject syncResponseObject)
         {
             this.Database = database;
             this.Identity = database.Identities.GetOrCreate(long.Parse(syncResponseObject.Id));
@@ -51,30 +51,31 @@ namespace Allors.Workspace.Adapters.Remote
 
         public string SortedDeniedPermissionIds { get; }
 
-        private Dictionary<Guid, object> RoleByRelationTypeId
+        private Dictionary<IRelationType, object> RoleByRelationType
         {
             get
             {
                 if (this.syncResponseRoles != null)
                 {
+                    var meta = this.Database.MetaPopulation;
                     var identities = this.Database.Identities;
 
                     var metaPopulation = this.Database.MetaPopulation;
-                    this.roleByRelationTypeId = this.syncResponseRoles.ToDictionary(
-                        v => Guid.Parse(v.RoleType),
+                    this.roleByRelationType = this.syncResponseRoles.ToDictionary(
+                        v => (IRelationType)meta.Find(Guid.Parse(v.RoleType)),
                         v =>
                         {
                             var value = v.Value;
-                            var RoleType = ((IRelationType)metaPopulation.Find(Guid.Parse(v.RoleType))).RoleType;
+                            var roleType = ((IRelationType)metaPopulation.Find(Guid.Parse(v.RoleType))).RoleType;
 
-                            var objectType = RoleType.ObjectType;
+                            var objectType = roleType.ObjectType;
                             if (objectType.IsUnit)
                             {
-                                return UnitConvert.Parse(RoleType.ObjectType.Id, value);
+                                return UnitConvert.Parse(roleType.ObjectType.Id, value);
                             }
                             else
                             {
-                                if (RoleType.IsOne)
+                                if (roleType.IsOne)
                                 {
                                     return value != null ? identities.Get(long.Parse(value)) : (Identity)null;
                                 }
@@ -90,7 +91,7 @@ namespace Allors.Workspace.Adapters.Remote
                     this.syncResponseRoles = null;
                 }
 
-                return this.roleByRelationTypeId;
+                return this.roleByRelationType;
             }
         }
 
@@ -117,7 +118,7 @@ namespace Allors.Workspace.Adapters.Remote
         public object GetRole(IRoleType roleType)
         {
             object @object = null;
-            this.RoleByRelationTypeId?.TryGetValue(roleType.RelationType.Id, out @object);
+            this.RoleByRelationType?.TryGetValue(roleType.RelationType, out @object);
             return @object;
         }
 

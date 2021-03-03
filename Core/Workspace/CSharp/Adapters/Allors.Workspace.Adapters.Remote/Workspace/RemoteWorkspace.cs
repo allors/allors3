@@ -15,7 +15,7 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class RemoteWorkspace : IWorkspace
     {
-        private readonly Dictionary<Identity, RemoteWorkspaceRoles> workspaceRolesByIdentity;
+        private readonly Dictionary<Identity, RemoteWorkspaceObject> workspaceRolesByIdentity;
 
         public RemoteWorkspace(IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, HttpClient httpClient)
         {
@@ -30,7 +30,7 @@ namespace Allors.Workspace.Adapters.Remote
 
             this.DomainDerivationById = new ConcurrentDictionary<Guid, IDomainDerivation>();
 
-            this.workspaceRolesByIdentity = new Dictionary<Identity, RemoteWorkspaceRoles>();
+            this.workspaceRolesByIdentity = new Dictionary<Identity, RemoteWorkspaceObject>();
 
             this.StateLifecycle.OnInit(this);
         }
@@ -51,7 +51,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal Dictionary<Identity, IClass> WorkspaceOrSessionClassByWorkspaceId { get; }
 
-        internal RemoteWorkspaceRoles Get(Identity identity)
+        internal RemoteWorkspaceObject Get(Identity identity)
         {
             this.workspaceRolesByIdentity.TryGetValue(identity, out var workspaceRoles);
             return workspaceRoles;
@@ -67,11 +67,11 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal void RegisterWorkspaceIdForSessionObject(IClass @class, Identity workspaceId) => this.WorkspaceOrSessionClassByWorkspaceId.Add(workspaceId, @class);
 
-        public void Push(Identity identity, IClass @class, long version, Dictionary<Guid, object> changedRoleByRoleType)
+        public void Push(Identity identity, IClass @class, long version, Dictionary<IRelationType, object> changedRoleByRoleType)
         {
             if (!this.workspaceRolesByIdentity.TryGetValue(identity, out var originalWorkspaceRoles))
             {
-                this.workspaceRolesByIdentity[identity] = new RemoteWorkspaceRoles(this.Database, identity, @class, ++version, changedRoleByRoleType);
+                this.workspaceRolesByIdentity[identity] = new RemoteWorkspaceObject(this.Database, identity, @class, ++version, changedRoleByRoleType);
             }
             else
             {

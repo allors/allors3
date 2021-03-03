@@ -14,14 +14,14 @@ namespace Allors.Workspace.Adapters.Remote
     {
         private readonly RemoteStrategy strategy;
 
-        private Dictionary<Guid, object> changedRoleByRoleType;
+        private Dictionary<IRelationType, object> changedRoleByRoleType;
 
-        private RemoteWorkspaceRoles WorkspaceRoles { get; set; }
+        private RemoteWorkspaceObject WorkspaceObject { get; set; }
 
         internal RemoteWorkspaceState(RemoteStrategy strategy)
         {
             this.strategy = strategy;
-            this.WorkspaceRoles = this.Workspace.Get(this.Identity);
+            this.WorkspaceObject = this.Workspace.Get(this.Identity);
         }
 
         internal bool HasWorkspaceChanges => this.changedRoleByRoleType != null;
@@ -39,9 +39,9 @@ namespace Allors.Workspace.Adapters.Remote
             if (roleType.ObjectType.IsUnit)
             {
 
-                if (this.changedRoleByRoleType == null || !this.changedRoleByRoleType.TryGetValue(roleType.RelationType.Id, out var unit))
+                if (this.changedRoleByRoleType == null || !this.changedRoleByRoleType.TryGetValue(roleType.RelationType, out var unit))
                 {
-                    unit = this.WorkspaceRoles?.GetRole(roleType);
+                    unit = this.WorkspaceObject?.GetRole(roleType);
                 }
 
                 return unit;
@@ -49,17 +49,17 @@ namespace Allors.Workspace.Adapters.Remote
 
             if (roleType.IsOne)
             {
-                if (this.changedRoleByRoleType == null || !this.changedRoleByRoleType.TryGetValue(roleType.RelationType.Id, out var workspaceRole))
+                if (this.changedRoleByRoleType == null || !this.changedRoleByRoleType.TryGetValue(roleType.RelationType, out var workspaceRole))
                 {
-                    workspaceRole = (Identity)this.WorkspaceRoles?.GetRole(roleType);
+                    workspaceRole = (Identity)this.WorkspaceObject?.GetRole(roleType);
                 }
 
                 return this.Session.Instantiate<IObject>((Identity)workspaceRole);
             }
 
-            if (this.changedRoleByRoleType == null || !this.changedRoleByRoleType.TryGetValue(roleType.RelationType.Id, out var identities))
+            if (this.changedRoleByRoleType == null || !this.changedRoleByRoleType.TryGetValue(roleType.RelationType, out var identities))
             {
-                identities = (Identity[])this.WorkspaceRoles?.GetRole(roleType);
+                identities = (Identity[])this.WorkspaceObject?.GetRole(roleType);
             }
 
             var ids = (Identity[])identities;
@@ -101,21 +101,21 @@ namespace Allors.Workspace.Adapters.Remote
                 }
             }
 
-            this.changedRoleByRoleType ??= new Dictionary<Guid, object>();
+            this.changedRoleByRoleType ??= new Dictionary<IRelationType, object>();
 
             if (roleType.ObjectType.IsUnit)
             {
-                this.changedRoleByRoleType[roleType.RelationType.Id] = value;
+                this.changedRoleByRoleType[roleType.RelationType] = value;
             }
             else
             {
                 if (roleType.IsOne)
                 {
-                    this.changedRoleByRoleType[roleType.RelationType.Id] = ((IObject)value)?.Identity;
+                    this.changedRoleByRoleType[roleType.RelationType] = ((IObject)value)?.Identity;
                 }
                 else
                 {
-                    this.changedRoleByRoleType[roleType.RelationType.Id] = ((IEnumerable<object>)value).Select(v => ((IObject)v).Identity).ToArray();
+                    this.changedRoleByRoleType[roleType.RelationType] = ((IEnumerable<object>)value).Select(v => ((IObject)v).Identity).ToArray();
                 }
             }
 
@@ -125,7 +125,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             if (this.HasWorkspaceChanges)
             {
-                this.Workspace.Push(this.Identity, this.Class, this.WorkspaceRoles?.Version ?? 0, this.changedRoleByRoleType);
+                this.Workspace.Push(this.Identity, this.Class, this.WorkspaceObject?.Version ?? 0, this.changedRoleByRoleType);
             }
 
             this.Reset();
@@ -133,7 +133,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal void Reset()
         {
-            this.WorkspaceRoles = this.Workspace.Get(this.Identity);
+            this.WorkspaceObject = this.Workspace.Get(this.Identity);
             this.changedRoleByRoleType = null;
         }
     }
