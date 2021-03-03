@@ -46,26 +46,36 @@ namespace Allors.Workspace.Adapters.Remote
 
                 return unit;
             }
-            else
+
+            if (roleType.IsOne)
             {
-                if (roleType.IsOne)
+                if (this.changedRoleByRoleType == null || !this.changedRoleByRoleType.TryGetValue(roleType.RelationType.Id, out var workspaceRole))
                 {
-                    if (this.changedRoleByRoleType == null || !this.changedRoleByRoleType.TryGetValue(roleType.RelationType.Id, out var workspaceRole))
-                    {
-                        workspaceRole = (Identity)this.WorkspaceRoles?.GetRole(roleType);
-                    }
-
-                    return this.Session.Instantiate<IObject>((Identity)workspaceRole);
+                    workspaceRole = (Identity)this.WorkspaceRoles?.GetRole(roleType);
                 }
 
-                if (this.changedRoleByRoleType == null || !this.changedRoleByRoleType.TryGetValue(roleType.RelationType.Id, out var identities))
-                {
-                    identities = (Identity[])this.WorkspaceRoles?.GetRole(roleType);
-                }
-
-                var ids = (IEnumerable<Identity>)identities;
-                return ids?.Select(v => this.Session.Instantiate<IObject>(v)).ToArray() ?? this.Session.Workspace.ObjectFactory.EmptyArray(roleType.ObjectType);
+                return this.Session.Instantiate<IObject>((Identity)workspaceRole);
             }
+
+            if (this.changedRoleByRoleType == null || !this.changedRoleByRoleType.TryGetValue(roleType.RelationType.Id, out var identities))
+            {
+                identities = (Identity[])this.WorkspaceRoles?.GetRole(roleType);
+            }
+
+            var ids = (Identity[])identities;
+
+            if (ids == null)
+            {
+                return this.Session.Workspace.ObjectFactory.EmptyArray(roleType.ObjectType);
+            }
+
+            var array = Array.CreateInstance(roleType.ObjectType.ClrType, ids.Length);
+            for (var i = 0; i < ids.Length; i++)
+            {
+                array.SetValue(this.Session.Instantiate<IObject>(ids[i]), i);
+            }
+
+            return array;
         }
 
         internal void SetRole(IRoleType roleType, object value)

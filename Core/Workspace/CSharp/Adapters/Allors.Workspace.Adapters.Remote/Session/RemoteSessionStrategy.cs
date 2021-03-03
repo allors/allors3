@@ -55,7 +55,7 @@ namespace Allors.Workspace.Adapters.Remote
                     return this.Session.GetRole(this.Identity, roleType);
 
                 default:
-                    throw new ArgumentException($"Origin {roleType.Origin} not supported");
+                    throw new ArgumentException("Unsupported Origin");
 
             }
         }
@@ -69,7 +69,7 @@ namespace Allors.Workspace.Adapters.Remote
                     break;
 
                 default:
-                    throw new ArgumentException($"Origin {roleType.Origin} not supported");
+                    throw new ArgumentException("Unsupported Origin");
             }
         }
 

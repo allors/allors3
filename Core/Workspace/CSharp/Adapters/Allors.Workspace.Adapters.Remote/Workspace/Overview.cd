@@ -49,18 +49,24 @@
   <Class Name="Allors.Workspace.Adapters.Remote.RemoteWorkspaceState">
     <Position X="1" Y="6.75" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAIAAAAAAAAAAAEAAAAAAAAAAAAAEAAAAAAA=</HashCode>
+      <HashCode>EBAAAAFACABABQAAAAIAAAAAAAAAAAAAAEAEAAAACAA=</HashCode>
       <FileName>Workspace\RemoteWorkspaceState.cs</FileName>
       <NewMemberFileName>Workspace\RemoteWorkspaceStrategy.cs</NewMemberFileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="WorkspaceRoles" />
+    </ShowAsAssociation>
   </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.RemoteWorkspaceStrategy">
     <Position X="1" Y="0.5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAIAAIBACIAABQBgEEIABEAAAAAAAAAAAEAQAAEIAAA=</HashCode>
+      <HashCode>AAIAAIAAAAAABQBgEEIABEAAAAAAAAAEAEAQAAEIAAA=</HashCode>
       <FileName>Workspace\RemoteWorkspaceStrategy.cs</FileName>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
+    <ShowAsAssociation>
+      <Field Name="state" />
+      <Property Name="Session" />
+    </ShowAsAssociation>
   </Class>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

@@ -522,7 +522,7 @@ namespace Tests.Workspace.Remote
             acme2.AddEmployee(martien);
             acme2.AddEmployee(mathijs);
 
-            session.Reset();
+            session.Refresh();
 
             // Assert.Null(mathijs.DatabaseId);
             Assert.True(mathijs.Strategy.Identity.Id < 0);

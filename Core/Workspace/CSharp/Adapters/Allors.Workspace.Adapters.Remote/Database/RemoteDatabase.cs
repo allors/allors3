@@ -164,13 +164,8 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal RemoteDatabaseRoles Get(Identity databaseId)
         {
-            var databaseObject = this.databaseRolesByDatabaseId[databaseId];
-            if (databaseObject == null)
-            {
-                throw new Exception($"Object with id {databaseId} is not present.");
-            }
-
-            return databaseObject;
+            this.databaseRolesByDatabaseId.TryGetValue(databaseId, out var databaseRoles);
+            return databaseRoles;
         }
 
         internal SecurityRequest SecurityResponse(SecurityResponse securityResponse)

@@ -16,20 +16,28 @@ namespace Allors.Workspace.Adapters.Remote
     {
         private IObject @object;
 
-        private Dictionary<IRoleType, object> changedRoleByRoleType;
+        private readonly RemoteWorkspaceState workspaceState;
+        private readonly RemoteDatabaseState databaseState;
 
-        private Dictionary<IRoleType, object> roleByRoleType = new Dictionary<IRoleType, object>();
-
-        private RemoteDatabaseStrategy(RemoteSession session, Identity identity, IClass @class)
+        public RemoteDatabaseStrategy(RemoteSession session, IClass @class, Identity identity)
         {
             this.Session = session;
             this.Identity = identity;
             this.Class = @class;
+
+            this.workspaceState = new RemoteWorkspaceState(this);
+            this.databaseState = new RemoteDatabaseState(this);
         }
 
-        public RemoteDatabaseStrategy(RemoteSession session, IClass @class, Identity identity) : this(session, identity, @class) { }
+        public RemoteDatabaseStrategy(RemoteSession session, RemoteDatabaseRoles databaseRoles)
+        {
+            this.Session = session;
+            this.Identity = databaseRoles.Identity;
+            this.Class = databaseRoles.Class;
 
-        public RemoteDatabaseStrategy(RemoteSession session, RemoteDatabaseRoles databaseRoles, Identity identity) : this(session, identity, databaseRoles.Class) => this.DatabaseRoles = databaseRoles;
+            this.workspaceState = new RemoteWorkspaceState(this);
+            this.databaseState = new RemoteDatabaseState(this, databaseRoles);
+        }
 
         public override RemoteSession Session { get; }
 
@@ -39,24 +47,9 @@ namespace Allors.Workspace.Adapters.Remote
 
         public override Identity Identity { get; }
 
-        public long? Version => this.DatabaseRoles?.Version;
+        internal bool HasDatabaseChanges => this.databaseState.HasDatabaseChanges;
 
-        private RemoteDatabaseRoles DatabaseRoles { get; set; }
-
-        internal bool HasDatabaseChanges
-        {
-            get
-            {
-                if (this.Class.HasDatabaseOrigin && !this.ExistDatabaseRoles)
-                {
-                    return true;
-                }
-
-                return this.changedRoleByRoleType != null;
-            }
-        }
-
-        private bool ExistDatabaseRoles => this.DatabaseRoles != null;
+        public long DatabaseVersion => this.databaseState.Version;
 
         public override bool Exist(IRoleType roleType)
         {
@@ -70,109 +63,35 @@ namespace Allors.Workspace.Adapters.Remote
             return value != null;
         }
 
-        public override object Get(IRoleType roleType)
-        {
-            if (roleType.Origin == Origin.Session)
+        public override object Get(IRoleType roleType) =>
+            roleType.Origin switch
             {
-                var state = this.Session.State;
-                state.GetRole(this.Identity, roleType, out var role);
-                if (roleType.ObjectType.IsUnit)
-                {
-                    return role;
-                }
-
-                if (roleType.IsOne)
-                {
-                    return this.Session.Instantiate<IObject>((Identity)role);
-                }
-
-                var ids = (IEnumerable<Identity>)role;
-                return ids?.Select(v => this.Session.Instantiate<IObject>(v)).ToArray() ?? this.Session.Workspace.ObjectFactory.EmptyArray(roleType.ObjectType);
-            }
-
-            if (!this.roleByRoleType.TryGetValue(roleType, out var value))
-            {
-                if (this.ExistDatabaseRoles)
-                {
-                    var databaseRole = this.DatabaseRoles.GetRole(roleType);
-                    if (databaseRole != null)
-                    {
-                        if (roleType.ObjectType.IsUnit)
-                        {
-                            value = databaseRole;
-                        }
-                        else
-                        {
-                            if (roleType.IsOne)
-                            {
-                                value = this.Session.Instantiate<IObject>((Identity)databaseRole);
-                            }
-                            else
-                            {
-                                var ids = (Identity[])databaseRole;
-                                var array = Array.CreateInstance(roleType.ObjectType.ClrType, ids.Length);
-                                for (var i = 0; i < ids.Length; i++)
-                                {
-                                    array.SetValue(this.Session.Instantiate<IObject>(ids[i]), i);
-                                }
-
-                                value = array;
-                            }
-                        }
-                    }
-                }
-
-                if (value == null && roleType.IsMany)
-                {
-                    value = this.Session.Workspace.ObjectFactory.EmptyArray(roleType.ObjectType);
-                }
-
-                this.roleByRoleType[roleType] = value;
-            }
-
-            return value;
-        }
+                Origin.Session => this.Session.GetRole(this.Identity, roleType),
+                Origin.Workspace => this.workspaceState.GetRole(roleType),
+                Origin.Database => this.databaseState.GetRole(roleType),
+                _ => throw new ArgumentException("Unsupported Origin")
+            };
 
         public override void Set(IRoleType roleType, object value)
         {
-            if (roleType.Origin == Origin.Session)
+            switch (roleType.Origin)
             {
-                var population = this.Session.State;
-                population.SetRole(this.Identity, roleType, value);
-                return;
+                case Origin.Session:
+                    this.Session.SetRole(this.Identity, roleType, value);
+                    break;
+
+                case Origin.Workspace:
+                    this.workspaceState.SetRole(roleType, value);
+
+                    break;
+
+                case Origin.Database:
+                    this.databaseState.SetRole(roleType, value);
+
+                    break;
+                default:
+                    throw new ArgumentException("Unsupported Origin");
             }
-
-            var current = this.Get(roleType);
-            if (roleType.ObjectType.IsUnit || roleType.IsOne)
-            {
-                if (Equals(current, value))
-                {
-                    return;
-                }
-            }
-            else
-            {
-                value ??= Array.Empty<IStrategy>();
-
-                var currentCollection = (IList<object>)current;
-                var valueCollection = (IList<object>)value;
-                if (currentCollection.Count == valueCollection.Count &&
-                    !currentCollection.Except(valueCollection).Any())
-                {
-                    return;
-                }
-            }
-
-            this.changedRoleByRoleType ??= new Dictionary<IRoleType, object>();
-
-            if (roleType.ObjectType.IsComposite && roleType.IsMany)
-            {
-                // TODO: Optimize
-                value = new ArrayList((Array)value).ToArray(roleType.ObjectType.ClrType);
-            }
-
-            this.roleByRoleType[roleType] = value;
-            this.changedRoleByRoleType[roleType] = value;
         }
 
         public override void Add(IRoleType roleType, IObject value)
@@ -225,188 +144,23 @@ namespace Allors.Workspace.Adapters.Remote
             return this.Session.GetAssociation(this.Object, associationType);
         }
 
-        public override bool CanRead(IRoleType roleType)
-        {
-            if (!this.ExistDatabaseRoles)
-            {
-                return true;
-            }
+        public override bool CanRead(IRoleType roleType) => this.databaseState.CanRead(roleType);
 
-            var permission = this.Session.Workspace.Database.GetPermission(this.Class, roleType, Operations.Read);
-            return this.DatabaseRoles.IsPermitted(permission);
-        }
+        public override bool CanWrite(IRoleType roleType) => this.databaseState.CanWrite(roleType);
 
-        public override bool CanWrite(IRoleType roleType)
-        {
-            if (!this.ExistDatabaseRoles)
-            {
-                return true;
-            }
-
-            var permission = this.Session.Workspace.Database.GetPermission(this.Class, roleType, Operations.Write);
-            return this.DatabaseRoles.IsPermitted(permission);
-        }
-
-        public override bool CanExecute(IMethodType methodType)
-        {
-            if (!this.ExistDatabaseRoles)
-            {
-                return true;
-            }
-
-            var permission = this.Session.Workspace.Database.GetPermission(this.Class, methodType, Operations.Execute);
-            return this.DatabaseRoles.IsPermitted(permission);
-        }
-
-        internal PushRequestNewObject SaveNew() => new PushRequestNewObject
-        {
-            NewWorkspaceId = ((DatabaseIdentity)this.Identity)?.WorkspaceId.ToString(),
-            ObjectType = this.Class.IdAsString,
-            Roles = this.SaveRoles(),
-        };
-
-        internal PushRequestObject SaveExisting() => new PushRequestObject
-        {
-            DatabaseId = ((DatabaseIdentity)this.Identity).DatabaseId.ToString(),
-            Version = this.Version.ToString(),
-            Roles = this.SaveRoles(),
-        };
-
-        internal void Reset()
-        {
-            if (this.DatabaseRoles != null)
-            {
-                this.DatabaseRoles = this.Session.Workspace.Database.Get(this.Identity);
-            }
-
-            this.changedRoleByRoleType = null;
-
-            this.roleByRoleType = new Dictionary<IRoleType, object>();
-        }
-
-        internal void PushResponse(RemoteDatabaseRoles databaseRoles) => this.DatabaseRoles = databaseRoles;
+        public override bool CanExecute(IMethodType methodType) => this.databaseState.CanExecute(methodType);
 
         internal void Refresh(bool merge = false)
         {
-            if (!this.HasDatabaseChanges)
-            {
-                this.Reset();
-            }
-            else
-            {
-                if (merge)
-                {
-                    if (this.DatabaseRoles != null)
-                    {
-                        this.DatabaseRoles = this.Session.Workspace.Database.Get(this.Identity);
-                    }
-                }
-            }
+            // TODO: Merge
+            this.workspaceState.Reset();
+            this.databaseState.Reset();
         }
 
-        internal object GetDatabase(IRoleType roleType)
-        {
-            if (!this.roleByRoleType.TryGetValue(roleType, out var value))
-            {
-                if (this.ExistDatabaseRoles)
-                {
-                    var databaseRole = this.DatabaseRoles.GetRole(roleType);
-                    if (databaseRole != null)
-                    {
-                        if (roleType.ObjectType.IsUnit)
-                        {
-                            value = databaseRole;
-                        }
-                        else
-                        {
-                            if (roleType.IsOne)
-                            {
-                                value = this.Session.GetForAssociation((Identity)databaseRole);
-                            }
-                            else
-                            {
-                                var ids = (Identity[])databaseRole;
-                                value = ids.Select(v => this.Session.GetForAssociation(v))
-                                    .Where(v => v != null)
-                                    .ToArray();
-                            }
-                        }
-                    }
-                }
+        internal PushRequestNewObject SaveNew() => this.databaseState.SaveNew();
 
-                if (value == null && roleType.IsMany)
-                {
-                    value = this.Session.Workspace.ObjectFactory.EmptyArray(roleType.ObjectType);
-                }
-            }
+        internal PushRequestObject SaveExisting() => this.databaseState.SaveExisting();
 
-            return value;
-        }
-
-        private PushRequestRole[] SaveRoles()
-        {
-            if (this.changedRoleByRoleType?.Count > 0)
-            {
-                var saveRoles = new List<PushRequestRole>();
-
-                foreach (var keyValuePair in this.changedRoleByRoleType)
-                {
-                    var roleType = keyValuePair.Key;
-                    var roleValue = keyValuePair.Value;
-
-                    var pushRequestRole = new PushRequestRole { RelationType = roleType.RelationType.IdAsString };
-
-                    if (roleType.ObjectType.IsUnit)
-                    {
-                        pushRequestRole.SetRole = UnitConvert.ToString(roleValue);
-                    }
-                    else
-                    {
-                        if (roleType.IsOne)
-                        {
-                            var sessionRole = (IObject)roleValue;
-                            var identity = (DatabaseIdentity)sessionRole?.Identity;
-                            pushRequestRole.SetRole = identity?.DatabaseId?.ToString() ?? identity?.WorkspaceId.ToString();
-                        }
-                        else
-                        {
-                            var sessionRoles = (IObject[])roleValue;
-                            var roleIds = sessionRoles
-                                .Select(item =>
-                                {
-                                    var identity = (DatabaseIdentity)item?.Identity;
-                                    return identity.DatabaseId?.ToString() ?? identity.WorkspaceId.ToString();
-                                }).ToArray();
-                            if (!this.ExistDatabaseRoles)
-                            {
-                                pushRequestRole.AddRole = roleIds;
-                            }
-                            else
-                            {
-                                var databaseRole = this.DatabaseRoles.GetRole(roleType);
-                                if (databaseRole == null)
-                                {
-                                    pushRequestRole.AddRole = roleIds;
-                                }
-                                else
-                                {
-                                    var originalRoleIds = ((IEnumerable<Identity>)databaseRole)
-                                        .Select(v => v.ToString())
-                                        .ToArray();
-                                    pushRequestRole.AddRole = roleIds.Except(originalRoleIds).ToArray();
-                                    pushRequestRole.RemoveRole = originalRoleIds.Except(roleIds).ToArray();
-                                }
-                            }
-                        }
-                    }
-
-                    saveRoles.Add(pushRequestRole);
-                }
-
-                return saveRoles.ToArray();
-            }
-
-            return null;
-        }
+        internal void PushResponse(RemoteDatabaseRoles databaseRoles) => this.databaseState.PushResponse(databaseRoles);
     }
 }

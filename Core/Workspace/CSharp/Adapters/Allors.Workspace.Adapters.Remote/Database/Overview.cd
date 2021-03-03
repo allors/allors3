@@ -16,7 +16,7 @@
   <Class Name="Allors.Workspace.Adapters.Remote.RemoteSession">
     <Position X="5.5" Y="0.5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AQQAwMAAAUBABgQgAAQEAAgAAAAgAEAAAIAQBQBAAAA=</HashCode>
+      <HashCode>ARAAwMEAAUBABgQAAAQEAEgAAAAggEAAAIAQBQBAAAA=</HashCode>
       <FileName>Session\RemoteSession.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -37,14 +37,14 @@
   <Class Name="Allors.Workspace.Adapters.Remote.RemoteWorkspace">
     <Position X="9.25" Y="2.5" Width="3" />
     <TypeIdentifier>
-      <HashCode>gEQBAEAAAEAAABBAACAAAAAEAAEAAAAAAAAAAAZAAIA=</HashCode>
+      <HashCode>gAQBAEAAAEAAABBAACAAIAAEAAEAAAAAAAAAAAZACIA=</HashCode>
       <FileName>Workspace\RemoteWorkspace.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="Database" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
-      <Field Name="workspaceRolesByDatabaseId" />
+      <Field Name="workspaceRolesByIdentity" />
     </ShowAsCollectionAssociation>
     <Lollipop Position="0.2" />
   </Class>
@@ -58,7 +58,7 @@
   <Class Name="Allors.Workspace.Adapters.Remote.RemoteWorkspaceRoles">
     <Position X="14.5" Y="4.75" Width="2" />
     <TypeIdentifier>
-      <HashCode>IAAAAAEAAEAAAAAAAAIAAAAgAAAAAAAAAEAAAAAAAAA=</HashCode>
+      <HashCode>IAQAAAEAAEAAAAAAAAIAAAAgAAAAAAAAAEAAAAAAAAA=</HashCode>
       <FileName>Workspace\RemoteWorkspaceRoles.cs</FileName>
       <NewMemberFileName>Database\RemoteDatabaseRoles.cs</NewMemberFileName>
     </TypeIdentifier>
@@ -66,14 +66,13 @@
   <Class Name="Allors.Workspace.Adapters.Remote.RemoteDatabaseStrategy">
     <Position X="0.5" Y="0.5" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>IAAAAAAAAIAAAQAkAAIAAEAAAAAAAAEAAEAEIABAAAA=</HashCode>
+      <HashCode>JAIAAAAAQABABQBkEEIABEAAAAAiAAEAAEAUIAFIAAA=</HashCode>
       <FileName>Database\RemoteDatabaseStrategy.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="Session" />
       <Property Name="DatabaseRoles" />
     </ShowAsAssociation>
-    <Lollipop Position="0.2" />
   </Class>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

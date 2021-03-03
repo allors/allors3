@@ -12,7 +12,7 @@ namespace Allors.Workspace.Adapters.Remote
 
     public sealed class RemoteWorkspaceStrategy : RemoteStrategy
     {
-        private readonly RemoteWorkspaceState state;
+        private readonly RemoteWorkspaceState workspaceState;
 
         private IObject @object;
 
@@ -22,7 +22,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.Identity = identity;
             this.Class = @class;
 
-            this.state = new RemoteWorkspaceState(this);
+            this.workspaceState = new RemoteWorkspaceState(this);
         }
 
         public override RemoteSession Session { get; }
@@ -49,8 +49,8 @@ namespace Allors.Workspace.Adapters.Remote
             roleType.Origin switch
             {
                 Origin.Session => this.Session.GetRole(this.Identity, roleType),
-                Origin.Workspace => this.state.GetRole(roleType),
-                _ => throw new ArgumentException("Origin Database not supported")
+                Origin.Workspace => this.workspaceState.GetRole(roleType),
+                _ => throw new ArgumentException("Unsupported Origin")
             };
 
         public override void Set(IRoleType roleType, object value)
@@ -62,11 +62,11 @@ namespace Allors.Workspace.Adapters.Remote
                     break;
 
                 case Origin.Workspace:
-                    this.state.SetRole(roleType, value);
+                    this.workspaceState.SetRole(roleType, value);
 
                     break;
                 default:
-                    throw new ArgumentException("Origin Database not supported");
+                    throw new ArgumentException("Unsupported Origin");
             }
         }
 
@@ -129,6 +129,6 @@ namespace Allors.Workspace.Adapters.Remote
 
         public override bool CanExecute(IMethodType methodType) => false;
 
-        internal void Save() => this.state.Push();
+        internal void Save() => this.workspaceState.Push();
     }
 }

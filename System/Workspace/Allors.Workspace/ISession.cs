@@ -34,8 +34,6 @@ namespace Allors.Workspace
 
         IEnumerable<T> Instantiate<T>(IEnumerable<Identity> identities) where T : IObject;
 
-        void Reset();
-
         void Refresh(bool merge = false);
 
         Task<ICallResult> Call(Method method, CallOptions options = null);
