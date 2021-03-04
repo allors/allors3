@@ -25,7 +25,8 @@ namespace Allors.Workspace.Adapters.Remote
 
         private readonly IList<RemoteDatabaseStrategy> existingDatabaseStrategies;
         private ISet<RemoteDatabaseStrategy> newDatabaseStrategies;
-        private RemoteSessionChangeSet sessionChangeSet;
+
+        private RemoteChangeSet changeSet;
 
         public RemoteSession(RemoteWorkspace workspace, ISessionLifecycle sessionLifecycle)
         {
@@ -40,7 +41,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.existingDatabaseStrategies = new List<RemoteDatabaseStrategy>();
 
             this.State = new State();
-            this.sessionChangeSet = new RemoteSessionChangeSet(this);
+            this.changeSet = new RemoteChangeSet(this);
             this.SessionLifecycle.OnInit(this);
         }
 
@@ -246,7 +247,17 @@ namespace Allors.Workspace.Adapters.Remote
             return new RemoteSaveResult(pushResponse);
         }
 
-        public IEnumerable<IChangeSet> Checkpoint() => throw new NotImplementedException();
+        public IChangeSet Checkpoint()
+        {
+            try
+            {
+                return this.changeSet;
+            }
+            finally
+            {
+                this.changeSet = new RemoteChangeSet(this);
+            }
+        }
 
         internal object GetRole(Identity association, IRoleType roleType)
         {
@@ -266,20 +277,7 @@ namespace Allors.Workspace.Adapters.Remote
         }
 
         internal void SetRole(Identity association, IRoleType roleType, object role) => this.State.SetRole(association, roleType, role);
-
-        internal IChangeSet Checkpoint(StateChangeSet workspaceChangeSet)
-        {
-            try
-            {
-                this.sessionChangeSet.Merge(workspaceChangeSet, this.State.Checkpoint());
-                return this.sessionChangeSet;
-            }
-            finally
-            {
-                this.sessionChangeSet = null;
-            }
-        }
-
+        
         internal IEnumerable<IObject> GetAssociation(IObject @object, IAssociationType associationType)
         {
             var roleType = associationType.RoleType;

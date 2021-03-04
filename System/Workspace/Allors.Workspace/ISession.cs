@@ -48,6 +48,6 @@ namespace Allors.Workspace
 
         Task<ISaveResult> Save();
 
-        IEnumerable<IChangeSet> Checkpoint();
+        IChangeSet Checkpoint();
     }
 }

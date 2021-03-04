@@ -1,4 +1,4 @@
-// <copyright file="RemoteDatabaseChangeSet.cs" company="Allors bvba">
+// <copyright file="RemoteSessionChangeSet.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -12,11 +12,12 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Linq;
     using Meta;
 
-    internal sealed class RemoteDatabaseChangeSet
+    internal sealed class RemoteChangeSet : IChangeSet
     {
         private static readonly HashSet<IRoleType> EmptyRoleTypeSet = new HashSet<IRoleType>();
         private static readonly HashSet<IAssociationType> EmptyAssociationTypeSet = new HashSet<IAssociationType>();
 
+        private readonly HashSet<IStrategy> created;
         private readonly HashSet<IStrategy> deleted;
 
         private readonly HashSet<Identity> associations;
@@ -28,14 +29,21 @@ namespace Allors.Workspace.Adapters.Remote
         private IDictionary<IRoleType, ISet<Identity>> associationsByRoleType;
         private IDictionary<IAssociationType, ISet<Identity>> rolesByAssociationType;
 
-        internal RemoteDatabaseChangeSet()
+        internal RemoteChangeSet(RemoteSession session)
         {
+            this.Session = session;
+            this.created = new HashSet<IStrategy>();
             this.deleted = new HashSet<IStrategy>();
             this.associations = new HashSet<Identity>();
             this.roles = new HashSet<Identity>();
             this.roleTypesByAssociation = new Dictionary<Identity, ISet<IRoleType>>();
             this.associationTypesByRole = new Dictionary<Identity, ISet<IAssociationType>>();
         }
+
+        ISession IChangeSet.Session => this.Session;
+        public RemoteSession Session { get; }
+
+        public ISet<IStrategy> Created => this.created;
 
         public ISet<IStrategy> Deleted => this.deleted;
 
@@ -58,6 +66,8 @@ namespace Allors.Workspace.Adapters.Remote
              from value in kvp.Value
              group kvp.Key by value)
                    .ToDictionary(grp => grp.Key, grp => new HashSet<Identity>(grp) as ISet<Identity>);
+
+        internal void OnCreated(IStrategy strategy) => this.created.Add(strategy);
 
         internal void OnDeleted(IStrategy strategy) => this.deleted.Add(strategy);
 
@@ -99,24 +109,24 @@ namespace Allors.Workspace.Adapters.Remote
 
             this.RoleTypes(association).Add(roleType);
         }
-
-        private ISet<IRoleType> RoleTypes(Identity association)
+        
+        private ISet<IRoleType> RoleTypes(Identity associationId)
         {
-            if (!this.RoleTypesByAssociation.TryGetValue(association, out var roleTypes))
+            if (!this.RoleTypesByAssociation.TryGetValue(associationId, out var roleTypes))
             {
                 roleTypes = new HashSet<IRoleType>();
-                this.RoleTypesByAssociation[association] = roleTypes;
+                this.RoleTypesByAssociation[associationId] = roleTypes;
             }
 
             return roleTypes;
         }
 
-        private ISet<IAssociationType> AssociationTypes(Identity role)
+        private ISet<IAssociationType> AssociationTypes(Identity roleId)
         {
-            if (!this.AssociationTypesByRole.TryGetValue(role, out var associationTypes))
+            if (!this.AssociationTypesByRole.TryGetValue(roleId, out var associationTypes))
             {
                 associationTypes = new HashSet<IAssociationType>();
-                this.AssociationTypesByRole[role] = associationTypes;
+                this.AssociationTypesByRole[roleId] = associationTypes;
             }
 
             return associationTypes;
