@@ -18,7 +18,7 @@ namespace Allors.Workspace.Adapters.Remote
         private static readonly HashSet<IAssociationType> EmptyAssociationTypeSet = new HashSet<IAssociationType>();
 
         private readonly HashSet<IStrategy> created;
-        private readonly HashSet<IStrategy> deleted;
+        private readonly HashSet<IStrategy> instantiated;
 
         private readonly HashSet<Identity> associations;
         private readonly HashSet<Identity> roles;
@@ -33,7 +33,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             this.Session = session;
             this.created = new HashSet<IStrategy>();
-            this.deleted = new HashSet<IStrategy>();
+            this.instantiated = new HashSet<IStrategy>();
             this.associations = new HashSet<Identity>();
             this.roles = new HashSet<Identity>();
             this.roleTypesByAssociation = new Dictionary<Identity, ISet<IRoleType>>();
@@ -45,7 +45,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public ISet<IStrategy> Created => this.created;
 
-        public ISet<IStrategy> Deleted => this.deleted;
+        public ISet<IStrategy> Instantiated => this.instantiated;
 
         public ISet<Identity> Associations => this.associations;
 
@@ -69,7 +69,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal void OnCreated(IStrategy strategy) => this.created.Add(strategy);
 
-        internal void OnDeleted(IStrategy strategy) => this.deleted.Add(strategy);
+        internal void OnInstantiated(IStrategy strategy) => this.instantiated.Add(strategy);
 
         internal void OnChangingUnitRole(Identity association, IRoleType roleType)
         {

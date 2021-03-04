@@ -318,7 +318,6 @@ namespace Allors.Workspace.Adapters.Remote
             var uri = new Uri(name + "/pull", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, pullRequest);
             response.EnsureSuccessStatusCode();
-
             return await this.ReadAsAsync<PullResponse>(response);
         }
 

@@ -32,7 +32,7 @@ namespace Allors.Workspace
         /// <summary>
         /// Gets the deleted objects.
         /// </summary>
-        ISet<IStrategy> Deleted { get; }
+        ISet<IStrategy> Instantiated { get; }
 
         /// <summary>
         /// Gets the changed associations.

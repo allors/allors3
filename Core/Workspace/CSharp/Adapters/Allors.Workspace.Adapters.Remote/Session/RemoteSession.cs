@@ -8,6 +8,8 @@ namespace Allors.Workspace.Adapters.Remote
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Runtime.InteropServices.ComTypes;
+    using System.Security.Cryptography.X509Certificates;
     using System.Threading.Tasks;
     using Data;
     using Meta;
@@ -160,13 +162,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var pullRequest = new PullRequest { Pulls = pulls.Select(v => v.ToJson()).ToArray() };
             var pullResponse = await this.Database.Pull(pullRequest);
-            var syncRequest = this.Database.Diff(pullResponse);
-            if (syncRequest.Objects.Length > 0)
-            {
-                await this.Load(syncRequest);
-            }
-
-            return new RemoteLoadResult(this, pullResponse);
+            return await this.OnPull(pullResponse);
         }
 
         public async Task<ILoadResult> Load(string service, object args)
@@ -182,14 +178,7 @@ namespace Allors.Workspace.Adapters.Remote
             }
 
             var pullResponse = await this.Database.Pull(service, args);
-            var syncRequest = this.Database.Diff(pullResponse);
-
-            if (syncRequest.Objects.Length > 0)
-            {
-                await this.Load(syncRequest);
-            }
-
-            return new RemoteLoadResult(this, pullResponse);
+            return await this.OnPull(pullResponse);
         }
 
         public void Refresh(bool merge = false)
@@ -227,7 +216,7 @@ namespace Allors.Workspace.Adapters.Remote
                     Objects = objects,
                 };
 
-                await this.Load(syncRequests);
+                await this.Sync(syncRequests);
 
                 foreach (var workspaceStrategy in this.workspaceStrategyByWorkspaceId.Values)
                 {
@@ -375,7 +364,29 @@ namespace Allors.Workspace.Adapters.Remote
             return strategy.Object;
         }
 
-        private async Task Load(SyncRequest syncRequest)
+        private async Task<ILoadResult> OnPull(PullResponse pullResponse)
+        {
+            var syncRequest = this.Database.Diff(pullResponse);
+            if (syncRequest.Objects.Length > 0)
+            {
+                await this.Sync(syncRequest);
+            }
+
+            foreach (var v in pullResponse.Objects)
+            {
+                var id = long.Parse(v[0]);
+                var identity = this.Database.Identities.GetOrCreate(id);
+                if (!this.databaseStrategyByWorkspaceId.ContainsKey(identity))
+                {
+                    //var strategy = this.Instantiate(identity);
+                    //this.changeSet.OnInstantiated(strategy);
+                }
+            }
+
+            return new RemoteLoadResult(this, pullResponse);
+        }
+
+        private async Task Sync(SyncRequest syncRequest)
         {
             var syncResponse = await this.Database.Sync(syncRequest);
             var securityRequest = this.Database.SyncResponse(syncResponse);
