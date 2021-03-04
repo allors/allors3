@@ -9,12 +9,12 @@ namespace Allors.Workspace.Adapters
     using System.Linq;
     using Meta;
 
-    public class StateChangeSet
+    public class SessionStateChangeSet
     {
         private readonly Dictionary<IRoleType, Dictionary<Identity, object>> roleByAssociationByRoleType;
         private readonly Dictionary<IAssociationType, Dictionary<Identity, object>> associationByRoleByRoleType;
 
-        public StateChangeSet(Dictionary<IRoleType, Dictionary<Identity, object>> roleByAssociationByRoleType, Dictionary<IAssociationType, Dictionary<Identity, object>> associationByRoleByAssociationType)
+        public SessionStateChangeSet(Dictionary<IRoleType, Dictionary<Identity, object>> roleByAssociationByRoleType, Dictionary<IAssociationType, Dictionary<Identity, object>> associationByRoleByAssociationType)
         {
             this.roleByAssociationByRoleType = roleByAssociationByRoleType;
             this.associationByRoleByRoleType = associationByRoleByAssociationType;

@@ -29,7 +29,7 @@ namespace Allors.Workspace.Adapters.Remote
         private IDictionary<IRoleType, ISet<Identity>> associationsByRoleType;
         private IDictionary<IAssociationType, ISet<Identity>> rolesByAssociationType;
 
-        internal RemoteChangeSet(RemoteSession session)
+        internal RemoteChangeSet(RemoteSession session, SessionStateChangeSet sessionStateChangeSet)
         {
             this.Session = session;
             this.created = new HashSet<IStrategy>();

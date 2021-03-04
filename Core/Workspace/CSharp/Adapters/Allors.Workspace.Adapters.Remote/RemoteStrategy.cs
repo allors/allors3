@@ -132,7 +132,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return this.Session.GetAssociation(this.Object, associationType).FirstOrDefault();
             }
 
-            this.Session.State.GetAssociation(this.Identity, associationType, out var association);
+            this.Session.SessionState.GetAssociation(this.Identity, associationType, out var association);
             var id = (Identity)association;
             return id != null ? this.Session.Instantiate<IObject>(id) : null;
         }
@@ -144,7 +144,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return this.Session.GetAssociation(this.Object, associationType);
             }
 
-            this.Session.State.GetAssociation(this.Identity, associationType, out var association);
+            this.Session.SessionState.GetAssociation(this.Identity, associationType, out var association);
             var ids = (IEnumerable<Identity>)association;
             return ids?.Select(v => this.Session.Instantiate<IObject>(v)).ToArray() ?? Array.Empty<IObject>();
         }

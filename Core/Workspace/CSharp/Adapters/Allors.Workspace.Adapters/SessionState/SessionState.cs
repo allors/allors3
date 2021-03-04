@@ -11,7 +11,7 @@ namespace Allors.Workspace.Adapters
     using System.Linq;
     using Meta;
 
-    public class State
+    public class SessionState
     {
         private readonly Dictionary<IRoleType, Dictionary<Identity, object>> roleByAssociationByRoleType;
         private readonly Dictionary<IAssociationType, Dictionary<Identity, object>> associationByRoleByAssociationType;
@@ -19,7 +19,7 @@ namespace Allors.Workspace.Adapters
         private Dictionary<IRoleType, Dictionary<Identity, object>> changedRoleByAssociationByRoleType;
         private Dictionary<IAssociationType, Dictionary<Identity, object>> changedAssociationByRoleByAssociationType;
 
-        public State()
+        public SessionState()
         {
             this.roleByAssociationByRoleType = new Dictionary<IRoleType, Dictionary<Identity, object>>();
             this.associationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Identity, object>>();
@@ -28,7 +28,7 @@ namespace Allors.Workspace.Adapters
             this.changedAssociationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Identity, object>>();
         }
 
-        public StateChangeSet Checkpoint()
+        public SessionStateChangeSet Checkpoint()
         {
             foreach (var roleType in this.changedRoleByAssociationByRoleType.Keys.ToArray())
             {
@@ -88,7 +88,7 @@ namespace Allors.Workspace.Adapters
                 }
             }
 
-            var changeSet = new StateChangeSet(this.changedRoleByAssociationByRoleType, this.changedAssociationByRoleByAssociationType);
+            var changeSet = new SessionStateChangeSet(this.changedRoleByAssociationByRoleType, this.changedAssociationByRoleByAssociationType);
 
             this.changedRoleByAssociationByRoleType = new Dictionary<IRoleType, Dictionary<Identity, object>>();
             this.changedAssociationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Identity, object>>();
