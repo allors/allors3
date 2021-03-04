@@ -39,7 +39,7 @@ namespace Allors.Workspace.Derivations.Default
             {
                 var changeSet = this.Session.Checkpoint();
 
-                while (changeSet.Associations.Any() || changeSet.Roles.Any() || changeSet.Created.Any() || changeSet.Deleted.Any())
+                while (changeSet.Associations.Any() || changeSet.Roles.Any() || changeSet.Created.Any() || changeSet.Instantiated.Any())
                 {
                     var session = changeSet.Session;
 

@@ -24,13 +24,6 @@ namespace Allors.Workspace.Adapters
             this.roleByAssociationByRoleType.Any(v => v.Value.Count > 0) ||
             this.associationByRoleByRoleType.Any(v => v.Value.Count > 0);
 
-        //public Dictionary<long?, object> ChangedRoles<TRole>(string name)
-        //{
-        //    IObjectType objectType = this.Meta.ObjectTypeByType[typeof(TRole)];
-        //    IRoleType roleType = objectType.RoleTypeByName[name];
-        //    return this.ChangedRoles(roleType);
-        //}
-
         public Dictionary<Identity, object> ChangedRoles(IRoleType roleType)
         {
             this.roleByAssociationByRoleType.TryGetValue(roleType, out var changedRelations);
