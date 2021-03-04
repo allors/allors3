@@ -9,7 +9,7 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Collections.Generic;
     using Meta;
 
-    public class RemoteWorkspaceObject
+    internal class RemoteWorkspaceObject
     {
         private readonly IReadOnlyDictionary<IRelationType, object> roleByRelationType;
 
@@ -22,15 +22,15 @@ namespace Allors.Workspace.Adapters.Remote
             this.roleByRelationType = roleByRelationType;
         }
 
-        public RemoteDatabase Database { get; }
+        internal RemoteDatabase Database { get; }
 
-        public IClass Class { get; }
+        internal IClass Class { get; }
 
-        public Identity Identity { get; }
+        internal Identity Identity { get; }
 
-        public long Version { get; private set; }
+        internal long Version { get; private set; }
 
-        public object GetRole(IRoleType roleType)
+        internal object GetRole(IRoleType roleType)
         {
             object @object = null;
             this.roleByRelationType?.TryGetValue(roleType.RelationType, out @object);

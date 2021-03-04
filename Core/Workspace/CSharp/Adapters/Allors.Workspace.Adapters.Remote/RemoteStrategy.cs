@@ -18,7 +18,7 @@ namespace Allors.Workspace.Adapters.Remote
         private readonly RemoteWorkspaceState workspaceState;
         private readonly RemoteDatabaseState databaseState;
 
-        public RemoteStrategy(RemoteSession session, IClass @class, Identity identity)
+        internal RemoteStrategy(RemoteSession session, IClass @class, Identity identity)
         {
             this.Session = session;
             this.Identity = identity;
@@ -35,7 +35,7 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        public RemoteStrategy(RemoteSession session, RemoteDatabaseObject databaseObject)
+        internal RemoteStrategy(RemoteSession session, RemoteDatabaseObject databaseObject)
         {
             this.Session = session;
             this.Identity = databaseObject.Identity;
@@ -46,17 +46,17 @@ namespace Allors.Workspace.Adapters.Remote
         }
 
         ISession IStrategy.Session => this.Session;
-        public RemoteSession Session { get; }
-
-        public IObject Object => this.@object ??= this.Session.Workspace.ObjectFactory.Create(this);
+        internal RemoteSession Session { get; }
 
         public IClass Class { get; }
 
         public Identity Identity { get; }
 
+        internal IObject Object => this.@object ??= this.Session.Workspace.ObjectFactory.Create(this);
+
         internal bool HasDatabaseChanges => this.databaseState.HasDatabaseChanges;
 
-        public long DatabaseVersion => this.databaseState.Version;
+        internal long DatabaseVersion => this.databaseState.Version;
 
         public bool Exist(IRoleType roleType)
         {

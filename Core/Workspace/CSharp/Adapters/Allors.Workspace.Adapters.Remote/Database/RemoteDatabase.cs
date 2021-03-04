@@ -30,7 +30,7 @@ namespace Allors.Workspace.Adapters.Remote
         private readonly Dictionary<IClass, Dictionary<IOperandType, RemotePermission>> writePermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, RemotePermission>> executePermissionByOperandTypeByClass;
 
-        public RemoteDatabase(IMetaPopulation metaPopulation, HttpClient httpClient, Identities identities)
+        internal RemoteDatabase(IMetaPopulation metaPopulation, HttpClient httpClient, Identities identities)
         {
             this.MetaPopulation = metaPopulation;
             this.HttpClient = httpClient;
@@ -51,13 +51,13 @@ namespace Allors.Workspace.Adapters.Remote
 
         ~RemoteDatabase() => this.HttpClient.Dispose();
 
-        public IMetaPopulation MetaPopulation { get; }
+        internal IMetaPopulation MetaPopulation { get; }
 
         public HttpClient HttpClient { get; }
 
-        public Identities Identities { get; }
+        internal Identities Identities { get; }
 
-        public IAsyncPolicy Policy { get; set; } = Polly.Policy
+        internal IAsyncPolicy Policy { get; set; } = Polly.Policy
            .Handle<HttpRequestException>()
            .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
 
@@ -70,20 +70,18 @@ namespace Allors.Workspace.Adapters.Remote
         public async Task<bool> Login(Uri url, string username, string password)
         {
             var request = new { UserName = username, Password = password };
-            using (var response = await this.PostAsJsonAsync(url, request))
+            using var response = await this.PostAsJsonAsync(url, request);
+            response.EnsureSuccessStatusCode();
+            var authResult = await this.ReadAsAsync<AuthenticationTokenResponse>(response);
+            if (!authResult.Authenticated)
             {
-                response.EnsureSuccessStatusCode();
-                var authResult = await this.ReadAsAsync<AuthenticationTokenResponse>(response);
-                if (!authResult.Authenticated)
-                {
-                    return false;
-                }
-
-                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authResult.Token);
-                this.UserId = authResult.UserId;
-
-                return true;
+                return false;
             }
+
+            this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authResult.Token);
+            this.UserId = authResult.UserId;
+
+            return true;
         }
 
         internal RemoteDatabaseObject PushResponse(Identity identity, IClass @class)

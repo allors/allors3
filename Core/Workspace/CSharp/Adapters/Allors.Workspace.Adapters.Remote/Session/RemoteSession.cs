@@ -28,12 +28,11 @@ namespace Allors.Workspace.Adapters.Remote
 
         private RemoteChangeSet changeSet;
 
-        public RemoteSession(RemoteWorkspace workspace, ISessionLifecycle sessionLifecycle)
+        internal RemoteSession(RemoteWorkspace workspace, ISessionLifecycle sessionLifecycle)
         {
             this.Workspace = workspace;
             this.Database = this.Workspace.Database;
             this.SessionLifecycle = sessionLifecycle;
-            this.Workspace.RegisterSession(this);
 
             this.databaseStrategyByWorkspaceId = new Dictionary<Identity, RemoteStrategy>();
             this.workspaceStrategyByWorkspaceId = new Dictionary<Identity, RemoteStrategy>();
@@ -44,8 +43,6 @@ namespace Allors.Workspace.Adapters.Remote
             this.changeSet = new RemoteChangeSet(this);
             this.SessionLifecycle.OnInit(this);
         }
-
-        ~RemoteSession() => this.Workspace.UnregisterSession(this);
 
         public ISessionLifecycle SessionLifecycle { get; }
 

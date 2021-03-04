@@ -30,6 +30,8 @@ namespace Allors.Workspace
 
         IEnumerable<T> Instantiate<T>(IEnumerable<IObject> objects) where T : IObject;
 
+        IEnumerable<T> Instantiate<T>(IEnumerable<T> objects) where T : IObject;
+
         IEnumerable<T> Instantiate<T>(IEnumerable<long> ids) where T : IObject;
 
         IEnumerable<T> Instantiate<T>(IEnumerable<Identity> identities) where T : IObject;

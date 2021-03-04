@@ -17,14 +17,13 @@ namespace Allors.Workspace.Adapters.Remote
     {
         private readonly Dictionary<Identity, RemoteWorkspaceObject> workspaceRolesByIdentity;
 
-        public RemoteWorkspace(IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, HttpClient httpClient)
+        internal RemoteWorkspace(IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, HttpClient httpClient)
         {
             this.MetaPopulation = metaPopulation;
             this.StateLifecycle = state;
 
             this.ObjectFactory = new ObjectFactory(this.MetaPopulation, instance);
             this.Database = new RemoteDatabase(this.MetaPopulation, httpClient, new Identities());
-            this.Sessions = new HashSet<RemoteSession>();
 
             this.WorkspaceClassByWorkspaceId = new Dictionary<Identity, IClass>();
 
@@ -39,17 +38,16 @@ namespace Allors.Workspace.Adapters.Remote
 
         public IWorkspaceLifecycle StateLifecycle { get; }
 
-        internal ISet<RemoteSession> Sessions { get; }
-        IEnumerable<ISession> IWorkspace.Sessions => this.Sessions;
-
         public IDictionary<Guid, IDomainDerivation> DomainDerivationById { get; }
 
         IObjectFactory IWorkspace.ObjectFactory => this.ObjectFactory;
         internal ObjectFactory ObjectFactory { get; }
 
-        internal RemoteDatabase Database { get; }
+        public RemoteDatabase Database { get; }
 
         internal Dictionary<Identity, IClass> WorkspaceClassByWorkspaceId { get; }
+
+        public ISession CreateSession() => new RemoteSession(this, this.StateLifecycle.CreateSessionContext());
 
         internal RemoteWorkspaceObject Get(Identity identity)
         {
@@ -57,15 +55,9 @@ namespace Allors.Workspace.Adapters.Remote
             return workspaceRoles;
         }
 
-        public ISession CreateSession() => new RemoteSession(this, this.StateLifecycle.CreateSessionContext());
-
-        internal void RegisterSession(RemoteSession session) => this.Sessions.Add(session);
-
-        internal void UnregisterSession(RemoteSession session) => this.Sessions.Remove(session);
-
         internal void RegisterWorkspaceObject(IClass @class, Identity workspaceId) => this.WorkspaceClassByWorkspaceId.Add(workspaceId, @class);
-        
-        public void Push(Identity identity, IClass @class, long version, Dictionary<IRelationType, object> changedRoleByRoleType)
+
+        internal void Push(Identity identity, IClass @class, long version, Dictionary<IRelationType, object> changedRoleByRoleType)
         {
             if (!this.workspaceRolesByIdentity.TryGetValue(identity, out var originalWorkspaceRoles))
             {

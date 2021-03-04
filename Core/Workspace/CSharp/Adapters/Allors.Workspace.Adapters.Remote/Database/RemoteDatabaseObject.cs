@@ -12,7 +12,7 @@ namespace Allors.Workspace.Adapters.Remote
     using Allors.Protocol.Json.Api;
     using Allors.Protocol.Json.Api.Sync;
 
-    public class RemoteDatabaseObject
+    internal class RemoteDatabaseObject
     {
         private RemotePermission[] deniedPermissions;
         private RemoteAccessControl[] accessControls;
@@ -39,17 +39,17 @@ namespace Allors.Workspace.Adapters.Remote
             this.SortedDeniedPermissionIds = ctx.ReadSortedDeniedPermissionIds(syncResponseObject.DeniedPermissions);
         }
 
-        public RemoteDatabase Database { get; }
+        internal RemoteDatabase Database { get; }
 
-        public IClass Class { get; }
+        internal IClass Class { get; }
 
-        public Identity Identity { get; }
+        internal Identity Identity { get; }
 
-        public long Version { get; private set; }
+        internal long Version { get; private set; }
 
-        public string SortedAccessControlIds { get; }
+        internal string SortedAccessControlIds { get; }
 
-        public string SortedDeniedPermissionIds { get; }
+        internal string SortedDeniedPermissionIds { get; }
 
         private Dictionary<IRelationType, object> RoleByRelationType
         {
