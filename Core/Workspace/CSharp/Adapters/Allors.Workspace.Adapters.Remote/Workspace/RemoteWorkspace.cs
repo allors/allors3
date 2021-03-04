@@ -26,7 +26,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.Database = new RemoteDatabase(this.MetaPopulation, httpClient, new Identities());
             this.Sessions = new HashSet<RemoteSession>();
 
-            this.WorkspaceOrSessionClassByWorkspaceId = new Dictionary<Identity, IClass>();
+            this.WorkspaceClassByWorkspaceId = new Dictionary<Identity, IClass>();
 
             this.DomainDerivationById = new ConcurrentDictionary<Guid, IDomainDerivation>();
 
@@ -49,7 +49,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal RemoteDatabase Database { get; }
 
-        internal Dictionary<Identity, IClass> WorkspaceOrSessionClassByWorkspaceId { get; }
+        internal Dictionary<Identity, IClass> WorkspaceClassByWorkspaceId { get; }
 
         internal RemoteWorkspaceObject Get(Identity identity)
         {
@@ -63,10 +63,8 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal void UnregisterSession(RemoteSession session) => this.Sessions.Remove(session);
 
-        internal void RegisterWorkspaceIdForWorkspaceObject(IClass @class, Identity workspaceId) => this.WorkspaceOrSessionClassByWorkspaceId.Add(workspaceId, @class);
-
-        internal void RegisterWorkspaceIdForSessionObject(IClass @class, Identity workspaceId) => this.WorkspaceOrSessionClassByWorkspaceId.Add(workspaceId, @class);
-
+        internal void RegisterWorkspaceObject(IClass @class, Identity workspaceId) => this.WorkspaceClassByWorkspaceId.Add(workspaceId, @class);
+        
         public void Push(Identity identity, IClass @class, long version, Dictionary<IRelationType, object> changedRoleByRoleType)
         {
             if (!this.workspaceRolesByIdentity.TryGetValue(identity, out var originalWorkspaceRoles))
