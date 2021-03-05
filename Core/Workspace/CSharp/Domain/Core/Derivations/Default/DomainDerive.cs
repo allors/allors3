@@ -39,7 +39,7 @@ namespace Allors.Workspace.Derivations.Default
             {
                 var changeSet = this.Session.Checkpoint();
 
-                while (changeSet.AssociationByRoleByRoleType.Any() || changeSet.RoleByAssociationByRoleType.Any() || changeSet.Created.Any() || changeSet.Instantiated.Any())
+                while (changeSet.RoleByRoleType.Any() || changeSet.AssociationByRoleType.Any() || changeSet.Created.Any() || changeSet.Instantiated.Any())
                 {
                     var session = changeSet.Session;
 
@@ -66,36 +66,36 @@ namespace Allors.Workspace.Derivations.Default
                             {
                                 // RoleDefault
                                 AssociationPattern { RoleType: RoleDefault roleType } => changeSet
-                                    .RoleByAssociationByRoleType
+                                    .AssociationByRoleType
                                     .Where(v => v.Key.RelationType.Equals(roleType.RelationType))
-                                    .SelectMany(v => v.Value.Keys.Select(session.Instantiate<IObject>)),
+                                    .SelectMany(v => v.Value.Select(session.Instantiate<IObject>)),
 
                                 RolePattern { RoleType: RoleDefault roleType } => changeSet
-                                    .AssociationByRoleByRoleType
+                                    .RoleByRoleType
                                     .Where(v => v.Key.RelationType.Equals(roleType.RelationType))
-                                    .SelectMany(v => v.Value.Keys.Select(session.Instantiate<IObject>)),
+                                    .SelectMany(v => v.Value.Select(session.Instantiate<IObject>)),
 
                                 // RoleInterface
                                 AssociationPattern { RoleType: RoleInterface roleInterface } => changeSet
-                                    .RoleByAssociationByRoleType
+                                    .AssociationByRoleType
                                     .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
-                                    .SelectMany(v => v.Value.Keys.Select(session.Instantiate<IObject>))
+                                    .SelectMany(v => v.Value.Select(session.Instantiate<IObject>))
                                     .Where(v => roleInterface.AssociationTypeComposite.IsAssignableFrom(v.Strategy.Class)),
 
                                 RolePattern { RoleType: RoleInterface roleInterface } => changeSet
-                                    .AssociationByRoleByRoleType
+                                    .RoleByRoleType
                                     .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
-                                    .SelectMany(v => v.Value.Keys.Select(session.Instantiate<IObject>)),
+                                    .SelectMany(v => v.Value.Select(session.Instantiate<IObject>)),
 
                                 // RoleClass
                                 AssociationPattern { RoleType: RoleClass roleClass } => changeSet
-                                    .RoleByAssociationByRoleType.Where(v => v.Key.Equals(roleClass))
-                                    .SelectMany(v => v.Value.Keys.Select(session.Instantiate<IObject>))
+                                    .AssociationByRoleType.Where(v => v.Key.Equals(roleClass))
+                                    .SelectMany(v => v.Value.Select(session.Instantiate<IObject>))
                                     .Where(v => v.Strategy.Class.Equals(roleClass.AssociationTypeComposite)),
 
                                 RolePattern { RoleType: RoleClass roleClass } => changeSet
-                                    .AssociationByRoleByRoleType.Where(v => v.Key.RoleType.Equals(roleClass))
-                                    .SelectMany(v => v.Value.Keys.Select(session.Instantiate<IObject>)),
+                                    .RoleByRoleType.Where(v => v.Key.RoleType.Equals(roleClass))
+                                    .SelectMany(v => v.Value.Select(session.Instantiate<IObject>)),
 
                                 _ => Array.Empty<IObject>()
                             };

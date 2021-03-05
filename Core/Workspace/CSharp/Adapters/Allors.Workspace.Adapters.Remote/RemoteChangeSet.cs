@@ -9,6 +9,7 @@
 namespace Allors.Workspace.Adapters.Remote
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Meta;
 
     internal sealed class RemoteChangeSet : IChangeSet
@@ -18,8 +19,14 @@ namespace Allors.Workspace.Adapters.Remote
             this.Session = session;
             this.Created = created;
             this.Instantiated = instantiated;
-            this.RoleByAssociationByRoleType = sessionStateChangeSet.RoleByAssociationByRoleType;
-            this.AssociationByRoleByRoleType = sessionStateChangeSet.AssociationByRoleByRoleType;
+            this.AssociationByRoleType = sessionStateChangeSet.RoleByAssociationByRoleType
+                .ToDictionary(
+                    v => v.Key,
+                    v => (ISet<Identity>)new HashSet<Identity>(v.Value.Keys));
+            this.RoleByRoleType = sessionStateChangeSet.AssociationByRoleByRoleType.ToDictionary(
+                v => v.Key,
+                v => (ISet<Identity>)new HashSet<Identity>(v.Value.Keys));
+            ;
         }
 
         ISession IChangeSet.Session => this.Session;
@@ -29,8 +36,8 @@ namespace Allors.Workspace.Adapters.Remote
 
         public ISet<IStrategy> Instantiated { get; }
 
-        public IDictionary<IRoleType, IDictionary<Identity, object>> RoleByAssociationByRoleType { get; }
+        public IDictionary<IRoleType, ISet<Identity>> AssociationByRoleType { get; }
 
-        public IDictionary<IAssociationType, IDictionary<Identity, object>> AssociationByRoleByRoleType { get; }
+        public IDictionary<IAssociationType, ISet<Identity>> RoleByRoleType { get; }
     }
 }
