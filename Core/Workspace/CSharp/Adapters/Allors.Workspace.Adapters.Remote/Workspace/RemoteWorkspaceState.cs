@@ -15,11 +15,9 @@ namespace Allors.Workspace.Adapters.Remote
         private readonly RemoteStrategy strategy;
 
         private RemoteWorkspaceObject workspaceObject;
-
         private Dictionary<IRelationType, object> changedRoleByRoleType;
 
         private RemoteWorkspaceObject changeSetWorkspaceObject;
-
         private Dictionary<IRelationType, object> changeSetChangedRoleByRoleType;
 
         internal RemoteWorkspaceState(RemoteStrategy strategy)
@@ -150,6 +148,30 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal void Checkpoint(RemoteChangeSet changeSet)
         {
+            if (this.workspaceObject.Identity == this.changeSetWorkspaceObject.Identity)
+            {
+                if (this.changeSetChangedRoleByRoleType == null)
+                {
+                    if (this.changedRoleByRoleType != null)
+                    {
+                        foreach (var kvp in this.changedRoleByRoleType)
+                        {
+                            changeSet.AddAssociation(kvp.Key, this.Identity);
+                        }
+                    }
+                }
+                else
+                {
+                    // TODO:
+                }
+            }
+            else
+            {
+                // TODO:
+            }
+
+            this.changeSetWorkspaceObject = this.workspaceObject;
+            this.changeSetChangedRoleByRoleType = this.changedRoleByRoleType;
         }
     }
 }

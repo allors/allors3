@@ -39,5 +39,31 @@ namespace Allors.Workspace.Adapters.Remote
         public IDictionary<IRoleType, ISet<Identity>> AssociationByRoleType { get; }
 
         public IDictionary<IAssociationType, ISet<Identity>> RoleByRoleType { get; }
+
+        internal void AddAssociation(IRelationType relationType, Identity association)
+        {
+            var roleType = relationType.RoleType;
+
+            if (!this.AssociationByRoleType.TryGetValue(roleType, out var associations))
+            {
+                associations = new HashSet<Identity>();
+                this.AssociationByRoleType.Add(roleType, associations);
+            }
+
+            _ = associations.Add(association);
+        }
+
+        internal void AddRole(IRelationType relationType, Identity role)
+        {
+            var associationType = relationType.AssociationType;
+
+            if (!this.RoleByRoleType.TryGetValue(associationType, out var roles))
+            {
+                roles = new HashSet<Identity>();
+                this.RoleByRoleType.Add(associationType, roles);
+            }
+
+            _ = roles.Add(role);
+        }
     }
 }
