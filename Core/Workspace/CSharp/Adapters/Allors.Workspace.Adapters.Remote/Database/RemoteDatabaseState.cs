@@ -17,16 +17,19 @@ namespace Allors.Workspace.Adapters.Remote
     {
         private readonly RemoteStrategy strategy;
 
-        private Dictionary<IRoleType, object> changedRoleByRoleType;
-
         private RemoteDatabaseObject databaseObject;
 
-        private RemoteWorkspaceObject changeSetDatabaseObject;
+        private Dictionary<IRoleType, object> changedRoleByRoleType;
+
+        private RemoteDatabaseObject changeSetDatabaseObject;
+
+        private Dictionary<IRoleType, object> changeSetChangedRoleByRoleType;
 
         internal RemoteDatabaseState(RemoteStrategy strategy, RemoteDatabaseObject databaseObject = null)
         {
             this.strategy = strategy;
             this.databaseObject = databaseObject ?? this.Database.Get(this.Identity);
+            this.changeSetDatabaseObject = this.databaseObject;
         }
 
         internal bool HasDatabaseChanges => this.databaseObject == null || this.changedRoleByRoleType != null;
@@ -75,7 +78,6 @@ namespace Allors.Workspace.Adapters.Remote
             var permission = this.Session.Workspace.Database.GetPermission(this.Class, methodType, Operations.Execute);
             return this.databaseObject.IsPermitted(permission);
         }
-
 
         internal object GetRole(IRoleType roleType)
         {
@@ -173,6 +175,12 @@ namespace Allors.Workspace.Adapters.Remote
             this.changedRoleByRoleType = null;
         }
 
+        internal void Merge() => this.databaseObject = this.Database.Get(this.Identity);
+
+        internal void Checkpoint(RemoteChangeSet changeSet)
+        {
+        }
+
         internal void PushResponse(RemoteDatabaseObject databaseObject) => this.databaseObject = databaseObject;
 
         internal PushRequestNewObject SaveNew() => new PushRequestNewObject
@@ -248,5 +256,6 @@ namespace Allors.Workspace.Adapters.Remote
 
             return null;
         }
+
     }
 }

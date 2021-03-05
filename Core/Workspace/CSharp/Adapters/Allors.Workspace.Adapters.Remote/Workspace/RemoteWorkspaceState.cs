@@ -14,16 +14,19 @@ namespace Allors.Workspace.Adapters.Remote
     {
         private readonly RemoteStrategy strategy;
 
-        private Dictionary<IRelationType, object> changedRoleByRoleType;
-
         private RemoteWorkspaceObject workspaceObject;
 
+        private Dictionary<IRelationType, object> changedRoleByRoleType;
+
         private RemoteWorkspaceObject changeSetWorkspaceObject;
+
+        private Dictionary<IRelationType, object> changeSetChangedRoleByRoleType;
 
         internal RemoteWorkspaceState(RemoteStrategy strategy)
         {
             this.strategy = strategy;
             this.workspaceObject = this.Workspace.Get(this.Identity);
+            this.changeSetWorkspaceObject = this.workspaceObject;
         }
 
         internal bool HasWorkspaceChanges => this.changedRoleByRoleType != null;
@@ -113,11 +116,13 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 if (roleType.IsOne)
                 {
-                    this.changedRoleByRoleType[roleType.RelationType] = ((IObject)value)?.Identity;
+                    var role = ((IObject)value)?.Identity;
+                    this.changedRoleByRoleType[roleType.RelationType] = role;
                 }
                 else
                 {
-                    this.changedRoleByRoleType[roleType.RelationType] = ((IEnumerable<object>)value).Select(v => ((IObject)v).Identity).ToArray();
+                    var role = ((IEnumerable<object>)value).Select(v => ((IObject)v).Identity).ToArray();
+                    this.changedRoleByRoleType[roleType.RelationType] = role;
                 }
             }
 
@@ -131,13 +136,20 @@ namespace Allors.Workspace.Adapters.Remote
                 this.Workspace.Push(this.Identity, this.Class, this.workspaceObject?.Version ?? 0, this.changedRoleByRoleType);
             }
 
-            this.Reset();
+            this.workspaceObject = this.Workspace.Get(this.Identity);
+            this.changedRoleByRoleType = null;
         }
 
         internal void Reset()
         {
             this.workspaceObject = this.Workspace.Get(this.Identity);
             this.changedRoleByRoleType = null;
+        }
+
+        internal void Merge() => this.workspaceObject = this.Workspace.Get(this.Identity);
+
+        internal void Checkpoint(RemoteChangeSet changeSet)
+        {
         }
     }
 }

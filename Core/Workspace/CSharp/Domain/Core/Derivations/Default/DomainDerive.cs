@@ -39,7 +39,7 @@ namespace Allors.Workspace.Derivations.Default
             {
                 var changeSet = this.Session.Checkpoint();
 
-                while (changeSet.Associations.Any() || changeSet.Roles.Any() || changeSet.Created.Any() || changeSet.Instantiated.Any())
+                while (changeSet.AssociationByRoleByRoleType.Any() || changeSet.RoleByAssociationByRoleType.Any() || changeSet.Created.Any() || changeSet.Instantiated.Any())
                 {
                     var session = changeSet.Session;
 
@@ -55,7 +55,6 @@ namespace Allors.Workspace.Derivations.Default
                         Validation = this.Validation
                     };
 
-                    var matchesByDerivation = new Dictionary<IDomainDerivation, IEnumerable<IObject>>();
                     foreach (var kvp in domainDerivationById)
                     {
                         var domainDerivation = kvp.Value;
@@ -67,37 +66,36 @@ namespace Allors.Workspace.Derivations.Default
                             {
                                 // RoleDefault
                                 AssociationPattern { RoleType: RoleDefault roleType } => changeSet
-                                    .AssociationsByRoleType
+                                    .RoleByAssociationByRoleType
                                     .Where(v => v.Key.RelationType.Equals(roleType.RelationType))
-                                    .SelectMany(v => session.Instantiate<IObject>(v.Value)),
+                                    .SelectMany(v => v.Value.Keys.Select(session.Instantiate<IObject>)),
 
                                 RolePattern { RoleType: RoleDefault roleType } => changeSet
-                                    .RolesByAssociationType
+                                    .AssociationByRoleByRoleType
                                     .Where(v => v.Key.RelationType.Equals(roleType.RelationType))
-                                    .SelectMany(v => session.Instantiate<IObject>(v.Value)),
+                                    .SelectMany(v => v.Value.Keys.Select(session.Instantiate<IObject>)),
 
                                 // RoleInterface
                                 AssociationPattern { RoleType: RoleInterface roleInterface } => changeSet
-                                    .AssociationsByRoleType
+                                    .RoleByAssociationByRoleType
                                     .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
-                                    .SelectMany(v => session.Instantiate<IObject>(v.Value))
-                                    .Where(v =>
-                                        roleInterface.AssociationTypeComposite.IsAssignableFrom(v.Strategy.Class)),
+                                    .SelectMany(v => v.Value.Keys.Select(session.Instantiate<IObject>))
+                                    .Where(v => roleInterface.AssociationTypeComposite.IsAssignableFrom(v.Strategy.Class)),
 
                                 RolePattern { RoleType: RoleInterface roleInterface } => changeSet
-                                    .RolesByAssociationType
+                                    .AssociationByRoleByRoleType
                                     .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
-                                    .SelectMany(v => session.Instantiate<IObject>(v.Value)),
+                                    .SelectMany(v => v.Value.Keys.Select(session.Instantiate<IObject>)),
 
                                 // RoleClass
                                 AssociationPattern { RoleType: RoleClass roleClass } => changeSet
-                                    .AssociationsByRoleType.Where(v => v.Key.Equals(roleClass))
-                                    .SelectMany(v => session.Instantiate<IObject>(v.Value))
+                                    .RoleByAssociationByRoleType.Where(v => v.Key.Equals(roleClass))
+                                    .SelectMany(v => v.Value.Keys.Select(session.Instantiate<IObject>))
                                     .Where(v => v.Strategy.Class.Equals(roleClass.AssociationTypeComposite)),
 
                                 RolePattern { RoleType: RoleClass roleClass } => changeSet
-                                    .RolesByAssociationType.Where(v => v.Key.RoleType.Equals(roleClass))
-                                    .SelectMany(v => session.Instantiate<IObject>(v.Value)),
+                                    .AssociationByRoleByRoleType.Where(v => v.Key.RoleType.Equals(roleClass))
+                                    .SelectMany(v => v.Value.Keys.Select(session.Instantiate<IObject>)),
 
                                 _ => Array.Empty<IObject>()
                             };

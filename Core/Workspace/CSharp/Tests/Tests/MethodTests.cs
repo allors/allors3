@@ -36,7 +36,7 @@ namespace Tests.Workspace
 
             organisation = (await session.Load(pull)).GetObject<Organisation>();
 
-            session.Refresh();
+            session.Reset();
 
             Assert.True(organisation.JustDidIt);
         }

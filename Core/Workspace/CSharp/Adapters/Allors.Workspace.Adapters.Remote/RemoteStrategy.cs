@@ -155,11 +155,16 @@ namespace Allors.Workspace.Adapters.Remote
 
         public bool CanExecute(IMethodType methodType) => this.databaseState?.CanExecute(methodType) ?? false;
 
-        internal void Refresh(bool merge = false)
+        internal void Reset()
         {
-            // TODO: Merge
             this.workspaceState?.Reset();
             this.databaseState?.Reset();
+        }
+
+        internal void Merge()
+        {
+            this.workspaceState?.Merge();
+            this.databaseState?.Merge();
         }
 
         internal PushRequestNewObject DatabaseSaveNew() => this.databaseState.SaveNew();

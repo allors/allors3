@@ -31,8 +31,8 @@ namespace Allors.Workspace.Adapters.Remote
         private ISet<RemoteDatabaseState> changedDatabaseStates;
         private ISet<RemoteWorkspaceState> changedWorkspaceStates;
 
-        private ISet<RemoteStrategy> created;
-        private ISet<RemoteStrategy> instantiated;
+        private ISet<IStrategy> created;
+        private ISet<IStrategy> instantiated;
 
         internal RemoteSession(RemoteWorkspace workspace, ISessionLifecycle sessionLifecycle)
         {
@@ -168,22 +168,48 @@ namespace Allors.Workspace.Adapters.Remote
             return await this.OnPull(pullResponse);
         }
 
-        public void Refresh(bool merge = false)
+        public void Reset()
         {
             if (this.newDatabaseStrategies != null)
             {
                 foreach (var databaseStrategy in this.newDatabaseStrategies)
                 {
-                    databaseStrategy.Refresh(merge);
+                    databaseStrategy.Reset();
                 }
             }
 
             foreach (var databaseStrategy in this.existingDatabaseStrategies)
             {
-                databaseStrategy.Refresh(merge);
+                databaseStrategy.Reset();
+            }
+
+            foreach (var kvp in this.workspaceStrategyByWorkspaceId)
+            {
+                kvp.Value.Reset();
             }
         }
 
+        public void Merge()
+        {
+            if (this.newDatabaseStrategies != null)
+            {
+                foreach (var databaseStrategy in this.newDatabaseStrategies)
+                {
+                    databaseStrategy.Merge();
+                }
+            }
+
+            foreach (var databaseStrategy in this.existingDatabaseStrategies)
+            {
+                databaseStrategy.Merge();
+            }
+
+            foreach (var kvp in this.workspaceStrategyByWorkspaceId)
+            {
+                kvp.Value.Merge();
+            }
+        }
+        
         public async Task<ISaveResult> Save()
         {
             var saveRequest = this.PushRequest();
@@ -210,7 +236,7 @@ namespace Allors.Workspace.Adapters.Remote
                     workspaceStrategy.WorkspaceSave();
                 }
 
-                this.Refresh();
+                this.Reset();
             }
 
             return new RemoteSaveResult(pushResponse);
@@ -218,7 +244,18 @@ namespace Allors.Workspace.Adapters.Remote
 
         public IChangeSet Checkpoint()
         {
-            var changeSet = new RemoteChangeSet(this, this.SessionState.Checkpoint());
+            var changeSet = new RemoteChangeSet(this, this.created, this.instantiated, this.SessionState.Checkpoint());
+
+            foreach(var changed in this.changedWorkspaceStates)
+            {
+                changed.Checkpoint(changeSet);
+            }
+
+            foreach (var changed in this.changedDatabaseStates)
+            {
+                changed.Checkpoint(changeSet);
+            }
+
             return changeSet;
         }
 
@@ -434,13 +471,13 @@ namespace Allors.Workspace.Adapters.Remote
 
         private void OnCreate(RemoteStrategy strategy)
         {
-            this.created ??= new HashSet<RemoteStrategy>();
+            this.created ??= new HashSet<IStrategy>();
             _ = this.created.Add(strategy);
         }
 
         private void OnInstantiate(RemoteStrategy strategy)
         {
-            this.instantiated ??= new HashSet<RemoteStrategy>();
+            this.instantiated ??= new HashSet<IStrategy>();
             _ = this.instantiated.Add(strategy);
         }
     }
