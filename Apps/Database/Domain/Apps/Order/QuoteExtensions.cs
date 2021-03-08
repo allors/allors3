@@ -74,42 +74,56 @@ namespace Allors.Database.Domain
         {
             @this.QuoteState = new QuoteStates(@this.Strategy.Transaction).InProcess;
             SetItemState(@this);
+
+            method.StopPropagation = true;
         }
 
         public static void AppsSend(this Quote @this, QuoteSend method)
         {
             @this.QuoteState = new QuoteStates(@this.Strategy.Transaction).AwaitingAcceptance;
             SetItemState(@this);
+
+            method.StopPropagation = true;
         }
 
         public static void AppsAccept(this Quote @this, QuoteAccept method)
         {
             @this.QuoteState = new QuoteStates(@this.Strategy.Transaction).Accepted;
             SetItemState(@this);
+
+            method.StopPropagation = true;
         }
 
         public static void AppsRevise(this Quote @this, QuoteRevise method)
         {
             @this.QuoteState = new QuoteStates(@this.Strategy.Transaction).Created;
             SetItemState(@this);
+
+            method.StopPropagation = true;
         }
 
         public static void AppsReopen(this Quote @this, QuoteReopen method)
         {
             @this.QuoteState = new QuoteStates(@this.Strategy.Transaction).Created;
             SetItemState(@this);
+
+            method.StopPropagation = true;
         }
 
         public static void AppsReject(this Quote @this, QuoteReject method)
         {
             @this.QuoteState = new QuoteStates(@this.Strategy.Transaction).Rejected;
             SetItemState(@this);
+
+            method.StopPropagation = true;
         }
 
         public static void AppsCancel(this Quote @this, QuoteCancel method)
         {
             @this.QuoteState = new QuoteStates(@this.Strategy.Transaction).Cancelled;
             SetItemState(@this);
+
+            method.StopPropagation = true;
         }
 
         public static void SetItemState(this Quote @this)

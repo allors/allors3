@@ -19,6 +19,8 @@ namespace Allors.Database.Meta
 
         public bool Executed { get; set; }
 
+        public bool StopPropagation { get; set; }
+
         public virtual void Execute() => this.MethodInvocation.Execute(this);
     }
 }

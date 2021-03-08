@@ -42,15 +42,35 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void AppsSend(QuoteItemSend method) => this.QuoteItemState = new QuoteItemStates(this.Strategy.Transaction).AwaitingAcceptance;
+        public void AppsSend(QuoteItemSend method)
+        {
+            this.QuoteItemState = new QuoteItemStates(this.Strategy.Transaction).AwaitingAcceptance;
+            method.StopPropagation = true;
+        }
 
-        public void AppsCancel(QuoteItemCancel method) => this.QuoteItemState = new QuoteItemStates(this.Strategy.Transaction).Cancelled;
+        public void AppsCancel(QuoteItemCancel method)
+        {
+            this.QuoteItemState = new QuoteItemStates(this.Strategy.Transaction).Cancelled;
+            method.StopPropagation = true;
+        }
 
-        public void AppsReject(QuoteItemReject method) => this.QuoteItemState = new QuoteItemStates(this.Strategy.Transaction).Rejected;
+        public void AppsReject(QuoteItemReject method)
+        {
+            this.QuoteItemState = new QuoteItemStates(this.Strategy.Transaction).Rejected;
+            method.StopPropagation = true;
+        }
 
-        public void AppsOrder(QuoteItemOrder method) => this.QuoteItemState = new QuoteItemStates(this.Strategy.Transaction).Ordered;
+        public void AppsOrder(QuoteItemOrder method)
+        {
+            this.QuoteItemState = new QuoteItemStates(this.Strategy.Transaction).Ordered;
+            method.StopPropagation = true;
+        }
 
-        public void AppsSubmit(QuoteItemSubmit method) => this.QuoteItemState = new QuoteItemStates(this.Strategy.Transaction).Submitted;
+        public void AppsSubmit(QuoteItemSubmit method)
+        {
+            this.QuoteItemState = new QuoteItemStates(this.Strategy.Transaction).Submitted;
+            method.StopPropagation = true;
+        }
 
         public void Sync(Quote quote) => this.SyncedQuote = quote;
     }

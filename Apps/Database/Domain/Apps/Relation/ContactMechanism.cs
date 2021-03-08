@@ -9,21 +9,4 @@ namespace Allors.Database.Domain
     {
         bool IsPostalAddress { get; }
     }
-
-    public static partial class ContactMechanismExtensions
-    {
-        public static void AppsOnPreDerive(this ContactMechanism @this, ObjectOnPreDerive method)
-        {
-            var (iteration, changeSet, derivedObjects) = method;
-
-            if (iteration.IsMarked(@this) || changeSet.IsCreated(@this) || changeSet.HasChangedRoles(@this))
-            {
-                foreach (PartyContactMechanism partyContactMechanism in @this.PartyContactMechanismsWhereContactMechanism)
-                {
-                    iteration.AddDependency(partyContactMechanism, @this);
-                    iteration.Mark(partyContactMechanism);
-                }
-            }
-        }
-    }
 }

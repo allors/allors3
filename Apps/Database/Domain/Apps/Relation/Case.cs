@@ -20,22 +20,22 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void AppsClose()
+        public void AppsClose(CaseClose method)
         {
-            var closed = new CaseStates(this.Strategy.Transaction).Closed;
-            this.CaseState = closed;
+            this.CaseState = new CaseStates(this.Strategy.Transaction).Closed;
+            method.StopPropagation = true;
         }
 
-        public void AppsComplete()
+        public void AppsComplete(CaseComplete method)
         {
-            var completed = new CaseStates(this.Strategy.Transaction).Completed;
-            this.CaseState = completed;
+            this.CaseState = new CaseStates(this.Strategy.Transaction).Completed;
+            method.StopPropagation = true;
         }
 
-        public void AppsReopen()
+        public void AppsReopen(CaseReOpen method)
         {
-            var opened = new CaseStates(this.Strategy.Transaction).Opened;
-            this.CaseState = opened;
+            this.CaseState = new CaseStates(this.Strategy.Transaction).Opened;
+            method.StopPropagation = true;
         }
     }
 }

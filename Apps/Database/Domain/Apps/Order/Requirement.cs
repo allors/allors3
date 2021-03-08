@@ -20,12 +20,28 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void AppsClose(RequirementClose method) => this.RequirementState = new RequirementStates(this.Strategy.Transaction).Closed;
+        public void AppsClose(RequirementClose method)
+        {
+            this.RequirementState = new RequirementStates(this.Strategy.Transaction).Closed;
+            method.StopPropagation = true;
+        }
 
-        public void AppsReopen(RequirementReopen method) => this.RequirementState = new RequirementStates(this.Strategy.Transaction).Active;
+        public void AppsReopen(RequirementReopen method)
+        {
+            this.RequirementState = new RequirementStates(this.Strategy.Transaction).Active;
+            method.StopPropagation = true;
+        }
 
-        public void AppsCancel(RequirementCancel method) => this.RequirementState = new RequirementStates(this.Strategy.Transaction).Cancelled;
+        public void AppsCancel(RequirementCancel method)
+        {
+            this.RequirementState = new RequirementStates(this.Strategy.Transaction).Cancelled;
+            method.StopPropagation = true;
+        }
 
-        public void AppsHold(RequirementHold method) => this.RequirementState = new RequirementStates(this.Strategy.Transaction).OnHold;
+        public void AppsHold(RequirementHold method)
+        {
+            this.RequirementState = new RequirementStates(this.Strategy.Transaction).OnHold;
+            method.StopPropagation = true;
+        }
     }
 }

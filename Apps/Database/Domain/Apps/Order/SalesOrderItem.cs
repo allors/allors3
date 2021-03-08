@@ -108,13 +108,29 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void AppsCancel(OrderItemCancel method) => this.SalesOrderItemState = new SalesOrderItemStates(this.Strategy.Transaction).Cancelled;
+        public void AppsCancel(OrderItemCancel method)
+        {
+            this.SalesOrderItemState = new SalesOrderItemStates(this.Strategy.Transaction).Cancelled;
+            method.StopPropagation = true;
+        }
 
-        public void AppsReject(OrderItemReject method) => this.SalesOrderItemState = new SalesOrderItemStates(this.Strategy.Transaction).Rejected;
+        public void AppsReject(OrderItemReject method)
+        {
+            this.SalesOrderItemState = new SalesOrderItemStates(this.Strategy.Transaction).Rejected;
+            method.StopPropagation = true;
+        }
 
-        public void AppsApprove(OrderItemApprove method) => this.SalesOrderItemState = new SalesOrderItemStates(this.Strategy.Transaction).ReadyForPosting;
+        public void AppsApprove(OrderItemApprove method)
+        {
+            this.SalesOrderItemState = new SalesOrderItemStates(this.Strategy.Transaction).ReadyForPosting;
+            method.StopPropagation = true;
+        }
 
-        public void AppsReopen(OrderItemReopen method) => this.SalesOrderItemState = this.PreviousSalesOrderItemState;
+        public void AppsReopen(OrderItemReopen method)
+        {
+            this.SalesOrderItemState = this.PreviousSalesOrderItemState;
+            method.StopPropagation = true;
+        }
 
         public void Sync(Order order) => this.SyncedOrder = order;
     }

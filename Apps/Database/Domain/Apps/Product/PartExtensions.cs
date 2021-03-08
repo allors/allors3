@@ -68,12 +68,8 @@ namespace Allors.Database.Domain
 
         public static void AppsSetDisplayName(this Part @this, PartSetDisplayName method)
         {
-            if (!method.Result.HasValue)
-            {
-                @this.DisplayName = @this.Name;
-
-                method.Result = true;
-            }
+            @this.DisplayName = @this.Name;
+            method.StopPropagation = true;
         }
     }
 }

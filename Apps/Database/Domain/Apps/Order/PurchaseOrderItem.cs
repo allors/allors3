@@ -96,7 +96,11 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void AppsApprove(OrderItemApprove method) => this.PurchaseOrderItemState = new PurchaseOrderItemStates(this.Strategy.Transaction).InProcess;
+        public void AppsApprove(OrderItemApprove method)
+        {
+            this.PurchaseOrderItemState = new PurchaseOrderItemStates(this.Strategy.Transaction).InProcess;
+            method.StopPropagation = true;
+        }
 
         public void AppsQuickReceive(PurchaseOrderItemQuickReceive method)
         {
@@ -155,25 +159,27 @@ namespace Allors.Database.Domain
             {
                 this.QuantityReceived = 1;
             }
+
+            method.StopPropagation = true;
         }
 
-        public void AppsCancel(OrderItemCancel method) => this.PurchaseOrderItemState = new PurchaseOrderItemStates(this.Strategy.Transaction).Cancelled;
+        public void AppsCancel(OrderItemCancel method)
+        {
+            this.PurchaseOrderItemState = new PurchaseOrderItemStates(this.Strategy.Transaction).Cancelled;
+            method.StopPropagation = true;
+        }
 
-        public void AppsReject(OrderItemReject method) => this.PurchaseOrderItemState = new PurchaseOrderItemStates(this.Strategy.Transaction).Rejected;
+        public void AppsReject(OrderItemReject method)
+        {
+            this.PurchaseOrderItemState = new PurchaseOrderItemStates(this.Strategy.Transaction).Rejected;
+            method.StopPropagation = true;
+        }
 
-        public void AppsReopen(OrderItemReopen method) => this.PurchaseOrderItemState = this.PreviousPurchaseOrderItemState;
-
-        //public void AppsDeriveIsReceivable(PurchaseOrderItemDeriveIsReceivable method)
-        //{
-        //    if (!method.Result.HasValue)
-        //    {
-        //        this.IsReceivable = this.ExistPart
-        //            && (this.InvoiceItemType.Equals(new InvoiceItemTypes(this.Transaction()).PartItem)
-        //                || this.InvoiceItemType.Equals(new InvoiceItemTypes(this.Transaction()).ProductItem));
-
-        //        method.Result = true;
-        //    }
-        //}
+        public void AppsReopen(OrderItemReopen method)
+        {
+            this.PurchaseOrderItemState = this.PreviousPurchaseOrderItemState;
+            method.StopPropagation = true;
+        }
 
         public void Sync(Order order) => this.SyncedOrder = order;
     }

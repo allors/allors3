@@ -64,12 +64,28 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void AppsCancel(PickListCancel method) => this.PickListState = new PickListStates(this.Strategy.Transaction).Cancelled;
+        public void AppsCancel(PickListCancel method)
+        {
+            this.PickListState = new PickListStates(this.Strategy.Transaction).Cancelled;
+            method.StopPropagation = true;
+        }
 
-        public void AppsHold(PickListHold method) => this.PickListState = new PickListStates(this.Strategy.Transaction).OnHold;
+        public void AppsHold(PickListHold method)
+        {
+            this.PickListState = new PickListStates(this.Strategy.Transaction).OnHold;
+            method.StopPropagation = true;
+        }
 
-        public void AppsContinue(PickListContinue method) => this.PickListState = this.PreviousPickListState;
+        public void AppsContinue(PickListContinue method)
+        {
+            this.PickListState = this.PreviousPickListState;
+            method.StopPropagation = true;
+        }
 
-        public void AppsSetPicked(PickListSetPicked method) => this.PickListState = new PickListStates(this.Strategy.Transaction).Picked;
+        public void AppsSetPicked(PickListSetPicked method)
+        {
+            this.PickListState = new PickListStates(this.Strategy.Transaction).Picked;
+            method.StopPropagation = true;
+        }
     }
 }

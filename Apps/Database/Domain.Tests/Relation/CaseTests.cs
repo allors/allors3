@@ -43,7 +43,7 @@ namespace Allors.Database.Domain.Tests
             Assert.Single(complaint.AllVersions);
             Assert.Equal(new CaseStates(this.Transaction).Opened, complaint.CaseState);
 
-            complaint.AppsClose();
+            complaint.Close();
 
             this.Transaction.Derive();
 

@@ -76,34 +76,37 @@ namespace Allors.Database.Domain
 
         public void AppsPrint(PrintablePrint method)
         {
-            if (!method.IsPrinted)
+            var singleton = this.Strategy.Transaction.GetSingleton();
+            var logo = this.BilledTo?.ExistLogoImage == true ?
+                this.BilledTo.LogoImage.MediaContent.Data :
+                singleton.LogoImage.MediaContent.Data;
+
+            var images = new Dictionary<string, byte[]>
             {
-                var singleton = this.Strategy.Transaction.GetSingleton();
-                var logo = this.BilledTo?.ExistLogoImage == true ?
-                    this.BilledTo.LogoImage.MediaContent.Data :
-                    singleton.LogoImage.MediaContent.Data;
+                { "Logo", logo },
+            };
 
-                var images = new Dictionary<string, byte[]>
-                {
-                    { "Logo", logo },
-                };
-
-                if (this.ExistInvoiceNumber)
-                {
-                    var transaction = this.Strategy.Transaction;
-                    var barcodeService = transaction.Database.Context().BarcodeGenerator;
-                    var barcode = barcodeService.Generate(this.InvoiceNumber, BarcodeType.CODE_128, 320, 80, pure: true);
-                    images.Add("Barcode", barcode);
-                }
-
-                var model = new Print.PurchaseInvoiceModel.Model(this);
-                this.RenderPrintDocument(this.BilledTo?.PurchaseInvoiceTemplate, model, images);
-
-                this.PrintDocument.Media.InFileName = $"{this.InvoiceNumber}.odt";
+            if (this.ExistInvoiceNumber)
+            {
+                var transaction = this.Strategy.Transaction;
+                var barcodeService = transaction.Database.Context().BarcodeGenerator;
+                var barcode = barcodeService.Generate(this.InvoiceNumber, BarcodeType.CODE_128, 320, 80, pure: true);
+                images.Add("Barcode", barcode);
             }
+
+            var model = new Print.PurchaseInvoiceModel.Model(this);
+            this.RenderPrintDocument(this.BilledTo?.PurchaseInvoiceTemplate, model, images);
+
+            this.PrintDocument.Media.InFileName = $"{this.InvoiceNumber}.odt";
+
+            method.StopPropagation = true;
         }
 
-        public void AppsConfirm(PurchaseInvoiceConfirm method) => this.PurchaseInvoiceState = this.NeedsApproval ? new PurchaseInvoiceStates(this.Strategy.Transaction).AwaitingApproval : new PurchaseInvoiceStates(this.Strategy.Transaction).NotPaid;
+        public void AppsConfirm(PurchaseInvoiceConfirm method)
+        {
+            this.PurchaseInvoiceState = this.NeedsApproval ? new PurchaseInvoiceStates(this.Strategy.Transaction).AwaitingApproval : new PurchaseInvoiceStates(this.Strategy.Transaction).NotPaid;
+            method.StopPropagation = true;
+        }
 
         public void AppsCancel(PurchaseInvoiceCancel method)
         {
@@ -112,6 +115,8 @@ namespace Allors.Database.Domain
             {
                 purchaseInvoiceItem.CancelFromInvoice();
             }
+
+            method.StopPropagation = true;
         }
 
         public void AppsReject(PurchaseInvoiceReject method)
@@ -121,6 +126,8 @@ namespace Allors.Database.Domain
             {
                 purchaseInvoiceItem.Reject();
             }
+
+            method.StopPropagation = true;
         }
 
         public void AppsReopen(PurchaseInvoiceReopen method)
@@ -130,6 +137,8 @@ namespace Allors.Database.Domain
             {
                 purchaseInvoiceItem.PurchaseInvoiceItemState = purchaseInvoiceItem.PreviousPurchaseInvoiceItemState;
             }
+
+            method.StopPropagation = true;
         }
 
         public void AppsApprove(PurchaseInvoiceApprove method)
@@ -196,11 +205,14 @@ namespace Allors.Database.Domain
                     }
                 }
             }
+
+            method.StopPropagation = true;
         }
 
         public void AppsRevise(PurchaseInvoiceRevise method)
         {
             this.PurchaseInvoiceState = new PurchaseInvoiceStates(this.Strategy.Transaction).Revising;
+            method.StopPropagation = true;
         }
 
         public void AppsFinishRevising(PurchaseInvoiceFinishRevising method)
@@ -210,6 +222,8 @@ namespace Allors.Database.Domain
             {
                 purchaseInvoiceItem.FinishRevising();
             }
+
+            method.StopPropagation = true;
         }
 
         public void AppsDelete(DeletableDelete method)
@@ -313,6 +327,8 @@ namespace Allors.Database.Domain
             }
 
             this.AddDeniedPermission(new Permissions(this.Strategy.Transaction).Get(this.Meta.ObjectType, this.Meta.CreateSalesInvoice));
+
+            method.StopPropagation = true;
         }
     }
 }

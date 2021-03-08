@@ -14,10 +14,12 @@ namespace Allors.Database.Domain
             new TransitionalConfiguration(this.M.RequestForQuote, this.M.RequestForQuote.RequestState),
         };
 
-        public void AppsCreateQuote(RequestForQuoteCreateQuote Method)
+        public void AppsCreateQuote(RequestForQuoteCreateQuote method)
         {
             this.RequestState = new RequestStates(this.Strategy.Transaction).Quoted;
             this.QuoteThis();
+
+            method.StopPropagation = true;
         }
 
         private ProductQuote QuoteThis()

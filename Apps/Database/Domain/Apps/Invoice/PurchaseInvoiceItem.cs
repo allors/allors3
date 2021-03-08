@@ -61,10 +61,22 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void AppsReject(PurchaseInvoiceItemReject method) => this.PurchaseInvoiceItemState = new PurchaseInvoiceItemStates(this.Strategy.Transaction).Rejected;
+        public void AppsReject(PurchaseInvoiceItemReject method)
+        {
+            this.PurchaseInvoiceItemState = new PurchaseInvoiceItemStates(this.Strategy.Transaction).Rejected;
+            method.StopPropagation = true;
+        }
 
-        public void AppsRevise(PurchaseInvoiceItemRevise method) => this.PurchaseInvoiceItemState = new PurchaseInvoiceItemStates(this.Strategy.Transaction).Revising;
+        public void AppsRevise(PurchaseInvoiceItemRevise method)
+        {
+            this.PurchaseInvoiceItemState = new PurchaseInvoiceItemStates(this.Strategy.Transaction).Revising;
+            method.StopPropagation = true;
+        }
 
-        public void AppsFinishRevising(PurchaseInvoiceItemFinishRevising method) => this.PurchaseInvoiceItemState = new PurchaseInvoiceItemStates(this.Strategy.Transaction).Created;
+        public void AppsFinishRevising(PurchaseInvoiceItemFinishRevising method)
+        {
+            this.PurchaseInvoiceItemState = new PurchaseInvoiceItemStates(this.Strategy.Transaction).Created;
+            method.StopPropagation = true;
+        }
     }
 }

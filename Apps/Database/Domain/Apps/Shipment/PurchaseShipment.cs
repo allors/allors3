@@ -113,6 +113,8 @@ namespace Allors.Database.Domain
                         .Build();
                 }
             }
+
+            method.StopPropagation = true;
         }
     }
 }

@@ -33,6 +33,8 @@ namespace Allors.Database.Domain
 
                 this.ProductQuote.CreatedBy.NotificationList.AddNotification(this.ApprovalNotification);
             }
+
+            method.StopPropagation = true;
         }
 
         public void AppsReject(ProductQuoteApprovalReject method)
@@ -60,6 +62,8 @@ namespace Allors.Database.Domain
 
                 this.ProductQuote.CreatedBy.NotificationList.AddNotification(this.RejectionNotification);
             }
+
+            method.StopPropagation = true;
         }
 
         public void ManageNotification(TaskAssignment taskAssignment)

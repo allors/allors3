@@ -115,5 +115,26 @@ namespace Allors.Repository
         public void OnPostDerive() { }
 
         #endregion
+
+
+        #region Allors
+        [Id("bf1de1f6-520f-4daa-a386-bce59df02f92")]
+        #endregion
+        [Workspace(Default)]
+        public void Close() { }
+
+
+        #region Allors
+        [Id("6d77a806-8083-40d2-85ce-72c66c4975e9")]
+        #endregion
+        [Workspace(Default)]
+        public void Complete() { }
+
+
+        #region Allors
+        [Id("e87cdd9c-dc39-4d36-b777-4dc289936bc3")]
+        #endregion
+        [Workspace(Default)]
+        public void ReOpen() { }
     }
 }

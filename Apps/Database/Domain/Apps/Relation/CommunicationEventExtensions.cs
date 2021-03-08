@@ -23,10 +23,22 @@ namespace Allors.Database.Domain
             }
         }
 
-        public static void AppsClose(this CommunicationEvent @this, CommunicationEventClose method) => @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Transaction).Completed;
+        public static void AppsClose(this CommunicationEvent @this, CommunicationEventClose method)
+        {
+            @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Transaction).Completed;
+            method.StopPropagation = true;
+        }
 
-        public static void AppsReopen(this CommunicationEvent @this, CommunicationEventReopen method) => @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Transaction).Scheduled;
+        public static void AppsReopen(this CommunicationEvent @this, CommunicationEventReopen method)
+        {
+            @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Transaction).Scheduled;
+            method.StopPropagation = true;
+        }
 
-        public static void AppsCancel(this CommunicationEvent @this, CommunicationEventCancel method) => @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Transaction).Cancelled;
+        public static void AppsCancel(this CommunicationEvent @this, CommunicationEventCancel method)
+        {
+            @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Transaction).Cancelled;
+            method.StopPropagation = true;
+        }
     }
 }

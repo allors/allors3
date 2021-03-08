@@ -32,6 +32,8 @@ namespace Allors.Database.Domain
 
                 this.PurchaseOrder.CreatedBy.NotificationList.AddNotification(this.ApprovalNotification);
             }
+
+            method.StopPropagation = true;
         }
 
         public void AppsReject(PurchaseOrderApprovalLevel2Reject method)
@@ -59,6 +61,8 @@ namespace Allors.Database.Domain
 
                 this.PurchaseOrder.CreatedBy.NotificationList.AddNotification(this.RejectionNotification);
             }
+
+            method.StopPropagation = true;
         }
 
         public void ManageNotification(TaskAssignment taskAssignment)
