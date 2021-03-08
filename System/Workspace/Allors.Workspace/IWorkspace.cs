@@ -18,8 +18,6 @@ namespace Allors.Workspace
 
         IWorkspaceLifecycle StateLifecycle { get; }
 
-        IEnumerable<ISession> Sessions { get; }
-
         ISession CreateSession();
 
         IDictionary<Guid, IDomainDerivation> DomainDerivationById { get; }

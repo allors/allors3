@@ -11,24 +11,24 @@ namespace Allors.Workspace.Adapters
     using System.Linq;
     using Meta;
 
-    public class State
+    public class SessionState
     {
-        private readonly Dictionary<IRoleType, Dictionary<Identity, object>> roleByAssociationByRoleType;
-        private readonly Dictionary<IAssociationType, Dictionary<Identity, object>> associationByRoleByAssociationType;
+        private readonly IDictionary<IRoleType, IDictionary<Identity, object>> roleByAssociationByRoleType;
+        private readonly IDictionary<IAssociationType, IDictionary<Identity, object>> associationByRoleByAssociationType;
 
-        private Dictionary<IRoleType, Dictionary<Identity, object>> changedRoleByAssociationByRoleType;
-        private Dictionary<IAssociationType, Dictionary<Identity, object>> changedAssociationByRoleByAssociationType;
+        private IDictionary<IRoleType, IDictionary<Identity, object>> changedRoleByAssociationByRoleType;
+        private IDictionary<IAssociationType, IDictionary<Identity, object>> changedAssociationByRoleByAssociationType;
 
-        public State()
+        public SessionState()
         {
-            this.roleByAssociationByRoleType = new Dictionary<IRoleType, Dictionary<Identity, object>>();
-            this.associationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Identity, object>>();
+            this.roleByAssociationByRoleType = new Dictionary<IRoleType, IDictionary<Identity, object>>();
+            this.associationByRoleByAssociationType = new Dictionary<IAssociationType, IDictionary<Identity, object>>();
 
-            this.changedRoleByAssociationByRoleType = new Dictionary<IRoleType, Dictionary<Identity, object>>();
-            this.changedAssociationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Identity, object>>();
+            this.changedRoleByAssociationByRoleType = new Dictionary<IRoleType, IDictionary<Identity, object>>();
+            this.changedAssociationByRoleByAssociationType = new Dictionary<IAssociationType, IDictionary<Identity, object>>();
         }
 
-        public StateChangeSet Checkpoint()
+        public SessionStateChangeSet Checkpoint()
         {
             foreach (var roleType in this.changedRoleByAssociationByRoleType.Keys.ToArray())
             {
@@ -88,10 +88,10 @@ namespace Allors.Workspace.Adapters
                 }
             }
 
-            var changeSet = new StateChangeSet(this.changedRoleByAssociationByRoleType, this.changedAssociationByRoleByAssociationType);
+            var changeSet = new SessionStateChangeSet(this.changedRoleByAssociationByRoleType, this.changedAssociationByRoleByAssociationType);
 
-            this.changedRoleByAssociationByRoleType = new Dictionary<IRoleType, Dictionary<Identity, object>>();
-            this.changedAssociationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Identity, object>>();
+            this.changedRoleByAssociationByRoleType = new Dictionary<IRoleType, IDictionary<Identity, object>>();
+            this.changedAssociationByRoleByAssociationType = new Dictionary<IAssociationType, IDictionary<Identity, object>>();
 
             return changeSet;
         }
@@ -294,7 +294,7 @@ namespace Allors.Workspace.Adapters
             this.AssociationByRole(associationType).TryGetValue(role, out association);
         }
 
-        private Dictionary<Identity, object> AssociationByRole(IAssociationType asscociationType)
+        private IDictionary<Identity, object> AssociationByRole(IAssociationType asscociationType)
         {
             if (!this.associationByRoleByAssociationType.TryGetValue(asscociationType, out var associationByRole))
             {
@@ -305,7 +305,7 @@ namespace Allors.Workspace.Adapters
             return associationByRole;
         }
 
-        private Dictionary<Identity, object> RoleByAssociation(IRoleType roleType)
+        private IDictionary<Identity, object> RoleByAssociation(IRoleType roleType)
         {
             if (!this.roleByAssociationByRoleType.TryGetValue(roleType, out var roleByAssociation))
             {
@@ -316,7 +316,7 @@ namespace Allors.Workspace.Adapters
             return roleByAssociation;
         }
 
-        private Dictionary<Identity, object> ChangedAssociationByRole(IAssociationType associationType)
+        private IDictionary<Identity, object> ChangedAssociationByRole(IAssociationType associationType)
         {
             if (!this.changedAssociationByRoleByAssociationType.TryGetValue(associationType, out var changedAssociationByRole))
             {
@@ -327,7 +327,7 @@ namespace Allors.Workspace.Adapters
             return changedAssociationByRole;
         }
 
-        private Dictionary<Identity, object> ChangedRoleByAssociation(IRoleType roleType)
+        private IDictionary<Identity, object> ChangedRoleByAssociation(IRoleType roleType)
         {
             if (!this.changedRoleByAssociationByRoleType.TryGetValue(roleType, out var changedRoleByAssociation))
             {

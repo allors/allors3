@@ -7,19 +7,19 @@ namespace Allors.Workspace.Adapters.Remote
 {
     using System.Collections.Generic;
 
-    public class RemoteAccessControl
+    internal class RemoteAccessControl
     {
-        public RemoteAccessControl(long id, long version, ISet<long> permissionIds)
+        internal RemoteAccessControl(long id, long version, ISet<long> permissionIds)
         {
             this.Id = id;
             this.Version = version;
             this.PermissionIds = permissionIds;
         }
 
-        public long Id { get; }
+        internal long Id { get; }
 
-        public long Version { get; }
+        internal long Version { get; }
 
-        public ISet<long> PermissionIds { get; }
+        internal ISet<long> PermissionIds { get; }
     }
 }

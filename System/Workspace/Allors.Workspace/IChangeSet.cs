@@ -32,36 +32,10 @@ namespace Allors.Workspace
         /// <summary>
         /// Gets the deleted objects.
         /// </summary>
-        ISet<IStrategy> Deleted { get; }
+        ISet<IStrategy> Instantiated { get; }
 
-        /// <summary>
-        /// Gets the changed associations.
-        /// </summary>
-        ISet<Identity> Associations { get; }
+        IDictionary<IRoleType, ISet<Identity>> AssociationByRoleType { get; }
 
-        /// <summary>
-        /// Gets the changed roles.
-        /// </summary>
-        ISet<Identity> Roles { get; }
-
-        /// <summary>
-        /// Gets the changed role types by association.
-        /// </summary>
-        IDictionary<Identity, ISet<IRoleType>> RoleTypesByAssociation { get; }
-
-        /// <summary>
-        /// Gets the changed association types by role.
-        /// </summary>
-        IDictionary<Identity, ISet<IAssociationType>> AssociationTypesByRole { get; }
-
-        /// <summary>
-        /// Gets the changed associations by role type.
-        /// </summary>
-        IDictionary<IRoleType, ISet<Identity>> AssociationsByRoleType { get; }
-
-        /// <summary>
-        /// Gets the changed roles by association type.
-        /// </summary>
-        IDictionary<IAssociationType, ISet<Identity>> RolesByAssociationType { get; }
+        IDictionary<IAssociationType, ISet<Identity>> RoleByRoleType { get; }
     }
 }

@@ -30,13 +30,15 @@ namespace Allors.Workspace
 
         IEnumerable<T> Instantiate<T>(IEnumerable<IObject> objects) where T : IObject;
 
+        IEnumerable<T> Instantiate<T>(IEnumerable<T> objects) where T : IObject;
+
         IEnumerable<T> Instantiate<T>(IEnumerable<long> ids) where T : IObject;
 
         IEnumerable<T> Instantiate<T>(IEnumerable<Identity> identities) where T : IObject;
 
         void Reset();
 
-        void Refresh(bool merge = false);
+        void Merge();
 
         Task<ICallResult> Call(Method method, CallOptions options = null);
 
@@ -50,6 +52,6 @@ namespace Allors.Workspace
 
         Task<ISaveResult> Save();
 
-        IEnumerable<IChangeSet> Checkpoint();
+        IChangeSet Checkpoint();
     }
 }

@@ -5,39 +5,174 @@
 
 namespace Allors.Workspace.Adapters.Remote
 {
+    using System;
     using System.Collections.Generic;
+    using System.Linq;
+    using Allors.Protocol.Json.Api.Push;
     using Meta;
 
-    public abstract class RemoteStrategy : IStrategy
+    public sealed class RemoteStrategy : IStrategy
     {
-        public abstract IObject Object { get; }
+        private IObject @object;
 
-        public abstract Identity Identity { get; }
+        private readonly RemoteWorkspaceState workspaceState;
+        private readonly RemoteDatabaseState databaseState;
 
-        public abstract IClass Class { get; }
+        internal RemoteStrategy(RemoteSession session, IClass @class, Identity identity)
+        {
+            this.Session = session;
+            this.Identity = identity;
+            this.Class = @class;
+
+            if (!this.Class.HasSessionOrigin)
+            {
+                this.workspaceState = new RemoteWorkspaceState(this);
+            }
+
+            if (this.Class.HasDatabaseOrigin)
+            {
+                this.databaseState = new RemoteDatabaseState(this);
+            }
+        }
+
+        internal RemoteStrategy(RemoteSession session, RemoteDatabaseObject databaseObject)
+        {
+            this.Session = session;
+            this.Identity = databaseObject.Identity;
+            this.Class = databaseObject.Class;
+
+            this.workspaceState = new RemoteWorkspaceState(this);
+            this.databaseState = new RemoteDatabaseState(this, databaseObject);
+        }
 
         ISession IStrategy.Session => this.Session;
+        internal RemoteSession Session { get; }
 
-        public abstract RemoteSession Session { get; }
+        public IClass Class { get; }
 
-        public abstract bool Exist(IRoleType roleType);
+        public Identity Identity { get; }
 
-        public abstract object Get(IRoleType roleType);
+        internal IObject Object => this.@object ??= this.Session.Workspace.ObjectFactory.Create(this);
 
-        public abstract void Set(IRoleType roleType, object value);
+        internal bool HasDatabaseChanges => this.databaseState.HasDatabaseChanges;
 
-        public abstract void Add(IRoleType roleType, IObject value);
+        internal long DatabaseVersion => this.databaseState.Version;
 
-        public abstract void Remove(IRoleType roleType, IObject value);
+        public bool Exist(IRoleType roleType)
+        {
+            var value = this.Get(roleType);
 
-        public abstract IObject GetAssociation(IAssociationType associationType);
+            if (roleType.ObjectType.IsComposite && roleType.IsMany)
+            {
+                return ((IEnumerable<IObject>)value).Any();
+            }
 
-        public abstract IEnumerable<IObject> GetAssociations(IAssociationType associationType);
+            return value != null;
+        }
 
-        public abstract bool CanRead(IRoleType roleType);
+        public object Get(IRoleType roleType) =>
+            roleType.Origin switch
+            {
+                Origin.Session => this.Session.GetRole(this.Identity, roleType),
+                Origin.Workspace => this.workspaceState?.GetRole(roleType),
+                Origin.Database => this.databaseState?.GetRole(roleType),
+                _ => throw new ArgumentException("Unsupported Origin")
+            };
 
-        public abstract bool CanWrite(IRoleType roleType);
+        public void Set(IRoleType roleType, object value)
+        {
+            switch (roleType.Origin)
+            {
+                case Origin.Session:
+                    this.Session.SetRole(this.Identity, roleType, value);
+                    break;
 
-        public abstract bool CanExecute(IMethodType methodType);
+                case Origin.Workspace:
+                    this.workspaceState?.SetRole(roleType, value);
+
+                    break;
+
+                case Origin.Database:
+                    this.databaseState?.SetRole(roleType, value);
+
+                    break;
+                default:
+                    throw new ArgumentException("Unsupported Origin");
+            }
+        }
+
+        public void Add(IRoleType roleType, IObject value)
+        {
+            var roles = (IObject[])this.Get(roleType);
+            if (!roles.Contains(value))
+            {
+                roles = new List<IObject>(roles) { value }.ToArray();
+            }
+
+            this.Set(roleType, roles);
+        }
+
+        public void Remove(IRoleType roleType, IObject value)
+        {
+            var roles = (IStrategy[])this.Get(roleType);
+            if (roles.Contains(value.Strategy))
+            {
+                var newRoles = new List<IStrategy>(roles);
+                _ = newRoles.Remove(value.Strategy);
+                roles = newRoles.ToArray();
+            }
+
+            this.Set(roleType, roles);
+        }
+
+        public IObject GetAssociation(IAssociationType associationType)
+        {
+            if (associationType.Origin != Origin.Session)
+            {
+                return this.Session.GetAssociation(this.Object, associationType).FirstOrDefault();
+            }
+
+            this.Session.SessionState.GetAssociation(this.Identity, associationType, out var association);
+            var id = (Identity)association;
+            return id != null ? this.Session.Instantiate<IObject>(id) : null;
+        }
+
+        public IEnumerable<IObject> GetAssociations(IAssociationType associationType)
+        {
+            if (associationType.Origin != Origin.Session)
+            {
+                return this.Session.GetAssociation(this.Object, associationType);
+            }
+
+            this.Session.SessionState.GetAssociation(this.Identity, associationType, out var association);
+            var ids = (IEnumerable<Identity>)association;
+            return ids?.Select(v => this.Session.Instantiate<IObject>(v)).ToArray() ?? Array.Empty<IObject>();
+        }
+
+        public bool CanRead(IRoleType roleType) => this.databaseState?.CanRead(roleType) ?? true;
+
+        public bool CanWrite(IRoleType roleType) => this.databaseState?.CanWrite(roleType) ?? true;
+
+        public bool CanExecute(IMethodType methodType) => this.databaseState?.CanExecute(methodType) ?? false;
+
+        internal void Reset()
+        {
+            this.workspaceState?.Reset();
+            this.databaseState?.Reset();
+        }
+
+        internal void Merge()
+        {
+            this.workspaceState?.Merge();
+            this.databaseState?.Merge();
+        }
+
+        internal PushRequestNewObject DatabaseSaveNew() => this.databaseState.SaveNew();
+
+        internal PushRequestObject DatabaseSaveExisting() => this.databaseState.SaveExisting();
+
+        internal void DatabasePushResponse(RemoteDatabaseObject databaseObject) => this.databaseState.PushResponse(databaseObject);
+
+        internal void WorkspaceSave() => this.workspaceState.Push();
     }
 }

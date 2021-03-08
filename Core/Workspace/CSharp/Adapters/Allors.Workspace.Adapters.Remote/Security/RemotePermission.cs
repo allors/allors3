@@ -7,9 +7,9 @@ namespace Allors.Workspace.Adapters.Remote
 {
     using Meta;
 
-    public class RemotePermission
+    internal class RemotePermission
     {
-        public RemotePermission(long id, IClass @class, IOperandType operandType, Operations operation)
+        internal RemotePermission(long id, IClass @class, IOperandType operandType, Operations operation)
         {
             this.Id = id;
             this.Class = @class;
@@ -17,12 +17,12 @@ namespace Allors.Workspace.Adapters.Remote
             this.Operation = operation;
         }
 
-        public long Id { get; }
+        internal long Id { get; }
 
-        public IClass Class { get; }
+        internal IClass Class { get; }
 
-        public IOperandType OperandType { get; }
+        internal IOperandType OperandType { get; }
 
-        public Operations Operation { get; }
+        internal Operations Operation { get; }
     }
 }

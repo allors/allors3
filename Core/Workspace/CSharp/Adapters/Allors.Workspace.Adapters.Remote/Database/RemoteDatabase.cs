@@ -24,13 +24,13 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class RemoteDatabase
     {
-        private readonly Dictionary<Identity, RemoteDatabaseRoles> databaseRolesByDatabaseId;
+        private readonly Dictionary<Identity, RemoteDatabaseObject> databaseRolesByDatabaseId;
 
         private readonly Dictionary<IClass, Dictionary<IOperandType, RemotePermission>> readPermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, RemotePermission>> writePermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, RemotePermission>> executePermissionByOperandTypeByClass;
 
-        public RemoteDatabase(IMetaPopulation metaPopulation, HttpClient httpClient, Identities identities)
+        internal RemoteDatabase(IMetaPopulation metaPopulation, HttpClient httpClient, Identities identities)
         {
             this.MetaPopulation = metaPopulation;
             this.HttpClient = httpClient;
@@ -42,7 +42,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.AccessControlById = new Dictionary<long, RemoteAccessControl>();
             this.PermissionById = new Dictionary<long, RemotePermission>();
 
-            this.databaseRolesByDatabaseId = new Dictionary<Identity, RemoteDatabaseRoles>();
+            this.databaseRolesByDatabaseId = new Dictionary<Identity, RemoteDatabaseObject>();
 
             this.readPermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, RemotePermission>>();
             this.writePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, RemotePermission>>();
@@ -51,13 +51,13 @@ namespace Allors.Workspace.Adapters.Remote
 
         ~RemoteDatabase() => this.HttpClient.Dispose();
 
-        public IMetaPopulation MetaPopulation { get; }
+        internal IMetaPopulation MetaPopulation { get; }
 
         public HttpClient HttpClient { get; }
 
-        public Identities Identities { get; }
+        internal Identities Identities { get; }
 
-        public IAsyncPolicy Policy { get; set; } = Polly.Policy
+        internal IAsyncPolicy Policy { get; set; } = Polly.Policy
            .Handle<HttpRequestException>()
            .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
 
@@ -70,25 +70,23 @@ namespace Allors.Workspace.Adapters.Remote
         public async Task<bool> Login(Uri url, string username, string password)
         {
             var request = new { UserName = username, Password = password };
-            using (var response = await this.PostAsJsonAsync(url, request))
+            using var response = await this.PostAsJsonAsync(url, request);
+            response.EnsureSuccessStatusCode();
+            var authResult = await this.ReadAsAsync<AuthenticationTokenResponse>(response);
+            if (!authResult.Authenticated)
             {
-                response.EnsureSuccessStatusCode();
-                var authResult = await this.ReadAsAsync<AuthenticationTokenResponse>(response);
-                if (!authResult.Authenticated)
-                {
-                    return false;
-                }
-
-                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authResult.Token);
-                this.UserId = authResult.UserId;
-
-                return true;
+                return false;
             }
+
+            this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authResult.Token);
+            this.UserId = authResult.UserId;
+
+            return true;
         }
 
-        internal RemoteDatabaseRoles PushResponse(Identity identity, IClass @class)
+        internal RemoteDatabaseObject PushResponse(Identity identity, IClass @class)
         {
-            var databaseObject = new RemoteDatabaseRoles(this, identity, @class);
+            var databaseObject = new RemoteDatabaseObject(this, identity, @class);
             this.databaseRolesByDatabaseId[identity] = databaseObject;
             return databaseObject;
         }
@@ -98,7 +96,7 @@ namespace Allors.Workspace.Adapters.Remote
             var ctx = new RemoteResponseContext(this.AccessControlById, this.PermissionById);
             foreach (var syncResponseObject in syncResponse.Objects)
             {
-                var databaseRoles = new RemoteDatabaseRoles(this, ctx, syncResponseObject);
+                var databaseRoles = new RemoteDatabaseObject(this, ctx, syncResponseObject);
                 this.databaseRolesByDatabaseId[databaseRoles.Identity] = databaseRoles;
             }
 
@@ -162,15 +160,10 @@ namespace Allors.Workspace.Adapters.Remote
             };
         }
 
-        internal RemoteDatabaseRoles Get(Identity databaseId)
+        internal RemoteDatabaseObject Get(Identity databaseId)
         {
-            var databaseObject = this.databaseRolesByDatabaseId[databaseId];
-            if (databaseObject == null)
-            {
-                throw new Exception($"Object with id {databaseId} is not present.");
-            }
-
-            return databaseObject;
+            this.databaseRolesByDatabaseId.TryGetValue(databaseId, out var databaseRoles);
+            return databaseRoles;
         }
 
         internal SecurityRequest SecurityResponse(SecurityResponse securityResponse)
@@ -267,7 +260,7 @@ namespace Allors.Workspace.Adapters.Remote
             return null;
         }
 
-        internal IEnumerable<RemoteDatabaseRoles> Get(IComposite objectType)
+        internal IEnumerable<RemoteDatabaseObject> Get(IComposite objectType)
         {
             var classes = new HashSet<IClass>(objectType.DatabaseClasses);
             return this.databaseRolesByDatabaseId.Where(v => classes.Contains(v.Value.Class)).Select(v => v.Value);
@@ -325,7 +318,6 @@ namespace Allors.Workspace.Adapters.Remote
             var uri = new Uri(name + "/pull", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, pullRequest);
             response.EnsureSuccessStatusCode();
-
             return await this.ReadAsAsync<PullResponse>(response);
         }
 

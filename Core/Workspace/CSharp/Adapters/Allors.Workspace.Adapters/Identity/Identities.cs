@@ -14,12 +14,12 @@ namespace Allors.Workspace.Adapters
 
         private readonly IDictionary<long, Identity> identityById;
 
-        private long workspaceIdCounter;
+        private long sessionAndWorkspaceIdCounter;
 
         public Identities()
         {
             this.identityById = new Dictionary<long, Identity>();
-            this.workspaceIdCounter = 0;
+            this.sessionAndWorkspaceIdCounter = 0;
         }
 
         public Identity Get(long id)
@@ -84,12 +84,23 @@ namespace Allors.Workspace.Adapters
             lock (this.identityByIdLock)
             {
                 var workspaceId = this.NextWorkspaceId();
-                var identity = new WorkspaceIdentity(--this.workspaceIdCounter);
+                var identity = new WorkspaceIdentity(--this.sessionAndWorkspaceIdCounter);
                 this.identityById.Add(workspaceId, identity);
                 return identity;
             }
         }
 
-        private long NextWorkspaceId() => --this.workspaceIdCounter;
+        public SessionIdentity NextSessionIdentity()
+        {
+            lock (this.identityByIdLock)
+            {
+                var workspaceId = this.NextWorkspaceId();
+                var identity = new SessionIdentity(--this.sessionAndWorkspaceIdCounter);
+                this.identityById.Add(workspaceId, identity);
+                return identity;
+            }
+        }
+
+        private long NextWorkspaceId() => --this.sessionAndWorkspaceIdCounter;
     }
 }
