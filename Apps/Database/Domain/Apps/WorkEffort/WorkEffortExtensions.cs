@@ -47,16 +47,17 @@ namespace Allors.Database.Domain
 
         public static void AppsComplete(this WorkEffort @this, WorkEffortComplete method)
         {
-            if (!method.Result.HasValue)
-            {
-                @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Transaction).Completed;
-                method.Result = true;
-            }
+            @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Transaction).Completed;
+            method.StopPropagation = true;
         }
 
-        public static void AppsCancel(this WorkEffort @this, WorkEffortCancel cancel) => @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Transaction).Cancelled;
+        public static void AppsCancel(this WorkEffort @this, WorkEffortCancel method)
+        {
+            @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Transaction).Cancelled;
+            method.StopPropagation = true;
+        }
 
-        public static void AppsReopen(this WorkEffort @this, WorkEffortReopen reopen)
+        public static void AppsReopen(this WorkEffort @this, WorkEffortReopen method)
         {
             if (@this.ExistActualStart)
             {
@@ -66,6 +67,8 @@ namespace Allors.Database.Domain
             {
                 @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Transaction).Created;
             }
+
+            method.StopPropagation = true;
         }
 
         public static void AppsRevise(this WorkEffort @this, WorkEffortRevise method)
@@ -78,21 +81,20 @@ namespace Allors.Database.Domain
             {
                 @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Transaction).Created;
             }
+
+            method.StopPropagation = true;
         }
 
         public static void AppsInvoice(this WorkEffort @this, WorkEffortInvoice method)
         {
-            if (!method.Result.HasValue)
+            if (@this.CanInvoice)
             {
-                if (@this.CanInvoice)
-                {
-                    @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Transaction).Finished;
-                    @this.InvoiceThis();
-                    @this.CanInvoice = false;
-                }
-
-                method.Result = true;
+                @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Transaction).Finished;
+                @this.InvoiceThis();
+                @this.CanInvoice = false;
             }
+
+            method.StopPropagation = true;
         }
 
         private static SalesInvoice InvoiceThis(this WorkEffort @this)

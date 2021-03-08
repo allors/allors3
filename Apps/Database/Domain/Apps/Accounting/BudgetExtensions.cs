@@ -15,8 +15,16 @@ namespace Allors.Database.Domain
             }
         }
 
-        public static void AppsClose(this Budget @this, BudgetClose method) => @this.BudgetState = new BudgetStates(@this.Strategy.Transaction).Closed;
+        public static void AppsClose(this Budget @this, BudgetClose method)
+        {
+            @this.BudgetState = new BudgetStates(@this.Strategy.Transaction).Closed;
+            method.StopPropagation = true;
+        }
 
-        public static void AppsReopen(this Budget @this, BudgetReopen method) => @this.BudgetState = new BudgetStates(@this.Strategy.Transaction).Opened;
+        public static void AppsReopen(this Budget @this, BudgetReopen method)
+        {
+            @this.BudgetState = new BudgetStates(@this.Strategy.Transaction).Opened;
+            method.StopPropagation = true;
+        }
     }
 }

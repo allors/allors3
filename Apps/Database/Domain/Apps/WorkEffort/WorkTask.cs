@@ -28,31 +28,30 @@ namespace Allors.Database.Domain
 
         public void AppsPrint(PrintablePrint method)
         {
-            if (!method.IsPrinted)
+            var singleton = this.Strategy.Transaction.GetSingleton();
+            var logo = this.TakenBy?.ExistLogoImage == true ?
+                            this.TakenBy.LogoImage.MediaContent.Data :
+                            singleton.LogoImage.MediaContent.Data;
+
+            var images = new Dictionary<string, byte[]>
+                                {
+                                    { "Logo", logo },
+                                };
+
+            if (this.ExistWorkEffortNumber)
             {
-                var singleton = this.Strategy.Transaction.GetSingleton();
-                var logo = this.TakenBy?.ExistLogoImage == true ?
-                               this.TakenBy.LogoImage.MediaContent.Data :
-                               singleton.LogoImage.MediaContent.Data;
-
-                var images = new Dictionary<string, byte[]>
-                                 {
-                                     { "Logo", logo },
-                                 };
-
-                if (this.ExistWorkEffortNumber)
-                {
-                    var transaction = this.Strategy.Transaction;
-                    var barcodeService = transaction.Database.Context().BarcodeGenerator;
-                    var barcode = barcodeService.Generate(this.WorkEffortNumber, BarcodeType.CODE_128, 320, 80, pure: true);
-                    images["Barcode"] = barcode;
-                }
-
-                var model = new Print.WorkTaskModel.Model(this);
-                this.RenderPrintDocument(this.TakenBy?.WorkTaskTemplate, model, images);
-
-                this.PrintDocument.Media.InFileName = $"{this.WorkEffortNumber}.odt";
+                var transaction = this.Strategy.Transaction;
+                var barcodeService = transaction.Database.Context().BarcodeGenerator;
+                var barcode = barcodeService.Generate(this.WorkEffortNumber, BarcodeType.CODE_128, 320, 80, pure: true);
+                images["Barcode"] = barcode;
             }
+
+            var model = new Print.WorkTaskModel.Model(this);
+            this.RenderPrintDocument(this.TakenBy?.WorkTaskTemplate, model, images);
+
+            this.PrintDocument.Media.InFileName = $"{this.WorkEffortNumber}.odt";
+
+            method.StopPropagation = true;
         }
     }
 }

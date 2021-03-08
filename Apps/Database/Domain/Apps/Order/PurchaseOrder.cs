@@ -162,41 +162,49 @@ namespace Allors.Database.Domain
         }
 
         public void AppsPrint(PrintablePrint method)
-        {
-            if (!method.IsPrinted)
+    {
+            var singleton = this.Strategy.Transaction.GetSingleton();
+            var logo = this.OrderedBy?.ExistLogoImage == true ?
+                this.OrderedBy.LogoImage.MediaContent.Data :
+                singleton.LogoImage.MediaContent.Data;
+
+            var images = new Dictionary<string, byte[]>
             {
-                var singleton = this.Strategy.Transaction.GetSingleton();
-                var logo = this.OrderedBy?.ExistLogoImage == true ?
-                    this.OrderedBy.LogoImage.MediaContent.Data :
-                    singleton.LogoImage.MediaContent.Data;
+                { "Logo", logo },
+            };
 
-                var images = new Dictionary<string, byte[]>
-                {
-                    { "Logo", logo },
-                };
-
-                if (this.ExistOrderNumber)
-                {
-                    var transaction = this.Strategy.Transaction;
-                    var barcodeService = transaction.Database.Context().BarcodeGenerator;
-                    var barcode = barcodeService.Generate(this.OrderNumber, BarcodeType.CODE_128, 320, 80, pure: true);
-                    images.Add("Barcode", barcode);
-                }
-
-                var model = new Print.PurchaseOrderModel.Model(this);
-                this.RenderPrintDocument(this.OrderedBy?.PurchaseOrderTemplate, model, images);
-
-                this.PrintDocument.Media.InFileName = $"{this.OrderNumber}.odt";
+            if (this.ExistOrderNumber)
+            {
+                var transaction = this.Strategy.Transaction;
+                var barcodeService = transaction.Database.Context().BarcodeGenerator;
+                var barcode = barcodeService.Generate(this.OrderNumber, BarcodeType.CODE_128, 320, 80, pure: true);
+                images.Add("Barcode", barcode);
             }
+
+            var model = new Print.PurchaseOrderModel.Model(this);
+            this.RenderPrintDocument(this.OrderedBy?.PurchaseOrderTemplate, model, images);
+
+            this.PrintDocument.Media.InFileName = $"{this.OrderNumber}.odt";
+
+            method.StopPropagation = true;
         }
 
-        public void AppsCancel(OrderCancel method) => this.PurchaseOrderState = new PurchaseOrderStates(this.Strategy.Transaction).Cancelled;
+        public void AppsCancel(OrderCancel method)
+        {
+            this.PurchaseOrderState = new PurchaseOrderStates(this.Strategy.Transaction).Cancelled;
+            method.StopPropagation = true;
+        }
 
-        public void AppsSetReadyForProcessing(PurchaseOrderSetReadyForProcessing method) => this.PurchaseOrderState = this.NeedsApprovalLevel1
+        public void AppsSetReadyForProcessing(PurchaseOrderSetReadyForProcessing method)
+        {
+            this.PurchaseOrderState = this.NeedsApprovalLevel1
                 ? new PurchaseOrderStates(this.Strategy.Transaction).AwaitingApprovalLevel1
                 : this.PurchaseOrderState = this.NeedsApprovalLevel2
-                    ? new PurchaseOrderStates(this.Strategy.Transaction).AwaitingApprovalLevel2
-                    : new PurchaseOrderStates(this.Strategy.Transaction).InProcess;
+                ? new PurchaseOrderStates(this.Strategy.Transaction).AwaitingApprovalLevel2
+                : new PurchaseOrderStates(this.Strategy.Transaction).InProcess;
+
+            method.StopPropagation = true;
+        }
 
         public void AppsReject(OrderReject method)
         {
@@ -205,9 +213,15 @@ namespace Allors.Database.Domain
             {
                 purchaseOrderItem.Reject();
             }
+
+            method.StopPropagation = true;
         }
 
-        public void AppsHold(OrderHold method) => this.PurchaseOrderState = new PurchaseOrderStates(this.Strategy.Transaction).OnHold;
+        public void AppsHold(OrderHold method)
+        {
+            this.PurchaseOrderState = new PurchaseOrderStates(this.Strategy.Transaction).OnHold;
+            method.StopPropagation = true;
+        }
 
         public void AppsApprove(OrderApprove method)
         {
@@ -224,15 +238,33 @@ namespace Allors.Database.Domain
             {
                 openTasks.First().DateClosed = this.Transaction().Now();
             }
+
+            method.StopPropagation = true;
         }
 
-        public void AppsRevise(PurchaseOrderRevise method) => this.PurchaseOrderState = new PurchaseOrderStates(this.Strategy.Transaction).Created;
+        public void AppsRevise(PurchaseOrderRevise method)
+        {
+            this.PurchaseOrderState = new PurchaseOrderStates(this.Strategy.Transaction).Created;
+            method.StopPropagation = true;
+        }
 
-        public void AppsReopen(OrderReopen method) => this.PurchaseOrderState = this.PreviousPurchaseOrderState;
+        public void AppsReopen(OrderReopen method)
+        {
+            this.PurchaseOrderState = this.PreviousPurchaseOrderState;
+            method.StopPropagation = true;
+        }
 
-        public void AppsContinue(OrderContinue method) => this.PurchaseOrderState = this.PreviousPurchaseOrderState;
+        public void AppsContinue(OrderContinue method)
+        {
+            this.PurchaseOrderState = this.PreviousPurchaseOrderState;
+            method.StopPropagation = true;
+        }
 
-        public void AppsSend(PurchaseOrderSend method) => this.PurchaseOrderState = new PurchaseOrderStates(this.Strategy.Transaction).Sent;
+        public void AppsSend(PurchaseOrderSend method)
+        {
+            this.PurchaseOrderState = new PurchaseOrderStates(this.Strategy.Transaction).Sent;
+            method.StopPropagation = true;
+        }
 
         public void AppsQuickReceive(PurchaseOrderQuickReceive method)
         {
@@ -301,14 +333,13 @@ namespace Allors.Database.Domain
                     }
                 }
 
-                if (shipment.ShipToParty is InternalOrganisation internalOrganisation)
+                if (shipment.ShipToParty is InternalOrganisation internalOrganisation && internalOrganisation.IsAutomaticallyReceived)
                 {
-                    if (internalOrganisation.IsAutomaticallyReceived)
-                    {
-                        shipment.Receive();
-                    }
+                    shipment.Receive();
                 }
             }
+
+            method.StopPropagation = true;
         }
 
         public void AppsInvoice(PurchaseOrderInvoice method)
@@ -391,6 +422,8 @@ namespace Allors.Database.Domain
 
                 this.DerivationTrigger = new Guid();
             }
+
+            method.StopPropagation = true;
         }
     }
 }

@@ -149,7 +149,11 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void AppsCancel(OrderCancel method) => this.SalesOrderState = new SalesOrderStates(this.Strategy.Transaction).Cancelled;
+        public void AppsCancel(OrderCancel method)
+        {
+            this.SalesOrderState = new SalesOrderStates(this.Strategy.Transaction).Cancelled;
+            method.StopPropagation = true;
+        }
 
         public void AppsSetReadyForPosting(SalesOrderSetReadyForPosting method)
         {
@@ -167,25 +171,63 @@ namespace Allors.Database.Domain
             {
                 this.SalesOrderState = new SalesOrderStates(this.Strategy.Transaction).ReadyForPosting;
             }
+
+            method.StopPropagation = true;
         }
 
-        public void AppsPost(SalesOrderPost method) => this.SalesOrderState = new SalesOrderStates(this.Strategy.Transaction).AwaitingAcceptance;
+        public void AppsPost(SalesOrderPost method)
+        {
+            this.SalesOrderState = new SalesOrderStates(this.Strategy.Transaction).AwaitingAcceptance;
+            method.StopPropagation = true;
+        }
 
-        public void AppsReject(OrderReject method) => this.SalesOrderState = new SalesOrderStates(this.Strategy.Transaction).Rejected;
+        public void AppsReject(OrderReject method)
+        {
+            this.SalesOrderState = new SalesOrderStates(this.Strategy.Transaction).Rejected;
+            method.StopPropagation = true;
+        }
 
-        public void AppsReopen(OrderReopen method) => this.SalesOrderState = this.PreviousSalesOrderState;
+        public void AppsReopen(OrderReopen method)
+        {
+            this.SalesOrderState = this.PreviousSalesOrderState;
+            method.StopPropagation = true;
+        }
 
-        public void AppsHold(OrderHold method) => this.SalesOrderState = new SalesOrderStates(this.Strategy.Transaction).OnHold;
+        public void AppsHold(OrderHold method)
+        {
+            this.SalesOrderState = new SalesOrderStates(this.Strategy.Transaction).OnHold;
+            method.StopPropagation = true;
+        }
 
-        public void AppsApprove(OrderApprove method) => this.SalesOrderState = new SalesOrderStates(this.Strategy.Transaction).ReadyForPosting;
+        public void AppsApprove(OrderApprove method)
+        {
+            this.SalesOrderState = new SalesOrderStates(this.Strategy.Transaction).ReadyForPosting;
+            method.StopPropagation = true;
+        }
 
-        public void AppsAccept(SalesOrderAccept method) => this.SalesOrderState = new SalesOrderStates(this.Strategy.Transaction).InProcess;
+        public void AppsAccept(SalesOrderAccept method)
+        {
+            this.SalesOrderState = new SalesOrderStates(this.Strategy.Transaction).InProcess;
+            method.StopPropagation = true;
+        }
 
-        public void AppsRevise(OrderRevise method) => this.SalesOrderState = new SalesOrderStates(this.Strategy.Transaction).Provisional;
+        public void AppsRevise(OrderRevise method)
+        {
+            this.SalesOrderState = new SalesOrderStates(this.Strategy.Transaction).Provisional;
+            method.StopPropagation = true;
+        }
 
-        public void AppsContinue(OrderContinue method) => this.SalesOrderState = this.PreviousSalesOrderState;
+        public void AppsContinue(OrderContinue method)
+        {
+            this.SalesOrderState = this.PreviousSalesOrderState;
+            method.StopPropagation = true;
+        }
 
-        public void AppsComplete(OrderComplete method) => this.SalesOrderState = new SalesOrderStates(this.Strategy.Transaction).Completed;
+        public void AppsComplete(OrderComplete method)
+        {
+            this.SalesOrderState = new SalesOrderStates(this.Strategy.Transaction).Completed;
+            method.StopPropagation = true;
+        }
 
         public void AppsShip(SalesOrderShip method)
         {
@@ -300,6 +342,8 @@ namespace Allors.Database.Domain
                     }
                 }
             }
+
+            method.StopPropagation = true;
         }
 
         public void AppsInvoice(SalesOrderInvoice method)
@@ -437,35 +481,36 @@ namespace Allors.Database.Domain
                     }
                 }
             }
+
+            method.StopPropagation = true;
         }
 
         public void AppsPrint(PrintablePrint method)
         {
-            if (!method.IsPrinted)
+            var singleton = this.Strategy.Transaction.GetSingleton();
+            var logo = this.TakenBy?.ExistLogoImage == true ?
+                            this.TakenBy.LogoImage.MediaContent.Data :
+                            singleton.LogoImage.MediaContent.Data;
+
+            var images = new Dictionary<string, byte[]>
+                                {
+                                    { "Logo", logo },
+                                };
+
+            if (this.ExistOrderNumber)
             {
-                var singleton = this.Strategy.Transaction.GetSingleton();
-                var logo = this.TakenBy?.ExistLogoImage == true ?
-                               this.TakenBy.LogoImage.MediaContent.Data :
-                               singleton.LogoImage.MediaContent.Data;
-
-                var images = new Dictionary<string, byte[]>
-                                 {
-                                     { "Logo", logo },
-                                 };
-
-                if (this.ExistOrderNumber)
-                {
-                    var transaction = this.Strategy.Transaction;
-                    var barcodeService = transaction.Database.Context().BarcodeGenerator;
-                    var barcode = barcodeService.Generate(this.OrderNumber, BarcodeType.CODE_128, 320, 80, pure: true);
-                    images.Add("Barcode", barcode);
-                }
-
-                var model = new Print.SalesOrderModel.Model(this);
-                this.RenderPrintDocument(this.TakenBy?.SalesOrderTemplate, model, images);
-
-                this.PrintDocument.Media.InFileName = $"{this.OrderNumber}.odt";
+                var transaction = this.Strategy.Transaction;
+                var barcodeService = transaction.Database.Context().BarcodeGenerator;
+                var barcode = barcodeService.Generate(this.OrderNumber, BarcodeType.CODE_128, 320, 80, pure: true);
+                images.Add("Barcode", barcode);
             }
+
+            var model = new Print.SalesOrderModel.Model(this);
+            this.RenderPrintDocument(this.TakenBy?.SalesOrderTemplate, model, images);
+
+            this.PrintDocument.Media.InFileName = $"{this.OrderNumber}.odt";
+
+            method.StopPropagation = true;
         }
 
         private Dictionary<PostalAddress, Party> ShipToAddresses()

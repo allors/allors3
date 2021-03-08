@@ -42,7 +42,11 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void AppsCancel(RequestItemCancel method) => this.RequestItemState = new RequestItemStates(this.Strategy.Transaction).Cancelled;
+        public void AppsCancel(RequestItemCancel method)
+        {
+            this.RequestItemState = new RequestItemStates(this.Strategy.Transaction).Cancelled;
+            method.StopPropagation = true;
+        }
 
         public void Sync(Request request) => this.SyncedRequest = request;
     }

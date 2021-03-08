@@ -50,12 +50,28 @@ namespace Allors.Database.Domain
             }
         }
 
-        public static void AppsCancel(this Request @this, RequestCancel method) => @this.RequestState = new RequestStates(@this.Strategy.Transaction).Cancelled;
+        public static void AppsCancel(this Request @this, RequestCancel method)
+        {
+            @this.RequestState = new RequestStates(@this.Strategy.Transaction).Cancelled;
+            method.StopPropagation = true;
+        }
 
-        public static void AppsReject(this Request @this, RequestReject method) => @this.RequestState = new RequestStates(@this.Strategy.Transaction).Rejected;
+        public static void AppsReject(this Request @this, RequestReject method)
+        {
+            @this.RequestState = new RequestStates(@this.Strategy.Transaction).Rejected;
+            method.StopPropagation = true;
+        }
 
-        public static void AppsSubmit(this Request @this, RequestSubmit method) => @this.RequestState = new RequestStates(@this.Strategy.Transaction).Submitted;
+        public static void AppsSubmit(this Request @this, RequestSubmit method)
+        {
+            @this.RequestState = new RequestStates(@this.Strategy.Transaction).Submitted;
+            method.StopPropagation = true;
+        }
 
-        public static void AppsHold(this Request @this, RequestHold method) => @this.RequestState = new RequestStates(@this.Strategy.Transaction).PendingCustomer;
+        public static void AppsHold(this Request @this, RequestHold method)
+        {
+            @this.RequestState = new RequestStates(@this.Strategy.Transaction).PendingCustomer;
+            method.StopPropagation = true;
+        }
     }
 }

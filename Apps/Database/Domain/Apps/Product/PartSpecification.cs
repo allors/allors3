@@ -20,6 +20,10 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void AppsApprove(PartSpecificationApprove method) => this.PartSpecificationState = new PartSpecificationStates(this.Strategy.Transaction).Approved;
+        public void AppsApprove(PartSpecificationApprove method)
+        {
+            this.PartSpecificationState = new PartSpecificationStates(this.Strategy.Transaction).Approved;
+            method.StopPropagation = true;
+        }
     }
 }

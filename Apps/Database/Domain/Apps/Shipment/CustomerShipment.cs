@@ -126,42 +126,65 @@ namespace Allors.Database.Domain
 
         public void AppsOnPostDerive(ObjectOnPostDerive method) => method.Derivation.Validation.AssertExists(this, this.M.CustomerShipment.ShipToParty);
 
-        public void AppsCancel(CustomerShipmentCancel method) => this.ShipmentState = new ShipmentStates(this.Strategy.Transaction).Cancelled;
+        public void AppsCancel(CustomerShipmentCancel method)
+        {
+            this.ShipmentState = new ShipmentStates(this.Strategy.Transaction).Cancelled;
+            method.StopPropagation = true;
+        }
 
         public void AppsPick(CustomerShipmentPick method)
         {
-            if (!method.Overridden)
+            this.CreatePickList();
+
+            foreach (ShipmentItem shipmentItem in this.ShipmentItems)
             {
-                this.CreatePickList();
-
-                foreach (ShipmentItem shipmentItem in this.ShipmentItems)
-                {
-                    shipmentItem.ShipmentItemState = new ShipmentItemStates(this.Transaction()).Picking;
-                }
-
-                this.ShipmentState = new ShipmentStates(this.Strategy.Transaction).Picking;
+                shipmentItem.ShipmentItemState = new ShipmentItemStates(this.Transaction()).Picking;
             }
+
+            this.ShipmentState = new ShipmentStates(this.Strategy.Transaction).Picking;
+
+            method.StopPropagation = true;
         }
 
         public void AppsHold(CustomerShipmentHold method)
         {
             this.HeldManually = true;
             this.PutOnHold();
+
+            method.StopPropagation = true;
         }
 
-        public void AppsPutOnHold(CustomerShipmentPutOnHold method) => this.ShipmentState = new ShipmentStates(this.Strategy.Transaction).OnHold;
+        public void AppsPutOnHold(CustomerShipmentPutOnHold method)
+        {
+            this.ShipmentState = new ShipmentStates(this.Strategy.Transaction).OnHold;
+            method.StopPropagation = true;
+        }
 
         public void AppsContinue(CustomerShipmentContinue method)
         {
             this.ReleasedManually = true;
             this.ProcessOnContinue();
+
+            method.StopPropagation = true;
         }
 
-        public void AppsProcessOnContinue(CustomerShipmentProcessOnContinue method) => this.ShipmentState = this.ExistPreviousShipmentState ? this.PreviousShipmentState : new ShipmentStates(this.Strategy.Transaction).Created;
+        public void AppsProcessOnContinue(CustomerShipmentProcessOnContinue method)
+        {
+            this.ShipmentState = this.ExistPreviousShipmentState ? this.PreviousShipmentState : new ShipmentStates(this.Strategy.Transaction).Created;
+            method.StopPropagation = true;
+        }
 
-        public void AppsSetPicked(CustomerShipmentSetPicked method) => this.ShipmentState = new ShipmentStates(this.Strategy.Transaction).Picked;
+        public void AppsSetPicked(CustomerShipmentSetPicked method)
+        {
+            this.ShipmentState = new ShipmentStates(this.Strategy.Transaction).Picked;
+            method.StopPropagation = true;
+        }
 
-        public void AppsSetPacked(CustomerShipmentSetPacked method) => this.ShipmentState = new ShipmentStates(this.Strategy.Transaction).Packed;
+        public void AppsSetPacked(CustomerShipmentSetPacked method)
+        {
+            this.ShipmentState = new ShipmentStates(this.Strategy.Transaction).Packed;
+            method.StopPropagation = true;
+        }
 
         public void AppsShip(CustomerShipmentShip method)
         {
@@ -211,6 +234,8 @@ namespace Allors.Database.Domain
                     }
                 }
             }
+
+            method.StopPropagation = true;
         }
 
         public void AppsInvoice(CustomerShipmentInvoice method)
@@ -362,32 +387,8 @@ namespace Allors.Database.Domain
                     }
                 }
             }
-        }
 
-        public void AppsOnDeriveShipmentValue(IDerivation derivation)
-        {
-            //var shipmentValue = 0M;
-            //foreach (ShipmentItem shipmentItem in this.ShipmentItems)
-            //{
-            //    foreach (OrderShipment orderShipment in shipmentItem.OrderShipmentsWhereShipmentItem)
-            //    {
-            //        shipmentValue += orderShipment.Quantity * orderShipment.OrderItem.UnitPrice;
-            //    }
-            //}
-
-            //this.ShipmentValue = shipmentValue;
-        }
-
-        public void AppsOnDeriveCurrentObjectState(IDerivation derivation)
-        {
-            //if (this.ExistShipmentState && !this.ShipmentState.Equals(this.LastShipmentState) &&
-            //    this.ShipmentState.Equals(new ShipmentStates(this.Strategy.Transaction).Shipped))
-            //{
-            //    if (Equals(this.Store.BillingProcess, new BillingProcesses(this.Strategy.Transaction).BillingForShipmentItems))
-            //    {
-            //        this.Invoice();
-            //    }
-            //}
+            method.StopPropagation = true;
         }
 
         public void AppsOnDeriveQuantityDecreased(ShipmentItem shipmentItem, SalesOrderItem orderItem, decimal correction)

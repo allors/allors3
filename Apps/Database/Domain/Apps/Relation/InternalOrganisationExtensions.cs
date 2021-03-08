@@ -170,6 +170,8 @@ namespace Allors.Database.Domain
 
                 @this.ActualAccountingPeriod = monthPeriod;
             }
+
+            method.StopPropagation = true;
         }
 
         public static int NextSubAccountNumber(this InternalOrganisation @this)

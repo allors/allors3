@@ -19,13 +19,10 @@ namespace Allors.Database.Domain
 
         public void AppsSetReadyForProcessing(ProductQuoteSetReadyForProcessing method)
         {
-            if (!method.Result.HasValue)
-            {
-                this.QuoteState = this.AppsNeedsApproval
-                    ? new QuoteStates(this.Strategy.Transaction).AwaitingApproval : new QuoteStates(this.Strategy.Transaction).InProcess;
+            this.QuoteState = this.AppsNeedsApproval
+                ? new QuoteStates(this.Strategy.Transaction).AwaitingApproval : new QuoteStates(this.Strategy.Transaction).InProcess;
 
-                method.Result = true;
-            }
+            method.StopPropagation = true;
         }
 
         public void AppsOrder(ProductQuoteOrder method)
@@ -42,36 +39,37 @@ namespace Allors.Database.Domain
             }
 
             this.OrderThis();
+
+            method.StopPropagation = true;
         }
 
         public void AppsPrint(PrintablePrint method)
         {
-            if (!method.IsPrinted)
+            var singleton = this.Strategy.Transaction.GetSingleton();
+            var logo = this.Issuer?.ExistLogoImage == true ?
+                            this.Issuer.LogoImage.MediaContent.Data :
+                            singleton.LogoImage.MediaContent.Data;
+
+            var images = new Dictionary<string, byte[]>
+                                {
+                                    { "Logo1", logo },
+                                    { "Logo2", logo },
+                                };
+
+            if (this.ExistQuoteNumber)
             {
-                var singleton = this.Strategy.Transaction.GetSingleton();
-                var logo = this.Issuer?.ExistLogoImage == true ?
-                               this.Issuer.LogoImage.MediaContent.Data :
-                               singleton.LogoImage.MediaContent.Data;
-
-                var images = new Dictionary<string, byte[]>
-                                 {
-                                     { "Logo1", logo },
-                                     { "Logo2", logo },
-                                 };
-
-                if (this.ExistQuoteNumber)
-                {
-                    var transaction = this.Strategy.Transaction;
-                    var barcodeService = transaction.Database.Context().BarcodeGenerator;
-                    var barcode = barcodeService.Generate(this.QuoteNumber, BarcodeType.CODE_128, 320, 80, pure: true);
-                    images.Add("Barcode", barcode);
-                }
-
-                var printModel = new Print.ProductQuoteModel.Model(this, images);
-                this.RenderPrintDocument(this.Issuer?.ProductQuoteTemplate, printModel, images);
-
-                this.PrintDocument.Media.InFileName = $"{this.QuoteNumber}.odt";
+                var transaction = this.Strategy.Transaction;
+                var barcodeService = transaction.Database.Context().BarcodeGenerator;
+                var barcode = barcodeService.Generate(this.QuoteNumber, BarcodeType.CODE_128, 320, 80, pure: true);
+                images.Add("Barcode", barcode);
             }
+
+            var printModel = new Print.ProductQuoteModel.Model(this, images);
+            this.RenderPrintDocument(this.Issuer?.ProductQuoteTemplate, printModel, images);
+
+            this.PrintDocument.Media.InFileName = $"{this.QuoteNumber}.odt";
+
+            method.StopPropagation = true;
         }
 
         private SalesOrder OrderThis()
