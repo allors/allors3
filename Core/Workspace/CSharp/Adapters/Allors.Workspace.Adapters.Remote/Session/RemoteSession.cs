@@ -307,20 +307,6 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        internal IObject GetForAssociation(Identity id)
-        {
-            if (id == null)
-            {
-                return null;
-            }
-
-            // TODO:
-            //this.strategyByWorkspaceId.TryGetValue(id, out var strategy);
-            //return strategy?.Object;
-
-            return default;
-        }
-
         internal PushRequest PushRequest() => new PushRequest
         {
             NewObjects = this.newDatabaseStrategies?.Select(v => v.DatabaseSaveNew()).ToArray(),
