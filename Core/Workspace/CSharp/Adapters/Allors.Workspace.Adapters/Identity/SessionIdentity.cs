@@ -10,5 +10,7 @@ namespace Allors.Workspace.Adapters
         public SessionIdentity(long id) => this.Id = id;
 
         public override long Id { get; }
+
+        public override long CompareId => this.Id;
     }
 }

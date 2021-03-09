@@ -13,8 +13,38 @@ namespace Allors.Workspace.Adapters.Remote
 
     public sealed class RemoteDiff
     {
-        public RemoteDiff(IReadOnlyDictionary<IRelationType, object> roleByRelationType, IReadOnlyDictionary<IRelationType, object> workspaceObjectRoleByRelationType)
+        public RemoteDiff(IReadOnlyDictionary<IRelationType, object> x, IReadOnlyDictionary<IRelationType, object> y)
         {
+            var relationTypes = new List<IRelationType>();
+
+            foreach (var kvp in x)
+            {
+                var relationType = kvp.Key;
+                var role = kvp.Value;
+
+                if (y.TryGetValue(relationType, out var otherRole))
+                {
+                    var roleType = relationType.RoleType;
+                    if (!roleType.IsMany)
+                    {
+                        if (Equals(role, otherRole))
+                        {
+                            continue;
+                        }
+                    }
+                    else
+                    {
+
+                    }
+                }
+
+                relationTypes.Add(relationType);
+            }
+
+
+            this.RelationTypes = relationTypes.ToArray();
         }
+
+        public IRelationType[] RelationTypes { get; }
     }
 }

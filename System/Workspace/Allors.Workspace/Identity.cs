@@ -5,11 +5,15 @@
 
 namespace Allors.Workspace
 {
-    using System.Threading;
+    using System;
 
-    public abstract class Identity
+    public abstract class Identity : IComparable<Identity>
     {
         public abstract long Id { get; }
+
+        public abstract long CompareId { get; }
+
+        public int CompareTo(Identity other) => this.CompareId.CompareTo(other.CompareId);
 
         public override string ToString() => this.Id.ToString();
     }

@@ -155,7 +155,7 @@ namespace Allors.Workspace.Adapters
                     }
                     else
                     {
-                        changedAssociationByRole[roleIdentity] = NullableArrayList.Remove(previousAssociation, roleIdentity);
+                        changedAssociationByRole[roleIdentity] = NullableSortableArraySet.Remove(previousAssociation, roleIdentity);
                     }
                 }
                 else
@@ -189,7 +189,7 @@ namespace Allors.Workspace.Adapters
             var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
             this.GetRole(association, roleType, out var previousRole);
             var roleArray = (Identity[])previousRole;
-            roleArray = NullableArrayList.Add(roleArray, role);
+            roleArray = NullableSortableArraySet.Add(roleArray, role);
             changedRoleByAssociation[association] = roleArray;
 
             // Association
@@ -201,7 +201,7 @@ namespace Allors.Workspace.Adapters
                 if (previousAssociationObject != null)
                 {
                     this.GetRole(previousAssociationObject, roleType, out var previousAssociationRole);
-                    changedRoleByAssociation[previousAssociationObject] = NullableArrayList.Remove(previousAssociationRole, role);
+                    changedRoleByAssociation[previousAssociationObject] = NullableSortableArraySet.Remove(previousAssociationRole, role);
                 }
 
                 changedAssociationByRole[role] = association;
@@ -209,7 +209,7 @@ namespace Allors.Workspace.Adapters
             else
             {
                 // Many to Many
-                changedAssociationByRole[role] = NullableArrayList.Add(previousAssociation, association);
+                changedAssociationByRole[role] = NullableSortableArraySet.Add(previousAssociation, association);
             }
         }
 
@@ -223,7 +223,7 @@ namespace Allors.Workspace.Adapters
             {
                 // Role
                 var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
-                changedRoleByAssociation[association] = NullableArrayList.Remove(previousRole, role);
+                changedRoleByAssociation[association] = NullableSortableArraySet.Remove(previousRole, role);
 
                 // Association
                 var changedAssociationByRole = this.ChangedAssociationByRole(associationType);
@@ -235,7 +235,7 @@ namespace Allors.Workspace.Adapters
                 else
                 {
                     // Many to Many
-                    changedAssociationByRole[role] = NullableArrayList.Add(previousAssociation, association);
+                    changedAssociationByRole[role] = NullableSortableArraySet.Add(previousAssociation, association);
                 }
             }
         }

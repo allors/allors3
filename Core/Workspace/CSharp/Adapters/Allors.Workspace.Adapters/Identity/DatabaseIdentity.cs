@@ -12,5 +12,7 @@ namespace Allors.Workspace.Adapters
         public long? DatabaseId { get; set; }
 
         public override long Id => this.DatabaseId ?? this.WorkspaceId ?? 0;
+
+        public override long CompareId => this.WorkspaceId ?? this.DatabaseId ?? 0;
     }
 }
