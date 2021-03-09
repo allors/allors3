@@ -525,12 +525,12 @@ namespace Tests.Workspace.Remote
             session.Reset();
 
             // Assert.Null(mathijs.DatabaseId);
-            Assert.True(mathijs.Strategy.Identity.Id < 0);
+            Assert.True(mathijs.Strategy.Identity < 0);
             Assert.Null(mathijs.FirstName);
             Assert.Null(mathijs.LastName);
 
             // Assert.Null(acme2.DatabaseId);
-            Assert.True(acme2.Strategy.Identity.Id < 0);
+            Assert.True(acme2.Strategy.Identity < 0);
             Assert.Null(acme2.Owner);
             Assert.Null(acme2.Manager);
 
@@ -562,7 +562,7 @@ namespace Tests.Workspace.Remote
             session.PushResponse(pushResponse);
 
             Assert.NotNull(mathijs.Strategy.Identity);
-            Assert.Equal(10000, mathijs.Identity.Id);
+            Assert.Equal(10000, mathijs.Identity);
             Assert.Equal("Person", mathijs.Strategy.Class.Name);
 
             mathijs = session.Instantiate<Person>(10000) as Person;

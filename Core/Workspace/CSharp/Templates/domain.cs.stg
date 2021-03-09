@@ -2,7 +2,7 @@ delimiters "$", "$"
 
 TemplateId() ::= <<07F63139-1791-4F55-AAED-F1A6D8D40055>>
 TemplateName() ::= <<Allors C# Workspace Domain>>
-TemplateVersion() ::= <<3.0.1>>
+TemplateVersion() ::= <<3.0.2>>
 TemplateAllors() ::= <<1.0>>
 TemplateConfiguration(meta, workspaceName) ::= <<
 $!
@@ -156,7 +156,7 @@ $endif$
 
         public IStrategy Strategy { get; }
 
-		public Identity Identity
+		public long Identity
 		{
 			get
 			{

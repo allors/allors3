@@ -5,12 +5,15 @@
 
 namespace Allors.Workspace.Adapters
 {
-    public class WorkspaceIdentity : Identity
+    using System;
+    using System.Collections.Generic;
+
+    public sealed class Identities
     {
-        public WorkspaceIdentity(long id) => this.Id = id;
+        private long counter;
 
-        public override long Id { get; }
+        public Identities() => this.counter = 0;
 
-        public override long CompareId => this.Id;
+        public long NextId() => --this.counter;
     }
 }

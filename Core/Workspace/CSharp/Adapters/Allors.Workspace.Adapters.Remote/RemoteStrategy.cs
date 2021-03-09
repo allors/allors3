@@ -18,7 +18,7 @@ namespace Allors.Workspace.Adapters.Remote
         private readonly RemoteWorkspaceState workspaceState;
         private readonly RemoteDatabaseState databaseState;
 
-        internal RemoteStrategy(RemoteSession session, IClass @class, Identity identity)
+        internal RemoteStrategy(RemoteSession session, IClass @class, long identity)
         {
             this.Session = session;
             this.Identity = identity;
@@ -50,7 +50,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public IClass Class { get; }
 
-        public Identity Identity { get; }
+        public long Identity { get; }
 
         internal IObject Object => this.@object ??= this.Session.Workspace.ObjectFactory.Create(this);
 
@@ -133,7 +133,7 @@ namespace Allors.Workspace.Adapters.Remote
             }
 
             this.Session.SessionState.GetAssociation(this.Identity, associationType, out var association);
-            var id = (Identity)association;
+            var id = (long?)association;
             return id != null ? this.Session.Instantiate<IObject>(id) : null;
         }
 
@@ -145,7 +145,7 @@ namespace Allors.Workspace.Adapters.Remote
             }
 
             this.Session.SessionState.GetAssociation(this.Identity, associationType, out var association);
-            var ids = (IEnumerable<Identity>)association;
+            var ids = (IEnumerable<long>)association;
             return ids?.Select(v => this.Session.Instantiate<IObject>(v)).ToArray() ?? Array.Empty<IObject>();
         }
 

@@ -34,8 +34,8 @@ namespace Allors.Workspace
         /// </summary>
         ISet<IStrategy> Instantiated { get; }
 
-        IDictionary<IRoleType, ISet<Identity>> AssociationByRoleType { get; }
+        IDictionary<IRoleType, ISet<long>> AssociationByRoleType { get; }
 
-        IDictionary<IAssociationType, ISet<Identity>> RoleByRoleType { get; }
+        IDictionary<IAssociationType, ISet<long>> RoleByRoleType { get; }
     }
 }

@@ -38,7 +38,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal long Version => this.databaseObject?.Version ?? 0;
 
-        private Identity Identity => this.strategy.Identity;
+        private long Identity => this.strategy.Identity;
 
         private IClass Class => this.strategy.Class;
 
@@ -97,18 +97,18 @@ namespace Allors.Workspace.Adapters.Remote
                 {
                     if (this.changedRoleByRoleType == null || !this.changedRoleByRoleType.TryGetValue(roleType, out var workspaceRole))
                     {
-                        workspaceRole = (Identity)this.databaseObject?.GetRole(roleType);
+                        workspaceRole = (long?)this.databaseObject?.GetRole(roleType);
                     }
 
-                    return this.Session.Instantiate<IObject>((Identity)workspaceRole);
+                    return this.Session.Instantiate<IObject>((long?)workspaceRole);
                 }
 
                 if (this.changedRoleByRoleType == null || !this.changedRoleByRoleType.TryGetValue(roleType, out var identities))
                 {
-                    identities = (Identity[])this.databaseObject?.GetRole(roleType);
+                    identities = (long[])this.databaseObject?.GetRole(roleType);
                 }
 
-                var ids = (Identity[])identities;
+                var ids = (long[])identities;
 
                 if (ids == null)
                 {
@@ -185,14 +185,14 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal PushRequestNewObject SaveNew() => new PushRequestNewObject
         {
-            NewWorkspaceId = this.Identity.Id.ToString(),
+            NewWorkspaceId = this.Identity.ToString(),
             ObjectType = this.Class.IdAsString,
             Roles = this.SaveRoles(),
         };
 
         internal PushRequestObject SaveExisting() => new PushRequestObject
         {
-            DatabaseId = this.Identity.Id.ToString(),
+            DatabaseId = this.Identity.ToString(),
             Version = this.Version.ToString(),
             Roles = this.SaveRoles(),
         };
@@ -218,20 +218,20 @@ namespace Allors.Workspace.Adapters.Remote
                     {
                         if (roleType.IsOne)
                         {
-                            var identity = (Identity)roleValue;
-                            pushRequestRole.SetRole = identity?.Id.ToString();
+                            var identity = (long?)roleValue;
+                            pushRequestRole.SetRole = identity?.ToString();
                         }
                         else
                         {
-                            var sessionRoles = (Identity[])roleValue;
-                            var roleIds = sessionRoles.Select(v => v.Id.ToString()).ToArray();
+                            var sessionRoles = (long[])roleValue;
+                            var roleIds = sessionRoles.Select(v => v.ToString()).ToArray();
                             if (!this.ExistDatabaseRoles)
                             {
                                 pushRequestRole.AddRole = roleIds;
                             }
                             else
                             {
-                                var databaseRole = (Identity[])this.databaseObject.GetRole(roleType);
+                                var databaseRole = (long[])this.databaseObject.GetRole(roleType);
                                 if (databaseRole == null)
                                 {
                                     pushRequestRole.AddRole = roleIds;
@@ -239,7 +239,7 @@ namespace Allors.Workspace.Adapters.Remote
                                 else
                                 {
                                     var originalRoleIds = databaseRole
-                                        .Select(v => v.Id.ToString())
+                                        .Select(v => v.ToString())
                                         .ToArray();
                                     pushRequestRole.AddRole = roleIds.Except(originalRoleIds).ToArray();
                                     pushRequestRole.RemoveRole = originalRoleIds.Except(roleIds).ToArray();
@@ -256,6 +256,5 @@ namespace Allors.Workspace.Adapters.Remote
 
             return null;
         }
-
     }
 }

@@ -15,7 +15,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         private IDictionary<RemoteWorkspaceObject, RemoteDiff> diffByObject;
 
-        internal RemoteWorkspaceObject(RemoteDatabase database, Identity identity, IClass @class, long version, IReadOnlyDictionary<IRelationType, object> roleByRelationType)
+        internal RemoteWorkspaceObject(RemoteDatabase database, long identity, IClass @class, long version, IReadOnlyDictionary<IRelationType, object> roleByRelationType)
         {
             this.Database = database;
             this.Identity = identity;
@@ -28,7 +28,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal IClass Class { get; }
 
-        internal Identity Identity { get; }
+        internal long Identity { get; }
 
         internal long Version { get; private set; }
 

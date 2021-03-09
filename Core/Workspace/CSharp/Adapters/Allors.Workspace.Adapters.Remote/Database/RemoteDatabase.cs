@@ -24,7 +24,7 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class RemoteDatabase
     {
-        private readonly Dictionary<Identity, RemoteDatabaseObject> databaseRolesByDatabaseId;
+        private readonly Dictionary<long, RemoteDatabaseObject> databaseRolesByDatabaseId;
 
         private readonly Dictionary<IClass, Dictionary<IOperandType, RemotePermission>> readPermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, RemotePermission>> writePermissionByOperandTypeByClass;
@@ -42,7 +42,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.AccessControlById = new Dictionary<long, RemoteAccessControl>();
             this.PermissionById = new Dictionary<long, RemotePermission>();
 
-            this.databaseRolesByDatabaseId = new Dictionary<Identity, RemoteDatabaseObject>();
+            this.databaseRolesByDatabaseId = new Dictionary<long, RemoteDatabaseObject>();
 
             this.readPermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, RemotePermission>>();
             this.writePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, RemotePermission>>();
@@ -84,7 +84,7 @@ namespace Allors.Workspace.Adapters.Remote
             return true;
         }
 
-        internal RemoteDatabaseObject PushResponse(Identity identity, IClass @class)
+        internal RemoteDatabaseObject PushResponse(long identity, IClass @class)
         {
             var databaseObject = new RemoteDatabaseObject(this, identity, @class);
             this.databaseRolesByDatabaseId[identity] = databaseObject;
@@ -121,8 +121,7 @@ namespace Allors.Workspace.Adapters.Remote
                 Objects = response.Objects
                     .Where(v =>
                     {
-                        var id = long.Parse(v[0]);
-                        var identity = this.Identities.GetOrCreate(id);
+                        var identity = long.Parse(v[0]);
                         this.databaseRolesByDatabaseId.TryGetValue(identity, out var databaseObject);
                         if (databaseObject == null)
                         {
@@ -160,9 +159,9 @@ namespace Allors.Workspace.Adapters.Remote
             };
         }
 
-        internal RemoteDatabaseObject Get(Identity databaseId)
+        internal RemoteDatabaseObject Get(long identity)
         {
-            this.databaseRolesByDatabaseId.TryGetValue(databaseId, out var databaseRoles);
+            this.databaseRolesByDatabaseId.TryGetValue(identity, out var databaseRoles);
             return databaseRoles;
         }
 

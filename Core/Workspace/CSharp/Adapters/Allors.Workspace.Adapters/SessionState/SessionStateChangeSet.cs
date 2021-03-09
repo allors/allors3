@@ -10,14 +10,14 @@ namespace Allors.Workspace.Adapters
 
     public class SessionStateChangeSet
     {
-        public SessionStateChangeSet(IDictionary<IRoleType, IDictionary<Identity, object>> roleByAssociationByRoleType, IDictionary<IAssociationType, IDictionary<Identity, object>> associationByRoleByAssociationType)
+        public SessionStateChangeSet(IDictionary<IRoleType, IDictionary<long, object>> roleByAssociationByRoleType, IDictionary<IAssociationType, IDictionary<long, object>> associationByRoleByAssociationType)
         {
             this.RoleByAssociationByRoleType = roleByAssociationByRoleType;
             this.AssociationByRoleByRoleType = associationByRoleByAssociationType;
         }
 
-        public IDictionary<IRoleType, IDictionary<Identity, object>> RoleByAssociationByRoleType { get; }
+        public IDictionary<IRoleType, IDictionary<long, object>> RoleByAssociationByRoleType { get; }
 
-        public IDictionary<IAssociationType, IDictionary<Identity, object>> AssociationByRoleByRoleType { get; }
+        public IDictionary<IAssociationType, IDictionary<long, object>> AssociationByRoleByRoleType { get; }
     }
 }

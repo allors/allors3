@@ -13,13 +13,11 @@ namespace Tests.Workspace.Remote
         [Fact]
         public void Load()
         {
-            var identities = this.Database.Identities;
-
             this.Database.SyncResponse(Fixture.LoadData(this.M));
 
-            var martien = this.Database.Get(identities.GetOrCreate(3));
+            var martien = this.Database.Get(3);
 
-            Assert.Equal(identities.GetOrCreate(3), martien.Identity);
+            Assert.Equal(3, martien.Identity);
             Assert.Equal(1003, martien.Version);
             Assert.Equal("Person", martien.Class.Name);
             Assert.Equal("Martien", martien.GetRole(this.M.Person.FirstName));

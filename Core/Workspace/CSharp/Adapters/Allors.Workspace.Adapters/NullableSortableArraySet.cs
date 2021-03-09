@@ -9,11 +9,11 @@ namespace Allors.Workspace.Adapters
 
     internal static class NullableSortableArraySet
     {
-        internal static Identity[] Add(object set, Identity item) => Add((Identity[])set, item);
+        internal static long[] Add(object set, long item) => Add((long[])set, item);
 
-        internal static Identity[] Add(Identity[] sourceArray, Identity item)
+        internal static long[] Add(long[] sourceArray, long item)
         {
-            if (item == null)
+            if (item == 0)
             {
                 return sourceArray;
             }
@@ -28,7 +28,7 @@ namespace Allors.Workspace.Adapters
                 return sourceArray;
             }
 
-            var destinationArray = new Identity[sourceArray.Length + 1];
+            var destinationArray = new long[sourceArray.Length + 1];
 
             Array.Copy(sourceArray, destinationArray, sourceArray.Length);
             destinationArray[destinationArray.Length - 1] = item;
@@ -36,9 +36,9 @@ namespace Allors.Workspace.Adapters
             return destinationArray;
         }
 
-        internal static Identity[] Remove(object set, Identity item) => Remove((Identity[])set, item);
+        internal static long[] Remove(object set, long item) => Remove((long[])set, item);
 
-        internal static Identity[] Remove(Identity[] sourceArray, Identity item)
+        internal static long[] Remove(long[] sourceArray, long item)
         {
             if (sourceArray == null)
             {
@@ -58,7 +58,7 @@ namespace Allors.Workspace.Adapters
                 return null;
             }
 
-            var destinationArray = new Identity[sourceArray.Length - 1];
+            var destinationArray = new long[sourceArray.Length - 1];
 
             if (index > 0)
             {

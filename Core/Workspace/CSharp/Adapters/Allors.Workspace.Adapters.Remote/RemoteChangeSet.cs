@@ -22,10 +22,10 @@ namespace Allors.Workspace.Adapters.Remote
             this.AssociationByRoleType = sessionStateChangeSet.RoleByAssociationByRoleType
                 .ToDictionary(
                     v => v.Key,
-                    v => (ISet<Identity>)new HashSet<Identity>(v.Value.Keys));
+                    v => (ISet<long>)new HashSet<long>(v.Value.Keys));
             this.RoleByRoleType = sessionStateChangeSet.AssociationByRoleByRoleType.ToDictionary(
                 v => v.Key,
-                v => (ISet<Identity>)new HashSet<Identity>(v.Value.Keys));
+                v => (ISet<long>)new HashSet<long>(v.Value.Keys));
             ;
         }
 
@@ -36,30 +36,30 @@ namespace Allors.Workspace.Adapters.Remote
 
         public ISet<IStrategy> Instantiated { get; }
 
-        public IDictionary<IRoleType, ISet<Identity>> AssociationByRoleType { get; }
+        public IDictionary<IRoleType, ISet<long>> AssociationByRoleType { get; }
 
-        public IDictionary<IAssociationType, ISet<Identity>> RoleByRoleType { get; }
+        public IDictionary<IAssociationType, ISet<long>> RoleByRoleType { get; }
 
-        internal void AddAssociation(IRelationType relationType, Identity association)
+        internal void AddAssociation(IRelationType relationType, long association)
         {
             var roleType = relationType.RoleType;
 
             if (!this.AssociationByRoleType.TryGetValue(roleType, out var associations))
             {
-                associations = new HashSet<Identity>();
+                associations = new HashSet<long>();
                 this.AssociationByRoleType.Add(roleType, associations);
             }
 
             _ = associations.Add(association);
         }
 
-        internal void AddRole(IRelationType relationType, Identity role)
+        internal void AddRole(IRelationType relationType, long role)
         {
             var associationType = relationType.AssociationType;
 
             if (!this.RoleByRoleType.TryGetValue(associationType, out var roles))
             {
-                roles = new HashSet<Identity>();
+                roles = new HashSet<long>();
                 this.RoleByRoleType.Add(associationType, roles);
             }
 

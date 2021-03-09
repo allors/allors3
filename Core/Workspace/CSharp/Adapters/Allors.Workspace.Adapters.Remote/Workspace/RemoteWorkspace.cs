@@ -15,7 +15,7 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class RemoteWorkspace : IWorkspace
     {
-        private readonly Dictionary<Identity, RemoteWorkspaceObject> workspaceRolesByIdentity;
+        private readonly Dictionary<long, RemoteWorkspaceObject> workspaceRolesByIdentity;
 
         internal RemoteWorkspace(IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, HttpClient httpClient)
         {
@@ -25,11 +25,11 @@ namespace Allors.Workspace.Adapters.Remote
             this.ObjectFactory = new ObjectFactory(this.MetaPopulation, instance);
             this.Database = new RemoteDatabase(this.MetaPopulation, httpClient, new Identities());
 
-            this.WorkspaceClassByWorkspaceId = new Dictionary<Identity, IClass>();
+            this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
 
             this.DomainDerivationById = new ConcurrentDictionary<Guid, IDomainDerivation>();
 
-            this.workspaceRolesByIdentity = new Dictionary<Identity, RemoteWorkspaceObject>();
+            this.workspaceRolesByIdentity = new Dictionary<long, RemoteWorkspaceObject>();
 
             this.StateLifecycle.OnInit(this);
         }
@@ -45,19 +45,19 @@ namespace Allors.Workspace.Adapters.Remote
 
         public RemoteDatabase Database { get; }
 
-        internal Dictionary<Identity, IClass> WorkspaceClassByWorkspaceId { get; }
+        internal Dictionary<long, IClass> WorkspaceClassByWorkspaceId { get; }
 
         public ISession CreateSession() => new RemoteSession(this, this.StateLifecycle.CreateSessionContext());
 
-        internal RemoteWorkspaceObject Get(Identity identity)
+        internal RemoteWorkspaceObject Get(long identity)
         {
             this.workspaceRolesByIdentity.TryGetValue(identity, out var workspaceRoles);
             return workspaceRoles;
         }
 
-        internal void RegisterWorkspaceObject(IClass @class, Identity workspaceId) => this.WorkspaceClassByWorkspaceId.Add(workspaceId, @class);
+        internal void RegisterWorkspaceObject(IClass @class, long workspaceId) => this.WorkspaceClassByWorkspaceId.Add(workspaceId, @class);
 
-        internal void Push(Identity identity, IClass @class, long version, Dictionary<IRelationType, object> changedRoleByRoleType)
+        internal void Push(long identity, IClass @class, long version, Dictionary<IRelationType, object> changedRoleByRoleType)
         {
             if (!this.workspaceRolesByIdentity.TryGetValue(identity, out var originalWorkspaceRoles))
             {

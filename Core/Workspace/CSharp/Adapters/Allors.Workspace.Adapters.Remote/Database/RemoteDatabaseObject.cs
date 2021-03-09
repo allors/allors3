@@ -20,7 +20,7 @@ namespace Allors.Workspace.Adapters.Remote
         private Dictionary<IRelationType, object> roleByRelationType;
         private SyncResponseRole[] syncResponseRoles;
 
-        internal RemoteDatabaseObject(RemoteDatabase database, Identity identity, IClass @class)
+        internal RemoteDatabaseObject(RemoteDatabase database, long identity, IClass @class)
         {
             this.Database = database;
             this.Identity = identity;
@@ -31,7 +31,7 @@ namespace Allors.Workspace.Adapters.Remote
         internal RemoteDatabaseObject(RemoteDatabase database, RemoteResponseContext ctx, SyncResponseObject syncResponseObject)
         {
             this.Database = database;
-            this.Identity = database.Identities.GetOrCreate(long.Parse(syncResponseObject.Id));
+            this.Identity = long.Parse(syncResponseObject.Id);
             this.Class = (IClass)this.Database.MetaPopulation.Find(Guid.Parse(syncResponseObject.ObjectTypeOrKey));
             this.Version = !string.IsNullOrEmpty(syncResponseObject.Version) ? long.Parse(syncResponseObject.Version) : 0;
             this.syncResponseRoles = syncResponseObject.Roles;
@@ -43,7 +43,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal IClass Class { get; }
 
-        internal Identity Identity { get; }
+        internal long Identity { get; }
 
         internal long Version { get; private set; }
 
@@ -77,13 +77,13 @@ namespace Allors.Workspace.Adapters.Remote
                             {
                                 if (roleType.IsOne)
                                 {
-                                    return value != null ? identities.Get(long.Parse(value)) : (Identity)null;
+                                    return value != null ? long.Parse(value) : (long?)null;
                                 }
                                 else
                                 {
                                     return value != null
-                                        ? value.Split(Encoding.SeparatorChar).Select(w => identities.Get(long.Parse(w))).ToArray()
-                                        : Array.Empty<Identity>();
+                                        ? value.Split(Encoding.SeparatorChar).Select(long.Parse).ToArray()
+                                        : Array.Empty<long>();
                                 }
                             }
                         });

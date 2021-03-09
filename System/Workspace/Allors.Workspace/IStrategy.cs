@@ -12,7 +12,7 @@ namespace Allors.Workspace
     {
         IClass Class { get; }
 
-        Identity Identity { get; }
+        long Identity { get; }
 
         ISession Session { get; }
 
