@@ -236,6 +236,7 @@ namespace Allors.Workspace.Adapters.Remote
             else
             {
                 var diff = this.previousWorkspaceObject.Diff(this.workspaceObject);
+                // TODO:
             }
 
             this.previousWorkspaceObject = this.workspaceObject;

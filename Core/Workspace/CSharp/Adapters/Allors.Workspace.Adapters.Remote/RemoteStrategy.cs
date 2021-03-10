@@ -60,17 +60,35 @@ namespace Allors.Workspace.Adapters.Remote
 
         public bool Exist(IRoleType roleType)
         {
-            var value = this.Get(roleType);
-
-            if (roleType.ObjectType.IsComposite && roleType.IsMany)
+            if (roleType.ObjectType.IsUnit)
             {
-                return ((IEnumerable<IObject>)value).Any();
+                return this.GetUnitRole(roleType) != null;
             }
 
-            return value != null;
+            if (roleType.IsOne)
+            {
+                return this.GetCompositeRole<IObject>(roleType) != null;
+            }
+
+            return this.GetCompositesRole<IObject>(roleType).Any();
         }
 
-        public object Get(IRoleType roleType) =>
+        public object GetRole(IRoleType roleType)
+        {
+            if (roleType.ObjectType.IsUnit)
+            {
+                return this.GetUnitRole(roleType);
+            }
+
+            if (roleType.IsOne)
+            {
+                return this.GetCompositeRole<IObject>(roleType);
+            }
+
+            return this.GetCompositesRole<IObject>(roleType);
+        }
+
+        public object GetUnitRole(IRoleType roleType) =>
             roleType.Origin switch
             {
                 Origin.Session => this.Session.GetRole(this, roleType),
@@ -78,6 +96,34 @@ namespace Allors.Workspace.Adapters.Remote
                 Origin.Database => this.databaseState?.GetRole(roleType),
                 _ => throw new ArgumentException("Unsupported Origin")
             };
+
+        public T GetCompositeRole<T>(IRoleType roleType) where T : IObject =>
+            roleType.Origin switch
+            {
+                Origin.Session => (T)this.Session.GetRole(this, roleType),
+                Origin.Workspace => (T)this.workspaceState?.GetRole(roleType),
+                Origin.Database => (T)this.databaseState?.GetRole(roleType),
+                _ => throw new ArgumentException("Unsupported Origin")
+            };
+
+        public IEnumerable<T> GetCompositesRole<T>(IRoleType roleType) where T : IObject
+        {
+            var roles = roleType.Origin switch
+            {
+                Origin.Session => this.Session.GetRole(this, roleType),
+                Origin.Workspace => this.workspaceState?.GetRole(roleType),
+                Origin.Database => this.databaseState?.GetRole(roleType),
+                _ => throw new ArgumentException("Unsupported Origin")
+            };
+
+            if (roles != null)
+            {
+                foreach (var role in (IObject[])roles)
+                {
+                    yield return (T)role;
+                }
+            }
+        }
 
         public void Set(IRoleType roleType, object value)
         {
@@ -103,25 +149,21 @@ namespace Allors.Workspace.Adapters.Remote
 
         public void Add(IRoleType roleType, IObject value)
         {
-            var roles = (IObject[])this.Get(roleType);
-            if (!roles.Contains(value))
+            if (!this.GetCompositesRole<IObject>(roleType).Contains(value))
             {
-                roles = new List<IObject>(roles) { value }.ToArray();
+                var roles = this.GetCompositesRole<IObject>(roleType).Append(value).ToArray();
+                this.Set(roleType, roles);
             }
-
-            this.Set(roleType, roles);
         }
 
         public void Remove(IRoleType roleType, IObject value)
         {
-            var roles = (IStrategy[])this.Get(roleType);
-            if (roles.Contains(value.Strategy))
+            if (!this.GetCompositesRole<IObject>(roleType).Contains(value))
             {
-                var newRoles = new List<IStrategy>(roles);
-                _ = newRoles.Remove(value.Strategy);
-                roles = newRoles.ToArray();
+                return;
             }
 
+            var roles = this.GetCompositesRole<IObject>(roleType).Where(v => !v.Equals(value)).ToArray();
             this.Set(roleType, roles);
         }
 

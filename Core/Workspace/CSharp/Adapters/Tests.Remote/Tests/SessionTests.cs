@@ -296,7 +296,7 @@ namespace Tests.Workspace.Remote
             var ocme = session.Instantiate<Organisation>(102);
             var icme = session.Instantiate<Organisation>(103);
 
-            Assert.Equal(3, acme.Employees.Length);
+            Assert.Equal(3, acme.Employees.Count());
             Assert.Contains(koen, acme.Employees);
             Assert.Contains(martien, acme.Employees);
             Assert.Contains(patrick, acme.Employees);
@@ -339,7 +339,7 @@ namespace Tests.Workspace.Remote
             acme2.Employees = null;
             icme2.Employees = new[] { koen2, patrick2, martien2 };
 
-            Assert.Equal(3, acme1.Employees.Length);
+            Assert.Equal(3, acme1.Employees.Count());
             Assert.Contains(koen1, acme1.Employees);
             Assert.Contains(martien1, acme1.Employees);
             Assert.Contains(patrick1, acme1.Employees);
@@ -354,7 +354,7 @@ namespace Tests.Workspace.Remote
             Assert.Single(ocme2.Employees);
             Assert.Contains(koen2, ocme2.Employees);
 
-            Assert.Equal(3, icme2.Employees.Length);
+            Assert.Equal(3, icme2.Employees.Count());
             Assert.Contains(koen2, icme2.Employees);
             Assert.Contains(martien2, icme2.Employees);
             Assert.Contains(patrick2, icme2.Employees);
@@ -565,11 +565,9 @@ namespace Tests.Workspace.Remote
             Assert.Equal(10000, mathijs.Identity);
             Assert.Equal("Person", mathijs.Strategy.Class.Name);
 
-            mathijs = session.Instantiate<Person>(10000) as Person;
+            var mathijs2 = session.Instantiate<Person>(10000) as Person;
 
-            Assert.NotNull(mathijs);
-
-            var mathijs2 = session.Instantiate<Person>(workspaceId);
+            Assert.NotNull(mathijs2);
 
             Assert.Equal(mathijs, mathijs2);
         }

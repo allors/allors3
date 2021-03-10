@@ -58,8 +58,7 @@ namespace Tests.Workspace
             {
                 foreach (var roleType in this.M.C1.ObjectType.RoleTypes)
                 {
-                    var role = c1.Strategy.Get(roleType);
-                    Assert.True(role == null || role is Array array && array.Length == 0);
+                    Assert.False(c1.Strategy.Exist(roleType));
                 }
 
                 foreach (var associationType in this.M.C1.ObjectType.AssociationTypes)
@@ -98,8 +97,7 @@ namespace Tests.Workspace
             {
                 foreach (var roleType in this.M.C1.ObjectType.RoleTypes)
                 {
-                    var role = c1.Strategy.Get(roleType);
-                    Assert.True(role == null || role is Array array && array.Length == 0);
+                    Assert.False(c1.Strategy.Exist(roleType));
                 }
 
                 foreach (var associationType in this.M.C1.ObjectType.AssociationTypes)

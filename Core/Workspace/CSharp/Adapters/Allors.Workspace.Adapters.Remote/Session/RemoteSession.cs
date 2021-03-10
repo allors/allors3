@@ -282,11 +282,11 @@ namespace Allors.Workspace.Adapters.Remote
             foreach (var association in this.Database.Get(associationType.ObjectType)
                 .Select(v => this.Instantiate<IObject>(v.Identity)))
             {
-                if (((IObject)association).Strategy.CanRead(roleType))
+                if (association.Strategy.CanRead(roleType))
                 {
                     if (roleType.IsOne)
                     {
-                        var role = (IObject)((RemoteStrategy)association.Strategy).Get(roleType);
+                        var role = ((RemoteStrategy)association.Strategy).GetCompositeRole<IObject>(roleType);
                         if (role != null && role.Identity == @object.Identity)
                         {
                             yield return association;
@@ -294,8 +294,8 @@ namespace Allors.Workspace.Adapters.Remote
                     }
                     else
                     {
-                        var roles = (IObject[])((RemoteStrategy)association.Strategy).Get(roleType);
-                        if (roles != null && roles.Contains(@object))
+                        var roles = ((RemoteStrategy)association.Strategy).GetCompositesRole<IObject>(roleType);
+                        if (roles?.Contains(@object) == true)
                         {
                             yield return association;
                         }

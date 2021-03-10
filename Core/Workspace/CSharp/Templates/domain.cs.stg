@@ -67,7 +67,7 @@ $endif$
 
 $else$
 $if(roleType.IsMany)$
-		$roleType_ObjectType(roleType)$[] $roleType.PluralName$
+		System.Collections.Generic.IEnumerable<$roleType_ObjectType(roleType)$> $roleType.PluralName$
 		{
 			get;
 $if(!roleType.RelationType.IsDerived)$
@@ -240,7 +240,7 @@ $if(concreteRoleType.ObjectType.IsUnit)$
 		{
 			get
 			{
-				return ($concreteRoleType_ObjectType(concreteRoleType)$) this.Strategy.Get(Meta.$concreteRoleType.Name$);
+				return ($concreteRoleType_ObjectType(concreteRoleType)$) this.Strategy.GetUnitRole(Meta.$concreteRoleType.Name$);
 			}
 			set
 			{
@@ -261,11 +261,11 @@ $if(concreteRoleType.ObjectType.IsUnit)$
 		}
 $else$
 $if(concreteRoleType.IsMany)$
-		virtual public $concreteRoleType_ObjectType(concreteRoleType)$[] $concreteRoleType.PluralName$
+		virtual public System.Collections.Generic.IEnumerable<$concreteRoleType_ObjectType(concreteRoleType)$> $concreteRoleType.PluralName$
 		{
 			get
 			{
-				return ($concreteRoleType_ObjectType(concreteRoleType)$[])this.Strategy.Get(Meta.$concreteRoleType.Name$);
+				return this.Strategy.GetCompositesRole<$concreteRoleType_ObjectType(concreteRoleType)$>(Meta.$concreteRoleType.Name$);
 			}
 			set
 			{
@@ -300,7 +300,7 @@ $else$
 		{
 			get
 			{
-				return ($concreteRoleType_ObjectType(concreteRoleType)$) this.Strategy.Get(Meta.$concreteRoleType.Name$);
+				return this.Strategy.GetCompositeRole<$concreteRoleType_ObjectType(concreteRoleType)$>(Meta.$concreteRoleType.Name$);
 			}
 			set
 			{
