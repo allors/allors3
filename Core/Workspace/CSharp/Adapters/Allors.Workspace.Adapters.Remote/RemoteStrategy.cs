@@ -50,9 +50,9 @@ namespace Allors.Workspace.Adapters.Remote
 
         public IClass Class { get; }
 
-        public long Identity { get; }
+        public long Identity { get; private set; }
 
-        internal IObject Object => this.@object ??= this.Session.Workspace.ObjectFactory.Create(this);
+        public IObject Object => this.@object ??= this.Session.Workspace.ObjectFactory.Create(this);
 
         internal bool HasDatabaseChanges => this.databaseState.HasDatabaseChanges;
 
@@ -73,7 +73,7 @@ namespace Allors.Workspace.Adapters.Remote
         public object Get(IRoleType roleType) =>
             roleType.Origin switch
             {
-                Origin.Session => this.Session.GetRole(this.Identity, roleType),
+                Origin.Session => this.Session.GetRole(this, roleType),
                 Origin.Workspace => this.workspaceState?.GetRole(roleType),
                 Origin.Database => this.databaseState?.GetRole(roleType),
                 _ => throw new ArgumentException("Unsupported Origin")
@@ -84,7 +84,7 @@ namespace Allors.Workspace.Adapters.Remote
             switch (roleType.Origin)
             {
                 case Origin.Session:
-                    this.Session.SetRole(this.Identity, roleType, value);
+                    this.Session.SetRole(this, roleType, value);
                     break;
 
                 case Origin.Workspace:
@@ -132,7 +132,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return this.Session.GetAssociation(this.Object, associationType).FirstOrDefault();
             }
 
-            this.Session.SessionState.GetAssociation(this.Identity, associationType, out var association);
+            this.Session.SessionState.GetAssociation(this, associationType, out var association);
             var id = (long?)association;
             return id != null ? this.Session.Instantiate<IObject>(id) : null;
         }
@@ -144,7 +144,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return this.Session.GetAssociation(this.Object, associationType);
             }
 
-            this.Session.SessionState.GetAssociation(this.Identity, associationType, out var association);
+            this.Session.SessionState.GetAssociation(this, associationType, out var association);
             var ids = (IEnumerable<long>)association;
             return ids?.Select(v => this.Session.Instantiate<IObject>(v)).ToArray() ?? Array.Empty<IObject>();
         }
@@ -171,7 +171,11 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal PushRequestObject DatabaseSaveExisting() => this.databaseState.SaveExisting();
 
-        internal void DatabasePushResponse(RemoteDatabaseObject databaseObject) => this.databaseState.PushResponse(databaseObject);
+        internal void DatabasePushResponse(RemoteDatabaseObject databaseObject)
+        {
+            this.Identity = databaseObject.Identity;
+            this.databaseState.PushResponse(databaseObject);
+        }
 
         internal void WorkspaceSave() => this.workspaceState.Push();
     }

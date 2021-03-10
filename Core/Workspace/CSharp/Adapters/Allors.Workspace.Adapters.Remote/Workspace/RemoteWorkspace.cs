@@ -59,13 +59,13 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal void Push(long identity, IClass @class, long version, Dictionary<IRelationType, object> changedRoleByRoleType)
         {
-            if (!this.workspaceRolesByIdentity.TryGetValue(identity, out var originalWorkspaceRoles))
+            if (!this.workspaceRolesByIdentity.TryGetValue(identity, out var originalWorkspaceObject))
             {
                 this.workspaceRolesByIdentity[identity] = new RemoteWorkspaceObject(this.Database, identity, @class, ++version, changedRoleByRoleType);
             }
             else
             {
-                this.workspaceRolesByIdentity[identity] = originalWorkspaceRoles.Update(changedRoleByRoleType);
+                this.workspaceRolesByIdentity[identity] = new RemoteWorkspaceObject(originalWorkspaceObject, changedRoleByRoleType);
             }
         }
     }

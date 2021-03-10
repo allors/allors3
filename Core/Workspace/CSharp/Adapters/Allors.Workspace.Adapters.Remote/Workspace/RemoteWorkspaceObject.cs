@@ -7,6 +7,7 @@ namespace Allors.Workspace.Adapters.Remote
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Meta;
 
     internal class RemoteWorkspaceObject
@@ -21,7 +22,19 @@ namespace Allors.Workspace.Adapters.Remote
             this.Identity = identity;
             this.Class = @class;
             this.Version = version;
-            this.roleByRelationType = roleByRelationType;
+
+            this.roleByRelationType = this.Import(roleByRelationType).ToDictionary(v => v.Key, v => v.Value);
+        }
+
+        public RemoteWorkspaceObject(RemoteWorkspaceObject originalWorkspaceObject, IReadOnlyDictionary<IRelationType, object> changedRoleByRoleType)
+        {
+            this.Database = originalWorkspaceObject.Database;
+            this.Identity = originalWorkspaceObject.Identity;
+            this.Class = originalWorkspaceObject.Class;
+            this.Version = ++originalWorkspaceObject.Version;
+
+
+            this.roleByRelationType = this.Import(changedRoleByRoleType, originalWorkspaceObject.roleByRelationType).ToDictionary(v => v.Key, v => v.Value);
         }
 
         internal RemoteDatabase Database { get; }
@@ -39,25 +52,7 @@ namespace Allors.Workspace.Adapters.Remote
             return @object;
         }
 
-        internal RemoteWorkspaceObject Update(Dictionary<IRelationType, object> changedRoleByRoleType)
-        {
-            var newRoleByRelationTypeId = new Dictionary<IRelationType, object>();
-            foreach (var roleType in this.Class.WorkspaceRoleTypes)
-            {
-                if (changedRoleByRoleType.TryGetValue(roleType.RelationType, out var role))
-                {
-                    newRoleByRelationTypeId[roleType.RelationType] = role;
-                }
-                else if (this.roleByRelationType.TryGetValue(roleType.RelationType, out role))
-                {
-                    newRoleByRelationTypeId[roleType.RelationType] = role;
-                }
-            }
-
-            return new RemoteWorkspaceObject(this.Database, this.Identity, this.Class, ++this.Version, newRoleByRelationTypeId);
-        }
-
-        public object Diff(RemoteWorkspaceObject workspaceObject)
+        internal object Diff(RemoteWorkspaceObject workspaceObject)
         {
             this.diffByObject ??= new Dictionary<RemoteWorkspaceObject, RemoteDiff>();
 
@@ -70,6 +65,45 @@ namespace Allors.Workspace.Adapters.Remote
             this.diffByObject.Add(workspaceObject, diff);
 
             return diff;
+        }
+
+        private IEnumerable<KeyValuePair<IRelationType, object>> Import(IReadOnlyDictionary<IRelationType, object> changedRoleByRoleType, IReadOnlyDictionary<IRelationType, object> originalRoleByRoleType = null)
+        {
+            foreach (var roleType in this.Class.WorkspaceRoleTypes)
+            {
+                var relationType = roleType.RelationType;
+
+                if (changedRoleByRoleType.TryGetValue(relationType, out var role))
+                {
+                    if (role != null)
+                    {
+                        if (roleType.ObjectType.IsUnit)
+                        {
+                            yield return new KeyValuePair<IRelationType, object>(relationType, role);
+                        }
+                        else
+                        {
+                            if (roleType.IsOne)
+                            {
+                                yield return new KeyValuePair<IRelationType, object>(relationType, ((RemoteStrategy)role).Identity);
+
+                            }
+                            else
+                            {
+                                var roles = ((RemoteStrategy[])role);
+                                if (roles.Length > 0)
+                                {
+                                    yield return new KeyValuePair<IRelationType, object>(relationType, roles.Select(v => v.Identity).ToArray());
+                                }
+                            }
+                        }
+                    }
+                }
+                else if (originalRoleByRoleType?.TryGetValue(roleType.RelationType, out role) == true)
+                {
+                    yield return new KeyValuePair<IRelationType, object>(relationType, role);
+                }
+            }
         }
     }
 }

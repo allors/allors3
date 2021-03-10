@@ -18,18 +18,16 @@ namespace Allors.Workspace.Adapters.Remote
         private readonly RemoteStrategy strategy;
 
         private RemoteDatabaseObject databaseObject;
-
         private Dictionary<IRoleType, object> changedRoleByRoleType;
 
-        private RemoteDatabaseObject changeSetDatabaseObject;
-
-        private Dictionary<IRoleType, object> changeSetChangedRoleByRoleType;
+        private RemoteDatabaseObject previousDatabaseObject;
+        private Dictionary<IRoleType, object> previousChangedRoleByRoleType;
 
         internal RemoteDatabaseState(RemoteStrategy strategy, RemoteDatabaseObject databaseObject = null)
         {
             this.strategy = strategy;
             this.databaseObject = databaseObject ?? this.Database.Get(this.Identity);
-            this.changeSetDatabaseObject = this.databaseObject;
+            this.previousDatabaseObject = this.databaseObject;
         }
 
         internal bool HasDatabaseChanges => this.databaseObject == null || this.changedRoleByRoleType != null;
@@ -181,7 +179,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
         }
 
-        internal void PushResponse(RemoteDatabaseObject databaseObject) => this.databaseObject = databaseObject;
+        internal void PushResponse(RemoteDatabaseObject newDatabaseObject) => this.databaseObject = newDatabaseObject;
 
         internal PushRequestNewObject SaveNew() => new PushRequestNewObject
         {

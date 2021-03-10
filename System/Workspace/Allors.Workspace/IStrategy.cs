@@ -14,6 +14,8 @@ namespace Allors.Workspace
 
         long Identity { get; }
 
+        IObject Object { get; }
+
         ISession Session { get; }
 
         bool Exist(IRoleType roleType);
