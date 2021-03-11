@@ -10,7 +10,7 @@ namespace Allors.Protocol.Json.Data
 
     public class Result : IVisitable
     {
-        [JsonPropertyName("fetchRef")]
+        [JsonPropertyName("selectRef")]
         public Guid? SelectRef { get; set; }
 
         [JsonPropertyName("select")]

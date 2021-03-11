@@ -39,9 +39,9 @@ namespace Allors.Database.Data
 
         public void Ensure(IObject allorsObject, IAccessControlLists acls) => this.Step.Ensure(allorsObject, acls);
 
-        public static bool TryParse(IComposite composite, string fetchString, out Select @select)
+        public static bool TryParse(IComposite composite, string selectString, out Select @select)
         {
-            var propertyType = Resolve(composite, fetchString);
+            var propertyType = Resolve(composite, selectString);
             @select = propertyType == null ? null : new Select(propertyType);
             return @select != null;
         }

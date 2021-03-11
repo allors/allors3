@@ -28,7 +28,7 @@ namespace Allors.Database.Protocol.Json
         private readonly Stack<Data.IExtent> extents;
         private readonly Stack<Data.IPredicate> predicates;
         private readonly Stack<Result> results;
-        private readonly Stack<Select> fetches;
+        private readonly Stack<Select> selects;
         private readonly Stack<Step> steps;
         private readonly Stack<Node> nodes;
         private readonly Stack<Sort> sorts;
@@ -41,7 +41,7 @@ namespace Allors.Database.Protocol.Json
             this.extents = new Stack<Data.IExtent>();
             this.predicates = new Stack<Data.IPredicate>();
             this.results = new Stack<Result>();
-            this.fetches = new Stack<Select>();
+            this.selects = new Stack<Select>();
             this.steps = new Stack<Step>();
             this.nodes = new Stack<Node>();
             this.sorts = new Stack<Sort>();
@@ -51,7 +51,7 @@ namespace Allors.Database.Protocol.Json
 
         public Data.IExtent Extent => this.extents?.Peek();
 
-        public Select Select => this.fetches?.Peek();
+        public Select Select => this.selects?.Peek();
 
         public void VisitExtent(Allors.Protocol.Json.Data.Extent visited)
         {
@@ -132,23 +132,23 @@ namespace Allors.Database.Protocol.Json
 
         public void VisitSelect(Allors.Protocol.Json.Data.Select visited)
         {
-            var fetch = new Select(this.transaction.Database.MetaPopulation);
+            var @select = new Select(this.transaction.Database.MetaPopulation);
 
-            this.fetches.Push(fetch);
+            this.selects.Push(@select);
 
             if (visited.Step != null)
             {
                 visited.Step.Accept(this);
-                fetch.Step = this.steps.Pop();
+                @select.Step = this.steps.Pop();
             }
 
             if (visited.Include?.Length > 0)
             {
-                fetch.Include = new Node[visited.Include.Length];
+                @select.Include = new Node[visited.Include.Length];
                 for (var i = 0; i < visited.Include.Length; i++)
                 {
                     visited.Include[i].Accept(this);
-                    fetch.Include[i] = this.nodes.Pop();
+                    @select.Include[i] = this.nodes.Pop();
                 }
             }
         }
@@ -428,7 +428,7 @@ namespace Allors.Database.Protocol.Json
             if (visited.Select != null)
             {
                 visited.Select.Accept(this);
-                result.Select = this.fetches.Pop();
+                result.Select = this.selects.Pop();
             }
 
             this.results.Push(result);

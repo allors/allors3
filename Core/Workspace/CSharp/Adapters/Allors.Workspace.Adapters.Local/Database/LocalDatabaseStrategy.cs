@@ -9,7 +9,11 @@ namespace Allors.Workspace.Adapters.Local
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
+    using Database;
     using Meta;
+    using IObject = Workspace.IObject;
+    using IStrategy = Workspace.IStrategy;
+    using ISession = Workspace.ISession;
 
     public class LocalDatabaseStrategy : LocalStrategy, IDatabaseStrategy
     {

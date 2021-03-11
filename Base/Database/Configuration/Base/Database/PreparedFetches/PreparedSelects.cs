@@ -12,19 +12,19 @@ namespace Allors.Database.Configuration
 
     public class PreparedSelects : IPreparedSelects
    {
-       private readonly ConcurrentDictionary<Guid, Select> fetchById;
+       private readonly ConcurrentDictionary<Guid, Select> selectById;
 
         public PreparedSelects(IDatabaseContext databaseContext)
         {
             this.DatabaseContext = databaseContext;
-            this.fetchById = new ConcurrentDictionary<Guid, Select>();
+            this.selectById = new ConcurrentDictionary<Guid, Select>();
         }
 
         public IDatabaseContext DatabaseContext { get; }
 
         public Select Get(Guid id)
         {
-            if (!this.fetchById.TryGetValue(id, out var fetch))
+            if (!this.selectById.TryGetValue(id, out var select))
             {
                 var transaction = this.DatabaseContext.Database.CreateTransaction();
                 try
@@ -39,8 +39,8 @@ namespace Allors.Database.Configuration
                     var preparedSelect = (PersistentPreparedSelect)filter.Build(transaction).First;
                     if (preparedSelect != null)
                     {
-                        fetch = preparedSelect.Select;
-                        this.fetchById[id] = fetch;
+                        select = preparedSelect.Select;
+                        this.selectById[id] = select;
                     }
                 }
                 finally
@@ -52,7 +52,7 @@ namespace Allors.Database.Configuration
                 }
             }
 
-            return fetch;
+            return select;
         }
     }
 }

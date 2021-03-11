@@ -50,32 +50,32 @@ namespace Allors.Database.Protocol.Json
                     {
                         var name = result.Name;
 
-                        var fetch = result.Select;
-                        if ((fetch == null) && result.SelectRef.HasValue)
+                        var @select = result.Select;
+                        if ((@select == null) && result.SelectRef.HasValue)
                         {
-                            fetch = this.preparedSelects.Get(result.SelectRef.Value);
+                            @select = this.preparedSelects.Get(result.SelectRef.Value);
                         }
 
-                        if (fetch != null)
+                        if (@select != null)
                         {
-                            var include = fetch.Include ?? fetch.Step?.End.Include;
+                            var include = @select.Include ?? @select.Step?.End.Include;
 
-                            if (fetch.Step != null)
+                            if (@select.Step != null)
                             {
-                                var propertyType = fetch.Step.End.PropertyType;
+                                var propertyType = @select.Step.End.PropertyType;
 
-                                if (fetch.Step.IsOne)
+                                if (@select.Step.IsOne)
                                 {
                                     name ??= propertyType.SingularName;
 
-                                    @object = (IObject)fetch.Step.Get(@object, this.acls);
+                                    @object = (IObject)@select.Step.Get(@object, this.acls);
                                     response.AddObject(name, @object, include);
                                 }
                                 else
                                 {
                                     name ??= propertyType.PluralName;
 
-                                    var stepResult = fetch.Step.Get(@object, this.acls);
+                                    var stepResult = @select.Step.Get(@object, this.acls);
                                     var objects = stepResult is HashSet<object> set ? set.Cast<IObject>().ToArray() : ((Extent)stepResult)?.ToArray() ?? new IObject[0];
 
                                     if (result.Skip.HasValue || result.Take.HasValue)

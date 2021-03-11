@@ -30,7 +30,7 @@ namespace Allors.Workspace.Adapters.Local
 
             this.AccessControlLists = new WorkspaceAccessControlLists(this.Workspace.Name, user);
             this.AllowedClasses = metaCache.GetWorkspaceClasses(this.Workspace.Name);
-            this.PreparedFetches = databaseContext.PreparedFetches;
+            this.PreparedSelects = databaseContext.PreparedSelects;
             this.PreparedExtents = databaseContext.PreparedExtents;
 
             this.Objects = new HashSet<IObject>();
@@ -52,7 +52,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public ISet<IClass> AllowedClasses { get; }
 
-        public IPreparedFetches PreparedFetches { get; }
+        public IPreparedSelects PreparedSelects { get; }
 
         public IPreparedExtents PreparedExtents { get; }
 
@@ -183,12 +183,12 @@ namespace Allors.Workspace.Adapters.Local
             {
                 if (pull.Object != null)
                 {
-                    var pullInstantiate = new LocalPullInstantiate(this.Transaction, pull, this.AccessControlLists, this.PreparedFetches);
+                    var pullInstantiate = new LocalPullInstantiate(this.Transaction, pull, this.AccessControlLists, this.PreparedSelects);
                     pullInstantiate.Execute(this);
                 }
                 else
                 {
-                    var pullExtent = new LocalPullExtent(this.Transaction, pull, this.AccessControlLists, this.PreparedFetches, this.PreparedExtents);
+                    var pullExtent = new LocalPullExtent(this.Transaction, pull, this.AccessControlLists, this.PreparedSelects, this.PreparedExtents);
                     pullExtent.Execute(this);
                 }
             }
