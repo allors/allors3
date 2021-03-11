@@ -31,7 +31,7 @@ namespace Tests.Workspace
                 {
                     new Result
                     {
-                        Fetch = new Fetch
+                        Select = new Select
                         {
                             Include = new C1NodeBuilder(this.M,v => v.C1C2One2One()),
                         },

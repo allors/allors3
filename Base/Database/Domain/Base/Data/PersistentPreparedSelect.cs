@@ -1,4 +1,4 @@
-// <copyright file="PersistentPreparedFetch.cs" company="Allors bvba">
+// <copyright file="PersistentPreparedSelect.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -12,15 +12,15 @@ namespace Allors.Database.Domain
     using Protocol.Json;
 
 
-    public partial class PersistentPreparedFetch
+    public partial class PersistentPreparedSelect
     {
-        public Allors.Database.Data.Fetch Fetch
+        public Allors.Database.Data.Select Select
         {
             get
             {
                 using TextReader reader = new StringReader(this.Content);
-                var protocolFetch = (Fetch)XmlSerializer.Deserialize(reader);
-                return protocolFetch.FromJson(this.Strategy.Transaction);
+                var protocolSelect = (Select)XmlSerializer.Deserialize(reader);
+                return protocolSelect.FromJson(this.Strategy.Transaction);
             }
 
             set
@@ -32,6 +32,6 @@ namespace Allors.Database.Domain
             }
         }
 
-        private static XmlSerializer XmlSerializer => new XmlSerializer(typeof(Fetch));
+        private static XmlSerializer XmlSerializer => new XmlSerializer(typeof(Select));
     }
 }

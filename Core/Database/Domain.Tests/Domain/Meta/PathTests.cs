@@ -34,7 +34,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            var path = new Fetch(this.M.C1.C1C2One2Manies, this.M.C2.C2AllorsString);
+            var path = new Select(this.M.C1.C1C2One2Manies, this.M.C2.C2AllorsString);
 
             var result = (ISet<object>)path.Get(c1a, this.AclsMock.Object);
             Assert.Equal(1, result.Count);
@@ -66,7 +66,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            var path = new Fetch(this.M.C1.C1C2One2Manies, this.M.C2.C2AllorsString);
+            var path = new Select(this.M.C1.C1C2One2Manies, this.M.C2.C2AllorsString);
 
             var result = (ISet<object>)path.Get(c1a, this.AclsMock.Object);
             Assert.Equal(1, result.Count);
@@ -98,7 +98,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Fetch.TryParse(this.M.C2.ObjectType, "C1WhereC1C2One2Many", out var fetch);
+            Select.TryParse(this.M.C2.ObjectType, "C1WhereC1C2One2Many", out var fetch);
 
             var result = (C1)fetch.Get(c2A, this.AclsMock.Object);
             Assert.Equal(result, c1A);

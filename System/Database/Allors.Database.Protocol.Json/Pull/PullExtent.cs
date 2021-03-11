@@ -18,16 +18,16 @@ namespace Allors.Database.Protocol.Json
         private readonly Pull pull;
         private readonly IAccessControlLists acls;
         private readonly IPreparedExtents preparedExtents;
-        private readonly IPreparedFetches preparedFetches;
+        private readonly IPreparedSelects preparedSelects;
 
-        public PullExtent(ITransaction transaction, Pull pull, IAccessControlLists acls, IPreparedFetches preparedFetches,
+        public PullExtent(ITransaction transaction, Pull pull, IAccessControlLists acls, IPreparedSelects preparedSelects,
             IPreparedExtents preparedExtents)
         {
             this.transaction = transaction;
             this.pull = pull;
             this.acls = acls;
             this.preparedExtents = preparedExtents;
-            this.preparedFetches = preparedFetches;
+            this.preparedSelects = preparedSelects;
         }
 
 
@@ -49,10 +49,10 @@ namespace Allors.Database.Protocol.Json
                     {
                         var name = result.Name;
 
-                        var fetch = result.Fetch;
-                        if (fetch == null && result.FetchRef.HasValue)
+                        var fetch = result.Select;
+                        if (fetch == null && result.SelectRef.HasValue)
                         {
-                            fetch = this.preparedFetches.Get(result.FetchRef.Value);
+                            fetch = this.preparedSelects.Get(result.SelectRef.Value);
                         }
 
                         if (fetch != null)

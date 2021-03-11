@@ -23,13 +23,13 @@ namespace Allors.Database.Protocol.Json
         private readonly AccessControlsWriter accessControlsWriter;
         private readonly PermissionsWriter permissionsWriter;
 
-        public PullResponseBuilder(ITransaction transaction, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, IPreparedFetches preparedFetches, IPreparedExtents preparedExtents)
+        public PullResponseBuilder(ITransaction transaction, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, IPreparedSelects preparedSelects, IPreparedExtents preparedExtents)
         {
             this.Transaction = transaction;
 
             this.AccessControlLists = accessControlLists;
             this.AllowedClasses = allowedClasses;
-            this.PreparedFetches = preparedFetches;
+            this.PreparedSelects = preparedSelects;
             this.PreparedExtents = preparedExtents;
 
             this.objects = new HashSet<IObject>();
@@ -43,7 +43,7 @@ namespace Allors.Database.Protocol.Json
 
         public ISet<IClass> AllowedClasses { get; }
 
-        public IPreparedFetches PreparedFetches { get; }
+        public IPreparedSelects PreparedSelects { get; }
 
         public IPreparedExtents PreparedExtents { get; }
 
@@ -175,12 +175,12 @@ namespace Allors.Database.Protocol.Json
 
                     if (pull.Object != null)
                     {
-                        var pullInstantiate = new PullInstantiate(this.Transaction, pull, this.AccessControlLists, this.PreparedFetches);
+                        var pullInstantiate = new PullInstantiate(this.Transaction, pull, this.AccessControlLists, this.PreparedSelects);
                         pullInstantiate.Execute(this);
                     }
                     else
                     {
-                        var pullExtent = new PullExtent(this.Transaction, pull, this.AccessControlLists, this.PreparedFetches, this.PreparedExtents);
+                        var pullExtent = new PullExtent(this.Transaction, pull, this.AccessControlLists, this.PreparedSelects, this.PreparedExtents);
                         pullExtent.Execute(this);
                     }
                 }

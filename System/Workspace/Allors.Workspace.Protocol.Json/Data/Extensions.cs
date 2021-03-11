@@ -5,10 +5,11 @@
 
 namespace Allors.Workspace.Protocol.Json
 {
+    using Allors.Protocol.Json.Data;
     using Data;
     using Extent = Allors.Protocol.Json.Data.Extent;
-    using Fetch = Allors.Protocol.Json.Data.Fetch;
     using Pull = Allors.Protocol.Json.Data.Pull;
+    using Select = Allors.Protocol.Json.Data.Select;
 
     public static class Extensions
     {
@@ -26,11 +27,11 @@ namespace Allors.Workspace.Protocol.Json
             return toJsonVisitor.Extent;
         }
 
-        public static Fetch ToJson(this Allors.Workspace.Data.Fetch fetch)
+        public static Select ToJson(this Allors.Workspace.Data.Select @select)
         {
             var toJsonVisitor = new ToJsonVisitor();
-            fetch.Accept(toJsonVisitor);
-            return toJsonVisitor.Fetch;
+            @select.Accept(toJsonVisitor);
+            return toJsonVisitor.Select;
         }
     }
 }

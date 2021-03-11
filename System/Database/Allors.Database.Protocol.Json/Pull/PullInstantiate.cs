@@ -18,14 +18,14 @@ namespace Allors.Database.Protocol.Json
         private readonly ITransaction transaction;
         private readonly Pull pull;
         private readonly IAccessControlLists acls;
-        private readonly IPreparedFetches preparedFetches;
+        private readonly IPreparedSelects preparedSelects;
 
-        public PullInstantiate(ITransaction transaction, Pull pull, IAccessControlLists acls, IPreparedFetches preparedFetches)
+        public PullInstantiate(ITransaction transaction, Pull pull, IAccessControlLists acls, IPreparedSelects preparedSelects)
         {
             this.transaction = transaction;
             this.pull = pull;
             this.acls = acls;
-            this.preparedFetches = preparedFetches;
+            this.preparedSelects = preparedSelects;
         }
 
         public void Execute(PullResponseBuilder response)
@@ -50,10 +50,10 @@ namespace Allors.Database.Protocol.Json
                     {
                         var name = result.Name;
 
-                        var fetch = result.Fetch;
-                        if ((fetch == null) && result.FetchRef.HasValue)
+                        var fetch = result.Select;
+                        if ((fetch == null) && result.SelectRef.HasValue)
                         {
-                            fetch = this.preparedFetches.Get(result.FetchRef.Value);
+                            fetch = this.preparedSelects.Get(result.SelectRef.Value);
                         }
 
                         if (fetch != null)

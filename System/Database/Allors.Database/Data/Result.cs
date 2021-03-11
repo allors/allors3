@@ -9,9 +9,9 @@ namespace Allors.Database.Data
 
     public class Result : IVisitable
     {
-        public Guid? FetchRef { get; set; }
+        public Guid? SelectRef { get; set; }
 
-        public Fetch Fetch { get; set; }
+        public Select Select { get; set; }
 
         public string Name { get; set; }
 
@@ -21,9 +21,9 @@ namespace Allors.Database.Data
 
         public override string ToString()
         {
-            if (this.FetchRef != null)
+            if (this.SelectRef != null)
             {
-                return $"Result: [FetchRef: {this.FetchRef}]";
+                return $"Result: [SelectRef: {this.SelectRef}]";
             }
 
             if (this.Name != null)
@@ -31,7 +31,7 @@ namespace Allors.Database.Data
                 return $"Result: [Name: {this.Name}]";
             }
 
-            return $"Result: [Fetch: {this.Fetch}]";
+            return $"Result: [Select: {this.Select}]";
         }
 
         public void Accept(IVisitor visitor) => visitor.VisitResult(this);

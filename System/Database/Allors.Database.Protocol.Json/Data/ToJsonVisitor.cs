@@ -11,11 +11,11 @@ namespace Allors.Database.Protocol.Json
     using Allors.Protocol.Json.Data;
     using Data;
     using Extent = Allors.Protocol.Json.Data.Extent;
-    using Fetch = Allors.Protocol.Json.Data.Fetch;
     using IVisitor = Data.IVisitor;
     using Node = Allors.Protocol.Json.Data.Node;
     using Pull = Allors.Protocol.Json.Data.Pull;
     using Result = Allors.Protocol.Json.Data.Result;
+    using Select = Allors.Protocol.Json.Data.Select;
     using Sort = Allors.Protocol.Json.Data.Sort;
     using Step = Allors.Protocol.Json.Data.Step;
 
@@ -24,7 +24,7 @@ namespace Allors.Database.Protocol.Json
         private readonly Stack<Extent> extents;
         private readonly Stack<Predicate> predicates;
         private readonly Stack<Result> results;
-        private readonly Stack<Fetch> fetches;
+        private readonly Stack<Select> fetches;
         private readonly Stack<Step> steps;
         private readonly Stack<Node> nodes;
         private readonly Stack<Sort> sorts;
@@ -34,7 +34,7 @@ namespace Allors.Database.Protocol.Json
             this.extents = new Stack<Extent>();
             this.predicates = new Stack<Predicate>();
             this.results = new Stack<Result>();
-            this.fetches = new Stack<Fetch>();
+            this.fetches = new Stack<Select>();
             this.steps = new Stack<Step>();
             this.nodes = new Stack<Node>();
             this.sorts = new Stack<Sort>();
@@ -44,7 +44,7 @@ namespace Allors.Database.Protocol.Json
 
         public Extent Extent => this.extents?.Peek();
 
-        public Fetch Fetch => this.fetches?.Peek();
+        public Select Select => this.fetches?.Peek();
 
         public void VisitAnd(And visited)
         {
@@ -201,9 +201,9 @@ namespace Allors.Database.Protocol.Json
             }
         }
 
-        public void VisitFetch(Data.Fetch visited)
+        public void VisitSelect(Data.Select visited)
         {
-            var fetch = new Fetch();
+            var fetch = new Select();
 
             this.fetches.Push(fetch);
 
@@ -413,7 +413,7 @@ namespace Allors.Database.Protocol.Json
         {
             var result = new Result
             {
-                FetchRef = visited.FetchRef,
+                SelectRef = visited.SelectRef,
                 Name = visited.Name,
                 Skip = visited.Skip,
                 Take = visited.Take,
@@ -421,10 +421,10 @@ namespace Allors.Database.Protocol.Json
 
             this.results.Push(result);
 
-            if (visited.Fetch != null)
+            if (visited.Select != null)
             {
-                visited.Fetch.Accept(this);
-                result.Fetch = this.fetches.Pop();
+                visited.Select.Accept(this);
+                result.Select = this.fetches.Pop();
             }
         }
 

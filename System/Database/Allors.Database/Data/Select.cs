@@ -1,4 +1,4 @@
-// <copyright file="Fetch.cs" company="Allors bvba">
+// <copyright file="Select.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -10,13 +10,13 @@ namespace Allors.Database.Data
     using Meta;
     using Security;
 
-    public class Fetch : IVisitable
+    public class Select : IVisitable
     {
-        public Fetch()
+        public Select()
         {
         }
 
-        public Fetch(params IPropertyType[] propertyTypes)
+        public Select(params IPropertyType[] propertyTypes)
         {
             if (propertyTypes.Length > 0)
             {
@@ -24,7 +24,7 @@ namespace Allors.Database.Data
             }
         }
 
-        public Fetch(IMetaPopulation metaPopulation, params Guid[] propertyTypeIds)
+        public Select(IMetaPopulation metaPopulation, params Guid[] propertyTypeIds)
             : this(propertyTypeIds.Select(v => (IPropertyType)metaPopulation.Find(v)).ToArray())
         {
         }
@@ -39,11 +39,11 @@ namespace Allors.Database.Data
 
         public void Ensure(IObject allorsObject, IAccessControlLists acls) => this.Step.Ensure(allorsObject, acls);
 
-        public static bool TryParse(IComposite composite, string fetchString, out Fetch fetch)
+        public static bool TryParse(IComposite composite, string fetchString, out Select @select)
         {
             var propertyType = Resolve(composite, fetchString);
-            fetch = propertyType == null ? null : new Fetch(propertyType);
-            return fetch != null;
+            @select = propertyType == null ? null : new Select(propertyType);
+            return @select != null;
         }
         
         private static IPropertyType Resolve(IComposite composite, string propertyName)
@@ -77,6 +77,6 @@ namespace Allors.Database.Data
 
         public override string ToString() => this.Step?.ToString() ?? base.ToString();
 
-        public void Accept(IVisitor visitor) => visitor.VisitFetch(this);
+        public void Accept(IVisitor visitor) => visitor.VisitSelect(this);
     }
 }

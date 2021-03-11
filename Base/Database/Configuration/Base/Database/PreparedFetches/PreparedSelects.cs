@@ -1,4 +1,4 @@
-// <copyright file="PersistentPreparedFetches.cs" company="Allors bvba">
+// <copyright file="PreparedSelects.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -10,19 +10,19 @@ namespace Allors.Database.Configuration
     using Data;
     using Domain;
 
-    public class PreparedFetches : IPreparedFetches
+    public class PreparedSelects : IPreparedSelects
    {
-       private readonly ConcurrentDictionary<Guid, Fetch> fetchById;
+       private readonly ConcurrentDictionary<Guid, Select> fetchById;
 
-        public PreparedFetches(IDatabaseContext databaseContext)
+        public PreparedSelects(IDatabaseContext databaseContext)
         {
             this.DatabaseContext = databaseContext;
-            this.fetchById = new ConcurrentDictionary<Guid, Fetch>();
+            this.fetchById = new ConcurrentDictionary<Guid, Select>();
         }
 
         public IDatabaseContext DatabaseContext { get; }
 
-        public Fetch Get(Guid id)
+        public Select Get(Guid id)
         {
             if (!this.fetchById.TryGetValue(id, out var fetch))
             {
@@ -31,15 +31,15 @@ namespace Allors.Database.Configuration
                 {
                     var m = transaction.Database.Context().M;
 
-                    var filter = new Extent(m.PersistentPreparedFetch.Class)
+                    var filter = new Extent(m.PersistentPreparedSelect.Class)
                     {
-                        Predicate = new Equals(m.PersistentPreparedFetch.UniqueId) { Value = id },
+                        Predicate = new Equals(m.PersistentPreparedSelect.UniqueId) { Value = id },
                     };
 
-                    var preparedFetch = (PersistentPreparedFetch)filter.Build(transaction).First;
-                    if (preparedFetch != null)
+                    var preparedSelect = (PersistentPreparedSelect)filter.Build(transaction).First;
+                    if (preparedSelect != null)
                     {
-                        fetch = preparedFetch.Fetch;
+                        fetch = preparedSelect.Select;
                         this.fetchById[id] = fetch;
                     }
                 }

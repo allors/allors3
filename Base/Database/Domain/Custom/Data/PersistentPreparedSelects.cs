@@ -9,18 +9,18 @@ namespace Allors.Database.Domain
 
     using Allors.Database.Data;
 
-    public partial class PersistentPreparedFetches
+    public partial class PersistentPreparedSelects
     {
-        public static readonly Guid FetchPeople = new Guid("F24CC434-8CDE-4E64-8970-4F693A606B7D");
+        public static readonly Guid SelectPeople = new Guid("F24CC434-8CDE-4E64-8970-4F693A606B7D");
 
         protected override void CustomSetup(Setup setup)
         {
             var merge = this.Cache.Merger().Action();
 
-            merge(FetchPeople, v =>
+            merge(SelectPeople, v =>
             {
-                v.Description = "Fetch People";
-                v.Fetch = new Fetch
+                v.Description = "Select People";
+                v.Select = new Select
                 {
                     Include = new[]
                     {

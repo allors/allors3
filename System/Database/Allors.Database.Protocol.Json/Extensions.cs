@@ -7,10 +7,11 @@ namespace Allors.Database.Protocol.Json
 {
     using System;
     using Allors.Protocol.Json.Data;
+    using Data;
     using Meta;
     using Extent = Data.Extent;
-    using Fetch = Data.Fetch;
     using Pull = Allors.Protocol.Json.Data.Pull;
+    using Select = Data.Select;
 
     public static class Extensions
     {
@@ -32,11 +33,11 @@ namespace Allors.Database.Protocol.Json
             return fromJsonVisitor.Extent;
         }
 
-        public static Fetch FromJson(this Allors.Protocol.Json.Data.Fetch extent, ITransaction transaction)
+        public static Select FromJson(this Allors.Protocol.Json.Data.Select extent, ITransaction transaction)
         {
             var fromJsonVisitor = new FromJsonVisitor(transaction);
             extent.Accept(fromJsonVisitor);
-            return fromJsonVisitor.Fetch;
+            return fromJsonVisitor.Select;
         }
         
         public static Pull ToJson(this Data.Pull pull)
@@ -53,11 +54,11 @@ namespace Allors.Database.Protocol.Json
             return toJsonVisitor.Extent;
         }
 
-        public static Allors.Protocol.Json.Data.Fetch ToJson(this Fetch extent)
+        public static Allors.Protocol.Json.Data.Select ToJson(this Select extent)
         {
             var toJsonVisitor = new ToJsonVisitor();
             extent.Accept(toJsonVisitor);
-            return toJsonVisitor.Fetch;
+            return toJsonVisitor.Select;
         }
     }
 }

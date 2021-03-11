@@ -26,7 +26,7 @@ namespace Allors.Database.Domain
 
         IPreparedExtents PreparedExtents { get; }
 
-        IPreparedFetches PreparedFetches { get; }
+        IPreparedSelects PreparedSelects { get; }
 
         IMetaCache MetaCache { get; }
 

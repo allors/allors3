@@ -1,4 +1,4 @@
-// <copyright file="PersistentPreparedFetch.cs" company="Allors bvba">
+// <copyright file="PersistentPreparedSelect.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -13,7 +13,7 @@ namespace Allors.Repository
     #region Allors
     [Id("02C7569C-8F54-4F8D-AC09-1BACD9528F1F")]
     #endregion
-    public partial class PersistentPreparedFetch : UniquelyIdentifiable, Deletable
+    public partial class PersistentPreparedSelect : UniquelyIdentifiable, Deletable
     {
         #region inherited properties
 
