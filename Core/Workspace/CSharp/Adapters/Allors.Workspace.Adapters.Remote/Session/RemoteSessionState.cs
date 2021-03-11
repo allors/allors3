@@ -11,7 +11,7 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Linq;
     using Meta;
 
-    public class SessionState
+    public class RemoteSessionState
     {
         private readonly IDictionary<IRoleType, IDictionary<RemoteStrategy, object>> roleByAssociationByRoleType;
         private readonly IDictionary<IAssociationType, IDictionary<RemoteStrategy, object>> associationByRoleByAssociationType;
@@ -19,7 +19,7 @@ namespace Allors.Workspace.Adapters.Remote
         private IDictionary<IRoleType, IDictionary<RemoteStrategy, object>> changedRoleByAssociationByRoleType;
         private IDictionary<IAssociationType, IDictionary<RemoteStrategy, object>> changedAssociationByRoleByAssociationType;
 
-        public SessionState()
+        public RemoteSessionState()
         {
             this.roleByAssociationByRoleType = new Dictionary<IRoleType, IDictionary<RemoteStrategy, object>>();
             this.associationByRoleByAssociationType = new Dictionary<IAssociationType, IDictionary<RemoteStrategy, object>>();
@@ -28,7 +28,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.changedAssociationByRoleByAssociationType = new Dictionary<IAssociationType, IDictionary<RemoteStrategy, object>>();
         }
 
-        public SessionStateChangeSet Checkpoint()
+        public RemoteSessionStateChangeSet Checkpoint()
         {
             foreach (var roleType in this.changedRoleByAssociationByRoleType.Keys.ToArray())
             {
@@ -88,7 +88,7 @@ namespace Allors.Workspace.Adapters.Remote
                 }
             }
 
-            var changeSet = new SessionStateChangeSet(this.changedRoleByAssociationByRoleType, this.changedAssociationByRoleByAssociationType);
+            var changeSet = new RemoteSessionStateChangeSet(this.changedRoleByAssociationByRoleType, this.changedAssociationByRoleByAssociationType);
 
             this.changedRoleByAssociationByRoleType = new Dictionary<IRoleType, IDictionary<RemoteStrategy, object>>();
             this.changedAssociationByRoleByAssociationType = new Dictionary<IAssociationType, IDictionary<RemoteStrategy, object>>();
@@ -336,6 +336,12 @@ namespace Allors.Workspace.Adapters.Remote
             }
 
             return changedRoleByAssociation;
+        }
+
+        public bool IsAssociationForRole(RemoteStrategy association, IRoleType roleType, RemoteStrategy forRole)
+        {
+            this.GetRole(association, roleType, out var role);
+            return role?.Equals(forRole) == true;
         }
     }
 }

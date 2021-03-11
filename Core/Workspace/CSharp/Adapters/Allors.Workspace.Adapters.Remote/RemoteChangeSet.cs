@@ -14,7 +14,7 @@ namespace Allors.Workspace.Adapters.Remote
 
     internal sealed class RemoteChangeSet : IChangeSet
     {
-        public RemoteChangeSet(RemoteSession session, ISet<IStrategy> created, ISet<IStrategy> instantiated, SessionStateChangeSet sessionStateChangeSet)
+        public RemoteChangeSet(RemoteSession session, ISet<IStrategy> created, ISet<IStrategy> instantiated, RemoteSessionStateChangeSet sessionStateChangeSet)
         {
             this.Session = session;
             this.Created = created;

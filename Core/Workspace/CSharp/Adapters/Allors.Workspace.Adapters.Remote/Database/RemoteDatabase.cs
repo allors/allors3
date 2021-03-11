@@ -258,13 +258,7 @@ namespace Allors.Workspace.Adapters.Remote
 
             return null;
         }
-
-        internal IEnumerable<RemoteDatabaseObject> Get(IComposite objectType)
-        {
-            var classes = new HashSet<IClass>(objectType.DatabaseClasses);
-            return this.databaseRolesByDatabaseId.Where(v => classes.Contains(v.Value.Class)).Select(v => v.Value);
-        }
-
+        
         internal RemotePermission GetPermission(IClass @class, IOperandType operandType, Operations operation)
         {
             switch (operation)

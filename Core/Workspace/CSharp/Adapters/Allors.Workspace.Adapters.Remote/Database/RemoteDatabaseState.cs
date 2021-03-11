@@ -248,7 +248,7 @@ namespace Allors.Workspace.Adapters.Remote
                 var associationType = roleType.AssociationType;
                 if (associationType.IsOne)
                 {
-                    var previousAssociationObject = this.Session.GetAssociation(previousRole, associationType).FirstOrDefault();
+                    var previousAssociationObject = this.Session.GetAssociation((RemoteStrategy)previousRole.Strategy, associationType).FirstOrDefault();
                     previousAssociationObject?.Strategy.Set(roleType, null);
                 }
             }
@@ -286,7 +286,7 @@ namespace Allors.Workspace.Adapters.Remote
                     var addedObjects = this.Session.Instantiate<IObject>(addedRoles);
                     foreach (var addedObject in addedObjects)
                     {
-                        var previousAssociationObject = this.Session.GetAssociation(addedObject, associationType).FirstOrDefault();
+                        var previousAssociationObject = this.Session.GetAssociation((RemoteStrategy)addedObject.Strategy, associationType).FirstOrDefault();
                         previousAssociationObject?.Strategy.Remove(roleType, addedObject);
                     }
                 }
@@ -296,6 +296,35 @@ namespace Allors.Workspace.Adapters.Remote
             this.changedRoleByRelationType[roleType.RelationType] = role.Select(v => (RemoteStrategy)v.Strategy).ToArray();
 
             this.Session.OnChange(this);
+        }
+
+        public bool IsAssociationForRole(IRoleType roleType, RemoteStrategy forRole)
+        {
+            if (roleType.ObjectType.IsUnit)
+            {
+               return false;
+            }
+
+            if (roleType.IsOne)
+            {
+                if (this.changedRoleByRelationType != null &&
+                    this.changedRoleByRelationType.TryGet<RemoteStrategy>(roleType.RelationType, out var workspaceRole))
+                {
+                    return workspaceRole?.Equals(forRole) == true;
+                }
+
+                var identity = (long?)this.databaseObject?.GetRole(roleType);
+                return identity?.Equals(forRole.Identity) == true;
+            }
+
+            if (this.changedRoleByRelationType != null &&
+                this.changedRoleByRelationType.TryGet<RemoteStrategy[]>(roleType.RelationType, out var workspaceRoles))
+            {
+                return workspaceRoles?.Contains(forRole) == true;
+            }
+
+            var identities = (long[])this.databaseObject?.GetRole(roleType);
+            return identities?.Contains(forRole.Identity) == true;
         }
     }
 }

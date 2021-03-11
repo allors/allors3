@@ -8,9 +8,9 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Collections.Generic;
     using Meta;
 
-    public class SessionStateChangeSet
+    public class RemoteSessionStateChangeSet
     {
-        public SessionStateChangeSet(IDictionary<IRoleType, IDictionary<RemoteStrategy, object>> roleByAssociationByRoleType, IDictionary<IAssociationType, IDictionary<RemoteStrategy, object>> associationByRoleByAssociationType)
+        public RemoteSessionStateChangeSet(IDictionary<IRoleType, IDictionary<RemoteStrategy, object>> roleByAssociationByRoleType, IDictionary<IAssociationType, IDictionary<RemoteStrategy, object>> associationByRoleByAssociationType)
         {
             this.RoleByAssociationByRoleType = roleByAssociationByRoleType;
             this.AssociationByRoleByRoleType = associationByRoleByAssociationType;

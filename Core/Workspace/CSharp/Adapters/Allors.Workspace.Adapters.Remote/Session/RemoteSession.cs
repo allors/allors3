@@ -8,15 +8,13 @@ namespace Allors.Workspace.Adapters.Remote
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Runtime.InteropServices.ComTypes;
-    using System.Security.Cryptography.X509Certificates;
     using System.Threading.Tasks;
-    using Data;
-    using Meta;
     using Allors.Protocol.Json.Api.Invoke;
     using Allors.Protocol.Json.Api.Pull;
     using Allors.Protocol.Json.Api.Push;
     using Allors.Protocol.Json.Api.Sync;
+    using Data;
+    using Meta;
     using Protocol.Json;
 
     public class RemoteSession : ISession
@@ -42,7 +40,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.strategyByWorkspaceId = new Dictionary<long, RemoteStrategy>();
             this.existingDatabaseStrategies = new List<RemoteStrategy>();
 
-            this.SessionState = new SessionState();
+            this.SessionState = new RemoteSessionState();
             this.SessionLifecycle.OnInit(this);
         }
 
@@ -55,7 +53,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal bool HasDatabaseChanges => this.newDatabaseStrategies?.Count > 0 || this.existingDatabaseStrategies.Any(v => v.HasDatabaseChanges);
 
-        internal SessionState SessionState { get; }
+        internal RemoteSessionState SessionState { get; }
 
         public async Task<ICallResult> Call(Method method, CallOptions options = null) => await this.Call(new[] { method }, options);
 
@@ -124,7 +122,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public IEnumerable<T> Instantiate<T>(IEnumerable<IObject> objects) where T : IObject => objects.Select(this.Instantiate<T>);
 
-        public IEnumerable<T> Instantiate<T>(IEnumerable<T> objects) where T : IObject => objects.Select(this.Instantiate<T>);
+        public IEnumerable<T> Instantiate<T>(IEnumerable<T> objects) where T : IObject => objects.Select(this.Instantiate);
 
         public IEnumerable<T> Instantiate<T>(IEnumerable<long> identities) where T : IObject => identities.Select(this.Instantiate<T>);
 
@@ -256,33 +254,20 @@ namespace Allors.Workspace.Adapters.Remote
             return ids?.Select(this.Instantiate<IObject>).ToArray() ?? this.Workspace.ObjectFactory.EmptyArray(roleType.ObjectType);
         }
 
-        internal void SetRole(RemoteStrategy association, IRoleType roleType, object role) => this.SessionState.SetRole(association, roleType, role);
-
-        internal IEnumerable<IObject> GetAssociation(IObject @object, IAssociationType associationType)
+        internal IEnumerable<IObject> GetAssociation(RemoteStrategy role, IAssociationType associationType)
         {
             var roleType = associationType.RoleType;
 
-            foreach (var association in this.Database.Get(associationType.ObjectType)
-                .Select(v => this.Instantiate<IObject>(v.Identity)))
+            foreach (var association in this.Get(associationType.ObjectType))
             {
-                if (association.Strategy.CanRead(roleType))
+                if (!association.CanRead(roleType))
                 {
-                    if (roleType.IsOne)
-                    {
-                        var role = ((RemoteStrategy)association.Strategy).GetCompositeRole<IObject>(roleType);
-                        if (role != null && role.Identity == @object.Identity)
-                        {
-                            yield return association;
-                        }
-                    }
-                    else
-                    {
-                        var roles = ((RemoteStrategy)association.Strategy).GetCompositesRole<IObject>(roleType);
-                        if (roles?.Contains(@object) == true)
-                        {
-                            yield return association;
-                        }
-                    }
+                    continue;
+                }
+
+                if (association.IsAssociationForRole(roleType, role))
+                {
+                    yield return association.Object;
                 }
             }
         }
@@ -409,6 +394,12 @@ namespace Allors.Workspace.Adapters.Remote
         {
             this.instantiated ??= new HashSet<IStrategy>();
             _ = this.instantiated.Add(strategy);
+        }
+
+        internal IEnumerable<RemoteStrategy> Get(IComposite objectType)
+        {
+            var classes = new HashSet<IClass>(objectType.DatabaseClasses);
+            return this.strategyByWorkspaceId.Where(v => classes.Contains(v.Value.Class)).Select(v => v.Value);
         }
     }
 }

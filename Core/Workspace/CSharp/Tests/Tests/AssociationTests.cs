@@ -36,7 +36,7 @@ namespace Tests.Workspace
                         {
                             Fetch = new Fetch
                             {
-                                Include = new[] {new Node(this.M.C2.C1WhereC1C2One2Many),},
+                                Include = new[] {new Node(this.M.C2.C1WhereC1C2One2Many)},
                             },
                         },
                     },

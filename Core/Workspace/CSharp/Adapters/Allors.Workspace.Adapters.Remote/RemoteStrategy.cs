@@ -130,7 +130,7 @@ namespace Allors.Workspace.Adapters.Remote
             switch (roleType.Origin)
             {
                 case Origin.Session:
-                    this.Session.SetRole(this, roleType, value);
+                    this.Session.SessionState.SetRole(this, roleType, value);
                     break;
 
                 case Origin.Workspace:
@@ -171,7 +171,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             if (associationType.Origin != Origin.Session)
             {
-                return this.Session.GetAssociation(this.Object, associationType).FirstOrDefault();
+                return this.Session.GetAssociation(this, associationType).FirstOrDefault();
             }
 
             this.Session.SessionState.GetAssociation(this, associationType, out var association);
@@ -183,7 +183,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             if (associationType.Origin != Origin.Session)
             {
-                return this.Session.GetAssociation(this.Object, associationType);
+                return this.Session.GetAssociation(this, associationType);
             }
 
             this.Session.SessionState.GetAssociation(this, associationType, out var association);
@@ -220,5 +220,15 @@ namespace Allors.Workspace.Adapters.Remote
         }
 
         internal void WorkspaceSave() => this.workspaceState.Push();
+
+        public bool IsAssociationForRole(IRoleType roleType, RemoteStrategy role)
+            =>
+                roleType.Origin switch
+                {
+                    Origin.Session => this.Session.SessionState.IsAssociationForRole(this, roleType, role),
+                    Origin.Workspace => this.workspaceState?.IsAssociationForRole(roleType, role) ?? false,
+                    Origin.Database => this.databaseState?.IsAssociationForRole(roleType, role) ?? false,
+                    _ => throw new ArgumentException("Unsupported Origin")
+                };
     }
 }
