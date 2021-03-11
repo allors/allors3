@@ -1,35 +1,35 @@
 import { MetaPopulation } from '@allors/meta/core';
 import { Database } from '@allors/workspace/core';
 
-import { data, FetchFactory, Meta } from '@allors/meta/generated';
+import { data, SelectFactory, Meta } from '@allors/meta/generated';
 import { MemoryDatabase } from '@allors/workspace/memory';
 
-describe('Fetch', () => {
+describe('Select', () => {
   let m: Meta;
-  let factory: FetchFactory;
+  let factory: SelectFactory;
   let database: Database;
 
   beforeEach(async () => {
     m = new MetaPopulation(data) as Meta;
     database = new MemoryDatabase(m);
 
-    factory = new FetchFactory(m);
+    factory = new SelectFactory(m);
   });
 
-  // describe('with empty fetch',
+  // describe('with empty select',
   //     () => {
   //         it('should serialize to correct json', () => {
 
   //             const original = factory.Organisation({});
 
   //             const json = JSON.stringify(original);
-  //             const fetch = JSON.parse(json);
+  //             const select = JSON.parse(json);
 
-  //             expect(fetch).toBeDefined();
+  //             expect(select).toBeDefined();
   //         });
   //     });
 
-  // describe('with one role fetch',
+  // describe('with one role select',
   //     () => {
   //         it('should serialize to correct json', () => {
 
@@ -38,13 +38,13 @@ describe('Fetch', () => {
   //             });
 
   //             const json = JSON.stringify(original);
-  //             const fetch = JSON.parse(json);
+  //             const select = JSON.parse(json);
 
-  //             assert.deepEqual(fetch, { step: { propertytype: 'b95c7b34-a295-4600-82c8-826cc2186a00' } });
+  //             assert.deepEqual(select, { step: { propertytype: 'b95c7b34-a295-4600-82c8-826cc2186a00' } });
   //         });
   //     });
 
-  // describe('with two roles fetch',
+  // describe('with two roles select',
   //     () => {
   //         it('should serialize to correct json', () => {
 
@@ -56,9 +56,9 @@ describe('Fetch', () => {
   //                 });
 
   //             const json = JSON.stringify(original);
-  //             const fetch = JSON.parse(json);
+  //             const select = JSON.parse(json);
 
-  //             assert.deepEqual(fetch, {
+  //             assert.deepEqual(select, {
   //                 step: {
   //                     next: {
   //                         propertytype: 'f6624fac-db8e-4fb2-9e86-18021b59d31d',
@@ -70,22 +70,22 @@ describe('Fetch', () => {
   //         });
   //     });
 
-  describe('with a subclass role fetch', () => {
+  describe('with a subclass role select', () => {
     it('should serialize to correct json', () => {
       const original = factory.User({
         Person_CycleOne: {},
       });
 
       const json = JSON.stringify(original);
-      const fetch = JSON.parse(json);
+      const select = JSON.parse(json);
 
-      expect(fetch).toEqual({
+      expect(select).toEqual({
         step: { roleType: m.Person.CycleOne.relationType.id },
       });
     });
   });
 
-  // describe('with a non exsiting role fetch',
+  // describe('with a non exsiting role select',
   //     () => {
   //         it('should throw exception', () => {
 
@@ -97,7 +97,7 @@ describe('Fetch', () => {
   //         });
   //     });
 
-  // describe('with one association fetch',
+  // describe('with one association select',
   //     () => {
   //         it('should serialize to correct json', () => {
 
@@ -106,23 +106,25 @@ describe('Fetch', () => {
   //             });
 
   //             const json = JSON.stringify(original);
-  //             const fetch = JSON.parse(json);
+  //             const select = JSON.parse(json);
 
-  //             assert.deepEqual(fetch, { step: { propertytype: 'dec66a7b-56f5-4010-a2e7-37e25124bc77' } });
+  //             assert.deepEqual(select, { step: { propertytype: 'dec66a7b-56f5-4010-a2e7-37e25124bc77' } });
   //         });
   //     });
 
-  describe('with one subclass association fetch', () => {
+  describe('with one subclass association select', () => {
     it('should serialize to correct json', () => {
       const orginal = factory.Deletable({
         Organisation_PeopleWhereCycleOne: {},
       });
 
       const json = JSON.stringify(orginal);
-      const fetch = JSON.parse(json);
+      const select = JSON.parse(json);
 
-      expect(fetch).toEqual({
-        step: { associationType: m.Organisation.PeopleWhereCycleOne.relationType.id },
+      expect(select).toEqual({
+        step: {
+          associationType: m.Organisation.PeopleWhereCycleOne.relationType.id,
+        },
       });
     });
   });

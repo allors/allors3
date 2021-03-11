@@ -6,7 +6,7 @@ import { Result } from './Result';
 import { FlatPull } from './FlatPull';
 import { Extent } from './Extent';
 import { Sort } from './Sort';
-import { Fetch } from './Fetch';
+import { Select } from './Select';
 import { Tree } from './Tree';
 
 export type PullArgs = Pick<Pull, 'objectType' | 'extentRef' | 'extent' | 'object' | 'results' | 'parameters'>;
@@ -56,10 +56,10 @@ export class Pull {
           this.extent = new Extent({ objectType: this.objectType, sort });
         }
 
-        if (flat.fetchRef || flat.fetch || flat.include || flat.name || flat.skip || flat.take) {
+        if (flat.selectRef || flat.select || flat.include || flat.name || flat.skip || flat.take) {
           const result = new Result({
-            fetchRef: flat.fetchRef,
-            fetch: flat.fetch ? (flat.fetch instanceof Fetch ? flat.fetch : new Fetch(this.objectType, flat.fetch)) : undefined,
+            selectRef: flat.selectRef,
+            select: flat.select ? (flat.select instanceof Select ? flat.select : new Select(this.objectType, flat.select)) : undefined,
             name: flat.name,
             skip: flat.skip,
             take: flat.take,
@@ -68,14 +68,14 @@ export class Pull {
           if (flat.include) {
             const include = flat.include instanceof Tree ? flat.include : new Tree(this.objectType, flat.include);
 
-            if (result.fetch) {
-              if (result.fetch.step) {
-                throw new Error('include conflicts with fetch step');
+            if (result.select) {
+              if (result.select.step) {
+                throw new Error('include conflicts with select step');
               }
 
-              result.fetch.include = include;
+              result.select.include = include;
             } else {
-              result.fetch = new Fetch({ include });
+              result.select = new Select({ include });
             }
           }
 

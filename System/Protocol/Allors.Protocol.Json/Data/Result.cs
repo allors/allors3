@@ -13,7 +13,7 @@ namespace Allors.Protocol.Json.Data
         [JsonPropertyName("fetchRef")]
         public Guid? SelectRef { get; set; }
 
-        [JsonPropertyName("@select")]
+        [JsonPropertyName("select")]
         public Select Select { get; set; }
 
         [JsonPropertyName("name")]

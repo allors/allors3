@@ -16,16 +16,16 @@ namespace Allors.Database.Domain
         public CoarseDerivation(M m) : base(m, new Guid("2D54CAE9-D3A0-4D66-BBF5-BF988B7983D6")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.Scoreboard.Games) { Steps = new IPropertyType[]{m.Scoreboard.Games} },
-                new ChangedPattern(m.Scoreboard.Players) { Steps = new IPropertyType[]{m.Scoreboard.Games} },
-                new ChangedPattern(m.Scoreboard.Players),
-                new ChangedPattern(m.Game.Declarers),
-                new ChangedPattern(m.Game.StartDate),
-                new ChangedPattern(m.Game.EndDate),
-                new ChangedPattern(m.Game.GameMode),
-                new ChangedPattern(m.Game.Winners),
-                new ChangedPattern(m.Scoreboard.AccumulatedScores),
-                new ChangedPattern(m.Score.Value) {Steps = new IPropertyType[]
+                new AssociationPattern(m.Scoreboard.Games) { Steps = new IPropertyType[]{m.Scoreboard.Games} },
+                new AssociationPattern(m.Scoreboard.Players) { Steps = new IPropertyType[]{m.Scoreboard.Games} },
+                new AssociationPattern(m.Scoreboard.Players),
+                new AssociationPattern(m.Game.Declarers),
+                new AssociationPattern(m.Game.StartDate),
+                new AssociationPattern(m.Game.EndDate),
+                new AssociationPattern(m.Game.GameMode),
+                new AssociationPattern(m.Game.Winners),
+                new AssociationPattern(m.Scoreboard.AccumulatedScores),
+                new AssociationPattern(m.Score.Value) {Steps = new IPropertyType[]
                 {
                     m.Score.GameWhereScore,
                     m.Game.ScoreboardWhereGame,
@@ -52,7 +52,7 @@ namespace Allors.Database.Domain
 
                 foreach (var player in players)
                 {
-                    var score = new ScoreBuilder(cycle.Session)
+                    var score = new ScoreBuilder(cycle.Transaction)
                         .WithPlayer(player)
                         .WithValue(0)
                         .Build();
@@ -79,7 +79,7 @@ namespace Allors.Database.Domain
 
                 foreach (var player in players)
                 {
-                    var score = new ScoreBuilder(cycle.Session)
+                    var score = new ScoreBuilder(cycle.Transaction)
                         .WithPlayer(player)
                         .Build();
 

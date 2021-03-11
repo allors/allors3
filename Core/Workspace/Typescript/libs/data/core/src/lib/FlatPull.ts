@@ -2,7 +2,7 @@ import { DatabaseObject, ParameterTypes } from '@allors/workspace/core';
 
 import { IExtent } from './IExtent';
 import { Result } from './Result';
-import { Fetch } from './Fetch';
+import { Select } from './Select';
 import { Predicate } from './Predicate';
 import { Sort } from './Sort';
 import { Tree } from './Tree';
@@ -20,9 +20,9 @@ export interface FlatPull {
 
   results?: Result[];
 
-  fetchRef?: string;
+  selectRef?: string;
 
-  fetch?: Fetch | any;
+  select?: Select | any;
 
   include?: Tree | any;
 

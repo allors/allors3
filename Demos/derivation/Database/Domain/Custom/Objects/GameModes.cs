@@ -32,7 +32,7 @@ namespace Allors.Database.Domain
         public GameMode Abondance => this.Cache[AbondanceId];
 
 
-        private UniquelyIdentifiableCache<GameMode> Cache => this.cache ??= new UniquelyIdentifiableCache<GameMode>(this.Session);
+        private UniquelyIdentifiableCache<GameMode> Cache => this.cache ??= new UniquelyIdentifiableCache<GameMode>(this.Transaction);
 
         protected override void CustomSetup(Setup setup)
         {
@@ -46,7 +46,7 @@ namespace Allors.Database.Domain
             this.CreateGameType("Abondance", AbondanceId);
         }
 
-        private GameMode CreateGameType(string name, Guid uniqueId) => new GameModeBuilder(this.Session)
+        private GameMode CreateGameType(string name, Guid uniqueId) => new GameModeBuilder(this.Transaction)
                             .WithName(name)
                             .WithUniqueId(uniqueId)
                             .WithIsActive(true)

@@ -17,10 +17,10 @@ namespace Allors.Database.Domain.Tests.Relation
         {
             this.RegisterAdditionalDerivations((DerivationTypes)data);
 
-            var builder = new PersonBuilder(this.Session);
+            var builder = new PersonBuilder(this.Transaction);
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
 
         [Theory]
@@ -29,35 +29,35 @@ namespace Allors.Database.Domain.Tests.Relation
         {
             this.RegisterAdditionalDerivations((DerivationTypes) data);
 
-            var people = new People(this.Session);
+            var people = new People(this.Transaction);
 
             Person player1 = people.FindBy(M.Person.UserName, "player1");
             Person player2 = people.FindBy(M.Person.UserName, "player2");
             Person player3 = people.FindBy(M.Person.UserName, "player3");
             Person player4 = people.FindBy(M.Person.UserName, "player4");
 
-            Scoreboard scoreboard = new ScoreboardBuilder(this.Session)
+            Scoreboard scoreboard = new ScoreboardBuilder(this.Transaction)
                 .WithPlayer(player1)
                 .WithPlayer(player2)
                 .WithPlayer(player3)
                 .WithPlayer(player4)
                 .Build();
 
-            GameModes GameTypes = new GameModes(this.Session);
+            GameModes GameTypes = new GameModes(this.Transaction);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var game = new GameBuilder(this.Session).Build();
+            var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
 
-            game.StartDate = this.Session.Now();
+            game.StartDate = this.Transaction.Now();
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
             game.GameMode = GameTypes.Solo;
             game.AddDeclarer(player1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Contains(player1, game.Declarers);
             Assert.Contains(player2, game.Defenders);
@@ -71,28 +71,28 @@ namespace Allors.Database.Domain.Tests.Relation
         {
             this.RegisterAdditionalDerivations((DerivationTypes)data);
 
-            var people = new People(this.Session);
+            var people = new People(this.Transaction);
 
             Person player1 = people.FindBy(M.Person.UserName, "player1");
             Person player2 = people.FindBy(M.Person.UserName, "player2");
             Person player3 = people.FindBy(M.Person.UserName, "player3");
             Person player4 = people.FindBy(M.Person.UserName, "player4");
 
-            Scoreboard scoreboard = new ScoreboardBuilder(this.Session)
+            Scoreboard scoreboard = new ScoreboardBuilder(this.Transaction)
                 .WithPlayer(player1)
                 .WithPlayer(player2)
                 .WithPlayer(player3)
                 .WithPlayer(player4)
                 .Build();
 
-            GameModes GameTypes = new GameModes(this.Session);
+            GameModes GameTypes = new GameModes(this.Transaction);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var game = new GameBuilder(this.Session).Build();
+            var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
 
-            game.StartDate = this.Session.Now();
+            game.StartDate = this.Transaction.Now();
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
@@ -100,7 +100,7 @@ namespace Allors.Database.Domain.Tests.Relation
             game.AddDeclarer(player1);
             game.AddDeclarer(player2);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Contains(player1, game.Declarers);
             Assert.Contains(player2, game.Declarers);

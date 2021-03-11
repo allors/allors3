@@ -27,8 +27,8 @@ namespace Allors.Database.Domain
         private void CustomOnPreSetup()
         {
             // Default access policy
-            var security = new Security(this.session);
-            foreach (Class @class in session.Database.MetaPopulation.DatabaseClasses)
+            var security = new Security(this.transaction);
+            foreach (Class @class in this.transaction.Database.MetaPopulation.DatabaseClasses)
             {
                 security.GrantAdministrator(@class, Operations.Read, Operations.Write, Operations.Execute);
                 security.GrantCreator(@class, Operations.Read, Operations.Write, Operations.Execute);

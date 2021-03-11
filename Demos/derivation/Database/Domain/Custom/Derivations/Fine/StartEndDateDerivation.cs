@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public StartEndDateDerivation(M m) : base(m, new Guid("F9080FC9-04D8-4072-92E9-936D2C34D028")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.Game.StartDate),
-                new ChangedPattern(m.Game.EndDate),
+                new AssociationPattern(m.Game.StartDate),
+                new AssociationPattern(m.Game.EndDate),
             };
       
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

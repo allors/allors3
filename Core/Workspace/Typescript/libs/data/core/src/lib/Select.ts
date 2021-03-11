@@ -6,12 +6,12 @@ import { Node } from './Node';
 
 const includeKey = 'include';
 
-export class Fetch {
+export class Select {
   public step?: Step;
 
   public include?: Tree | Node[];
 
-  constructor(args?: Partial<Fetch> | ObjectType, literal?: any) {
+  constructor(args?: Partial<Select> | ObjectType, literal?: any) {
     if (args instanceof ObjectType) {
       const objectType = args as ObjectType;
 

@@ -1,9 +1,9 @@
-import { Fetch } from './Fetch';
+import { Select } from './Select';
 
 export class Result {
-  public fetchRef?: string;
+  public selectRef?: string;
 
-  public fetch?: Fetch;
+  public select?: Select;
 
   public name?: string;
 

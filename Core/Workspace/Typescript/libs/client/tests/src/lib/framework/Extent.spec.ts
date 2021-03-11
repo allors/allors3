@@ -1,4 +1,4 @@
-import { Pull, Result, Fetch, Tree, And, Equals, Extent, Node } from '@allors/data/core';
+import { Pull, Result, Select, Tree, And, Equals, Extent, Node } from '@allors/data/core';
 import { PullRequest } from '@allors/protocol/core';
 import { Organisation, C1, Person, I1 } from '@allors/domain/generated';
 
@@ -50,7 +50,7 @@ describe('Extent', () => {
           }),
           results: [
             new Result({
-              fetch: new Fetch({
+              select: new Select({
                 include: new Tree({
                   objectType: m.C1,
                   nodes: [
@@ -99,7 +99,7 @@ describe('Extent', () => {
           }),
           results: [
             new Result({
-              fetch: new Fetch({
+              select: new Select({
                 include: tree.Organisation({
                   Owner: {},
                 }),
@@ -138,7 +138,7 @@ describe('Extent', () => {
           }),
           results: [
             new Result({
-              fetch: new Fetch({
+              select: new Select({
                 include: tree.I1({
                   I1I2One2One: {},
                 }),
@@ -171,7 +171,7 @@ describe('Extent', () => {
 
   describe('Organisation with path', () => {
     it('should return all owners', async () => {
-      const { m, ctx, fetch } = fixture;
+      const { m, ctx, select } = fixture;
 
       const pulls = [
         new Pull({
@@ -180,7 +180,7 @@ describe('Extent', () => {
           }),
           results: [
             new Result({
-              fetch: fetch.Organisation({
+              select: select.Organisation({
                 Owner: {},
               }),
             }),
@@ -200,7 +200,7 @@ describe('Extent', () => {
     });
 
     it('should return all employees', async () => {
-      const { m, ctx, fetch } = fixture;
+      const { m, ctx, select } = fixture;
 
       const pulls = [
         new Pull({
@@ -209,7 +209,7 @@ describe('Extent', () => {
           }),
           results: [
             new Result({
-              fetch: fetch.Organisation({
+              select: select.Organisation({
                 Employees: {},
               }),
             }),
@@ -231,14 +231,14 @@ describe('Extent', () => {
 
   describe('Organisation with typesafe path', () => {
     it('should return all employees', async () => {
-      const { m, ctx, fetch } = fixture;
+      const { m, ctx, select } = fixture;
 
       const pulls = [
         new Pull({
           extent: new Extent(m.Organisation),
           results: [
             new Result({
-              fetch: fetch.Organisation({
+              select: select.Organisation({
                 Employees: {},
               }),
             }),
@@ -260,14 +260,14 @@ describe('Extent', () => {
 
   describe('Organisation with typesafe path and tree', () => {
     it('should return all people', async () => {
-      const { m, ctx, fetch } = fixture;
+      const { m, ctx, select } = fixture;
 
       const pulls = [
         new Pull({
           extent: new Extent(m.Organisation),
           results: [
             new Result({
-              fetch: fetch.Organisation({
+              select: select.Organisation({
                 Owner: {
                   include: {
                     CycleOne: {},
