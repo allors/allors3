@@ -16,10 +16,10 @@ namespace Allors.Workspace.Adapters.Remote
         private readonly RemoteStrategy strategy;
 
         private RemoteWorkspaceObject workspaceObject;
-        private Dictionary<IRelationType, object> changedRoleByRoleType;
+        private Dictionary<IRelationType, object> changedRoleByRelationType;
 
         private RemoteWorkspaceObject previousWorkspaceObject;
-        private Dictionary<IRelationType, object> previousChangedRoleByRoleType;
+        private Dictionary<IRelationType, object> previousChangedRoleByRelationType;
 
         internal RemoteWorkspaceState(RemoteStrategy strategy)
         {
@@ -28,7 +28,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.previousWorkspaceObject = this.workspaceObject;
         }
 
-        internal bool HasWorkspaceChanges => this.changedRoleByRoleType != null;
+        internal bool HasWorkspaceChanges => this.changedRoleByRelationType != null;
 
         private long Identity => this.strategy.Identity;
 
@@ -43,7 +43,7 @@ namespace Allors.Workspace.Adapters.Remote
             if (roleType.ObjectType.IsUnit)
             {
 
-                if (this.changedRoleByRoleType == null || !this.changedRoleByRoleType.TryGetValue(roleType.RelationType, out var unit))
+                if (this.changedRoleByRelationType == null || !this.changedRoleByRelationType.TryGetValue(roleType.RelationType, out var unit))
                 {
                     unit = this.workspaceObject?.GetRole(roleType);
                 }
@@ -53,8 +53,8 @@ namespace Allors.Workspace.Adapters.Remote
 
             if (roleType.IsOne)
             {
-                if (this.changedRoleByRoleType != null &&
-                    this.changedRoleByRoleType.TryGet<RemoteStrategy>(roleType.RelationType, out var workspaceRole))
+                if (this.changedRoleByRelationType != null &&
+                    this.changedRoleByRelationType.TryGet<RemoteStrategy>(roleType.RelationType, out var workspaceRole))
                 {
                     return workspaceRole?.Object;
                 }
@@ -65,8 +65,8 @@ namespace Allors.Workspace.Adapters.Remote
                 return workspaceRole?.Object;
             }
 
-            if (this.changedRoleByRoleType != null &&
-                this.changedRoleByRoleType.TryGet<RemoteStrategy[]>(roleType.RelationType, out var workspaceRoles))
+            if (this.changedRoleByRelationType != null &&
+                this.changedRoleByRelationType.TryGet<RemoteStrategy[]>(roleType.RelationType, out var workspaceRoles))
             {
                 return workspaceRoles != null ? workspaceRoles.Select(v => v.Object).ToArray() : Array.Empty<IObject>();
             }
@@ -98,17 +98,17 @@ namespace Allors.Workspace.Adapters.Remote
         {
             if (this.HasWorkspaceChanges)
             {
-                this.Workspace.Push(this.Identity, this.Class, this.workspaceObject?.Version ?? 0, this.changedRoleByRoleType);
+                this.Workspace.Push(this.Identity, this.Class, this.workspaceObject?.Version ?? 0, this.changedRoleByRelationType);
             }
 
             this.workspaceObject = this.Workspace.Get(this.Identity);
-            this.changedRoleByRoleType = null;
+            this.changedRoleByRelationType = null;
         }
 
         internal void Reset()
         {
             this.workspaceObject = this.Workspace.Get(this.Identity);
-            this.changedRoleByRoleType = null;
+            this.changedRoleByRelationType = null;
         }
 
         internal void Merge() => this.workspaceObject = this.Workspace.Get(this.Identity);
@@ -119,128 +119,74 @@ namespace Allors.Workspace.Adapters.Remote
             if (this.workspaceObject.Identity == this.previousWorkspaceObject.Identity)
             {
                 // No previous changed roles
-                if (this.previousChangedRoleByRoleType == null)
+                if (this.previousChangedRoleByRelationType == null)
                 {
-                    if (this.changedRoleByRoleType != null)
+                    if (this.changedRoleByRelationType != null)
                     {
                         // Changed roles
-                        foreach (var kvp in this.changedRoleByRoleType)
+                        foreach (var kvp in this.changedRoleByRelationType)
                         {
                             var relationType = kvp.Key;
-                            var roleType = relationType.RoleType;
+                            var cooked = kvp.Value;
+                            var raw = this.workspaceObject.GetRole(relationType.RoleType);
 
-                            if (roleType.IsOne)
-                            {
-                                var currentRole = (RemoteStrategy)kvp.Value;
-                                changeSet.AddRole(relationType, currentRole);
-
-                                var previousRole = (RemoteStrategy)this.workspaceObject.GetRole(roleType);
-                                if (previousRole != null)
-                                {
-                                    changeSet.AddRole(relationType, previousRole);
-                                }
-                            }
-                            else
-                            {
-                                var currentRole = (RemoteStrategy[])kvp.Value;
-                                var previousRole = (RemoteStrategy[])this.workspaceObject.GetRole(roleType);
-
-                                var addedRoles = currentRole.Except(previousRole).ToArray();
-                                var removedRoles = previousRole.Except(currentRole).ToArray();
-
-                                foreach (var role in addedRoles.Union(removedRoles))
-                                {
-                                    changeSet.AddRole(relationType, role);
-                                }
-                            }
-
-                            changeSet.AddAssociation(relationType, this.strategy);
+                            changeSet.DiffCookedWithRaw(this.strategy, relationType, cooked, raw );
                         }
                     }
                 }
                 // Previous changed roles
                 else
                 {
-                    foreach (var kvp in this.changedRoleByRoleType)
+                    foreach (var kvp in this.changedRoleByRelationType)
                     {
                         var relationType = kvp.Key;
-                        var roleType = relationType.RoleType;
+                        var role = kvp.Value;
 
-                        this.previousChangedRoleByRoleType.TryGetValue(relationType, out var previousRoleValue);
-
-                        if (roleType.IsOne)
-                        {
-                            var currentRole = (RemoteStrategy)kvp.Value;
-                            var previousRole = (RemoteStrategy)previousRoleValue;
-
-                            if (!Equals(currentRole, previousRole))
-                            {
-                                if (currentRole != null)
-                                {
-                                    changeSet.AddRole(relationType, currentRole);
-                                }
-
-                                if (previousRole != null)
-                                {
-                                    changeSet.AddRole(relationType, previousRole);
-                                }
-
-                                changeSet.AddAssociation(relationType, this.strategy);
-                            }
-                        }
-                        else
-                        {
-                            var currentRole = (RemoteStrategy[])kvp.Value;
-                            var previousRole = (RemoteStrategy[])previousRoleValue;
-
-                            if (currentRole?.Length > 0 && previousRole?.Length > 0)
-                            {
-                                var addedRoles = currentRole.Except(previousRole).ToArray();
-                                var removedRoles = previousRole.Except(currentRole).ToArray();
-
-                                if (addedRoles.Length > 0 && removedRoles.Length > 0)
-                                {
-                                    foreach (var role in addedRoles.Union(removedRoles))
-                                    {
-                                        changeSet.AddRole(relationType, role);
-                                    }
-
-                                    changeSet.AddAssociation(relationType, this.strategy);
-                                }
-                            }
-                            else if (currentRole?.Length > 0)
-                            {
-                                foreach (var role in currentRole)
-                                {
-                                    changeSet.AddRole(relationType, role);
-                                }
-
-                                changeSet.AddAssociation(relationType, this.strategy);
-                            }
-                            else if (previousRole?.Length > 0)
-                            {
-                                foreach (var role in previousRole)
-                                {
-                                    changeSet.AddRole(relationType, role);
-                                }
-
-                                changeSet.AddAssociation(relationType, this.strategy);
-                            }
-                        }
-
-                        changeSet.AddAssociation(relationType, this.strategy);
+                        this.previousChangedRoleByRelationType.TryGetValue(relationType, out var previousRole);
+                        changeSet.DiffCookedWithCooked(this.strategy, relationType, role, previousRole);
                     }
                 }
             }
             // Different workspace objects
             else
             {
-                var diff = this.previousWorkspaceObject.Diff(this.workspaceObject);
-                // TODO:
+                var hasPreviousCooked = this.previousChangedRoleByRelationType != null;
+                var hasCooked = this.changedRoleByRelationType != null;
+
+                foreach (var roleType in this.Class.WorkspaceRoleTypes)
+                {
+                    var relationType = roleType.RelationType;
+
+                    if (hasPreviousCooked && this.previousChangedRoleByRelationType.TryGetValue(relationType, out var previousCooked))
+                    {
+                        if (hasCooked && this.changedRoleByRelationType.TryGetValue(relationType, out var cooked) == true)
+                        {
+                            changeSet.DiffCookedWithCooked(this.strategy, relationType, cooked, previousCooked);
+                        }
+                        else
+                        {
+                            var raw = this.workspaceObject.GetRole(roleType);
+                            changeSet.DiffRawWithCooked(this.strategy, relationType, raw, previousCooked);
+                        }
+                    }
+                    else
+                    {
+                        var previousRaw = this.previousWorkspaceObject?.GetRole(roleType);
+                        if (hasCooked && this.changedRoleByRelationType.TryGetValue(relationType, out var cooked) == true)
+                        {
+                            changeSet.DiffCookedWithRaw(this.strategy, relationType, cooked, previousRaw);
+                        }
+                        else
+                        {
+                            var raw = this.workspaceObject.GetRole(roleType);
+                            changeSet.DiffRawWithRaw(this.strategy, relationType, raw, previousRaw);
+                        }
+                    }
+                }
             }
 
             this.previousWorkspaceObject = this.workspaceObject;
-            this.previousChangedRoleByRoleType = this.changedRoleByRoleType;
+            this.previousChangedRoleByRelationType = this.changedRoleByRelationType;
         }
 
         private void SetUnitRole(IRoleType roleType, object role)
@@ -251,8 +197,8 @@ namespace Allors.Workspace.Adapters.Remote
                 return;
             }
 
-            this.changedRoleByRoleType ??= new Dictionary<IRelationType, object>();
-            this.changedRoleByRoleType[roleType.RelationType] = role;
+            this.changedRoleByRelationType ??= new Dictionary<IRelationType, object>();
+            this.changedRoleByRelationType[roleType.RelationType] = role;
 
             this.Session.OnChange(this);
         }
@@ -277,8 +223,8 @@ namespace Allors.Workspace.Adapters.Remote
                 }
             }
 
-            this.changedRoleByRoleType ??= new Dictionary<IRelationType, object>();
-            this.changedRoleByRoleType[roleType.RelationType] = role?.Strategy;
+            this.changedRoleByRelationType ??= new Dictionary<IRelationType, object>();
+            this.changedRoleByRelationType[roleType.RelationType] = role?.Strategy;
 
             this.Session.OnChange(this);
         }
@@ -316,8 +262,8 @@ namespace Allors.Workspace.Adapters.Remote
                 }
             }
 
-            this.changedRoleByRoleType ??= new Dictionary<IRelationType, object>();
-            this.changedRoleByRoleType[roleType.RelationType] = role;
+            this.changedRoleByRelationType ??= new Dictionary<IRelationType, object>();
+            this.changedRoleByRelationType[roleType.RelationType] = role;
 
             this.Session.OnChange(this);
         }
@@ -331,8 +277,8 @@ namespace Allors.Workspace.Adapters.Remote
 
             if (roleType.IsOne)
             {
-                if (this.changedRoleByRoleType != null &&
-                    this.changedRoleByRoleType.TryGet<RemoteStrategy>(roleType.RelationType, out var workspaceRole))
+                if (this.changedRoleByRelationType != null &&
+                    this.changedRoleByRelationType.TryGet<RemoteStrategy>(roleType.RelationType, out var workspaceRole))
                 {
                     return workspaceRole?.Equals(forRole) == true;
                 }
@@ -341,8 +287,8 @@ namespace Allors.Workspace.Adapters.Remote
                 return identity?.Equals(forRole.Identity) == true;
             }
 
-            if (this.changedRoleByRoleType != null &&
-                this.changedRoleByRoleType.TryGet<RemoteStrategy[]>(roleType.RelationType, out var workspaceRoles))
+            if (this.changedRoleByRelationType != null &&
+                this.changedRoleByRelationType.TryGet<RemoteStrategy[]>(roleType.RelationType, out var workspaceRoles))
             {
                 return workspaceRoles?.Contains(forRole) == true;
             }

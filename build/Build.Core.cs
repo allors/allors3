@@ -160,10 +160,11 @@ partial class Build
             //    .SetLogger("trx;LogFileName=CoreWorkspaceCSharpTests.trx")
             //    .SetResultsDirectory(this.Paths.ArtifactsTests));
 
-            DotNetTest(s => s
-                .SetProjectFile(this.Paths.CoreWorkspaceCSharpDirectTests)
-                .SetLogger("trx;LogFileName=CoreWorkspaceCSharpDirectTests.trx")
-                .SetResultsDirectory(this.Paths.ArtifactsTests));
+            // TODO: Include once stabilized
+            //DotNetTest(s => s
+            //    .SetProjectFile(this.Paths.CoreWorkspaceCSharpLocalTests)
+            //    .SetLogger("trx;LogFileName=CoreWorkspaceCSharpLocalTests.trx")
+            //    .SetResultsDirectory(this.Paths.ArtifactsTests));
 
             DotNetTest(s => s
                 .SetProjectFile(this.Paths.CoreWorkspaceCSharpRemoteTests)

@@ -14,8 +14,6 @@ namespace Allors.Workspace.Adapters.Remote
     {
         private readonly IReadOnlyDictionary<IRelationType, object> roleByRelationType;
 
-        private IDictionary<RemoteWorkspaceObject, RemoteDiff> diffByObject;
-
         internal RemoteWorkspaceObject(RemoteDatabase database, long identity, IClass @class, long version, IReadOnlyDictionary<IRelationType, object> roleByRelationType)
         {
             this.Database = database;
@@ -50,21 +48,6 @@ namespace Allors.Workspace.Adapters.Remote
             object @object = null;
             this.roleByRelationType?.TryGetValue(roleType.RelationType, out @object);
             return @object;
-        }
-
-        internal object Diff(RemoteWorkspaceObject workspaceObject)
-        {
-            this.diffByObject ??= new Dictionary<RemoteWorkspaceObject, RemoteDiff>();
-
-            if (this.diffByObject.TryGetValue(workspaceObject, out var diff))
-            {
-                return diff;
-            }
-
-            diff = new RemoteDiff(this.roleByRelationType, workspaceObject.roleByRelationType);
-            this.diffByObject.Add(workspaceObject, diff);
-
-            return diff;
         }
 
         private IEnumerable<KeyValuePair<IRelationType, object>> Import(IReadOnlyDictionary<IRelationType, object> changedRoleByRoleType, IReadOnlyDictionary<IRelationType, object> originalRoleByRoleType = null)

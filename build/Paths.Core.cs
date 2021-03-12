@@ -19,7 +19,7 @@ public partial class Paths
     public AbsolutePath CoreDatabaseResourcesCustom => this.CoreDatabaseResources / "Custom";
 
     public AbsolutePath CoreWorkspaceCSharpTests => this.Core / "Workspace/CSharp/Tests";
-    public AbsolutePath CoreWorkspaceCSharpDirectTests => this.Core / "Workspace/CSharp/Adapters/Tests.Direct";
+    public AbsolutePath CoreWorkspaceCSharpLocalTests => this.Core / "Workspace/CSharp/Adapters/Tests.Local";
     public AbsolutePath CoreWorkspaceCSharpRemoteTests => this.Core / "Workspace/CSharp/Adapters/Tests.Remote";
 
     public AbsolutePath CoreWorkspaceTypescript=> this.Core / "Workspace/Typescript";

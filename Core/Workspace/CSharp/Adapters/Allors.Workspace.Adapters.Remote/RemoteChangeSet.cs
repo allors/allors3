@@ -8,6 +8,7 @@
 
 namespace Allors.Workspace.Adapters.Remote
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
@@ -64,6 +65,191 @@ namespace Allors.Workspace.Adapters.Remote
             }
 
             _ = roles.Add(role);
+        }
+
+        internal void DiffCookedWithCooked(RemoteStrategy association, IRelationType relationType, object current, object previous)
+        {
+            var roleType = relationType.RoleType;
+
+            if (roleType.ObjectType.IsUnit)
+            {
+                if (Equals(current, previous))
+                {
+                    return;
+                }
+
+                this.AddAssociation(relationType, association);
+            }
+            else
+            {
+                if (roleType.IsOne)
+                {
+                    if (Equals(current, previous))
+                    {
+                        return;
+                    }
+
+                    if (current != null)
+                    {
+                        this.AddRole(relationType, (RemoteStrategy)current);
+                    }
+
+                    if (previous != null)
+                    {
+                        this.AddRole(relationType, (RemoteStrategy)previous);
+                    }
+
+                    this.AddAssociation(relationType, association);
+                }
+                else
+                {
+                    var currentRole = (RemoteStrategy[])current;
+                    var previousRole = (RemoteStrategy[])previous;
+
+                    if (currentRole?.Length > 0 && previousRole?.Length > 0)
+                    {
+                        var addedRoles = currentRole.Except(previousRole);
+                        var removedRoles = previousRole.Except(currentRole);
+
+                        var hasChange = false;
+                        foreach (var role in addedRoles.Concat(removedRoles))
+                        {
+                            this.AddRole(relationType, role);
+                            hasChange = true;
+                        }
+
+                        if (hasChange)
+                        {
+                            this.AddAssociation(relationType, association);
+                        }
+                    }
+                    else if (currentRole?.Length > 0)
+                    {
+                        foreach (var role in currentRole)
+                        {
+                            this.AddRole(relationType, role);
+                        }
+
+                        this.AddAssociation(relationType, association);
+                    }
+                    else if (previousRole?.Length > 0)
+                    {
+                        foreach (var role in previousRole)
+                        {
+                            this.AddRole(relationType, role);
+                        }
+
+                        this.AddAssociation(relationType, association);
+                    }
+                }
+            }
+        }
+
+        internal void DiffRawWithCooked(RemoteStrategy strategy, IRelationType relationType, object current, object previous)
+        {
+        }
+
+        internal void DiffCookedWithRaw(RemoteStrategy association, IRelationType relationType, object current, object previous)
+        {
+            var roleType = relationType.RoleType;
+
+            if (roleType.ObjectType.IsUnit)
+            {
+                if (!Equals(current, previous))
+                {
+                    this.AddAssociation(relationType, association);
+                }
+            }
+            else
+            {
+                if (roleType.IsOne)
+                {
+                    if (current == null && previous == null)
+                    {
+                        return;
+                    }
+
+                    var currentRole = (RemoteStrategy)current;
+
+                    if (current != null && previous != null)
+                    {
+                        var previousRole = this.Session.Get((long)previous);
+                        if (Equals(current, previousRole))
+                        {
+                            return;
+                        }
+
+                        this.AddRole(relationType, previousRole);
+                        this.AddRole(relationType, currentRole);
+                        this.AddAssociation(relationType, association);
+                    }
+                    else if (current != null)
+                    {
+                        this.AddRole(relationType, currentRole);
+                        this.AddAssociation(relationType, association);
+                    }
+                    else
+                    {
+                        var previousRole = this.Session.Get((long)previous);
+                        this.AddRole(relationType, previousRole);
+                        this.AddAssociation(relationType, association);
+                    }
+                }
+                else
+                {
+                    if (current == null && previous == null)
+                    {
+                        return;
+                    }
+
+                    var currentRole = (RemoteStrategy[])current;
+
+                    if (previous == null)
+                    {
+                        foreach (var v in currentRole)
+                        {
+                            this.AddRole(relationType, v);
+                        }
+
+                        this.AddAssociation(relationType, association);
+                    }
+                    else
+                    {
+                        var previousRole = ((long[])previous).Select(v => this.Session.Get(v)).ToArray();
+
+                        if (currentRole == null)
+                        {
+                            foreach (var v in previousRole)
+                            {
+                                this.AddRole(relationType, v);
+                            }
+
+                            this.AddAssociation(relationType, association);
+                        }
+                        else
+                        {
+                            var addedRoles = currentRole.Except(previousRole);
+                            var removedRoles = previousRole.Except(currentRole);
+
+                            var hasChange = false;
+                            foreach (var role in addedRoles.Concat(removedRoles))
+                            {
+                                this.AddRole(relationType, role);
+                                hasChange = true;
+                            }
+
+                            if (hasChange)
+                            {
+                                this.AddAssociation(relationType, association);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        internal void DiffRawWithRaw(RemoteStrategy strategy, IRelationType relationType, object raw, object previousRaw)
+        {
         }
     }
 }
