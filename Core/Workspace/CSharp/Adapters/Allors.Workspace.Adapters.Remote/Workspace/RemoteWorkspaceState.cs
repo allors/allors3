@@ -130,7 +130,7 @@ namespace Allors.Workspace.Adapters.Remote
                             var cooked = kvp.Value;
                             var raw = this.workspaceObject.GetRole(relationType.RoleType);
 
-                            changeSet.DiffCookedWithRaw(this.strategy, relationType, cooked, raw );
+                            changeSet.DiffCookedWithRaw(this.strategy, relationType, cooked, raw);
                         }
                     }
                 }
@@ -159,7 +159,7 @@ namespace Allors.Workspace.Adapters.Remote
 
                     if (hasPreviousCooked && this.previousChangedRoleByRelationType.TryGetValue(relationType, out var previousCooked))
                     {
-                        if (hasCooked && this.changedRoleByRelationType.TryGetValue(relationType, out var cooked) == true)
+                        if (hasCooked && this.changedRoleByRelationType.TryGetValue(relationType, out var cooked))
                         {
                             changeSet.DiffCookedWithCooked(this.strategy, relationType, cooked, previousCooked);
                         }

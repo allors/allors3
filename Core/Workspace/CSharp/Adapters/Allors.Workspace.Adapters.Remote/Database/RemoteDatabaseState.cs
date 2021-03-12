@@ -21,7 +21,7 @@ namespace Allors.Workspace.Adapters.Remote
         private Dictionary<IRelationType, object> changedRoleByRelationType;
 
         private RemoteDatabaseObject previousDatabaseObject;
-        private Dictionary<IRelationType, object> previousChangedRoleByRoleType;
+        private Dictionary<IRelationType, object> previousChangedRoleByRelationType;
 
         internal RemoteDatabaseState(RemoteStrategy strategy, RemoteDatabaseObject databaseObject = null)
         {
@@ -143,7 +143,81 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal void Checkpoint(RemoteChangeSet changeSet)
         {
+            // Same workspace object
+            if (this.databaseObject.Identity == this.previousDatabaseObject.Identity)
+            {
+                // No previous changed roles
+                if (this.previousChangedRoleByRelationType == null)
+                {
+                    if (this.changedRoleByRelationType != null)
+                    {
+                        // Changed roles
+                        foreach (var kvp in this.changedRoleByRelationType)
+                        {
+                            var relationType = kvp.Key;
+                            var cooked = kvp.Value;
+                            var raw = this.databaseObject.GetRole(relationType.RoleType);
+
+                            changeSet.DiffCookedWithRaw(this.strategy, relationType, cooked, raw);
+                        }
+                    }
+                }
+                // Previous changed roles
+                else
+                {
+                    foreach (var kvp in this.changedRoleByRelationType)
+                    {
+                        var relationType = kvp.Key;
+                        var role = kvp.Value;
+
+                        this.previousChangedRoleByRelationType.TryGetValue(relationType, out var previousRole);
+                        changeSet.DiffCookedWithCooked(this.strategy, relationType, role, previousRole);
+                    }
+                }
+            }
+            // Different workspace objects
+            else
+            {
+                var hasPreviousCooked = this.previousChangedRoleByRelationType != null;
+                var hasCooked = this.changedRoleByRelationType != null;
+
+                foreach (var roleType in this.Class.WorkspaceRoleTypes)
+                {
+                    var relationType = roleType.RelationType;
+
+                    if (hasPreviousCooked && this.previousChangedRoleByRelationType.TryGetValue(relationType, out var previousCooked))
+                    {
+                        if (hasCooked && this.changedRoleByRelationType.TryGetValue(relationType, out var cooked))
+                        {
+                            changeSet.DiffCookedWithCooked(this.strategy, relationType, cooked, previousCooked);
+                        }
+                        else
+                        {
+                            var raw = this.databaseObject.GetRole(roleType);
+                            changeSet.DiffRawWithCooked(this.strategy, relationType, raw, previousCooked);
+                        }
+                    }
+                    else
+                    {
+                        var previousRaw = this.previousDatabaseObject?.GetRole(roleType);
+                        if (hasCooked && this.changedRoleByRelationType.TryGetValue(relationType, out var cooked) == true)
+                        {
+                            changeSet.DiffCookedWithRaw(this.strategy, relationType, cooked, previousRaw);
+                        }
+                        else
+                        {
+                            var raw = this.databaseObject.GetRole(roleType);
+                            changeSet.DiffRawWithRaw(this.strategy, relationType, raw, previousRaw);
+                        }
+                    }
+                }
+            }
+
+            this.previousDatabaseObject = this.databaseObject;
+            this.previousChangedRoleByRelationType = this.changedRoleByRelationType;
         }
+
+
 
         internal void PushResponse(RemoteDatabaseObject newDatabaseObject) => this.databaseObject = newDatabaseObject;
 
