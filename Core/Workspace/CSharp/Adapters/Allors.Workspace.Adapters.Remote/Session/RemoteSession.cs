@@ -366,8 +366,8 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal RemoteStrategy InstantiateDatabaseObject(long identity)
         {
-            var databaseRoles = this.Database.Get(identity);
-            var strategy = new RemoteStrategy(this, databaseRoles);
+            var databaseObject = this.Database.Get(identity);
+            var strategy = new RemoteStrategy(this, databaseObject);
             this.existingDatabaseStrategies.Add(strategy);
             this.AddStrategy(strategy);
             this.OnInstantiate(strategy);

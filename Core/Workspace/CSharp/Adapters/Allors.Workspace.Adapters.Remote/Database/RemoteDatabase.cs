@@ -24,7 +24,7 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class RemoteDatabase
     {
-        private readonly Dictionary<long, RemoteDatabaseObject> databaseRolesByDatabaseId;
+        private readonly Dictionary<long, RemoteDatabaseObject> objectsById;
 
         private readonly Dictionary<IClass, Dictionary<IOperandType, RemotePermission>> readPermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, RemotePermission>> writePermissionByOperandTypeByClass;
@@ -42,7 +42,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.AccessControlById = new Dictionary<long, RemoteAccessControl>();
             this.PermissionById = new Dictionary<long, RemotePermission>();
 
-            this.databaseRolesByDatabaseId = new Dictionary<long, RemoteDatabaseObject>();
+            this.objectsById = new Dictionary<long, RemoteDatabaseObject>();
 
             this.readPermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, RemotePermission>>();
             this.writePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, RemotePermission>>();
@@ -87,7 +87,7 @@ namespace Allors.Workspace.Adapters.Remote
         internal RemoteDatabaseObject PushResponse(long identity, IClass @class)
         {
             var databaseObject = new RemoteDatabaseObject(this, identity, @class);
-            this.databaseRolesByDatabaseId[identity] = databaseObject;
+            this.objectsById[identity] = databaseObject;
             return databaseObject;
         }
 
@@ -96,8 +96,8 @@ namespace Allors.Workspace.Adapters.Remote
             var ctx = new RemoteResponseContext(this.AccessControlById, this.PermissionById);
             foreach (var syncResponseObject in syncResponse.Objects)
             {
-                var databaseRoles = new RemoteDatabaseObject(this, ctx, syncResponseObject);
-                this.databaseRolesByDatabaseId[databaseRoles.Identity] = databaseRoles;
+                var databaseObjects = new RemoteDatabaseObject(this, ctx, syncResponseObject);
+                this.objectsById[databaseObjects.Identity] = databaseObjects;
             }
 
             if (ctx.MissingAccessControlIds.Count > 0 || ctx.MissingPermissionIds.Count > 0)
@@ -122,7 +122,7 @@ namespace Allors.Workspace.Adapters.Remote
                     .Where(v =>
                     {
                         var identity = long.Parse(v[0]);
-                        this.databaseRolesByDatabaseId.TryGetValue(identity, out var databaseObject);
+                        this.objectsById.TryGetValue(identity, out var databaseObject);
                         if (databaseObject == null)
                         {
                             return true;
@@ -161,8 +161,8 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal RemoteDatabaseObject Get(long identity)
         {
-            this.databaseRolesByDatabaseId.TryGetValue(identity, out var databaseRoles);
-            return databaseRoles;
+            this.objectsById.TryGetValue(identity, out var databaseObjects);
+            return databaseObjects;
         }
 
         internal SecurityRequest SecurityResponse(SecurityResponse securityResponse)

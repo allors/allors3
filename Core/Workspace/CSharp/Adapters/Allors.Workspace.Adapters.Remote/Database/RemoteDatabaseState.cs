@@ -32,7 +32,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal bool HasDatabaseChanges => this.databaseObject == null || this.changedRoleByRelationType != null;
 
-        private bool ExistDatabaseRoles => this.databaseObject != null;
+        private bool ExistDatabaseObjects => this.databaseObject != null;
 
         internal long Version => this.databaseObject?.Version ?? 0;
 
@@ -46,7 +46,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public bool CanRead(IRoleType roleType)
         {
-            if (!this.ExistDatabaseRoles)
+            if (!this.ExistDatabaseObjects)
             {
                 return true;
             }
@@ -57,7 +57,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public bool CanWrite(IRoleType roleType)
         {
-            if (!this.ExistDatabaseRoles)
+            if (!this.ExistDatabaseObjects)
             {
                 return true;
             }
@@ -68,7 +68,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public bool CanExecute(IMethodType methodType)
         {
-            if (!this.ExistDatabaseRoles)
+            if (!this.ExistDatabaseObjects)
             {
                 return true;
             }
@@ -261,7 +261,7 @@ namespace Allors.Workspace.Adapters.Remote
                         else
                         {
                             var roleIds = ((RemoteStrategy[])roleValue).Select(v => v.Identity.ToString()).ToArray();
-                            if (!this.ExistDatabaseRoles)
+                            if (!this.ExistDatabaseObjects)
                             {
                                 pushRequestRole.AddRole = roleIds;
                             }
