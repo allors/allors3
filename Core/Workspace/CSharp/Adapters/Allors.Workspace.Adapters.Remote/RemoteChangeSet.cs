@@ -169,7 +169,7 @@ namespace Allors.Workspace.Adapters.Remote
 
                     if (current != null && previous != null)
                     {
-                        var previousRole = this.Session.Get((long)previous);
+                        var previousRole = this.Session.GetStrategy((long)previous);
                         if (Equals(current, previousRole))
                         {
                             return;
@@ -186,7 +186,7 @@ namespace Allors.Workspace.Adapters.Remote
                     }
                     else
                     {
-                        var previousRole = this.Session.Get((long)previous);
+                        var previousRole = this.Session.GetStrategy((long)previous);
                         this.AddRole(relationType, previousRole);
                         this.AddAssociation(relationType, association);
                     }
@@ -211,7 +211,7 @@ namespace Allors.Workspace.Adapters.Remote
                     }
                     else
                     {
-                        var previousRole = ((long[])previous).Select(v => this.Session.Get(v)).ToArray();
+                        var previousRole = ((long[])previous).Select(v => this.Session.GetStrategy(v)).ToArray();
 
                         if (currentRole == null)
                         {
@@ -263,12 +263,12 @@ namespace Allors.Workspace.Adapters.Remote
                     {
                         if (previous != null)
                         {
-                            this.AddRole(relationType, this.Session.Get((long)previous));
+                            this.AddRole(relationType, this.Session.GetStrategy((long)previous));
                         }
 
                         if (current != null)
                         {
-                            this.AddRole(relationType, this.Session.Get((long)current));
+                            this.AddRole(relationType, this.Session.GetStrategy((long)current));
                         }
 
                         this.AddAssociation(relationType, association);
@@ -287,7 +287,7 @@ namespace Allors.Workspace.Adapters.Remote
                     {
                         foreach (var v in currentRole)
                         {
-                            this.AddRole(relationType, this.Session.Get(v));
+                            this.AddRole(relationType, this.Session.GetStrategy(v));
                         }
 
                         this.AddAssociation(relationType, association);
@@ -300,7 +300,7 @@ namespace Allors.Workspace.Adapters.Remote
                         {
                             foreach (var v in previousRole)
                             {
-                                this.AddRole(relationType, this.Session.Get(v));
+                                this.AddRole(relationType, this.Session.GetStrategy(v));
                             }
 
                             this.AddAssociation(relationType, association);
@@ -313,7 +313,7 @@ namespace Allors.Workspace.Adapters.Remote
                             var hasChange = false;
                             foreach (var v in addedRoles.Concat(removedRoles))
                             {
-                                this.AddRole(relationType, this.Session.Get(v));
+                                this.AddRole(relationType, this.Session.GetStrategy(v));
                                 hasChange = true;
                             }
 
@@ -352,7 +352,7 @@ namespace Allors.Workspace.Adapters.Remote
 
                         if (current != null)
                         {
-                            this.AddRole(relationType, this.Session.Get((long)current));
+                            this.AddRole(relationType, this.Session.GetStrategy((long)current));
                         }
 
                         this.AddAssociation(relationType, association);
@@ -371,7 +371,7 @@ namespace Allors.Workspace.Adapters.Remote
                     {
                         foreach (var v in currentRole)
                         {
-                            this.AddRole(relationType, this.Session.Get(v));
+                            this.AddRole(relationType, this.Session.GetStrategy(v));
                         }
 
                         this.AddAssociation(relationType, association);
@@ -398,7 +398,7 @@ namespace Allors.Workspace.Adapters.Remote
                             var hasChange = false;
                             foreach (var v in addedRoles.Concat(removedRoles))
                             {
-                                this.AddRole(relationType, this.Session.Get(v));
+                                this.AddRole(relationType, this.Session.GetStrategy(v));
                                 hasChange = true;
                             }
 

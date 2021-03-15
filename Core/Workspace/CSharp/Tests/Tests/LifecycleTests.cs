@@ -24,7 +24,7 @@ namespace Tests.Workspace
 
             var session2 = this.Workspace.CreateSession();
 
-            var workspaceOrganisation2 = session2.Instantiate(workspaceOrganisation1);
+            var workspaceOrganisation2 = session2.Get(workspaceOrganisation1);
 
             Assert.NotNull(workspaceOrganisation1);
         }
@@ -38,7 +38,7 @@ namespace Tests.Workspace
             
             var session2 = this.Workspace.CreateSession();
 
-            var sessionOrganisation2 = session2.Instantiate(sessionOrganisation1);
+            var sessionOrganisation2 = session2.Get(sessionOrganisation1);
 
             Assert.Null(sessionOrganisation2);
         }

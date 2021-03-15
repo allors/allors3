@@ -9,9 +9,9 @@ namespace Allors.Workspace.Adapters.Remote
 
     internal static class NullableSortableArraySet
     {
-        internal static RemoteStrategy[] Add(object set, RemoteStrategy item) => Add((RemoteStrategy[])set, item);
+        internal static T[] Add<T>(object set, T item) => Add((T[])set, item);
 
-        internal static RemoteStrategy[] Add(RemoteStrategy[] sourceArray, RemoteStrategy item)
+        internal static T[] Add<T>(T[] sourceArray, T item)
         {
             if (item == null)
             {
@@ -28,7 +28,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return sourceArray;
             }
 
-            var destinationArray = new RemoteStrategy[sourceArray.Length + 1];
+            var destinationArray = new T[sourceArray.Length + 1];
 
             Array.Copy(sourceArray, destinationArray, sourceArray.Length);
             destinationArray[destinationArray.Length - 1] = item;
@@ -36,9 +36,9 @@ namespace Allors.Workspace.Adapters.Remote
             return destinationArray;
         }
 
-        internal static RemoteStrategy[] Remove(object set, RemoteStrategy item) => Remove((RemoteStrategy[])set, item);
+        internal static T[] Remove<T>(object set, T item) => Remove((T[])set, item);
 
-        internal static RemoteStrategy[] Remove(RemoteStrategy[] sourceArray, RemoteStrategy item)
+        internal static T[] Remove<T>(T[] sourceArray, T item)
         {
             if (sourceArray == null || item == null)
             {
@@ -58,7 +58,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return null;
             }
 
-            var destinationArray = new RemoteStrategy[sourceArray.Length - 1];
+            var destinationArray = new T[sourceArray.Length - 1];
 
             if (index > 0)
             {

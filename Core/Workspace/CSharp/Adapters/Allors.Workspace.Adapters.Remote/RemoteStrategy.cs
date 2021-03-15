@@ -176,7 +176,7 @@ namespace Allors.Workspace.Adapters.Remote
 
             this.Session.SessionState.GetAssociation(this, associationType, out var association);
             var id = (long?)association;
-            return id != null ? this.Session.Instantiate<IObject>(id) : null;
+            return id != null ? this.Session.Get<IObject>(id) : null;
         }
 
         public IEnumerable<IObject> GetAssociations(IAssociationType associationType)
@@ -188,7 +188,7 @@ namespace Allors.Workspace.Adapters.Remote
 
             this.Session.SessionState.GetAssociation(this, associationType, out var association);
             var ids = (IEnumerable<long>)association;
-            return ids?.Select(v => this.Session.Instantiate<IObject>(v)).ToArray() ?? Array.Empty<IObject>();
+            return ids?.Select(v => this.Session.Get<IObject>(v)).ToArray() ?? Array.Empty<IObject>();
         }
 
         public bool CanRead(IRoleType roleType) => this.databaseState?.CanRead(roleType) ?? true;

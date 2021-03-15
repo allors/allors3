@@ -60,7 +60,7 @@ namespace Allors.Workspace.Adapters.Remote
                 }
 
                 var identity = (long?)this.workspaceObject?.GetRole(roleType);
-                workspaceRole = this.Session.Get(identity);
+                workspaceRole = this.Session.GetStrategy(identity);
 
                 return workspaceRole?.Object;
             }
@@ -72,7 +72,7 @@ namespace Allors.Workspace.Adapters.Remote
             }
 
             var identities = (long[])this.workspaceObject?.GetRole(roleType);
-            return identities == null ? Array.Empty<IObject>() : identities.Select(v => this.Session.Instantiate<IObject>(v)).ToArray();
+            return identities == null ? Array.Empty<IObject>() : identities.Select(v => this.Session.Get<IObject>(v)).ToArray();
         }
 
         internal void SetRole(IRoleType roleType, object value)
@@ -253,7 +253,7 @@ namespace Allors.Workspace.Adapters.Remote
                 var associationType = roleType.AssociationType;
                 if (associationType.IsOne)
                 {
-                    var addedObjects = this.Session.Instantiate<IObject>(addedRoles);
+                    var addedObjects = this.Session.Get<IObject>(addedRoles);
                     foreach (var addedObject in addedObjects)
                     {
                         var previousAssociationObject = this.Session.GetAssociation((RemoteStrategy)addedObject.Strategy, associationType).FirstOrDefault();

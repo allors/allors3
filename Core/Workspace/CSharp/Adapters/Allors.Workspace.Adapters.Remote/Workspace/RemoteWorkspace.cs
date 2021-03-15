@@ -26,6 +26,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.Database = new RemoteDatabase(this.MetaPopulation, httpClient, new Identities());
 
             this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
+            this.WorkspaceIdsByWorkspaceClass = new Dictionary<IClass, long[]>();
 
             this.DomainDerivationById = new ConcurrentDictionary<Guid, IDomainDerivation>();
 
@@ -47,6 +48,8 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal Dictionary<long, IClass> WorkspaceClassByWorkspaceId { get; }
 
+        internal Dictionary<IClass, long[]> WorkspaceIdsByWorkspaceClass { get; }
+
         public ISession CreateSession() => new RemoteSession(this, this.StateLifecycle.CreateSessionContext());
 
         internal RemoteWorkspaceObject Get(long identity)
@@ -55,7 +58,21 @@ namespace Allors.Workspace.Adapters.Remote
             return workspaceRoles;
         }
 
-        internal void RegisterWorkspaceObject(IClass @class, long workspaceId) => this.WorkspaceClassByWorkspaceId.Add(workspaceId, @class);
+        internal void RegisterWorkspaceObject(IClass @class, long workspaceId)
+        {
+            this.WorkspaceClassByWorkspaceId.Add(workspaceId, @class);
+
+            if (!this.WorkspaceIdsByWorkspaceClass.TryGetValue(@class, out var ids))
+            {
+                ids = new[] { workspaceId };
+            }
+            else
+            {
+                ids = NullableSortableArraySet.Add(ids, workspaceId);
+            }
+
+            this.WorkspaceIdsByWorkspaceClass[@class] = ids;
+        }
 
         internal void Push(long identity, IClass @class, long version, Dictionary<IRelationType, object> changedRoleByRoleType)
         {
