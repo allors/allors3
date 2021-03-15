@@ -5,10 +5,8 @@
 
 namespace Tests.Workspace
 {
-    using System;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
-    using Remote;
     using Xunit;
 
     public abstract class LoadTests : Test
@@ -50,7 +48,7 @@ namespace Tests.Workspace
                 Extent = new Extent(this.M.C1.ObjectType),
             };
 
-            var result = session.Load(pull).Result;
+            var result = await session.Load(pull);
 
             var c1s = result.GetCollection<C1>("C1s");
 

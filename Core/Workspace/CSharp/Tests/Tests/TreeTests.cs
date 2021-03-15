@@ -9,7 +9,6 @@ namespace Tests.Workspace
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
     using Allors.Workspace.Meta;
-    using Remote;
     using Xunit;
     using Result = Allors.Workspace.Data.Result;
 

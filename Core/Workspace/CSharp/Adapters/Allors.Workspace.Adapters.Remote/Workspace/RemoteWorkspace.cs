@@ -17,8 +17,9 @@ namespace Allors.Workspace.Adapters.Remote
     {
         private readonly Dictionary<long, RemoteWorkspaceObject> objectById;
 
-        internal RemoteWorkspace(IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, HttpClient httpClient)
+        internal RemoteWorkspace(string name, IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, HttpClient httpClient)
         {
+            this.Name = name;
             this.MetaPopulation = metaPopulation;
             this.StateLifecycle = state;
 
@@ -34,6 +35,8 @@ namespace Allors.Workspace.Adapters.Remote
 
             this.StateLifecycle.OnInit(this);
         }
+
+        public string Name { get; }
 
         public IMetaPopulation MetaPopulation { get; }
 

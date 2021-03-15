@@ -31,6 +31,7 @@ namespace Tests.Workspace.Remote
 
         public Profile() =>
             this.Workspace = new RemoteWorkspace(
+                "Default",
                 new MetaBuilder().Build(),
                 typeof(User),
                 new WorkspaceContext(),

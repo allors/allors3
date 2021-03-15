@@ -8,7 +8,6 @@ namespace Tests.Workspace
     using System.Linq;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
-    using Remote;
     using Xunit;
 
     public abstract class Many2OneTests : Test

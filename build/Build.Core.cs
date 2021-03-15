@@ -151,25 +151,34 @@ partial class Build
         .Executes(async () =>
         {
             DotNet("Commands.dll Populate", this.Paths.ArtifactsCoreCommands);
-            using var server = new Server(this.Paths.ArtifactsCoreServer);
-            await server.Ready();
 
-            // TODO: Include once stabilized
-            //DotNetTest(s => s
-            //    .SetProjectFile(this.Paths.CoreWorkspaceCSharpTests)
-            //    .SetLogger("trx;LogFileName=CoreWorkspaceCSharpTests.trx")
-            //    .SetResultsDirectory(this.Paths.ArtifactsTests));
+            {
+                DotNetTest(s => s
+                    .SetProjectFile(this.Paths.CoreWorkspaceCSharpAdaptersLocalTests)
+                    .SetLogger("trx;LogFileName=CoreWorkspaceCSharpAdaptersLocalTests.trx")
+                    .SetResultsDirectory(this.Paths.ArtifactsTests));
 
-            // TODO: Include once stabilized
-            //DotNetTest(s => s
-            //    .SetProjectFile(this.Paths.CoreWorkspaceCSharpLocalTests)
-            //    .SetLogger("trx;LogFileName=CoreWorkspaceCSharpLocalTests.trx")
-            //    .SetResultsDirectory(this.Paths.ArtifactsTests));
+                // TODO: Enable once stabilized
+                //DotNetTest(s => s
+                //    .SetProjectFile(this.Paths.CoreWorkspaceCSharpTestsLocal)
+                //    .SetLogger("trx;LogFileName=CoreWorkspaceCSharpTestsLocal.trx")
+                //    .SetResultsDirectory(this.Paths.ArtifactsTests));
+            }
 
-            DotNetTest(s => s
-                .SetProjectFile(this.Paths.CoreWorkspaceCSharpRemoteTests)
-                .SetLogger("trx;LogFileName=CoreWorkspaceCSharpRemoteTests.trx")
-                .SetResultsDirectory(this.Paths.ArtifactsTests));
+            {
+                using var server = new Server(this.Paths.ArtifactsCoreServer);
+                await server.Ready();
+
+                DotNetTest(s => s
+                    .SetProjectFile(this.Paths.CoreWorkspaceCSharpAdaptersRemoteTests)
+                    .SetLogger("trx;LogFileName=CoreWorkspaceCSharpAdaptersRemoteTests.trx")
+                    .SetResultsDirectory(this.Paths.ArtifactsTests));
+
+                DotNetTest(s => s
+                    .SetProjectFile(this.Paths.CoreWorkspaceCSharpTestsRemote)
+                    .SetLogger("trx;LogFileName=CoreWorkspaceCSharpTestsRemote.trx")
+                    .SetResultsDirectory(this.Paths.ArtifactsTests));
+            }
         });
 
     Target CoreDatabaseTest => _ => _

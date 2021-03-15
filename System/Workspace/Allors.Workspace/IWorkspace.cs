@@ -12,6 +12,8 @@ namespace Allors.Workspace
 
     public interface IWorkspace
     {
+        string Name { get; }
+
         IMetaPopulation MetaPopulation { get; }
 
         IObjectFactory ObjectFactory { get; }

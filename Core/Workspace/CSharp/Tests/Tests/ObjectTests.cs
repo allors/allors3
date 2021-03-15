@@ -6,7 +6,6 @@
 namespace Tests.Workspace
 {
     using System.Net.Http;
-    using Remote;
     using Xunit;
 
     public abstract class ObjectTests : Test

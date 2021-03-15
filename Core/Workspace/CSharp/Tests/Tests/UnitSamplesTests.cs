@@ -7,7 +7,6 @@ namespace Tests.Workspace
 {
     using System;
     using Allors.Workspace.Domain;
-    using Remote;
     using Xunit;
 
     public abstract class UnitSamplesTests : Test
