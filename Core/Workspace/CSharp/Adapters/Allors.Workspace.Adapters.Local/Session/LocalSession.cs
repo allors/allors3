@@ -178,7 +178,42 @@ namespace Allors.Workspace.Adapters.Local
 
         public async Task<ISaveResult> Save()
         {
-            throw new NotImplementedException();
+            var newStrategies = this.newDatabaseStrategies?.ToArray() ?? Array.Empty<LocalStrategy>();
+            var changedStrategies = this.existingDatabaseStrategies?.Where(v => v.HasDatabaseChanges).ToArray() ?? Array.Empty<LocalStrategy>();
+
+            var localPushResult = new LocalPushResult(this.Workspace);
+            localPushResult.Execute(newStrategies, changedStrategies);
+
+            if (!localPushResult.HasErrors)
+            {
+                this.PushResponse(localPushResult);
+
+                var objects = localPushResult.Objects;
+
+                this.Workspace.LocalDatabase.Sync(objects);
+
+                foreach (var databaseObject in objects)
+                {
+                    var identity = databaseObject.Id;
+                    if (!this.strategyByWorkspaceId.ContainsKey(identity))
+                    {
+                        this.InstantiateDatabaseObject(identity);
+                    }
+                }
+
+                if (this.workspaceStrategies != null)
+                {
+                    foreach (var workspaceStrategy in this.workspaceStrategies)
+                    {
+                        workspaceStrategy.WorkspaceSave();
+                    }
+                }
+
+                this.Reset();
+            }
+
+
+            return new LocalSaveResult(localPushResult);
         }
 
         public IChangeSet Checkpoint()
@@ -333,7 +368,8 @@ namespace Allors.Workspace.Adapters.Local
 
         private Task<ILoadResult> OnPull(LocalPullResult pullResult)
         {
-            this.Workspace.LocalDatabase.Sync(pullResult);
+            var syncObjects = this.Database.ObjectsToSync(pullResult);
+            this.Workspace.LocalDatabase.Sync(syncObjects);
 
             foreach (var databaseObject in pullResult.Objects)
             {
@@ -348,6 +384,34 @@ namespace Allors.Workspace.Adapters.Local
             return Task.FromResult<ILoadResult>(loadResult);
         }
 
+        internal void PushResponse(LocalPushResult pushResponse)
+        {
+            if (pushResponse.ObjectByNewId?.Count > 0)
+            {
+                foreach (var kvp in pushResponse.ObjectByNewId)
+                {
+                    var workspaceId = kvp.Key;
+                    var databaseId = kvp.Value.Id;
 
+                    var strategy = this.strategyByWorkspaceId[workspaceId];
+
+                    this.newDatabaseStrategies.Remove(strategy);
+                    this.RemoveStrategy(strategy);
+
+                    var databaseObject = this.Database.PushResponse(databaseId, strategy.Class);
+                    strategy.DatabasePushResponse(databaseObject);
+
+                    this.existingDatabaseStrategies.Add(strategy);
+                    this.AddStrategy(strategy);
+                }
+            }
+
+            if (this.newDatabaseStrategies?.Count > 0)
+            {
+                throw new Exception("Not all new objects received ids");
+            }
+
+            this.newDatabaseStrategies = null;
+        }
     }
 }

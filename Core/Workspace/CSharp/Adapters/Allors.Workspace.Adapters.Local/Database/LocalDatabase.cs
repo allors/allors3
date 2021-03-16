@@ -33,21 +33,9 @@ namespace Allors.Workspace.Adapters.Local
 
         internal Identities Identities { get; }
 
-        public void Sync(LocalPullResult pullResult)
+        internal void Sync(IEnumerable<IObject> objects)
         {
-            var objects = pullResult.Objects.Where(v =>
-            {
-                if (this.ObjectsById.TryGetValue(v.Id, out var databaseRoles))
-                {
-                    return v.Strategy.ObjectVersion != databaseRoles.Version;
-                }
-
-                return true;
-            });
-
             // TODO: Prefetch objects
-
-
             static object GetRole(IObject @object, IRoleType roleType)
             {
                 if (roleType.ObjectType.IsUnit)
@@ -129,5 +117,23 @@ namespace Allors.Workspace.Adapters.Local
                     return null;
             }
         }
+
+        internal LocalDatabaseObject PushResponse(long identity, IClass @class)
+        {
+            var databaseObject = new LocalDatabaseObject(this, identity, @class);
+            this.ObjectsById[identity] = databaseObject;
+            return databaseObject;
+        }
+
+        public IEnumerable<IObject> ObjectsToSync(LocalPullResult pullResult) =>
+            pullResult.Objects.Where(v =>
+            {
+                if (this.ObjectsById.TryGetValue(v.Id, out var databaseRoles))
+                {
+                    return v.Strategy.ObjectVersion != databaseRoles.Version;
+                }
+
+                return true;
+            });
     }
 }

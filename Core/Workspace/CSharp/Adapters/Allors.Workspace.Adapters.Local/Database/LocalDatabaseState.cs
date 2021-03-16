@@ -17,7 +17,6 @@ namespace Allors.Workspace.Adapters.Local
         private readonly LocalStrategy strategy;
 
         private LocalDatabaseObject databaseObject;
-        private Dictionary<IRelationType, object> changedRoleByRelationType;
 
         private LocalDatabaseObject previousDatabaseObject;
         private Dictionary<IRelationType, object> previousChangedRoleByRelationType;
@@ -29,7 +28,9 @@ namespace Allors.Workspace.Adapters.Local
             this.previousDatabaseObject = this.databaseObject;
         }
 
-        internal bool HasDatabaseChanges => this.databaseObject == null || this.changedRoleByRelationType != null;
+        internal bool HasDatabaseChanges => this.databaseObject == null || this.ChangedRoleByRelationType != null;
+
+        internal Dictionary<IRelationType, object> ChangedRoleByRelationType { get; private set; }
 
         private bool ExistDatabaseObjects => this.databaseObject != null;
 
@@ -81,7 +82,7 @@ namespace Allors.Workspace.Adapters.Local
             if (roleType.ObjectType.IsUnit)
             {
 
-                if (this.changedRoleByRelationType == null || !this.changedRoleByRelationType.TryGetValue(roleType.RelationType, out var unit))
+                if (this.ChangedRoleByRelationType == null || !this.ChangedRoleByRelationType.TryGetValue(roleType.RelationType, out var unit))
                 {
                     unit = this.databaseObject?.GetRole(roleType);
                 }
@@ -91,8 +92,8 @@ namespace Allors.Workspace.Adapters.Local
 
             if (roleType.IsOne)
             {
-                if (this.changedRoleByRelationType != null &&
-                    this.changedRoleByRelationType.TryGet<LocalStrategy>(roleType.RelationType, out var workspaceRole))
+                if (this.ChangedRoleByRelationType != null &&
+                    this.ChangedRoleByRelationType.TryGet<LocalStrategy>(roleType.RelationType, out var workspaceRole))
                 {
                     return workspaceRole?.Object;
                 }
@@ -103,8 +104,8 @@ namespace Allors.Workspace.Adapters.Local
                 return workspaceRole?.Object;
             }
 
-            if (this.changedRoleByRelationType != null &&
-                this.changedRoleByRelationType.TryGet<LocalStrategy[]>(roleType.RelationType, out var workspaceRoles))
+            if (this.ChangedRoleByRelationType != null &&
+                this.ChangedRoleByRelationType.TryGet<LocalStrategy[]>(roleType.RelationType, out var workspaceRoles))
             {
                 return workspaceRoles != null ? workspaceRoles.Select(v => v.Object).ToArray() : Array.Empty<IObject>();
             }
@@ -135,7 +136,7 @@ namespace Allors.Workspace.Adapters.Local
         internal void Reset()
         {
             this.databaseObject = this.Database.Get(this.Identity);
-            this.changedRoleByRelationType = null;
+            this.ChangedRoleByRelationType = null;
         }
 
         internal void Merge() => this.databaseObject = this.Database.Get(this.Identity);
@@ -148,10 +149,10 @@ namespace Allors.Workspace.Adapters.Local
                 // No previous changed roles
                 if (this.previousChangedRoleByRelationType == null)
                 {
-                    if (this.changedRoleByRelationType != null)
+                    if (this.ChangedRoleByRelationType != null)
                     {
                         // Changed roles
-                        foreach (var kvp in this.changedRoleByRelationType)
+                        foreach (var kvp in this.ChangedRoleByRelationType)
                         {
                             var relationType = kvp.Key;
                             var cooked = kvp.Value;
@@ -164,7 +165,7 @@ namespace Allors.Workspace.Adapters.Local
                 // Previous changed roles
                 else
                 {
-                    foreach (var kvp in this.changedRoleByRelationType)
+                    foreach (var kvp in this.ChangedRoleByRelationType)
                     {
                         var relationType = kvp.Key;
                         var role = kvp.Value;
@@ -178,7 +179,7 @@ namespace Allors.Workspace.Adapters.Local
             else
             {
                 var hasPreviousCooked = this.previousChangedRoleByRelationType != null;
-                var hasCooked = this.changedRoleByRelationType != null;
+                var hasCooked = this.ChangedRoleByRelationType != null;
 
                 foreach (var roleType in this.Class.WorkspaceRoleTypes)
                 {
@@ -186,7 +187,7 @@ namespace Allors.Workspace.Adapters.Local
 
                     if (hasPreviousCooked && this.previousChangedRoleByRelationType.TryGetValue(relationType, out var previousCooked))
                     {
-                        if (hasCooked && this.changedRoleByRelationType.TryGetValue(relationType, out var cooked))
+                        if (hasCooked && this.ChangedRoleByRelationType.TryGetValue(relationType, out var cooked))
                         {
                             changeSet.DiffCookedWithCooked(this.strategy, relationType, cooked, previousCooked);
                         }
@@ -199,7 +200,7 @@ namespace Allors.Workspace.Adapters.Local
                     else
                     {
                         var previousRaw = this.previousDatabaseObject?.GetRole(roleType);
-                        if (hasCooked && this.changedRoleByRelationType.TryGetValue(relationType, out var cooked) == true)
+                        if (hasCooked && this.ChangedRoleByRelationType.TryGetValue(relationType, out var cooked) == true)
                         {
                             changeSet.DiffCookedWithRaw(this.strategy, relationType, cooked, previousRaw);
                         }
@@ -213,11 +214,9 @@ namespace Allors.Workspace.Adapters.Local
             }
 
             this.previousDatabaseObject = this.databaseObject;
-            this.previousChangedRoleByRelationType = this.changedRoleByRelationType;
+            this.previousChangedRoleByRelationType = this.ChangedRoleByRelationType;
         }
-
-
-
+        
         internal void PushResponse(LocalDatabaseObject newDatabaseObject) => this.databaseObject = newDatabaseObject;
         
         private void SetUnitRole(IRoleType roleType, object role)
@@ -228,8 +227,8 @@ namespace Allors.Workspace.Adapters.Local
                 return;
             }
 
-            this.changedRoleByRelationType ??= new Dictionary<IRelationType, object>();
-            this.changedRoleByRelationType[roleType.RelationType] = role ;
+            this.ChangedRoleByRelationType ??= new Dictionary<IRelationType, object>();
+            this.ChangedRoleByRelationType[roleType.RelationType] = role ;
 
             this.Session.OnChange(this);
         }
@@ -254,8 +253,8 @@ namespace Allors.Workspace.Adapters.Local
                 }
             }
 
-            this.changedRoleByRelationType ??= new Dictionary<IRelationType, object>();
-            this.changedRoleByRelationType[roleType.RelationType] = role?.Strategy;
+            this.ChangedRoleByRelationType ??= new Dictionary<IRelationType, object>();
+            this.ChangedRoleByRelationType[roleType.RelationType] = role?.Strategy;
 
             this.Session.OnChange(this);
         }
@@ -293,8 +292,8 @@ namespace Allors.Workspace.Adapters.Local
                 }
             }
 
-            this.changedRoleByRelationType ??= new Dictionary<IRelationType, object>();
-            this.changedRoleByRelationType[roleType.RelationType] = role.Select(v => (LocalStrategy)v.Strategy).ToArray();
+            this.ChangedRoleByRelationType ??= new Dictionary<IRelationType, object>();
+            this.ChangedRoleByRelationType[roleType.RelationType] = role.Select(v => (LocalStrategy)v.Strategy).ToArray();
 
             this.Session.OnChange(this);
         }
@@ -308,8 +307,8 @@ namespace Allors.Workspace.Adapters.Local
 
             if (roleType.IsOne)
             {
-                if (this.changedRoleByRelationType != null &&
-                    this.changedRoleByRelationType.TryGet<LocalStrategy>(roleType.RelationType, out var workspaceRole))
+                if (this.ChangedRoleByRelationType != null &&
+                    this.ChangedRoleByRelationType.TryGet<LocalStrategy>(roleType.RelationType, out var workspaceRole))
                 {
                     return workspaceRole?.Equals(forRole) == true;
                 }
@@ -318,8 +317,8 @@ namespace Allors.Workspace.Adapters.Local
                 return identity?.Equals(forRole.Identity) == true;
             }
 
-            if (this.changedRoleByRelationType != null &&
-                this.changedRoleByRelationType.TryGet<LocalStrategy[]>(roleType.RelationType, out var workspaceRoles))
+            if (this.ChangedRoleByRelationType != null &&
+                this.ChangedRoleByRelationType.TryGet<LocalStrategy[]>(roleType.RelationType, out var workspaceRoles))
             {
                 return workspaceRoles?.Contains(forRole) == true;
             }

@@ -52,7 +52,12 @@ namespace Allors.Workspace.Adapters.Local
 
         public object GetRole(IRoleType roleType)
         {
-            this.RoleByRoleType.TryGetValue(roleType, out var role);
+            if (this.RoleByRoleType == null)
+            {
+                return null;
+            }
+
+            _ = this.RoleByRoleType.TryGetValue(roleType, out var role);
             return role;
         }
 
