@@ -9,17 +9,12 @@ namespace Allors.Workspace.Adapters.Local
 
     internal class LocalAccessControl
     {
-        internal LocalAccessControl(long id, long version, ISet<long> permissionIds)
-        {
-            this.Id = id;
-            this.Version = version;
-            this.PermissionIds = permissionIds;
-        }
+        internal LocalAccessControl(long id) => this.Id = id;
 
         internal long Id { get; }
 
-        internal long Version { get; }
+        internal long Version { get; set; }
 
-        internal ISet<long> PermissionIds { get; }
+        internal ISet<long> PermissionIds { get; set; }
     }
 }

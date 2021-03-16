@@ -179,5 +179,7 @@ namespace Allors.Workspace.Meta
                         select method;
             return query.ToArray();
         }
+
+        public override Guid OperandId => this.Id;
     }
 }

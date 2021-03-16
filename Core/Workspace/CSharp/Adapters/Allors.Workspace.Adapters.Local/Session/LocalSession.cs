@@ -47,9 +47,7 @@ namespace Allors.Workspace.Adapters.Local
         internal LocalWorkspace Workspace { get; }
 
         internal LocalDatabase Database { get; }
-
-        internal bool HasDatabaseChanges => this.newDatabaseStrategies?.Count > 0 || this.existingDatabaseStrategies.Any(v => v.HasDatabaseChanges);
-
+        
         internal LocalSessionState SessionState { get; }
 
         public async Task<ICallResult> Call(Method method, CallOptions options = null) => await this.Call(new[] { method }, options);
@@ -190,7 +188,7 @@ namespace Allors.Workspace.Adapters.Local
 
                 var objects = localPushResult.Objects;
 
-                this.Workspace.LocalDatabase.Sync(objects);
+                this.Workspace.LocalDatabase.Sync(objects, localPushResult.AccessControlLists);
 
                 foreach (var databaseObject in objects)
                 {
@@ -369,8 +367,9 @@ namespace Allors.Workspace.Adapters.Local
         private Task<ILoadResult> OnPull(LocalPullResult pullResult)
         {
             var syncObjects = this.Database.ObjectsToSync(pullResult);
-            this.Workspace.LocalDatabase.Sync(syncObjects);
 
+            this.Workspace.LocalDatabase.Sync(syncObjects, pullResult.AccessControlLists);
+            
             foreach (var databaseObject in pullResult.Objects)
             {
                 var identity = databaseObject.Id;
@@ -398,6 +397,7 @@ namespace Allors.Workspace.Adapters.Local
                     this.newDatabaseStrategies.Remove(strategy);
                     this.RemoveStrategy(strategy);
 
+                    // TODO: Is this necessary?
                     var databaseObject = this.Database.PushResponse(databaseId, strategy.Class);
                     strategy.DatabasePushResponse(databaseObject);
 

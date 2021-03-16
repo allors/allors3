@@ -62,6 +62,8 @@ namespace Allors.Workspace.Meta
         /// </summary>
         public override string DisplayName => this.Name;
 
+        public override Guid OperandId => this.RelationType.Id;
+
         /// <summary>
         /// Gets the validation name.
         /// </summary>

@@ -7,11 +7,12 @@ namespace Allors.Workspace.Adapters.Local
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Database.Security;
     using Meta;
 
     public class LocalDatabaseObject
     {
-        private readonly LocalPermission[] deniedPermissions;
+        private readonly long[] deniedPermissions;
         private readonly LocalAccessControl[] accessControls;
 
         internal LocalDatabaseObject(LocalDatabase database, long identity, IClass @class)
@@ -22,14 +23,7 @@ namespace Allors.Workspace.Adapters.Local
             this.Version = 0;
         }
 
-        internal LocalDatabaseObject(
-            LocalDatabase database,
-            long identity,
-            IClass @class,
-            long version,
-            Dictionary<IRoleType, object> roleByRoleType,
-            LocalPermission[] deniedPermissions,
-            LocalAccessControl[] accessControls)
+        internal LocalDatabaseObject(LocalDatabase database, long identity, IClass @class, long version, Dictionary<IRoleType, object> roleByRoleType, long[] deniedPermissions, LocalAccessControl[] accessControls)
         {
             this.Database = database;
             this.Identity = identity;
@@ -61,9 +55,8 @@ namespace Allors.Workspace.Adapters.Local
             return role;
         }
 
-        internal bool IsPermitted(LocalPermission permission) =>
-            permission != null &&
+        internal bool IsPermitted(long permission) =>
             this.deniedPermissions?.Contains(permission) == false &&
-            this.accessControls?.Any(v => v.PermissionIds.Any(w => w == permission.Id)) != false;
+            this.accessControls?.Any(v => v.PermissionIds.Any(w => w == permission)) != false;
     }
 }

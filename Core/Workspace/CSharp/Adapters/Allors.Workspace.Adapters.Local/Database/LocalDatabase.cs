@@ -9,22 +9,27 @@ namespace Allors.Workspace.Adapters.Local
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net.Http.Headers;
     using Database;
+    using Database.Domain;
+    using Database.Security;
     using Meta;
     using IMetaPopulation = Meta.IMetaPopulation;
     using IRoleType = Database.Meta.IRoleType;
+    using Version = Allors.Version;
 
     internal class LocalDatabase
     {
-        private readonly Dictionary<IClass, Dictionary<IOperandType, LocalPermission>> readPermissionByOperandTypeByClass;
-        private readonly Dictionary<IClass, Dictionary<IOperandType, LocalPermission>> writePermissionByOperandTypeByClass;
-        private readonly Dictionary<IClass, Dictionary<IOperandType, LocalPermission>> executePermissionByOperandTypeByClass;
+        private readonly IPermissionsCache permissionCache;
 
-        internal LocalDatabase(IMetaPopulation metaPopulation, Identities identities)
+        internal LocalDatabase(IMetaPopulation metaPopulation, Identities identities, IPermissionsCache permissionCache)
         {
             this.MetaPopulation = metaPopulation;
             this.ObjectsById = new ConcurrentDictionary<long, LocalDatabaseObject>();
             this.Identities = identities;
+
+            this.permissionCache = permissionCache;
+            this.AccessControlById = new Dictionary<long, LocalAccessControl>();
         }
 
         public IMetaPopulation MetaPopulation { get; }
@@ -33,7 +38,9 @@ namespace Allors.Workspace.Adapters.Local
 
         internal Identities Identities { get; }
 
-        internal void Sync(IEnumerable<IObject> objects)
+        internal Dictionary<long, LocalAccessControl> AccessControlById { get; set; }
+
+        internal void Sync(IEnumerable<IObject> objects, IAccessControlLists acls)
         {
             // TODO: Prefetch objects
             static object GetRole(IObject @object, IRoleType roleType)
@@ -42,34 +49,35 @@ namespace Allors.Workspace.Adapters.Local
                 {
                     return @object.Strategy.GetUnitRole(roleType);
                 }
-                else if (roleType.IsOne)
+
+                if (roleType.IsOne)
                 {
                     return @object.Strategy.GetCompositeRole(roleType)?.Id;
                 }
-                else
-                {
-                    var roles = @object.Strategy.GetCompositeRoles(roleType);
-                    if (roles.Count > 0)
-                    {
-                        return @object.Strategy.GetCompositeRoles(roleType).Select(v => v.Id).ToArray();
-                    }
-                }
 
-                return Array.Empty<long>();
+                var roles = @object.Strategy.GetCompositeRoles(roleType);
+                return roles.Count > 0 ? @object.Strategy.GetCompositeRoles(roleType).Select(v => v.Id).ToArray() : Array.Empty<long>();
             }
 
-            foreach (var v in objects)
+            foreach (var @object in objects)
             {
-                var id = v.Id;
-                var databaseClass = v.Strategy.Class;
+                var id = @object.Id;
+                var databaseClass = @object.Strategy.Class;
                 var roleTypes = databaseClass.DatabaseRoleTypes.Where(w => w.RelationType.WorkspaceNames.Length > 0);
 
                 var workspaceClass = (IClass)this.MetaPopulation.Find(databaseClass.Id);
                 var roleByRoleType = roleTypes.ToDictionary(w =>
                         ((Meta.IRelationType)this.MetaPopulation.Find(w.RelationType.Id)).RoleType,
-                    w => GetRole(v, w));
+                    w => GetRole(@object, w));
 
-                this.ObjectsById[id] = new LocalDatabaseObject(this, id, workspaceClass, v.Strategy.ObjectVersion, roleByRoleType, null, null);
+                var acl = acls[@object];
+
+                var deniedPermissions = acl.DeniedPermissionIds?.ToArray() ?? Array.Empty<long>();
+                var accessControls = acl.AccessControls
+                    ?.Select(this.GetAccessControl)
+                    .ToArray() ?? Array.Empty<LocalAccessControl>();
+
+                this.ObjectsById[id] = new LocalDatabaseObject(this, id, workspaceClass, @object.Strategy.ObjectVersion, roleByRoleType, deniedPermissions, accessControls);
             }
         }
 
@@ -79,43 +87,25 @@ namespace Allors.Workspace.Adapters.Local
             return databaseObjects;
         }
 
-        internal LocalPermission GetPermission(IClass @class, IOperandType operandType, Operations operation)
+        internal long GetPermission(IClass @class, IOperandType operandType, Operations operation)
         {
+            long permission;
+            var permissionCache = this.permissionCache.Get(@class.Id);
+
             switch (operation)
             {
                 case Operations.Read:
-                    if (this.readPermissionByOperandTypeByClass.TryGetValue(@class, out var readPermissionByOperandType))
-                    {
-                        if (readPermissionByOperandType.TryGetValue(operandType, out var readPermission))
-                        {
-                            return readPermission;
-                        }
-                    }
-
-                    return null;
-
+                    permissionCache.RoleReadPermissionIdByRelationTypeId.TryGetValue(operandType.OperandId, out permission);
+                    break;
                 case Operations.Write:
-                    if (this.writePermissionByOperandTypeByClass.TryGetValue(@class, out var writePermissionByOperandType))
-                    {
-                        if (writePermissionByOperandType.TryGetValue(operandType, out var writePermission))
-                        {
-                            return writePermission;
-                        }
-                    }
-
-                    return null;
-
+                    permissionCache.RoleWritePermissionIdByRelationTypeId.TryGetValue(operandType.OperandId, out permission);
+                    break;
                 default:
-                    if (this.executePermissionByOperandTypeByClass.TryGetValue(@class, out var executePermissionByOperandType))
-                    {
-                        if (executePermissionByOperandType.TryGetValue(operandType, out var executePermission))
-                        {
-                            return executePermission;
-                        }
-                    }
-
-                    return null;
+                    permissionCache.MethodExecutePermissionIdByMethodTypeId.TryGetValue(operandType.OperandId, out permission);
+                    break;
             }
+
+            return permission;
         }
 
         internal LocalDatabaseObject PushResponse(long identity, IClass @class)
@@ -135,5 +125,23 @@ namespace Allors.Workspace.Adapters.Local
 
                 return true;
             });
+
+        private LocalAccessControl GetAccessControl(IAccessControl accessControl)
+        {
+            if (!this.AccessControlById.TryGetValue(accessControl.Strategy.ObjectId, out var localAccessControl))
+            {
+                localAccessControl = new LocalAccessControl(accessControl.Strategy.ObjectId);
+            }
+
+            if (localAccessControl.Version == accessControl.Strategy.ObjectVersion)
+            {
+                return localAccessControl;
+            }
+
+            localAccessControl.Version = accessControl.Strategy.ObjectVersion;
+            localAccessControl.PermissionIds = new HashSet<long>(accessControl.Permissions.Select(v => v.Id));
+
+            return localAccessControl;
+        }
     }
 }

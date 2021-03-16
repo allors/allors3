@@ -9,6 +9,7 @@ namespace Allors.Workspace.Adapters.Local
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using Database;
+    using Database.Domain;
     using Derivations;
     using Meta;
     using IObjectFactory = Workspace.IObjectFactory;
@@ -26,7 +27,9 @@ namespace Allors.Workspace.Adapters.Local
 
             this.ObjectFactory = new ObjectFactory(this.MetaPopulation, instance);
             this.Database = database;
-            this.LocalDatabase = new LocalDatabase(this.MetaPopulation, new Identities());
+
+            var databaseContext = this.Database.Context();
+            this.LocalDatabase = new LocalDatabase(this.MetaPopulation, new Identities(), databaseContext.PermissionsCache);
 
             this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
             this.WorkspaceIdsByWorkspaceClass = new Dictionary<IClass, long[]>();

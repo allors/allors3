@@ -41,5 +41,7 @@ namespace Allors.Workspace.Meta
         }
 
         public override string FullName => $"{this.Composite.Name}{this.Name}";
+
+        public override Guid OperandId => this.Id;
     }
 }

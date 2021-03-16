@@ -77,5 +77,7 @@ namespace Allors.Workspace.Meta
             get => this.Default.ObjectType;
             set => throw new NotSupportedException();
         }
+
+        public override Guid OperandId => this.RelationType.Id;
     }
 }

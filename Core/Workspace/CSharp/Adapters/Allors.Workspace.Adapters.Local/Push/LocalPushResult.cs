@@ -21,7 +21,7 @@ namespace Allors.Workspace.Adapters.Local
 
     public class LocalPushResult
     {
-        public LocalPushResult(LocalWorkspace workspace)
+        internal LocalPushResult(LocalWorkspace workspace)
         {
             this.Workspace = workspace;
             this.Transaction = this.Workspace.Database.CreateTransaction();
@@ -60,13 +60,13 @@ namespace Allors.Workspace.Adapters.Local
 
         public ITransaction Transaction { get; }
 
-        public IAccessControlLists AccessControlLists { get; }
-
         public ISet<IClass> AllowedClasses { get; }
 
         public IPreparedSelects PreparedSelects { get; }
 
         public IPreparedExtents PreparedExtents { get; }
+
+        internal IAccessControlLists AccessControlLists { get; }
 
         public M M { get; set; }
 
@@ -209,7 +209,7 @@ namespace Allors.Workspace.Adapters.Local
         internal void Execute(LocalStrategy[] newStrategies, LocalStrategy[] changedStrategies)
         {
             var metaPopulation = this.Workspace.Database.MetaPopulation;
-            
+
             if (newStrategies?.Length > 0)
             {
                 this.ObjectByNewId = newStrategies.ToDictionary(

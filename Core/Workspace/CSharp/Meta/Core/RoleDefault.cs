@@ -6,6 +6,8 @@
 
 namespace Allors.Workspace.Meta
 {
+    using System;
+
     public sealed partial class RoleDefault : RoleType, IRoleDefault
     {
         private ObjectType objectType;
@@ -124,5 +126,7 @@ namespace Allors.Workspace.Meta
                 this.MetaPopulation.Stale();
             }
         }
+
+        public override Guid OperandId => this.RelationType.Id;
     }
 }

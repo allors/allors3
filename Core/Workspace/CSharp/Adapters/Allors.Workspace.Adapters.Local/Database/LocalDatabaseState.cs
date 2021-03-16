@@ -79,6 +79,11 @@ namespace Allors.Workspace.Adapters.Local
 
         internal object GetRole(IRoleType roleType)
         {
+            if (!this.CanRead(roleType))
+            {
+                return null;
+            }
+
             if (roleType.ObjectType.IsUnit)
             {
 

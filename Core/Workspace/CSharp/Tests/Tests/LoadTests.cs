@@ -54,7 +54,7 @@ namespace Tests.Workspace
 
             foreach (var c1 in c1s)
             {
-                foreach (var roleType in this.M.C1.ObjectType.RoleTypes)
+                foreach (var roleType in this.M.C1.ObjectType.DatabaseRoleTypes)
                 {
                     Assert.False(c1.Strategy.Exist(roleType));
                 }
@@ -76,9 +76,9 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public void WithoutPermissions()
+        public async void WithoutPermissions()
         {
-            this.Login("noperm");
+            await this.Login("noperm");
 
             var session = this.Workspace.CreateSession();
 
@@ -93,7 +93,7 @@ namespace Tests.Workspace
 
             foreach (var c1 in c1s)
             {
-                foreach (var roleType in this.M.C1.ObjectType.RoleTypes)
+                foreach (var roleType in this.M.C1.ObjectType.DatabaseRoleTypes)
                 {
                     Assert.False(c1.Strategy.Exist(roleType));
                 }
