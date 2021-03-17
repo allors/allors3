@@ -47,14 +47,16 @@ namespace Allors.Workspace.Adapters.Local
         internal LocalWorkspace Workspace { get; }
 
         internal LocalDatabase Database { get; }
-        
+
         internal LocalSessionState SessionState { get; }
 
-        public async Task<ICallResult> Call(Method method, CallOptions options = null) => await this.Call(new[] { method }, options);
+        public Task<ICallResult> Call(Method method, CallOptions options = null) => this.Call(new[] { method }, options);
 
-        public async Task<ICallResult> Call(Method[] methods, CallOptions options = null)
+        public Task<ICallResult> Call(Method[] methods, CallOptions options = null)
         {
-            throw new NotImplementedException();
+            var localInvokeResult = new LocalInvokeResult(this.Workspace);
+            localInvokeResult.Execute(methods, options);
+            return Task.FromResult<ICallResult>(new LocalCallResult(localInvokeResult));
         }
 
         public async Task<ICallResult> Call(string service, object args)
@@ -174,7 +176,7 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        public async Task<ISaveResult> Save()
+        public Task<ISaveResult> Save()
         {
             var newStrategies = this.newDatabaseStrategies?.ToArray() ?? Array.Empty<LocalStrategy>();
             var changedStrategies = this.existingDatabaseStrategies?.Where(v => v.HasDatabaseChanges).ToArray() ?? Array.Empty<LocalStrategy>();
@@ -210,8 +212,7 @@ namespace Allors.Workspace.Adapters.Local
                 this.Reset();
             }
 
-
-            return new LocalSaveResult(localPushResult);
+            return Task.FromResult<ISaveResult>(new LocalSaveResult(localPushResult));
         }
 
         public IChangeSet Checkpoint()
@@ -369,7 +370,7 @@ namespace Allors.Workspace.Adapters.Local
             var syncObjects = this.Database.ObjectsToSync(pullResult);
 
             this.Workspace.LocalDatabase.Sync(syncObjects, pullResult.AccessControlLists);
-            
+
             foreach (var databaseObject in pullResult.Objects)
             {
                 var identity = databaseObject.Id;

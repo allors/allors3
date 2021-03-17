@@ -7,7 +7,9 @@ namespace Allors.Workspace.Protocol.Direct
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Database;
+    using Database.Data;
     using Database.Meta;
 
     public class ToDatabaseVisitor
@@ -53,24 +55,51 @@ namespace Allors.Workspace.Protocol.Direct
 
         private Database.Meta.IObjectType Visit(Meta.IObjectType ws) => ws != null ? (IObjectType)this.metaPopulation.Find(ws.Id) : null;
 
-        private Database.IObject Visit(Workspace.IObject ws)
+        private Database.IObject Visit(Workspace.IObject ws) => ws != null ? this.transaction.Instantiate(ws.Identity) : null;
+
+        private Database.Data.Result[] Visit(Data.Result[] ws) =>
+            ws?.Select(v => new Database.Data.Result
+            {
+                Name = v.Name,
+                Select = this.Visit(v.Select),
+                SelectRef = v.SelectRef,
+                Skip = v.Skip,
+                Take = v.Take,
+            }).ToArray();
+
+        private Select Visit(Data.Select ws) => ws != null ? new Select { Include = this.Visit(ws.Include), Step = this.Visit(ws.Step), } : null;
+
+        private Node[] Visit(Data.Node[] ws) => ws?.Select(this.Visit).ToArray();
+
+        private Node Visit(Data.Node ws) => ws != null ? new Node(this.Visit(ws.PropertyType), ws.Nodes?.Select(this.Visit).ToArray()) : null;
+
+        private Step Visit(Data.Step ws)
         {
             if (ws != null)
             {
-                throw new System.NotImplementedException();
+                return new Step
+                {
+                    PropertyType = this.Visit(ws.PropertyType),
+                    Include = this.Visit(ws.Include),
+                };
             }
 
             return null;
         }
 
-        private Database.Data.Result[] Visit(Data.Result[] ws)
+        private IPropertyType Visit(Meta.IPropertyType ws)
         {
-            if (ws != null)
+            switch (ws)
             {
-                throw new System.NotImplementedException();
-            }
+                case Meta.IAssociationType associationType:
+                    return ((IRelationType)this.metaPopulation.Find(associationType.OperandId)).AssociationType;
 
-            return null;
+                case Meta.IRoleType roleType:
+                    return ((IRelationType)this.metaPopulation.Find(roleType.OperandId)).RoleType;
+
+                default:
+                    throw new ArgumentException("Invalid property type");
+            }
         }
 
         private IDictionary<string, string> Visit(IDictionary<string, string> ws)
