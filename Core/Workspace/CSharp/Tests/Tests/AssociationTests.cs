@@ -20,6 +20,7 @@ namespace Tests.Workspace
         [Fact]
         public async void Database_GetOne2Many()
         {
+            await this.Login("administrator");
             var session = this.Workspace.CreateSession();
 
             var pull = new[]
@@ -59,6 +60,7 @@ namespace Tests.Workspace
         [Fact]
         public async void Database_GetOne2One()
         {
+            await this.Login("administrator");
             var session = this.Workspace.CreateSession();
 
             var pull = new[]

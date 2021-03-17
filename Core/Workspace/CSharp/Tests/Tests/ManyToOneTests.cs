@@ -19,6 +19,8 @@ namespace Tests.Workspace
         [Fact]
         public async void WorkspaceDatabase_SetRole()
         {
+            await this.Login("administrator");
+
             var session1 = this.Workspace.CreateSession();
 
             var result = await session1.Load(new[]
@@ -48,6 +50,8 @@ namespace Tests.Workspace
         [Fact]
         public async void WorkspaceDatabase_RemoveRole()
         {
+            await this.Login("administrator");
+
             var session1 = this.Workspace.CreateSession();
 
             var result = await session1.Load(new[]
@@ -76,6 +80,8 @@ namespace Tests.Workspace
         [Fact]
         public async void WorkspaceWorkspace_SetRole()
         {
+            await this.Login("administrator");
+
             var session1 = this.Workspace.CreateSession();
 
             var workspaceOrganisation1 = session1.Create<WorkspaceOrganisation>();
@@ -95,8 +101,10 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public void WorkspaceWorkspace_RemoveRole()
+        public async void WorkspaceWorkspace_RemoveRole()
         {
+            await this.Login("administrator");
+
             var session = this.Workspace.CreateSession();
 
             var workspaceOrganisation1 = session.Create<WorkspaceOrganisation>();

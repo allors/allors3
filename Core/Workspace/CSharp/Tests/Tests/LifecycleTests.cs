@@ -17,6 +17,8 @@ namespace Tests.Workspace
         [Fact]
         public async void Workspace_Instantiate()
         {
+            await this.Login("administrator");
+
             var session1 = this.Workspace.CreateSession();
 
             var workspaceOrganisation1 = session1.Create<WorkspaceOrganisation>();
@@ -31,6 +33,8 @@ namespace Tests.Workspace
         [Fact]
         public async void Session_Instantiate()
         {
+            await this.Login("administrator");
+
             var session1 = this.Workspace.CreateSession();
 
             var sessionOrganisation1 = session1.Create<SessionOrganisation>();

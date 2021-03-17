@@ -19,6 +19,8 @@ namespace Tests.Workspace
         [Fact]
         public async void Call()
         {
+            await this.Login("administrator");
+
             var session = this.Workspace.CreateSession();
 
             var pull = new[] { new Pull { Extent = new Extent(this.M.Organisation.ObjectType), }, };

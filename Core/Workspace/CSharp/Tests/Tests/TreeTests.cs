@@ -21,6 +21,7 @@ namespace Tests.Workspace
         [Fact]
         public async void C1()
         {
+            await this.Login("administrator");
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull

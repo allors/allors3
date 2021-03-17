@@ -23,13 +23,14 @@ namespace Tests.Workspace.Remote
 
         IWorkspace IProfile.Workspace => this.Workspace;
 
-        public RemoteWorkspace Workspace { get; }
+        public RemoteWorkspace Workspace { get; private set; }
 
         public RemoteDatabase Database => this.Workspace.Database;
 
         public M M => this.Workspace.Context().M;
 
-        public Profile() =>
+        public async Task InitializeAsync()
+        {
             this.Workspace = new RemoteWorkspace(
                 "Default",
                 new MetaBuilder().Build(),
@@ -40,8 +41,6 @@ namespace Tests.Workspace.Remote
                     BaseAddress = new Uri(Url),
                 });
 
-        public async Task InitializeAsync()
-        {
             var response = await this.Database.HttpClient.GetAsync(SetupUrl);
             Assert.True(response.IsSuccessStatusCode);
             await this.Login("administrator");
@@ -51,6 +50,7 @@ namespace Tests.Workspace.Remote
 
         public async Task Login(string user)
         {
+
             var uri = new Uri(LoginUrl, UriKind.Relative);
             var response = await this.Database.Login(uri, user, null);
             Assert.True(response);

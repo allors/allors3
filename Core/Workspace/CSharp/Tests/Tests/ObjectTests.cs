@@ -17,6 +17,8 @@ namespace Tests.Workspace
         [Fact]
         public async void NonExistingPullService()
         {
+            await this.Login("administrator");
+
             var session = this.Workspace.CreateSession();
 
             var exceptionThrown = false;

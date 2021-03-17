@@ -53,6 +53,7 @@ namespace Tests.Workspace.Local
 
             this.Workspace = new LocalWorkspace(
                 "Default",
+                this.Administrator.Id,
                 new Allors.Workspace.Meta.MetaBuilder().Build(),
                 typeof(Allors.Workspace.Domain.User),
                 new WorkspaceContext(),

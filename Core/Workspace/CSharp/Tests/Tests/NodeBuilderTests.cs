@@ -17,8 +17,10 @@ namespace Tests.Workspace
 
 
         [Fact]
-        public void Class()
+        public async void Class()
         {
+            await this.Login("administrator");
+
             var builder = new OrganisationNodeBuilder(this.M, organisation => organisation.Manager(manager =>
             {
                 manager.CycleOne();
@@ -44,8 +46,10 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public void Interface()
+        public async void Interface()
         {
+            await this.Login("administrator");
+
             var builder = new C1NodeBuilder(this.M, deletable =>
             {
                 deletable.C1C2One2One();

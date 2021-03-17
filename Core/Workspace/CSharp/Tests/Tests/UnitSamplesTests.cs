@@ -18,6 +18,7 @@ namespace Tests.Workspace
         [Fact]
         public async void Null()
         {
+            await this.Login("administrator");
             var session = this.Workspace.CreateSession();
 
             var result = await session.Load("TestUnitSamples", new { step = 0 });
@@ -37,6 +38,7 @@ namespace Tests.Workspace
         [Fact]
         public async void Values()
         {
+            await this.Login("administrator");
             var session = this.Workspace.CreateSession();
 
             var result = await session.Load("TestUnitSamples", new { step = 1 });

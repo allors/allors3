@@ -19,9 +19,10 @@ namespace Allors.Workspace.Adapters.Local
     {
         private readonly Dictionary<long, LocalWorkspaceObject> objectById;
 
-        public LocalWorkspace(string name, IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, Allors.Database.IDatabase database)
+        public LocalWorkspace(string name, long userId, IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, Allors.Database.IDatabase database)
         {
             this.Name = name;
+            this.UserId = userId;
             this.MetaPopulation = metaPopulation;
             this.StateLifecycle = state;
 
@@ -42,6 +43,8 @@ namespace Allors.Workspace.Adapters.Local
         }
 
         public string Name { get; }
+
+        public long UserId { get;  }
 
         public IMetaPopulation MetaPopulation { get; }
 

@@ -6,6 +6,7 @@
 namespace Tests.Workspace.Local
 {
     using System;
+    using System.Linq;
     using System.Threading.Tasks;
     using Allors.Workspace;
     using Allors.Workspace.Meta;
@@ -17,15 +18,13 @@ namespace Tests.Workspace.Local
 
     public class Profile : IProfile
     {
+        public Database Database { get; private set; }
+
         IWorkspace IProfile.Workspace => this.Workspace;
 
-        public LocalWorkspace Workspace { get; }
-
-        public Database Database { get; }
+        public LocalWorkspace Workspace { get; private set; }
 
         public M M => this.Workspace.Context().M;
-
-        private long administratorId;
 
         public Profile(Fixture fixture)
         {
@@ -40,16 +39,6 @@ namespace Tests.Workspace.Local
 
             this.Database.RegisterDerivations();
 
-            this.Workspace = new LocalWorkspace(
-                "Default",
-                new Allors.Workspace.Meta.MetaBuilder().Build(),
-                 typeof(Allors.Workspace.Domain.User),
-                new WorkspaceContext(),
-                this.Database);
-        }
-
-        public async Task InitializeAsync()
-        {
             using var session = this.Database.CreateTransaction();
             new Setup(session, new Config()).Apply();
 
@@ -62,8 +51,6 @@ namespace Tests.Workspace.Local
             var administratorRole = new Roles(session).Administrator;
             var acl = new AccessControlBuilder(session).WithRole(administratorRole).WithSubjectGroup(administrators).WithSecurityToken(defaultSecurityToken).Build();
 
-            this.administratorId = administrator.Strategy.ObjectId;
-
             session.Derive();
 
             new TestPopulation(session, "full").Apply();
@@ -71,13 +58,25 @@ namespace Tests.Workspace.Local
             session.Commit();
         }
 
+        public Task InitializeAsync() => Task.CompletedTask;
+
         public Task DisposeAsync() => Task.CompletedTask;
 
-        public async Task Login(string user)
+        public Task Login(string userName)
         {
-            using var session = this.Database.CreateTransaction();
-            var administrator = session.Instantiate(this.administratorId) as Person;
-            session.Context().User = administrator;
+            using var transaction = this.Database.CreateTransaction();
+            var user = new Users(transaction).Extent().ToArray().First(v => v.UserName.Equals(userName, StringComparison.InvariantCultureIgnoreCase));
+            transaction.Context().User = user;
+
+            this.Workspace = new LocalWorkspace(
+                "Default",
+                user.Id,
+                new Allors.Workspace.Meta.MetaBuilder().Build(),
+                typeof(Allors.Workspace.Domain.User),
+                new WorkspaceContext(),
+                this.Database);
+
+            return Task.CompletedTask;
         }
     }
 }

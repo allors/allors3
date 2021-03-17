@@ -19,6 +19,8 @@ namespace Tests.Workspace
         [Fact]
         public async void Load()
         {
+            await this.Login("administrator");
+
             var pull = new[]
             {
                 new Pull

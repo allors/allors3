@@ -26,8 +26,9 @@ namespace Allors.Workspace.Adapters.Local
             var sessionContext = this.Transaction.Context();
             var databaseContext = this.Transaction.Database.Context();
             var metaCache = databaseContext.MetaCache;
-            var user = sessionContext.User;
 
+            var user = (User)this.Transaction.Instantiate(this.Workspace.UserId);
+            
             this.AccessControlLists = new WorkspaceAccessControlLists(this.Workspace.Name, user);
             this.AllowedClasses = metaCache.GetWorkspaceClasses(this.Workspace.Name);
             this.PreparedSelects = databaseContext.PreparedSelects;
