@@ -16,9 +16,9 @@ namespace Allors.Database.Domain
         public ScoreboardDerivation(M m) : base(m, new Guid("66659E72-C496-485C-A68D-E940A9A94F9C")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.Scoreboard.Players),
-                new ChangedPattern(m.Scoreboard.Games),
-                new ChangedPattern(m.Game.Scores) { Steps = new IPropertyType[]{m.Game.ScoreboardWhereGame} },
+                new AssociationPattern(m.Scoreboard.Players),
+                new AssociationPattern(m.Scoreboard.Games),
+                new AssociationPattern(m.Game.Scores) { Steps = new IPropertyType[]{m.Game.ScoreboardWhereGame} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -35,7 +35,7 @@ namespace Allors.Database.Domain
 
                 foreach (var player in players)
                 {
-                    var score = new ScoreBuilder(cycle.Session)
+                    var score = new ScoreBuilder(cycle.Transaction)
                         .WithPlayer(player)
                         .WithValue(0)
                         .Build();

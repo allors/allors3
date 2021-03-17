@@ -9,7 +9,6 @@ namespace Tests.Workspace
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
     using Allors.Workspace.Meta;
-    using Remote;
     using Xunit;
     using Result = Allors.Workspace.Data.Result;
 
@@ -31,7 +30,7 @@ namespace Tests.Workspace
                 {
                     new Result
                     {
-                        Fetch = new Fetch
+                        Select = new Select
                         {
                             Include = new C1NodeBuilder(this.M,v => v.C1C2One2One()),
                         },

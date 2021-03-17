@@ -9,7 +9,7 @@ namespace Allors.Protocol.Json.Data
     {
         void VisitExtent(Extent visited);
 
-        void VisitFetch(Fetch fetch);
+        void VisitSelect(Select @select);
 
         void VisitNode(Node node);
 

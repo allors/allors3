@@ -5,9 +5,7 @@
 
 namespace Tests.Workspace
 {
-    using System;
     using Allors.Workspace.Domain;
-    using Remote;
     using Xunit;
 
     public abstract class SaveTests : Test
@@ -27,8 +25,7 @@ namespace Tests.Workspace
 
             foreach (var roleType in this.M.C1.ObjectType.RoleTypes)
             {
-                var role = newObject.Strategy.Get(roleType);
-                Assert.True(role == null || (role is Array array && (array.Length == 0)));
+                Assert.False(newObject.Strategy.Exist(roleType));
             }
 
             foreach (var associationType in this.M.C1.ObjectType.AssociationTypes)

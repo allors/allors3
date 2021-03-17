@@ -23,7 +23,7 @@ namespace Allors.Database.Data
 
         void VisitExtent(Extent visited);
 
-        void VisitFetch(Fetch visited);
+        void VisitSelect(Select visited);
 
         void VisitGreaterThan(GreaterThan visited);
 

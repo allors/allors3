@@ -7,21 +7,21 @@ namespace Tests.Workspace.Remote
 {
     using System.Linq;
     using Allors;
-    using Allors.Protocol.Json;
     using Allors.Protocol.Json.Api.Push;
     using Allors.Workspace.Adapters.Remote;
+    using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
     using Xunit;
 
     public class SessionTests : Test
     {
         [Fact]
-        public void UnitGet()
+        public async void UnitGet()
         {
             this.Database.SyncResponse(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
-            var koen = session.Instantiate<Person>(1);
+            var koen = session.InstantiateDatabaseObject(1 ).Object as Person;
 
             Assert.Equal("Koen", koen.FirstName);
             Assert.Null(koen.MiddleName);
@@ -29,7 +29,7 @@ namespace Tests.Workspace.Remote
             Assert.Equal(UnitConvert.Parse(this.M.Person.BirthDate.ObjectType.Id, "1973-03-27T18:00:00Z"), koen.BirthDate);
             Assert.True(koen.IsStudent);
 
-            var patrick = session.Instantiate<Person>(2);
+            var patrick = session.InstantiateDatabaseObject(2).Object as Person;
 
             Assert.Equal("Patrick", patrick.FirstName);
             Assert.Equal("De Boeck", patrick.LastName);
@@ -37,7 +37,7 @@ namespace Tests.Workspace.Remote
             Assert.Null(patrick.BirthDate);
             Assert.False(patrick.IsStudent);
 
-            var martien = session.Instantiate<Person>(3);
+            var martien = session.InstantiateDatabaseObject(3).Object as Person;
 
             Assert.Equal("Martien", martien.FirstName);
             Assert.Equal("Knippenberg", martien.LastName);
@@ -52,10 +52,10 @@ namespace Tests.Workspace.Remote
             this.Database.SyncResponse(Fixture.LoadData(this.M));
 
             var session1 = this.CreateSession();
-            var martien1 = session1.Instantiate<Person>(3);
+            var martien1 = session1.InstantiateDatabaseObject(3).Object as Person;
 
             var session2 = this.CreateSession();
-            var martien2 = session2.Instantiate<Person>(3);
+            var martien2 = session2.InstantiateDatabaseObject(3).Object as Person;
 
             martien2.FirstName = "Martinus";
             martien2.MiddleName = "X";
@@ -75,8 +75,8 @@ namespace Tests.Workspace.Remote
             this.Database.SyncResponse(Fixture.LoadData(this.M));
 
             var session = this.CreateSession();
-            var martien = session.Instantiate<Person>(3);
-            var acme = session.Instantiate<Organisation>(101);
+            var martien = session.InstantiateDatabaseObject(3).Object as Person;
+            var acme = session.InstantiateDatabaseObject(101).Object as Organisation;
 
             Assert.False(session.HasDatabaseChanges);
 
@@ -119,9 +119,9 @@ namespace Tests.Workspace.Remote
             this.Database.SyncResponse(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
-            var koen = session.Instantiate<Person>(1);
-            var patrick = session.Instantiate<Person>(2);
-            var martien = session.Instantiate<Person>(3);
+            var koen = session.InstantiateDatabaseObject(1).Object as Person;
+            var patrick = session.InstantiateDatabaseObject(2).Object as Person;
+            var martien = session.InstantiateDatabaseObject(3).Object as Person;
 
             koen.FirstName = "K";
             koen.LastName = "VE";
@@ -169,13 +169,13 @@ namespace Tests.Workspace.Remote
             this.Database.SyncResponse(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
-            var koen = session.Instantiate<Person>(1);
-            var patrick = session.Instantiate<Person>(2);
-            var martien = session.Instantiate<Person>(3);
+            var koen = session.InstantiateDatabaseObject(1).Object as Person;
+            var patrick = session.InstantiateDatabaseObject(2).Object as Person;
+            var martien = session.InstantiateDatabaseObject(3).Object as Person;
 
-            var acme = session.Instantiate<Organisation>(101);
-            var ocme = session.Instantiate<Organisation>(102);
-            var icme = session.Instantiate<Organisation>(103);
+            var acme = session.InstantiateDatabaseObject(101).Object as Organisation;
+            var ocme = session.InstantiateDatabaseObject(102).Object as Organisation;
+            var icme = session.InstantiateDatabaseObject(103).Object as Organisation;
 
             Assert.Equal(koen, acme.Owner);
             Assert.Equal(patrick, ocme.Owner);
@@ -194,22 +194,22 @@ namespace Tests.Workspace.Remote
             var session1 = this.CreateSession();
 
             var session2 = this.CreateSession();
+            
+            var koen1 = session1.InstantiateDatabaseObject(1).Object as Person;
+            var patrick1 = session1.InstantiateDatabaseObject(2).Object as Person;
+            var martien1 = session1.InstantiateDatabaseObject(3).Object as Person;
 
-            var koen1 = session1.Instantiate<Person>(1);
-            var patrick1 = session1.Instantiate<Person>(2);
-            var martien1 = session1.Instantiate<Person>(3);
+            var acme1 = session1.InstantiateDatabaseObject(101).Object as Organisation;
+            var ocme1 = session1.InstantiateDatabaseObject(102).Object as Organisation;
+            var icme1 = session1.InstantiateDatabaseObject(103).Object as Organisation;
 
-            var acme1 = session1.Instantiate<Organisation>(101);
-            var ocme1 = session1.Instantiate<Organisation>(102);
-            var icme1 = session1.Instantiate<Organisation>(103);
+            var koen2 = session2.InstantiateDatabaseObject(1).Object as Person;
+            var patrick2 = session2.InstantiateDatabaseObject(2).Object as Person;
+            var martien2 = session2.InstantiateDatabaseObject(3).Object as Person;
 
-            var koen2 = session2.Instantiate<Person>(1);
-            var patrick2 = session2.Instantiate<Person>(2);
-            var martien2 = session2.Instantiate<Person>(3);
-
-            var acme2 = session2.Instantiate<Organisation>(101);
-            var ocme2 = session2.Instantiate<Organisation>(102);
-            var icme2 = session2.Instantiate<Organisation>(103);
+            var acme2 = session2.InstantiateDatabaseObject(101).Object as Organisation;
+            var ocme2 = session2.InstantiateDatabaseObject(102).Object as Organisation;
+            var icme2 = session2.InstantiateDatabaseObject(103).Object as Organisation;
 
             acme2.Owner = martien2;
             ocme2.Owner = null;
@@ -238,13 +238,13 @@ namespace Tests.Workspace.Remote
             this.Database.SyncResponse(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
-            var koen = session.Instantiate<Person>(1);
-            var patrick = session.Instantiate<Person>(2);
-            var martien = session.Instantiate<Person>(3);
+            var koen = session.InstantiateDatabaseObject(1).Object as Person;
+            var patrick = session.InstantiateDatabaseObject(2).Object as Person;
+            var martien = session.InstantiateDatabaseObject(3).Object as Person;
 
-            var acme = session.Instantiate<Organisation>(101);
-            var ocme = session.Instantiate<Organisation>(102);
-            var icme = session.Instantiate<Organisation>(103);
+            var acme = session.InstantiateDatabaseObject(101).Object as Organisation;
+            var ocme = session.InstantiateDatabaseObject(102).Object as Organisation;
+            var icme = session.InstantiateDatabaseObject(103).Object as Organisation;
 
             acme.Owner = martien;
             ocme.Owner = null;
@@ -288,15 +288,15 @@ namespace Tests.Workspace.Remote
             this.Database.SyncResponse(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
-            var koen = session.Instantiate<Person>(1);
-            var patrick = session.Instantiate<Person>(2);
-            var martien = session.Instantiate<Person>(3);
+            var koen = session.InstantiateDatabaseObject(1).Object as Person;
+            var patrick = session.InstantiateDatabaseObject(2).Object as Person;
+            var martien = session.InstantiateDatabaseObject(3).Object as Person;
 
-            var acme = session.Instantiate<Organisation>(101);
-            var ocme = session.Instantiate<Organisation>(102);
-            var icme = session.Instantiate<Organisation>(103);
+            var acme = session.InstantiateDatabaseObject(101).Object as Organisation;
+            var ocme = session.InstantiateDatabaseObject(102).Object as Organisation;
+            var icme = session.InstantiateDatabaseObject(103).Object as Organisation;
 
-            Assert.Equal(3, acme.Employees.Length);
+            Assert.Equal(3, acme.Employees.Count());
             Assert.Contains(koen, acme.Employees);
             Assert.Contains(martien, acme.Employees);
             Assert.Contains(patrick, acme.Employees);
@@ -320,26 +320,26 @@ namespace Tests.Workspace.Remote
 
             var session2 = this.CreateSession();
 
-            var koen1 = session1.Instantiate<Person>(1) as Person;
-            var patrick1 = session1.Instantiate<Person>(2) as Person;
-            var martien1 = session1.Instantiate<Person>(3) as Person;
+            var koen1 = session1.InstantiateDatabaseObject(1).Object as Person;
+            var patrick1 = session1.InstantiateDatabaseObject(2).Object as Person;
+            var martien1 = session1.InstantiateDatabaseObject(3).Object as Person;
 
-            var acme1 = session1.Instantiate<Organisation>(101) as Organisation;
-            var ocme1 = session1.Instantiate<Organisation>(102) as Organisation;
-            var icme1 = session1.Instantiate<Organisation>(103) as Organisation;
+            var acme1 = session1.InstantiateDatabaseObject(101).Object as Organisation;
+            var ocme1 = session1.InstantiateDatabaseObject(102).Object as Organisation;
+            var icme1 = session1.InstantiateDatabaseObject(103).Object as Organisation;
 
-            var koen2 = session2.Instantiate<Person>(1) as Person;
-            var patrick2 = session2.Instantiate<Person>(2) as Person;
-            var martien2 = session2.Instantiate<Person>(3) as Person;
+            var koen2 = session2.InstantiateDatabaseObject(1).Object as Person;
+            var patrick2 = session2.InstantiateDatabaseObject(2).Object as Person;
+            var martien2 = session2.InstantiateDatabaseObject(3).Object as Person;
 
-            var acme2 = session2.Instantiate<Organisation>(101) as Organisation;
-            var ocme2 = session2.Instantiate<Organisation>(102) as Organisation;
-            var icme2 = session2.Instantiate<Organisation>(103) as Organisation;
+            var acme2 = session2.InstantiateDatabaseObject(101).Object as Organisation;
+            var ocme2 = session2.InstantiateDatabaseObject(102).Object as Organisation;
+            var icme2 = session2.InstantiateDatabaseObject(103).Object as Organisation;
 
             acme2.Employees = null;
             icme2.Employees = new[] { koen2, patrick2, martien2 };
 
-            Assert.Equal(3, acme1.Employees.Length);
+            Assert.Equal(3, acme1.Employees.Count());
             Assert.Contains(koen1, acme1.Employees);
             Assert.Contains(martien1, acme1.Employees);
             Assert.Contains(patrick1, acme1.Employees);
@@ -354,7 +354,7 @@ namespace Tests.Workspace.Remote
             Assert.Single(ocme2.Employees);
             Assert.Contains(koen2, ocme2.Employees);
 
-            Assert.Equal(3, icme2.Employees.Length);
+            Assert.Equal(3, icme2.Employees.Count());
             Assert.Contains(koen2, icme2.Employees);
             Assert.Contains(martien2, icme2.Employees);
             Assert.Contains(patrick2, icme2.Employees);
@@ -367,13 +367,13 @@ namespace Tests.Workspace.Remote
 
             var session = this.CreateSession();
 
-            var koen = session.Instantiate<Person>(1) as Person;
-            var patrick = session.Instantiate<Person>(2) as Person;
-            var martien = session.Instantiate<Person>(3) as Person;
+            var koen = session.InstantiateDatabaseObject(1).Object as Person;
+            var patrick = session.InstantiateDatabaseObject(2).Object as Person;
+            var martien = session.InstantiateDatabaseObject(3).Object as Person;
 
-            var acme = session.Instantiate<Organisation>(101) as Organisation;
-            var ocme = session.Instantiate<Organisation>(102) as Organisation;
-            var icme = session.Instantiate<Organisation>(103) as Organisation;
+            var acme = session.InstantiateDatabaseObject(101).Object as Organisation;
+            var ocme = session.InstantiateDatabaseObject(102).Object as Organisation;
+            var icme = session.InstantiateDatabaseObject(103).Object as Organisation;
 
             acme.Employees = null;
             ocme.Employees = new[] { martien, patrick };
@@ -434,7 +434,7 @@ namespace Tests.Workspace.Remote
 
             var session = this.CreateSession();
 
-            var martien = session.Instantiate<Person>(3);
+            var martien = session.InstantiateDatabaseObject(3).Object as Person;
 
             var mathijs = session.Create<Person>() as Person;
             mathijs.FirstName = "Mathijs";
@@ -509,7 +509,7 @@ namespace Tests.Workspace.Remote
 
             var session = this.CreateSession();
 
-            var martien = session.Instantiate<Person>(3) as Person;
+            var martien = session.InstantiateDatabaseObject(3).Object as Person;
 
             var mathijs = session.Create<Person>(this.M.Person.Class) as Person;
             mathijs.FirstName = "Mathijs";
@@ -525,12 +525,12 @@ namespace Tests.Workspace.Remote
             session.Reset();
 
             // Assert.Null(mathijs.DatabaseId);
-            Assert.True(mathijs.Strategy.Identity.Id < 0);
+            Assert.True(mathijs.Strategy.Identity < 0);
             Assert.Null(mathijs.FirstName);
             Assert.Null(mathijs.LastName);
 
             // Assert.Null(acme2.DatabaseId);
-            Assert.True(acme2.Strategy.Identity.Id < 0);
+            Assert.True(acme2.Strategy.Identity < 0);
             Assert.Null(acme2.Owner);
             Assert.Null(acme2.Manager);
 
@@ -562,14 +562,12 @@ namespace Tests.Workspace.Remote
             session.PushResponse(pushResponse);
 
             Assert.NotNull(mathijs.Strategy.Identity);
-            Assert.Equal(10000, mathijs.Identity.Id);
+            Assert.Equal(10000, mathijs.Identity);
             Assert.Equal("Person", mathijs.Strategy.Class.Name);
 
-            mathijs = session.Instantiate<Person>(10000) as Person;
+            var mathijs2 = session.Get<Person>(10000);
 
-            Assert.NotNull(mathijs);
-
-            var mathijs2 = session.Instantiate<Person>(workspaceId);
+            Assert.NotNull(mathijs2);
 
             Assert.Equal(mathijs, mathijs2);
         }
@@ -583,9 +581,9 @@ namespace Tests.Workspace.Remote
 
             var session = new Session(database);
 
-            var acme = session.Instantiate("101") as Organisation;
-            var ocme = session.Instantiate("102") as Organisation;
-            var icme = session.Instantiate("102") as Organisation;
+            var acme = session.InstantiateDatabaseObject(101).Object as Organisation;
+            var ocme = session.InstantiateDatabaseObject(102).Object as Organisation;
+            var icme = session.InstantiateDatabaseObject(103).Object as Organisation;
 
             Assert.True(acme.CanExecuteJustDoIt);
             this.isFalse(ocme.CanExecuteJustDoIt);
@@ -602,7 +600,7 @@ namespace Tests.Workspace.Remote
 
             var acme = (Organisation)session.Create<Organisation>(this.M.Organisation.Class);
 
-            var acmeAgain = session.Instantiate<Organisation>(acme.Identity);
+            var acmeAgain = session.Get<Organisation>(acme.Identity);
 
             Assert.Equal(acme, acmeAgain);
         }

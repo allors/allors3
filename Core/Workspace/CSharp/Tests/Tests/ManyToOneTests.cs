@@ -8,7 +8,6 @@ namespace Tests.Workspace
     using System.Linq;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
-    using Remote;
     using Xunit;
 
     public abstract class Many2OneTests : Test
@@ -39,8 +38,8 @@ namespace Tests.Workspace
 
             var session2 = this.Workspace.CreateSession();
 
-            var workspaceOrganisation2 = session2.Instantiate(workspaceOrganisation1);
-            var databasePerson2 = session2.Instantiate(databasePerson1);
+            var workspaceOrganisation2 = session2.Get(workspaceOrganisation1);
+            var databasePerson2 = session2.Get(databasePerson1);
 
             Assert.Equal(databasePerson2, workspaceOrganisation2.WorkspaceDatabaseOwner);
             Assert.Equal(databasePerson1, workspaceOrganisation1.WorkspaceDatabaseOwner);
@@ -66,7 +65,7 @@ namespace Tests.Workspace
 
             var session2 = this.Workspace.CreateSession();
 
-            var workspaceOrganisation2 = session2.Instantiate(workspaceOrganisation1);
+            var workspaceOrganisation2 = session2.Get(workspaceOrganisation1);
 
             workspaceOrganisation1.RemoveWorkspaceWorkspaceOwner();
 
@@ -88,8 +87,8 @@ namespace Tests.Workspace
 
             var session2 = this.Workspace.CreateSession();
 
-            var workspaceOrganisation2 = session2.Instantiate(workspaceOrganisation1);
-            var workspacePerson2 = session2.Instantiate(workspacePerson1);
+            var workspaceOrganisation2 = session2.Get(workspaceOrganisation1);
+            var workspacePerson2 = session2.Get(workspacePerson1);
 
             Assert.Equal(workspacePerson2, workspaceOrganisation2.WorkspaceWorkspaceOwner);
             Assert.Equal(workspacePerson1, workspaceOrganisation1.WorkspaceWorkspaceOwner);
@@ -107,7 +106,7 @@ namespace Tests.Workspace
 
             var session2 = this.Workspace.CreateSession();
 
-            var workspaceOrganisation2 = session2.Instantiate(workspaceOrganisation1);
+            var workspaceOrganisation2 = session2.Get(workspaceOrganisation1);
 
             workspaceOrganisation1.RemoveWorkspaceWorkspaceOwner();
 

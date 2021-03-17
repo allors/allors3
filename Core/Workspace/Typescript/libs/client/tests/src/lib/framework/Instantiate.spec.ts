@@ -1,4 +1,4 @@
-import { Pull, Result, Fetch, Tree, Extent, Node } from '@allors/data/core';
+import { Pull, Result, Select, Tree, Extent, Node } from '@allors/data/core';
 import { PullRequest } from '@allors/protocol/core';
 import { Person } from '@allors/domain/generated';
 
@@ -75,7 +75,7 @@ describe('Instantiate', () => {
           }),
           results: [
             new Result({
-              fetch: new Fetch({
+              select: new Select({
                 include: new Tree({
                   objectType: m.Person,
                   nodes: [

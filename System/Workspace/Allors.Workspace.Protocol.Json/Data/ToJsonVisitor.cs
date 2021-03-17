@@ -12,11 +12,11 @@ namespace Allors.Workspace.Protocol.Json
     using Meta;
     using Data;
     using Extent = Allors.Protocol.Json.Data.Extent;
-    using Fetch = Allors.Protocol.Json.Data.Fetch;
     using IVisitor = Data.IVisitor;
     using Node = Allors.Protocol.Json.Data.Node;
     using Pull = Allors.Protocol.Json.Data.Pull;
     using Result = Allors.Protocol.Json.Data.Result;
+    using Select = Allors.Protocol.Json.Data.Select;
     using Sort = Allors.Protocol.Json.Data.Sort;
     using Step = Allors.Protocol.Json.Data.Step;
 
@@ -25,7 +25,7 @@ namespace Allors.Workspace.Protocol.Json
         private readonly Stack<Extent> extents;
         private readonly Stack<Predicate> predicates;
         private readonly Stack<Result> results;
-        private readonly Stack<Fetch> fetches;
+        private readonly Stack<Select> selects;
         private readonly Stack<Step> steps;
         private readonly Stack<Node> nodes;
         private readonly Stack<Sort> sorts;
@@ -35,7 +35,7 @@ namespace Allors.Workspace.Protocol.Json
             this.extents = new Stack<Extent>();
             this.predicates = new Stack<Predicate>();
             this.results = new Stack<Result>();
-            this.fetches = new Stack<Fetch>();
+            this.selects = new Stack<Select>();
             this.steps = new Stack<Step>();
             this.nodes = new Stack<Node>();
             this.sorts = new Stack<Sort>();
@@ -45,7 +45,7 @@ namespace Allors.Workspace.Protocol.Json
 
         public Extent Extent => this.extents?.Peek();
 
-        public Fetch Fetch => this.fetches?.Peek();
+        public Select Select => this.selects?.Peek();
 
         public void VisitAnd(And visited)
         {
@@ -202,27 +202,27 @@ namespace Allors.Workspace.Protocol.Json
             }
         }
 
-        public void VisitFetch(Allors.Workspace.Data.Fetch visited)
+        public void VisitSelect(Allors.Workspace.Data.Select visited)
         {
-            var fetch = new Fetch();
+            var @select = new Select();
 
-            this.fetches.Push(fetch);
+            this.selects.Push(@select);
 
             if (visited.Step != null)
             {
                 visited.Step.Accept(this);
-                fetch.Step = this.steps.Pop();
+                @select.Step = this.steps.Pop();
             }
 
             if (visited.Include?.Length > 0)
             {
                 var length = visited.Include.Length;
-                fetch.Include = new Node[length];
+                @select.Include = new Node[length];
                 for (var i = 0; i < length; i++)
                 {
                     var node = visited.Include[i];
                     node.Accept(this);
-                    fetch.Include[i] = this.nodes.Pop();
+                    @select.Include[i] = this.nodes.Pop();
                 }
             }
         }
@@ -414,7 +414,7 @@ namespace Allors.Workspace.Protocol.Json
         {
             var result = new Result
             {
-                FetchRef = visited.FetchRef,
+                SelectRef = visited.SelectRef,
                 Name = visited.Name,
                 Skip = visited.Skip,
                 Take = visited.Take,
@@ -422,10 +422,10 @@ namespace Allors.Workspace.Protocol.Json
 
             this.results.Push(result);
 
-            if (visited.Fetch != null)
+            if (visited.Select != null)
             {
-                visited.Fetch.Accept(this);
-                result.Fetch = this.fetches.Pop();
+                visited.Select.Accept(this);
+                result.Select = this.selects.Pop();
             }
         }
 

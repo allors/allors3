@@ -20,11 +20,11 @@ namespace Allors.Workspace.Adapters.Remote
 
             this.Objects = response.NamedObjects.ToDictionary(
                 pair => pair.Key,
-                pair => session.Instantiate<IObject>(identities.GetOrCreate(long.Parse(pair.Value))),
+                pair => session.Get<IObject>(long.Parse(pair.Value)),
                 StringComparer.OrdinalIgnoreCase);
             this.Collections = response.NamedCollections.ToDictionary(
                 pair => pair.Key,
-                pair => pair.Value.Select(v => session.Instantiate<IObject>(identities.GetOrCreate(long.Parse(v)))).ToArray(),
+                pair => pair.Value.Select(v => session.Get<IObject>(long.Parse(v))).ToArray(),
                 StringComparer.OrdinalIgnoreCase);
             this.Values = response.NamedValues.ToDictionary(
                 pair => pair.Key,

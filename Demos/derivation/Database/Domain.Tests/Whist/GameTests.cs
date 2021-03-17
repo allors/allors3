@@ -23,23 +23,23 @@ namespace Allors.Database.Domain.Tests.Whist
         {
             this.RegisterAdditionalDerivations(data);
 
-            var people = new People(this.Session);
+            var people = new People(this.Transaction);
 
             this.player1 = people.FindBy(M.Person.UserName, "player1");
             this.player2 = people.FindBy(M.Person.UserName, "player2");
             this.player3 = people.FindBy(M.Person.UserName, "player3");
             this.player4 = people.FindBy(M.Person.UserName, "player4");
 
-            this.scoreboard = new ScoreboardBuilder(this.Session)
+            this.scoreboard = new ScoreboardBuilder(this.Transaction)
                 .WithPlayer(player1)
                 .WithPlayer(player2)
                 .WithPlayer(player3)
                 .WithPlayer(player4)
                 .Build();
 
-            this.GameTypes = new GameModes(this.Session);
+            this.GameTypes = new GameModes(this.Transaction);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
         }
 
         [Theory]
@@ -49,16 +49,16 @@ namespace Allors.Database.Domain.Tests.Whist
             this.Setup((DerivationTypes)data);
 
             // Arrange
-            var game = new GameBuilder(this.Session).Build();
+            var game = new GameBuilder(this.Transaction).Build();
             this.scoreboard.AddGame(game);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             // Act
-            game.StartDate = this.Session.Now();
+            game.StartDate = this.Transaction.Now();
             game.EndDate = game.StartDate.Value.AddHours(-1);
 
-            var validation = this.Session.Derive(false);
+            var validation = this.Transaction.Derive(false);
 
             // Assert
             Assert.True(validation.HasErrors);
@@ -71,16 +71,16 @@ namespace Allors.Database.Domain.Tests.Whist
             this.Setup((DerivationTypes)data);
 
             // Arrange
-            var game = new GameBuilder(this.Session).Build();
+            var game = new GameBuilder(this.Transaction).Build();
             this.scoreboard.AddGame(game);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             // Act
-            game.StartDate = this.Session.Now();
+            game.StartDate = this.Transaction.Now();
             game.EndDate = game.StartDate;
 
-            var validation = this.Session.Derive(false);
+            var validation = this.Transaction.Derive(false);
 
             // Assert
             Assert.True(validation.HasErrors);

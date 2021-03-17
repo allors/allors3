@@ -9,9 +9,9 @@ namespace Allors.Workspace.Data
 
     public class Result : IVisitable
     {
-        public Guid? FetchRef { get; set; }
+        public Guid? SelectRef { get; set; }
 
-        public Fetch Fetch { get; set; }
+        public Select Select { get; set; }
 
         public string Name { get; set; }
 

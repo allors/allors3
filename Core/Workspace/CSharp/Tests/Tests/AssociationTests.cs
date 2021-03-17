@@ -34,9 +34,9 @@ namespace Tests.Workspace
                     {
                         new Result
                         {
-                            Fetch = new Fetch
+                            Select = new Select
                             {
-                                Include = new[] {new Node(this.M.C2.C1WhereC1C2One2Many),},
+                                Include = new[] {new Node(this.M.C2.C1WhereC1C2One2Many)},
                             },
                         },
                     },
@@ -73,7 +73,7 @@ namespace Tests.Workspace
                     {
                         new Result
                         {
-                            Fetch = new Fetch
+                            Select = new Select
                             {
                                 Include = new[] {new Node(this.M.C2.C1WhereC1C2One2One),},
                             },

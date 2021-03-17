@@ -5,10 +5,8 @@
 
 namespace Tests.Workspace
 {
-    using System;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
-    using Remote;
     using Xunit;
 
     public abstract class LoadTests : Test
@@ -50,16 +48,15 @@ namespace Tests.Workspace
                 Extent = new Extent(this.M.C1.ObjectType),
             };
 
-            var result = session.Load(pull).Result;
+            var result = await session.Load(pull);
 
             var c1s = result.GetCollection<C1>("C1s");
 
             foreach (var c1 in c1s)
             {
-                foreach (var roleType in this.M.C1.ObjectType.RoleTypes)
+                foreach (var roleType in this.M.C1.ObjectType.DatabaseRoleTypes)
                 {
-                    var role = c1.Strategy.Get(roleType);
-                    Assert.True(role == null || role is Array array && array.Length == 0);
+                    Assert.False(c1.Strategy.Exist(roleType));
                 }
 
                 foreach (var associationType in this.M.C1.ObjectType.AssociationTypes)
@@ -79,9 +76,9 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public void WithoutPermissions()
+        public async void WithoutPermissions()
         {
-            this.Login("noperm");
+            await this.Login("noperm");
 
             var session = this.Workspace.CreateSession();
 
@@ -96,10 +93,9 @@ namespace Tests.Workspace
 
             foreach (var c1 in c1s)
             {
-                foreach (var roleType in this.M.C1.ObjectType.RoleTypes)
+                foreach (var roleType in this.M.C1.ObjectType.DatabaseRoleTypes)
                 {
-                    var role = c1.Strategy.Get(roleType);
-                    Assert.True(role == null || role is Array array && array.Length == 0);
+                    Assert.False(c1.Strategy.Exist(roleType));
                 }
 
                 foreach (var associationType in this.M.C1.ObjectType.AssociationTypes)

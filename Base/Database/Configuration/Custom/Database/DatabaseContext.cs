@@ -28,7 +28,7 @@ namespace Allors.Database.Configuration
             this.VersionedIdByStrategy = new VersionedIdByStrategy();
 
             this.PrefetchPolicyCache = new PrefetchPolicyCache(this);
-            this.PreparedFetches = new PreparedFetches(this);
+            this.PreparedSelects = new PreparedSelects(this);
             this.PreparedExtents = new PreparedExtents(this);
             this.TreeCache = new TreeCache();
 
@@ -59,7 +59,7 @@ namespace Allors.Database.Configuration
 
         public IPrefetchPolicyCache PrefetchPolicyCache { get; set; }
 
-        public IPreparedFetches PreparedFetches { get; private set; }
+        public IPreparedSelects PreparedSelects { get; private set; }
 
         public IPreparedExtents PreparedExtents { get; private set; }
 

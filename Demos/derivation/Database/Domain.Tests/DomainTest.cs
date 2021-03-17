@@ -39,11 +39,11 @@ namespace Allors.Database.Domain.Tests
 
         public virtual Config Config { get; } = new Config { SetupSecurity = false };
 
-        public ISession Session { get; private set; }
+        public ITransaction Transaction { get; private set; }
 
-        public ITime Time => this.Session.Database.Context().Time;
+        public ITime Time => this.Transaction.Database.Context().Time;
 
-        public IDerivationFactory DerivationFactory => this.Session.Database.Context().DerivationFactory;
+        public IDerivationFactory DerivationFactory => this.Transaction.Database.Context().DerivationFactory;
 
         public TimeSpan? TimeShift
         {
@@ -55,8 +55,8 @@ namespace Allors.Database.Domain.Tests
         
         public void Dispose()
         {
-            this.Session.Rollback();
-            this.Session = null;
+            this.Transaction.Rollback();
+            this.Transaction = null;
         }
 
         protected void Setup(IDatabase database, bool populate)
@@ -65,12 +65,12 @@ namespace Allors.Database.Domain.Tests
 
             database.RegisterDerivations();
 
-            this.Session = database.CreateSession();
+            this.Transaction = database.CreateTransaction();
 
             if (populate)
             {
-                new Setup(this.Session, this.Config).Apply();
-                this.Session.Commit();
+                new Setup(this.Transaction, this.Config).Apply();
+                this.Transaction.Commit();
             }
         }
 
@@ -78,11 +78,11 @@ namespace Allors.Database.Domain.Tests
         {
             if (derivationType == DerivationTypes.Fine)
             {
-                this.Session.Database.RegisterFineDerivations();
+                this.Transaction.Database.RegisterFineDerivations();
             }
             else
             {
-                this.Session.Database.RegisterCoarseDerivations();
+                this.Transaction.Database.RegisterCoarseDerivations();
             }
         }
     }

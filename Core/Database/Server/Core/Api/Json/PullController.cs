@@ -27,7 +27,7 @@ namespace Allors.Database.Protocol.Json
             var scope = this.DatabaseService.Database.Context();
 
             this.ExtentService = scope.PreparedExtents;
-            this.PreparedFetches = scope.PreparedFetches;
+            this.PreparedSelects = scope.PreparedSelects;
             this.TreeCache = scope.TreeCache;
             this.Logger = logger;
         }
@@ -38,7 +38,7 @@ namespace Allors.Database.Protocol.Json
 
         private IPreparedExtents ExtentService { get; }
 
-        private IPreparedFetches PreparedFetches { get; }
+        private IPreparedSelects PreparedSelects { get; }
 
         private ILogger<PullController> Logger { get; }
 

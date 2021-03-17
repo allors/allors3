@@ -8,7 +8,6 @@ namespace Tests.Workspace
     using System.Threading.Tasks;
     using Allors.Workspace;
     using Allors.Workspace.Meta;
-    using Tests.Workspace.Remote;
     using Xunit;
 
     public abstract class Test : IAsyncLifetime

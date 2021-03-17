@@ -35,7 +35,7 @@ namespace Allors.Database.Domain.Tests
 
         public virtual Config Config { get; } = new Config { SetupSecurity = false };
 
-        public ISession Session { get; private set; }
+        public ITransaction Session { get; private set; }
 
         public ITime Time => this.Session.Database.Context().Time;
 
@@ -60,7 +60,7 @@ namespace Allors.Database.Domain.Tests
 
             database.RegisterDerivations();
 
-            this.Session = database.CreateSession();
+            this.Session = database.CreateTransaction();
 
             if (populate)
             {

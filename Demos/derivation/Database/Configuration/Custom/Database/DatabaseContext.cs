@@ -1,4 +1,4 @@
-// <copyright file="DefaultDatabaseScope.cs" company="Allors bvba">
+// <copyright file="DatabaseContext.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -28,7 +28,7 @@ namespace Allors.Database.Configuration
             this.VersionedIdByStrategy = new VersionedIdByStrategy();
 
             this.PrefetchPolicyCache = new PrefetchPolicyCache(this);
-            this.PreparedFetches = new PreparedFetches(this);
+            this.PreparedSelects = new PreparedSelects(this);
             this.PreparedExtents = new PreparedExtents(this);
             this.TreeCache = new TreeCache();
 
@@ -55,7 +55,7 @@ namespace Allors.Database.Configuration
 
         public IPrefetchPolicyCache PrefetchPolicyCache { get; set; }
 
-        public IPreparedFetches PreparedFetches { get; private set; }
+        public IPreparedSelects PreparedSelects { get; private set; }
 
         public IPreparedExtents PreparedExtents { get; private set; }
 
@@ -85,7 +85,7 @@ namespace Allors.Database.Configuration
 
         public IDerivationFactory DerivationFactory { get; protected set; }
 
-        public ISessionLifecycle CreateSessionInstance() => new DefaultSessionContext(this.httpContextAccessor);
+        public ITransactionLifecycle CreateTransactionInstance() => new DefaultTransactionContext(this.httpContextAccessor);
 
         public void Dispose()
         {

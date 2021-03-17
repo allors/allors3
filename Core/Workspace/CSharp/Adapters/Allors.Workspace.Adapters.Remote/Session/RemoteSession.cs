@@ -8,25 +8,23 @@ namespace Allors.Workspace.Adapters.Remote
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Runtime.InteropServices.ComTypes;
-    using System.Security.Cryptography.X509Certificates;
     using System.Threading.Tasks;
-    using Data;
-    using Meta;
     using Allors.Protocol.Json.Api.Invoke;
     using Allors.Protocol.Json.Api.Pull;
     using Allors.Protocol.Json.Api.Push;
     using Allors.Protocol.Json.Api.Sync;
+    using Data;
+    using Meta;
     using Protocol.Json;
 
     public class RemoteSession : ISession
     {
-        private readonly Dictionary<Identity, RemoteStrategy> databaseStrategyByWorkspaceId;
-        private readonly Dictionary<Identity, RemoteStrategy> workspaceStrategyByWorkspaceId;
-        private readonly Dictionary<Identity, RemoteStrategy> sessionStrategyByWorkspaceId;
+        private readonly Dictionary<long, RemoteStrategy> strategyByWorkspaceId;
+        private readonly Dictionary<IClass, RemoteStrategy[]> strategiesByClass;
 
         private readonly IList<RemoteStrategy> existingDatabaseStrategies;
         private ISet<RemoteStrategy> newDatabaseStrategies;
+        private ISet<RemoteStrategy> workspaceStrategies;
 
         private ISet<RemoteDatabaseState> changedDatabaseStates;
         private ISet<RemoteWorkspaceState> changedWorkspaceStates;
@@ -40,12 +38,11 @@ namespace Allors.Workspace.Adapters.Remote
             this.Database = this.Workspace.Database;
             this.SessionLifecycle = sessionLifecycle;
 
-            this.databaseStrategyByWorkspaceId = new Dictionary<Identity, RemoteStrategy>();
-            this.workspaceStrategyByWorkspaceId = new Dictionary<Identity, RemoteStrategy>();
-            this.sessionStrategyByWorkspaceId = new Dictionary<Identity, RemoteStrategy>();
+            this.strategyByWorkspaceId = new Dictionary<long, RemoteStrategy>();
+            this.strategiesByClass = new Dictionary<IClass, RemoteStrategy[]>();
             this.existingDatabaseStrategies = new List<RemoteStrategy>();
 
-            this.SessionState = new SessionState();
+            this.SessionState = new RemoteSessionState();
             this.SessionLifecycle.OnInit(this);
         }
 
@@ -58,7 +55,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal bool HasDatabaseChanges => this.newDatabaseStrategies?.Count > 0 || this.existingDatabaseStrategies.Any(v => v.HasDatabaseChanges);
 
-        internal SessionState SessionState { get; }
+        internal RemoteSessionState SessionState { get; }
 
         public async Task<ICallResult> Call(Method method, CallOptions options = null) => await this.Call(new[] { method }, options);
 
@@ -68,7 +65,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 Invocations = methods.Select(v => new Invocation
                 {
-                    Id = v.Object.Identity?.ToString(),
+                    Id = v.Object.Identity.ToString(),
                     Version = ((RemoteStrategy)v.Object.Strategy).DatabaseVersion.ToString(),
                     Method = v.MethodType.IdAsString,
                 }).ToArray(),
@@ -91,59 +88,89 @@ namespace Allors.Workspace.Adapters.Remote
 
         public T Create<T>() where T : class, IObject => this.Create<T>((IClass)this.Workspace.ObjectFactory.GetObjectType<T>());
 
-        public T Create<T>(IClass @class) where T : IObject => @class.Origin switch
+        public T Create<T>(IClass @class) where T : IObject
         {
-            Origin.Database => (T)this.CreateDatabaseObject(@class),
-            Origin.Workspace => (T)this.CreateWorkspaceObject(@class),
-            Origin.Session => (T)this.CreateSessionObject(@class),
-            _ => throw new Exception($"Unsupported origin: {@class.Origin}"),
-        };
+            var workspaceId = this.Database.Identities.NextId();
+            var strategy = new RemoteStrategy(this, @class, workspaceId);
+            this.AddStrategy(strategy);
 
-        public T Instantiate<T>(IObject @object) where T : IObject => this.Instantiate<T>(@object.Identity);
-
-        public T Instantiate<T>(T @object) where T : IObject => this.Instantiate<T>(@object.Identity);
-
-        public T Instantiate<T>(long id) where T : IObject => this.Instantiate<T>(this.Database.Identities.Get(id));
-
-        public T Instantiate<T>(Identity identity) where T : IObject
-        {
-            if (identity == null)
+            if (@class.Origin == Origin.Database)
             {
-                return default;
+                this.newDatabaseStrategies ??= new HashSet<RemoteStrategy>();
+                this.newDatabaseStrategies.Add(strategy);
             }
 
-            if (this.databaseStrategyByWorkspaceId.TryGetValue(identity, out var databaseStrategy))
+            if (@class.Origin == Origin.Workspace)
             {
-                return (T)databaseStrategy.Object;
+                this.workspaceStrategies ??= new HashSet<RemoteStrategy>();
+                this.workspaceStrategies.Add(strategy);
+                // TODO: move to Push
+                this.Workspace.RegisterWorkspaceObject(@class, workspaceId);
             }
 
-            if (this.workspaceStrategyByWorkspaceId.TryGetValue(identity, out var workspaceStrategy))
-            {
-                return (T)workspaceStrategy.Object;
-            }
+            this.created ??= new HashSet<IStrategy>();
+            _ = this.created.Add(strategy);
 
-            if (this.sessionStrategyByWorkspaceId.TryGetValue(identity, out var sessionStrategy))
-            {
-                return (T)sessionStrategy.Object;
-            }
-
-            var strategy = identity switch
-            {
-                WorkspaceIdentity workspaceIdentity => this.InstantiateWorkspaceObject(workspaceIdentity),
-                DatabaseIdentity databaseIdentity => this.InstantiateDatabaseObject(databaseIdentity),
-                _ => null
-            };
-
-            return (T)strategy?.Object;
+            return (T)strategy.Object;
         }
 
-        public IEnumerable<T> Instantiate<T>(IEnumerable<IObject> objects) where T : IObject => objects.Select(this.Instantiate<T>);
+        public T Get<T>(IObject @object) where T : IObject => this.Get<T>(@object.Identity);
 
-        public IEnumerable<T> Instantiate<T>(IEnumerable<T> objects) where T : IObject => objects.Select(this.Instantiate<T>);
+        public T Get<T>(T @object) where T : IObject => this.Get<T>(@object.Identity);
 
-        public IEnumerable<T> Instantiate<T>(IEnumerable<long> ids) where T : IObject => ids.Select(this.Instantiate<T>);
+        public T Get<T>(long? identity) where T : IObject => identity.HasValue ? this.Get<T>((long)identity) : default;
 
-        public IEnumerable<T> Instantiate<T>(IEnumerable<Identity> identities) where T : IObject => identities.Select(this.Instantiate<T>);
+        public T Get<T>(long identity) where T : IObject => (T)this.GetStrategy(identity)?.Object;
+
+        public IEnumerable<T> Get<T>(IEnumerable<IObject> objects) where T : IObject => objects.Select(this.Get<T>);
+
+        public IEnumerable<T> Get<T>(IEnumerable<T> objects) where T : IObject => objects.Select(this.Get);
+
+        public IEnumerable<T> Get<T>(IEnumerable<long> identities) where T : IObject => identities.Select(this.Get<T>);
+
+        public IEnumerable<T> GetAll<T>() where T : class, IObject
+        {
+            var objectType = (IComposite)this.Workspace.ObjectFactory.GetObjectType<T>();
+            return this.GetAll<T>(objectType);
+        }
+
+        public IEnumerable<T> GetAll<T>(IComposite objectType) where T : IObject
+        {
+            foreach (var @class in objectType.DatabaseClasses)
+            {
+                switch (@class.Origin)
+                {
+                    case Origin.Workspace:
+                        if (this.Workspace.WorkspaceIdsByWorkspaceClass.TryGetValue(@class, out var ids))
+                        {
+                            foreach (var id in ids)
+                            {
+                                if (this.strategyByWorkspaceId.TryGetValue(id, out var strategy))
+                                {
+                                    yield return (T)strategy.Object;
+                                }
+                                else
+                                {
+                                    strategy = this.InstantiateWorkspaceObject(id);
+                                    yield return (T)strategy.Object;
+                                }
+                            }
+                        }
+
+                        break;
+                    default:
+                        if (this.strategiesByClass.TryGetValue(@class, out var strategies))
+                        {
+                            foreach (var strategy in strategies)
+                            {
+                                yield return (T)strategy.Object;
+                            }
+                        }
+
+                        break;
+                }
+            }
+        }
 
         public async Task<ILoadResult> Load(params Pull[] pulls)
         {
@@ -170,20 +197,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public void Reset()
         {
-            if (this.newDatabaseStrategies != null)
-            {
-                foreach (var databaseStrategy in this.newDatabaseStrategies)
-                {
-                    databaseStrategy.Reset();
-                }
-            }
-
-            foreach (var databaseStrategy in this.existingDatabaseStrategies)
-            {
-                databaseStrategy.Reset();
-            }
-
-            foreach (var kvp in this.workspaceStrategyByWorkspaceId)
+            foreach (var kvp in this.strategyByWorkspaceId)
             {
                 kvp.Value.Reset();
             }
@@ -191,25 +205,12 @@ namespace Allors.Workspace.Adapters.Remote
 
         public void Merge()
         {
-            if (this.newDatabaseStrategies != null)
-            {
-                foreach (var databaseStrategy in this.newDatabaseStrategies)
-                {
-                    databaseStrategy.Merge();
-                }
-            }
-
-            foreach (var databaseStrategy in this.existingDatabaseStrategies)
-            {
-                databaseStrategy.Merge();
-            }
-
-            foreach (var kvp in this.workspaceStrategyByWorkspaceId)
+            foreach (var kvp in this.strategyByWorkspaceId)
             {
                 kvp.Value.Merge();
             }
         }
-        
+
         public async Task<ISaveResult> Save()
         {
             var saveRequest = this.PushRequest();
@@ -231,9 +232,12 @@ namespace Allors.Workspace.Adapters.Remote
 
                 await this.Sync(syncRequests);
 
-                foreach (var workspaceStrategy in this.workspaceStrategyByWorkspaceId.Values)
+                if (this.workspaceStrategies != null)
                 {
-                    workspaceStrategy.WorkspaceSave();
+                    foreach (var workspaceStrategy in this.workspaceStrategies)
+                    {
+                        workspaceStrategy.WorkspaceSave();
+                    }
                 }
 
                 this.Reset();
@@ -246,7 +250,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var changeSet = new RemoteChangeSet(this, this.created, this.instantiated, this.SessionState.Checkpoint());
 
-            foreach(var changed in this.changedWorkspaceStates)
+            foreach (var changed in this.changedWorkspaceStates)
             {
                 changed.Checkpoint(changeSet);
             }
@@ -259,7 +263,25 @@ namespace Allors.Workspace.Adapters.Remote
             return changeSet;
         }
 
-        internal object GetRole(Identity association, IRoleType roleType)
+        internal RemoteStrategy GetStrategy(long? identity) => identity.HasValue ? this.GetStrategy(identity.Value) : null;
+
+        internal RemoteStrategy GetStrategy(long identity)
+        {
+            if (identity == 0)
+            {
+                return default;
+            }
+
+
+            if (this.strategyByWorkspaceId.TryGetValue(identity, out var sessionStrategy))
+            {
+                return sessionStrategy;
+            }
+
+            return identity < 0 ? this.InstantiateWorkspaceObject(identity) : null;
+        }
+
+        internal object GetRole(RemoteStrategy association, IRoleType roleType)
         {
             this.SessionState.GetRole(association, roleType, out var role);
             if (roleType.ObjectType.IsUnit)
@@ -269,56 +291,29 @@ namespace Allors.Workspace.Adapters.Remote
 
             if (roleType.IsOne)
             {
-                return this.Instantiate<IObject>((Identity)role);
+                return this.Get<IObject>((long?)role);
             }
 
-            var ids = (IEnumerable<Identity>)role;
-            return ids?.Select(this.Instantiate<IObject>).ToArray() ?? this.Workspace.ObjectFactory.EmptyArray(roleType.ObjectType);
+            var ids = (IEnumerable<long>)role;
+            return ids?.Select(this.Get<IObject>).ToArray() ?? this.Workspace.ObjectFactory.EmptyArray(roleType.ObjectType);
         }
 
-        internal void SetRole(Identity association, IRoleType roleType, object role) => this.SessionState.SetRole(association, roleType, role);
-
-        internal IEnumerable<IObject> GetAssociation(IObject @object, IAssociationType associationType)
+        internal IEnumerable<IObject> GetAssociation(RemoteStrategy role, IAssociationType associationType)
         {
             var roleType = associationType.RoleType;
 
-            foreach (var association in this.Database.Get(associationType.ObjectType)
-                .Select(v => this.Instantiate<IObject>(v.Identity)))
+            foreach (var association in this.Get(associationType.ObjectType))
             {
-                if (((IObject)association).Strategy.CanRead(roleType))
+                if (!association.CanRead(roleType))
                 {
-                    if (roleType.IsOne)
-                    {
-                        var role = (IObject)((RemoteStrategy)association.Strategy).Get(roleType);
-                        if (role != null && role.Identity == @object.Identity)
-                        {
-                            yield return association;
-                        }
-                    }
-                    else
-                    {
-                        var roles = (IObject[])((RemoteStrategy)association.Strategy).Get(roleType);
-                        if (roles != null && roles.Contains(@object))
-                        {
-                            yield return association;
-                        }
-                    }
+                    continue;
+                }
+
+                if (association.IsAssociationForRole(roleType, role))
+                {
+                    yield return association.Object;
                 }
             }
-        }
-
-        internal IObject GetForAssociation(Identity id)
-        {
-            if (id == null)
-            {
-                return null;
-            }
-
-            // TODO:
-            //this.strategyByWorkspaceId.TryGetValue(id, out var strategy);
-            //return strategy?.Object;
-
-            return default;
         }
 
         internal PushRequest PushRequest() => new PushRequest
@@ -336,14 +331,16 @@ namespace Allors.Workspace.Adapters.Remote
                     var workspaceId = long.Parse(pushResponseNewObject.WorkspaceId);
                     var databaseId = long.Parse(pushResponseNewObject.DatabaseId);
 
-                    var identity = this.Database.Identities.GetAndUpdate(workspaceId, databaseId);
+                    var strategy = this.strategyByWorkspaceId[workspaceId];
 
-                    var strategy = this.databaseStrategyByWorkspaceId[identity];
                     this.newDatabaseStrategies.Remove(strategy);
-                    this.existingDatabaseStrategies.Add(strategy);
+                    this.RemoveStrategy(strategy);
 
-                    var databaseObject = this.Database.PushResponse(identity, strategy.Class);
+                    var databaseObject = this.Database.PushResponse(databaseId, strategy.Class);
                     strategy.DatabasePushResponse(databaseObject);
+
+                    this.existingDatabaseStrategies.Add(strategy);
+                    this.AddStrategy(strategy);
                 }
             }
 
@@ -367,55 +364,18 @@ namespace Allors.Workspace.Adapters.Remote
             _ = this.changedWorkspaceStates.Add(state);
         }
 
-        private IObject CreateDatabaseObject(IClass @class)
+        internal RemoteStrategy InstantiateDatabaseObject(long identity)
         {
-            var workspaceId = this.Database.Identities.NextDatabaseIdentity();
-            var strategy = new RemoteStrategy(this, @class, workspaceId);
-            this.newDatabaseStrategies ??= new HashSet<RemoteStrategy>();
-            this.newDatabaseStrategies.Add(strategy);
-            this.databaseStrategyByWorkspaceId.Add(strategy.Identity, strategy);
-
-            this.OnCreate(strategy);
-
-            return strategy.Object;
-        }
-
-        private IObject CreateWorkspaceObject(IClass @class)
-        {
-            var workspaceId = this.Database.Identities.NextWorkspaceIdentity();
-            this.Workspace.RegisterWorkspaceObject(@class, workspaceId);
-            var strategy = new RemoteStrategy(this, @class, workspaceId);
-            this.workspaceStrategyByWorkspaceId[strategy.Identity] = strategy;
-
-            this.OnCreate(strategy);
-
-            return strategy.Object;
-        }
-
-        private IObject CreateSessionObject(IClass @class)
-        {
-            var workspaceId = this.Database.Identities.NextSessionIdentity();
-            var strategy = new RemoteStrategy(this, @class, workspaceId);
-            this.sessionStrategyByWorkspaceId[strategy.Identity] = strategy;
-
-            this.OnCreate(strategy);
-
-            return strategy.Object;
-        }
-
-        private RemoteStrategy InstantiateDatabaseObject(Identity identity)
-        {
-            var databaseRoles = this.Database.Get(identity);
-            var strategy = new RemoteStrategy(this, databaseRoles);
+            var databaseObject = this.Database.Get(identity);
+            var strategy = new RemoteStrategy(this, databaseObject);
             this.existingDatabaseStrategies.Add(strategy);
-            this.databaseStrategyByWorkspaceId[identity] = strategy;
-
+            this.AddStrategy(strategy);
             this.OnInstantiate(strategy);
 
             return strategy;
         }
 
-        private RemoteStrategy InstantiateWorkspaceObject(Identity identity)
+        private RemoteStrategy InstantiateWorkspaceObject(long identity)
         {
             if (!this.Workspace.WorkspaceClassByWorkspaceId.TryGetValue(identity, out var @class))
             {
@@ -423,8 +383,9 @@ namespace Allors.Workspace.Adapters.Remote
             }
 
             var strategy = new RemoteStrategy(this, @class, identity);
-            this.workspaceStrategyByWorkspaceId[identity] = strategy;
-
+            this.workspaceStrategies ??= new HashSet<RemoteStrategy>();
+            this.workspaceStrategies.Add(strategy);
+            this.AddStrategy(strategy);
             this.OnInstantiate(strategy);
 
             return strategy;
@@ -440,9 +401,8 @@ namespace Allors.Workspace.Adapters.Remote
 
             foreach (var v in pullResponse.Objects)
             {
-                var id = long.Parse(v[0]);
-                var identity = this.Database.Identities.GetOrCreate(id);
-                if (!this.databaseStrategyByWorkspaceId.ContainsKey(identity))
+                var identity = long.Parse(v[0]);
+                if (!this.strategyByWorkspaceId.ContainsKey(identity))
                 {
                     this.InstantiateDatabaseObject(identity);
                 }
@@ -469,16 +429,45 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        private void OnCreate(RemoteStrategy strategy)
-        {
-            this.created ??= new HashSet<IStrategy>();
-            _ = this.created.Add(strategy);
-        }
-
         private void OnInstantiate(RemoteStrategy strategy)
         {
             this.instantiated ??= new HashSet<IStrategy>();
             _ = this.instantiated.Add(strategy);
+        }
+
+        internal IEnumerable<RemoteStrategy> Get(IComposite objectType)
+        {
+            var classes = new HashSet<IClass>(objectType.DatabaseClasses);
+            return this.strategyByWorkspaceId.Where(v => classes.Contains(v.Value.Class)).Select(v => v.Value);
+        }
+
+        private void AddStrategy(RemoteStrategy strategy)
+        {
+            this.strategyByWorkspaceId.Add(strategy.Identity, strategy);
+
+            var @class = strategy.Class;
+            if (!this.strategiesByClass.TryGetValue(@class, out var strategies))
+            {
+                strategies = new[] { strategy };
+            }
+            else
+            {
+                strategies = NullableSortableArraySet.Add(strategies, strategy);
+            }
+
+            this.strategiesByClass[@class] = strategies;
+        }
+
+        private void RemoveStrategy(RemoteStrategy strategy)
+        {
+            this.strategyByWorkspaceId.Remove(strategy.Identity);
+
+            var @class = strategy.Class;
+            if (this.strategiesByClass.TryGetValue(@class, out var strategies))
+            {
+                strategies = NullableSortableArraySet.Remove(strategies, strategy);
+                this.strategiesByClass[@class] = strategies;
+            }
         }
     }
 }

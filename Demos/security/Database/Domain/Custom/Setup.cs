@@ -21,25 +21,25 @@ namespace Allors.Database.Domain
 
         private void CustomOnPostSetup()
         {
-            var player1 = new PersonBuilder(this.session)
+            var player1 = new PersonBuilder(this.transaction)
                 .WithUserName("player1")
                 .WithFirstName("player")
                 .WithLastName("One")
                 .Build();
 
-            var player2 = new PersonBuilder(this.session)
+            var player2 = new PersonBuilder(this.transaction)
                 .WithUserName("player2")
                 .WithFirstName("player")
                 .WithLastName("Two")
                 .Build();
 
-            var player3 = new PersonBuilder(this.session)
+            var player3 = new PersonBuilder(this.transaction)
                 .WithUserName("player3")
                 .WithFirstName("player")
                 .WithLastName("Three")
                 .Build();
 
-            var player4 = new PersonBuilder(this.session)
+            var player4 = new PersonBuilder(this.transaction)
                 .WithUserName("player4")
                 .WithFirstName("player")
                 .WithLastName("Four")

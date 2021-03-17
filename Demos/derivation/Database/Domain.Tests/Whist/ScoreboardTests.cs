@@ -25,23 +25,23 @@ namespace Allors.Database.Domain.Tests.Whist
         {
             this.RegisterAdditionalDerivations(data);
 
-            var people = new People(this.Session);
+            var people = new People(this.Transaction);
 
             this.player1 = people.FindBy(M.Person.UserName, "player1");
             this.player2 = people.FindBy(M.Person.UserName, "player2");
             this.player3 = people.FindBy(M.Person.UserName, "player3");
             this.player4 = people.FindBy(M.Person.UserName, "player4");
 
-            this.scoreboard = new ScoreboardBuilder(this.Session)
+            this.scoreboard = new ScoreboardBuilder(this.Transaction)
                 .WithPlayer(player1)
                 .WithPlayer(player2)
                 .WithPlayer(player3)
                 .WithPlayer(player4)
                 .Build();
 
-            this.GameTypes = new GameModes(this.Session);
+            this.GameTypes = new GameModes(this.Transaction);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
         }
 
         [Theory]
@@ -51,10 +51,10 @@ namespace Allors.Database.Domain.Tests.Whist
             this.Setup((DerivationTypes)data);
 
             //Arrange
-            var game = new GameBuilder(this.Session).Build();
+            var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var scores = game.Scores.ToArray();
 
@@ -75,10 +75,10 @@ namespace Allors.Database.Domain.Tests.Whist
             this.Setup((DerivationTypes)data);
 
             //Arrange
-            var game = new GameBuilder(this.Session).Build();
+            var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var scores = game.Scores.ToArray();
 
@@ -99,10 +99,10 @@ namespace Allors.Database.Domain.Tests.Whist
             this.Setup((DerivationTypes)data);
 
             //Arrange
-            var game = new GameBuilder(this.Session).Build();
+            var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
 
-            game.StartDate = this.Session.Now();
+            game.StartDate = this.Transaction.Now();
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
@@ -113,7 +113,7 @@ namespace Allors.Database.Domain.Tests.Whist
 
             game.AddWinner(this.player1);
 
-            var derive = new DefaultDerivation(this.Session);
+            var derive = new DefaultDerivation(this.Transaction);
             var validation = derive.Derive();
 
             //Assert
@@ -130,16 +130,16 @@ namespace Allors.Database.Domain.Tests.Whist
             this.Setup((DerivationTypes)data);
 
             //Arrange
-            var game = new GameBuilder(this.Session).Build();
+            var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
 
-            game.StartDate = this.Session.Now();
+            game.StartDate = this.Transaction.Now();
             game.EndDate = game.StartDate.Value.AddHours(1);
 
-            var game2 = new GameBuilder(this.Session).Build();
+            var game2 = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game2);
 
-            game2.StartDate = this.Session.Now();
+            game2.StartDate = this.Transaction.Now();
             game2.EndDate = game2.StartDate.Value.AddHours(1);
 
             //Act
@@ -157,7 +157,7 @@ namespace Allors.Database.Domain.Tests.Whist
 
             game2.AddWinner(this.player1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             //Assert
             Assert.Equal(12, scoreboard.AccumulatedScores.First(v => v.Player == player1).Value);
@@ -175,7 +175,7 @@ namespace Allors.Database.Domain.Tests.Whist
             //Arrange
 
             //Act
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             //Assert
             Assert.Equal(0, scoreboard.AccumulatedScores.First(v => v.Player == player1).Value);
@@ -191,22 +191,22 @@ namespace Allors.Database.Domain.Tests.Whist
             this.Setup((DerivationTypes)data);
 
             //Arrange
-            var game = new GameBuilder(this.Session).Build();
+            var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
 
-            game.StartDate = this.Session.Now();
+            game.StartDate = this.Transaction.Now();
             game.EndDate = game.StartDate.Value.AddHours(1);
 
-            var game2 = new GameBuilder(this.Session).Build();
+            var game2 = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game2);
 
-            game2.StartDate = this.Session.Now();
+            game2.StartDate = this.Transaction.Now();
             game2.EndDate = game2.StartDate.Value.AddHours(1);
 
-            var game3 = new GameBuilder(this.Session).Build();
+            var game3 = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game3);
 
-            game3.StartDate = this.Session.Now();
+            game3.StartDate = this.Transaction.Now();
             game3.EndDate = game3.StartDate.Value.AddHours(1);
 
             //Act
@@ -232,7 +232,7 @@ namespace Allors.Database.Domain.Tests.Whist
 
             game3.AddWinner(this.player1);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             //Assert
             Assert.Equal(29, scoreboard.AccumulatedScores.First(v => v.Player == player1).Value);

@@ -2,11 +2,6 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="Tests\Local\**" />
-    <EmbeddedResource Remove="Tests\Local\**" />
-    <None Remove="Tests\Local\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
@@ -21,6 +16,7 @@
     <ProjectReference Include="..\..\..\..\System\Database\Adapters\Allors.Database.Adapters.Memory\Allors.Database.Adapters.Memory.csproj" />
     <ProjectReference Include="..\..\..\..\System\Database\Adapters\Allors.Database.Adapters.SqlClient\Allors.Database.Adapters.SqlClient.csproj" />
     <ProjectReference Include="..\..\..\Database\Configuration\Configuration.csproj" />
+    <ProjectReference Include="..\Adapters\Allors.Workspace.Adapters.Local\Allors.Workspace.Adapters.Local.csproj" />
     <ProjectReference Include="..\Adapters\Allors.Workspace.Adapters.Remote\Allors.Workspace.Adapters.Remote.csproj" />
     <ProjectReference Include="..\Domain\Workspace.Domain.csproj" />
     <ProjectReference Include="..\Meta\Workspace.Meta.csproj" />

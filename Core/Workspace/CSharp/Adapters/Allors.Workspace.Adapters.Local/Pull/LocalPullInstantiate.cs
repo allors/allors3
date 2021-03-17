@@ -20,14 +20,14 @@ namespace Allors.Workspace.Adapters.Local
         private readonly ITransaction transaction;
         private readonly Database.Data.Pull pull;
         private readonly IAccessControlLists acls;
-        private readonly IPreparedFetches preparedFetches;
+        private readonly IPreparedSelects preparedSelects;
 
-        public LocalPullInstantiate(ITransaction transaction, Database.Data.Pull pull, IAccessControlLists acls, IPreparedFetches preparedFetches)
+        public LocalPullInstantiate(ITransaction transaction, Database.Data.Pull pull, IAccessControlLists acls, IPreparedSelects preparedSelects)
         {
             this.transaction = transaction;
             this.pull = pull;
             this.acls = acls;
-            this.preparedFetches = preparedFetches;
+            this.preparedSelects = preparedSelects;
         }
 
         public void Execute(LocalPullResult response)
@@ -52,32 +52,32 @@ namespace Allors.Workspace.Adapters.Local
                     {
                         var name = result.Name;
 
-                        var fetch = result.Fetch;
-                        if ((fetch == null) && result.FetchRef.HasValue)
+                        var @select = result.Select;
+                        if ((@select == null) && result.SelectRef.HasValue)
                         {
-                            fetch = this.preparedFetches.Get(result.FetchRef.Value);
+                            @select = this.preparedSelects.Get(result.SelectRef.Value);
                         }
 
-                        if (fetch != null)
+                        if (@select != null)
                         {
-                            var include = fetch.Include ?? fetch.Step?.End.Include;
+                            var include = @select.Include ?? @select.Step?.End.Include;
 
-                            if (fetch.Step != null)
+                            if (@select.Step != null)
                             {
-                                var propertyType = fetch.Step.End.PropertyType;
+                                var propertyType = @select.Step.End.PropertyType;
 
-                                if (fetch.Step.IsOne)
+                                if (@select.Step.IsOne)
                                 {
                                     name ??= propertyType.SingularName;
 
-                                    @object = (IObject)fetch.Step.Get(@object, this.acls);
+                                    @object = (IObject)@select.Step.Get(@object, this.acls);
                                     response.AddObject(name, @object, include);
                                 }
                                 else
                                 {
                                     name ??= propertyType.PluralName;
 
-                                    var stepResult = fetch.Step.Get(@object, this.acls);
+                                    var stepResult = @select.Step.Get(@object, this.acls);
                                     var objects = stepResult is HashSet<object> set ? set.Cast<IObject>().ToArray() : ((Database.Extent)stepResult)?.ToArray() ?? new IObject[0];
 
                                     if (result.Skip.HasValue || result.Take.HasValue)

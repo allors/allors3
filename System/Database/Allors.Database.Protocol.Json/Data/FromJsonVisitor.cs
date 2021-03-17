@@ -9,13 +9,14 @@ namespace Allors.Database.Protocol.Json
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Protocol.Json.Data;
+    using Data;
     using Meta;
     using Extent = Data.Extent;
-    using Fetch = Data.Fetch;
     using IVisitor = Allors.Protocol.Json.Data.IVisitor;
     using Node = Data.Node;
     using Pull = Data.Pull;
     using Result = Data.Result;
+    using Select = Data.Select;
     using Sort = Data.Sort;
     using Step = Data.Step;
 
@@ -27,7 +28,7 @@ namespace Allors.Database.Protocol.Json
         private readonly Stack<Data.IExtent> extents;
         private readonly Stack<Data.IPredicate> predicates;
         private readonly Stack<Result> results;
-        private readonly Stack<Fetch> fetches;
+        private readonly Stack<Select> selects;
         private readonly Stack<Step> steps;
         private readonly Stack<Node> nodes;
         private readonly Stack<Sort> sorts;
@@ -40,7 +41,7 @@ namespace Allors.Database.Protocol.Json
             this.extents = new Stack<Data.IExtent>();
             this.predicates = new Stack<Data.IPredicate>();
             this.results = new Stack<Result>();
-            this.fetches = new Stack<Fetch>();
+            this.selects = new Stack<Select>();
             this.steps = new Stack<Step>();
             this.nodes = new Stack<Node>();
             this.sorts = new Stack<Sort>();
@@ -50,7 +51,7 @@ namespace Allors.Database.Protocol.Json
 
         public Data.IExtent Extent => this.extents?.Peek();
 
-        public Fetch Fetch => this.fetches?.Peek();
+        public Select Select => this.selects?.Peek();
 
         public void VisitExtent(Allors.Protocol.Json.Data.Extent visited)
         {
@@ -129,25 +130,25 @@ namespace Allors.Database.Protocol.Json
             }
         }
 
-        public void VisitFetch(Allors.Protocol.Json.Data.Fetch visited)
+        public void VisitSelect(Allors.Protocol.Json.Data.Select visited)
         {
-            var fetch = new Fetch(this.transaction.Database.MetaPopulation);
+            var @select = new Select(this.transaction.Database.MetaPopulation);
 
-            this.fetches.Push(fetch);
+            this.selects.Push(@select);
 
             if (visited.Step != null)
             {
                 visited.Step.Accept(this);
-                fetch.Step = this.steps.Pop();
+                @select.Step = this.steps.Pop();
             }
 
             if (visited.Include?.Length > 0)
             {
-                fetch.Include = new Node[visited.Include.Length];
+                @select.Include = new Node[visited.Include.Length];
                 for (var i = 0; i < visited.Include.Length; i++)
                 {
                     visited.Include[i].Accept(this);
-                    fetch.Include[i] = this.nodes.Pop();
+                    @select.Include[i] = this.nodes.Pop();
                 }
             }
         }
@@ -418,16 +419,16 @@ namespace Allors.Database.Protocol.Json
         {
             var result = new Result
             {
-                FetchRef = visited.FetchRef,
+                SelectRef = visited.SelectRef,
                 Name = visited.Name,
                 Skip = visited.Skip,
                 Take = visited.Take,
             };
 
-            if (visited.Fetch != null)
+            if (visited.Select != null)
             {
-                visited.Fetch.Accept(this);
-                result.Fetch = this.fetches.Pop();
+                visited.Select.Accept(this);
+                result.Select = this.selects.Pop();
             }
 
             this.results.Push(result);

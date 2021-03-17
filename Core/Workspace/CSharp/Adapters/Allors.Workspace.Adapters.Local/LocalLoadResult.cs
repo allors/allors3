@@ -14,8 +14,8 @@ namespace Allors.Workspace.Adapters.Local
         {
             this.Workspace = session.Workspace;
 
-            this.Collections = pullResult.CollectionsByName.ToDictionary(v => v.Key, v => v.Value.Select(w => session.Instantiate(w.Id)).ToArray());
-            this.Objects = pullResult.ObjectByName.ToDictionary(v => v.Key, v => session.Instantiate(v.Value.Id));
+            this.Collections = pullResult.CollectionsByName.ToDictionary(v => v.Key, v => v.Value.Select(w => session.Get<IObject>(w.Id)).ToArray());
+            this.Objects = pullResult.ObjectByName.ToDictionary(v => v.Key, v => session.Get<IObject>(v.Value.Id));
             this.Values = pullResult.ValueByName;
         }
 

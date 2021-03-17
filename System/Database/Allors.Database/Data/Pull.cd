@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="Allors.Data.Pull">
+  <Class Name="Allors.Database.Data.Pull">
     <Position X="1" Y="2.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>EIAAAAAAAAAAAAAgAAAAAAAACAAAAAAAAIAACAAAAAA=</HashCode>
@@ -13,22 +13,22 @@
     </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Allors.Data.Result">
+  <Class Name="Allors.Database.Data.Result">
     <Position X="4" Y="4" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AIAAAAAAAAAAAAAEAAEgAAQAAAAAAAAAAAEAAAAAEAA=</HashCode>
+      <HashCode>AIAAAAAAAAAAAAAEAgAAAAQAAAAAAAAAAAEAQAAAEAA=</HashCode>
       <FileName>Data\Result.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="Fetch" />
+      <Property Name="Select" />
     </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Allors.Data.Fetch">
+  <Class Name="Allors.Database.Data.Select">
     <Position X="7.5" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AIAAAAAAAACAAAAEAAAACAAAAAAAAAAAIAAAAAAAAAA=</HashCode>
-      <FileName>Data\Fetch.cs</FileName>
+      <HashCode>AIAAAAAAAACABABEAAAACAAAAAAAAAQAIAAAAAAAAAA=</HashCode>
+      <FileName>Data\Select.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="Include" />
@@ -36,12 +36,11 @@
     </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Allors.Data.Step">
+  <Class Name="Allors.Database.Data.Step">
     <Position X="10" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AoICgAAAAAAAAAAEAAAgCAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <HashCode>AoICgAAAAAAABABEAAAgCAAAAAAAAAQAAAACAAAAAAA=</HashCode>
       <FileName>Data\Step.cs</FileName>
-      <NewMemberFileName>Data\Path.cs</NewMemberFileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="PropertyType" />
@@ -49,10 +48,10 @@
     </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Allors.Data.Node">
-    <Position X="10" Y="6.75" Width="1.5" />
+  <Class Name="Allors.Database.Data.Node">
+    <Position X="10" Y="7.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AIIoAAAAAAAAAAAAABAAAAAAAACAAAAAAAACAAAAAAA=</HashCode>
+      <HashCode>AIIoAAAAAACAAAAAABAAAAAAAACAAAAAAAACAAAAAAA=</HashCode>
       <FileName>Data\Node.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -60,21 +59,21 @@
     </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Interface Name="Allors.Data.IExtent">
+  <Interface Name="Allors.Database.Data.IExtent">
     <Position X="4" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>IAAAAAAAAAAAAAAAAAAAAAAQAAAAgAAAAIAAAAAAAAA=</HashCode>
       <FileName>Data\IExtent.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Allors.IObject" Collapsed="true">
+  <Interface Name="Allors.Database.IObject" Collapsed="true">
     <Position X="4" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAA=</HashCode>
       <FileName>IObject.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Allors.Meta.IPropertyType" Collapsed="true">
+  <Interface Name="Allors.Database.Meta.IPropertyType" Collapsed="true">
     <Position X="13" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAiAAAAAAAAAJAAAAAAAQAAAAAAAACAIAAAAAAAAA=</HashCode>

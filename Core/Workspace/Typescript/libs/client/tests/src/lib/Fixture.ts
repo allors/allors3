@@ -1,5 +1,5 @@
 import { MetaPopulation } from '@allors/meta/core';
-import { Meta, PullFactory, TreeFactory, FetchFactory, data } from '@allors/meta/generated';
+import { Meta, PullFactory, TreeFactory, SelectFactory, data } from '@allors/meta/generated';
 import { Database } from '@allors/workspace/core';
 import { MemoryDatabase } from '@allors/workspace/memory';
 
@@ -17,7 +17,7 @@ export class Fixture {
 
   pull: PullFactory;
   tree: TreeFactory;
-  fetch: FetchFactory;
+  select: SelectFactory;
 
   readonly x = new Object();
 
@@ -37,7 +37,7 @@ export class Fixture {
     this.ctx = new Context(client, database);
 
     this.tree = new TreeFactory(this.m);
-    this.fetch = new FetchFactory(this.m);
+    this.select = new SelectFactory(this.m);
     this.pull = new PullFactory(this.m);
 
     await this.login('administrator');

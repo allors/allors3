@@ -1,5 +1,5 @@
 export { Node } from './lib/Node';
-export { Fetch } from './lib/Fetch';
+export { Select } from './lib/Select';
 export { IExtent } from './lib/IExtent';
 export { Sort } from './lib/Sort';
 export { Predicate } from './lib/Predicate';

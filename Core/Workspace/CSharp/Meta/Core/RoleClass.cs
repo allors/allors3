@@ -169,5 +169,7 @@ namespace Allors.Workspace.Meta
             get => this.isUnique ?? this.Default?.IsUnique ?? false;
             set => this.isUnique = value;
         }
+
+        public override Guid OperandId => this.RelationType.Id;
     }
 }

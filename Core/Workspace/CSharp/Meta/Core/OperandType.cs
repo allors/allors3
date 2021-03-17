@@ -5,6 +5,8 @@
 
 namespace Allors.Workspace.Meta
 {
+    using System;
+
     public abstract partial class OperandType : MetaObjectBase, IOperandType
     {
         protected OperandType(MetaPopulation metaPopulation)
@@ -13,5 +15,7 @@ namespace Allors.Workspace.Meta
         }
 
         public abstract string DisplayName { get; }
+
+        public abstract Guid OperandId { get; }
     }
 }

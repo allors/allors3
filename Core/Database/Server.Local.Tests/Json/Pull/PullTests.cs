@@ -98,7 +98,7 @@ namespace Tests
         }
 
         [Fact]
-        public async void WithFetchRef()
+        public async void WithSelectRef()
         {
             this.SetUser("jane@example.com");
 

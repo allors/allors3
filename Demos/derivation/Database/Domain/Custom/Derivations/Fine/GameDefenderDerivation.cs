@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         public GameDefenderDerivation(M m) : base(m, new Guid("498A40C3-068E-4AB8-8E28-0B9F6F2D9D90")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.Game.Declarers),
+                new AssociationPattern(m.Game.Declarers),
             };
      
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

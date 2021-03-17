@@ -15,24 +15,28 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class RemoteWorkspace : IWorkspace
     {
-        private readonly Dictionary<Identity, RemoteWorkspaceObject> workspaceRolesByIdentity;
+        private readonly Dictionary<long, RemoteWorkspaceObject> objectById;
 
-        internal RemoteWorkspace(IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, HttpClient httpClient)
+        internal RemoteWorkspace(string name, IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, HttpClient httpClient)
         {
+            this.Name = name;
             this.MetaPopulation = metaPopulation;
             this.StateLifecycle = state;
 
             this.ObjectFactory = new ObjectFactory(this.MetaPopulation, instance);
             this.Database = new RemoteDatabase(this.MetaPopulation, httpClient, new Identities());
 
-            this.WorkspaceClassByWorkspaceId = new Dictionary<Identity, IClass>();
+            this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
+            this.WorkspaceIdsByWorkspaceClass = new Dictionary<IClass, long[]>();
 
             this.DomainDerivationById = new ConcurrentDictionary<Guid, IDomainDerivation>();
 
-            this.workspaceRolesByIdentity = new Dictionary<Identity, RemoteWorkspaceObject>();
+            this.objectById = new Dictionary<long, RemoteWorkspaceObject>();
 
             this.StateLifecycle.OnInit(this);
         }
+
+        public string Name { get; }
 
         public IMetaPopulation MetaPopulation { get; }
 
@@ -45,27 +49,43 @@ namespace Allors.Workspace.Adapters.Remote
 
         public RemoteDatabase Database { get; }
 
-        internal Dictionary<Identity, IClass> WorkspaceClassByWorkspaceId { get; }
+        internal Dictionary<long, IClass> WorkspaceClassByWorkspaceId { get; }
+
+        internal Dictionary<IClass, long[]> WorkspaceIdsByWorkspaceClass { get; }
 
         public ISession CreateSession() => new RemoteSession(this, this.StateLifecycle.CreateSessionContext());
 
-        internal RemoteWorkspaceObject Get(Identity identity)
+        internal RemoteWorkspaceObject Get(long identity)
         {
-            this.workspaceRolesByIdentity.TryGetValue(identity, out var workspaceRoles);
-            return workspaceRoles;
+            this.objectById.TryGetValue(identity, out var workspaceObject);
+            return workspaceObject;
         }
 
-        internal void RegisterWorkspaceObject(IClass @class, Identity workspaceId) => this.WorkspaceClassByWorkspaceId.Add(workspaceId, @class);
-
-        internal void Push(Identity identity, IClass @class, long version, Dictionary<IRelationType, object> changedRoleByRoleType)
+        internal void RegisterWorkspaceObject(IClass @class, long workspaceId)
         {
-            if (!this.workspaceRolesByIdentity.TryGetValue(identity, out var originalWorkspaceRoles))
+            this.WorkspaceClassByWorkspaceId.Add(workspaceId, @class);
+
+            if (!this.WorkspaceIdsByWorkspaceClass.TryGetValue(@class, out var ids))
             {
-                this.workspaceRolesByIdentity[identity] = new RemoteWorkspaceObject(this.Database, identity, @class, ++version, changedRoleByRoleType);
+                ids = new[] { workspaceId };
             }
             else
             {
-                this.workspaceRolesByIdentity[identity] = originalWorkspaceRoles.Update(changedRoleByRoleType);
+                ids = NullableSortableArraySet.Add(ids, workspaceId);
+            }
+
+            this.WorkspaceIdsByWorkspaceClass[@class] = ids;
+        }
+
+        internal void Push(long identity, IClass @class, long version, Dictionary<IRelationType, object> changedRoleByRoleType)
+        {
+            if (!this.objectById.TryGetValue(identity, out var originalWorkspaceObject))
+            {
+                this.objectById[identity] = new RemoteWorkspaceObject(this.Database, identity, @class, ++version, changedRoleByRoleType);
+            }
+            else
+            {
+                this.objectById[identity] = new RemoteWorkspaceObject(originalWorkspaceObject, changedRoleByRoleType);
             }
         }
     }

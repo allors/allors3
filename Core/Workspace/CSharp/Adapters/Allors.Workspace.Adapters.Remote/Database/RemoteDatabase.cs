@@ -24,7 +24,7 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class RemoteDatabase
     {
-        private readonly Dictionary<Identity, RemoteDatabaseObject> databaseRolesByDatabaseId;
+        private readonly Dictionary<long, RemoteDatabaseObject> objectsById;
 
         private readonly Dictionary<IClass, Dictionary<IOperandType, RemotePermission>> readPermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, RemotePermission>> writePermissionByOperandTypeByClass;
@@ -42,7 +42,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.AccessControlById = new Dictionary<long, RemoteAccessControl>();
             this.PermissionById = new Dictionary<long, RemotePermission>();
 
-            this.databaseRolesByDatabaseId = new Dictionary<Identity, RemoteDatabaseObject>();
+            this.objectsById = new Dictionary<long, RemoteDatabaseObject>();
 
             this.readPermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, RemotePermission>>();
             this.writePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, RemotePermission>>();
@@ -84,10 +84,10 @@ namespace Allors.Workspace.Adapters.Remote
             return true;
         }
 
-        internal RemoteDatabaseObject PushResponse(Identity identity, IClass @class)
+        internal RemoteDatabaseObject PushResponse(long identity, IClass @class)
         {
             var databaseObject = new RemoteDatabaseObject(this, identity, @class);
-            this.databaseRolesByDatabaseId[identity] = databaseObject;
+            this.objectsById[identity] = databaseObject;
             return databaseObject;
         }
 
@@ -96,8 +96,8 @@ namespace Allors.Workspace.Adapters.Remote
             var ctx = new RemoteResponseContext(this.AccessControlById, this.PermissionById);
             foreach (var syncResponseObject in syncResponse.Objects)
             {
-                var databaseRoles = new RemoteDatabaseObject(this, ctx, syncResponseObject);
-                this.databaseRolesByDatabaseId[databaseRoles.Identity] = databaseRoles;
+                var databaseObjects = new RemoteDatabaseObject(this, ctx, syncResponseObject);
+                this.objectsById[databaseObjects.Identity] = databaseObjects;
             }
 
             if (ctx.MissingAccessControlIds.Count > 0 || ctx.MissingPermissionIds.Count > 0)
@@ -121,9 +121,8 @@ namespace Allors.Workspace.Adapters.Remote
                 Objects = response.Objects
                     .Where(v =>
                     {
-                        var id = long.Parse(v[0]);
-                        var identity = this.Identities.GetOrCreate(id);
-                        this.databaseRolesByDatabaseId.TryGetValue(identity, out var databaseObject);
+                        var identity = long.Parse(v[0]);
+                        this.objectsById.TryGetValue(identity, out var databaseObject);
                         if (databaseObject == null)
                         {
                             return true;
@@ -160,10 +159,10 @@ namespace Allors.Workspace.Adapters.Remote
             };
         }
 
-        internal RemoteDatabaseObject Get(Identity databaseId)
+        internal RemoteDatabaseObject Get(long identity)
         {
-            this.databaseRolesByDatabaseId.TryGetValue(databaseId, out var databaseRoles);
-            return databaseRoles;
+            this.objectsById.TryGetValue(identity, out var databaseObjects);
+            return databaseObjects;
         }
 
         internal SecurityRequest SecurityResponse(SecurityResponse securityResponse)
@@ -259,13 +258,7 @@ namespace Allors.Workspace.Adapters.Remote
 
             return null;
         }
-
-        internal IEnumerable<RemoteDatabaseObject> Get(IComposite objectType)
-        {
-            var classes = new HashSet<IClass>(objectType.DatabaseClasses);
-            return this.databaseRolesByDatabaseId.Where(v => classes.Contains(v.Value.Class)).Select(v => v.Value);
-        }
-
+        
         internal RemotePermission GetPermission(IClass @class, IOperandType operandType, Operations operation)
         {
             switch (operation)

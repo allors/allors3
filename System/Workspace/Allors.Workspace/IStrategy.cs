@@ -12,13 +12,21 @@ namespace Allors.Workspace
     {
         IClass Class { get; }
 
-        Identity Identity { get; }
+        long Identity { get; }
+
+        IObject Object { get; }
 
         ISession Session { get; }
 
         bool Exist(IRoleType roleType);
 
-        object Get(IRoleType roleType);
+        object GetRole(IRoleType roleType);
+
+        object GetUnitRole(IRoleType roleType);
+
+        T GetCompositeRole<T>(IRoleType roleType) where T : IObject;
+
+        IEnumerable<T> GetCompositesRole<T>(IRoleType roleType) where T : IObject;
 
         void Set(IRoleType roleType, object value);
 

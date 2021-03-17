@@ -121,7 +121,7 @@ namespace Allors.Workspace.Meta
         ///// <returns>
         ///// The role value.
         ///// </returns>
-        public object Get(IStrategy strategy) => strategy.Get(this.RelationType.RoleType);
+        public object Get(IStrategy strategy) => strategy.GetRole(this.RelationType.RoleType);
 
         ///// <summary>
         ///// Set the value of the role on this object.

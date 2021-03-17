@@ -34,7 +34,7 @@ namespace Allors.Database.Protocol.Json
             this.AllowedClasses = metaCache.GetWorkspaceClasses(workspaceName);
             this.M = databaseContext.M;
             this.MetaPopulation = databaseContext.MetaPopulation;
-            this.PreparedFetches = databaseContext.PreparedFetches;
+            this.PreparedSelects = databaseContext.PreparedSelects;
             this.PreparedExtents = databaseContext.PreparedExtents;
             this.Build = @class => (IObject)DefaultObjectBuilder.Build(transaction, @class);
             this.Derive = () => this.Transaction.Derive(false);
@@ -52,7 +52,7 @@ namespace Allors.Database.Protocol.Json
 
         public MetaPopulation MetaPopulation { get; }
 
-        public IPreparedFetches PreparedFetches { get; }
+        public IPreparedSelects PreparedSelects { get; }
 
         public IPreparedExtents PreparedExtents { get; }
 
@@ -60,7 +60,7 @@ namespace Allors.Database.Protocol.Json
 
         public Func<IDerivationResult> Derive { get; }
 
-        public PullResponseBuilder CreatePullResponseBuilder() => new PullResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, this.PreparedFetches, this.PreparedExtents);
+        public PullResponseBuilder CreatePullResponseBuilder() => new PullResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents);
 
         public InvokeResponse Invoke(InvokeRequest invokeRequest)
         {

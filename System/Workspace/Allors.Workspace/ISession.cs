@@ -20,21 +20,21 @@ namespace Allors.Workspace
 
         T Create<T>(IClass @class) where T : IObject;
 
-        T Instantiate<T>(IObject @object) where T : IObject;
+        T Get<T>(IObject @object) where T : IObject;
 
-        T Instantiate<T>(T @object) where T : IObject;
+        T Get<T>(T @object) where T : IObject;
 
-        T Instantiate<T>(long id) where T : IObject;
+        T Get<T>(long identity) where T : IObject;
 
-        T Instantiate<T>(Identity identity) where T : IObject;
+        IEnumerable<T> Get<T>(IEnumerable<IObject> objects) where T : IObject;
 
-        IEnumerable<T> Instantiate<T>(IEnumerable<IObject> objects) where T : IObject;
+        IEnumerable<T> Get<T>(IEnumerable<T> objects) where T : IObject;
 
-        IEnumerable<T> Instantiate<T>(IEnumerable<T> objects) where T : IObject;
+        IEnumerable<T> Get<T>(IEnumerable<long> identities) where T : IObject;
 
-        IEnumerable<T> Instantiate<T>(IEnumerable<long> ids) where T : IObject;
+        IEnumerable<T> GetAll<T>() where T : class, IObject;
 
-        IEnumerable<T> Instantiate<T>(IEnumerable<Identity> identities) where T : IObject;
+        IEnumerable<T> GetAll<T>(IComposite objectType) where T : IObject;
 
         void Reset();
 
