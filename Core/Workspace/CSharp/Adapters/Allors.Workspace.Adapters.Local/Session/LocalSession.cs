@@ -59,11 +59,6 @@ namespace Allors.Workspace.Adapters.Local
             return Task.FromResult<ICallResult>(new LocalCallResult(localInvokeResult));
         }
 
-        public async Task<ICallResult> Call(string service, object args)
-        {
-            throw new NotImplementedException();
-        }
-
         public T Create<T>() where T : class, IObject => this.Create<T>((IClass)this.Workspace.ObjectFactory.GetObjectType<T>());
 
         public T Create<T>(IClass @class) where T : IObject

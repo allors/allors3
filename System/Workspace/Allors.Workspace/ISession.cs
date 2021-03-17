@@ -44,8 +44,6 @@ namespace Allors.Workspace
 
         Task<ICallResult> Call(Method[] methods, CallOptions options = null);
 
-        Task<ICallResult> Call(string service, object args);
-
         Task<ILoadResult> Load(params Pull[] pulls);
 
         Task<ILoadResult> Load(string service, object args);

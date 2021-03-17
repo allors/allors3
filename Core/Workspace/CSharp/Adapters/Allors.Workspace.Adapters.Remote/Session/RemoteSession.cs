@@ -80,12 +80,6 @@ namespace Allors.Workspace.Adapters.Remote
             return new RemoteCallResult(invokeResponse);
         }
 
-        public async Task<ICallResult> Call(string service, object args)
-        {
-            var invokeResponse = await this.Database.Invoke(service, args);
-            return new RemoteCallResult(invokeResponse);
-        }
-
         public T Create<T>() where T : class, IObject => this.Create<T>((IClass)this.Workspace.ObjectFactory.GetObjectType<T>());
 
         public T Create<T>(IClass @class) where T : IObject

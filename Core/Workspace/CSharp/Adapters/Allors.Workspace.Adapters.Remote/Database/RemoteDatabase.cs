@@ -340,16 +340,7 @@ namespace Allors.Workspace.Adapters.Remote
 
             return await this.ReadAsAsync<InvokeResponse>(response);
         }
-
-        internal async Task<InvokeResponse> Invoke(string service, object args)
-        {
-            var uri = new Uri(service + "/Pull", UriKind.Relative);
-            var response = await this.PostAsJsonAsync(uri, args);
-            response.EnsureSuccessStatusCode();
-
-            return await this.ReadAsAsync<InvokeResponse>(response);
-        }
-
+        
         internal async Task<SecurityResponse> Security(SecurityRequest securityRequest)
         {
             var uri = new Uri("security", UriKind.Relative);
