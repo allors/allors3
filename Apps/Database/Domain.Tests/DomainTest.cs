@@ -47,7 +47,7 @@ namespace Allors.Database.Domain.Tests
             set => this.Time.Shift = value;
         }
 
-        protected Organisation InternalOrganisation => this.Transaction.Extent<Organisation>().First(v => v.IsInternalOrganisation);
+        protected Organisation InternalOrganisation { get; set; }
 
         protected Person Administrator => this.GetPersonByUserName("administrator");
 
@@ -122,7 +122,7 @@ namespace Allors.Database.Domain.Tests
                 .WithCountry(belgium)
                 .Build();
 
-            var internalOrganisation = new OrganisationBuilder(this.Transaction)
+            this.InternalOrganisation = new OrganisationBuilder(this.Transaction)
                 .WithIsInternalOrganisation(true)
                 .WithDoAccounting(false)
                 .WithName("internalOrganisation")
@@ -146,7 +146,7 @@ namespace Allors.Database.Domain.Tests
                 .WithSubAccountCounter(new CounterBuilder(this.Transaction).WithUniqueId(Guid.NewGuid()).WithValue(0).Build())
                 .Build();
 
-            internalOrganisation.AddPartyContactMechanism(new PartyContactMechanismBuilder(this.Transaction)
+            this.InternalOrganisation.AddPartyContactMechanism(new PartyContactMechanismBuilder(this.Transaction)
                 .WithUseAsDefault(true)
                 .WithContactMechanism(postalAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).GeneralCorrespondence)
@@ -157,7 +157,7 @@ namespace Allors.Database.Domain.Tests
             var facility = new FacilityBuilder(this.Transaction)
                 .WithFacilityType(new FacilityTypes(this.Transaction).Warehouse)
                 .WithName("facility")
-                .WithOwner(internalOrganisation)
+                .WithOwner(this.InternalOrganisation)
                 .Build();
 
             singleton.Settings.DefaultFacility = facility;
@@ -167,7 +167,7 @@ namespace Allors.Database.Domain.Tests
             new StoreBuilder(this.Transaction)
                 .WithName("store")
                 .WithBillingProcess(new BillingProcesses(this.Transaction).BillingForShipmentItems)
-                .WithInternalOrganisation(internalOrganisation)
+                .WithInternalOrganisation(this.InternalOrganisation)
                 .WithCustomerShipmentNumberPrefix("shipmentno: ")
                 .WithSalesInvoiceNumberPrefix("invoiceno: ")
                 .WithSalesOrderNumberPrefix("orderno: ")
@@ -183,11 +183,11 @@ namespace Allors.Database.Domain.Tests
 
             new ProductCategoryBuilder(this.Transaction).WithName("Primary Category").Build();
 
-            internalOrganisation.CreateEmployee("letmein", this.Transaction.Faker());
-            internalOrganisation.CreateB2BCustomer(this.Transaction.Faker());
-            internalOrganisation.CreateB2CCustomer(this.Transaction.Faker());
-            internalOrganisation.CreateSupplier(this.Transaction.Faker());
-            internalOrganisation.CreateSubContractor(this.Transaction.Faker());
+            this.InternalOrganisation.CreateEmployee("letmein", this.Transaction.Faker());
+            this.InternalOrganisation.CreateB2BCustomer(this.Transaction.Faker());
+            this.InternalOrganisation.CreateB2CCustomer(this.Transaction.Faker());
+            this.InternalOrganisation.CreateSupplier(this.Transaction.Faker());
+            this.InternalOrganisation.CreateSubContractor(this.Transaction.Faker());
 
             var purchaser = new PersonBuilder(this.Transaction).WithFirstName("The").WithLastName("purchaser").WithUserName("purchaser").Build();
             var orderProcessor = new PersonBuilder(this.Transaction).WithFirstName("The").WithLastName("orderProcessor").WithUserName("orderProcessor").Build();
@@ -202,9 +202,9 @@ namespace Allors.Database.Domain.Tests
             new UserGroups(this.Transaction).Creators.AddMember(orderProcessor);
             new UserGroups(this.Transaction).Creators.AddMember(administrator);
 
-            new EmploymentBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithEmployee(purchaser).WithEmployer(internalOrganisation).Build();
+            new EmploymentBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithEmployee(purchaser).WithEmployer(this.InternalOrganisation).Build();
 
-            new EmploymentBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithEmployee(orderProcessor).WithEmployer(internalOrganisation).Build();
+            new EmploymentBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithEmployee(orderProcessor).WithEmployer(this.InternalOrganisation).Build();
 
             var good1 = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
@@ -245,7 +245,7 @@ namespace Allors.Database.Domain.Tests
                     .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build())
                 .Build();
 
-            var serialisedUnifiedGood = new UnifiedGoodBuilder(this.Transaction).WithSerialisedDefaults(internalOrganisation).Build();
+            var serialisedUnifiedGood = new UnifiedGoodBuilder(this.Transaction).WithSerialisedDefaults(this.InternalOrganisation).Build();
 
             var catMain = new ProductCategoryBuilder(this.Transaction).WithName("main cat").Build();
 
