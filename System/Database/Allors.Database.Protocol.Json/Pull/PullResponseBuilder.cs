@@ -47,6 +47,8 @@ namespace Allors.Database.Protocol.Json
 
         public IPreparedExtents PreparedExtents { get; }
 
+        public object Args { get; }
+
         public void AddCollection(string name, in IEnumerable<IObject> collection)
         {
             switch (collection)
@@ -162,6 +164,14 @@ namespace Allors.Database.Protocol.Json
                         this.objects.UnionWith(newWorkspaceCollection);
                     }
                 }
+            }
+        }
+
+        public void Accept(PullArgs pullArgs = null)
+        {
+            if (pullArgs != null)
+            {
+
             }
         }
 

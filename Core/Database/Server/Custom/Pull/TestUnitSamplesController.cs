@@ -6,12 +6,14 @@
 namespace Allors.Server.Controllers
 {
     using System;
+    using System.Text.Json;
     using System.Threading.Tasks;
     using Services;
     using Microsoft.AspNetCore.Mvc;
     using Database;
     using Database.Domain;
     using Database.Protocol.Json;
+    using Protocol.Json.Api.Pull;
 
     public class TestUnitSamplesController : Controller
     {
@@ -29,31 +31,25 @@ namespace Allors.Server.Controllers
         public ITreeCache TreeCache { get; }
 
         [HttpPost]
-        public async Task<IActionResult> Pull([FromBody] TestUnitSamplesParams @params)
+        public async Task<IActionResult> Pull([FromBody] PullArgs pullArgs)
         {
             try
             {
                 var api = new Api(this.Transaction, this.WorkspaceService.Name);
-                var response = api.CreatePullResponseBuilder();
+                var builder = api.CreatePullResponseBuilder(pullArgs);
 
-                var unitSample = this.Transaction.UnitSample(@params.Step);
-                response.AddObject("unitSample", unitSample);
-                var pullResponse = response.Build();
+                var step = pullArgs?.NamedValues.ContainsKey("step") == true ? ((JsonElement)pullArgs.NamedValues["step"]).GetInt32() : 0;
+
+                var unitSample = this.Transaction.UnitSample(step);
+                builder.AddObject("unitSample", unitSample);
+
+                var pullResponse = builder.Build();
 
                 return this.Ok(pullResponse);
             }
             catch (Exception e)
             {
                 return this.BadRequest(e.Message);
-            }
-        }
-
-        public class TestUnitSamplesParams
-        {
-            public int Step
-            {
-                get;
-                set;
             }
         }
     }

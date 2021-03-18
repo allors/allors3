@@ -5,6 +5,7 @@
 
 namespace Tests.Workspace
 {
+    using System.Collections.Generic;
     using System.Net.Http;
     using Xunit;
 
@@ -24,7 +25,9 @@ namespace Tests.Workspace
             var exceptionThrown = false;
             try
             {
-                await session.Load("ThisIsWrong", new { step = 0 });
+                await session.Load(
+                    "ThisIsWrong",
+                    new Dictionary<string, object> { { "step", 0 } });
             }
             catch (HttpRequestException)
             {

@@ -153,7 +153,7 @@ namespace Allors.Workspace.Adapters.Local
             return this.OnPull(pullResult);
         }
 
-        public Task<ILoadResult> Load(string service, object args) => throw new System.NotImplementedException();
+        public Task<ILoadResult> Load(string service, IEnumerable<KeyValuePair<string, object>> values = null, IEnumerable<KeyValuePair<string, IObject>> objects = null, IEnumerable<KeyValuePair<string, IEnumerable<IObject>>> collections = null) => throw new NotImplementedException();
 
         public void Reset()
         {

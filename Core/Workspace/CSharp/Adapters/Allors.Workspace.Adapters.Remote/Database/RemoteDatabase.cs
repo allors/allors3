@@ -258,7 +258,7 @@ namespace Allors.Workspace.Adapters.Remote
 
             return null;
         }
-        
+
         internal RemotePermission GetPermission(IClass @class, IOperandType operandType, Operations operation)
         {
             switch (operation)
@@ -306,10 +306,21 @@ namespace Allors.Workspace.Adapters.Remote
             return await this.ReadAsAsync<PullResponse>(response);
         }
 
-        internal async Task<PullResponse> Pull(string name, object pullRequest)
+        internal async Task<PullResponse> Pull(
+            string name,
+            IEnumerable<KeyValuePair<string, object>> values = null,
+            IEnumerable<KeyValuePair<string, IObject>> objects = null,
+            IEnumerable<KeyValuePair<string, IEnumerable<IObject>>> collections = null)
         {
+            var pullArgs = new PullArgs
+            {
+                NamedValues = values?.ToDictionary(v => v.Key, v => v.Value),
+                NamedObjects = objects?.ToDictionary(v => v.Key, v => v.Value?.Identity.ToString()),
+                NamedCollections = collections?.ToDictionary(v => v.Key, v => v.Value.Select(v=>v.Identity.ToString()).ToArray()),
+            };
+
             var uri = new Uri(name + "/pull", UriKind.Relative);
-            var response = await this.PostAsJsonAsync(uri, pullRequest);
+            var response = await this.PostAsJsonAsync(uri, pullArgs);
             response.EnsureSuccessStatusCode();
             return await this.ReadAsAsync<PullResponse>(response);
         }
@@ -340,7 +351,7 @@ namespace Allors.Workspace.Adapters.Remote
 
             return await this.ReadAsAsync<InvokeResponse>(response);
         }
-        
+
         internal async Task<SecurityResponse> Security(SecurityRequest securityRequest)
         {
             var uri = new Uri("security", UriKind.Relative);

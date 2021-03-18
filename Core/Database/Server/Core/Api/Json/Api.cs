@@ -60,17 +60,22 @@ namespace Allors.Database.Protocol.Json
 
         public Func<IDerivationResult> Derive { get; }
 
-        public PullResponseBuilder CreatePullResponseBuilder() => new PullResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents);
-
         public InvokeResponse Invoke(InvokeRequest invokeRequest)
         {
             var invokeResponseBuilder = new InvokeResponseBuilder(this.Transaction, this.Derive, this.AccessControlLists, this.AllowedClasses);
             return invokeResponseBuilder.Build(invokeRequest);
         }
 
+        public PullResponseBuilder CreatePullResponseBuilder(PullArgs pullArgs = null)
+        {
+            var response = new PullResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents);
+            response.Accept(pullArgs);
+            return response;
+        }
+
         public PullResponse Pull(PullRequest pullRequest)
         {
-            var response = this.CreatePullResponseBuilder();
+            var response = new PullResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents);
             return response.Build(pullRequest);
         }
 

@@ -173,19 +173,13 @@ namespace Allors.Workspace.Adapters.Remote
             return await this.OnPull(pullResponse);
         }
 
-        public async Task<ILoadResult> Load(string service, object args)
+        public async Task<ILoadResult> Load(
+            string service,
+            IEnumerable<KeyValuePair<string, object>> values = null,
+            IEnumerable<KeyValuePair<string, IObject>> objects = null,
+            IEnumerable<KeyValuePair<string, IEnumerable<IObject>>> collections = null)
         {
-            if (args is Pull pull)
-            {
-                args = new PullRequest { Pulls = new[] { pull.ToJson() } };
-            }
-
-            if (args is IEnumerable<Pull> pulls)
-            {
-                args = new PullRequest { Pulls = pulls.Select(v => v.ToJson()).ToArray() };
-            }
-
-            var pullResponse = await this.Database.Pull(service, args);
+            var pullResponse = await this.Database.Pull(service, values, objects, collections);
             return await this.OnPull(pullResponse);
         }
 

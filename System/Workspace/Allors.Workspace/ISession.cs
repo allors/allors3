@@ -40,16 +40,21 @@ namespace Allors.Workspace
 
         void Merge();
 
+        IChangeSet Checkpoint();
+
         Task<ICallResult> Call(Method method, CallOptions options = null);
 
         Task<ICallResult> Call(Method[] methods, CallOptions options = null);
 
         Task<ILoadResult> Load(params Pull[] pulls);
 
-        Task<ILoadResult> Load(string service, object args);
+        Task<ILoadResult> Load(
+            string service,
+            IEnumerable<KeyValuePair<string, object>> values = null,
+            IEnumerable<KeyValuePair<string, IObject>> objects = null,
+            IEnumerable<KeyValuePair<string, IEnumerable<IObject>>> collections = null
+            );
 
         Task<ISaveResult> Save();
-
-        IChangeSet Checkpoint();
     }
 }
