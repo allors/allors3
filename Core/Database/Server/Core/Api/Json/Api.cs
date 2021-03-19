@@ -3,7 +3,6 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-
 namespace Allors.Database.Protocol.Json
 {
     using System;
@@ -66,13 +65,6 @@ namespace Allors.Database.Protocol.Json
             return invokeResponseBuilder.Build(invokeRequest);
         }
 
-        public PullResponseBuilder CreatePullResponseBuilder(PullArgs pullArgs = null)
-        {
-            var response = new PullResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents);
-            response.Accept(pullArgs);
-            return response;
-        }
-
         public PullResponse Pull(PullRequest pullRequest)
         {
             var response = new PullResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents);
@@ -113,6 +105,13 @@ namespace Allors.Database.Protocol.Json
         {
             var responseBuilder = new SecurityResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses);
             return responseBuilder.Build(securityRequest);
+        }
+
+        // TODO: Delete
+        public PullResponseBuilder CreatePullResponseBuilder()
+        {
+            var response = new PullResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents);
+            return response;
         }
     }
 }

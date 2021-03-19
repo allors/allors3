@@ -148,7 +148,7 @@ namespace Allors.Database.Adapters.Memory
 
         public T Create<T>() where T : IObject
         {
-            var objectType = this.Database.ObjectFactory.GetObjectTypeForType(typeof(T));
+            var objectType = this.Database.ObjectFactory.GetObjectType(typeof(T));
 
             if (!(objectType is IClass @class))
             {
@@ -160,7 +160,7 @@ namespace Allors.Database.Adapters.Memory
 
         public IObject[] Create(IClass objectType, int count)
         {
-            var arrayType = this.Database.ObjectFactory.GetTypeForObjectType(objectType);
+            var arrayType = this.Database.ObjectFactory.GetType(objectType);
             var allorsObjects = (IObject[])Array.CreateInstance(arrayType, count);
             for (var i = 0; i < count; i++)
             {
@@ -235,7 +235,7 @@ namespace Allors.Database.Adapters.Memory
 
         public Extent<T> Extent<T>() where T : IObject
         {
-            if (!(this.Database.ObjectFactory.GetObjectTypeForType(typeof(T)) is IComposite compositeType))
+            if (!(this.Database.ObjectFactory.GetObjectType(typeof(T)) is IComposite compositeType))
             {
                 throw new Exception("type should be a CompositeType");
             }
@@ -281,7 +281,7 @@ namespace Allors.Database.Adapters.Memory
 
         internal void Init() => this.Reset();
 
-        internal Type GetTypeForObjectType(IObjectType objectType) => this.Database.ObjectFactory.GetTypeForObjectType(objectType);
+        internal Type GetTypeForObjectType(IObjectType objectType) => this.Database.ObjectFactory.GetType(objectType);
 
         internal virtual Strategy InsertStrategy(IClass objectType, long objectId, long objectVersion)
         {

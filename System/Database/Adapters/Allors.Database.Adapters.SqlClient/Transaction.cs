@@ -104,7 +104,7 @@ namespace Allors.Database.Adapters.SqlClient
 
             var references = this.Commands.CreateObjects(objectType, count);
 
-            var arrayType = this.Database.ObjectFactory.GetTypeForObjectType(objectType);
+            var arrayType = this.Database.ObjectFactory.GetType(objectType);
             var domainObjects = (IObject[])Array.CreateInstance(arrayType, count);
 
             for (var i = 0; i < references.Count; i++)
@@ -249,7 +249,7 @@ namespace Allors.Database.Adapters.SqlClient
             }
         }
 
-        public Extent<T> Extent<T>() where T : IObject => this.Extent((IComposite)this.Database.ObjectFactory.GetObjectTypeForType(typeof(T)));
+        public Extent<T> Extent<T>() where T : IObject => this.Extent((IComposite)this.Database.ObjectFactory.GetObjectType(typeof(T)));
 
         public Allors.Database.Extent Extent(IComposite type) => new ExtentFiltered(this, type);
 
@@ -364,7 +364,7 @@ namespace Allors.Database.Adapters.SqlClient
 
         public T Create<T>() where T : IObject
         {
-            var objectType = (IClass)this.Database.ObjectFactory.GetObjectTypeForType(typeof(T));
+            var objectType = (IClass)this.Database.ObjectFactory.GetObjectType(typeof(T));
             return (T)this.Create(objectType);
         }
 

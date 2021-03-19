@@ -1,19 +1,19 @@
-// <copyright file="ILoadResult.cs" company="Allors bvba">
+// <copyright file="IProcedureInput.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Workspace
+namespace Allors.Database
 {
     using System.Collections.Generic;
 
-    public interface ILoadResult : IResult
+    public interface IProcedureInput
     {
-        IReadOnlyDictionary<string, IObject[]> Collections { get; }
+        IDictionary<string, IObject[]> Collections { get; }
 
-        IReadOnlyDictionary<string, IObject> Objects { get; }
+        IDictionary<string, IObject> Objects { get; }
 
-        IReadOnlyDictionary<string, object> Values { get; }
+        IDictionary<string, object> Values { get; }
 
         public T[] GetCollection<T>();
 

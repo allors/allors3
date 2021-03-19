@@ -153,6 +153,16 @@ namespace Allors.Workspace.Adapters.Local
             return this.OnPull(pullResult);
         }
 
+        public Task<ILoadResult> Load(Procedure procedure)
+        {
+            var pullResult = new LocalPullResult(this.Workspace);
+
+            // TODO:
+            //pullResult.Execute(procedure);
+
+            return this.OnPull(pullResult);
+        }
+
         public Task<ILoadResult> Load(string service, IEnumerable<KeyValuePair<string, object>> values = null, IEnumerable<KeyValuePair<string, IObject>> objects = null, IEnumerable<KeyValuePair<string, IEnumerable<IObject>>> collections = null) => throw new NotImplementedException();
 
         public void Reset()

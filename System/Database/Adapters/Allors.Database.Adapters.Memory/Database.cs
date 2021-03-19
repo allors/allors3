@@ -6,6 +6,7 @@
 namespace Allors.Database.Adapters.Memory
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Xml;
 
@@ -36,6 +37,7 @@ namespace Allors.Database.Adapters.Memory
             this.Id = string.IsNullOrWhiteSpace(configuration.Id) ? Guid.NewGuid().ToString("N").ToLowerInvariant() : configuration.Id;
 
             this.Derivations = Array.Empty<IDomainDerivation>();
+            this.Procedures = new DefaultProcedures(this.ObjectFactory.Assembly);
 
             this.StateLifecycle.OnInit(this);
         }
@@ -45,6 +47,8 @@ namespace Allors.Database.Adapters.Memory
         public event RelationNotLoadedEventHandler RelationNotLoaded;
 
         public IDomainDerivation[] Derivations { get; private set; }
+
+        public IProcedures Procedures { get; set; }
 
         public string Id { get; }
 

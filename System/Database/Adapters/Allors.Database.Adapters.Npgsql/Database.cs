@@ -6,6 +6,7 @@
 namespace Allors.Database.Adapters.Npgsql
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
@@ -91,6 +92,7 @@ namespace Allors.Database.Adapters.Npgsql
             this.SchemaName = (configuration.SchemaName ?? "allors").ToLowerInvariant();
 
             this.Derivations = Array.Empty<IDomainDerivation>();
+            this.Procedures = new DefaultProcedures(this.ObjectFactory.Assembly);
 
             this.StateLifecycle.OnInit(this);
         }
@@ -181,6 +183,8 @@ namespace Allors.Database.Adapters.Npgsql
                 return this.mapping;
             }
         }
+
+        public IProcedures Procedures { get; }
 
         public ITransaction CreateTransaction()
         {
@@ -291,7 +295,7 @@ namespace Allors.Database.Adapters.Npgsql
             return concreteClasses.Contains(containee);
         }
 
-        internal Type GetDomainType(IObjectType objectType) => this.ObjectFactory.GetTypeForObjectType(objectType);
+        internal Type GetDomainType(IObjectType objectType) => this.ObjectFactory.GetType(objectType);
 
         internal IRoleType[] GetSortedUnitRolesByObjectType(IObjectType objectType)
         {

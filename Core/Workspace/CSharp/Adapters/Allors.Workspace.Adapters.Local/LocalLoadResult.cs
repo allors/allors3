@@ -56,5 +56,7 @@ namespace Allors.Workspace.Adapters.Local
             where T : class, IObject => this.Objects.TryGetValue(key, out var @object) ? (T)@object : null;
 
         public object GetValue(string key) => this.Values[key];
+
+        public T GetValue<T>(string key) => (T)this.GetValue(key);
     }
 }

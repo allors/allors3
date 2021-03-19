@@ -8,6 +8,7 @@ namespace Allors.Workspace.Protocol.Json
     using Allors.Protocol.Json.Data;
     using Data;
     using Extent = Allors.Protocol.Json.Data.Extent;
+    using Procedure = Allors.Protocol.Json.Data.Procedure;
     using Pull = Allors.Protocol.Json.Data.Pull;
     using Select = Allors.Protocol.Json.Data.Select;
 
@@ -32,6 +33,13 @@ namespace Allors.Workspace.Protocol.Json
             var toJsonVisitor = new ToJsonVisitor();
             @select.Accept(toJsonVisitor);
             return toJsonVisitor.Select;
+        }
+
+        public static Procedure ToJson(this Allors.Workspace.Data.Procedure procedure)
+        {
+            var toJsonVisitor = new ToJsonVisitor();
+            procedure.Accept(toJsonVisitor);
+            return toJsonVisitor.Procedure;
         }
     }
 }

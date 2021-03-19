@@ -39,6 +39,16 @@ namespace Allors.Database
         /// <returns>a new state.</returns>
         IObject Create(IStrategy strategy);
 
+        IObjectType GetObjectType<T>();
+
+        /// <summary>
+        /// Gets the IObjectType for the specified Type.
+        /// Only works for static domains.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns>The object type.</returns>
+        IObjectType GetObjectType(Type type);
+
         /// <summary>
         /// Gets the IObjectType with the specified id.
         /// </summary>
@@ -48,21 +58,14 @@ namespace Allors.Database
         /// <returns>
         /// The <see cref="IObjectType"/>.
         /// </returns>
-        IObjectType GetObjectTypeForType(Guid objectTypeId);
+        IObjectType GetObjectType(Guid objectTypeId);
 
         /// <summary>
         /// Gets the Type for the specified IObjectType.
         /// </summary>
         /// <param name="objectType">The object type.</param>
         /// <returns>The type.</returns>
-        Type GetTypeForObjectType(IObjectType objectType);
+        Type GetType(IObjectType objectType);
 
-        /// <summary>
-        /// Gets the IObjectType for the specified Type.
-        /// Only works for static domains.
-        /// </summary>
-        /// <param name="type">The type.</param>
-        /// <returns>The object type.</returns>
-        IObjectType GetObjectTypeForType(Type type);
     }
 }

@@ -13,6 +13,7 @@ namespace Allors.Database.Protocol.Json
     using Extent = Allors.Protocol.Json.Data.Extent;
     using IVisitor = Data.IVisitor;
     using Node = Allors.Protocol.Json.Data.Node;
+    using Procedure = Allors.Protocol.Json.Data.Procedure;
     using Pull = Allors.Protocol.Json.Data.Pull;
     using Result = Allors.Protocol.Json.Data.Result;
     using Select = Allors.Protocol.Json.Data.Select;
@@ -45,6 +46,8 @@ namespace Allors.Database.Protocol.Json
         public Extent Extent => this.extents?.Peek();
 
         public Select Select => this.selects?.Peek();
+
+        public Procedure Procedure { get; private set; }
 
         public void VisitAnd(And visited)
         {
@@ -501,5 +504,15 @@ namespace Allors.Database.Protocol.Json
                 }
             }
         }
+
+        public void VisitProcedure(Data.Procedure procedure) =>
+            this.Procedure = new Procedure
+            {
+                Name = procedure.Name,
+                NamedCollections = procedure.Collections.ToDictionary(v => v.Key, v => v.Value?.Select(w => w.Id.ToString()).ToArray()),
+                NamedObjects = procedure.Objects.ToDictionary(v => v.Key, v => v.Value?.Id.ToString()),
+                NamedValues = procedure.Values,
+                VersionByObject = procedure.VersionByObject.ToDictionary(v => v.Key.Id.ToString(), v => v.Value.ToString())
+            };
     }
 }

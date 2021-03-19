@@ -9,10 +9,11 @@ namespace Allors.Database.Protocol.Json
     using System.Linq;
     using Allors.Protocol.Json.Api.Pull;
     using Data;
+    using Derivations;
     using Meta;
     using Security;
 
-    public class PullResponseBuilder
+    public class PullResponseBuilder : IProcedureContext, IProcedureOutput
     {
         private readonly Dictionary<string, ISet<IObject>> collectionsByName = new Dictionary<string, ISet<IObject>>();
         private readonly Dictionary<string, IObject> objectByName = new Dictionary<string, IObject>();
@@ -22,6 +23,8 @@ namespace Allors.Database.Protocol.Json
 
         private readonly AccessControlsWriter accessControlsWriter;
         private readonly PermissionsWriter permissionsWriter;
+
+        private List<IDerivationResult> errors;
 
         public PullResponseBuilder(ITransaction transaction, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, IPreparedSelects preparedSelects, IPreparedExtents preparedExtents)
         {
@@ -35,6 +38,8 @@ namespace Allors.Database.Protocol.Json
             this.objects = new HashSet<IObject>();
             this.accessControlsWriter = new AccessControlsWriter(this.AccessControlLists);
             this.permissionsWriter = new PermissionsWriter(this.AccessControlLists);
+
+
         }
 
         public ITransaction Transaction { get; }
@@ -47,7 +52,11 @@ namespace Allors.Database.Protocol.Json
 
         public IPreparedExtents PreparedExtents { get; }
 
-        public object Args { get; }
+        public void AddError(IDerivationResult derivationResult)
+        {
+            this.errors ??= new List<IDerivationResult>();
+            this.errors.Add(derivationResult);
+        }
 
         public void AddCollection(string name, in IEnumerable<IObject> collection)
         {
@@ -64,7 +73,7 @@ namespace Allors.Database.Protocol.Json
 
         public void AddCollection(string name, in ICollection<IObject> collection) => this.AddCollectionInternal(name, collection, null);
 
-        public void AddCollection(string name, IEnumerable<IObject> collection, Node[] tree)
+        public void AddCollection(string name, in IEnumerable<IObject> collection, Node[] tree)
         {
             switch (collection)
             {
@@ -167,16 +176,54 @@ namespace Allors.Database.Protocol.Json
             }
         }
 
-        public void Accept(PullArgs pullArgs = null)
-        {
-            if (pullArgs != null)
-            {
-
-            }
-        }
-
         public PullResponse Build(PullRequest pullRequest = null)
         {
+            var pullResponse = new PullResponse();
+
+            var procedure = pullRequest?.Procedure?.FromJson(this.Transaction);
+            if (procedure != null)
+            {
+                if (procedure.VersionByObject != null)
+                {
+                    foreach (var kvp in procedure.VersionByObject)
+                    {
+                        var @object = kvp.Key;
+                        var version = kvp.Value;
+
+                        if (!@object.Strategy.ObjectVersion.Equals(version))
+                        {
+                            pullResponse.AddVersionError(@object);
+                        }
+                    }
+
+                    if (pullResponse.HasErrors)
+                    {
+                        return pullResponse;
+                    }
+                }
+
+                var proc = this.Transaction.Database.Procedures.Get(procedure.Name);
+                if (proc == null)
+                {
+                    pullResponse.ErrorMessage = $"Missing procedure {procedure.Name}";
+                    return pullResponse;
+                }
+
+                var input = new ProcedureInput(this.Transaction.Database.ObjectFactory, procedure);
+
+                proc.Execute(this, input, this);
+
+                if (this.errors?.Count > 0)
+                {
+                    foreach (var error in this.errors)
+                    {
+                        pullResponse.AddDerivationErrors(error);
+                    }
+
+                    return pullResponse;
+                }
+            }
+
             if (pullRequest?.Pulls != null)
             {
                 foreach (var p in pullRequest.Pulls)

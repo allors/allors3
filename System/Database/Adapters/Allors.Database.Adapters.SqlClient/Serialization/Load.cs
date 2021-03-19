@@ -102,7 +102,7 @@ namespace Allors.Database.Adapters.SqlClient
                 if (!string.IsNullOrWhiteSpace(xmlObjectType.Objects))
                 {
                     var objectTypeId = xmlObjectType.Id;
-                    var objectType = this.database.ObjectFactory.GetObjectTypeForType(objectTypeId);
+                    var objectType = this.database.ObjectFactory.GetObjectType(objectTypeId);
 
                     var canLoad = objectType != null && objectType.IsClass;
 

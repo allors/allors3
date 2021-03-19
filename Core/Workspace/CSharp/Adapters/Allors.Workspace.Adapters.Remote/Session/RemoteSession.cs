@@ -173,6 +173,13 @@ namespace Allors.Workspace.Adapters.Remote
             return await this.OnPull(pullResponse);
         }
 
+        public async Task<ILoadResult> Load(Procedure procedure)
+        {
+            var pullRequest = new PullRequest { Procedure = procedure.ToJson() };
+            var pullResponse = await this.Database.Pull(pullRequest);
+            return await this.OnPull(pullResponse);
+        }
+
         public async Task<ILoadResult> Load(
             string service,
             IEnumerable<KeyValuePair<string, object>> values = null,

@@ -1,4 +1,4 @@
-// <copyright file="TestData.cs" company="Allors bvba">
+// <copyright file="TestUnitSamplesController.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -6,17 +6,18 @@
 namespace Allors.Database.Domain
 {
     using System;
-    using Domain;
 
-    public static class TestData
+    public class TestUnitSamples : IProcedure
     {
-        public static UnitSample UnitSample(this ITransaction @this, int step)
+        public void Execute(IProcedureContext context, IProcedureInput input, IProcedureOutput output)
         {
-            var unitSample = new UnitSamples(@this).Extent().First;
+            var step = input.GetValue<int>("step");
+
+            var unitSample = new UnitSamples(context.Transaction).Extent().First;
             if (unitSample == null)
             {
-                unitSample = new UnitSampleBuilder(@this).Build();
-                @this.Commit();
+                unitSample = new UnitSampleBuilder(context.Transaction).Build();
+                context.Transaction.Commit();
             }
 
             switch (step)
@@ -46,8 +47,9 @@ namespace Allors.Database.Domain
                     break;
             }
 
-            @this.Commit();
-            return unitSample;
+            context.Transaction.Commit();
+
+            output.AddObject("unitSample", unitSample);
         }
     }
 }

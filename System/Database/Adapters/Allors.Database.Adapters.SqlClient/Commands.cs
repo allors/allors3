@@ -644,7 +644,7 @@ namespace Allors.Database.Adapters.SqlClient
                     var version = reader.GetInt64(2);
 
                     var objectId = long.Parse(objectIdString);
-                    var type = (IClass)this.Database.ObjectFactory.GetObjectTypeForType(classId);
+                    var type = (IClass)this.Database.ObjectFactory.GetObjectType(classId);
                     var reference = this.transaction.State.GetOrCreateReferenceForExistingObject(type, objectId, version, this.transaction);
 
                     yield return reference;

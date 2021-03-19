@@ -9,18 +9,17 @@ namespace Allors.Database.Protocol.Json
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Protocol.Json.Data;
-    using Data;
     using Meta;
     using Extent = Data.Extent;
-    using IVisitor = Allors.Protocol.Json.Data.IVisitor;
     using Node = Data.Node;
     using Pull = Data.Pull;
     using Result = Data.Result;
     using Select = Data.Select;
     using Sort = Data.Sort;
     using Step = Data.Step;
+    using Procedure = Data.Procedure;
 
-    public class FromJsonVisitor : IVisitor
+    public class FromJsonVisitor : Allors.Protocol.Json.Data.IVisitor
     {
         private readonly ITransaction transaction;
         private IMetaPopulation metaPopulation;
@@ -52,6 +51,8 @@ namespace Allors.Database.Protocol.Json
         public Data.IExtent Extent => this.extents?.Peek();
 
         public Select Select => this.selects?.Peek();
+
+        public Procedure Procedure { get; private set; }
 
         public void VisitExtent(Allors.Protocol.Json.Data.Extent visited)
         {
@@ -472,5 +473,14 @@ namespace Allors.Database.Protocol.Json
                 }
             }
         }
+
+        public void VisitProcedure(Allors.Protocol.Json.Data.Procedure procedure) =>
+            this.Procedure = new Procedure(procedure.Name)
+            {
+                Collections = procedure.NamedCollections?.ToDictionary(v => v.Key, v => this.transaction.Instantiate(v.Value)),
+                Objects = procedure.NamedObjects?.ToDictionary(v => v.Key, v => this.transaction.Instantiate(v.Value)),
+                Values = procedure.NamedValues,
+                VersionByObject = procedure.VersionByObject?.ToDictionary(v => this.transaction.Instantiate(v.Key), v => long.Parse(v.Value))
+            };
     }
 }

@@ -39,7 +39,15 @@ namespace Allors.Database.Protocol.Json
             extent.Accept(fromJsonVisitor);
             return fromJsonVisitor.Select;
         }
-        
+
+        public static Data.Procedure FromJson(this Allors.Protocol.Json.Data.Procedure procedure, ITransaction transaction)
+        {
+            var fromJsonVisitor = new FromJsonVisitor(transaction);
+            procedure.Accept(fromJsonVisitor);
+            return fromJsonVisitor.Procedure;
+        }
+
+
         public static Pull ToJson(this Data.Pull pull)
         {
             var toJsonVisitor = new ToJsonVisitor();
@@ -59,6 +67,13 @@ namespace Allors.Database.Protocol.Json
             var toJsonVisitor = new ToJsonVisitor();
             extent.Accept(toJsonVisitor);
             return toJsonVisitor.Select;
+        }
+
+        public static Allors.Protocol.Json.Data.Procedure ToJson(this Data.Procedure extent)
+        {
+            var toJsonVisitor = new ToJsonVisitor();
+            extent.Accept(toJsonVisitor);
+            return toJsonVisitor.Procedure;
         }
     }
 }

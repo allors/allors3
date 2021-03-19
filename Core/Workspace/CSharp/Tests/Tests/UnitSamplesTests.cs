@@ -7,6 +7,7 @@ namespace Tests.Workspace
 {
     using System;
     using System.Collections.Generic;
+    using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
     using Xunit;
 
@@ -22,7 +23,12 @@ namespace Tests.Workspace
             await this.Login("administrator");
             var session = this.Workspace.CreateSession();
 
-            var result = await session.Load("TestUnitSamples", new Dictionary<string, object> { { "step", 0 } });
+            var procedure = new Procedure("TestUnitSamples")
+            {
+                Values = new Dictionary<string, object> { { "step", 0 } }
+            };
+
+            var result = await session.Load(procedure);
 
             var unitSample = result.GetObject<UnitSample>("unitSample");
 
@@ -42,7 +48,12 @@ namespace Tests.Workspace
             await this.Login("administrator");
             var session = this.Workspace.CreateSession();
 
-            var result = await session.Load("TestUnitSamples", new Dictionary<string, object> { { "step", 1 } });
+            var procedure = new Procedure("TestUnitSamples")
+            {
+                Values = new Dictionary<string, object> { { "step", 0 } }
+            };
+
+            var result = await session.Load(procedure);
 
             var unitSample = result.GetObject<UnitSample>("unitSample");
 

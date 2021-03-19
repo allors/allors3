@@ -6,6 +6,7 @@
 namespace Allors.Database.Adapters.SqlClient
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Data;
     using Microsoft.Data.SqlClient;
@@ -82,17 +83,16 @@ namespace Allors.Database.Adapters.SqlClient
                 }
                 else
                 {
-                    using (var connection = new SqlConnection(this.ConnectionString))
-                    {
-                        connection.Open();
-                        this.Id = connection.Database.ToLowerInvariant();
-                    }
+                    using var connection = new SqlConnection(this.ConnectionString);
+                    connection.Open();
+                    this.Id = connection.Database.ToLowerInvariant();
                 }
             }
 
             this.SchemaName = (configuration.SchemaName ?? "allors").ToLowerInvariant();
 
             this.Derivations = Array.Empty<IDomainDerivation>();
+            this.Procedures = new DefaultProcedures(this.ObjectFactory.Assembly);
 
             this.StateLifecycle.OnInit(this);
         }
@@ -102,6 +102,8 @@ namespace Allors.Database.Adapters.SqlClient
         public event RelationNotLoadedEventHandler RelationNotLoaded;
 
         public IDomainDerivation[] Derivations { get; private set; }
+
+        public IProcedures Procedures { get; }
 
         public IDatabaseLifecycle StateLifecycle { get; }
 
@@ -317,7 +319,7 @@ namespace Allors.Database.Adapters.SqlClient
 
         internal IEnumerable<SqlDataRecord> CreateUnitRelationTable(IRoleType roleType, IEnumerable<UnitRelation> relations) => new UnitRoleDataRecords(this, roleType, relations);
 
-        internal Type GetDomainType(IObjectType objectType) => this.ObjectFactory.GetTypeForObjectType(objectType);
+        internal Type GetDomainType(IObjectType objectType) => this.ObjectFactory.GetType(objectType);
 
         internal IRoleType[] GetSortedUnitRolesByObjectType(IObjectType objectType)
         {
