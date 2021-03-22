@@ -5,6 +5,7 @@
 
 namespace Tests.Workspace
 {
+    using Allors.Workspace;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
     using Xunit;
@@ -65,12 +66,12 @@ namespace Tests.Workspace
                 {
                     if (associationType.IsOne)
                     {
-                        var association = c1.Strategy.GetComposite(associationType);
+                        var association = c1.Strategy.GetComposite<IObject>(associationType);
                         Assert.Null(association);
                     }
                     else
                     {
-                        var association = c1.Strategy.GetComposites(associationType);
+                        var association = c1.Strategy.GetComposites<IObject>(associationType);
                         Assert.Empty(association);
                     }
                 }
@@ -104,12 +105,12 @@ namespace Tests.Workspace
                 {
                     if (associationType.IsOne)
                     {
-                        var association = c1.Strategy.GetComposite(associationType);
+                        var association = c1.Strategy.GetComposite<IObject>(associationType);
                         Assert.Null(association);
                     }
                     else
                     {
-                        var association = c1.Strategy.GetComposites(associationType);
+                        var association = c1.Strategy.GetComposites<IObject>(associationType);
                         Assert.Empty(association);
                     }
                 }

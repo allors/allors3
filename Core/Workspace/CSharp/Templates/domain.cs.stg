@@ -331,7 +331,7 @@ $if(associationType.IsOne)$
 		{
             get
             {
-                return ($objectType_Name(associationType.ObjectType)$)this.Strategy.GetComposite(Meta.$associationType.Name$);
+                return this.Strategy.GetComposite<$objectType_Name(associationType.ObjectType)$>(Meta.$associationType.Name$);
             }
 		}
 $else$
@@ -339,7 +339,7 @@ $else$
 		{
             get
             {
-                return this.Strategy.GetComposites(Meta.$associationType.Name$).Cast<$objectType_Name(associationType.ObjectType)$>().ToArray();
+                return this.Strategy.GetComposites<$objectType_Name(associationType.ObjectType)$>(Meta.$associationType.Name$).ToArray();
             }
 		}
 $endif$

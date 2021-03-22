@@ -32,7 +32,7 @@ namespace Allors.Workspace
 
         IEnumerable<T> Get<T>(IEnumerable<long> identities) where T : IObject;
 
-        IEnumerable<T> GetAll<T>() where T : class, IObject;
+        IEnumerable<T> GetAll<T>() where T : IObject;
 
         IEnumerable<T> GetAll<T>(IComposite objectType) where T : IObject;
 
@@ -49,7 +49,7 @@ namespace Allors.Workspace
         Task<ILoadResult> Load(params Pull[] pulls);
 
         Task<ILoadResult> Load(Procedure procedure, params Pull[] pulls);
-        
+
         Task<ISaveResult> Save();
     }
 }

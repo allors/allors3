@@ -152,7 +152,7 @@ namespace Allors.Workspace.Meta
         ///// <returns>
         ///// The association value.
         ///// </returns>
-        public object Get(IStrategy strategy) => strategy.GetComposite(this);
+        public object Get(IStrategy strategy) => strategy.GetComposite<IObject>(this);
 
         /// <summary>
         /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.

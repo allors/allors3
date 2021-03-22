@@ -101,7 +101,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public IEnumerable<T> Get<T>(IEnumerable<long> identities) where T : IObject => identities.Select(this.Get<T>);
 
-        public IEnumerable<T> GetAll<T>() where T : class, IObject
+        public IEnumerable<T> GetAll<T>() where T : IObject
         {
             var objectType = (IComposite)this.Workspace.ObjectFactory.GetObjectType<T>();
             return this.GetAll<T>(objectType);
@@ -271,7 +271,7 @@ namespace Allors.Workspace.Adapters.Local
             return ids?.Select(this.Get<IObject>).ToArray() ?? this.Workspace.ObjectFactory.EmptyArray(roleType.ObjectType);
         }
 
-        internal IEnumerable<IObject> GetAssociation(LocalStrategy role, IAssociationType associationType)
+        internal IEnumerable<T> GetAssociation<T>(LocalStrategy role, IAssociationType associationType) where T: IObject
         {
             var roleType = associationType.RoleType;
 
@@ -284,7 +284,7 @@ namespace Allors.Workspace.Adapters.Local
 
                 if (association.IsAssociationForRole(roleType, role))
                 {
-                    yield return association.Object;
+                    yield return (T)association.Object;
                 }
             }
         }

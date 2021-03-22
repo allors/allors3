@@ -210,7 +210,7 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        public void Add(IRoleType roleType, IObject value)
+        public void Add<T>(IRoleType roleType, T value) where T : IObject
         {
             if (!this.GetComposites<IObject>(roleType).Contains(value))
             {
@@ -219,7 +219,7 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        public void Remove(IRoleType roleType, IObject value)
+        public void Remove<T>(IRoleType roleType, T value) where T : IObject
         {
             if (!this.GetComposites<IObject>(roleType).Contains(value))
             {
@@ -249,28 +249,28 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        public IObject GetComposite(IAssociationType associationType)
+        public T GetComposite<T>(IAssociationType associationType) where T : IObject
         {
             if (associationType.Origin != Origin.Session)
             {
-                return this.Session.GetAssociation(this, associationType).FirstOrDefault();
+                return this.Session.GetAssociation<T>(this, associationType).FirstOrDefault();
             }
 
             this.Session.SessionState.GetAssociation(this, associationType, out var association);
             var id = (long?)association;
-            return id != null ? this.Session.Get<IObject>(id) : null;
+            return id != null ? this.Session.Get<T>(id) : default;
         }
 
-        public IEnumerable<IObject> GetComposites(IAssociationType associationType)
+        public IEnumerable<T> GetComposites<T>(IAssociationType associationType) where T : IObject
         {
             if (associationType.Origin != Origin.Session)
             {
-                return this.Session.GetAssociation(this, associationType);
+                return this.Session.GetAssociation<T>(this, associationType);
             }
 
             this.Session.SessionState.GetAssociation(this, associationType, out var association);
             var ids = (IEnumerable<long>)association;
-            return ids?.Select(v => this.Session.Get<IObject>(v)).ToArray() ?? Array.Empty<IObject>();
+            return ids?.Select(v => this.Session.Get<T>(v)).ToArray() ?? Array.Empty<T>();
         }
 
         public bool CanRead(IRoleType roleType) => this.DatabaseState?.CanRead(roleType) ?? true;

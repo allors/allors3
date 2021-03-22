@@ -42,14 +42,14 @@ namespace Allors.Workspace
 
         void SetComposites<T>(IRoleType roleType, in IEnumerable<T> value) where T : IObject;
 
-        void Add(IRoleType roleType, IObject value);
+        void Add<T>(IRoleType roleType, T value) where T : IObject;
 
-        void Remove(IRoleType roleType, IObject value);
+        void Remove<T>(IRoleType roleType, T value) where T : IObject;
 
         void Remove(IRoleType roleType);
 
-        IObject GetComposite(IAssociationType associationType);
+        T GetComposite<T>(IAssociationType associationType) where T : IObject;
 
-        IEnumerable<IObject> GetComposites(IAssociationType associationType);
+        IEnumerable<T> GetComposites<T>(IAssociationType associationType) where T : IObject;
     }
 }

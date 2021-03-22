@@ -143,7 +143,7 @@ namespace Allors.Workspace.Adapters.Remote
                 var associationType = roleType.AssociationType;
                 if (associationType.IsOne)
                 {
-                    var previousAssociationObject = this.Session.GetAssociation((RemoteStrategy)previousRole.Strategy, associationType).FirstOrDefault();
+                    var previousAssociationObject = this.Session.GetAssociation<IObject>((RemoteStrategy)previousRole.Strategy, associationType).FirstOrDefault();
                     previousAssociationObject?.Strategy.Set(roleType, null);
                 }
             }
@@ -181,7 +181,7 @@ namespace Allors.Workspace.Adapters.Remote
                     var addedObjects = this.Session.Get<IObject>(addedRoles);
                     foreach (var addedObject in addedObjects)
                     {
-                        var previousAssociationObject = this.Session.GetAssociation((RemoteStrategy)addedObject.Strategy, associationType).FirstOrDefault();
+                        var previousAssociationObject = this.Session.GetAssociation<IObject>((RemoteStrategy)addedObject.Strategy, associationType).FirstOrDefault();
                         previousAssociationObject?.Strategy.Remove(roleType, addedObject);
                     }
                 }
