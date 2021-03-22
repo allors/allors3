@@ -18,36 +18,38 @@ namespace Allors.Workspace
 
         ISession Session { get; }
 
-        bool Exist(IRoleType roleType);
-
-        object GetRole(IRoleType roleType);
-
-        object GetUnitRole(IRoleType roleType);
-
-        T GetCompositeRole<T>(IRoleType roleType) where T : IObject;
-
-        IEnumerable<T> GetCompositesRole<T>(IRoleType roleType) where T : IObject;
-
-        void SetRole(IRoleType roleType, object value);
-
-        void SetUnitRole(IRoleType roleType, object value);
-
-        void SetCompositeRole(IRoleType roleType, object value);
-
-        void SetCompositesRole(IRoleType roleType, object value);
-
-        void AddRole(IRoleType roleType, IObject value);
-
-        void RemoveRole(IRoleType roleType, IObject value);
-
-        IObject GetCompositeAssociation(IAssociationType associationType);
-
-        IEnumerable<IObject> GetCompositesAssociation(IAssociationType associationType);
-
         bool CanRead(IRoleType roleType);
 
         bool CanWrite(IRoleType roleType);
 
         bool CanExecute(IMethodType methodType);
+
+        bool Exist(IRoleType roleType);
+
+        object Get(IRoleType roleType);
+
+        object GetUnit(IRoleType roleType);
+
+        T GetComposite<T>(IRoleType roleType) where T : IObject;
+
+        IEnumerable<T> GetComposites<T>(IRoleType roleType) where T : IObject;
+
+        void Set(IRoleType roleType, object value);
+
+        void SetUnit(IRoleType roleType, object value);
+
+        void SetComposite<T>(IRoleType roleType, T value) where T : IObject;
+
+        void SetComposites<T>(IRoleType roleType, in IEnumerable<T> value) where T : IObject;
+
+        void Add(IRoleType roleType, IObject value);
+
+        void Remove(IRoleType roleType, IObject value);
+
+        void Remove(IRoleType roleType);
+
+        IObject GetComposite(IAssociationType associationType);
+
+        IEnumerable<IObject> GetComposites(IAssociationType associationType);
     }
 }

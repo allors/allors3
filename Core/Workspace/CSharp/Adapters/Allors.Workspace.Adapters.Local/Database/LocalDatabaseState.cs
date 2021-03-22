@@ -149,7 +149,7 @@ namespace Allors.Workspace.Adapters.Local
                 if (associationType.IsOne)
                 {
                     var previousAssociationObject = this.Session.GetAssociation((LocalStrategy)previousRole.Strategy, associationType).FirstOrDefault();
-                    previousAssociationObject?.Strategy.SetRole(roleType, null);
+                    previousAssociationObject?.Strategy.Set(roleType, null);
                 }
             }
 
@@ -187,7 +187,7 @@ namespace Allors.Workspace.Adapters.Local
                     foreach (var addedObject in addedObjects)
                     {
                         var previousAssociationObject = this.Session.GetAssociation((LocalStrategy)addedObject.Strategy, associationType).FirstOrDefault();
-                        previousAssociationObject?.Strategy.RemoveRole(roleType, addedObject);
+                        previousAssociationObject?.Strategy.Remove(roleType, addedObject);
                     }
                 }
             }

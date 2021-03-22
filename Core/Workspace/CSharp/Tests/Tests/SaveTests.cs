@@ -34,12 +34,12 @@ namespace Tests.Workspace
             {
                 if (associationType.IsOne)
                 {
-                    var association = newObject.Strategy.GetCompositeAssociation(associationType);
+                    var association = newObject.Strategy.GetComposite(associationType);
                     Assert.Null(association);
                 }
                 else
                 {
-                    var association = newObject.Strategy.GetCompositesAssociation(associationType);
+                    var association = newObject.Strategy.GetComposites(associationType);
                     Assert.Empty(association);
                 }
             }

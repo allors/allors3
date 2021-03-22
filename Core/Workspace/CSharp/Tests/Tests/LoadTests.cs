@@ -65,12 +65,12 @@ namespace Tests.Workspace
                 {
                     if (associationType.IsOne)
                     {
-                        var association = c1.Strategy.GetCompositeAssociation(associationType);
+                        var association = c1.Strategy.GetComposite(associationType);
                         Assert.Null(association);
                     }
                     else
                     {
-                        var association = c1.Strategy.GetCompositesAssociation(associationType);
+                        var association = c1.Strategy.GetComposites(associationType);
                         Assert.Empty(association);
                     }
                 }
@@ -104,12 +104,12 @@ namespace Tests.Workspace
                 {
                     if (associationType.IsOne)
                     {
-                        var association = c1.Strategy.GetCompositeAssociation(associationType);
+                        var association = c1.Strategy.GetComposite(associationType);
                         Assert.Null(association);
                     }
                     else
                     {
-                        var association = c1.Strategy.GetCompositesAssociation(associationType);
+                        var association = c1.Strategy.GetComposites(associationType);
                         Assert.Empty(association);
                     }
                 }
