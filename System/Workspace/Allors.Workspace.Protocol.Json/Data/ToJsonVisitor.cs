@@ -7,10 +7,10 @@ namespace Allors.Workspace.Protocol.Json
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Allors.Protocol.Json;
     using Allors.Protocol.Json.Data;
     using Data;
     using Meta;
-    using Data;
     using Extent = Allors.Protocol.Json.Data.Extent;
     using IVisitor = Data.IVisitor;
     using Node = Allors.Protocol.Json.Data.Node;
@@ -509,10 +509,10 @@ namespace Allors.Workspace.Protocol.Json
         public void VisitProcedure(Data.Procedure procedure) => this.Procedure = new Allors.Protocol.Json.Data.Procedure
         {
             Name = procedure.Name,
-            NamedCollections = procedure.Collections?.ToDictionary(v => v.Key, v => v.Value.Select(w => w.Identity.ToString()).ToArray()),
-            NamedObjects = procedure.Objects?.ToDictionary(v => v.Key, v => v.Value.Identity.ToString()),
-            NamedValues = procedure.Values,
-            VersionByObject = procedure.Objects?.ToDictionary(v => v.Key, v => v.Value.Identity.ToString())
+            CollectionByName = procedure.CollectionByName.ToJsonForCollectionByName(),
+            ObjectByName = procedure.ObjectByName.ToJsonForObjectByName(),
+            ValueByName = procedure.ValueByName.ToJsonForValueByName(),
+            VersionByObject = procedure.VersionByObject.ToJsonForVersionByObject(),
         };
     }
 }

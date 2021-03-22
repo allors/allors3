@@ -5,7 +5,6 @@
 
 namespace Allors.Protocol.Json.Data
 {
-    using System;
     using System.Collections.Generic;
     using System.Text.Json.Serialization;
 
@@ -15,16 +14,16 @@ namespace Allors.Protocol.Json.Data
         public string Name { get; set; }
 
         [JsonPropertyName("namedCollections")]
-        public IDictionary<string, string[]> NamedCollections { get; set; }
+        public string[][] CollectionByName { get; set; }
 
         [JsonPropertyName("namedObjects")]
-        public IDictionary<string, string> NamedObjects { get; set; }
+        public string[][] ObjectByName { get; set; }
 
         [JsonPropertyName("namedValues")]
-        public IDictionary<string, object> NamedValues { get; set; }
+        public string[][] ValueByName { get; set; }
 
-        [JsonPropertyName("versionByObject")]
-        public IDictionary<string, string> VersionByObject { get; set; }
+        [JsonPropertyName("objectVersions")]
+        public string[][] VersionByObject { get; set; }
 
         public void Accept(IVisitor visitor) => visitor.VisitProcedure(this);
     }

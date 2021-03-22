@@ -48,15 +48,8 @@ namespace Allors.Workspace
 
         Task<ILoadResult> Load(params Pull[] pulls);
 
-        Task<ILoadResult> Load(Procedure procedure);
-
-        Task<ILoadResult> Load(
-            string service,
-            IEnumerable<KeyValuePair<string, object>> values = null,
-            IEnumerable<KeyValuePair<string, IObject>> objects = null,
-            IEnumerable<KeyValuePair<string, IEnumerable<IObject>>> collections = null
-            );
-
+        Task<ILoadResult> Load(Procedure procedure, params Pull[] pulls);
+        
         Task<ISaveResult> Save();
     }
 }

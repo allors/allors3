@@ -34,6 +34,15 @@ namespace Allors.Workspace.Protocol.Direct
                 Parameters = this.Visit(ws.Parameters)
             };
 
+        public Database.Data.Procedure Visit(Data.Procedure ws) =>
+            new Database.Data.Procedure(ws.Name)
+            {
+                CollectionByName = ws.CollectionByName?.ToDictionary(v => v.Key, v => this.transaction.Instantiate(v.Value?.Select(w => w.Identity))),
+                ObjectByName = ws.ObjectByName?.ToDictionary(v => v.Key, v => v.Value != null ? this.transaction.Instantiate(v.Value.Identity) : null),
+                ValueByName = ws.ValueByName,
+                VersionByObject = ws.VersionByObject?.ToDictionary(v => this.transaction.Instantiate(v.Key.Identity), v => v.Value),
+            };
+        
         private Database.Data.IExtent Visit(Data.IExtent ws) =>
             ws switch
             {

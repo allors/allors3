@@ -18,6 +18,7 @@ namespace Allors.Database.Protocol.Json
     using Sort = Data.Sort;
     using Step = Data.Step;
     using Procedure = Data.Procedure;
+    using Allors.Protocol.Json;
 
     public class FromJsonVisitor : Allors.Protocol.Json.Data.IVisitor
     {
@@ -477,10 +478,10 @@ namespace Allors.Database.Protocol.Json
         public void VisitProcedure(Allors.Protocol.Json.Data.Procedure procedure) =>
             this.Procedure = new Procedure(procedure.Name)
             {
-                Collections = procedure.NamedCollections?.ToDictionary(v => v.Key, v => this.transaction.Instantiate(v.Value)),
-                Objects = procedure.NamedObjects?.ToDictionary(v => v.Key, v => this.transaction.Instantiate(v.Value)),
-                Values = procedure.NamedValues,
-                VersionByObject = procedure.VersionByObject?.ToDictionary(v => this.transaction.Instantiate(v.Key), v => long.Parse(v.Value))
+                CollectionByName = procedure.CollectionByName?.FromJsonForCollectionByName(this.transaction),
+                ObjectByName = procedure.ObjectByName?.FromJsonForObjectByName(this.transaction),
+                ValueByName = procedure.ValueByName.FromJsonForValueByName(),
+                VersionByObject = procedure.VersionByObject?.FromJsonForVersionByObject(this.transaction)
             };
     }
 }

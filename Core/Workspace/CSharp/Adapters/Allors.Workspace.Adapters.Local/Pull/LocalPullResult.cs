@@ -9,14 +9,16 @@ namespace Allors.Workspace.Adapters.Local
     using System.Linq;
     using Database;
     using Database.Data;
+    using Database.Derivations;
     using Database.Domain;
     using Database.Security;
     using Protocol.Direct;
     using IClass = Database.Meta.IClass;
     using Node = Database.Data.Node;
+    using Procedure = Database.Data.Procedure;
     using Pull = Database.Data.Pull;
 
-    public class LocalPullResult
+    public class LocalPullResult : IProcedureOutput
     {
         public LocalPullResult(LocalWorkspace workspace)
         {
@@ -28,7 +30,7 @@ namespace Allors.Workspace.Adapters.Local
             var metaCache = databaseContext.MetaCache;
 
             var user = (User)this.Transaction.Instantiate(this.Workspace.UserId);
-            
+
             this.AccessControlLists = new WorkspaceAccessControlLists(this.Workspace.Name, user);
             this.AllowedClasses = metaCache.GetWorkspaceClasses(this.Workspace.Name);
             this.PreparedSelects = databaseContext.PreparedSelects;
@@ -36,6 +38,12 @@ namespace Allors.Workspace.Adapters.Local
 
             this.Objects = new HashSet<IObject>();
         }
+
+        public bool HasErrors => this.VersionErrors?.Count > 0 || this.DerivationErrors?.Count > 0;
+
+        public IList<IObject> VersionErrors { get; private set; }
+
+        public IList<IDerivationResult> DerivationErrors { get; private set; }
 
         public Dictionary<string, ISet<IObject>> CollectionsByName { get; } = new Dictionary<string, ISet<IObject>>();
 
@@ -72,7 +80,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public void AddCollection(string name, in ICollection<IObject> collection) => this.AddCollectionInternal(name, collection, null);
 
-        public void AddCollection(string name, IEnumerable<IObject> collection, Node[] tree)
+        public void AddCollection(string name, in IEnumerable<IObject> collection, Node[] tree)
         {
             switch (collection)
             {
@@ -175,6 +183,14 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
+        public void Execute(Allors.Workspace.Data.Procedure workspaceProcedure)
+        {
+            var visitor = new ToDatabaseVisitor(this.Transaction);
+            var procedure = visitor.Visit(workspaceProcedure);
+            var localProcedure = new LocalProcedure(this.Transaction, procedure, this.AccessControlLists, this.PreparedSelects);
+            localProcedure.Execute(this);
+        }
+
         public void Execute(IEnumerable<Allors.Workspace.Data.Pull> workspacePulls)
         {
             var visitor = new ToDatabaseVisitor(this.Transaction);
@@ -193,6 +209,18 @@ namespace Allors.Workspace.Adapters.Local
                     pullExtent.Execute(this);
                 }
             }
+        }
+
+        public void AddVersionError(IObject @object)
+        {
+            this.VersionErrors ??= new List<IObject>();
+            this.VersionErrors.Add(@object);
+        }
+
+        public void AddDerivationErrors(IDerivationResult error)
+        {
+            this.DerivationErrors = new List<IDerivationResult>();
+            this.DerivationErrors.Add(error);
         }
     }
 }

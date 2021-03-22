@@ -5,8 +5,10 @@
 
 namespace Tests.Workspace
 {
+    using System;
     using System.Collections.Generic;
     using System.Net.Http;
+    using Allors.Workspace.Data;
     using Xunit;
 
     public abstract class ObjectTests : Test
@@ -25,11 +27,14 @@ namespace Tests.Workspace
             var exceptionThrown = false;
             try
             {
-                await session.Load(
-                    "ThisIsWrong",
-                    new Dictionary<string, object> { { "step", 0 } });
+                var procedure = new Procedure("ThisIsWrong")
+                {
+                    ValueByName = new Dictionary<string, object> { { "step", 0 } }
+                };
+
+                await session.Load(procedure);
             }
-            catch (HttpRequestException)
+            catch (Exception)
             {
                 exceptionThrown = true;
             }

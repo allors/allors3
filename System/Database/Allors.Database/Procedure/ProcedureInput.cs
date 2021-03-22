@@ -1,8 +1,7 @@
-namespace Allors.Database.Protocol.Json
+namespace Allors.Database
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Runtime.CompilerServices;
     using Data;
 
     public class ProcedureInput : IProcedureInput
@@ -17,11 +16,11 @@ namespace Allors.Database.Protocol.Json
         }
 
 
-        public IDictionary<string, IObject[]> Collections => this.procedure.Collections;
+        public IDictionary<string, IObject[]> Collections => this.procedure.CollectionByName;
 
-        public IDictionary<string, IObject> Objects => this.procedure.Objects;
+        public IDictionary<string, IObject> Objects => this.procedure.ObjectByName;
 
-        public IDictionary<string, object> Values => this.procedure.Values;
+        public IDictionary<string, object> Values => this.procedure.ValueByName;
 
         public T[] GetCollection<T>()
         {

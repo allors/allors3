@@ -7,6 +7,7 @@ namespace Allors.Database.Protocol.Json
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Allors.Protocol.Json;
     using Meta;
     using Allors.Protocol.Json.Data;
     using Data;
@@ -509,10 +510,10 @@ namespace Allors.Database.Protocol.Json
             this.Procedure = new Procedure
             {
                 Name = procedure.Name,
-                NamedCollections = procedure.Collections.ToDictionary(v => v.Key, v => v.Value?.Select(w => w.Id.ToString()).ToArray()),
-                NamedObjects = procedure.Objects.ToDictionary(v => v.Key, v => v.Value?.Id.ToString()),
-                NamedValues = procedure.Values,
-                VersionByObject = procedure.VersionByObject.ToDictionary(v => v.Key.Id.ToString(), v => v.Value.ToString())
+                CollectionByName = procedure.CollectionByName.ToJsonForCollectionByName(),
+                ObjectByName = procedure.ObjectByName.ToJsonForObjectByName(),
+                ValueByName = procedure.ValueByName.ToJsonForValueByName(),
+                VersionByObject = procedure.VersionByObject.ToJsonForVersionByObject(),
             };
     }
 }

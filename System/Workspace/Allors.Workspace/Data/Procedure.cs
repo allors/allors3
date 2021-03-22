@@ -5,10 +5,8 @@
 
 namespace Allors.Workspace.Data
 {
-    using System;
     using System.Collections.Generic;
     using Workspace;
-    using Meta;
 
     public class Procedure : IVisitable
     {
@@ -16,11 +14,11 @@ namespace Allors.Workspace.Data
 
         public string Name { get; }
 
-        public IDictionary<string, IObject[]> Collections { get; set; }
+        public IDictionary<string, IObject[]> CollectionByName { get; set; }
 
-        public IDictionary<string, IObject> Objects { get; set; }
+        public IDictionary<string, IObject> ObjectByName { get; set; }
 
-        public IDictionary<string, object> Values { get; set; }
+        public IDictionary<string, object> ValueByName { get; set; }
 
         public IDictionary<IObject, long> VersionByObject { get; set; }
 

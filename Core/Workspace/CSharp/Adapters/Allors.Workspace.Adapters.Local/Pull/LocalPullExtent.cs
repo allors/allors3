@@ -32,7 +32,6 @@ namespace Allors.Workspace.Adapters.Local
             this.preparedSelects = preparedSelects;
         }
 
-
         public void Execute(LocalPullResult response)
         {
             if (this.pull.Extent == null && !this.pull.ExtentRef.HasValue)

@@ -148,22 +148,21 @@ namespace Allors.Workspace.Adapters.Local
         public Task<ILoadResult> Load(params Data.Pull[] pulls)
         {
             var pullResult = new LocalPullResult(this.Workspace);
+
             pullResult.Execute(pulls);
 
             return this.OnPull(pullResult);
         }
 
-        public Task<ILoadResult> Load(Procedure procedure)
+        public Task<ILoadResult> Load(Procedure procedure, params Data.Pull[] pulls)
         {
             var pullResult = new LocalPullResult(this.Workspace);
 
-            // TODO:
-            //pullResult.Execute(procedure);
+            pullResult.Execute(procedure);
+            pullResult.Execute(pulls);
 
             return this.OnPull(pullResult);
         }
-
-        public Task<ILoadResult> Load(string service, IEnumerable<KeyValuePair<string, object>> values = null, IEnumerable<KeyValuePair<string, IObject>> objects = null, IEnumerable<KeyValuePair<string, IEnumerable<IObject>>> collections = null) => throw new NotImplementedException();
 
         public void Reset()
         {
