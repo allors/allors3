@@ -29,6 +29,20 @@ namespace Allors.Database.Protocol.Json
             return fromJsonVisitor.Pull;
         }
 
+        public static Data.IExtent FromJson(this Allors.Protocol.Json.Data.Extent extent, ITransaction transaction)
+        {
+            var fromJsonVisitor = new FromJsonVisitor(transaction);
+            extent.Accept(fromJsonVisitor);
+            return fromJsonVisitor.Extent;
+        }
+
+        public static Select FromJson(this Allors.Protocol.Json.Data.Select @select, ITransaction transaction)
+        {
+            var fromJsonVisitor = new FromJsonVisitor(transaction);
+            @select.Accept(fromJsonVisitor);
+            return fromJsonVisitor.Select;
+        }
+
         public static IDictionary<string, IObject[]> FromJsonForCollectionByName(this string[][] collectionByName, ITransaction transaction) =>
             collectionByName?.Select(namedCollection =>
             {
@@ -89,6 +103,20 @@ namespace Allors.Database.Protocol.Json
             var toJsonVisitor = new ToJsonVisitor();
             procedure.Accept(toJsonVisitor);
             return toJsonVisitor.Procedure;
+        }
+
+        public static Allors.Protocol.Json.Data.Extent ToJson(this Data.IExtent extent)
+        {
+            var toJsonVisitor = new ToJsonVisitor();
+            extent.Accept(toJsonVisitor);
+            return toJsonVisitor.Extent;
+        }
+
+        public static Allors.Protocol.Json.Data.Select ToJson(this Select extent)
+        {
+            var toJsonVisitor = new ToJsonVisitor();
+            extent.Accept(toJsonVisitor);
+            return toJsonVisitor.Select;
         }
 
         public static string[][] ToJsonForCollectionByName(this IDictionary<string, IObject[]> collectionByName) =>
