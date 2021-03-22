@@ -319,7 +319,7 @@ namespace Allors.Database.Protocol.Json
                             }
                             else if (visited.Value != null)
                             {
-                                var value = UnitConvert.Parse(((IRoleType)propertyType).ObjectType.Id, visited.Value);
+                                var value = UnitConvert.FromString(((IRoleType)propertyType).ObjectType.Id, visited.Value);
                                 equals.Value = value;
                             }
 
@@ -331,7 +331,7 @@ namespace Allors.Database.Protocol.Json
                             {
                                 Dependencies = visited.Dependencies,
                                 Parameter = visited.Parameter,
-                                Values = visited.Values?.Select(v => UnitConvert.Parse(roleType.ObjectType.Id, v)).ToArray(),
+                                Values = visited.Values?.Select(v => UnitConvert.FromString(roleType.ObjectType.Id, v)).ToArray(),
                             };
 
                             this.predicates.Push(between);
@@ -344,7 +344,7 @@ namespace Allors.Database.Protocol.Json
                             {
                                 Dependencies = visited.Dependencies,
                                 Parameter = visited.Parameter,
-                                Value = UnitConvert.Parse(roleType.ObjectType.Id, visited.Value),
+                                Value = UnitConvert.FromString(roleType.ObjectType.Id, visited.Value),
                             };
 
                             this.predicates.Push(greaterThan);
@@ -357,7 +357,7 @@ namespace Allors.Database.Protocol.Json
                             {
                                 Dependencies = visited.Dependencies,
                                 Parameter = visited.Parameter,
-                                Value = UnitConvert.Parse(roleType.ObjectType.Id, visited.Value),
+                                Value = UnitConvert.FromString(roleType.ObjectType.Id, visited.Value),
                             };
 
                             this.predicates.Push(lessThan);
@@ -370,7 +370,7 @@ namespace Allors.Database.Protocol.Json
                             {
                                 Dependencies = visited.Dependencies,
                                 Parameter = visited.Parameter,
-                                Value = UnitConvert.Parse(roleType.ObjectType.Id, visited.Value)?.ToString(),
+                                Value = UnitConvert.FromString(roleType.ObjectType.Id, visited.Value)?.ToString(),
                             };
 
                             this.predicates.Push(like);

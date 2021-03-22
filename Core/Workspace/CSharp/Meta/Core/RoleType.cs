@@ -132,7 +132,7 @@ namespace Allors.Workspace.Meta
         ///// <param name="value">
         ///// The role value.
         ///// </param>
-        public void Set(IStrategy strategy, object value) => strategy.Set(this.RelationType.RoleType, value);
+        public void Set(IStrategy strategy, object value) => strategy.SetRole(this.RelationType.RoleType, value);
 
         public override bool Equals(object other) => this.RelationType.Id.Equals((other as RoleType)?.RelationType.Id);
 

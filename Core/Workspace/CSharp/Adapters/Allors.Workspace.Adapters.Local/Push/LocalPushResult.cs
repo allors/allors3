@@ -213,7 +213,7 @@ namespace Allors.Workspace.Adapters.Local
             if (newStrategies?.Length > 0)
             {
                 this.ObjectByNewId = newStrategies.ToDictionary(
-                    x => x.Identity,
+                    x => x.Id,
                     x =>
                     {
                         var cls = (IClass)metaPopulation.Find(x.Class.Id);
@@ -231,7 +231,7 @@ namespace Allors.Workspace.Adapters.Local
             if (changedStrategies?.Length > 0)
             {
                 // bulk load all objects
-                var objectIds = changedStrategies.Select(v => v.Identity).ToArray();
+                var objectIds = changedStrategies.Select(v => v.Id).ToArray();
                 var objects = this.Transaction.Instantiate(objectIds);
 
                 if (objectIds.Length != objects.Length)
@@ -248,7 +248,7 @@ namespace Allors.Workspace.Adapters.Local
                 {
                     foreach (var pushRequestObject in changedStrategies)
                     {
-                        var obj = this.Transaction.Instantiate(pushRequestObject.Identity);
+                        var obj = this.Transaction.Instantiate(pushRequestObject.Id);
 
                         if (!pushRequestObject.DatabaseVersion.Equals(obj.Strategy.ObjectVersion))
                         {
@@ -325,9 +325,9 @@ namespace Allors.Workspace.Adapters.Local
 
         private IObject GetRole(LocalStrategy localStrategy)
         {
-            if (this.ObjectByNewId == null || !this.ObjectByNewId.TryGetValue(localStrategy.Identity, out var role))
+            if (this.ObjectByNewId == null || !this.ObjectByNewId.TryGetValue(localStrategy.Id, out var role))
             {
-                role = this.Transaction.Instantiate(localStrategy.Identity);
+                role = this.Transaction.Instantiate(localStrategy.Id);
             }
 
             return role;
@@ -337,21 +337,21 @@ namespace Allors.Workspace.Adapters.Local
         {
             if (this.ObjectByNewId == null)
             {
-                return this.Transaction.Instantiate(localStrategies.Select(v => v.Identity));
+                return this.Transaction.Instantiate(localStrategies.Select(v => v.Id));
             }
 
             var roles = new List<IObject>();
             List<long> existingRoleIds = null;
             foreach (var localStrategy in localStrategies)
             {
-                if (this.ObjectByNewId.TryGetValue(localStrategy.Identity, out var role))
+                if (this.ObjectByNewId.TryGetValue(localStrategy.Id, out var role))
                 {
                     roles.Add(role);
                 }
                 else
                 {
                     existingRoleIds ??= new List<long>();
-                    existingRoleIds.Add(localStrategy.Identity);
+                    existingRoleIds.Add(localStrategy.Id);
                 }
             }
 

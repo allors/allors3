@@ -12,7 +12,7 @@ namespace Allors.Workspace
     {
         IClass Class { get; }
 
-        long Identity { get; }
+        long Id { get; }
 
         IObject Object { get; }
 
@@ -28,15 +28,21 @@ namespace Allors.Workspace
 
         IEnumerable<T> GetCompositesRole<T>(IRoleType roleType) where T : IObject;
 
-        void Set(IRoleType roleType, object value);
+        void SetRole(IRoleType roleType, object value);
 
-        void Add(IRoleType roleType, IObject value);
+        void SetUnitRole(IRoleType roleType, object value);
 
-        void Remove(IRoleType roleType, IObject value);
+        void SetCompositeRole(IRoleType roleType, object value);
 
-        IObject GetAssociation(IAssociationType associationType);
+        void SetCompositesRole(IRoleType roleType, object value);
 
-        IEnumerable<IObject> GetAssociations(IAssociationType associationType);
+        void AddRole(IRoleType roleType, IObject value);
+
+        void RemoveRole(IRoleType roleType, IObject value);
+
+        IObject GetCompositeAssociation(IAssociationType associationType);
+
+        IEnumerable<IObject> GetCompositesAssociation(IAssociationType associationType);
 
         bool CanRead(IRoleType roleType);
 

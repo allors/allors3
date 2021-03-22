@@ -95,7 +95,7 @@ namespace Allors.Workspace.Protocol.Json
                 Dependencies = visited.Dependencies,
                 AssociationType = (visited.PropertyType as IAssociationType)?.RelationType.Id,
                 RoleType = (visited.PropertyType as IRoleType)?.RelationType.Id,
-                Values = visited.Objects?.Select(v => v.Identity.ToString()).ToArray(),
+                Values = visited.Objects?.Select(v => v.Id.ToString()).ToArray(),
                 Parameter = visited.Parameter,
             };
 
@@ -116,7 +116,7 @@ namespace Allors.Workspace.Protocol.Json
                 Dependencies = visited.Dependencies,
                 AssociationType = (visited.PropertyType as IAssociationType)?.RelationType.Id,
                 RoleType = (visited.PropertyType as IRoleType)?.RelationType.Id,
-                Object = visited.Object?.Identity.ToString(),
+                Object = visited.Object?.Id.ToString(),
                 Parameter = visited.Parameter,
             };
 
@@ -131,7 +131,7 @@ namespace Allors.Workspace.Protocol.Json
                 Dependencies = visited.Dependencies,
                 AssociationType = (visited.PropertyType as IAssociationType)?.RelationType.Id,
                 RoleType = (visited.PropertyType as IRoleType)?.RelationType.Id,
-                Object = visited.Object?.Identity.ToString(),
+                Object = visited.Object?.Id.ToString(),
                 Value = UnitConvert.ToString(visited.Value),
                 Parameter = visited.Parameter,
             };
@@ -388,7 +388,7 @@ namespace Allors.Workspace.Protocol.Json
             {
                 ExtentRef = visited.ExtentRef,
                 ObjectType = visited.ObjectType?.Id,
-                Object = visited.ObjectId ?? visited.Object?.Identity.ToString(),
+                Object = visited.ObjectId ?? visited.Object?.Id.ToString(),
             };
 
             if (visited.Extent != null)

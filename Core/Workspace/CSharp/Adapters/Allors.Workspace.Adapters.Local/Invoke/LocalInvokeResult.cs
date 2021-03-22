@@ -135,10 +135,10 @@ namespace Allors.Workspace.Adapters.Local
 
         private bool Invoke(Method invocation)
         {
-            var obj = this.Transaction.Instantiate(invocation.Object.Identity);
+            var obj = this.Transaction.Instantiate(invocation.Object.Id);
             if (obj == null)
             {
-                this.MissingIds.Add(invocation.Object.Identity);
+                this.MissingIds.Add(invocation.Object.Id);
                 return true;
             }
 

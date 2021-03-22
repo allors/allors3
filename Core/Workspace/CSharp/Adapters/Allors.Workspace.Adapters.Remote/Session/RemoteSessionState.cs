@@ -107,7 +107,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.RoleByAssociation(roleType).TryGetValue(association, out role);
         }
 
-        public void SetRole(RemoteStrategy association, IRoleType roleType, object role)
+        public void SetUnitRole(RemoteStrategy association, IRoleType roleType, object role)
         {
             if (role == null)
             {
@@ -115,68 +115,76 @@ namespace Allors.Workspace.Adapters.Remote
                 return;
             }
 
-            if (roleType.ObjectType.IsUnit)
+            var unitRole = roleType.NormalizeUnit(role);
+            this.ChangedRoleByAssociation(roleType)[association] = unitRole;
+        }
+
+        public void SetCompositeRole(RemoteStrategy association, IRoleType roleType, object role)
+        {
+            if (role == null)
             {
-                // Role
-                var unitRole = roleType.NormalizeUnit(role);
-                this.ChangedRoleByAssociation(roleType)[association] = unitRole;
+                this.RemoveRole(association, roleType);
+                return;
+            }
+
+            var associationType = roleType.AssociationType;
+            this.GetRole(association, roleType, out var previousRole);
+            var roleIdentity = (RemoteStrategy)role;
+            this.GetAssociation(roleIdentity, associationType, out var previousAssociation);
+
+            // Role
+            var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
+            changedRoleByAssociation[association] = roleIdentity;
+
+            // Association
+            var changedAssociationByRole = this.ChangedAssociationByRole(associationType);
+            if (associationType.IsOne)
+            {
+                // One to One
+                var previousAssociationObject = (RemoteStrategy)previousAssociation;
+                if (previousAssociationObject != null)
+                {
+                    changedRoleByAssociation[previousAssociationObject] = null;
+                }
+
+                if (previousRole != null)
+                {
+                    var previousRoleObject = (RemoteStrategy)previousRole;
+                    changedAssociationByRole[previousRoleObject] = null;
+                }
+
+                changedAssociationByRole[roleIdentity] = association;
             }
             else
             {
-                var associationType = roleType.AssociationType;
-                this.GetRole(association, roleType, out var previousRole);
-                if (roleType.IsOne)
-                {
-                    var roleIdentity = (RemoteStrategy)role;
-                    this.GetAssociation(roleIdentity, associationType, out var previousAssociation);
+                changedAssociationByRole[roleIdentity] = NullableSortableArraySet.Remove(previousAssociation, roleIdentity);
+            }
+        }
 
-                    // Role
-                    var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
-                    changedRoleByAssociation[association] = roleIdentity;
+        public void SetCompositesRole(RemoteStrategy association, IRoleType roleType, object role)
+        {
+            if (role == null)
+            {
+                this.RemoveRole(association, roleType);
+                return;
+            }
 
-                    // Association
-                    var changedAssociationByRole = this.ChangedAssociationByRole(associationType);
-                    if (associationType.IsOne)
-                    {
-                        // One to One
-                        var previousAssociationObject = (RemoteStrategy)previousAssociation;
-                        if (previousAssociationObject != null)
-                        {
-                            changedRoleByAssociation[previousAssociationObject] = null;
-                        }
+            this.GetRole(association, roleType, out var previousRole);
+            var compositesRole = (RemoteStrategy[])role;
+            var previousRoles = (RemoteStrategy[])previousRole ?? Array.Empty<RemoteStrategy>();
 
-                        if (previousRole != null)
-                        {
-                            var previousRoleObject = (RemoteStrategy)previousRole;
-                            changedAssociationByRole[previousRoleObject] = null;
-                        }
+            // Use Diff (Add/Remove)
+            var addedRoles = compositesRole.Except(previousRoles);
+            var removedRoles = previousRoles.Except(compositesRole);
 
-                        changedAssociationByRole[roleIdentity] = association;
-                    }
-                    else
-                    {
-                        changedAssociationByRole[roleIdentity] = NullableSortableArraySet.Remove(previousAssociation, roleIdentity);
-                    }
-                }
-                else
-                {
-                    var compositesRole = (RemoteStrategy[])role;
-                    var previousRoles = (RemoteStrategy[])previousRole ?? Array.Empty<RemoteStrategy>();
+            foreach (var addedRole in addedRoles)
+            {
+                this.AddRole(association, roleType, addedRole);
+            }
 
-                    // Use Diff (Add/Remove)
-                    var addedRoles = compositesRole.Except(previousRoles);
-                    var removedRoles = previousRoles.Except(compositesRole);
-
-                    foreach (var addedRole in addedRoles)
-                    {
-                        this.AddRole(association, roleType, addedRole);
-                    }
-
-                    foreach (var removeRole in removedRoles)
-                    {
-                        this.RemoveRole(association, roleType, removeRole);
-                    }
-                }
+            foreach (var removeRole in removedRoles)
+            {
+                this.RemoveRole(association, roleType, removeRole);
             }
         }
 

@@ -87,9 +87,9 @@ namespace Allors.Workspace.Adapters.Local
             return (T)strategy.Object;
         }
 
-        public T Get<T>(IObject @object) where T : IObject => this.Get<T>(@object.Identity);
+        public T Get<T>(IObject @object) where T : IObject => this.Get<T>(@object.Id);
 
-        public T Get<T>(T @object) where T : IObject => this.Get<T>(@object.Identity);
+        public T Get<T>(T @object) where T : IObject => this.Get<T>(@object.Id);
 
         public T Get<T>(long? identity) where T : IObject => identity.HasValue ? this.Get<T>((long)identity) : default;
 
@@ -342,7 +342,7 @@ namespace Allors.Workspace.Adapters.Local
 
         private void AddStrategy(LocalStrategy strategy)
         {
-            this.strategyByWorkspaceId.Add(strategy.Identity, strategy);
+            this.strategyByWorkspaceId.Add(strategy.Id, strategy);
 
             var @class = strategy.Class;
             if (!this.strategiesByClass.TryGetValue(@class, out var strategies))
@@ -359,7 +359,7 @@ namespace Allors.Workspace.Adapters.Local
 
         private void RemoveStrategy(LocalStrategy strategy)
         {
-            this.strategyByWorkspaceId.Remove(strategy.Identity);
+            this.strategyByWorkspaceId.Remove(strategy.Id);
 
             var @class = strategy.Class;
             if (this.strategiesByClass.TryGetValue(@class, out var strategies))

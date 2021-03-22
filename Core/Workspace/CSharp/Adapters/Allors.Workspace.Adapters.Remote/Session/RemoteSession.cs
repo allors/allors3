@@ -65,7 +65,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 Invocations = methods.Select(v => new Invocation
                 {
-                    Id = v.Object.Identity.ToString(),
+                    Id = v.Object.Id.ToString(),
                     Version = ((RemoteStrategy)v.Object.Strategy).DatabaseVersion.ToString(),
                     Method = v.MethodType.IdAsString,
                 }).ToArray(),
@@ -108,9 +108,9 @@ namespace Allors.Workspace.Adapters.Remote
             return (T)strategy.Object;
         }
 
-        public T Get<T>(IObject @object) where T : IObject => this.Get<T>(@object.Identity);
+        public T Get<T>(IObject @object) where T : IObject => this.Get<T>(@object.Id);
 
-        public T Get<T>(T @object) where T : IObject => this.Get<T>(@object.Identity);
+        public T Get<T>(T @object) where T : IObject => this.Get<T>(@object.Id);
 
         public T Get<T>(long? identity) where T : IObject => identity.HasValue ? this.Get<T>((long)identity) : default;
 
@@ -437,7 +437,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         private void AddStrategy(RemoteStrategy strategy)
         {
-            this.strategyByWorkspaceId.Add(strategy.Identity, strategy);
+            this.strategyByWorkspaceId.Add(strategy.Id, strategy);
 
             var @class = strategy.Class;
             if (!this.strategiesByClass.TryGetValue(@class, out var strategies))
@@ -454,7 +454,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         private void RemoveStrategy(RemoteStrategy strategy)
         {
-            this.strategyByWorkspaceId.Remove(strategy.Identity);
+            this.strategyByWorkspaceId.Remove(strategy.Id);
 
             var @class = strategy.Class;
             if (this.strategiesByClass.TryGetValue(@class, out var strategies))

@@ -68,7 +68,7 @@ namespace Allors.Workspace.Adapters.Local
                         {
                             if (roleType.IsOne)
                             {
-                                yield return new KeyValuePair<IRelationType, object>(relationType, ((LocalStrategy)role).Identity);
+                                yield return new KeyValuePair<IRelationType, object>(relationType, ((LocalStrategy)role).Id);
 
                             }
                             else
@@ -76,7 +76,7 @@ namespace Allors.Workspace.Adapters.Local
                                 var roles = ((LocalStrategy[])role);
                                 if (roles.Length > 0)
                                 {
-                                    yield return new KeyValuePair<IRelationType, object>(relationType, roles.Select(v => v.Identity).ToArray());
+                                    yield return new KeyValuePair<IRelationType, object>(relationType, roles.Select(v => v.Id).ToArray());
                                 }
                             }
                         }

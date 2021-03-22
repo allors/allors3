@@ -71,7 +71,7 @@ namespace Allors.Workspace.Adapters.Remote
                             var objectType = roleType.ObjectType;
                             if (objectType.IsUnit)
                             {
-                                return UnitConvert.Parse(roleType.ObjectType.Id, value);
+                                return UnitConvert.FromString(roleType.ObjectType.Id, value);
                             }
                             else
                             {

@@ -315,8 +315,8 @@ namespace Allors.Workspace.Adapters.Remote
             var pullArgs = new PullArgs
             {
                 NamedValues = values?.ToDictionary(v => v.Key, v => v.Value),
-                NamedObjects = objects?.ToDictionary(v => v.Key, v => v.Value?.Identity.ToString()),
-                NamedCollections = collections?.ToDictionary(v => v.Key, v => v.Value.Select(v=>v.Identity.ToString()).ToArray()),
+                NamedObjects = objects?.ToDictionary(v => v.Key, v => v.Value?.Id.ToString()),
+                NamedCollections = collections?.ToDictionary(v => v.Key, v => v.Value.Select(v=>v.Id.ToString()).ToArray()),
             };
 
             var uri = new Uri(name + "/pull", UriKind.Relative);

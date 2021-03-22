@@ -36,7 +36,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal long Version => this.databaseObject?.Version ?? 0;
 
-        private long Identity => this.strategy.Identity;
+        private long Identity => this.strategy.Id;
 
         private IClass Class => this.strategy.Class;
 
@@ -114,23 +114,83 @@ namespace Allors.Workspace.Adapters.Remote
             return identities == null ? Array.Empty<IObject>() : identities.Select(v => this.Session.Get<IObject>(v)).ToArray();
         }
 
-        internal void SetRole(IRoleType roleType, object value)
+        internal void SetUnitRole(IRoleType roleType, object role)
         {
-            if (roleType.ObjectType.IsUnit)
+            var previousRole = this.GetRole(roleType);
+            if (Equals(previousRole, role))
             {
-                this.SetUnitRole(roleType, value);
+                return;
             }
-            else
+
+            this.changedRoleByRelationType ??= new Dictionary<IRelationType, object>();
+            this.changedRoleByRelationType[roleType.RelationType] = role;
+
+            this.Session.OnChange(this);
+        }
+
+        internal void SetCompositeRole(IRoleType roleType, object value)
+        {
+            var role = (IObject)value;
+            var previousRole = (IObject)this.GetRole(roleType);
+            if (Equals(previousRole, role))
             {
-                if (roleType.IsOne)
+                return;
+            }
+
+            // OneToOne
+            if (previousRole != null)
+            {
+                var associationType = roleType.AssociationType;
+                if (associationType.IsOne)
                 {
-                    this.SetCompositeRole(roleType, value);
-                }
-                else
-                {
-                    this.SetCompositesRole(roleType, value);
+                    var previousAssociationObject = this.Session.GetAssociation((RemoteStrategy)previousRole.Strategy, associationType).FirstOrDefault();
+                    previousAssociationObject?.Strategy.SetRole(roleType, null);
                 }
             }
+
+            this.changedRoleByRelationType ??= new Dictionary<IRelationType, object>();
+            this.changedRoleByRelationType[roleType.RelationType] = role?.Strategy;
+
+            this.Session.OnChange(this);
+        }
+
+        internal void SetCompositesRole(IRoleType roleType, object value)
+        {
+            var previousRole = ((IObject[])this.GetRole(roleType));
+
+            var role = Array.Empty<IObject>();
+            if (value != null)
+            {
+                role = ((IEnumerable<IObject>)value).ToArray();
+            }
+
+            var addedRoles = role.Except(previousRole).ToArray();
+            var removedRoles = previousRole.Except(role).ToArray();
+
+            if (addedRoles.Length == 0 && removedRoles.Length == 0)
+            {
+                return;
+            }
+
+            // OneToMany
+            if (previousRole.Length > 0)
+            {
+                var associationType = roleType.AssociationType;
+                if (associationType.IsOne)
+                {
+                    var addedObjects = this.Session.Get<IObject>(addedRoles);
+                    foreach (var addedObject in addedObjects)
+                    {
+                        var previousAssociationObject = this.Session.GetAssociation((RemoteStrategy)addedObject.Strategy, associationType).FirstOrDefault();
+                        previousAssociationObject?.Strategy.RemoveRole(roleType, addedObject);
+                    }
+                }
+            }
+
+            this.changedRoleByRelationType ??= new Dictionary<IRelationType, object>();
+            this.changedRoleByRelationType[roleType.RelationType] = role.Select(v => (RemoteStrategy)v.Strategy).ToArray();
+
+            this.Session.OnChange(this);
         }
 
         internal void Reset()
@@ -217,8 +277,6 @@ namespace Allors.Workspace.Adapters.Remote
             this.previousChangedRoleByRelationType = this.changedRoleByRelationType;
         }
 
-
-
         internal void PushResponse(RemoteDatabaseObject newDatabaseObject) => this.databaseObject = newDatabaseObject;
 
         internal PushRequestNewObject SaveNew() => new PushRequestNewObject
@@ -256,11 +314,11 @@ namespace Allors.Workspace.Adapters.Remote
                     {
                         if (relationType.RoleType.IsOne)
                         {
-                            pushRequestRole.SetRole = ((RemoteStrategy)roleValue)?.Identity.ToString();
+                            pushRequestRole.SetRole = ((RemoteStrategy)roleValue)?.Id.ToString();
                         }
                         else
                         {
-                            var roleIds = ((RemoteStrategy[])roleValue).Select(v => v.Identity.ToString()).ToArray();
+                            var roleIds = ((RemoteStrategy[])roleValue).Select(v => v.Id.ToString()).ToArray();
                             if (!this.ExistDatabaseObjects)
                             {
                                 pushRequestRole.AddRole = roleIds;
@@ -293,90 +351,11 @@ namespace Allors.Workspace.Adapters.Remote
             return null;
         }
 
-        private void SetUnitRole(IRoleType roleType, object role)
-        {
-            var previousRole = this.GetRole(roleType);
-            if (Equals(previousRole, role))
-            {
-                return;
-            }
-
-            this.changedRoleByRelationType ??= new Dictionary<IRelationType, object>();
-            this.changedRoleByRelationType[roleType.RelationType] = role ;
-
-            this.Session.OnChange(this);
-        }
-
-        private void SetCompositeRole(IRoleType roleType, object value)
-        {
-            var role = (IObject)value;
-            var previousRole = (IObject)this.GetRole(roleType);
-            if (Equals(previousRole, role))
-            {
-                return;
-            }
-
-            // OneToOne
-            if (previousRole != null)
-            {
-                var associationType = roleType.AssociationType;
-                if (associationType.IsOne)
-                {
-                    var previousAssociationObject = this.Session.GetAssociation((RemoteStrategy)previousRole.Strategy, associationType).FirstOrDefault();
-                    previousAssociationObject?.Strategy.Set(roleType, null);
-                }
-            }
-
-            this.changedRoleByRelationType ??= new Dictionary<IRelationType, object>();
-            this.changedRoleByRelationType[roleType.RelationType] = role?.Strategy;
-
-            this.Session.OnChange(this);
-        }
-
-        private void SetCompositesRole(IRoleType roleType, object value)
-        {
-            var previousRole = ((IObject[])this.GetRole(roleType));
-
-            var role = Array.Empty<IObject>();
-            if (value != null)
-            {
-                role = ((IEnumerable<IObject>)value).ToArray();
-            }
-
-            var addedRoles = role.Except(previousRole).ToArray();
-            var removedRoles = previousRole.Except(role).ToArray();
-
-            if (addedRoles.Length == 0 && removedRoles.Length == 0)
-            {
-                return;
-            }
-
-            // OneToMany
-            if (previousRole.Length > 0)
-            {
-                var associationType = roleType.AssociationType;
-                if (associationType.IsOne)
-                {
-                    var addedObjects = this.Session.Get<IObject>(addedRoles);
-                    foreach (var addedObject in addedObjects)
-                    {
-                        var previousAssociationObject = this.Session.GetAssociation((RemoteStrategy)addedObject.Strategy, associationType).FirstOrDefault();
-                        previousAssociationObject?.Strategy.Remove(roleType, addedObject);
-                    }
-                }
-            }
-
-            this.changedRoleByRelationType ??= new Dictionary<IRelationType, object>();
-            this.changedRoleByRelationType[roleType.RelationType] = role.Select(v => (RemoteStrategy)v.Strategy).ToArray();
-
-            this.Session.OnChange(this);
-        }
-
         public bool IsAssociationForRole(IRoleType roleType, RemoteStrategy forRole)
         {
             if (roleType.ObjectType.IsUnit)
             {
-               return false;
+                return false;
             }
 
             if (roleType.IsOne)
@@ -388,7 +367,7 @@ namespace Allors.Workspace.Adapters.Remote
                 }
 
                 var identity = (long?)this.databaseObject?.GetRole(roleType);
-                return identity?.Equals(forRole.Identity) == true;
+                return identity?.Equals(forRole.Id) == true;
             }
 
             if (this.changedRoleByRelationType != null &&
@@ -398,7 +377,7 @@ namespace Allors.Workspace.Adapters.Remote
             }
 
             var identities = (long[])this.databaseObject?.GetRole(roleType);
-            return identities?.Contains(forRole.Identity) == true;
+            return identities?.Contains(forRole.Id) == true;
         }
     }
 }

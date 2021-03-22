@@ -6,7 +6,6 @@
 namespace Allors.Workspace.Adapters.Local
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
@@ -22,7 +21,7 @@ namespace Allors.Workspace.Adapters.Local
         internal LocalStrategy(LocalSession session, IClass @class, long identity)
         {
             this.Session = session;
-            this.Identity = identity;
+            this.Id = identity;
             this.Class = @class;
 
             if (!this.Class.HasSessionOrigin)
@@ -39,7 +38,7 @@ namespace Allors.Workspace.Adapters.Local
         internal LocalStrategy(LocalSession session, LocalDatabaseObject databaseObject)
         {
             this.Session = session;
-            this.Identity = databaseObject.Identity;
+            this.Id = databaseObject.Identity;
             this.Class = databaseObject.Class;
 
             this.workspaceState = new LocalWorkspaceState(this);
@@ -51,14 +50,14 @@ namespace Allors.Workspace.Adapters.Local
 
         public IClass Class { get; }
 
-        public long Identity { get; private set; }
+        public long Id { get; private set; }
 
         public IObject Object => this.@object ??= this.Session.Workspace.ObjectFactory.Create(this);
 
         internal bool HasDatabaseChanges => this.DatabaseState.HasDatabaseChanges;
 
         internal long DatabaseVersion => this.DatabaseState.Version;
-        
+
         public bool Exist(IRoleType roleType)
         {
             if (roleType.ObjectType.IsUnit)
@@ -126,21 +125,40 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        public void Set(IRoleType roleType, object value)
+        public void SetRole(IRoleType roleType, object value)
+        {
+            if (roleType.ObjectType.IsUnit)
+            {
+                this.SetUnitRole(roleType, value);
+            }
+            else
+            {
+                if (roleType.IsOne)
+                {
+                    this.SetCompositeRole(roleType, value);
+                }
+                else
+                {
+                    this.SetCompositesRole(roleType, value);
+                }
+            }
+        }
+
+        public void SetUnitRole(IRoleType roleType, object value)
         {
             switch (roleType.Origin)
             {
                 case Origin.Session:
-                    this.Session.SessionState.SetRole(this, roleType, value);
+                    this.Session.SessionState.SetUnitRole(this, roleType, value);
                     break;
 
                 case Origin.Workspace:
-                    this.workspaceState?.SetRole(roleType, value);
+                    this.workspaceState?.SetUnitRole(roleType, value);
 
                     break;
 
                 case Origin.Database:
-                    this.DatabaseState?.SetRole(roleType, value);
+                    this.DatabaseState?.SetUnitRole(roleType, value);
 
                     break;
                 default:
@@ -148,16 +166,60 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        public void Add(IRoleType roleType, IObject value)
+        public void SetCompositeRole(IRoleType roleType, object value)
+        {
+            switch (roleType.Origin)
+            {
+                case Origin.Session:
+                    this.Session.SessionState.SetCompositeRole(this, roleType, value);
+                    break;
+
+                case Origin.Workspace:
+                    this.workspaceState?.SetCompositeRole(roleType, value);
+
+                    break;
+
+                case Origin.Database:
+                    this.DatabaseState?.SetCompositeRole(roleType, value);
+
+                    break;
+                default:
+                    throw new ArgumentException("Unsupported Origin");
+            }
+        }
+
+        public void SetCompositesRole(IRoleType roleType, object value)
+        {
+            switch (roleType.Origin)
+            {
+                case Origin.Session:
+                    this.Session.SessionState.SetCompositesRole(this, roleType, value);
+                    break;
+
+                case Origin.Workspace:
+                    this.workspaceState?.SetCompositesRole(roleType, value);
+
+                    break;
+
+                case Origin.Database:
+                    this.DatabaseState?.SetCompositesRole(roleType, value);
+
+                    break;
+                default:
+                    throw new ArgumentException("Unsupported Origin");
+            }
+        }
+
+        public void AddRole(IRoleType roleType, IObject value)
         {
             if (!this.GetCompositesRole<IObject>(roleType).Contains(value))
             {
                 var roles = this.GetCompositesRole<IObject>(roleType).Append(value).ToArray();
-                this.Set(roleType, roles);
+                this.SetRole(roleType, roles);
             }
         }
 
-        public void Remove(IRoleType roleType, IObject value)
+        public void RemoveRole(IRoleType roleType, IObject value)
         {
             if (!this.GetCompositesRole<IObject>(roleType).Contains(value))
             {
@@ -165,10 +227,10 @@ namespace Allors.Workspace.Adapters.Local
             }
 
             var roles = this.GetCompositesRole<IObject>(roleType).Where(v => !v.Equals(value)).ToArray();
-            this.Set(roleType, roles);
+            this.SetRole(roleType, roles);
         }
 
-        public IObject GetAssociation(IAssociationType associationType)
+        public IObject GetCompositeAssociation(IAssociationType associationType)
         {
             if (associationType.Origin != Origin.Session)
             {
@@ -180,7 +242,7 @@ namespace Allors.Workspace.Adapters.Local
             return id != null ? this.Session.Get<IObject>(id) : null;
         }
 
-        public IEnumerable<IObject> GetAssociations(IAssociationType associationType)
+        public IEnumerable<IObject> GetCompositesAssociation(IAssociationType associationType)
         {
             if (associationType.Origin != Origin.Session)
             {
@@ -222,7 +284,7 @@ namespace Allors.Workspace.Adapters.Local
 
         internal void DatabasePushResponse(LocalDatabaseObject databaseObject)
         {
-            this.Identity = databaseObject.Identity;
+            this.Id = databaseObject.Identity;
             this.DatabaseState.PushResponse(databaseObject);
         }
 

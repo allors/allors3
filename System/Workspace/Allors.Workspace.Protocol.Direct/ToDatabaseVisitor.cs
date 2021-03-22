@@ -37,10 +37,10 @@ namespace Allors.Workspace.Protocol.Direct
         public Database.Data.Procedure Visit(Data.Procedure ws) =>
             new Database.Data.Procedure(ws.Name)
             {
-                CollectionByName = ws.CollectionByName?.ToDictionary(v => v.Key, v => this.transaction.Instantiate(v.Value?.Select(w => w.Identity))),
-                ObjectByName = ws.ObjectByName?.ToDictionary(v => v.Key, v => v.Value != null ? this.transaction.Instantiate(v.Value.Identity) : null),
+                CollectionByName = ws.CollectionByName?.ToDictionary(v => v.Key, v => this.transaction.Instantiate(v.Value?.Select(w => w.Id))),
+                ObjectByName = ws.ObjectByName?.ToDictionary(v => v.Key, v => v.Value != null ? this.transaction.Instantiate(v.Value.Id) : null),
                 ValueByName = ws.ValueByName,
-                VersionByObject = ws.VersionByObject?.ToDictionary(v => this.transaction.Instantiate(v.Key.Identity), v => v.Value),
+                VersionByObject = ws.VersionByObject?.ToDictionary(v => this.transaction.Instantiate(v.Key.Id), v => v.Value),
             };
         
         private Database.Data.IExtent Visit(Data.IExtent ws) =>
@@ -64,7 +64,7 @@ namespace Allors.Workspace.Protocol.Direct
 
         private Database.Meta.IObjectType Visit(Meta.IObjectType ws) => ws != null ? (IObjectType)this.metaPopulation.Find(ws.Id) : null;
 
-        private Database.IObject Visit(Workspace.IObject ws) => ws != null ? this.transaction.Instantiate(ws.Identity) : null;
+        private Database.IObject Visit(Workspace.IObject ws) => ws != null ? this.transaction.Instantiate(ws.Id) : null;
 
         private Database.Data.Result[] Visit(Data.Result[] ws) =>
             ws?.Select(v => new Database.Data.Result

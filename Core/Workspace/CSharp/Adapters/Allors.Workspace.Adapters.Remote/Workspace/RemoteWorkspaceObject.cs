@@ -68,7 +68,7 @@ namespace Allors.Workspace.Adapters.Remote
                         {
                             if (roleType.IsOne)
                             {
-                                yield return new KeyValuePair<IRelationType, object>(relationType, ((RemoteStrategy)role).Identity);
+                                yield return new KeyValuePair<IRelationType, object>(relationType, ((RemoteStrategy)role).Id);
 
                             }
                             else
@@ -76,7 +76,7 @@ namespace Allors.Workspace.Adapters.Remote
                                 var roles = ((RemoteStrategy[])role);
                                 if (roles.Length > 0)
                                 {
-                                    yield return new KeyValuePair<IRelationType, object>(relationType, roles.Select(v => v.Identity).ToArray());
+                                    yield return new KeyValuePair<IRelationType, object>(relationType, roles.Select(v => v.Id).ToArray());
                                 }
                             }
                         }

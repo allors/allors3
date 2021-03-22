@@ -343,7 +343,7 @@ namespace Allors.Workspace.Adapters.Remote
                 if (roleType.IsOne)
                 {
                     var previousRole = (RemoteStrategy)previous;
-                    if (!Equals(current, previousRole?.Identity))
+                    if (!Equals(current, previousRole?.Id))
                     {
                         if (previous != null)
                         {
@@ -391,7 +391,7 @@ namespace Allors.Workspace.Adapters.Remote
                         }
                         else
                         {
-                            var previousRoleIds = previousRole.Select(v => v.Identity).ToArray();
+                            var previousRoleIds = previousRole.Select(v => v.Id).ToArray();
                             var addedRoles = currentRole.Except(previousRoleIds);
                             var removedRoles = previousRoleIds.Except(currentRole);
 

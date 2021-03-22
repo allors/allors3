@@ -107,7 +107,7 @@ namespace Allors.Workspace.Adapters.Local
             this.RoleByAssociation(roleType).TryGetValue(association, out role);
         }
 
-        public void SetRole(LocalStrategy association, IRoleType roleType, object role)
+        public void SetUnitRole(LocalStrategy association, IRoleType roleType, object role)
         {
             if (role == null)
             {
@@ -115,70 +115,79 @@ namespace Allors.Workspace.Adapters.Local
                 return;
             }
 
-            if (roleType.ObjectType.IsUnit)
+            var unitRole = roleType.NormalizeUnit(role);
+            this.ChangedRoleByAssociation(roleType)[association] = unitRole;
+        }
+
+        public void SetCompositeRole(LocalStrategy association, IRoleType roleType, object role)
+        {
+            if (role == null)
             {
-                // Role
-                var unitRole = roleType.NormalizeUnit(role);
-                this.ChangedRoleByAssociation(roleType)[association] = unitRole;
+                this.RemoveRole(association, roleType);
+                return;
+            }
+
+            var associationType = roleType.AssociationType;
+            this.GetRole(association, roleType, out var previousRole);
+            var roleIdentity = (LocalStrategy)role;
+            this.GetAssociation(roleIdentity, associationType, out var previousAssociation);
+
+            // Role
+            var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
+            changedRoleByAssociation[association] = roleIdentity;
+
+            // Association
+            var changedAssociationByRole = this.ChangedAssociationByRole(associationType);
+            if (associationType.IsOne)
+            {
+                // One to One
+                var previousAssociationObject = (LocalStrategy)previousAssociation;
+                if (previousAssociationObject != null)
+                {
+                    changedRoleByAssociation[previousAssociationObject] = null;
+                }
+
+                if (previousRole != null)
+                {
+                    var previousRoleObject = (LocalStrategy)previousRole;
+                    changedAssociationByRole[previousRoleObject] = null;
+                }
+
+                changedAssociationByRole[roleIdentity] = association;
             }
             else
             {
-                var associationType = roleType.AssociationType;
-                this.GetRole(association, roleType, out var previousRole);
-                if (roleType.IsOne)
-                {
-                    var roleIdentity = (LocalStrategy)role;
-                    this.GetAssociation(roleIdentity, associationType, out var previousAssociation);
-
-                    // Role
-                    var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
-                    changedRoleByAssociation[association] = roleIdentity;
-
-                    // Association
-                    var changedAssociationByRole = this.ChangedAssociationByRole(associationType);
-                    if (associationType.IsOne)
-                    {
-                        // One to One
-                        var previousAssociationObject = (LocalStrategy)previousAssociation;
-                        if (previousAssociationObject != null)
-                        {
-                            changedRoleByAssociation[previousAssociationObject] = null;
-                        }
-
-                        if (previousRole != null)
-                        {
-                            var previousRoleObject = (LocalStrategy)previousRole;
-                            changedAssociationByRole[previousRoleObject] = null;
-                        }
-
-                        changedAssociationByRole[roleIdentity] = association;
-                    }
-                    else
-                    {
-                        changedAssociationByRole[roleIdentity] = NullableSortableArraySet.Remove(previousAssociation, roleIdentity);
-                    }
-                }
-                else
-                {
-                    var compositesRole = (LocalStrategy[])role;
-                    var previousRoles = (LocalStrategy[])previousRole ?? Array.Empty<LocalStrategy>();
-
-                    // Use Diff (Add/Remove)
-                    var addedRoles = compositesRole.Except(previousRoles);
-                    var removedRoles = previousRoles.Except(compositesRole);
-
-                    foreach (var addedRole in addedRoles)
-                    {
-                        this.AddRole(association, roleType, addedRole);
-                    }
-
-                    foreach (var removeRole in removedRoles)
-                    {
-                        this.RemoveRole(association, roleType, removeRole);
-                    }
-                }
+                changedAssociationByRole[roleIdentity] = NullableSortableArraySet.Remove(previousAssociation, roleIdentity);
             }
         }
+
+        public void SetCompositesRole(LocalStrategy association, IRoleType roleType, object role)
+        {
+            if (role == null)
+            {
+                this.RemoveRole(association, roleType);
+                return;
+            }
+
+            this.GetRole(association, roleType, out var previousRole);
+            var compositesRole = (LocalStrategy[])role;
+            var previousRoles = (LocalStrategy[])previousRole ?? Array.Empty<LocalStrategy>();
+
+            // Use Diff (Add/Remove)
+            var addedRoles = compositesRole.Except(previousRoles);
+            var removedRoles = previousRoles.Except(compositesRole);
+
+            foreach (var addedRole in addedRoles)
+            {
+                this.AddRole(association, roleType, addedRole);
+            }
+
+            foreach (var removeRole in removedRoles)
+            {
+                this.RemoveRole(association, roleType, removeRole);
+            }
+        }
+
 
         public void AddRole(LocalStrategy association, IRoleType roleType, LocalStrategy role)
         {
