@@ -16,14 +16,24 @@ namespace Allors.Workspace.Adapters.Local
     using Database.Security;
     using Protocol.Direct;
     using IClass = Database.Meta.IClass;
+    using IDerivationError = Workspace.IDerivationError;
+    using IObject = Workspace.IObject;
     using Method = Workspace.Method;
     using Node = Database.Data.Node;
     using Pull = Database.Data.Pull;
 
-    public class LocalInvokeResult
+    public class LocalInvokeResult : ICallResult
     {
-        internal LocalInvokeResult(LocalWorkspace workspace)
+        private List<LocalStrategy> accessErrorStrategies;
+        private List<long> databaseMissingIds;
+        private List<LocalStrategy> databaseVersionErrors;
+        private IList<IDerivationResult> validations;
+
+        private readonly LocalSession session;
+
+        internal LocalInvokeResult(LocalSession session, LocalWorkspace workspace)
         {
+            this.session = session;
             this.Workspace = workspace;
             this.Transaction = this.Workspace.Database.CreateTransaction();
 
@@ -34,43 +44,40 @@ namespace Allors.Workspace.Adapters.Local
 
             this.AccessControlLists = new WorkspaceAccessControlLists(this.Workspace.Name, user);
             this.AllowedClasses = metaCache.GetWorkspaceClasses(this.Workspace.Name);
-            this.M = databaseContext.M;
             this.MetaPopulation = databaseContext.MetaPopulation;
             this.Derive = () => this.Transaction.Derive(false);
 
             // TODO: move to separate class
-            this.AccessErrorStrategies = new List<LocalStrategy>();
-            this.MissingIds = new List<long>();
-            this.VersionErrors = new Dictionary<LocalStrategy, IObject>();
+            this.accessErrorStrategies = new List<LocalStrategy>();
+            this.databaseMissingIds = new List<long>();
+            this.databaseVersionErrors = new List<LocalStrategy>();
         }
 
-        public LocalWorkspace Workspace { get; }
+        private LocalWorkspace Workspace { get; }
 
-        public ITransaction Transaction { get; }
+        private ITransaction Transaction { get; }
 
-        public ISet<IClass> AllowedClasses { get; }
+        private ISet<IClass> AllowedClasses { get; }
 
-        internal IAccessControlLists AccessControlLists { get; }
+        private IAccessControlLists AccessControlLists { get; }
 
-        public M M { get; set; }
+        private MetaPopulation MetaPopulation { get; }
 
-        public MetaPopulation MetaPopulation { get; set; }
-
-        public Func<IDerivationResult> Derive { get; }
-
-        public List<LocalStrategy> AccessErrorStrategies { get; }
-
-        public List<long> MissingIds { get; }
-
-        public Dictionary<LocalStrategy, IObject> VersionErrors { get; }
-
-        public IList<IDerivationResult> Validations { get; set; }
+        private Func<IDerivationResult> Derive { get; }
 
         public string ErrorMessage { get; private set; }
 
-        public bool HasErrors => !string.IsNullOrWhiteSpace(this.ErrorMessage) || this.AccessErrorStrategies?.Count > 0 || this.MissingIds?.Count > 0 || this.VersionErrors?.Count > 0 || this.Validations?.Count > 0;
+        public IEnumerable<IObject> VersionErrors => this.databaseVersionErrors?.Select(v => v.Object);
 
-        internal void Execute(Method[] methods, CallOptions options)
+        public IEnumerable<IObject> AccessErrors => this.accessErrorStrategies?.Select(v => v.Object);
+
+        public IEnumerable<IObject> MissingErrors => this.session.Get<IObject>(this.databaseMissingIds);
+
+        public IEnumerable<IDerivationError> DerivationErrors => this.validations?.Select(v => (IDerivationError)new LocalDerivationError(this.session, v)).ToArray();
+
+        public bool HasErrors => !string.IsNullOrWhiteSpace(this.ErrorMessage) || this.accessErrorStrategies?.Count > 0 || this.databaseMissingIds?.Count > 0 || this.databaseVersionErrors?.Count > 0 || this.validations?.Count > 0;
+
+        internal void Execute(Method[] methods, InvokeOptions options)
         {
             var isolated = options?.Isolated ?? false;
             var continueOnError = options?.ContinueOnError ?? false;
@@ -86,7 +93,7 @@ namespace Allors.Workspace.Adapters.Local
                         if (validation.HasErrors)
                         {
                             error = true;
-                            this.Validations.Add(validation);
+                            this.validations.Add(validation);
                         }
                     }
 
@@ -138,7 +145,7 @@ namespace Allors.Workspace.Adapters.Local
             var obj = this.Transaction.Instantiate(invocation.Object.Id);
             if (obj == null)
             {
-                this.MissingIds.Add(invocation.Object.Id);
+                this.databaseMissingIds.Add(invocation.Object.Id);
                 return true;
             }
 
@@ -146,7 +153,7 @@ namespace Allors.Workspace.Adapters.Local
 
             if (this.AllowedClasses?.Contains(obj.Strategy.Class) != true)
             {
-                this.AccessErrorStrategies.Add(localStrategy);
+                this.accessErrorStrategies.Add(localStrategy);
                 return true;
             }
 
@@ -163,14 +170,14 @@ namespace Allors.Workspace.Adapters.Local
 
             if (!localStrategy.DatabaseVersion.Equals(obj.Strategy.ObjectVersion))
             {
-                this.VersionErrors.Add(localStrategy, obj);
+                this.databaseVersionErrors.Add(localStrategy);
                 return true;
             }
 
             var acl = this.AccessControlLists[obj];
             if (!acl.CanExecute(methodType))
             {
-                this.AccessErrorStrategies.Add(localStrategy);
+                this.accessErrorStrategies.Add(localStrategy);
                 return true;
             }
 
@@ -195,7 +202,7 @@ namespace Allors.Workspace.Adapters.Local
             var validation = this.Derive();
             if (validation.HasErrors)
             {
-                this.Validations.Add(validation);
+                this.validations.Add(validation);
                 return true;
             }
 

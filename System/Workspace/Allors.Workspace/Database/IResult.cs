@@ -5,21 +5,20 @@
 
 namespace Allors.Workspace
 {
+    using System.Collections.Generic;
+
     public interface IResult
     {
         bool HasErrors { get; }
 
         string ErrorMessage { get; }
 
-        // TODO: return objects instead of ids 
-        string[] VersionErrors { get; }
+        IEnumerable<IObject> VersionErrors { get; }
 
-        // TODO: return objects instead of ids 
-        string[] AccessErrors { get; }
+        IEnumerable<IObject> AccessErrors { get; }
 
-        // TODO: return objects instead of ids 
-        string[] MissingErrors { get; }
+        IEnumerable<IObject> MissingErrors { get; }
 
-        IDerivationError[] DerivationErrors { get; }
+        IEnumerable<IDerivationError> DerivationErrors { get; }
     }
 }

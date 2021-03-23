@@ -5,7 +5,6 @@
 
 namespace Allors.Workspace
 {
-    using System;
     using System.Collections.Generic;
     using Derivations;
     using Meta;
@@ -20,8 +19,10 @@ namespace Allors.Workspace
 
         IWorkspaceLifecycle StateLifecycle { get; }
 
-        ISession CreateSession();
+        IEnumerable<IDerivation> Derivations { get; }
 
-        IDictionary<Guid, IDerivation> DomainDerivationById { get; }
+        void AddDerivation(IDerivation derivation);
+
+        ISession CreateSession();
     }
 }

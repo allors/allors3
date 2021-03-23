@@ -11,6 +11,6 @@ namespace Allors.Workspace.Adapters.Remote
     {
         private readonly InvokeResponse invokeResponse;
 
-        public RemoteCallResult(InvokeResponse invokeResponse) : base(invokeResponse) => this.invokeResponse = invokeResponse;
+        public RemoteCallResult(ISession session, InvokeResponse invokeResponse) : base(session, invokeResponse) => this.invokeResponse = invokeResponse;
     }
 }

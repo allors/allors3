@@ -6,7 +6,6 @@
 namespace Allors.Workspace
 {
     using Derivations;
-    using Domain;
 
     public static partial class WorkspaceExtensions
     {
@@ -20,7 +19,7 @@ namespace Allors.Workspace
 
             foreach (var derivation in derivations)
             {
-                @this.DomainDerivationById.Add(derivation.Id, derivation);
+                @this.AddDerivation(derivation);
             }
         }
     }

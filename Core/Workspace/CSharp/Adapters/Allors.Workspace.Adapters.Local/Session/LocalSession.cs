@@ -50,13 +50,13 @@ namespace Allors.Workspace.Adapters.Local
 
         internal LocalSessionState SessionState { get; }
 
-        public Task<ICallResult> Call(Method method, CallOptions options = null) => this.Call(new[] { method }, options);
+        public Task<ICallResult> Call(Method method, InvokeOptions options = null) => this.Call(new[] { method }, options);
 
-        public Task<ICallResult> Call(Method[] methods, CallOptions options = null)
+        public Task<ICallResult> Call(Method[] methods, InvokeOptions options = null)
         {
-            var localInvokeResult = new LocalInvokeResult(this.Workspace);
+            var localInvokeResult = new LocalInvokeResult(this, this.Workspace);
             localInvokeResult.Execute(methods, options);
-            return Task.FromResult<ICallResult>(new LocalCallResult(localInvokeResult));
+            return Task.FromResult<ICallResult>(localInvokeResult);
         }
 
         public T Create<T>() where T : class, IObject => this.Create<T>((IClass)this.Workspace.ObjectFactory.GetObjectType<T>());
@@ -95,11 +95,27 @@ namespace Allors.Workspace.Adapters.Local
 
         public T Get<T>(long identity) where T : IObject => (T)this.GetStrategy(identity)?.Object;
 
+        public T Get<T>(string identity) where T : IObject
+        {
+            if (long.TryParse(identity, out var id))
+            {
+                return (T)this.GetStrategy(id)?.Object;
+            }
+
+            return default;
+        }
+
         public IEnumerable<T> Get<T>(IEnumerable<IObject> objects) where T : IObject => objects.Select(this.Get<T>);
 
         public IEnumerable<T> Get<T>(IEnumerable<T> objects) where T : IObject => objects.Select(this.Get);
 
         public IEnumerable<T> Get<T>(IEnumerable<long> identities) where T : IObject => identities.Select(this.Get<T>);
+
+        public IEnumerable<T> Get<T>(IEnumerable<string> identities) where T : IObject => this.Get<T>(identities.Select(v =>
+        {
+            _ = long.TryParse(v, out var id);
+            return id;
+        }));
 
         public IEnumerable<T> GetAll<T>() where T : IObject
         {

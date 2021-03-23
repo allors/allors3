@@ -3,11 +3,10 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-using System.Collections.Generic;
-
 namespace Allors.Database.Domain
 {
-    using Meta;
+    using System.Collections.Generic;
+    using Allors.Database.Meta;
 
     public partial class PurchaseShipments
     {

@@ -18,7 +18,7 @@ namespace Allors.Workspace.Derivations
             this.Id = id;
         }
 
-        public M M { get; set; }
+        private M M { get; set; }
 
         public Guid Id { get; protected set; }
 

@@ -24,7 +24,11 @@ namespace Allors.Workspace
 
         T Get<T>(T @object) where T : IObject;
 
+        T Get<T>(long? identity) where T : IObject;
+
         T Get<T>(long identity) where T : IObject;
+
+        T Get<T>(string identity) where T : IObject;
 
         IEnumerable<T> Get<T>(IEnumerable<IObject> objects) where T : IObject;
 
@@ -32,21 +36,23 @@ namespace Allors.Workspace
 
         IEnumerable<T> Get<T>(IEnumerable<long> identities) where T : IObject;
 
+        IEnumerable<T> Get<T>(IEnumerable<string> responseVersionErrors) where T : IObject;
+
         IEnumerable<T> GetAll<T>() where T : IObject;
 
         IEnumerable<T> GetAll<T>(IComposite objectType) where T : IObject;
-        
-        IChangeSet Checkpoint();
 
-        Task<ICallResult> Call(Method method, CallOptions options = null);
+        Task<ICallResult> Call(Method method, InvokeOptions options = null);
 
-        Task<ICallResult> Call(Method[] methods, CallOptions options = null);
+        Task<ICallResult> Call(Method[] methods, InvokeOptions options = null);
 
         Task<ILoadResult> Load(params Pull[] pulls);
 
         Task<ILoadResult> Load(Procedure procedure, params Pull[] pulls);
 
         Task<ISaveResult> Save();
+
+        IChangeSet Checkpoint();
 
         void Reset();
     }

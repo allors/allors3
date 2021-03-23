@@ -3,12 +3,12 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-using System.IO;
-using System.Linq;
-using System.Reflection;
-
 namespace Allors.Database.Domain
 {
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
+
     public static partial class SingletonExtensions
     {
         public static Template CreateOpenDocumentTemplate<T>(this Singleton @this, string fileName, byte[] content)

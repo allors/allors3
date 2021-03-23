@@ -20,6 +20,8 @@ namespace Allors.Workspace.Adapters.Local
     {
         private readonly Dictionary<long, LocalWorkspaceObject> objectById;
 
+        private readonly ConcurrentDictionary<Guid, IDerivation> derivationById;
+
         public LocalWorkspace(string name, long userId, IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, Allors.Database.IDatabase database)
         {
             this.Name = name;
@@ -36,7 +38,7 @@ namespace Allors.Workspace.Adapters.Local
             this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
             this.WorkspaceIdsByWorkspaceClass = new Dictionary<IClass, long[]>();
 
-            this.DomainDerivationById = new ConcurrentDictionary<Guid, IDerivation>();
+            this.derivationById = new ConcurrentDictionary<Guid, IDerivation>();
 
             this.objectById = new Dictionary<long, LocalWorkspaceObject>();
 
@@ -45,26 +47,28 @@ namespace Allors.Workspace.Adapters.Local
 
         public string Name { get; }
 
-        public long UserId { get;  }
+        public long UserId { get; }
 
         public IMetaPopulation MetaPopulation { get; }
 
         public IWorkspaceLifecycle StateLifecycle { get; }
 
-        public IDictionary<Guid, IDerivation> DomainDerivationById { get; }
+        public IEnumerable<IDerivation> Derivations => this.derivationById.Values;
 
         IObjectFactory IWorkspace.ObjectFactory => this.ObjectFactory;
         internal ObjectFactory ObjectFactory { get; }
 
         public IDatabase Database { get; }
 
+        public void AddDerivation(IDerivation derivation) => this.derivationById[derivation.Id] = derivation;
+
+        public ISession CreateSession() => new LocalSession(this, this.StateLifecycle.CreateSessionContext());
+
         internal LocalDatabase LocalDatabase { get; }
 
         internal Dictionary<long, IClass> WorkspaceClassByWorkspaceId { get; }
 
         internal Dictionary<IClass, long[]> WorkspaceIdsByWorkspaceClass { get; }
-
-        public ISession CreateSession() => new LocalSession(this, this.StateLifecycle.CreateSessionContext());
 
         internal LocalWorkspaceObject Get(long identity)
         {

@@ -16,9 +16,9 @@ namespace Allors.Workspace.Adapters.Local
 
         public bool HasErrors { get; }
         public string ErrorMessage { get; }
-        public string[] VersionErrors { get; }
-        public string[] AccessErrors { get; }
-        public string[] MissingErrors { get; }
-        public IDerivationError[] DerivationErrors { get; }
+        public IEnumerable<IObject> VersionErrors { get; }
+        public IEnumerable<IObject> AccessErrors { get; }
+        public IEnumerable<IObject> MissingErrors { get; }
+        public IEnumerable<IDerivationError> DerivationErrors { get; }
     }
 }

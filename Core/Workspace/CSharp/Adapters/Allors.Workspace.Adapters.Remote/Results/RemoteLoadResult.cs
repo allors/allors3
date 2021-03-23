@@ -12,7 +12,7 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class RemoteLoadResult : RemoteResult, ILoadResult
     {
-        public RemoteLoadResult(RemoteSession session, PullResponse response) : base(response)
+        public RemoteLoadResult(RemoteSession session, PullResponse response) : base(session, response)
         {
             this.Workspace = session.Workspace;
 

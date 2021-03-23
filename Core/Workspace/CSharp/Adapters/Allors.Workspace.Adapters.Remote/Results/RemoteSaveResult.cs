@@ -9,7 +9,7 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class RemoteSaveResult : RemoteResult, ISaveResult
     {
-        public RemoteSaveResult(Response response) : base(response)
+        public RemoteSaveResult(ISession session, Response response) : base(session, response)
         {
         }
     }

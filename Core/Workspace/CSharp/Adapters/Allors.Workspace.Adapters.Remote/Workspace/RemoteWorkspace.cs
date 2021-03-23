@@ -8,7 +8,6 @@ namespace Allors.Workspace.Adapters.Remote
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Net.Http;
     using Derivations;
     using Meta;
@@ -16,6 +15,8 @@ namespace Allors.Workspace.Adapters.Remote
     public class RemoteWorkspace : IWorkspace
     {
         private readonly Dictionary<long, RemoteWorkspaceObject> objectById;
+
+        private readonly ConcurrentDictionary<Guid, IDerivation> derivationById;
 
         internal RemoteWorkspace(string name, IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, HttpClient httpClient)
         {
@@ -29,7 +30,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
             this.WorkspaceIdsByWorkspaceClass = new Dictionary<IClass, long[]>();
 
-            this.DomainDerivationById = new ConcurrentDictionary<Guid, IDerivation>();
+            this.derivationById = new ConcurrentDictionary<Guid, IDerivation>();
 
             this.objectById = new Dictionary<long, RemoteWorkspaceObject>();
 
@@ -42,18 +43,20 @@ namespace Allors.Workspace.Adapters.Remote
 
         public IWorkspaceLifecycle StateLifecycle { get; }
 
-        public IDictionary<Guid, IDerivation> DomainDerivationById { get; }
+        public IEnumerable<IDerivation> Derivations => this.derivationById.Values;
 
         IObjectFactory IWorkspace.ObjectFactory => this.ObjectFactory;
         internal ObjectFactory ObjectFactory { get; }
+
+        public void AddDerivation(IDerivation derivation) => this.derivationById[derivation.Id] = derivation;
+
+        public ISession CreateSession() => new RemoteSession(this, this.StateLifecycle.CreateSessionContext());
 
         public RemoteDatabase Database { get; }
 
         internal Dictionary<long, IClass> WorkspaceClassByWorkspaceId { get; }
 
         internal Dictionary<IClass, long[]> WorkspaceIdsByWorkspaceClass { get; }
-
-        public ISession CreateSession() => new RemoteSession(this, this.StateLifecycle.CreateSessionContext());
 
         internal RemoteWorkspaceObject Get(long identity)
         {

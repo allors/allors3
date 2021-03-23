@@ -7,16 +7,16 @@ namespace Allors.Workspace
 {
     using Meta;
 
-    public class Method
+    public struct Role
     {
-        public Method(IObject @object, IMethodType methodType)
+        public Role(IObject @object, IRelationType relationType)
         {
             this.Object = @object;
-            this.MethodType = methodType;
+            this.RelationType = relationType;
         }
 
         public IObject Object { get; }
 
-        public IMethodType MethodType { get; }
+        public IRelationType RelationType { get; }
     }
 }

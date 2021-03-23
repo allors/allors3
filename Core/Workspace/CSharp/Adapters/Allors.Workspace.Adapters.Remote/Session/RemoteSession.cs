@@ -16,6 +16,7 @@ namespace Allors.Workspace.Adapters.Remote
     using Data;
     using Meta;
     using Protocol.Json;
+    using InvokeOptions = Workspace.InvokeOptions;
 
     public class RemoteSession : ISession
     {
@@ -57,9 +58,9 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal RemoteSessionState SessionState { get; }
 
-        public async Task<ICallResult> Call(Method method, CallOptions options = null) => await this.Call(new[] { method }, options);
+        public async Task<ICallResult> Call(Method method, InvokeOptions options = null) => await this.Call(new[] { method }, options);
 
-        public async Task<ICallResult> Call(Method[] methods, CallOptions options = null)
+        public async Task<ICallResult> Call(Method[] methods, InvokeOptions options = null)
         {
             var invokeRequest = new InvokeRequest
             {
@@ -69,7 +70,7 @@ namespace Allors.Workspace.Adapters.Remote
                     Version = ((RemoteStrategy)v.Object.Strategy).DatabaseVersion.ToString(),
                     Method = v.MethodType.IdAsString,
                 }).ToArray(),
-                InvokeOptions = options != null ? new InvokeOptions
+                InvokeOptions = options != null ? new Allors.Protocol.Json.Api.Invoke.InvokeOptions
                 {
                     ContinueOnError = options.ContinueOnError,
                     Isolated = options.Isolated
@@ -77,7 +78,7 @@ namespace Allors.Workspace.Adapters.Remote
             };
 
             var invokeResponse = await this.Database.Invoke(invokeRequest);
-            return new RemoteCallResult(invokeResponse);
+            return new RemoteCallResult(this, invokeResponse);
         }
 
         public T Create<T>() where T : class, IObject => this.Create<T>((IClass)this.Workspace.ObjectFactory.GetObjectType<T>());
@@ -116,11 +117,27 @@ namespace Allors.Workspace.Adapters.Remote
 
         public T Get<T>(long identity) where T : IObject => (T)this.GetStrategy(identity)?.Object;
 
+        public T Get<T>(string identity) where T : IObject
+        {
+            if (long.TryParse(identity, out var id))
+            {
+                return (T)this.GetStrategy(id)?.Object;
+            }
+
+            return default;
+        }
+
         public IEnumerable<T> Get<T>(IEnumerable<IObject> objects) where T : IObject => objects.Select(this.Get<T>);
 
         public IEnumerable<T> Get<T>(IEnumerable<T> objects) where T : IObject => objects.Select(this.Get);
 
         public IEnumerable<T> Get<T>(IEnumerable<long> identities) where T : IObject => identities.Select(this.Get<T>);
+
+        public IEnumerable<T> Get<T>(IEnumerable<string> identities) where T : IObject => this.Get<T>(identities.Select(v =>
+        {
+            _ = long.TryParse(v, out var id);
+            return id;
+        }));
 
         public IEnumerable<T> GetAll<T>() where T : IObject
         {
@@ -229,7 +246,7 @@ namespace Allors.Workspace.Adapters.Remote
                 this.Reset();
             }
 
-            return new RemoteSaveResult(pushResponse);
+            return new RemoteSaveResult(this, pushResponse);
         }
 
         public IChangeSet Checkpoint()
