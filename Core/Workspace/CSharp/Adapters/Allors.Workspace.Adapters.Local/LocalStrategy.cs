@@ -279,19 +279,34 @@ namespace Allors.Workspace.Adapters.Local
 
         public bool CanExecute(IMethodType methodType) => this.DatabaseState?.CanExecute(methodType) ?? false;
 
-        internal void Reset()
+        public void Reset()
         {
             this.workspaceState?.Reset();
             this.DatabaseState?.Reset();
         }
 
-        internal void Merge()
+        public IEnumerable<IRelationType> Diff()
         {
-            this.workspaceState?.Merge();
-            this.DatabaseState?.Merge();
-        }
+            if (this.workspaceState != null)
+            {
+                foreach (var diff in this.workspaceState.Diff())
+                {
+                    yield return diff;
+                }
+            }
 
-        public bool IsAssociationForRole(IRoleType roleType, LocalStrategy role)
+            if (this.DatabaseState == null)
+            {
+                yield break;
+            }
+
+            foreach (var diff in this.DatabaseState.Diff())
+            {
+                yield return diff;
+            }
+        }
+        
+        internal bool IsAssociationForRole(IRoleType roleType, LocalStrategy role)
             =>
                 roleType.Origin switch
                 {

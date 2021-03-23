@@ -22,6 +22,6 @@ namespace Allors.Workspace
 
         ISession CreateSession();
 
-        IDictionary<Guid, IDomainDerivation> DomainDerivationById { get; }
+        IDictionary<Guid, IDerivation> DomainDerivationById { get; }
     }
 }

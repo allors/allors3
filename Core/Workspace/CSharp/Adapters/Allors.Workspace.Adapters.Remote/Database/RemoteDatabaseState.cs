@@ -199,12 +199,10 @@ namespace Allors.Workspace.Adapters.Remote
             this.changedRoleByRelationType = null;
         }
 
-        internal void Merge() => this.databaseObject = this.Database.Get(this.Identity);
-
         internal void Checkpoint(RemoteChangeSet changeSet)
         {
             // Same workspace object
-            if (this.databaseObject.Identity == this.previousDatabaseObject.Identity)
+            if (this.databaseObject.Version == this.previousDatabaseObject.Version)
             {
                 // No previous changed roles
                 if (this.previousChangedRoleByRelationType == null)
@@ -378,6 +376,19 @@ namespace Allors.Workspace.Adapters.Remote
 
             var identities = (long[])this.databaseObject?.GetRole(roleType);
             return identities?.Contains(forRole.Id) == true;
+        }
+
+        internal IEnumerable<IRelationType> Diff()
+        {
+            if (this.changedRoleByRelationType == null)
+            {
+                yield break;
+            }
+
+            foreach (var kvp in this.changedRoleByRelationType)
+            {
+                yield return kvp.Key;
+            }
         }
     }
 }

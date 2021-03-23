@@ -171,12 +171,10 @@ namespace Allors.Workspace.Adapters.Local
             this.changedRoleByRelationType = null;
         }
 
-        internal void Merge() => this.workspaceObject = this.Workspace.Get(this.Identity);
-
         internal void Checkpoint(LocalChangeSet changeSet)
         {
             // Same workspace object
-            if (this.workspaceObject.Identity == this.previousWorkspaceObject.Identity)
+            if (this.workspaceObject.Version == this.previousWorkspaceObject.Version)
             {
                 // No previous changed roles
                 if (this.previousChangedRoleByRelationType == null)
@@ -276,6 +274,19 @@ namespace Allors.Workspace.Adapters.Local
 
             var identities = (long[])this.workspaceObject?.GetRole(roleType);
             return identities?.Contains(forRole.Id) == true;
+        }
+
+        internal IEnumerable<IRelationType> Diff()
+        {
+            if (this.changedRoleByRelationType == null)
+            {
+                yield break;
+            }
+
+            foreach (var kvp in this.changedRoleByRelationType)
+            {
+                yield return kvp.Key;
+            }
         }
     }
 }

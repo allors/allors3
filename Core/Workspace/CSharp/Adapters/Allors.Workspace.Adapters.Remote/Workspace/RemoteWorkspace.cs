@@ -29,7 +29,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
             this.WorkspaceIdsByWorkspaceClass = new Dictionary<IClass, long[]>();
 
-            this.DomainDerivationById = new ConcurrentDictionary<Guid, IDomainDerivation>();
+            this.DomainDerivationById = new ConcurrentDictionary<Guid, IDerivation>();
 
             this.objectById = new Dictionary<long, RemoteWorkspaceObject>();
 
@@ -42,7 +42,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public IWorkspaceLifecycle StateLifecycle { get; }
 
-        public IDictionary<Guid, IDomainDerivation> DomainDerivationById { get; }
+        public IDictionary<Guid, IDerivation> DomainDerivationById { get; }
 
         IObjectFactory IWorkspace.ObjectFactory => this.ObjectFactory;
         internal ObjectFactory ObjectFactory { get; }

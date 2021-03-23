@@ -7,11 +7,11 @@ namespace Allors.Workspace.Derivations.Default
 {
     using System.Collections.Generic;
 
-    public class DomainValidation : IDomainValidation
+    public class Validation : IValidation
     {
         private readonly List<string> errors;
 
-        public DomainValidation() => this.errors = new List<string>();
+        public Validation() => this.errors = new List<string>();
 
         public void AddError(string error) => this.errors.Add(error);
 

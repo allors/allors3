@@ -171,12 +171,10 @@ namespace Allors.Workspace.Adapters.Remote
             this.changedRoleByRelationType = null;
         }
 
-        internal void Merge() => this.workspaceObject = this.Workspace.Get(this.Identity);
-
         internal void Checkpoint(RemoteChangeSet changeSet)
         {
             // Same workspace object
-            if (this.workspaceObject.Identity == this.previousWorkspaceObject.Identity)
+            if (this.workspaceObject.Version == this.previousWorkspaceObject.Version)
             {
                 // No previous changed roles
                 if (this.previousChangedRoleByRelationType == null)
@@ -248,7 +246,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.previousWorkspaceObject = this.workspaceObject;
             this.previousChangedRoleByRelationType = this.changedRoleByRelationType;
         }
-        
+
         public bool IsAssociationForRole(IRoleType roleType, RemoteStrategy forRole)
         {
             if (roleType.ObjectType.IsUnit)
@@ -276,6 +274,19 @@ namespace Allors.Workspace.Adapters.Remote
 
             var identities = (long[])this.workspaceObject?.GetRole(roleType);
             return identities?.Contains(forRole.Id) == true;
+        }
+
+        internal IEnumerable<IRelationType> Diff()
+        {
+            if (this.changedRoleByRelationType == null)
+            {
+                yield break;
+            }
+
+            foreach (var kvp in this.changedRoleByRelationType)
+            {
+                yield return kvp.Key;
+            }
         }
     }
 }

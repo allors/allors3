@@ -198,19 +198,16 @@ namespace Allors.Workspace.Adapters.Local
             this.Session.OnChange(this);
         }
 
-
         internal void Reset()
         {
             this.databaseObject = this.Database.Get(this.Identity);
             this.ChangedRoleByRelationType = null;
         }
 
-        internal void Merge() => this.databaseObject = this.Database.Get(this.Identity);
-
         internal void Checkpoint(LocalChangeSet changeSet)
         {
             // Same workspace object
-            if (this.databaseObject.Identity == this.previousDatabaseObject.Identity)
+            if (this.databaseObject.Version == this.previousDatabaseObject.Version)
             {
                 // No previous changed roles
                 if (this.previousChangedRoleByRelationType == null)
@@ -285,7 +282,7 @@ namespace Allors.Workspace.Adapters.Local
 
         internal void PushResponse(LocalDatabaseObject newDatabaseObject) => this.databaseObject = newDatabaseObject;
 
-        public bool IsAssociationForRole(IRoleType roleType, LocalStrategy forRole)
+        internal bool IsAssociationForRole(IRoleType roleType, LocalStrategy forRole)
         {
             if (roleType.ObjectType.IsUnit)
             {
@@ -312,6 +309,19 @@ namespace Allors.Workspace.Adapters.Local
 
             var identities = (long[])this.databaseObject?.GetRole(roleType);
             return identities?.Contains(forRole.Id) == true;
+        }
+
+        internal IEnumerable<IRelationType> Diff()
+        {
+            if (this.ChangedRoleByRelationType == null)
+            {
+                yield break;
+            }
+
+            foreach (var kvp in this.ChangedRoleByRelationType)
+            {
+                yield return kvp.Key;
+            }
         }
     }
 }

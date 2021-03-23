@@ -1,4 +1,4 @@
-// <copyright file="DomainDerivationCycle.cs" company="Allors bvba">
+// <copyright file="DerivationCycle.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -13,21 +13,21 @@ namespace Allors.Workspace.Derivations.Default
     using Meta;
     using Domain;
 
-    public class DomainDerive
+    public class Derive
     {
-        public DomainDerive(ISession session, int maxDomainDerivationCycles)
+        public Derive(ISession session, int maxDomainDerivationCycles)
         {
             this.Session = session;
             this.MaxDomainDerivationCycles = maxDomainDerivationCycles;
 
-            this.Validation = new DomainValidation();
+            this.Validation = new Validation();
         }
 
         public ISession Session { get; }
 
         public int MaxDomainDerivationCycles { get; }
 
-        public IDomainValidation Validation { get; }
+        public IValidation Validation { get; }
 
         public void Execute()
         {
@@ -39,7 +39,7 @@ namespace Allors.Workspace.Derivations.Default
             {
                 var changeSet = this.Session.Checkpoint();
 
-                while (changeSet.RoleByRoleType.Any() || changeSet.AssociationByRoleType.Any() || changeSet.Created.Any() || changeSet.Instantiated.Any())
+                while (changeSet.RoleByAssociationType.Any() || changeSet.AssociationByRoleType.Any() || changeSet.Created.Any() || changeSet.Instantiated.Any())
                 {
                     var session = changeSet.Session;
 
@@ -48,7 +48,7 @@ namespace Allors.Workspace.Derivations.Default
                         throw new Exception("Maximum amount of domain derivation cycles detected");
                     }
 
-                    var domainCycle = new DomainDerivationCycle
+                    var domainCycle = new DerivationCycle
                     {
                         ChangeSet = changeSet,
                         Session = session,
@@ -72,7 +72,7 @@ namespace Allors.Workspace.Derivations.Default
                                     .Select(v => v.Object),
 
                                 RolePattern { RoleType: RoleDefault roleType } => changeSet
-                                    .RoleByRoleType
+                                    .RoleByAssociationType
                                     .Where(v => v.Key.RelationType.Equals(roleType.RelationType))
                                     .SelectMany(v => v.Value)
                                     .Select(v => v.Object),
@@ -86,7 +86,7 @@ namespace Allors.Workspace.Derivations.Default
                                     .Select(v => v.Object),
 
                                 RolePattern { RoleType: RoleInterface roleInterface } => changeSet
-                                    .RoleByRoleType
+                                    .RoleByAssociationType
                                     .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
                                     .SelectMany(v => v.Value)
                                     .Select(v => v.Object),
@@ -99,7 +99,7 @@ namespace Allors.Workspace.Derivations.Default
                                     .Select(v => v.Object),
                                 
                                 RolePattern { RoleType: RoleClass roleClass } => changeSet
-                                    .RoleByRoleType.Where(v => v.Key.RoleType.Equals(roleClass))
+                                    .RoleByAssociationType.Where(v => v.Key.RoleType.Equals(roleClass))
                                     .SelectMany(v => v.Value)
                                     .Select(v=>v.Object),
 

@@ -172,14 +172,6 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        public void Merge()
-        {
-            foreach (var kvp in this.strategyByWorkspaceId)
-            {
-                kvp.Value.Merge();
-            }
-        }
-
         public Task<ISaveResult> Save()
         {
             var newStrategies = this.newDatabaseStrategies?.ToArray() ?? Array.Empty<LocalStrategy>();

@@ -12,6 +12,7 @@ namespace Allors.Workspace.Adapters.Local
     using Database.Domain;
     using Derivations;
     using Meta;
+    using IDerivation = Derivations.IDerivation;
     using IObjectFactory = Workspace.IObjectFactory;
     using ObjectFactory = Adapters.ObjectFactory;
 
@@ -35,7 +36,7 @@ namespace Allors.Workspace.Adapters.Local
             this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
             this.WorkspaceIdsByWorkspaceClass = new Dictionary<IClass, long[]>();
 
-            this.DomainDerivationById = new ConcurrentDictionary<Guid, IDomainDerivation>();
+            this.DomainDerivationById = new ConcurrentDictionary<Guid, IDerivation>();
 
             this.objectById = new Dictionary<long, LocalWorkspaceObject>();
 
@@ -50,7 +51,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public IWorkspaceLifecycle StateLifecycle { get; }
 
-        public IDictionary<Guid, IDomainDerivation> DomainDerivationById { get; }
+        public IDictionary<Guid, IDerivation> DomainDerivationById { get; }
 
         IObjectFactory IWorkspace.ObjectFactory => this.ObjectFactory;
         internal ObjectFactory ObjectFactory { get; }

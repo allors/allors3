@@ -46,6 +46,7 @@ namespace Allors.Workspace.Adapters.Remote
         }
 
         ISession IStrategy.Session => this.Session;
+
         internal RemoteSession Session { get; }
 
         public IClass Class { get; }
@@ -57,6 +58,27 @@ namespace Allors.Workspace.Adapters.Remote
         internal bool HasDatabaseChanges => this.databaseState.HasDatabaseChanges;
 
         internal long DatabaseVersion => this.databaseState.Version;
+
+        public IEnumerable<IRelationType> Diff()
+        {
+            if (this.workspaceState != null)
+            {
+                foreach (var diff in this.workspaceState.Diff())
+                {
+                    yield return diff;
+                }
+            }
+
+            if (this.databaseState == null)
+            {
+                yield break;
+            }
+
+            foreach (var diff in this.databaseState.Diff())
+            {
+                yield return diff;
+            }
+        }
 
         public bool Exist(IRoleType roleType)
         {
@@ -279,16 +301,10 @@ namespace Allors.Workspace.Adapters.Remote
 
         public bool CanExecute(IMethodType methodType) => this.databaseState?.CanExecute(methodType) ?? false;
 
-        internal void Reset()
+        public void Reset()
         {
             this.workspaceState?.Reset();
             this.databaseState?.Reset();
-        }
-
-        internal void Merge()
-        {
-            this.workspaceState?.Merge();
-            this.databaseState?.Merge();
         }
 
         internal PushRequestNewObject DatabaseSaveNew() => this.databaseState.SaveNew();

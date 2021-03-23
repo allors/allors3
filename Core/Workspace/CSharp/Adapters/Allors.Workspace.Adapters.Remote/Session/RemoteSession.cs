@@ -197,14 +197,6 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        public void Merge()
-        {
-            foreach (var kvp in this.strategyByWorkspaceId)
-            {
-                kvp.Value.Merge();
-            }
-        }
-
         public async Task<ISaveResult> Save()
         {
             var saveRequest = this.PushRequest();

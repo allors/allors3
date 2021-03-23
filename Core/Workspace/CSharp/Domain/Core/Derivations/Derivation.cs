@@ -10,9 +10,9 @@ namespace Allors.Workspace.Derivations
     using System.Collections.Generic;
     using Meta;
 
-    public abstract partial class DomainDerivation : IDomainDerivation
+    public abstract partial class Derivation : IDerivation
     {
-        protected DomainDerivation(M m, Guid id)
+        protected Derivation(M m, Guid id)
         {
             this.M = m;
             this.Id = id;
@@ -24,6 +24,6 @@ namespace Allors.Workspace.Derivations
 
         public Pattern[] Patterns { get; protected set; }
 
-        public abstract void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches);
+        public abstract void Derive(IDerivationCycle cycle, IEnumerable<IObject> matches);
     }
 }

@@ -18,6 +18,8 @@ namespace Allors.Workspace
 
         ISession Session { get; }
 
+        IEnumerable<IRelationType> Diff();
+
         bool CanRead(IRoleType roleType);
 
         bool CanWrite(IRoleType roleType);
@@ -51,5 +53,7 @@ namespace Allors.Workspace
         T GetComposite<T>(IAssociationType associationType) where T : IObject;
 
         IEnumerable<T> GetComposites<T>(IAssociationType associationType) where T : IObject;
+
+        void Reset();
     }
 }

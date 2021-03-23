@@ -35,11 +35,7 @@ namespace Allors.Workspace
         IEnumerable<T> GetAll<T>() where T : IObject;
 
         IEnumerable<T> GetAll<T>(IComposite objectType) where T : IObject;
-
-        void Reset();
-
-        void Merge();
-
+        
         IChangeSet Checkpoint();
 
         Task<ICallResult> Call(Method method, CallOptions options = null);
@@ -51,5 +47,7 @@ namespace Allors.Workspace
         Task<ILoadResult> Load(Procedure procedure, params Pull[] pulls);
 
         Task<ISaveResult> Save();
+
+        void Reset();
     }
 }
