@@ -28,7 +28,7 @@ namespace Tests.Workspace
                 ValueByName = new Dictionary<string, object> { { "step", 0 } }
             };
 
-            var result = await session.Load(procedure);
+            var result = await session.Pull(procedure);
 
             var unitSample = result.GetObject<UnitSample>("unitSample");
 
@@ -53,7 +53,7 @@ namespace Tests.Workspace
                 ValueByName = new Dictionary<string, object> { { "step", 1 } }
             };
 
-            var result = await session.Load(procedure);
+            var result = await session.Pull(procedure);
 
             var unitSample = result.GetObject<UnitSample>("unitSample");
 

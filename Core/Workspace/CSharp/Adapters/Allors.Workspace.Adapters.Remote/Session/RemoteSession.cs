@@ -58,9 +58,9 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal RemoteSessionState SessionState { get; }
 
-        public async Task<ICallResult> Call(Method method, InvokeOptions options = null) => await this.Call(new[] { method }, options);
+        public async Task<IInvokeResult> Invoke(Method method, InvokeOptions options = null) => await this.Invoke(new[] { method }, options);
 
-        public async Task<ICallResult> Call(Method[] methods, InvokeOptions options = null)
+        public async Task<IInvokeResult> Invoke(Method[] methods, InvokeOptions options = null)
         {
             var invokeRequest = new InvokeRequest
             {
@@ -78,7 +78,7 @@ namespace Allors.Workspace.Adapters.Remote
             };
 
             var invokeResponse = await this.Database.Invoke(invokeRequest);
-            return new RemoteCallResult(this, invokeResponse);
+            return new RemoteInvokeResult(this, invokeResponse);
         }
 
         public T Create<T>() where T : class, IObject => this.Create<T>((IClass)this.Workspace.ObjectFactory.GetObjectType<T>());
@@ -183,7 +183,7 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        public async Task<ILoadResult> Load(params Pull[] pulls)
+        public async Task<IPullResult> Pull(params Pull[] pulls)
         {
             var pullRequest = new PullRequest
             {
@@ -194,7 +194,7 @@ namespace Allors.Workspace.Adapters.Remote
             return await this.OnPull(pullResponse);
         }
 
-        public async Task<ILoadResult> Load(Procedure procedure, params Pull[] pulls)
+        public async Task<IPullResult> Pull(Procedure procedure, params Pull[] pulls)
         {
             var pullRequest = new PullRequest
             {
@@ -214,15 +214,15 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        public async Task<ISaveResult> Save()
+        public async Task<IPushResult> Push()
         {
-            var saveRequest = this.PushRequest();
-            var pushResponse = await this.Database.Push(saveRequest);
+            var pushRequest = this.PushRequest();
+            var pushResponse = await this.Database.Push(pushRequest);
             if (!pushResponse.HasErrors)
             {
                 this.PushResponse(pushResponse);
 
-                var objects = saveRequest.Objects.Select(v => v.DatabaseId).ToArray();
+                var objects = pushRequest.Objects.Select(v => v.DatabaseId).ToArray();
                 if (pushResponse.NewObjects != null)
                 {
                     objects = objects.Union(pushResponse.NewObjects.Select(v => v.DatabaseId)).ToArray();
@@ -239,14 +239,14 @@ namespace Allors.Workspace.Adapters.Remote
                 {
                     foreach (var workspaceStrategy in this.workspaceStrategies)
                     {
-                        workspaceStrategy.WorkspaceSave();
+                        workspaceStrategy.WorkspacePush();
                     }
                 }
 
                 this.Reset();
             }
 
-            return new RemoteSaveResult(this, pushResponse);
+            return new RemotePushResult(this, pushResponse);
         }
 
         public IChangeSet Checkpoint()
@@ -321,8 +321,8 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal PushRequest PushRequest() => new PushRequest
         {
-            NewObjects = this.newDatabaseStrategies?.Select(v => v.DatabaseSaveNew()).ToArray(),
-            Objects = this.existingDatabaseStrategies.Where(v => v.HasDatabaseChanges).Select(v => v.DatabaseSaveExisting()).ToArray(),
+            NewObjects = this.newDatabaseStrategies?.Select(v => v.DatabasePushNew()).ToArray(),
+            Objects = this.existingDatabaseStrategies.Where(v => v.HasDatabaseChanges).Select(v => v.DatabasePushExisting()).ToArray(),
         };
 
         internal void PushResponse(PushResponse pushResponse)
@@ -394,7 +394,7 @@ namespace Allors.Workspace.Adapters.Remote
             return strategy;
         }
 
-        private async Task<ILoadResult> OnPull(PullResponse pullResponse)
+        private async Task<IPullResult> OnPull(PullResponse pullResponse)
         {
             var syncRequest = this.Database.Diff(pullResponse);
             if (syncRequest.Objects.Length > 0)
@@ -411,7 +411,7 @@ namespace Allors.Workspace.Adapters.Remote
                 }
             }
 
-            return new RemoteLoadResult(this, pullResponse);
+            return new RemotePullResult(this, pullResponse);
         }
 
         private async Task Sync(SyncRequest syncRequest)

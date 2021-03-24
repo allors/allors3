@@ -277,25 +277,25 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal void PushResponse(RemoteDatabaseObject newDatabaseObject) => this.databaseObject = newDatabaseObject;
 
-        internal PushRequestNewObject SaveNew() => new PushRequestNewObject
+        internal PushRequestNewObject PushNew() => new PushRequestNewObject
         {
             NewWorkspaceId = this.Identity.ToString(),
             ObjectType = this.Class.IdAsString,
-            Roles = this.SaveRoles(),
+            Roles = this.PushRoles(),
         };
 
-        internal PushRequestObject SaveExisting() => new PushRequestObject
+        internal PushRequestObject PushExisting() => new PushRequestObject
         {
             DatabaseId = this.Identity.ToString(),
             Version = this.Version.ToString(),
-            Roles = this.SaveRoles(),
+            Roles = this.PushRoles(),
         };
 
-        private PushRequestRole[] SaveRoles()
+        private PushRequestRole[] PushRoles()
         {
             if (this.changedRoleByRelationType?.Count > 0)
             {
-                var saveRoles = new List<PushRequestRole>();
+                var roles = new List<PushRequestRole>();
 
                 foreach (var keyValuePair in this.changedRoleByRelationType)
                 {
@@ -340,10 +340,10 @@ namespace Allors.Workspace.Adapters.Remote
                         }
                     }
 
-                    saveRoles.Add(pushRequestRole);
+                    roles.Add(pushRequestRole);
                 }
 
-                return saveRoles.ToArray();
+                return roles.ToArray();
             }
 
             return null;

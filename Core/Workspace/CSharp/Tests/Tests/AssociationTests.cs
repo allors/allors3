@@ -44,7 +44,7 @@ namespace Tests.Workspace
                 },
             };
 
-            var result = await session.Load(pull);
+            var result = await session.Pull(pull);
 
             var c2s = result.GetCollection<C2>();
 
@@ -84,7 +84,7 @@ namespace Tests.Workspace
                 },
             };
 
-            var result = await session.Load(pull);
+            var result = await session.Pull(pull);
 
             var c2s = result.GetCollection<C2>();
 

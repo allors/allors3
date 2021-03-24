@@ -8,20 +8,17 @@ namespace Allors.Workspace.Adapters.Local
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Database;
     using Database.Data;
     using Database.Derivations;
     using Database.Domain;
     using Database.Meta;
     using Database.Security;
-    using Protocol.Direct;
     using IClass = Database.Meta.IClass;
     using Node = Database.Data.Node;
-    using Pull = Database.Data.Pull;
 
-    public class LocalPushResult
+    public class LocalPushResult : LocalResult, IPushResult
     {
-        internal LocalPushResult(LocalWorkspace workspace)
+        internal LocalPushResult(LocalSession session, LocalWorkspace workspace) : base(session)
         {
             this.Workspace = workspace;
             this.Transaction = this.Workspace.Database.CreateTransaction();
@@ -37,28 +34,23 @@ namespace Allors.Workspace.Adapters.Local
             this.PreparedExtents = databaseContext.PreparedExtents;
             this.M = databaseContext.M;
             this.MetaPopulation = databaseContext.MetaPopulation;
-            this.Build = @class => (IObject)DefaultObjectBuilder.Build(this.Transaction, @class);
+            this.Build = @class => (Database.IObject)DefaultObjectBuilder.Build(this.Transaction, @class);
             this.Derive = () => this.Transaction.Derive(false);
 
-            // TODO: move to separate class
-            this.AccessErrorStrategies = new List<LocalStrategy>();
-            this.MissingIds = new List<long>();
-            this.VersionErrors = new Dictionary<LocalStrategy, IObject>();
-
-            this.Objects = new HashSet<IObject>();
+            this.Objects = new HashSet<Database.IObject>();
         }
 
-        public Dictionary<string, ISet<IObject>> CollectionsByName { get; } = new Dictionary<string, ISet<IObject>>();
+        public Dictionary<string, ISet<Database.IObject>> DatabaseCollectionsByName { get; } = new Dictionary<string, ISet<Database.IObject>>();
 
-        public Dictionary<string, IObject> ObjectByName { get; } = new Dictionary<string, IObject>();
+        public Dictionary<string, Database.IObject> DatabaseObjectByName { get; } = new Dictionary<string, Database.IObject>();
 
-        public Dictionary<string, object> ValueByName { get; } = new Dictionary<string, object>();
+        public Dictionary<string, object> DatabaseValueByName { get; } = new Dictionary<string, object>();
 
-        public HashSet<IObject> Objects { get; }
+        public HashSet<Database.IObject> Objects { get; }
 
         public LocalWorkspace Workspace { get; }
 
-        public ITransaction Transaction { get; }
+        public Database.ITransaction Transaction { get; }
 
         public ISet<IClass> AllowedClasses { get; }
 
@@ -72,27 +64,17 @@ namespace Allors.Workspace.Adapters.Local
 
         public MetaPopulation MetaPopulation { get; set; }
 
-        public Func<IClass, IObject> Build { get; }
+        public Func<IClass, Database.IObject> Build { get; }
 
         public Func<IDerivationResult> Derive { get; }
 
-        public List<LocalStrategy> AccessErrorStrategies { get; }
+        public Dictionary<long, Database.IObject> ObjectByNewId { get; set; }
 
-        public List<long> MissingIds { get; }
-
-        public Dictionary<LocalStrategy, IObject> VersionErrors { get; }
-
-        public IDerivationResult Validation { get; set; }
-
-        public bool HasErrors => this.AccessErrorStrategies?.Count > 0 || this.MissingIds?.Count > 0 || this.VersionErrors?.Count > 0 || this.Validation?.HasErrors == true;
-
-        public Dictionary<long, IObject> ObjectByNewId { get; set; }
-
-        public void AddCollection(string name, in IEnumerable<IObject> collection)
+        public void AddCollection(string name, in IEnumerable<Database.IObject> collection)
         {
             switch (collection)
             {
-                case ICollection<IObject> asCollection:
+                case ICollection<Database.IObject> asCollection:
                     this.AddCollectionInternal(name, asCollection, null);
                     break;
                 default:
@@ -101,13 +83,13 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        public void AddCollection(string name, in ICollection<IObject> collection) => this.AddCollectionInternal(name, collection, null);
+        public void AddCollection(string name, in ICollection<Database.IObject> collection) => this.AddCollectionInternal(name, collection, null);
 
-        public void AddCollection(string name, IEnumerable<IObject> collection, Node[] tree)
+        public void AddCollection(string name, IEnumerable<Database.IObject> collection, Node[] tree)
         {
             switch (collection)
             {
-                case ICollection<IObject> list:
+                case ICollection<Database.IObject> list:
                     this.AddCollectionInternal(name, list, tree);
                     break;
                 default:
@@ -118,7 +100,7 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        public void AddObject(string name, IObject @object)
+        public void AddObject(string name, Database.IObject @object)
         {
             if (@object != null)
             {
@@ -126,7 +108,7 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        public void AddObject(string name, IObject @object, Node[] tree)
+        public void AddObject(string name, Database.IObject @object, Node[] tree)
         {
             if (@object != null)
             {
@@ -141,7 +123,7 @@ namespace Allors.Workspace.Adapters.Local
                     }
 
                     this.Objects.Add(@object);
-                    this.ObjectByName[name] = @object;
+                    this.DatabaseObjectByName[name] = @object;
                     tree?.Resolve(@object, this.AccessControlLists, this.Objects);
                 }
             }
@@ -151,15 +133,15 @@ namespace Allors.Workspace.Adapters.Local
         {
             if (value != null)
             {
-                this.ValueByName.Add(name, value);
+                this.DatabaseValueByName.Add(name, value);
             }
         }
 
-        private void AddCollectionInternal(string name, in ICollection<IObject> collection, Node[] tree)
+        private void AddCollectionInternal(string name, in ICollection<Database.IObject> collection, Node[] tree)
         {
             if (collection?.Count > 0)
             {
-                this.CollectionsByName.TryGetValue(name, out var existingCollection);
+                this.DatabaseCollectionsByName.TryGetValue(name, out var existingCollection);
 
                 var filteredCollection = collection.Where(v => this.AllowedClasses != null && this.AllowedClasses.Contains(v.Strategy.Class));
 
@@ -167,7 +149,7 @@ namespace Allors.Workspace.Adapters.Local
                 {
                     var prefetchPolicy = tree.BuildPrefetchPolicy();
 
-                    ICollection<IObject> newCollection;
+                    ICollection<Database.IObject> newCollection;
 
                     if (existingCollection != null)
                     {
@@ -177,10 +159,10 @@ namespace Allors.Workspace.Adapters.Local
                     }
                     else
                     {
-                        var newSet = new HashSet<IObject>(filteredCollection);
+                        var newSet = new HashSet<Database.IObject>(filteredCollection);
                         newCollection = newSet;
                         this.Transaction.Prefetch(prefetchPolicy, newCollection);
-                        this.CollectionsByName.Add(name, newSet);
+                        this.DatabaseCollectionsByName.Add(name, newSet);
                     }
 
                     this.Objects.UnionWith(newCollection);
@@ -198,8 +180,8 @@ namespace Allors.Workspace.Adapters.Local
                     }
                     else
                     {
-                        var newWorkspaceCollection = new HashSet<IObject>(filteredCollection);
-                        this.CollectionsByName.Add(name, newWorkspaceCollection);
+                        var newWorkspaceCollection = new HashSet<Database.IObject>(filteredCollection);
+                        this.DatabaseCollectionsByName.Add(name, newWorkspaceCollection);
                         this.Objects.UnionWith(newWorkspaceCollection);
                     }
                 }
@@ -219,10 +201,10 @@ namespace Allors.Workspace.Adapters.Local
                         var cls = (IClass)metaPopulation.Find(x.Class.Id);
                         if (this.AllowedClasses?.Contains(cls) == true)
                         {
-                            return (IObject)this.Build(cls);
+                            return (Database.IObject)this.Build(cls);
                         }
 
-                        this.AccessErrorStrategies.Add(x);
+                        this.AddAccessError(x);
 
                         return null;
                     });
@@ -240,7 +222,7 @@ namespace Allors.Workspace.Adapters.Local
                     var missingIds = objectIds.Where(v => !existingIds.Contains(v));
                     foreach (var missingId in missingIds)
                     {
-                        this.MissingIds.Add(missingId);
+                        this.AddMissingId(missingId);
                     }
                 }
 
@@ -252,7 +234,7 @@ namespace Allors.Workspace.Adapters.Local
 
                         if (!pushRequestObject.DatabaseVersion.Equals(obj.Strategy.ObjectVersion))
                         {
-                            this.VersionErrors[pushRequestObject] = obj;
+                            this.AddVersionError(obj.Id);;
                         }
                         else if (this.AllowedClasses?.Contains(obj.Strategy.Class) == true)
                         {
@@ -260,13 +242,17 @@ namespace Allors.Workspace.Adapters.Local
                         }
                         else
                         {
-                            this.AccessErrorStrategies.Add(pushRequestObject);
+                            this.AddAccessError(pushRequestObject);
                         }
                     }
                 }
             }
 
-            this.Validation = this.Derive();
+            var validation = this.Derive();
+            if (validation.HasErrors)
+            {
+                this.AddDerivationErrors(validation.Errors);
+            }
 
             if (!this.HasErrors)
             {
@@ -275,7 +261,7 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        private void PushRequestRoles(LocalStrategy local, IObject obj)
+        private void PushRequestRoles(LocalStrategy local, Database.IObject obj)
         {
             // TODO: Cache and filter for workspace
             var composite = (IComposite)obj.Strategy.Class;
@@ -318,12 +304,12 @@ namespace Allors.Workspace.Adapters.Local
                 }
                 else
                 {
-                    this.AccessErrorStrategies.Add(local);
+                    this.AddAccessError(local);
                 }
             }
         }
 
-        private IObject GetRole(LocalStrategy localStrategy)
+        private Database.IObject GetRole(LocalStrategy localStrategy)
         {
             if (this.ObjectByNewId == null || !this.ObjectByNewId.TryGetValue(localStrategy.Id, out var role))
             {
@@ -333,14 +319,14 @@ namespace Allors.Workspace.Adapters.Local
             return role;
         }
 
-        private IObject[] GetRoles(LocalStrategy[] localStrategies)
+        private Database.IObject[] GetRoles(LocalStrategy[] localStrategies)
         {
             if (this.ObjectByNewId == null)
             {
                 return this.Transaction.Instantiate(localStrategies.Select(v => v.Id));
             }
 
-            var roles = new List<IObject>();
+            var roles = new List<Database.IObject>();
             List<long> existingRoleIds = null;
             foreach (var localStrategy in localStrategies)
             {

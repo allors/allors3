@@ -10,7 +10,7 @@ namespace Allors.Workspace.Adapters.Local
     using Database.Derivations;
     using IDerivationError = Workspace.IDerivationError;
 
-    public abstract class LocalResult : ICallResult
+    public abstract class LocalResult : IInvokeResult
     {
         private List<LocalStrategy> accessErrorStrategies;
         private List<long> databaseMissingIds;

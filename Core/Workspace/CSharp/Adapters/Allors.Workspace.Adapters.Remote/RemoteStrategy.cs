@@ -307,9 +307,9 @@ namespace Allors.Workspace.Adapters.Remote
             this.databaseState?.Reset();
         }
 
-        internal PushRequestNewObject DatabaseSaveNew() => this.databaseState.SaveNew();
+        internal PushRequestNewObject DatabasePushNew() => this.databaseState.PushNew();
 
-        internal PushRequestObject DatabaseSaveExisting() => this.databaseState.SaveExisting();
+        internal PushRequestObject DatabasePushExisting() => this.databaseState.PushExisting();
 
         internal void DatabasePushResponse(RemoteDatabaseObject databaseObject)
         {
@@ -317,7 +317,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.databaseState.PushResponse(databaseObject);
         }
 
-        internal void WorkspaceSave() => this.workspaceState.Push();
+        internal void WorkspacePush() => this.workspaceState.Push();
 
         public bool IsAssociationForRole(IRoleType roleType, RemoteStrategy role)
             =>

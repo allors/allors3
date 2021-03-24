@@ -42,15 +42,15 @@ namespace Allors.Workspace
 
         IEnumerable<T> GetAll<T>(IComposite objectType) where T : IObject;
 
-        Task<ICallResult> Call(Method method, InvokeOptions options = null);
+        Task<IInvokeResult> Invoke(Method method, InvokeOptions options = null);
 
-        Task<ICallResult> Call(Method[] methods, InvokeOptions options = null);
+        Task<IInvokeResult> Invoke(Method[] methods, InvokeOptions options = null);
 
-        Task<ILoadResult> Load(params Pull[] pulls);
+        Task<IPullResult> Pull(params Pull[] pulls);
 
-        Task<ILoadResult> Load(Procedure procedure, params Pull[] pulls);
+        Task<IPullResult> Pull(Procedure procedure, params Pull[] pulls);
 
-        Task<ISaveResult> Save();
+        Task<IPushResult> Push();
 
         IChangeSet Checkpoint();
 

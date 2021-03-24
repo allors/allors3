@@ -39,7 +39,7 @@ namespace Tests.Workspace
                 },
             };
 
-            var result = await session.Load(pull);
+            var result = await session.Pull(pull);
 
             var c1s = result.GetCollection<C1>();
             var c1b = c1s.Single(v => v.Name == "c1B");

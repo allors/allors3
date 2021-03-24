@@ -322,6 +322,6 @@ namespace Allors.Workspace.Adapters.Local
             this.DatabaseState.PushResponse(databaseObject);
         }
 
-        internal void WorkspaceSave() => this.workspaceState.Push();
+        internal void WorkspacePush() => this.workspaceState.Push();
     }
 }

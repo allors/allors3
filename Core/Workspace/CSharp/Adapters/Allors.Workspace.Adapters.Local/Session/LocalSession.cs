@@ -50,13 +50,13 @@ namespace Allors.Workspace.Adapters.Local
 
         internal LocalSessionState SessionState { get; }
 
-        public Task<ICallResult> Call(Method method, InvokeOptions options = null) => this.Call(new[] { method }, options);
+        public Task<IInvokeResult> Invoke(Method method, InvokeOptions options = null) => this.Invoke(new[] { method }, options);
 
-        public Task<ICallResult> Call(Method[] methods, InvokeOptions options = null)
+        public Task<IInvokeResult> Invoke(Method[] methods, InvokeOptions options = null)
         {
             var localInvokeResult = new LocalInvokeResult(this, this.Workspace);
             localInvokeResult.Execute(methods, options);
-            return Task.FromResult<ICallResult>(localInvokeResult);
+            return Task.FromResult<IInvokeResult>(localInvokeResult);
         }
 
         public T Create<T>() where T : class, IObject => this.Create<T>((IClass)this.Workspace.ObjectFactory.GetObjectType<T>());
@@ -161,7 +161,7 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        public Task<ILoadResult> Load(params Data.Pull[] pulls)
+        public Task<IPullResult> Pull(params Data.Pull[] pulls)
         {
             var pullResult = new LocalPullResult(this, this.Workspace);
 
@@ -170,7 +170,7 @@ namespace Allors.Workspace.Adapters.Local
             return this.OnPull(pullResult);
         }
 
-        public Task<ILoadResult> Load(Procedure procedure, params Data.Pull[] pulls)
+        public Task<IPullResult> Pull(Procedure procedure, params Data.Pull[] pulls)
         {
             var pullResult = new LocalPullResult(this, this.Workspace);
 
@@ -188,12 +188,12 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        public Task<ISaveResult> Save()
+        public Task<IPushResult> Push()
         {
             var newStrategies = this.newDatabaseStrategies?.ToArray() ?? Array.Empty<LocalStrategy>();
             var changedStrategies = this.existingDatabaseStrategies?.Where(v => v.HasDatabaseChanges).ToArray() ?? Array.Empty<LocalStrategy>();
 
-            var localPushResult = new LocalPushResult(this.Workspace);
+            var localPushResult = new LocalPushResult(this, this.Workspace);
             localPushResult.Execute(newStrategies, changedStrategies);
 
             if (!localPushResult.HasErrors)
@@ -217,14 +217,14 @@ namespace Allors.Workspace.Adapters.Local
                 {
                     foreach (var workspaceStrategy in this.workspaceStrategies)
                     {
-                        workspaceStrategy.WorkspaceSave();
+                        workspaceStrategy.WorkspacePush();
                     }
                 }
 
                 this.Reset();
             }
 
-            return Task.FromResult<ISaveResult>(new LocalSaveResult(localPushResult));
+            return Task.FromResult<IPushResult>(localPushResult);
         }
 
         public IChangeSet Checkpoint()
@@ -377,7 +377,7 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        private Task<ILoadResult> OnPull(LocalPullResult pullResult)
+        private Task<IPullResult> OnPull(LocalPullResult pullResult)
         {
             var syncObjects = this.Database.ObjectsToSync(pullResult);
 
@@ -392,7 +392,7 @@ namespace Allors.Workspace.Adapters.Local
                 }
             }
 
-            return Task.FromResult<ILoadResult>(pullResult);
+            return Task.FromResult<IPullResult>(pullResult);
         }
 
         private void PushResponse(LocalPushResult pushResponse)

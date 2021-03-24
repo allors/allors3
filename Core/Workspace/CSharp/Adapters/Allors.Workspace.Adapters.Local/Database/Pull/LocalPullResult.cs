@@ -13,7 +13,7 @@ namespace Allors.Workspace.Adapters.Local
     using IClass = Database.Meta.IClass;
     using Node = Database.Data.Node;
 
-    public class LocalPullResult : LocalResult, ILoadResult, Database.IProcedureOutput
+    public class LocalPullResult : LocalResult, IPullResult, Database.IProcedureOutput
     {
         private IDictionary<string, IObject[]> collections;
         private IDictionary<string, IObject> objects;

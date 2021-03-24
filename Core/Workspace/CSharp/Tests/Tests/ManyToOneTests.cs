@@ -23,7 +23,7 @@ namespace Tests.Workspace
 
             var session1 = this.Workspace.CreateSession();
 
-            var result = await session1.Load(new[]
+            var result = await session1.Pull(new[]
             {
                         new Pull
                         {
@@ -36,7 +36,7 @@ namespace Tests.Workspace
 
             workspaceOrganisation1.WorkspaceDatabaseOwner = databasePerson1;
 
-            await session1.Save();
+            await session1.Push();
 
             var session2 = this.Workspace.CreateSession();
 
@@ -54,7 +54,7 @@ namespace Tests.Workspace
 
             var session1 = this.Workspace.CreateSession();
 
-            var result = await session1.Load(new[]
+            var result = await session1.Pull(new[]
             {
                 new Pull
                 {
@@ -89,7 +89,7 @@ namespace Tests.Workspace
 
             workspaceOrganisation1.WorkspaceWorkspaceOwner = workspacePerson1;
 
-            await session1.Save();
+            await session1.Push();
 
             var session2 = this.Workspace.CreateSession();
 

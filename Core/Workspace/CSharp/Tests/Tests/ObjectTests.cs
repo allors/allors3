@@ -32,7 +32,7 @@ namespace Tests.Workspace
                     ValueByName = new Dictionary<string, object> { { "step", 0 } }
                 };
 
-                await session.Load(procedure);
+                await session.Pull(procedure);
             }
             catch (Exception)
             {

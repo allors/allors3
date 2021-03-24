@@ -24,7 +24,7 @@ namespace Tests.Workspace
 
             var newObject = session.Create<C1>();
 
-            var saved = await session.Save();
+            var saved = await session.Push();
 
             foreach (var roleType in this.M.C1.ObjectType.RoleTypes)
             {

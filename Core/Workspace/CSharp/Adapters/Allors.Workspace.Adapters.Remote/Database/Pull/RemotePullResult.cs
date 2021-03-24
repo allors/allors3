@@ -1,4 +1,4 @@
-// <copyright file="RemoteLoadResult.cs" company="Allors bvba">
+// <copyright file="RemotePullResult.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -10,9 +10,9 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Linq;
     using Allors.Protocol.Json.Api.Pull;
 
-    public class RemoteLoadResult : RemoteResult, ILoadResult
+    public class RemotePullResult : RemoteResult, IPullResult
     {
-        public RemoteLoadResult(RemoteSession session, PullResponse response) : base(session, response)
+        public RemotePullResult(RemoteSession session, PullResponse response) : base(session, response)
         {
             this.Workspace = session.Workspace;
 
