@@ -32,11 +32,11 @@ namespace Allors.Workspace.Adapters.Remote
                 StringComparer.OrdinalIgnoreCase);
         }
 
-        public IReadOnlyDictionary<string, IObject> Objects { get; }
+        public IDictionary<string, IObject> Objects { get; }
 
-        public IReadOnlyDictionary<string, IObject[]> Collections { get; }
+        public IDictionary<string, IObject[]> Collections { get; }
 
-        public IReadOnlyDictionary<string, object> Values { get; }
+        public IDictionary<string, object> Values { get; }
 
         private IWorkspace Workspace { get; }
 

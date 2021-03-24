@@ -9,11 +9,11 @@ namespace Allors.Workspace
 
     public interface ILoadResult : IResult
     {
-        IReadOnlyDictionary<string, IObject[]> Collections { get; }
+        IDictionary<string, IObject[]> Collections { get; }
 
-        IReadOnlyDictionary<string, IObject> Objects { get; }
+        IDictionary<string, IObject> Objects { get; }
 
-        IReadOnlyDictionary<string, object> Values { get; }
+        IDictionary<string, object> Values { get; }
 
         public T[] GetCollection<T>();
 

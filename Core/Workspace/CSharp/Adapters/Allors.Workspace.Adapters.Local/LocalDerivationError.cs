@@ -5,31 +5,27 @@
 
 namespace Allors.Workspace.Adapters.Local
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Database.Derivations;
     using Meta;
-    using IDerivationError = Workspace.IDerivationError;
 
     public class LocalDerivationError : IDerivationError
     {
-        private readonly ISession session;
-        private readonly IDerivationResult derivationResult;
+        private readonly LocalSession session;
+        private readonly Database.Derivations.IDerivationError derivationError;
 
-        public LocalDerivationError(ISession session, IDerivationResult derivationResult)
+        public LocalDerivationError(LocalSession session, Database.Derivations.IDerivationError derivationError)
         {
             this.session = session;
-            this.derivationResult = derivationResult;
+            this.derivationError = derivationError;
         }
 
-        public string ErrorMessage => "TODO"; // TODO: ?
+        public IEnumerable<Role> Roles => this.derivationError.Relations
+            .Select(v =>
+                new Role(
+                    this.session.Get<IObject>(v.Association.Id),
+                    (IRelationType)this.session.Workspace.MetaPopulation.Find(v.RelationType.Id)));
 
-        public IEnumerable<Role> Roles =>
-            from error in this.derivationResult.Errors
-            from r in error.Relations
-            let association = this.session.Get<IObject>(r.Association.Id)
-            let relationType = (IRelationType)this.session.Workspace.MetaPopulation.Find(r.RelationType.Id)
-            select new Role(association, relationType);
+        public string Message => this.derivationError.Message;
     }
 }

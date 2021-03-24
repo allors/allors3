@@ -9,7 +9,7 @@ namespace Allors.Workspace
 
     public interface IDerivationError
     {
-        string ErrorMessage { get; }
+        string Message { get; }
 
         IEnumerable<Role> Roles { get; }
     }

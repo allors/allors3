@@ -22,7 +22,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.responseDerivationError = responseDerivationError;
         }
 
-        public string ErrorMessage => this.responseDerivationError.M;
+        public string Message => this.responseDerivationError.M;
 
         public IEnumerable<Role> Roles =>
             from r in this.responseDerivationError.R

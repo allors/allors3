@@ -163,7 +163,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public Task<ILoadResult> Load(params Data.Pull[] pulls)
         {
-            var pullResult = new LocalPullResult(this.Workspace);
+            var pullResult = new LocalPullResult(this, this.Workspace);
 
             pullResult.Execute(pulls);
 
@@ -172,7 +172,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public Task<ILoadResult> Load(Procedure procedure, params Data.Pull[] pulls)
         {
-            var pullResult = new LocalPullResult(this.Workspace);
+            var pullResult = new LocalPullResult(this, this.Workspace);
 
             pullResult.Execute(procedure);
             pullResult.Execute(pulls);
@@ -309,7 +309,7 @@ namespace Allors.Workspace.Adapters.Local
             _ = this.changedWorkspaceStates.Add(state);
         }
 
-        internal LocalStrategy InstantiateDatabaseObject(long identity)
+        private LocalStrategy InstantiateDatabaseObject(long identity)
         {
             var databaseObject = this.Database.Get(identity);
             var strategy = new LocalStrategy(this, databaseObject);
@@ -342,7 +342,7 @@ namespace Allors.Workspace.Adapters.Local
             _ = this.instantiated.Add(strategy);
         }
 
-        internal IEnumerable<LocalStrategy> Get(IComposite objectType)
+        private IEnumerable<LocalStrategy> Get(IComposite objectType)
         {
             var classes = new HashSet<IClass>(objectType.DatabaseClasses);
             return this.strategyByWorkspaceId.Where(v => classes.Contains(v.Value.Class)).Select(v => v.Value);
@@ -383,7 +383,7 @@ namespace Allors.Workspace.Adapters.Local
 
             this.Workspace.LocalDatabase.Sync(syncObjects, pullResult.AccessControlLists);
 
-            foreach (var databaseObject in pullResult.Objects)
+            foreach (var databaseObject in pullResult.DatabaseObjects)
             {
                 var identity = databaseObject.Id;
                 if (!this.strategyByWorkspaceId.ContainsKey(identity))
@@ -392,11 +392,10 @@ namespace Allors.Workspace.Adapters.Local
                 }
             }
 
-            var loadResult = new LocalLoadResult(this, pullResult);
-            return Task.FromResult<ILoadResult>(loadResult);
+            return Task.FromResult<ILoadResult>(pullResult);
         }
 
-        internal void PushResponse(LocalPushResult pushResponse)
+        private void PushResponse(LocalPushResult pushResponse)
         {
             if (pushResponse.ObjectByNewId?.Count > 0)
             {

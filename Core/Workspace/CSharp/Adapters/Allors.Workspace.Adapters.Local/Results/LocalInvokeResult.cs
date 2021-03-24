@@ -9,31 +9,17 @@ namespace Allors.Workspace.Adapters.Local
     using System.Collections.Generic;
     using System.Linq;
     using Database;
-    using Database.Data;
     using Database.Derivations;
     using Database.Domain;
     using Database.Meta;
     using Database.Security;
-    using Protocol.Direct;
     using IClass = Database.Meta.IClass;
-    using IDerivationError = Workspace.IDerivationError;
-    using IObject = Workspace.IObject;
     using Method = Workspace.Method;
-    using Node = Database.Data.Node;
-    using Pull = Database.Data.Pull;
 
-    public class LocalInvokeResult : ICallResult
+    public class LocalInvokeResult : LocalResult
     {
-        private List<LocalStrategy> accessErrorStrategies;
-        private List<long> databaseMissingIds;
-        private List<LocalStrategy> databaseVersionErrors;
-        private IList<IDerivationResult> validations;
-
-        private readonly LocalSession session;
-
-        internal LocalInvokeResult(LocalSession session, LocalWorkspace workspace)
+        internal LocalInvokeResult(LocalSession session, LocalWorkspace workspace) : base(session)
         {
-            this.session = session;
             this.Workspace = workspace;
             this.Transaction = this.Workspace.Database.CreateTransaction();
 
@@ -46,11 +32,6 @@ namespace Allors.Workspace.Adapters.Local
             this.AllowedClasses = metaCache.GetWorkspaceClasses(this.Workspace.Name);
             this.MetaPopulation = databaseContext.MetaPopulation;
             this.Derive = () => this.Transaction.Derive(false);
-
-            // TODO: move to separate class
-            this.accessErrorStrategies = new List<LocalStrategy>();
-            this.databaseMissingIds = new List<long>();
-            this.databaseVersionErrors = new List<LocalStrategy>();
         }
 
         private LocalWorkspace Workspace { get; }
@@ -65,18 +46,6 @@ namespace Allors.Workspace.Adapters.Local
 
         private Func<IDerivationResult> Derive { get; }
 
-        public string ErrorMessage { get; private set; }
-
-        public IEnumerable<IObject> VersionErrors => this.databaseVersionErrors?.Select(v => v.Object);
-
-        public IEnumerable<IObject> AccessErrors => this.accessErrorStrategies?.Select(v => v.Object);
-
-        public IEnumerable<IObject> MissingErrors => this.session.Get<IObject>(this.databaseMissingIds);
-
-        public IEnumerable<IDerivationError> DerivationErrors => this.validations?.Select(v => (IDerivationError)new LocalDerivationError(this.session, v)).ToArray();
-
-        public bool HasErrors => !string.IsNullOrWhiteSpace(this.ErrorMessage) || this.accessErrorStrategies?.Count > 0 || this.databaseMissingIds?.Count > 0 || this.databaseVersionErrors?.Count > 0 || this.validations?.Count > 0;
-
         internal void Execute(Method[] methods, InvokeOptions options)
         {
             var isolated = options?.Isolated ?? false;
@@ -89,11 +58,11 @@ namespace Allors.Workspace.Adapters.Local
                     var error = this.Invoke(method);
                     if (!error)
                     {
-                        var validation = this.Derive();
-                        if (validation.HasErrors)
+                        var derivationResult = this.Derive();
+                        if (derivationResult.HasErrors)
                         {
                             error = true;
-                            this.validations.Add(validation);
+                            this.AddDerivationErrors(derivationResult.Errors);
                         }
                     }
 
@@ -145,7 +114,7 @@ namespace Allors.Workspace.Adapters.Local
             var obj = this.Transaction.Instantiate(invocation.Object.Id);
             if (obj == null)
             {
-                this.databaseMissingIds.Add(invocation.Object.Id);
+                this.AddMissingId(invocation.Object.Id);
                 return true;
             }
 
@@ -153,7 +122,7 @@ namespace Allors.Workspace.Adapters.Local
 
             if (this.AllowedClasses?.Contains(obj.Strategy.Class) != true)
             {
-                this.accessErrorStrategies.Add(localStrategy);
+                this.AddAccessError(localStrategy);
                 return true;
             }
 
@@ -170,14 +139,14 @@ namespace Allors.Workspace.Adapters.Local
 
             if (!localStrategy.DatabaseVersion.Equals(obj.Strategy.ObjectVersion))
             {
-                this.databaseVersionErrors.Add(localStrategy);
+                this.AddVersionError(localStrategy.Id);
                 return true;
             }
 
             var acl = this.AccessControlLists[obj];
             if (!acl.CanExecute(methodType))
             {
-                this.accessErrorStrategies.Add(localStrategy);
+                this.AddAccessError(localStrategy);
                 return true;
             }
 
@@ -199,10 +168,10 @@ namespace Allors.Workspace.Adapters.Local
                 return true;
             }
 
-            var validation = this.Derive();
-            if (validation.HasErrors)
+            var derivationResult = this.Derive();
+            if (derivationResult.HasErrors)
             {
-                this.validations.Add(validation);
+                this.AddDerivationErrors(derivationResult.Errors);
                 return true;
             }
 

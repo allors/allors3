@@ -8,27 +8,22 @@ namespace Allors.Workspace.Adapters.Local
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using Database;
     using Database.Data;
     using Database.Derivations;
     using Database.Security;
-    using IComposite = Database.Meta.IComposite;
-    using Pull = Database.Data.Pull;
 
     public class LocalProcedure : IProcedureContext
     {
         private readonly Database.Data.Procedure procedure;
-        private readonly IPreparedSelects preparedSelects;
 
         private List<IDerivationResult> errors;
 
-        public LocalProcedure(ITransaction transaction, Database.Data.Procedure procedure, IAccessControlLists acls, IPreparedSelects preparedSelects)
+        public LocalProcedure(ITransaction transaction, Procedure procedure, IAccessControlLists acls)
         {
             this.Transaction = transaction;
             this.procedure = procedure;
             this.AccessControlLists = acls;
-            this.preparedSelects = preparedSelects;
         }
 
         public ITransaction Transaction { get; }
@@ -45,14 +40,14 @@ namespace Allors.Workspace.Adapters.Local
         {
             if (this.procedure.VersionByObject != null)
             {
-                foreach (var kvp in procedure.VersionByObject)
+                foreach (var kvp in this.procedure.VersionByObject)
                 {
                     var @object = kvp.Key;
                     var version = kvp.Value;
 
                     if (!@object.Strategy.ObjectVersion.Equals(version))
                     {
-                        pullResponse.AddVersionError(@object);
+                        pullResponse.AddVersionError(@object.Id);
                     }
                 }
 
@@ -74,9 +69,9 @@ namespace Allors.Workspace.Adapters.Local
 
             if (this.errors?.Count > 0)
             {
-                foreach (var error in this.errors)
+                foreach (var derivationResult in this.errors)
                 {
-                    pullResponse.AddDerivationErrors(error);
+                    pullResponse.AddDerivationErrors(derivationResult.Errors);
                 }
             }
         }
