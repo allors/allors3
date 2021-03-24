@@ -14,6 +14,7 @@ namespace Tests.Workspace.Local
     using Allors.Database.Domain;
     using Allors.Database.Adapters.Memory;
     using Allors.Workspace.Adapters.Local;
+    using Allors.Workspace.Domain;
     using Person = Allors.Database.Domain.Person;
 
     public class Profile : IProfile

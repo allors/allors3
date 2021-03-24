@@ -5,7 +5,7 @@
 
 namespace Allors.Workspace.Derivations.Default
 {
-    public class Cycle : IDerivationCycle
+    public class Cycle : ICycle
     {
         public ISession Session { get; internal set; }
 

@@ -1,4 +1,4 @@
-// <copyright file="IDerivationCycle.cs" company="Allors bvba">
+// <copyright file="IRule.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -6,12 +6,15 @@
 
 namespace Allors.Workspace.Derivations
 {
-    public interface IDerivationCycle
+    using System;
+    using System.Collections.Generic;
+
+    public interface IRule
     {
-        ISession Session { get; }
+        Guid Id { get; }
 
-        IChangeSet ChangeSet { get; }
+        Pattern[] Patterns { get; }
 
-        IValidation Validation { get; }
+        void Match(ICycle cycle, IEnumerable<IObject> matches);
     }
 }

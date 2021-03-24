@@ -37,17 +37,17 @@ namespace Allors.Workspace.Adapters.Remote
         {
             this.Workspace = workspace;
             this.Database = this.Workspace.Database;
-            this.SessionLifecycle = sessionLifecycle;
+            this.Lifecycle = sessionLifecycle;
 
             this.strategyByWorkspaceId = new Dictionary<long, RemoteStrategy>();
             this.strategiesByClass = new Dictionary<IClass, RemoteStrategy[]>();
             this.existingDatabaseStrategies = new List<RemoteStrategy>();
 
             this.SessionState = new RemoteSessionState();
-            this.SessionLifecycle.OnInit(this);
+            this.Lifecycle.OnInit(this);
         }
 
-        public ISessionLifecycle SessionLifecycle { get; }
+        public ISessionLifecycle Lifecycle { get; }
 
         IWorkspace ISession.Workspace => this.Workspace;
         internal RemoteWorkspace Workspace { get; }

@@ -5,6 +5,8 @@
 
 namespace Allors.Workspace
 {
+    using Domain;
+
     public partial class SessionContext : ISessionContext
     {
         public void Dispose()

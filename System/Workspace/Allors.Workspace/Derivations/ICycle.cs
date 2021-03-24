@@ -1,4 +1,4 @@
-// <copyright file="IRule.cs" company="Allors bvba">
+// <copyright file="ICycle.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -6,10 +6,12 @@
 
 namespace Allors.Workspace.Derivations
 {
-    public interface IDerivation
+    public interface ICycle
     {
-        IValidation Validation { get; }
+        ISession Session { get; }
 
-        void Execute();
+        IChangeSet ChangeSet { get; }
+
+        IValidation Validation { get; }
     }
 }

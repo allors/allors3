@@ -16,13 +16,11 @@ namespace Allors.Workspace.Adapters.Remote
     {
         private readonly Dictionary<long, RemoteWorkspaceObject> objectById;
 
-        private readonly ConcurrentDictionary<Guid, IDerivation> derivationById;
-
         internal RemoteWorkspace(string name, IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, HttpClient httpClient)
         {
             this.Name = name;
             this.MetaPopulation = metaPopulation;
-            this.StateLifecycle = state;
+            this.Lifecycle = state;
 
             this.ObjectFactory = new ObjectFactory(this.MetaPopulation, instance);
             this.Database = new RemoteDatabase(this.MetaPopulation, httpClient, new Identities());
@@ -30,27 +28,21 @@ namespace Allors.Workspace.Adapters.Remote
             this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
             this.WorkspaceIdsByWorkspaceClass = new Dictionary<IClass, long[]>();
 
-            this.derivationById = new ConcurrentDictionary<Guid, IDerivation>();
-
             this.objectById = new Dictionary<long, RemoteWorkspaceObject>();
 
-            this.StateLifecycle.OnInit(this);
+            this.Lifecycle.OnInit(this);
         }
 
         public string Name { get; }
 
         public IMetaPopulation MetaPopulation { get; }
 
-        public IWorkspaceLifecycle StateLifecycle { get; }
-
-        public IEnumerable<IDerivation> Derivations => this.derivationById.Values;
+        public IWorkspaceLifecycle Lifecycle { get; }
 
         IObjectFactory IWorkspace.ObjectFactory => this.ObjectFactory;
         internal ObjectFactory ObjectFactory { get; }
 
-        public void AddDerivation(IDerivation derivation) => this.derivationById[derivation.Id] = derivation;
-
-        public ISession CreateSession() => new RemoteSession(this, this.StateLifecycle.CreateSessionContext());
+        public ISession CreateSession() => new RemoteSession(this, this.Lifecycle.CreateSessionContext());
 
         public RemoteDatabase Database { get; }
 

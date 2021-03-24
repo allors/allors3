@@ -10,9 +10,9 @@ namespace Allors.Workspace.Derivations
     using System.Collections.Generic;
     using Meta;
 
-    public abstract partial class Derivation : IDerivation
+    public abstract partial class Rule : IRule
     {
-        protected Derivation(M m, Guid id)
+        protected Rule(M m, Guid id)
         {
             this.M = m;
             this.Id = id;
@@ -24,6 +24,6 @@ namespace Allors.Workspace.Derivations
 
         public Pattern[] Patterns { get; protected set; }
 
-        public abstract void Derive(IDerivationCycle cycle, IEnumerable<IObject> matches);
+        public abstract void Match(ICycle cycle, IEnumerable<IObject> matches);
     }
 }

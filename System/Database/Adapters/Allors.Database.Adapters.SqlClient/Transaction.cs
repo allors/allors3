@@ -23,14 +23,14 @@ namespace Allors.Database.Adapters.SqlClient
         {
             this.Database = database;
             this.Connection = connection;
-            this.StateLifecycle = scope;
+            this.Lifecycle = scope;
 
             this.State = new State();
 
             this.Prefetcher = new Prefetcher(this);
             this.Commands = new Commands(this, connection);
 
-            this.StateLifecycle.OnInit(this);
+            this.Lifecycle.OnInit(this);
         }
 
         public Connection Connection { get; }
@@ -41,7 +41,7 @@ namespace Allors.Database.Adapters.SqlClient
 
         IDatabase ITransaction.Database => this.Database;
 
-        public ITransactionLifecycle StateLifecycle { get; }
+        public ITransactionLifecycle Lifecycle { get; }
         
         public Database Database { get; }
 

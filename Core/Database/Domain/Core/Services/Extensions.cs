@@ -20,11 +20,11 @@ namespace Allors.Database.Domain
 
     public static partial class TransactionExtensions
     {
-        public static ITransactionContext Context(this ITransaction @this) => ((ITransactionContext)@this.StateLifecycle);
+        public static ITransactionContext Context(this ITransaction @this) => ((ITransactionContext)@this.Lifecycle);
     }
 
     public static partial class DatabaseExtensions
     {
-        public static IDatabaseContext Context(this IDatabase @this) => ((IDatabaseContext)@this.StateLifecycle);
+        public static IDatabaseContext Context(this IDatabase @this) => ((IDatabaseContext)@this.Lifecycle);
     }
 }

@@ -177,6 +177,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Workspace.Tests.Local", "Co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Workspace.Tests.Remote", "Core\Workspace\CSharp\Tests.Remote\Workspace.Tests.Remote.csproj", "{9ADB4BD9-B9FB-4991-91DB-61ADD51073A6}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Workspace.Configuration", "Core\Workspace\CSharp\Configuration\Workspace.Configuration.csproj", "{73EE6897-B0A6-4BD8-A771-34FA71EFDB41}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -451,6 +453,10 @@ Global
 		{9ADB4BD9-B9FB-4991-91DB-61ADD51073A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9ADB4BD9-B9FB-4991-91DB-61ADD51073A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9ADB4BD9-B9FB-4991-91DB-61ADD51073A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73EE6897-B0A6-4BD8-A771-34FA71EFDB41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73EE6897-B0A6-4BD8-A771-34FA71EFDB41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73EE6897-B0A6-4BD8-A771-34FA71EFDB41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73EE6897-B0A6-4BD8-A771-34FA71EFDB41}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -539,6 +545,7 @@ Global
 		{D2087870-DAA2-408C-B0C5-958B45146EED} = {1C62BCEE-DC47-4093-8359-22F448216C7F}
 		{B3ED8053-0A33-40F7-AAF5-583B6C45EF3C} = {50A1B7BA-85A8-4AD0-B90C-829A756CC0E5}
 		{9ADB4BD9-B9FB-4991-91DB-61ADD51073A6} = {50A1B7BA-85A8-4AD0-B90C-829A756CC0E5}
+		{73EE6897-B0A6-4BD8-A771-34FA71EFDB41} = {50A1B7BA-85A8-4AD0-B90C-829A756CC0E5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {00D78C3D-8536-4549-B1EE-C19BD0C50387}

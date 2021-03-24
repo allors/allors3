@@ -30,7 +30,7 @@ namespace Allors.Database.Adapters.Memory
         internal Transaction(Database database, ITransactionLifecycle scope)
         {
             this.Database = database;
-            this.StateLifecycle = scope;
+            this.Lifecycle = scope;
 
             this.busyCommittingOrRollingBack = false;
 
@@ -40,14 +40,14 @@ namespace Allors.Database.Adapters.Memory
 
             this.Reset();
 
-            this.StateLifecycle.OnInit(this);
+            this.Lifecycle.OnInit(this);
         }
 
         public IDatabase Population => this.Database;
 
         IDatabase ITransaction.Database => this.Database;
 
-        public ITransactionLifecycle StateLifecycle { get; }
+        public ITransactionLifecycle Lifecycle { get; }
 
         public Action<IStrategy, IRoleType> OnAccessUnitRole { get; set; }
 

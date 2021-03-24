@@ -31,17 +31,17 @@ namespace Allors.Workspace.Adapters.Local
         {
             this.Workspace = workspace;
             this.Database = this.Workspace.LocalDatabase;
-            this.SessionLifecycle = sessionLifecycle;
+            this.Lifecycle = sessionLifecycle;
 
             this.strategyByWorkspaceId = new Dictionary<long, LocalStrategy>();
             this.strategiesByClass = new Dictionary<IClass, LocalStrategy[]>();
             this.existingDatabaseStrategies = new List<LocalStrategy>();
 
             this.SessionState = new LocalSessionState();
-            this.SessionLifecycle.OnInit(this);
+            this.Lifecycle.OnInit(this);
         }
 
-        public ISessionLifecycle SessionLifecycle { get; }
+        public ISessionLifecycle Lifecycle { get; }
 
         IWorkspace ISession.Workspace => this.Workspace;
         internal LocalWorkspace Workspace { get; }

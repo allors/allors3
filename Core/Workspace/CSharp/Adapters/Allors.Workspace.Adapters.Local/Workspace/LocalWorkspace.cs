@@ -12,7 +12,6 @@ namespace Allors.Workspace.Adapters.Local
     using Database.Domain;
     using Derivations;
     using Meta;
-    using IDerivation = Derivations.IDerivation;
     using IObjectFactory = Workspace.IObjectFactory;
     using ObjectFactory = Adapters.ObjectFactory;
 
@@ -20,14 +19,12 @@ namespace Allors.Workspace.Adapters.Local
     {
         private readonly Dictionary<long, LocalWorkspaceObject> objectById;
 
-        private readonly ConcurrentDictionary<Guid, IDerivation> derivationById;
-
         public LocalWorkspace(string name, long userId, IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, Allors.Database.IDatabase database)
         {
             this.Name = name;
             this.UserId = userId;
             this.MetaPopulation = metaPopulation;
-            this.StateLifecycle = state;
+            this.Lifecycle = state;
 
             this.ObjectFactory = new ObjectFactory(this.MetaPopulation, instance);
             this.Database = database;
@@ -38,11 +35,9 @@ namespace Allors.Workspace.Adapters.Local
             this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
             this.WorkspaceIdsByWorkspaceClass = new Dictionary<IClass, long[]>();
 
-            this.derivationById = new ConcurrentDictionary<Guid, IDerivation>();
-
             this.objectById = new Dictionary<long, LocalWorkspaceObject>();
 
-            this.StateLifecycle.OnInit(this);
+            this.Lifecycle.OnInit(this);
         }
 
         public string Name { get; }
@@ -51,18 +46,14 @@ namespace Allors.Workspace.Adapters.Local
 
         public IMetaPopulation MetaPopulation { get; }
 
-        public IWorkspaceLifecycle StateLifecycle { get; }
-
-        public IEnumerable<IDerivation> Derivations => this.derivationById.Values;
+        public IWorkspaceLifecycle Lifecycle { get; }
 
         IObjectFactory IWorkspace.ObjectFactory => this.ObjectFactory;
         internal ObjectFactory ObjectFactory { get; }
 
         public IDatabase Database { get; }
-
-        public void AddDerivation(IDerivation derivation) => this.derivationById[derivation.Id] = derivation;
-
-        public ISession CreateSession() => new LocalSession(this, this.StateLifecycle.CreateSessionContext());
+        
+        public ISession CreateSession() => new LocalSession(this, this.Lifecycle.CreateSessionContext());
 
         internal LocalDatabase LocalDatabase { get; }
 

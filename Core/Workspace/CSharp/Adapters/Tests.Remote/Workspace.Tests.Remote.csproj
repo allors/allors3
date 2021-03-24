@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Domain\Workspace.Domain.csproj" />
+    <ProjectReference Include="..\..\Configuration\Workspace.Configuration.csproj" />
     <ProjectReference Include="..\..\Meta\Workspace.Meta.csproj" />
     <ProjectReference Include="..\Allors.Workspace.Adapters.Remote\Allors.Workspace.Adapters.Remote.csproj" />
   </ItemGroup>

@@ -7,25 +7,27 @@ namespace Allors.Workspace.Derivations.Default
 {
     using System;
     using System.Collections.Generic;
-    using System.Data;
     using System.Linq;
     using Data;
     using Meta;
     using Domain;
 
-    public class Derive
+    public class Derivation : IDerivation
     {
-        public Derive(ISession session, int maxDomainDerivationCycles)
+        private readonly ISession session;
+
+        private readonly IRule[] rules;
+
+        private readonly int maxDomainDerivationCycles;
+
+        public Derivation(ISession session, IRule[] rules, int maxDomainDerivationCycles)
         {
-            this.Session = session;
-            this.MaxDomainDerivationCycles = maxDomainDerivationCycles;
+            this.rules = rules;
+            this.session = session;
+            this.maxDomainDerivationCycles = maxDomainDerivationCycles;
 
             this.Validation = new Validation();
         }
-
-        public ISession Session { get; }
-
-        public int MaxDomainDerivationCycles { get; }
 
         public IValidation Validation { get; }
 
@@ -33,13 +35,13 @@ namespace Allors.Workspace.Derivations.Default
         {
             var cycles = 0;
 
-            var changeSet = this.Session.Checkpoint();
+            var changeSet = this.session.Checkpoint();
 
             while (changeSet.RoleByAssociationType.Count > 0 || changeSet.AssociationByRoleType.Count > 0 || changeSet.Created.Count > 0 || changeSet.Instantiated.Count > 0)
             {
                 var session = changeSet.Session;
 
-                if (++cycles > this.MaxDomainDerivationCycles)
+                if (++cycles > this.maxDomainDerivationCycles)
                 {
                     throw new Exception("Maximum amount of domain derivation cycles detected");
                 }
@@ -51,11 +53,11 @@ namespace Allors.Workspace.Derivations.Default
                     Validation = this.Validation
                 };
 
-                foreach (var domainDerivation in this.Session.Workspace.Derivations)
+                foreach (var rule in this.rules)
                 {
                     var matches = new HashSet<IObject>();
 
-                    foreach (var pattern in domainDerivation.Patterns)
+                    foreach (var pattern in rule.Patterns)
                     {
                         var source = pattern switch
                         {
@@ -101,30 +103,27 @@ namespace Allors.Workspace.Derivations.Default
                             _ => Array.Empty<IObject>()
                         };
 
-                        if (source != null)
+                        if (pattern.Steps?.Length > 0)
                         {
-                            if (pattern.Steps?.Length > 0)
-                            {
-                                var step = new Step(pattern.Steps);
-                                source = source.SelectMany(v => step.Get(v));
-                            }
-
-                            if (pattern.OfType != null)
-                            {
-                                source = source.Where(v => pattern.OfType.IsAssignableFrom(v.Strategy.Class));
-                            }
-
-                            matches.UnionWith(source);
+                            var step = new Step(pattern.Steps);
+                            source = source.SelectMany(v => step.Get(v));
                         }
+
+                        if (pattern.OfType != null)
+                        {
+                            source = source.Where(v => pattern.OfType.IsAssignableFrom(v.Strategy.Class));
+                        }
+
+                        matches.UnionWith(source);
                     }
 
                     if (matches.Count > 0)
                     {
-                        domainDerivation.Derive(cycle, matches);
+                        rule.Match(cycle, matches);
                     }
                 }
 
-                changeSet = this.Session.Checkpoint();
+                changeSet = this.session.Checkpoint();
             }
         }
     }
