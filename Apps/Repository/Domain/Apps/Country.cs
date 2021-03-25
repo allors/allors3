@@ -28,14 +28,6 @@ namespace Allors.Repository
         #endregion
 
         #region Allors
-        [Id("13010743-231f-43a8-9539-b95b83ab15da")]
-        #endregion
-        [Multiplicity(Multiplicity.OneToMany)]
-        [Indexed]
-        [Workspace(Default)]
-        public VatRate[] VatRates { get; set; }
-
-        #region Allors
         [Id("2ecb8cfb-011d-4c31-a9cd-ed5a13ae23a4")]
         #endregion
         [Workspace(Default)]
@@ -68,6 +60,15 @@ namespace Allors.Repository
         [Indexed]
         [Workspace(Default)]
         public VatForm VatForm { get; set; }
+
+        #region Allors
+        [Id("bc0bf6fb-d7d0-410e-ab14-5bc0e33f491d")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToMany)]
+        [Indexed]
+        [Derived]
+        [Workspace]
+        public VatRegime[] DerivedVatRegimes { get; set; }
 
         #region Allors
         [Id("c231ce68-bf03-4122-8699-c3c6473ab90a")]

@@ -75,4 +75,24 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(@"[A-Z]{4}\d{10}", country.IbanRegex);
         }
     }
+
+    public class CountryVatRegimesDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public CountryVatRegimesDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedVatRegimeCountryDeriveDerivedVatRegimes()
+        {
+            var country = new CountryBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var vatRegime = new VatRegimeBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            vatRegime.Country = country;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(vatRegime, country.DerivedVatRegimes);
+        }
+    }
 }

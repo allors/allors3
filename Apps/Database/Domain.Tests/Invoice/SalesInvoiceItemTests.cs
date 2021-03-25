@@ -34,7 +34,7 @@ namespace Allors.Database.Domain.Tests
         private BasePrice currentFeature1BasePrice;
         private BasePrice currentGood1Feature1BasePrice;
         private SalesInvoice invoice;
-        private VatRate vatRate21;
+        private VatRegime vatRegime;
 
         public SalesInvoiceItemTests(Fixture fixture) : base(fixture)
         {
@@ -44,7 +44,7 @@ namespace Allors.Database.Domain.Tests
 
             this.internalOrganisation = this.Transaction.GetSingleton();
 
-            this.vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
+            this.vatRegime = new VatRegimes(this.Transaction).BelgiumStandard;
 
             this.mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             this.kiev = new CityBuilder(this.Transaction).WithName("Kiev").Build();
@@ -64,7 +64,7 @@ namespace Allors.Database.Domain.Tests
             this.finishedGood = this.good.Part;
 
             this.feature1 = new ColourBuilder(this.Transaction)
-                .WithVatRate(this.vatRate21)
+                .WithVatRegime(this.vatRegime)
                 .WithName("white")
                 .Build();
 
@@ -222,7 +222,7 @@ namespace Allors.Database.Domain.Tests
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction)
                 .WithBillToCustomer(this.billToCustomer)
                 .WithAssignedBillToContactMechanism(this.billToContactMechanismMechelen)
-                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Export)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).ZeroRated)
                 .Build();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithQuantity(1).WithInvoiceItemType(productItem).Build();
@@ -243,7 +243,7 @@ namespace Allors.Database.Domain.Tests
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction)
                 .WithBillToCustomer(this.billToCustomer)
                 .WithAssignedBillToContactMechanism(this.billToContactMechanismMechelen)
-                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Export)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).ZeroRated)
                 .Build();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithQuantity(1).Build();
@@ -328,7 +328,7 @@ namespace Allors.Database.Domain.Tests
                 .WithProduct(this.good)
                 .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem)
                 .WithQuantity(quantity)
-                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Assessable21)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).BelgiumStandard)
                 .Build();
 
             this.invoice.AddSalesInvoiceItem(item1);
@@ -339,13 +339,13 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(0, item1.UnitDiscount);
             Assert.Equal(0, item1.UnitSurcharge);
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitPrice);
-            Assert.Equal(Math.Round(item1.UnitPrice * this.vatRate21.Rate / 100, 2), item1.UnitVat);
+            Assert.Equal(Math.Round(item1.UnitPrice * 21 / 100, 2), item1.UnitVat);
 
             Assert.Equal(this.currentGood1BasePrice.Price * quantity, item1.TotalBasePrice);
             Assert.Equal(0, item1.TotalDiscount);
             Assert.Equal(0, item1.TotalSurcharge);
             Assert.Equal(this.currentGood1BasePrice.Price * quantity, item1.TotalExVat);
-            Assert.Equal(Math.Round(item1.UnitPrice * this.vatRate21.Rate / 100, 2) * quantity, item1.TotalVat);
+            Assert.Equal(Math.Round(item1.UnitPrice * 21 / 100, 2) * quantity, item1.TotalVat);
 
             var purchasePrice = this.goodPurchasePrice.Price * 0.5M;
 
@@ -353,7 +353,7 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(0, this.invoice.TotalDiscount);
             Assert.Equal(0, this.invoice.TotalSurcharge);
             Assert.Equal(this.currentGood1BasePrice.Price * quantity, this.invoice.TotalExVat);
-            Assert.Equal(Math.Round(item1.UnitPrice * this.vatRate21.Rate / 100, 2) * quantity, this.invoice.TotalVat);
+            Assert.Equal(Math.Round(item1.UnitPrice * 21 / 100, 2) * quantity, this.invoice.TotalVat);
         }
 
         [Fact]
@@ -366,7 +366,7 @@ namespace Allors.Database.Domain.Tests
                 .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem)
                 .WithQuantity(3)
                 .WithAssignedUnitPrice(15)
-                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Assessable21)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).BelgiumStandard)
                 .WithAssignedIrpfRegime(new IrpfRegimes(this.Transaction).Assessable19)
                 .Build();
 
@@ -411,7 +411,7 @@ namespace Allors.Database.Domain.Tests
                 .WithProduct(this.good)
                 .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem)
                 .WithQuantity(quantity)
-                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Assessable21)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).BelgiumStandard)
                 .WithAssignedIrpfRegime(irpfRegime)
                 .Build();
 
@@ -423,21 +423,21 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(0, item1.UnitDiscount);
             Assert.Equal(0, item1.UnitSurcharge);
             Assert.Equal(this.currentGood1BasePrice.Price, item1.UnitPrice);
-            Assert.Equal(Math.Round(item1.UnitPrice * this.vatRate21.Rate / 100, 2), item1.UnitVat);
-            Assert.Equal(Math.Round(item1.UnitPrice * irpfRegime.IrpfRate.Rate / 100, 2), item1.UnitIrpf);
+            Assert.Equal(Math.Round(item1.UnitPrice * 21 / 100, 2), item1.UnitVat);
+            Assert.Equal(Math.Round(item1.UnitPrice * 19 / 100, 2), item1.UnitIrpf);
 
             Assert.Equal(this.currentGood1BasePrice.Price * quantity, item1.TotalBasePrice);
             Assert.Equal(0, item1.TotalDiscount);
             Assert.Equal(0, item1.TotalSurcharge);
             Assert.Equal(this.currentGood1BasePrice.Price * quantity, item1.TotalExVat);
-            Assert.Equal(Math.Round(item1.UnitPrice * irpfRegime.IrpfRate.Rate / 100, 2) * quantity, item1.TotalIrpf);
+            Assert.Equal(Math.Round(item1.UnitPrice * 19 / 100, 2) * quantity, item1.TotalIrpf);
 
             Assert.Equal(this.currentGood1BasePrice.Price * quantity, this.invoice.TotalBasePrice);
             Assert.Equal(0, this.invoice.TotalDiscount);
             Assert.Equal(0, this.invoice.TotalSurcharge);
             Assert.Equal(this.currentGood1BasePrice.Price * quantity, this.invoice.TotalExVat);
-            Assert.Equal(Math.Round(item1.UnitPrice * this.vatRate21.Rate / 100, 2) * quantity, this.invoice.TotalVat);
-            Assert.Equal(Math.Round(item1.UnitPrice * irpfRegime.IrpfRate.Rate / 100, 2) * quantity, this.invoice.TotalIrpf);
+            Assert.Equal(Math.Round(item1.UnitPrice * 21 / 100, 2) * quantity, this.invoice.TotalVat);
+            Assert.Equal(Math.Round(item1.UnitPrice * 19 / 100, 2) * quantity, this.invoice.TotalIrpf);
         }
 
         [Fact]
@@ -1900,7 +1900,7 @@ namespace Allors.Database.Domain.Tests
                 .WithProduct(this.good)
                 .WithQuantity(1)
                 .WithAssignedUnitPrice(100M)
-                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Assessable21)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).BelgiumStandard)
                 .Build();
 
             this.invoice.AddSalesInvoiceItem(item1);
@@ -1939,7 +1939,7 @@ namespace Allors.Database.Domain.Tests
             this.currentGood1BasePrice = (BasePrice)transaction.Instantiate(this.currentGood1BasePrice);
             this.currentGood1Feature1BasePrice = (BasePrice)transaction.Instantiate(this.currentGood1Feature1BasePrice);
             this.invoice = (SalesInvoice)transaction.Instantiate(this.invoice);
-            this.vatRate21 = (VatRate)transaction.Instantiate(this.vatRate21);
+            this.vatRegime = (VatRegime)transaction.Instantiate(this.vatRegime);
         }
     }
 
@@ -2163,9 +2163,9 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleAssignedVatRegimeDeriveVatRegime()
+        public void ChangedAssignedVatRegimeDeriveVatRegime()
         {
-            var assignedVatRegime = new VatRegimes(this.Transaction).Assessable10;
+            var assignedVatRegime = new VatRegimes(this.Transaction).SpainReduced;
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).WithAssignedVatRegime(new VatRegimes(this.Transaction).Exempt).Build();
             this.Transaction.Derive(false);
 
@@ -2180,9 +2180,9 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleSalesInvoiceVatRegimeDeriveVatRegime()
+        public void ChangedSalesInvoiceVatRegimeDeriveVatRegime()
         {
-            var vatRegime = new VatRegimes(this.Transaction).Assessable10;
+            var vatRegime = new VatRegimes(this.Transaction).SpainReduced;
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
@@ -2197,9 +2197,9 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleSalesInvoiceVatRegimeDeriveVatRate()
+        public void ChangedSalesInvoiceVatRegimeDeriveVatRate()
         {
-            var vatRegime = new VatRegimes(this.Transaction).Assessable10;
+            var vatRegime = new VatRegimes(this.Transaction).SpainReduced;
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
@@ -2210,11 +2210,39 @@ namespace Allors.Database.Domain.Tests
             salesInvoice.AssignedVatRegime = vatRegime;
             this.Transaction.Derive(false);
 
-            Assert.Equal(vatRegime.VatRate, invoiceItem.VatRate);
+            Assert.Equal(vatRegime.VatRates[0], invoiceItem.VatRate);
         }
 
         [Fact]
-        public void OnChangedRoleAssignedIrpfRegimeDeriveIrpfRegime()
+        public void ChangedSalesInvoiceInvoiceDateDeriveVatRate()
+        {
+            var vatRegime = new VatRegimes(this.Transaction).SpainReduced;
+            vatRegime.VatRates[0].ThroughDate = this.Transaction.Now().AddDays(-1).Date;
+            this.Transaction.Derive(false);
+
+            var newVatRate = new VatRateBuilder(this.Transaction).WithFromDate(this.Transaction.Now().Date).WithRate(11).Build();
+            vatRegime.AddVatRate(newVatRate);
+            this.Transaction.Derive(false);
+
+            var salesInvoice = new SalesInvoiceBuilder(this.Transaction)
+                .WithInvoiceDate(this.Transaction.Now().AddDays(-1).Date)
+                .WithAssignedVatRegime(vatRegime).Build();
+            this.Transaction.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
+            salesInvoice.AddSalesInvoiceItem(invoiceItem);
+            this.Transaction.Derive(false);
+
+            Assert.NotEqual(newVatRate, invoiceItem.VatRate);
+
+            salesInvoice.InvoiceDate = this.Transaction.Now().AddDays(1).Date;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(newVatRate, invoiceItem.VatRate);
+        }
+
+        [Fact]
+        public void ChangedAssignedIrpfRegimeDeriveIrpfRegime()
         {
             var assignedIrpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).WithAssignedIrpfRegime(new IrpfRegimes(this.Transaction).Exempt).Build();
@@ -2231,7 +2259,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleSalesInvoiceIrpfRegimeDeriveIrpfRegime()
+        public void ChangedSalesInvoiceIrpfRegimeDeriveIrpfRegime()
         {
             var irpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
@@ -2248,7 +2276,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleSalesInvoiceIrpfRegimeDeriveIrpfRate()
+        public void ChangedSalesInvoiceIrpfRegimeDeriveIrpfRate()
         {
             var irpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
@@ -2261,11 +2289,11 @@ namespace Allors.Database.Domain.Tests
             salesInvoice.AssignedIrpfRegime = irpfRegime;
             this.Transaction.Derive(false);
 
-            Assert.Equal(irpfRegime.IrpfRate, invoiceItem.IrpfRate);
+            Assert.Equal(irpfRegime.IrpfRates[0], invoiceItem.IrpfRate);
         }
 
         [Fact]
-        public void OnChangedRolePaymentApplicationAmountAppliedDeriveAmountPaid()
+        public void ChangedPaymentApplicationAmountAppliedDeriveAmountPaid()
         {
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
@@ -2281,7 +2309,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleSalesInvoiceSalesInvoiceStateDeriveSalesInvoiceItemStateCancelled()
+        public void ChangedSalesInvoiceSalesInvoiceStateDeriveSalesInvoiceItemStateCancelled()
         {
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
@@ -2297,7 +2325,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleSalesInvoiceSalesInvoiceStateDeriveSalesInvoiceItemStateWrittenOff()
+        public void ChangedSalesInvoiceSalesInvoiceStateDeriveSalesInvoiceItemStateWrittenOff()
         {
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
@@ -2313,7 +2341,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleSalesInvoiceSalesInvoiceStateDeriveSalesInvoiceItemStateReadyForPosting()
+        public void ChangedSalesInvoiceSalesInvoiceStateDeriveSalesInvoiceItemStateReadyForPosting()
         {
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);

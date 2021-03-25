@@ -26,6 +26,7 @@ namespace Allors.Database.Domain
                 new AssociationPattern(this.M.PurchaseOrder.DeliveryDate) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
                 new AssociationPattern(this.M.PurchaseOrder.DerivedVatRegime) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
                 new AssociationPattern(this.M.PurchaseOrder.DerivedIrpfRegime) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
+                new AssociationPattern(this.M.PurchaseOrder.OrderDate) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -39,9 +40,9 @@ namespace Allors.Database.Domain
 
                 @this.DerivedDeliveryDate = @this.AssignedDeliveryDate ?? order?.DeliveryDate;
                 @this.DerivedVatRegime = @this.AssignedVatRegime ?? order?.DerivedVatRegime;
-                @this.VatRate = @this.DerivedVatRegime?.VatRate;
+                @this.VatRate = @this.DerivedVatRegime?.VatRates.First(v => v.FromDate <= order.OrderDate && (!v.ExistThroughDate || v.ThroughDate >= order.OrderDate));
                 @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? order?.DerivedIrpfRegime;
-                @this.IrpfRate = @this.DerivedIrpfRegime?.IrpfRate;
+                @this.IrpfRate = @this.DerivedIrpfRegime?.IrpfRates.First(v => v.FromDate <= order.OrderDate && (!v.ExistThroughDate || v.ThroughDate >= order.OrderDate));
             }
         }
     }

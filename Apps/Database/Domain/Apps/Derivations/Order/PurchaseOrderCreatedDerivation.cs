@@ -28,14 +28,13 @@ namespace Allors.Database.Domain
                 new AssociationPattern(m.PurchaseOrder.AssignedBillToContactMechanism),
                 new AssociationPattern(m.PurchaseOrder.AssignedShipToAddress),
                 new AssociationPattern(m.PurchaseOrder.Locale),
+                new AssociationPattern(m.PurchaseOrder.OrderDate),
                 new AssociationPattern(m.Organisation.Locale) { Steps = new IPropertyType[] { m.Organisation.PurchaseOrdersWhereOrderedBy }},
                 new AssociationPattern(m.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { m.Organisation.PurchaseOrdersWhereOrderedBy }},
                 new AssociationPattern(m.Organisation.ShippingAddress) { Steps = new IPropertyType[] { m.Organisation.PurchaseOrdersWhereOrderedBy }},
                 new AssociationPattern(m.Organisation.BillingAddress) { Steps = new IPropertyType[] { m.Organisation.PurchaseOrdersWhereOrderedBy }},
                 new AssociationPattern(m.Organisation.GeneralCorrespondence) { Steps = new IPropertyType[] { m.Organisation.PurchaseOrdersWhereOrderedBy }},
                 new AssociationPattern(m.Organisation.OrderAddress) { Steps = new IPropertyType[] { m.Organisation.PurchaseOrdersWhereTakenViaSupplier }},
-                new AssociationPattern(m.Organisation.VatRegime) { Steps = new IPropertyType[] { m.Organisation.PurchaseOrdersWhereTakenViaSupplier }},
-                new AssociationPattern(m.Organisation.IrpfRegime) { Steps = new IPropertyType[] { m.Organisation.PurchaseOrdersWhereTakenViaSupplier }},
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -46,11 +45,17 @@ namespace Allors.Database.Domain
             {
                 @this.DerivedLocale = @this.Locale ?? @this.OrderedBy?.Locale;
                 @this.DerivedCurrency = @this.AssignedCurrency ?? @this.OrderedBy?.PreferredCurrency;
-                @this.DerivedVatRegime = @this.AssignedVatRegime ?? @this.TakenViaSupplier?.VatRegime;
-                @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? @this.TakenViaSupplier?.IrpfRegime;
+                @this.DerivedVatRegime = @this.AssignedVatRegime;
+                @this.DerivedIrpfRegime = @this.AssignedIrpfRegime;
                 @this.DerivedShipToAddress = @this.AssignedShipToAddress ?? @this.OrderedBy?.ShippingAddress;
                 @this.DerivedBillToContactMechanism = @this.AssignedBillToContactMechanism ?? @this.OrderedBy?.BillingAddress ?? @this.OrderedBy?.GeneralCorrespondence;
                 @this.DerivedTakenViaContactMechanism = @this.AssignedTakenViaContactMechanism ?? @this.TakenViaSupplier?.OrderAddress;
+
+                if (@this.ExistOrderDate)
+                {
+                    @this.DerivedVatRate = @this.DerivedVatRegime?.VatRates.First(v => v.FromDate <= @this.OrderDate && (!v.ExistThroughDate || v.ThroughDate >= @this.OrderDate));
+                    @this.DerivedIrpfRate = @this.DerivedIrpfRegime?.IrpfRates.First(v => v.FromDate <= @this.OrderDate && (!v.ExistThroughDate || v.ThroughDate >= @this.OrderDate));
+                }
             }
         }
     }

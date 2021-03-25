@@ -47,10 +47,10 @@ namespace Allors.Database.Domain.Tests
             var unitsOfMeasure = new UnitsOfMeasure(this.Transaction);
             var unknown = new InventoryTransactionReasons(this.Transaction).Unknown;
 
-            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
+            var vatRegime = new VatRegimes(this.Transaction).BelgiumStandard;
             var category = new ProductCategoryBuilder(this.Transaction).WithName("category").Build();
             var finishedGood = this.CreatePart("FG1", kinds.Serialised);
-            var good = this.CreateGood("10101", vatRate21, "good1", unitsOfMeasure.Piece, category, finishedGood);
+            var good = this.CreateGood("10101", vatRegime, "good1", unitsOfMeasure.Piece, category, finishedGood);
             var serialItem = new SerialisedItemBuilder(this.Transaction).WithSerialNumber("1").Build();
             var variance = this.CreateInventoryTransaction(10, unknown, finishedGood, serialItem);
 
@@ -82,12 +82,12 @@ namespace Allors.Database.Domain.Tests
                     .WithIdentification(partId)
                     .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build()).WithInventoryItemKind(kind).Build();
 
-        private Good CreateGood(string sku, VatRate vatRate, string name, UnitOfMeasure uom, ProductCategory category, Part part)
+        private Good CreateGood(string sku, VatRegime vatRegime, string name, UnitOfMeasure uom, ProductCategory category, Part part)
             => new NonUnifiedGoodBuilder(this.Transaction)
                 .WithProductIdentification(new SkuIdentificationBuilder(this.Transaction)
                     .WithIdentification(sku)
                     .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Sku).Build())
-                .WithVatRate(vatRate)
+                .WithVatRegime(vatRegime)
                 .WithName(name)
                 .WithUnitOfMeasure(uom)
                 .WithPart(part)

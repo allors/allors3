@@ -19,6 +19,7 @@ namespace Allors.Database.Domain
                 new AssociationPattern(m.QuoteItem.AssignedVatRegime),
                 new AssociationPattern(m.QuoteItem.AssignedIrpfRegime),
                 new RolePattern(m.Quote.QuoteItems),
+                new AssociationPattern(m.Quote.IssueDate) { Steps = new IPropertyType[] { m.Quote.QuoteItems }},
                 new AssociationPattern(m.Quote.DerivedVatRegime) { Steps = new IPropertyType[] { m.Quote.QuoteItems }},
                 new AssociationPattern(m.Quote.DerivedIrpfRegime) { Steps = new IPropertyType[] { m.Quote.QuoteItems }},
             };
@@ -32,10 +33,10 @@ namespace Allors.Database.Domain
                 if (quote.QuoteState.IsCreated)
                 {
                     @this.DerivedVatRegime = @this.AssignedVatRegime ?? quote.DerivedVatRegime;
-                    @this.VatRate = @this.DerivedVatRegime?.VatRate;
+                    @this.VatRate = @this.DerivedVatRegime?.VatRates.First(v => v.FromDate <= quote.IssueDate && (!v.ExistThroughDate || v.ThroughDate >= quote.IssueDate));
 
                     @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? quote.DerivedIrpfRegime;
-                    @this.IrpfRate = @this.DerivedIrpfRegime?.IrpfRate;
+                    @this.IrpfRate = @this.DerivedIrpfRegime?.IrpfRates.First(v => v.FromDate <= quote.IssueDate && (!v.ExistThroughDate || v.ThroughDate >= quote.IssueDate));
                 }
             }
         }

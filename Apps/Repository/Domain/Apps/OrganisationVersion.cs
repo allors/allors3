@@ -94,8 +94,6 @@ namespace Allors.Repository
 
         public Currency PreferredCurrency { get; set; }
 
-        public VatRegime VatRegime { get; set; }
-
         public PartyRate[] PartyRates { get; set; }
         #endregion
 
@@ -177,14 +175,6 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Workspace(Default)]
         public CustomOrganisationClassification[] CustomClassifications { get; set; }
-
-        #region Allors
-        [Id("debd810e-6678-42db-9f2a-e4b871039627")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        [Workspace(Default)]
-        public IrpfRegime IrpfRegime { get; set; }
 
         #region inherited methods
 

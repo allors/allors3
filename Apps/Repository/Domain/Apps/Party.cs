@@ -336,23 +336,6 @@ namespace Allors.Repository
         Currency PreferredCurrency { get; set; }
 
         #region Allors
-        [Id("fafa35a1-7762-47f7-a9c2-28d3d0623e7c")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        [Workspace(Default)]
-        VatRegime VatRegime { get; set; }
-
-        #region Allors
-        [Id("bf0b654e-405b-46a6-9118-23a6c5746a31")]
-        #endregion
-
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        [Workspace(Default)]
-        public IrpfRegime IrpfRegime { get; set; }
-
-        #region Allors
         [Id("29AAF778-37F7-4E29-9EED-16748C376D98")]
         [Indexed]
         #endregion

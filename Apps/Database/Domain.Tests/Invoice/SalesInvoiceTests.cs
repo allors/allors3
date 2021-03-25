@@ -623,7 +623,7 @@ namespace Allors.Database.Domain.Tests
             var invoice = new SalesInvoiceBuilder(this.Transaction)
                 .WithBillToCustomer(customer)
                 .WithAssignedBillToContactMechanism(contactMechanism)
-                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Assessable21)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).BelgiumStandard)
                 .WithAssignedIrpfRegime(new IrpfRegimes(this.Transaction).Assessable19)
                 .Build();
 
@@ -687,7 +687,7 @@ namespace Allors.Database.Domain.Tests
                 .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Transaction).SalesInvoice)
                 .WithOrderAdjustment(adjustment)
-                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Assessable21)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).BelgiumStandard)
                 .Build();
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(invoice.BillToCustomer).Build();
@@ -725,7 +725,7 @@ namespace Allors.Database.Domain.Tests
                 .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Transaction).SalesInvoice)
                 .WithOrderAdjustment(adjustment)
-                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Assessable21)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).BelgiumStandard)
                 .Build();
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(invoice.BillToCustomer).Build();
@@ -763,7 +763,7 @@ namespace Allors.Database.Domain.Tests
                 .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Transaction).SalesInvoice)
                 .WithOrderAdjustment(adjustment)
-                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Assessable21)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).BelgiumStandard)
                 .Build();
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(invoice.BillToCustomer).Build();
@@ -801,7 +801,7 @@ namespace Allors.Database.Domain.Tests
                 .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Transaction).SalesInvoice)
                 .WithOrderAdjustment(adjustment)
-                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Assessable21)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).BelgiumStandard)
                 .Build();
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(invoice.BillToCustomer).Build();
@@ -922,7 +922,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var good = new Goods(this.Transaction).FindBy(this.M.Good.Name, "good1");
-            good.VatRate = new VatRateBuilder(this.Transaction).WithRate(0).Build();
+            good.VatRegime = new VatRegimes(this.Transaction).ZeroRated;
 
             this.Transaction.Derive();
             this.Transaction.Commit();
@@ -1273,19 +1273,6 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedBillToCustomerVatRegimeDeriveDerivedVatRegime()
-        {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
-            var invoice = new SalesInvoiceBuilder(this.Transaction).WithBillToCustomer(customer).Build();
-            this.Transaction.Derive(false);
-
-            customer.VatRegime = new VatRegimes(this.Transaction).Assessable10;
-            this.Transaction.Derive(false);
-
-            Assert.Equal(invoice.DerivedVatRegime, customer.VatRegime);
-        }
-
-        [Fact]
         public void ChangedAssignedIrpfRegimeDeriveDerivedIrpfRegime()
         {
             var invoice = new SalesInvoiceBuilder(this.Transaction).Build();
@@ -1295,19 +1282,6 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(false);
 
             Assert.Equal(invoice.DerivedIrpfRegime, invoice.AssignedIrpfRegime);
-        }
-
-        [Fact]
-        public void ChangedBillToCustomerDeriveIrpfRegime()
-        {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
-            var invoice = new SalesInvoiceBuilder(this.Transaction).WithBillToCustomer(customer).Build();
-            this.Transaction.Derive(false);
-
-            customer.IrpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
-            this.Transaction.Derive(false);
-
-            Assert.Equal(invoice.DerivedIrpfRegime, customer.IrpfRegime);
         }
 
         [Fact]
@@ -1513,7 +1487,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedVatRegimeDeriveDerivedVatClause()
         {
             var intraCommunautair = new VatRegimes(this.Transaction).IntraCommunautair;
-            var assessable9 = new VatRegimes(this.Transaction).Assessable9;
+            var assessable9 = new VatRegimes(this.Transaction).DutchReducedTariff;
 
             var invoice = new SalesInvoiceBuilder(this.Transaction).Build();
             invoice.AssignedVatRegime = assessable9;
@@ -1537,6 +1511,30 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(false);
 
             Assert.Equal(invoice.DerivedVatClause, vatClause);
+        }
+
+        [Fact]
+        public void ChangedInvoiceDateDeriveVatRate()
+        {
+            var vatRegime = new VatRegimes(this.Transaction).SpainReduced;
+            vatRegime.VatRates[0].ThroughDate = this.Transaction.Now().AddDays(-1).Date;
+            this.Transaction.Derive(false);
+
+            var newVatRate = new VatRateBuilder(this.Transaction).WithFromDate(this.Transaction.Now().Date).WithRate(11).Build();
+            vatRegime.AddVatRate(newVatRate);
+            this.Transaction.Derive(false);
+
+            var invoice = new SalesInvoiceBuilder(this.Transaction)
+                .WithInvoiceDate(this.Transaction.Now().AddDays(-1).Date)
+                .WithAssignedVatRegime(vatRegime).Build();
+            this.Transaction.Derive(false);
+
+            Assert.NotEqual(newVatRate, invoice.DerivedVatRate);
+
+            invoice.InvoiceDate = this.Transaction.Now().AddDays(1).Date;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(newVatRate, invoice.DerivedVatRate);
         }
     }
 

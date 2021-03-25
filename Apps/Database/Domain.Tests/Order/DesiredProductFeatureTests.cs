@@ -15,9 +15,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenDesiredProductFeature_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
             var softwareFeature = new SoftwareFeatureBuilder(this.Transaction)
-                .WithVatRate(vatRate21)
+                .WithVatRegime(new VatRegimes(this.Transaction).ZeroRated)
                 .WithName("Tutorial")
                 .Build();
 

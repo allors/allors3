@@ -353,7 +353,7 @@ line2")
                     .WithSalesOrderItem(salesOrderItem3)
                     .WithCustomerReference("a reference number")
                     .WithDescription("Sale of 1 used Aircraft Towbar")
-                    .WithAssignedVatRegime(new VatRegimes(@this.Transaction()).Assessable21)
+                    .WithAssignedVatRegime(new VatRegimes(@this.Transaction()).BelgiumStandard)
                     .Build();
 
                 var salesInvoiceItem1 = new SalesInvoiceItemBuilder(@this.Transaction())
@@ -395,7 +395,7 @@ line2")
                     .WithDescription("Sale of 1 used Aircraft Towbar")
                     .WithSalesInvoiceType(new SalesInvoiceTypes(@this.Transaction()).SalesInvoice)
                     .WithSalesTerm(incoTerm)
-                    .WithAssignedVatRegime(new VatRegimes(@this.Transaction()).Assessable21)
+                    .WithAssignedVatRegime(new VatRegimes(@this.Transaction()).BelgiumStandard)
                     .Build();
 
                 for (var j = 0; j < 3; j++)
@@ -451,7 +451,7 @@ line2")
                     .WithCustomerReference("a reference number")
                     .WithDescription("Purchase of 1 used Aircraft Towbar")
                     .WithPurchaseInvoiceType(new PurchaseInvoiceTypes(@this.Transaction()).PurchaseInvoice)
-                    .WithAssignedVatRegime(new VatRegimes(@this.Transaction()).Assessable21)
+                    .WithAssignedVatRegime(new VatRegimes(@this.Transaction()).BelgiumStandard)
                     .Build();
 
                 var purchaseOrderItem1 = new PurchaseOrderItemBuilder(@this.Transaction())

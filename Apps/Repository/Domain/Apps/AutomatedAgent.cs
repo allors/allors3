@@ -104,10 +104,6 @@ namespace Allors.Repository
 
         public Currency PreferredCurrency { get; set; }
 
-        public VatRegime VatRegime { get; set; }
-
-        public IrpfRegime IrpfRegime { get; set; }
-
         public PaymentMethod DefaultPaymentMethod { get; set; }
 
         public PartyRate[] PartyRates { get; set; }

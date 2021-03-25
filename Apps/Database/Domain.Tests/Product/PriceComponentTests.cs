@@ -18,11 +18,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenBasePrice_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
+            var vatRegime = new VatRegimes(this.Transaction).BelgiumStandard;
             var good = new Goods(this.Transaction).FindBy(this.M.Good.Name, "good1");
 
             var colorFeature = new ColourBuilder(this.Transaction)
-                .WithVatRate(vatRate21)
+                .WithVatRegime(vatRegime)
                 .WithName("black")
                 .Build();
 
@@ -66,14 +66,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenBasePriceForVirtualProduct_WhenDeriving_ThenProductVirtualProductPriceComponentIsUpdated()
         {
-            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
+            var vatRegime = new VatRegimes(this.Transaction).BelgiumStandard;
             var physicalGood = new Goods(this.Transaction).FindBy(this.M.Good.Name, "good1");
             var virtualGood = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("v101")
                     .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
                 .WithName("virtual gizmo")
-                .WithVatRate(vatRate21)
+                .WithVatRegime(vatRegime)
                 .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
                 .Build();
 
@@ -113,13 +113,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenDiscount_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
+            var vatRegime = new VatRegimes(this.Transaction).BelgiumStandard;
             var good = new Goods(this.Transaction).FindBy(this.M.Good.Name, "good1");
 
             var colorFeature = new ColourBuilder(this.Transaction)
-             .WithVatRate(vatRate21)
-             .WithName("black")
-             .Build();
+                .WithVatRegime(vatRegime)
+                .WithName("black")
+                .Build();
 
             this.Transaction.Derive();
             this.Transaction.Commit();
@@ -170,15 +170,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenDiscountForVirtualProduct_WhenDeriving_ThenProductVirtualProductPriceComponentIsUpdated()
         {
-            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
+            var vatRegime = new VatRegimes(this.Transaction).BelgiumStandard;
             var virtualService = new DeliverableBasedServiceBuilder(this.Transaction)
                 .WithName("virtual service")
-                .WithVatRate(vatRate21)
+                .WithVatRegime(vatRegime)
                 .Build();
 
             var physicalService = new DeliverableBasedServiceBuilder(this.Transaction)
                 .WithName("real service")
-                .WithVatRate(vatRate21)
+                .WithVatRegime(vatRegime)
                 .Build();
 
             physicalService.AddVariant(virtualService);
@@ -202,10 +202,10 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenDiscountForNonVirtualProduct_WhenDeriving_ThenProductVirtualProductPriceComponentIsNull()
         {
-            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
+            var vatRegime = new VatRegimes(this.Transaction).BelgiumStandard;
             var physicalService = new DeliverableBasedServiceBuilder(this.Transaction)
                 .WithName("real service")
-                .WithVatRate(vatRate21)
+                .WithVatRegime(vatRegime)
                 .Build();
 
             new DiscountComponentBuilder(this.Transaction)
@@ -221,11 +221,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenSurcharge_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
+            var vatRegime = new VatRegimes(this.Transaction).BelgiumStandard;
             var good = new Goods(this.Transaction).FindBy(this.M.Good.Name, "good1");
 
             var colorFeature = new ColourBuilder(this.Transaction)
-                .WithVatRate(vatRate21)
+                .WithVatRegime(vatRegime)
                 .WithName("black")
                 .Build();
 
@@ -274,15 +274,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenSurchargeForVirtualProduct_WhenDeriving_ThenProductVirtualProductPriceComponentIsUpdated()
         {
-            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
+            var vatRegime = new VatRegimes(this.Transaction).BelgiumStandard;
             var virtualService = new TimeAndMaterialsServiceBuilder(this.Transaction)
                 .WithName("virtual service")
-                .WithVatRate(vatRate21)
+                .WithVatRegime(vatRegime)
                 .Build();
 
             var physicalService = new TimeAndMaterialsServiceBuilder(this.Transaction)
                 .WithName("real service")
-                .WithVatRate(vatRate21)
+                .WithVatRegime(vatRegime)
                 .Build();
 
             physicalService.AddVariant(virtualService);
@@ -306,10 +306,10 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenSurchargeForNonVirtualProduct_WhenDeriving_ThenProductVirtualProductPriceComponentIsNull()
         {
-            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
+            var vatRegime = new VatRegimes(this.Transaction).BelgiumStandard;
             var physicalService = new TimeAndMaterialsServiceBuilder(this.Transaction)
                 .WithName("real service")
-                .WithVatRate(vatRate21)
+                .WithVatRegime(vatRegime)
                 .Build();
 
             new SurchargeComponentBuilder(this.Transaction)

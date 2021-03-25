@@ -225,8 +225,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedOwnBankAccountBankAccountThrowValidationError()
         {
-            var bankAccount = new BankAccountBuilder(this.Transaction).WithIban("TR330006100519786457841326").Build();
-            this.Transaction.Derive();
+            var bankAccount = new BankAccountBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
 
             new OwnBankAccountBuilder(this.Transaction).WithBankAccount(bankAccount).Build();
 

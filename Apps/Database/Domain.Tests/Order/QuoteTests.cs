@@ -125,38 +125,6 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedReceiverDeriveDerivedVatRegime()
-        {
-            var customer1 = this.InternalOrganisation.ActiveCustomers.First;
-            customer1.VatRegime = new VatRegimes(this.Transaction).Assessable10;
-
-            var customer2 = this.InternalOrganisation.CreateB2BCustomer(this.Transaction.Faker());
-            customer2.VatRegime = new VatRegimes(this.Transaction).Assessable21;
-
-            var quote = new ProductQuoteBuilder(this.Transaction).WithReceiver(customer1).Build();
-            this.Transaction.Derive(false);
-
-            quote.Receiver = customer2;
-            this.Transaction.Derive(false);
-
-            Assert.Equal(quote.DerivedVatRegime, customer2.VatRegime);
-        }
-
-        [Fact]
-        public void ChangedReceiverVatRegimeDeriveDerivedVatRegime()
-        {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
-
-            var quote = new ProductQuoteBuilder(this.Transaction).WithReceiver(customer).Build();
-            this.Transaction.Derive(false);
-
-            customer.VatRegime = new VatRegimes(this.Transaction).Assessable10;
-            this.Transaction.Derive(false);
-
-            Assert.Equal(quote.DerivedVatRegime, customer.VatRegime);
-        }
-
-        [Fact]
         public void ChangedAssignedIrpfRegimeDeriveDerivedIrpfRegime()
         {
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
@@ -166,38 +134,6 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(false);
 
             Assert.Equal(quote.DerivedIrpfRegime, quote.AssignedIrpfRegime);
-        }
-
-        [Fact]
-        public void ChangedReceiverDeriveDerivedIrpfRegime()
-        {
-            var customer1 = this.InternalOrganisation.ActiveCustomers.First;
-            customer1.IrpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
-
-            var customer2 = this.InternalOrganisation.CreateB2BCustomer(this.Transaction.Faker());
-            customer2.IrpfRegime = new IrpfRegimes(this.Transaction).Assessable19;
-
-            var quote = new ProductQuoteBuilder(this.Transaction).WithReceiver(customer1).Build();
-            this.Transaction.Derive(false);
-
-            quote.Receiver = customer2;
-            this.Transaction.Derive(false);
-
-            Assert.Equal(quote.DerivedVatRegime, customer2.VatRegime);
-        }
-
-        [Fact]
-        public void ChangedReceiverIrpfRegimeDeriveDerivedIrpfRegime()
-        {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
-
-            var quote = new ProductQuoteBuilder(this.Transaction).WithReceiver(customer).Build();
-            this.Transaction.Derive(false);
-
-            customer.IrpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
-            this.Transaction.Derive(false);
-
-            Assert.Equal(quote.DerivedIrpfRegime, customer.IrpfRegime);
         }
 
         [Fact]
@@ -281,6 +217,30 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(false);
 
             Assert.Equal(quote.DerivedCurrency, newLocale.Country.Currency);
+        }
+
+        [Fact]
+        public void ChangedIssueDateDeriveVatRate()
+        {
+            var vatRegime = new VatRegimes(this.Transaction).SpainReduced;
+            vatRegime.VatRates[0].ThroughDate = this.Transaction.Now().AddDays(-1).Date;
+            this.Transaction.Derive(false);
+
+            var newVatRate = new VatRateBuilder(this.Transaction).WithFromDate(this.Transaction.Now().Date).WithRate(11).Build();
+            vatRegime.AddVatRate(newVatRate);
+            this.Transaction.Derive(false);
+
+            var quote = new ProductQuoteBuilder(this.Transaction)
+                .WithIssueDate(this.Transaction.Now().AddDays(-1).Date)
+                .WithAssignedVatRegime(vatRegime).Build();
+            this.Transaction.Derive(false);
+
+            Assert.NotEqual(newVatRate, quote.DerivedVatRate);
+
+            quote.IssueDate = this.Transaction.Now().AddDays(1).Date;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(newVatRate, quote.DerivedVatRate);
         }
     }
 

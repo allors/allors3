@@ -321,7 +321,7 @@ namespace Allors.Database.Domain.Tests
                 .WithProduct(this.good)
                 .WithQuantityOrdered(3)
                 .WithAssignedUnitPrice(15)
-                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Assessable21)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).BelgiumStandard)
                 .Build();
 
             this.order.AddSalesOrderItem(item1);
@@ -357,7 +357,7 @@ namespace Allors.Database.Domain.Tests
             var item1 = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(this.good)
                 .WithQuantityOrdered(quantityOrdered)
-                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Assessable21)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).BelgiumStandard)
                 .Build();
 
             this.order.AddSalesOrderItem(item1);
@@ -2008,7 +2008,7 @@ namespace Allors.Database.Domain.Tests
             var item1 = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(this.variantGood)
                 .WithQuantityOrdered(quantityOrdered)
-                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Assessable21)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).BelgiumStandard)
                 .Build();
 
             this.order.AddSalesOrderItem(item1);
@@ -2132,7 +2132,7 @@ namespace Allors.Database.Domain.Tests
             var item1 = new SalesOrderItemBuilder(this.Transaction)
                 .WithProduct(this.good)
                 .WithQuantityOrdered(quantityOrdered)
-                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Assessable21)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).BelgiumStandard)
                 .Build();
 
             this.order.AddSalesOrderItem(item1);

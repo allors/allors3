@@ -21,8 +21,7 @@ namespace Allors.Database.Domain
                 new AssociationPattern(m.PurchaseInvoice.AssignedIrpfRegime),
                 new AssociationPattern(m.PurchaseInvoice.AssignedCurrency),
                 new AssociationPattern(m.PurchaseInvoice.BilledFrom),
-                new AssociationPattern(m.Party.VatRegime) { Steps = new IPropertyType[] { m.Party.PurchaseInvoicesWhereBilledFrom}},
-                new AssociationPattern(m.Party.IrpfRegime) { Steps = new IPropertyType[] { m.Party.PurchaseInvoicesWhereBilledFrom }},
+                new AssociationPattern(m.PurchaseInvoice.InvoiceDate),
                 new AssociationPattern(m.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { m.Organisation.PurchaseInvoicesWhereBilledTo }},
                 new AssociationPattern(m.OrderItemBilling.InvoiceItem) { Steps = new IPropertyType[] { m.OrderItemBilling.InvoiceItem, m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem }},
             };
@@ -33,10 +32,16 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<PurchaseInvoice>().Where(v => v.PurchaseInvoiceState.IsCreated))
             {
-                @this.DerivedVatRegime = @this.AssignedVatRegime ?? @this.BilledFrom?.VatRegime;
-                @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? (@this.BilledFrom as Organisation)?.IrpfRegime;
+                @this.DerivedVatRegime = @this.AssignedVatRegime;
+                @this.DerivedIrpfRegime = @this.AssignedIrpfRegime;
                 @this.DerivedCurrency = @this.AssignedCurrency ?? @this.BilledTo?.PreferredCurrency;
                 @this.PurchaseOrders = @this.InvoiceItems.SelectMany(v => v.OrderItemBillingsWhereInvoiceItem).Select(v => v.OrderItem.OrderWhereValidOrderItem).ToArray();
+
+                if (@this.ExistInvoiceDate)
+                {
+                    @this.DerivedVatRate = @this.DerivedVatRegime?.VatRates.First(v => v.FromDate <= @this.InvoiceDate && (!v.ExistThroughDate || v.ThroughDate >= @this.InvoiceDate));
+                    @this.DerivedIrpfRate = @this.DerivedIrpfRegime?.IrpfRates.First(v => v.FromDate <= @this.InvoiceDate && (!v.ExistThroughDate || v.ThroughDate >= @this.InvoiceDate));
+                }
             }
         }
     }

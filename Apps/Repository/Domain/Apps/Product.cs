@@ -80,12 +80,12 @@ namespace Allors.Repository
         Product[] ProductObsolescences { get; set; }
 
         #region Allors
-        [Id("f26e4376-4e3f-4d7d-8814-54d19c977a76")]
+        [Id("29d3d43b-6332-4a13-830b-44ab828c357b")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace(Default)]
-        VatRate VatRate { get; set; }
+        [Workspace]
+        VatRegime VatRegime { get; set; }
 
         #region Allors
         [Id("f2abc02c-67a1-42b7-83f5-195841e58a6a")]

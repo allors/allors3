@@ -38,11 +38,10 @@ namespace Allors.Database.Domain
                 new AssociationPattern(this.M.SalesOrder.AssignedShipmentMethod),
                 new AssociationPattern(this.M.SalesOrder.AssignedPaymentMethod),
                 new AssociationPattern(this.M.SalesOrder.Locale),
+                new AssociationPattern(this.M.SalesOrder.OrderDate),
                 new AssociationPattern(this.M.Party.Locale) { Steps = new IPropertyType[] { this.M.Party.SalesOrdersWhereBillToCustomer }},
                 new AssociationPattern(this.M.Organisation.Locale) { Steps = new IPropertyType[] { this.M.Organisation.SalesOrdersWhereTakenBy }},
                 new AssociationPattern(this.M.Party.PreferredCurrency) { Steps = new IPropertyType[] { this.M.Party.SalesOrdersWhereBillToCustomer }},
-                new AssociationPattern(this.M.Party.VatRegime) { Steps = new IPropertyType[] { this.M.Party.SalesOrdersWhereBillToCustomer }},
-                new AssociationPattern(this.M.Party.IrpfRegime) { Steps = new IPropertyType[] { this.M.Party.SalesOrdersWhereBillToCustomer }},
                 new AssociationPattern(this.M.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { this.M.Organisation.SalesOrdersWhereTakenBy }},
                 new AssociationPattern(this.M.Organisation.OrderAddress) { Steps = new IPropertyType[] { this.M.Organisation.SalesOrdersWhereTakenBy }},
                 new AssociationPattern(this.M.Organisation.ShippingAddress) { Steps = new IPropertyType[] { this.M.Organisation.SalesOrdersWhereTakenBy }},
@@ -70,8 +69,8 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<SalesOrder>().Where(v => v.SalesOrderState.IsProvisional))
             {
                 @this.DerivedLocale = @this.Locale ?? @this.BillToCustomer?.Locale ?? @this.TakenBy?.Locale;
-                @this.DerivedVatRegime = @this.AssignedVatRegime ?? @this.BillToCustomer?.VatRegime;
-                @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? @this.BillToCustomer?.IrpfRegime;
+                @this.DerivedVatRegime = @this.AssignedVatRegime;
+                @this.DerivedIrpfRegime = @this.AssignedIrpfRegime;
                 @this.DerivedCurrency = @this.AssignedCurrency ?? @this.BillToCustomer?.PreferredCurrency ?? @this.BillToCustomer?.Locale?.Country?.Currency ?? @this.TakenBy?.PreferredCurrency;
                 @this.DerivedTakenByContactMechanism = @this.AssignedTakenByContactMechanism ?? @this.TakenBy?.OrderAddress ?? @this.TakenBy?.BillingAddress ?? @this.TakenBy?.GeneralCorrespondence;
                 @this.DerivedBillToContactMechanism = @this.AssignedBillToContactMechanism ?? @this.BillToCustomer?.BillingAddress ?? @this.BillToCustomer?.ShippingAddress ?? @this.BillToCustomer?.GeneralCorrespondence;
@@ -81,6 +80,30 @@ namespace Allors.Database.Domain
                 @this.DerivedShipToAddress = @this.AssignedShipToAddress ?? @this.ShipToCustomer?.ShippingAddress;
                 @this.DerivedShipmentMethod = @this.AssignedShipmentMethod ?? @this.ShipToCustomer?.DefaultShipmentMethod ?? @this.Store?.DefaultShipmentMethod;
                 @this.DerivedPaymentMethod = @this.AssignedPaymentMethod ?? @this.TakenBy?.DefaultPaymentMethod ?? @this.Store?.DefaultCollectionMethod;
+
+                if (@this.ExistOrderDate)
+                {
+                    @this.DerivedVatRate = @this.DerivedVatRegime?.VatRates.First(v => v.FromDate <= @this.OrderDate && (!v.ExistThroughDate || v.ThroughDate >= @this.OrderDate));
+                    @this.DerivedIrpfRate = @this.DerivedIrpfRegime?.IrpfRates.First(v => v.FromDate <= @this.OrderDate && (!v.ExistThroughDate || v.ThroughDate >= @this.OrderDate));
+                }
+
+                if (@this.ExistDerivedVatRegime)
+                {
+                    if (@this.DerivedVatRegime.ExistVatClause)
+                    {
+                        @this.DerivedVatClause = @this.DerivedVatRegime.VatClause;
+                    }
+                    else
+                    {
+                        @this.RemoveDerivedVatClause();
+                    }
+                }
+                else
+                {
+                    @this.RemoveDerivedVatClause();
+                }
+
+                @this.DerivedVatClause = @this.ExistAssignedVatClause ? @this.AssignedVatClause : @this.DerivedVatClause;
             }
         }
     }

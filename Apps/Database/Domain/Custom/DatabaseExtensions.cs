@@ -43,6 +43,7 @@ namespace Allors.Database.Domain
                 new ProductQuoteDeniedPermissionDerivation(m),
                 new ProposalDeniedPermissionDerivation(m),
                 new CountryDerivation(m),
+                new CountryVatRegimesDerivation(m),
                 new PostalAddressDerivation(m),
                 new StoreDerivation(m),
                 new PurchaseInvoiceDeniedPermissionDerivation(m),

@@ -223,15 +223,6 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedDerivationTriggerDeriveVatRegime()
-        {
-            var person = new PersonBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
-
-            Assert.Equal(new VatRegimes(this.Transaction).PrivatePerson, person.VatRegime);
-        }
-
-        [Fact]
         public void ChangedOrganisationContactRelationshipEmployerDeriveCurrentOrganisationContactRelationships()
         {
             var contact = new PersonBuilder(this.Transaction).Build();

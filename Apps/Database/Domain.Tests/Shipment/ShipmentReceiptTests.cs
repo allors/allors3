@@ -75,7 +75,7 @@ namespace Allors.Database.Domain.Tests
 
             var order = new PurchaseOrderBuilder(this.Transaction)
                 .WithTakenViaSupplier(supplier)
-                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Export)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).ZeroRated)
                 .Build();
 
             var item1 = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(1).Build();

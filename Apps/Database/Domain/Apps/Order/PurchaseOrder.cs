@@ -133,11 +133,14 @@ namespace Allors.Database.Domain
 
         public void AppsOnInit(ObjectOnInit method)
         {
-            this.OrderDate = this.Transaction().Now();
-
             this.PurchaseOrderState ??= new PurchaseOrderStates(this.Strategy.Transaction).Created;
             this.PurchaseOrderShipmentState ??= new PurchaseOrderShipmentStates(this.Strategy.Transaction).NotReceived;
             this.PurchaseOrderPaymentState ??= new PurchaseOrderPaymentStates(this.Strategy.Transaction).NotPaid;
+
+            if (!this.ExistOrderDate)
+            {
+                this.OrderDate = this.Transaction().Now();
+            }
 
             if (!this.ExistEntryDate)
             {

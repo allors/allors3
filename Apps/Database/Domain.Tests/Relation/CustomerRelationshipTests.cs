@@ -180,7 +180,7 @@ namespace Allors.Database.Domain.Tests
             var billToContactMechanism = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Mechelen").Build();
 
             var good = new Goods(this.Transaction).FindBy(this.M.Good.Name, "good1");
-            good.VatRate = new VatRateBuilder(this.Transaction).WithRate(0).Build();
+            good.VatRegime = new VatRegimes(this.Transaction).ZeroRated;
 
             this.Transaction.Derive();
 
@@ -246,7 +246,7 @@ namespace Allors.Database.Domain.Tests
             var billToContactMechanism = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Mechelen").Build();
 
             var good = new Goods(this.Transaction).FindBy(this.M.Good.Name, "good1");
-            good.VatRate = new VatRateBuilder(this.Transaction).WithRate(0).Build();
+            good.VatRegime = new VatRegimes(this.Transaction).ZeroRated;
 
             this.Transaction.Derive();
 

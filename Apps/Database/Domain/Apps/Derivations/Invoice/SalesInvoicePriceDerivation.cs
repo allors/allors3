@@ -145,12 +145,12 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedVatRegime)
                         {
-                            discountVat = Math.Round(discount * @this.DerivedVatRegime.VatRate.Rate / 100, 2);
+                            discountVat = Math.Round(discount * @this.DerivedVatRate.Rate / 100, 2);
                         }
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            discountIrpf = Math.Round(discount * @this.DerivedIrpfRegime.IrpfRate.Rate / 100, 2);
+                            discountIrpf = Math.Round(discount * @this.DerivedIrpfRate.Rate / 100, 2);
                         }
                     }
 
@@ -164,12 +164,12 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedVatRegime)
                         {
-                            surchargeVat = Math.Round(surcharge * @this.DerivedVatRegime.VatRate.Rate / 100, 2);
+                            surchargeVat = Math.Round(surcharge * @this.DerivedVatRate.Rate / 100, 2);
                         }
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            surchargeIrpf = Math.Round(surcharge * @this.DerivedIrpfRegime.IrpfRate.Rate / 100, 2);
+                            surchargeIrpf = Math.Round(surcharge * @this.DerivedIrpfRate.Rate / 100, 2);
                         }
                     }
 
@@ -183,12 +183,12 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedVatRegime)
                         {
-                            feeVat = Math.Round(fee * @this.DerivedVatRegime.VatRate.Rate / 100, 2);
+                            feeVat = Math.Round(fee * @this.DerivedVatRate.Rate / 100, 2);
                         }
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            feeIrpf = Math.Round(fee * @this.DerivedIrpfRegime.IrpfRate.Rate / 100, 2);
+                            feeIrpf = Math.Round(fee * @this.DerivedIrpfRate.Rate / 100, 2);
                         }
                     }
 
@@ -202,12 +202,12 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedVatRegime)
                         {
-                            shippingVat = Math.Round(shipping * @this.DerivedVatRegime.VatRate.Rate / 100, 2);
+                            shippingVat = Math.Round(shipping * @this.DerivedVatRate.Rate / 100, 2);
                         }
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            shippingIrpf = Math.Round(shipping * @this.DerivedIrpfRegime.IrpfRate.Rate / 100, 2);
+                            shippingIrpf = Math.Round(shipping * @this.DerivedIrpfRate.Rate / 100, 2);
                         }
                     }
 
@@ -221,12 +221,12 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedVatRegime)
                         {
-                            miscellaneousVat = Math.Round(miscellaneous * @this.DerivedVatRegime.VatRate.Rate / 100, 2);
+                            miscellaneousVat = Math.Round(miscellaneous * @this.DerivedVatRate.Rate / 100, 2);
                         }
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            miscellaneousIrpf = Math.Round(miscellaneous * @this.DerivedIrpfRegime.IrpfRate.Rate / 100, 2);
+                            miscellaneousIrpf = Math.Round(miscellaneous * @this.DerivedIrpfRate.Rate / 100, 2);
                         }
                     }
                 }
@@ -247,8 +247,6 @@ namespace Allors.Database.Domain
                 decimal quantityOrdered,
                 decimal totalBasePrice)
             {
-                var salesInvoiceItemDerivedRoles = salesInvoiceItem;
-
                 var currentGenericOrProductOrFeaturePriceComponents = new List<PriceComponent>();
                 if (salesInvoiceItem.ExistProduct)
                 {
@@ -289,10 +287,10 @@ namespace Allors.Database.Domain
                 // Calculate Unit Price (with Discounts and Surcharges)
                 if (salesInvoiceItem.AssignedUnitPrice.HasValue)
                 {
-                    salesInvoiceItemDerivedRoles.UnitBasePrice = unitBasePrice ?? salesInvoiceItem.AssignedUnitPrice.Value;
-                    salesInvoiceItemDerivedRoles.UnitDiscount = 0;
-                    salesInvoiceItemDerivedRoles.UnitSurcharge = 0;
-                    salesInvoiceItemDerivedRoles.UnitPrice = salesInvoiceItem.AssignedUnitPrice.Value;
+                    salesInvoiceItem.UnitBasePrice = unitBasePrice ?? salesInvoiceItem.AssignedUnitPrice.Value;
+                    salesInvoiceItem.UnitDiscount = 0;
+                    salesInvoiceItem.UnitSurcharge = 0;
+                    salesInvoiceItem.UnitPrice = salesInvoiceItem.AssignedUnitPrice.Value;
                 }
                 else
                 {
@@ -302,61 +300,61 @@ namespace Allors.Database.Domain
                         return;
                     }
 
-                    salesInvoiceItemDerivedRoles.UnitBasePrice = unitBasePrice.Value;
+                    salesInvoiceItem.UnitBasePrice = unitBasePrice.Value;
 
-                    salesInvoiceItemDerivedRoles.UnitDiscount = priceComponents.OfType<DiscountComponent>().Sum(
+                    salesInvoiceItem.UnitDiscount = priceComponents.OfType<DiscountComponent>().Sum(
                         v => v.Percentage.HasValue
                                  ? Math.Round(salesInvoiceItem.UnitBasePrice * v.Percentage.Value / 100, 2)
                                  : v.Price ?? 0);
 
-                    salesInvoiceItemDerivedRoles.UnitSurcharge = priceComponents.OfType<SurchargeComponent>().Sum(
+                    salesInvoiceItem.UnitSurcharge = priceComponents.OfType<SurchargeComponent>().Sum(
                         v => v.Percentage.HasValue
                                  ? Math.Round(salesInvoiceItem.UnitBasePrice * v.Percentage.Value / 100, 2)
                                  : v.Price ?? 0);
 
-                    salesInvoiceItemDerivedRoles.UnitPrice = salesInvoiceItem.UnitBasePrice - salesInvoiceItem.UnitDiscount + salesInvoiceItem.UnitSurcharge;
+                    salesInvoiceItem.UnitPrice = salesInvoiceItem.UnitBasePrice - salesInvoiceItem.UnitDiscount + salesInvoiceItem.UnitSurcharge;
 
                     foreach (OrderAdjustment orderAdjustment in salesInvoiceItem.DiscountAdjustments)
                     {
-                        salesInvoiceItemDerivedRoles.UnitDiscount += orderAdjustment.Percentage.HasValue ?
+                        salesInvoiceItem.UnitDiscount += orderAdjustment.Percentage.HasValue ?
                             Math.Round(salesInvoiceItem.UnitPrice * orderAdjustment.Percentage.Value / 100, 2) :
                             orderAdjustment.Amount ?? 0;
                     }
 
                     foreach (OrderAdjustment orderAdjustment in salesInvoiceItem.SurchargeAdjustments)
                     {
-                        salesInvoiceItemDerivedRoles.UnitSurcharge += orderAdjustment.Percentage.HasValue ?
+                        salesInvoiceItem.UnitSurcharge += orderAdjustment.Percentage.HasValue ?
                             Math.Round(salesInvoiceItem.UnitPrice * orderAdjustment.Percentage.Value / 100, 2) :
                             orderAdjustment.Amount ?? 0;
                     }
 
-                    salesInvoiceItemDerivedRoles.UnitPrice = salesInvoiceItem.UnitBasePrice - salesInvoiceItem.UnitDiscount + salesInvoiceItem.UnitSurcharge;
+                    salesInvoiceItem.UnitPrice = salesInvoiceItem.UnitBasePrice - salesInvoiceItem.UnitDiscount + salesInvoiceItem.UnitSurcharge;
                 }
 
-                salesInvoiceItemDerivedRoles.UnitVat = salesInvoiceItem.ExistVatRate ? salesInvoiceItem.UnitPrice * salesInvoiceItem.VatRate.Rate / 100 : 0;
-                salesInvoiceItemDerivedRoles.UnitIrpf = salesInvoiceItem.ExistIrpfRate ? salesInvoiceItem.UnitPrice * salesInvoiceItem.IrpfRate.Rate / 100 : 0;
+                salesInvoiceItem.UnitVat = salesInvoiceItem.ExistVatRate ? salesInvoiceItem.UnitPrice * salesInvoiceItem.VatRate.Rate / 100 : 0;
+                salesInvoiceItem.UnitIrpf = salesInvoiceItem.ExistIrpfRate ? salesInvoiceItem.UnitPrice * salesInvoiceItem.IrpfRate.Rate / 100 : 0;
 
                 // Calculate Totals
-                salesInvoiceItemDerivedRoles.TotalBasePrice = salesInvoiceItem.UnitBasePrice * salesInvoiceItem.Quantity;
-                salesInvoiceItemDerivedRoles.TotalDiscount = salesInvoiceItem.UnitDiscount * salesInvoiceItem.Quantity;
-                salesInvoiceItemDerivedRoles.TotalSurcharge = salesInvoiceItem.UnitSurcharge * salesInvoiceItem.Quantity;
+                salesInvoiceItem.TotalBasePrice = salesInvoiceItem.UnitBasePrice * salesInvoiceItem.Quantity;
+                salesInvoiceItem.TotalDiscount = salesInvoiceItem.UnitDiscount * salesInvoiceItem.Quantity;
+                salesInvoiceItem.TotalSurcharge = salesInvoiceItem.UnitSurcharge * salesInvoiceItem.Quantity;
 
                 if (salesInvoiceItem.TotalBasePrice > 0)
                 {
-                    salesInvoiceItemDerivedRoles.TotalDiscountAsPercentage = Math.Round(salesInvoiceItem.TotalDiscount / salesInvoiceItem.TotalBasePrice * 100, 2);
-                    salesInvoiceItemDerivedRoles.TotalSurchargeAsPercentage = Math.Round(salesInvoiceItem.TotalSurcharge / salesInvoiceItem.TotalBasePrice * 100, 2);
+                    salesInvoiceItem.TotalDiscountAsPercentage = Math.Round(salesInvoiceItem.TotalDiscount / salesInvoiceItem.TotalBasePrice * 100, 2);
+                    salesInvoiceItem.TotalSurchargeAsPercentage = Math.Round(salesInvoiceItem.TotalSurcharge / salesInvoiceItem.TotalBasePrice * 100, 2);
                 }
                 else
                 {
-                    salesInvoiceItemDerivedRoles.TotalDiscountAsPercentage = 0;
-                    salesInvoiceItemDerivedRoles.TotalSurchargeAsPercentage = 0;
+                    salesInvoiceItem.TotalDiscountAsPercentage = 0;
+                    salesInvoiceItem.TotalSurchargeAsPercentage = 0;
                 }
 
-                salesInvoiceItemDerivedRoles.TotalExVat = salesInvoiceItem.UnitPrice * salesInvoiceItem.Quantity;
-                salesInvoiceItemDerivedRoles.TotalVat = salesInvoiceItem.UnitVat * salesInvoiceItem.Quantity;
-                salesInvoiceItemDerivedRoles.TotalIncVat = salesInvoiceItem.TotalExVat + salesInvoiceItem.TotalVat;
-                salesInvoiceItemDerivedRoles.TotalIrpf = salesInvoiceItem.UnitIrpf * salesInvoiceItem.Quantity;
-                salesInvoiceItemDerivedRoles.GrandTotal = salesInvoiceItem.TotalIncVat - salesInvoiceItem.TotalIrpf;
+                salesInvoiceItem.TotalExVat = salesInvoiceItem.UnitPrice * salesInvoiceItem.Quantity;
+                salesInvoiceItem.TotalVat = salesInvoiceItem.UnitVat * salesInvoiceItem.Quantity;
+                salesInvoiceItem.TotalIncVat = salesInvoiceItem.TotalExVat + salesInvoiceItem.TotalVat;
+                salesInvoiceItem.TotalIrpf = salesInvoiceItem.UnitIrpf * salesInvoiceItem.Quantity;
+                salesInvoiceItem.GrandTotal = salesInvoiceItem.TotalIncVat - salesInvoiceItem.TotalIrpf;
             }
         }
     }

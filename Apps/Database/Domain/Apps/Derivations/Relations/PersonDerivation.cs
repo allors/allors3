@@ -55,8 +55,6 @@ namespace Allors.Database.Domain
 
                 @this.PartyName = DerivePartyName(@this);
 
-                @this.VatRegime = new VatRegimes(@this.Transaction()).PrivatePerson;
-
                 @this.DeriveRelationships();
 
                 if (!@this.ExistTimeSheetWhereWorker && (@this.AppsIsActiveEmployee(now) || @this.CurrentOrganisationContactRelationships.Count > 0))

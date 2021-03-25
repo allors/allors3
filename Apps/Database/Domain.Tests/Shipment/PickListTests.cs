@@ -87,7 +87,7 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Transaction)
                 .WithBillToCustomer(customer)
                 .WithShipToCustomer(customer)
-                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Export)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).ZeroRated)
                 .Build();
 
             var item1 = new SalesOrderItemBuilder(this.Transaction).WithProduct(good1).WithQuantityOrdered(1).WithAssignedUnitPrice(15).Build();

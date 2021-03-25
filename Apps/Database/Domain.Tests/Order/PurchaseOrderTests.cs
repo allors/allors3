@@ -385,38 +385,6 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedTakenViaSupplierDeriveDerivedVatRegime()
-        {
-            var supplier1 = this.InternalOrganisation.ActiveSuppliers.First;
-            supplier1.VatRegime = new VatRegimes(this.Transaction).Assessable10;
-
-            var supplier2 = this.InternalOrganisation.CreateSupplier(this.Transaction.Faker());
-            supplier2.VatRegime = new VatRegimes(this.Transaction).Assessable21;
-
-            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier1).Build();
-            this.Transaction.Derive(false);
-
-            order.TakenViaSupplier = supplier2;
-            this.Transaction.Derive(false);
-
-            Assert.Equal(order.DerivedVatRegime, supplier2.VatRegime);
-        }
-
-        [Fact]
-        public void ChangedTakenViaSupplierVatRegimeDeriveDerivedVatRegime()
-        {
-            var supplier = this.InternalOrganisation.ActiveSuppliers.First;
-
-            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).Build();
-            this.Transaction.Derive(false);
-
-            supplier.VatRegime = new VatRegimes(this.Transaction).Assessable10;
-            this.Transaction.Derive(false);
-
-            Assert.Equal(order.DerivedVatRegime, supplier.VatRegime);
-        }
-
-        [Fact]
         public void ChangedAssignedIrpfRegimeDeriveDerivedIrpfRegime()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
@@ -426,38 +394,6 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(false);
 
             Assert.Equal(order.DerivedIrpfRegime, order.AssignedIrpfRegime);
-        }
-
-        [Fact]
-        public void ChangedTakenViaSupplierDeriveDerivedIrpfRegime()
-        {
-            var supplier1 = this.InternalOrganisation.ActiveSuppliers.First;
-            supplier1.IrpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
-
-            var supplier2 = this.InternalOrganisation.CreateSupplier(this.Transaction.Faker());
-            supplier2.IrpfRegime = new IrpfRegimes(this.Transaction).Assessable19;
-
-            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier1).Build();
-            this.Transaction.Derive(false);
-
-            order.TakenViaSupplier = supplier2;
-            this.Transaction.Derive(false);
-
-            Assert.Equal(order.DerivedIrpfRegime, supplier2.IrpfRegime);
-        }
-
-        [Fact]
-        public void ChangedTakenViaSupplierIrpfRegimeDeriveDerivedIrpfRegime()
-        {
-            var supplier = this.InternalOrganisation.ActiveSuppliers.First;
-
-            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).Build();
-            this.Transaction.Derive(false);
-
-            supplier.IrpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
-            this.Transaction.Derive(false);
-
-            Assert.Equal(order.DerivedIrpfRegime, supplier.IrpfRegime);
         }
 
         [Fact]
@@ -574,6 +510,30 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(false);
 
             Assert.Equal(order.DerivedShipToAddress, postalAddress);
+        }
+
+        [Fact]
+        public void ChangedOrderDateDeriveVatRate()
+        {
+            var vatRegime = new VatRegimes(this.Transaction).SpainReduced;
+            vatRegime.VatRates[0].ThroughDate = this.Transaction.Now().AddDays(-1).Date;
+            this.Transaction.Derive(false);
+
+            var newVatRate = new VatRateBuilder(this.Transaction).WithFromDate(this.Transaction.Now().Date).WithRate(11).Build();
+            vatRegime.AddVatRate(newVatRate);
+            this.Transaction.Derive(false);
+
+            var order = new PurchaseOrderBuilder(this.Transaction)
+                .WithOrderDate(this.Transaction.Now().AddDays(-1).Date)
+                .WithAssignedVatRegime(vatRegime).Build();
+            this.Transaction.Derive(false);
+
+            Assert.NotEqual(newVatRate, order.DerivedVatRate);
+
+            order.OrderDate = this.Transaction.Now().AddDays(1).Date;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(newVatRate, order.DerivedVatRate);
         }
     }
 

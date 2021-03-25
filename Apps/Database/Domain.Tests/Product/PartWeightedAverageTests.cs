@@ -502,7 +502,7 @@ namespace Allors.Database.Domain.Tests
             var good = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithName(part.Name)
                 .WithPart(part)
-                .WithVatRate(new VatRates(this.Transaction).Zero)
+                .WithVatRegime(new VatRegimes(this.Transaction).ZeroRated)
                 .Build();
 
             this.Transaction.Derive();

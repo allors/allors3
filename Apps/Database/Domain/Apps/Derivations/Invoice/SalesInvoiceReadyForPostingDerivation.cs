@@ -33,9 +33,8 @@ namespace Allors.Database.Domain
             new AssociationPattern(this.M.SalesInvoice.AssignedBillToEndCustomerContactMechanism),
             new AssociationPattern(this.M.SalesInvoice.AssignedShipToEndCustomerAddress),
             new AssociationPattern(this.M.SalesInvoice.Locale),
+            new AssociationPattern(this.M.SalesInvoice.InvoiceDate),
             new AssociationPattern(this.M.Party.Locale) { Steps = new IPropertyType[] { this.M.Party.SalesInvoicesWhereBillToCustomer }},
-            new AssociationPattern(this.M.Party.VatRegime) { Steps = new IPropertyType[] { this.M.Party.SalesInvoicesWhereBillToCustomer }},
-            new AssociationPattern(this.M.Party.IrpfRegime) { Steps = new IPropertyType[] { this.M.Party.SalesInvoicesWhereBillToCustomer }},
             new AssociationPattern(this.M.Party.BillingAddress) { Steps = new IPropertyType[] { this.M.Party.SalesInvoicesWhereBillToCustomer }},
             new AssociationPattern(this.M.Party.BillingAddress) { Steps = new IPropertyType[] { this.M.Party.SalesInvoicesWhereBillToEndCustomer }},
             new AssociationPattern(this.M.Party.ShippingAddress) { Steps = new IPropertyType[] { this.M.Party.SalesInvoicesWhereShipToCustomer}},
@@ -56,13 +55,19 @@ namespace Allors.Database.Domain
             {
                 @this.DerivedLocale = @this.Locale ?? @this.BillToCustomer?.Locale ?? @this.BilledFrom?.Locale;
                 @this.DerivedCurrency = @this.AssignedCurrency ?? @this.BillToCustomer?.PreferredCurrency ?? @this.BillToCustomer?.Locale?.Country?.Currency ?? @this.BilledFrom?.PreferredCurrency;
-                @this.DerivedVatRegime = @this.AssignedVatRegime ?? @this.BillToCustomer?.VatRegime;
-                @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? @this.BillToCustomer?.IrpfRegime;
+                @this.DerivedVatRegime = @this.AssignedVatRegime;
+                @this.DerivedIrpfRegime = @this.AssignedIrpfRegime;
                 @this.DerivedBilledFromContactMechanism = @this.AssignedBilledFromContactMechanism ?? @this.BilledFrom?.BillingAddress ?? @this.BilledFrom?.GeneralCorrespondence;
                 @this.DerivedBillToContactMechanism = @this.AssignedBillToContactMechanism ?? @this.BillToCustomer?.BillingAddress;
                 @this.DerivedBillToEndCustomerContactMechanism = @this.AssignedBillToEndCustomerContactMechanism ?? @this.BillToEndCustomer?.BillingAddress;
                 @this.DerivedShipToEndCustomerAddress = @this.AssignedShipToEndCustomerAddress ?? @this.ShipToEndCustomer?.ShippingAddress;
                 @this.DerivedShipToAddress = @this.AssignedShipToAddress ?? @this.ShipToCustomer?.ShippingAddress;
+
+                if (@this.ExistInvoiceDate)
+                {
+                    @this.DerivedVatRate = @this.DerivedVatRegime?.VatRates.First(v => v.FromDate <= @this.InvoiceDate && (!v.ExistThroughDate || v.ThroughDate >= @this.InvoiceDate));
+                    @this.DerivedIrpfRate = @this.DerivedIrpfRegime?.IrpfRates.First(v => v.FromDate <= @this.InvoiceDate && (!v.ExistThroughDate || v.ThroughDate >= @this.InvoiceDate));
+                }
 
                 if (@this.ExistDerivedVatRegime)
                 {

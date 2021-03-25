@@ -216,38 +216,6 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedBilledFromDeriveDerivedVatRegime()
-        {
-            var supplier1 = this.InternalOrganisation.ActiveSuppliers.First;
-            supplier1.VatRegime = new VatRegimes(this.Transaction).Assessable10;
-
-            var supplier2 = this.InternalOrganisation.CreateSupplier(this.Transaction.Faker());
-            supplier2.VatRegime = new VatRegimes(this.Transaction).Assessable21;
-
-            var invoice = new PurchaseInvoiceBuilder(this.Transaction).WithBilledFrom(supplier1).Build();
-            this.Transaction.Derive(false);
-
-            invoice.BilledFrom = supplier2;
-            this.Transaction.Derive(false);
-
-            Assert.Equal(invoice.DerivedVatRegime, supplier2.VatRegime);
-        }
-
-        [Fact]
-        public void ChangedBilledFromVatRegimeDeriveDerivedVatRegime()
-        {
-            var supplier = this.InternalOrganisation.ActiveSuppliers.First;
-
-            var invoice = new PurchaseInvoiceBuilder(this.Transaction).WithBilledFrom(supplier).Build();
-            this.Transaction.Derive(false);
-
-            supplier.VatRegime = new VatRegimes(this.Transaction).Assessable10;
-            this.Transaction.Derive(false);
-
-            Assert.Equal(invoice.DerivedVatRegime, supplier.VatRegime);
-        }
-
-        [Fact]
         public void ChangedAssignedIrpfRegimeDeriveDerivedIrpfRegime()
         {
             var invoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
@@ -257,38 +225,6 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(false);
 
             Assert.Equal(invoice.DerivedIrpfRegime, invoice.AssignedIrpfRegime);
-        }
-
-        [Fact]
-        public void ChangedBilledFromDeriveDerivedIrpfRegime()
-        {
-            var supplier1 = this.InternalOrganisation.ActiveSuppliers.First;
-            supplier1.IrpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
-
-            var supplier2 = this.InternalOrganisation.CreateSupplier(this.Transaction.Faker());
-            supplier2.IrpfRegime = new IrpfRegimes(this.Transaction).Assessable19;
-
-            var invoice = new PurchaseInvoiceBuilder(this.Transaction).WithBilledFrom(supplier1).Build();
-            this.Transaction.Derive(false);
-
-            invoice.BilledFrom = supplier2;
-            this.Transaction.Derive(false);
-
-            Assert.Equal(invoice.DerivedIrpfRegime, supplier2.IrpfRegime);
-        }
-
-        [Fact]
-        public void ChangedBilledFromIrpfRegimeDeriveDerivedIrpfRegime()
-        {
-            var supplier = this.InternalOrganisation.ActiveSuppliers.First;
-
-            var invoice = new PurchaseInvoiceBuilder(this.Transaction).WithBilledFrom(supplier).Build();
-            this.Transaction.Derive(false);
-
-            supplier.IrpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
-            this.Transaction.Derive(false);
-
-            Assert.Equal(invoice.DerivedIrpfRegime, supplier.IrpfRegime);
         }
 
         [Fact]
@@ -334,6 +270,30 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(false);
 
             Assert.Contains(purchaseOrder, purchaseInvoice.PurchaseOrders);
+        }
+
+        [Fact]
+        public void ChangedInvoiceDateDeriveVatRate()
+        {
+            var vatRegime = new VatRegimes(this.Transaction).SpainReduced;
+            vatRegime.VatRates[0].ThroughDate = this.Transaction.Now().AddDays(-1).Date;
+            this.Transaction.Derive(false);
+
+            var newVatRate = new VatRateBuilder(this.Transaction).WithFromDate(this.Transaction.Now().Date).WithRate(11).Build();
+            vatRegime.AddVatRate(newVatRate);
+            this.Transaction.Derive(false);
+
+            var invoice = new PurchaseInvoiceBuilder(this.Transaction)
+                .WithInvoiceDate(this.Transaction.Now().AddDays(-1).Date)
+                .WithAssignedVatRegime(vatRegime).Build();
+            this.Transaction.Derive(false);
+
+            Assert.NotEqual(newVatRate, invoice.DerivedVatRate);
+
+            invoice.InvoiceDate = this.Transaction.Now().AddDays(1).Date;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(newVatRate, invoice.DerivedVatRate);
         }
     }
 
@@ -1197,6 +1157,34 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(false);
 
             Assert.Equal(1.4M, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void ChangedPurchaseInvoiceInvoiceDateDeriveVatRate()
+        {
+            var vatRegime = new VatRegimes(this.Transaction).SpainReduced;
+            vatRegime.VatRates[0].ThroughDate = this.Transaction.Now().AddDays(-1).Date;
+            this.Transaction.Derive(false);
+
+            var newVatRate = new VatRateBuilder(this.Transaction).WithFromDate(this.Transaction.Now().Date).WithRate(11).Build();
+            vatRegime.AddVatRate(newVatRate);
+            this.Transaction.Derive(false);
+
+            var invoice = new PurchaseInvoiceBuilder(this.Transaction)
+                .WithInvoiceDate(this.Transaction.Now().AddDays(-1).Date)
+                .WithAssignedVatRegime(vatRegime).Build();
+            this.Transaction.Derive(false);
+
+            var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction).Build();
+            invoice.AddPurchaseInvoiceItem(invoiceItem);
+            this.Transaction.Derive(false);
+
+            Assert.NotEqual(newVatRate, invoiceItem.VatRate);
+
+            invoice.InvoiceDate = this.Transaction.Now().AddDays(1).Date;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(newVatRate, invoiceItem.VatRate);
         }
     }
 

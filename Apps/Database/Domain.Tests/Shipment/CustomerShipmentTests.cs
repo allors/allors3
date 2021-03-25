@@ -937,9 +937,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenCustomerShipment_WhenStateIsSetToShipped_ThenInvoiceIsCreated()
         {
-            var assessable = new VatRegimes(this.Transaction).Assessable21;
-            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(0).Build();
-            assessable.VatRate = vatRate21;
+            var assessable = new VatRegimes(this.Transaction).ZeroRated;
 
             var good1 = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1");
 
@@ -1102,9 +1100,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenCustomerShipmentContainingOrderOnHold_WhenTrySetStateToShipped_ThenActionIsNotAllowed()
         {
-            var assessable = new VatRegimes(this.Transaction).Assessable21;
-            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(0).Build();
-            assessable.VatRate = vatRate21;
+            var assessable = new VatRegimes(this.Transaction).ZeroRated;
 
             this.Transaction.Derive();
             this.Transaction.Commit();
@@ -1186,9 +1182,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenCustomerShipmentWithQuantityPackagedDifferentFromShippingQuantity_WhenTrySetStateToShipped_ThenActionIsNotAllowed()
         {
-            var assessable = new VatRegimes(this.Transaction).Assessable21;
-            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(0).Build();
-            assessable.VatRate = vatRate21;
+            var assessable = new VatRegimes(this.Transaction).ZeroRated;
 
             var good1 = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1");
 
@@ -2102,9 +2096,7 @@ namespace Allors.Database.Domain.Tests
             User user = this.Administrator;
             this.Transaction.SetUser(user);
 
-            var assessable = new VatRegimes(this.Transaction).Assessable21;
-            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(0).Build();
-            assessable.VatRate = vatRate21;
+            var assessable = new VatRegimes(this.Transaction).BelgiumStandard;
 
             var good1 = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1");
 

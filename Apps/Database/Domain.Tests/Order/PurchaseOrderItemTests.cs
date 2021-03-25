@@ -518,7 +518,7 @@ namespace Allors.Database.Domain.Tests
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var orderItem = new PurchaseOrderItemBuilder(this.Transaction).WithAssignedVatRegime(new VatRegimes(this.Transaction).Assessable10).Build();
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction).WithAssignedVatRegime(new VatRegimes(this.Transaction).BelgiumStandard).Build();
             order.AddPurchaseOrderItem(orderItem);
             this.Transaction.Derive(false);
 
@@ -535,7 +535,7 @@ namespace Allors.Database.Domain.Tests
             order.AddPurchaseOrderItem(orderItem);
             this.Transaction.Derive(false);
 
-            order.AssignedVatRegime = new VatRegimes(this.Transaction).Assessable10;
+            order.AssignedVatRegime = new VatRegimes(this.Transaction).BelgiumStandard;
             this.Transaction.Derive(false);
 
             Assert.Equal(orderItem.DerivedVatRegime, order.AssignedVatRegime);
@@ -551,10 +551,10 @@ namespace Allors.Database.Domain.Tests
             order.AddPurchaseOrderItem(orderItem);
             this.Transaction.Derive(false);
 
-            order.AssignedVatRegime = new VatRegimes(this.Transaction).Assessable10;
+            order.AssignedVatRegime = new VatRegimes(this.Transaction).BelgiumStandard;
             this.Transaction.Derive(false);
 
-            Assert.Equal(orderItem.VatRate, order.AssignedVatRegime.VatRate);
+            Assert.Equal(orderItem.VatRate, order.AssignedVatRegime.VatRates[0]);
         }
 
         [Fact]
@@ -599,7 +599,35 @@ namespace Allors.Database.Domain.Tests
             order.AssignedIrpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
             this.Transaction.Derive(false);
 
-            Assert.Equal(orderItem.IrpfRate, order.AssignedIrpfRegime.IrpfRate);
+            Assert.Equal(orderItem.IrpfRate, order.AssignedIrpfRegime.IrpfRates[0]);
+        }
+
+        [Fact]
+        public void ChangedPurchaseOrderOrderDateDeriveVatRate()
+        {
+            var vatRegime = new VatRegimes(this.Transaction).SpainReduced;
+            vatRegime.VatRates[0].ThroughDate = this.Transaction.Now().AddDays(-1).Date;
+            this.Transaction.Derive(false);
+
+            var newVatRate = new VatRateBuilder(this.Transaction).WithFromDate(this.Transaction.Now().Date).WithRate(11).Build();
+            vatRegime.AddVatRate(newVatRate);
+            this.Transaction.Derive(false);
+
+            var order = new PurchaseOrderBuilder(this.Transaction)
+                .WithOrderDate(this.Transaction.Now().AddDays(-1).Date)
+                .WithAssignedVatRegime(vatRegime).Build();
+            this.Transaction.Derive(false);
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
+            order.AddPurchaseOrderItem(orderItem);
+            this.Transaction.Derive(false);
+
+            Assert.NotEqual(newVatRate, orderItem.VatRate);
+
+            order.OrderDate = this.Transaction.Now().AddDays(1).Date;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(newVatRate, orderItem.VatRate);
         }
     }
 

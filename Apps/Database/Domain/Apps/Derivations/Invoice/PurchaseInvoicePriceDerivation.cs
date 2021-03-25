@@ -22,6 +22,7 @@ namespace Allors.Database.Domain
                 new AssociationPattern(this.M.PurchaseInvoice.ValidInvoiceItems),
                 new AssociationPattern(this.M.PurchaseInvoice.BilledFrom),
                 new AssociationPattern(this.M.PurchaseInvoice.OrderAdjustments),
+                new AssociationPattern(this.M.PurchaseInvoice.InvoiceDate),
                 new AssociationPattern(this.M.PurchaseInvoiceItem.Part) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem } },
                 new AssociationPattern(this.M.PurchaseInvoiceItem.Quantity) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem } },
                 new AssociationPattern(this.M.PurchaseInvoiceItem.AssignedUnitPrice) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem } },
@@ -49,6 +50,12 @@ namespace Allors.Database.Domain
                     purchaseInvoiceItem.UnitDiscount = 0;
                     purchaseInvoiceItem.UnitSurcharge = 0;
 
+                    purchaseInvoiceItem.DerivedVatRegime = purchaseInvoiceItem.AssignedVatRegime ?? @this.DerivedVatRegime;
+                    purchaseInvoiceItem.VatRate = purchaseInvoiceItem.DerivedVatRegime?.VatRates.First(v => v.FromDate <= @this.InvoiceDate && (!v.ExistThroughDate || v.ThroughDate >= @this.InvoiceDate));
+
+                    purchaseInvoiceItem.DerivedIrpfRegime = purchaseInvoiceItem.AssignedIrpfRegime ?? @this.DerivedIrpfRegime;
+                    purchaseInvoiceItem.IrpfRate = purchaseInvoiceItem.DerivedIrpfRegime?.IrpfRates.First(v => v.FromDate <= @this.InvoiceDate && (!v.ExistThroughDate || v.ThroughDate >= @this.InvoiceDate));
+
                     if (purchaseInvoiceItem.AssignedUnitPrice.HasValue)
                     {
                         purchaseInvoiceItem.UnitBasePrice = purchaseInvoiceItem.AssignedUnitPrice.Value;
@@ -56,21 +63,14 @@ namespace Allors.Database.Domain
                     }
                     else
                     {
-                        var invoice = purchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem;
                         if (purchaseInvoiceItem.ExistPart)
                         {
-                            purchaseInvoiceItem.UnitBasePrice = new SupplierOfferings(purchaseInvoiceItem.Strategy.Transaction).PurchasePrice(invoice.BilledFrom, invoice.InvoiceDate, purchaseInvoiceItem.Part);
+                            purchaseInvoiceItem.UnitBasePrice = new SupplierOfferings(purchaseInvoiceItem.Strategy.Transaction).PurchasePrice(@this.BilledFrom, @this.InvoiceDate, purchaseInvoiceItem.Part);
                         }
                     }
 
                     if (purchaseInvoiceItem.ExistUnitBasePrice)
                     {
-                        purchaseInvoiceItem.DerivedVatRegime = purchaseInvoiceItem.AssignedVatRegime ?? purchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem.DerivedVatRegime;
-                        purchaseInvoiceItem.VatRate = purchaseInvoiceItem.DerivedVatRegime?.VatRate;
-
-                        purchaseInvoiceItem.DerivedIrpfRegime = purchaseInvoiceItem.AssignedIrpfRegime ?? purchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem.DerivedIrpfRegime;
-                        purchaseInvoiceItem.IrpfRate = purchaseInvoiceItem.DerivedIrpfRegime?.IrpfRate;
-
                         foreach (OrderAdjustment orderAdjustment in purchaseInvoiceItem.DiscountAdjustments)
                         {
                             purchaseInvoiceItem.UnitDiscount += orderAdjustment.Percentage.HasValue ?
@@ -150,12 +150,12 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedVatRegime)
                         {
-                            discountVat = Math.Round(discount * @this.DerivedVatRegime.VatRate.Rate / 100, 2);
+                            discountVat = Math.Round(discount * @this.DerivedVatRate.Rate / 100, 2);
                         }
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            discountIrpf = Math.Round(discount * @this.DerivedIrpfRegime.IrpfRate.Rate / 100, 2);
+                            discountIrpf = Math.Round(discount * @this.DerivedIrpfRate.Rate / 100, 2);
                         }
                     }
 
@@ -169,12 +169,12 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedVatRegime)
                         {
-                            surchargeVat = Math.Round(surcharge * @this.DerivedVatRegime.VatRate.Rate / 100, 2);
+                            surchargeVat = Math.Round(surcharge * @this.DerivedVatRate.Rate / 100, 2);
                         }
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            surchargeIrpf = Math.Round(surcharge * @this.DerivedIrpfRegime.IrpfRate.Rate / 100, 2);
+                            surchargeIrpf = Math.Round(surcharge * @this.DerivedIrpfRate.Rate / 100, 2);
                         }
                     }
 
@@ -188,12 +188,12 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedVatRegime)
                         {
-                            feeVat = Math.Round(fee * @this.DerivedVatRegime.VatRate.Rate / 100, 2);
+                            feeVat = Math.Round(fee * @this.DerivedVatRate.Rate / 100, 2);
                         }
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            feeIrpf = Math.Round(fee * @this.DerivedIrpfRegime.IrpfRate.Rate / 100, 2);
+                            feeIrpf = Math.Round(fee * @this.DerivedIrpfRate.Rate / 100, 2);
                         }
                     }
 
@@ -207,12 +207,12 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedVatRegime)
                         {
-                            shippingVat = Math.Round(shipping * @this.DerivedVatRegime.VatRate.Rate / 100, 2);
+                            shippingVat = Math.Round(shipping * @this.DerivedVatRate.Rate / 100, 2);
                         }
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            shippingIrpf = Math.Round(shipping * @this.DerivedIrpfRegime.IrpfRate.Rate / 100, 2);
+                            shippingIrpf = Math.Round(shipping * @this.DerivedIrpfRate.Rate / 100, 2);
                         }
                     }
 
@@ -226,12 +226,12 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedVatRegime)
                         {
-                            miscellaneousVat = Math.Round(miscellaneous * @this.DerivedVatRegime.VatRate.Rate / 100, 2);
+                            miscellaneousVat = Math.Round(miscellaneous * @this.DerivedVatRate.Rate / 100, 2);
                         }
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            miscellaneousIrpf = Math.Round(miscellaneous * @this.DerivedIrpfRegime.IrpfRate.Rate / 100, 2);
+                            miscellaneousIrpf = Math.Round(miscellaneous * @this.DerivedIrpfRate.Rate / 100, 2);
                         }
                     }
                 }

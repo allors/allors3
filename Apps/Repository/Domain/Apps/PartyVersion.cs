@@ -302,14 +302,6 @@ namespace Allors.Repository
         Currency PreferredCurrency { get; set; }
 
         #region Allors
-        [Id("36648D37-BBD7-4C78-87D0-8CB77DABF7ED")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace(Default)]
-        VatRegime VatRegime { get; set; }
-
-        #region Allors
         [Id("E25BB549-9B1B-4FAF-A62C-72EB95897D0F")]
         #endregion
         [Indexed]

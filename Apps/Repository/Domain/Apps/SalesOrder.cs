@@ -65,6 +65,8 @@ namespace Allors.Repository
 
         public VatRegime DerivedVatRegime { get; set; }
 
+        public VatRate DerivedVatRate { get; set; }
+
         public decimal TotalShippingAndHandling { get; set; }
 
         public DateTime OrderDate { get; set; }
@@ -80,6 +82,8 @@ namespace Allors.Repository
         public IrpfRegime AssignedIrpfRegime { get; set; }
 
         public IrpfRegime DerivedIrpfRegime { get; set; }
+
+        public IrpfRate DerivedIrpfRate { get; set; }
 
         public decimal TotalIrpf { get; set; }
 

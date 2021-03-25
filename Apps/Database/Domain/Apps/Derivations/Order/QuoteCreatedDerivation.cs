@@ -23,11 +23,10 @@ namespace Allors.Database.Domain
                 new AssociationPattern(m.Quote.AssignedVatRegime),
                 new AssociationPattern(m.Quote.AssignedIrpfRegime),
                 new AssociationPattern(m.Quote.AssignedCurrency),
+                new AssociationPattern(m.Quote.IssueDate),
                 new AssociationPattern(m.Organisation.Locale) { Steps = new IPropertyType[] { m.Organisation.QuotesWhereIssuer }},
                 new AssociationPattern(m.Party.Locale) { Steps = new IPropertyType[] { m.Party.QuotesWhereReceiver }},
                 new AssociationPattern(m.Party.PreferredCurrency) { Steps = new IPropertyType[] { m.Party.QuotesWhereReceiver }},
-                new AssociationPattern(m.Party.VatRegime) { Steps = new IPropertyType[] { m.Party.QuotesWhereReceiver }},
-                new AssociationPattern(m.Party.IrpfRegime) { Steps = new IPropertyType[] { m.Party.QuotesWhereReceiver }},
                 new AssociationPattern(m.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { m.Organisation.QuotesWhereReceiver }},
             };
 
@@ -37,8 +36,14 @@ namespace Allors.Database.Domain
             {
                 @this.DerivedLocale = @this.Locale ?? @this.Receiver?.Locale ?? @this.Issuer?.Locale;
                 @this.DerivedCurrency = @this.AssignedCurrency ?? @this.Receiver?.PreferredCurrency ?? @this.Receiver?.Locale?.Country?.Currency ?? @this.Issuer?.PreferredCurrency;
-                @this.DerivedVatRegime = @this.AssignedVatRegime ?? @this.Receiver?.VatRegime;
-                @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? @this.Receiver?.IrpfRegime;
+                @this.DerivedVatRegime = @this.AssignedVatRegime;
+                @this.DerivedIrpfRegime = @this.AssignedIrpfRegime;
+
+                if (@this.ExistIssueDate)
+                {
+                    @this.DerivedVatRate = @this.DerivedVatRegime?.VatRates.First(v => v.FromDate <= @this.IssueDate && (!v.ExistThroughDate || v.ThroughDate >= @this.IssueDate));
+                    @this.DerivedIrpfRate = @this.DerivedIrpfRegime?.IrpfRates.First(v => v.FromDate <= @this.IssueDate && (!v.ExistThroughDate || v.ThroughDate >= @this.IssueDate));
+                }
             }
         }
     }

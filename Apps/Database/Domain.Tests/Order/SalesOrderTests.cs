@@ -44,7 +44,6 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(this.Transaction.Now().Date, order.EntryDate.Date);
             Assert.Equal(order.PreviousBillToCustomer, order.BillToCustomer);
             Assert.Equal(order.PreviousShipToCustomer, order.ShipToCustomer);
-            Assert.Equal(order.DerivedVatRegime, order.BillToCustomer.VatRegime);
             Assert.Equal(new Stores(this.Transaction).FindBy(this.M.Store.Name, "store"), order.Store);
             Assert.Equal(order.Store.DefaultCollectionMethod, order.DerivedPaymentMethod);
             Assert.Equal(order.Store.DefaultShipmentMethod, order.DerivedShipmentMethod);
@@ -206,9 +205,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenSalesOrderShippedInMultipleParts_WhenPaymentsAreReceived_ThenObjectStateCorrespondingSalesOrderIsUpdated()
         {
-            var assessable = new VatRegimes(this.Transaction).Assessable21;
-            var vatRate0 = new VatRateBuilder(this.Transaction).WithRate(0).Build();
-            assessable.VatRate = vatRate0;
+            var assessable = new VatRegimes(this.Transaction).ZeroRated;
 
             var good1 = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1");
             var good2 = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good2");
@@ -424,9 +421,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPendingShipmentAndAssignedPickList_WhenNewOrderIsConfirmed_ThenNewPickListIsCreatedAndSingleOrderShipmentIsUpdated()
         {
-            var assessable = new VatRegimes(this.Transaction).Assessable21;
-            var vatRate0 = new VatRateBuilder(this.Transaction).WithRate(0).Build();
-            assessable.VatRate = vatRate0;
+            var assessable = new VatRegimes(this.Transaction).ZeroRated;
 
             var good = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1");
 
@@ -531,9 +526,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenSalesOrderOnHold_WhenInventoryBecomesAvailable_ThenOrderIsNotSelectedForShipment()
         {
-            var assessable = new VatRegimes(this.Transaction).Assessable21;
-            var vatRate0 = new VatRateBuilder(this.Transaction).WithRate(0).Build();
-            assessable.VatRate = vatRate0;
+            var assessable = new VatRegimes(this.Transaction).ZeroRated;
 
             var good = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1");
 
@@ -603,9 +596,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenSalesOrderOnHold_WhenOrderIsContinued_ThenOrderIsSelectedForShipment()
         {
-            var assessable = new VatRegimes(this.Transaction).Assessable21;
-            var vatRate0 = new VatRateBuilder(this.Transaction).WithRate(0).Build();
-            assessable.VatRate = vatRate0;
+            var assessable = new VatRegimes(this.Transaction).ZeroRated;
 
             var good = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1");
 
@@ -681,9 +672,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenSalesOrderNotPartiallyShipped_WhenInComplete_ThenOrderIsNotSelectedForShipment()
         {
-            var assessable = new VatRegimes(this.Transaction).Assessable21;
-            var vatRate0 = new VatRateBuilder(this.Transaction).WithRate(0).Build();
-            assessable.VatRate = vatRate0;
+            var assessable = new VatRegimes(this.Transaction).ZeroRated;
 
             var good1 = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1");
             var good2 = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good2");
@@ -794,9 +783,7 @@ namespace Allors.Database.Domain.Tests
             var productItem = new InvoiceItemTypes(this.Transaction).ProductItem;
             var contactMechanism = new ContactMechanisms(this.Transaction).Extent().First;
 
-            var assessable = new VatRegimes(this.Transaction).Assessable21;
-            var vatRate0 = new VatRateBuilder(this.Transaction).WithRate(0).Build();
-            assessable.VatRate = vatRate0;
+            var assessable = new VatRegimes(this.Transaction).ZeroRated;
 
             var good = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1");
 
@@ -887,9 +874,7 @@ namespace Allors.Database.Domain.Tests
             var productItem = new InvoiceItemTypes(this.Transaction).ProductItem;
             var contactMechanism = new ContactMechanisms(this.Transaction).Extent().First;
 
-            var assessable = new VatRegimes(this.Transaction).Assessable21;
-            var vatRate0 = new VatRateBuilder(this.Transaction).WithRate(0).Build();
-            assessable.VatRate = vatRate0;
+            var assessable = new VatRegimes(this.Transaction).ZeroRated;
 
             var good = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1");
 
@@ -984,9 +969,7 @@ namespace Allors.Database.Domain.Tests
         {
             new Stores(this.Transaction).Extent().First.OrderThreshold = 1;
 
-            var assessable = new VatRegimes(this.Transaction).Assessable21;
-            var vatRate0 = new VatRateBuilder(this.Transaction).WithRate(0).Build();
-            assessable.VatRate = vatRate0;
+            var assessable = new VatRegimes(this.Transaction).ZeroRated;
 
             var good = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1");
 
@@ -1039,9 +1022,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenSalesOrderWithManualShipmentSchedule_WhenOrderIsConfirmed_ThenInventoryIsNotReservedAndOrderIsNotShipped()
         {
-            var assessable = new VatRegimes(this.Transaction).Assessable21;
-            var vatRate0 = new VatRateBuilder(this.Transaction).WithRate(0).Build();
-            assessable.VatRate = vatRate0;
+            var assessable = new VatRegimes(this.Transaction).ZeroRated;
 
             var good = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1");
 
@@ -1591,7 +1572,6 @@ namespace Allors.Database.Domain.Tests
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             var euro = new Currencies(this.Transaction).FindBy(this.M.Currency.IsoCode, "EUR");
             var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
-            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
             var adjustment = new ShippingAndHandlingChargeBuilder(this.Transaction).WithAmount(7.5M).Build();
 
             var good = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1");
@@ -1613,6 +1593,7 @@ namespace Allors.Database.Domain.Tests
                 .WithShipToCustomer(shipToCustomer)
                 .WithAssignedShipToAddress(new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build())
                 .WithOrderAdjustment(adjustment)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).BelgiumStandard)
                 .Build();
 
             this.Transaction.Derive();
@@ -1645,7 +1626,6 @@ namespace Allors.Database.Domain.Tests
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             var euro = new Currencies(this.Transaction).FindBy(this.M.Currency.IsoCode, "EUR");
             var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
-            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
             var adjustment = new ShippingAndHandlingChargeBuilder(this.Transaction).WithPercentage(5).Build();
 
             var good = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1");
@@ -1666,6 +1646,7 @@ namespace Allors.Database.Domain.Tests
                 .WithShipToCustomer(shipToCustomer)
                 .WithAssignedShipToAddress(new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build())
                 .WithOrderAdjustment(adjustment)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).BelgiumStandard)
                 .Build();
 
             this.Transaction.Derive();
@@ -1698,7 +1679,6 @@ namespace Allors.Database.Domain.Tests
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             var euro = new Currencies(this.Transaction).FindBy(this.M.Currency.IsoCode, "EUR");
             var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
-            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
             var adjustment = new FeeBuilder(this.Transaction).WithAmount(7.5M).Build();
 
             var good = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1");
@@ -1719,6 +1699,7 @@ namespace Allors.Database.Domain.Tests
                 .WithShipToCustomer(shipToCustomer)
                 .WithAssignedShipToAddress(new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build())
                 .WithOrderAdjustment(adjustment)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).BelgiumStandard)
                 .Build();
 
             this.Transaction.Derive();
@@ -1769,13 +1750,13 @@ namespace Allors.Database.Domain.Tests
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(billToCustomer).WithInternalOrganisation(this.InternalOrganisation).Build();
 
-            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
             var adjustment = new FeeBuilder(this.Transaction).WithAmount(7.5M).Build();
 
             var order = new SalesOrderBuilder(this.Transaction)
                 .WithAssignedShipFromAddress(shipFrom)
                 .WithBillToCustomer(billToCustomer)
                 .WithOrderAdjustment(adjustment)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).BelgiumStandard)
                 .Build();
 
             this.Transaction.Derive();
@@ -1795,7 +1776,6 @@ namespace Allors.Database.Domain.Tests
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             var euro = new Currencies(this.Transaction).FindBy(this.M.Currency.IsoCode, "EUR");
             var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
-            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
             var adjustment = new FeeBuilder(this.Transaction).WithPercentage(5).Build();
 
             var good = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1");
@@ -1816,6 +1796,7 @@ namespace Allors.Database.Domain.Tests
                 .WithShipToCustomer(shipToCustomer)
                 .WithAssignedShipToAddress(new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build())
                 .WithOrderAdjustment(adjustment)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).BelgiumStandard)
                 .Build();
 
             this.Transaction.Derive();
@@ -2122,14 +2103,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenSalesOrderForSerialisedItem_WhenConfirmed_ThenShipmentItemIsCreated()
         {
-            var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
-
             var good1 = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithName("good1")
                 .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("good1")
                     .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
-                .WithVatRate(vatRate21)
+                .WithVatRegime(new VatRegimes(this.Transaction).BelgiumStandard)
                 .WithPart(new NonUnifiedPartBuilder(this.Transaction)
                     .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                         .WithIdentification("1")
@@ -2245,7 +2224,7 @@ namespace Allors.Database.Domain.Tests
                 .WithBillToCustomer(person1)
                 .WithShipToCustomer(person1)
                 .WithAssignedShipToAddress(mechelenAddress)
-                .WithAssignedVatRegime(new VatRegimes(this.Transaction).Export)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).ZeroRated)
                 .Build();
 
             this.Transaction.Derive();
@@ -2345,14 +2324,12 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            var vatRate0 = new VatRateBuilder(this.Transaction).WithRate(0).Build();
-
             var good = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithName("good1")
                 .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
                     .WithIdentification("good1")
                     .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build())
-                .WithVatRate(vatRate0)
+                .WithVatRegime(new VatRegimes(this.Transaction).ZeroRated)
                 .WithPart(new NonUnifiedPartBuilder(this.Transaction)
                     .WithProductIdentification(new PartNumberBuilder(this.Transaction)
                         .WithIdentification("1")
@@ -2598,38 +2575,6 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedBillToCustomerDeriveDerivedVatRegime()
-        {
-            var customer1 = this.InternalOrganisation.ActiveCustomers.First;
-            customer1.VatRegime = new VatRegimes(this.Transaction).Assessable10;
-
-            var customer2 = this.InternalOrganisation.CreateB2BCustomer(this.Transaction.Faker());
-            customer2.VatRegime = new VatRegimes(this.Transaction).Assessable21;
-
-            var order = new SalesOrderBuilder(this.Transaction).WithBillToCustomer(customer1).Build();
-            this.Transaction.Derive(false);
-
-            order.BillToCustomer = customer2;
-            this.Transaction.Derive(false);
-
-            Assert.Equal(order.DerivedVatRegime, customer2.VatRegime);
-        }
-
-        [Fact]
-        public void ChangedBillToCustomerVatRegimeDeriveDerivedVatRegime()
-        {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
-
-            var order = new SalesOrderBuilder(this.Transaction).WithBillToCustomer(customer).Build();
-            this.Transaction.Derive(false);
-
-            customer.VatRegime = new VatRegimes(this.Transaction).Assessable10;
-            this.Transaction.Derive(false);
-
-            Assert.Equal(order.DerivedVatRegime, customer.VatRegime);
-        }
-
-        [Fact]
         public void ChangedAssignedIrpfRegimeDeriveDerivedIrpfRegime()
         {
             var order = new SalesOrderBuilder(this.Transaction).Build();
@@ -2639,38 +2584,6 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(false);
 
             Assert.Equal(order.DerivedIrpfRegime, order.AssignedIrpfRegime);
-        }
-
-        [Fact]
-        public void ChangedBillToCustomerDeriveDerivedIrpfRegime()
-        {
-            var customer1 = this.InternalOrganisation.ActiveCustomers.First;
-            customer1.IrpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
-
-            var customer2 = this.InternalOrganisation.CreateB2BCustomer(this.Transaction.Faker());
-            customer2.IrpfRegime = new IrpfRegimes(this.Transaction).Assessable19;
-
-            var order = new SalesOrderBuilder(this.Transaction).WithBillToCustomer(customer1).Build();
-            this.Transaction.Derive(false);
-
-            order.BillToCustomer = customer2;
-            this.Transaction.Derive(false);
-
-            Assert.Equal(order.DerivedVatRegime, customer2.VatRegime);
-        }
-
-        [Fact]
-        public void ChangedBillToCustomerIrpfRegimeDeriveDerivedIrpfRegime()
-        {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
-
-            var order = new SalesOrderBuilder(this.Transaction).WithBillToCustomer(customer).Build();
-            this.Transaction.Derive(false);
-
-            customer.IrpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
-            this.Transaction.Derive(false);
-
-            Assert.Equal(order.DerivedIrpfRegime, customer.IrpfRegime);
         }
 
         [Fact]
@@ -3172,6 +3085,30 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(false);
 
             Assert.Equal(order.DerivedPaymentMethod, cash);
+        }
+
+        [Fact]
+        public void ChangedOrderDateDeriveVatRate()
+        {
+            var vatRegime = new VatRegimes(this.Transaction).SpainReduced;
+            vatRegime.VatRates[0].ThroughDate = this.Transaction.Now().AddDays(-1).Date;
+            this.Transaction.Derive(false);
+
+            var newVatRate = new VatRateBuilder(this.Transaction).WithFromDate(this.Transaction.Now().Date).WithRate(11).Build();
+            vatRegime.AddVatRate(newVatRate);
+            this.Transaction.Derive(false);
+
+            var order = new SalesOrderBuilder(this.Transaction)
+                .WithOrderDate(this.Transaction.Now().AddDays(-1).Date)
+                .WithAssignedVatRegime(vatRegime).Build();
+            this.Transaction.Derive(false);
+
+            Assert.NotEqual(newVatRate, order.DerivedVatRate);
+
+            order.OrderDate = this.Transaction.Now().AddDays(1).Date;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(newVatRate, order.DerivedVatRate);
         }
     }
 

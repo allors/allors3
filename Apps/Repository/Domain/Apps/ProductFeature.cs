@@ -54,11 +54,11 @@ namespace Allors.Repository
         ProductFeature[] IncompatibleFeatures { get; set; }
 
         #region Allors
-        [Id("efe16e22-edfb-40b1-83c0-110f874c285a")]
+        [Id("1256ee14-4e29-4ba6-a83f-ed2428178731")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace(Default)]
-        VatRate VatRate { get; set; }
+        [Workspace]
+        VatRegime VatRegime { get; set; }
     }
 }

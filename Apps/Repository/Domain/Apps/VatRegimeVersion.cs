@@ -1,4 +1,4 @@
-// <copyright file="VatTariff.cs" company="Allors bvba">
+// <copyright file="VatRegimeVersion.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -7,27 +7,33 @@ namespace Allors.Repository
 {
     using System;
 
-    using Attributes;
+    using Allors.Repository.Attributes;
 
     #region Allors
-    [Id("a3f63642-b397-4281-ba7e-8c77e9f30658")]
+    [Id("c969939e-7511-49c6-8f43-ac1a79118046")]
     #endregion
-    public partial class VatTariff : Enumeration
+    public partial class VatRegimeVersion : Version
     {
         #region inherited properties
-        public LocalisedText[] LocalisedNames { get; set; }
 
-        public string Name { get; set; }
+        public Guid DerivationId { get; set; }
 
-        public bool IsActive { get; set; }
+        public DateTime DerivationTimeStamp { get; set; }
+
+        public User LastModifiedBy { get; set; }
 
         public Permission[] DeniedPermissions { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
-
-        public Guid UniqueId { get; set; }
-
         #endregion
+
+        #region Allors
+        [Id("b4b5fdc5-7533-4d7e-b91a-80a630ca2ca2")]
+        #endregion
+        [Workspace]
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        public Country Country { get; set; }
 
         #region inherited methods
 

@@ -40,7 +40,7 @@ namespace Allors.Database.Domain.Tests
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var quoteItem = new QuoteItemBuilder(this.Transaction).WithAssignedVatRegime(new VatRegimes(this.Transaction).Assessable10).Build();
+            var quoteItem = new QuoteItemBuilder(this.Transaction).WithAssignedVatRegime(new VatRegimes(this.Transaction).BelgiumStandard).Build();
             quote.AddQuoteItem(quoteItem);
             this.Transaction.Derive(false);
 
@@ -57,7 +57,7 @@ namespace Allors.Database.Domain.Tests
             quote.AddQuoteItem(quoteItem);
             this.Transaction.Derive(false);
 
-            quote.AssignedVatRegime = new VatRegimes(this.Transaction).Assessable10;
+            quote.AssignedVatRegime = new VatRegimes(this.Transaction).BelgiumStandard;
             this.Transaction.Derive(false);
 
             Assert.Equal(quoteItem.DerivedVatRegime, quote.AssignedVatRegime);
@@ -73,10 +73,10 @@ namespace Allors.Database.Domain.Tests
             quote.AddQuoteItem(quoteItem);
             this.Transaction.Derive(false);
 
-            quote.AssignedVatRegime = new VatRegimes(this.Transaction).Assessable10;
+            quote.AssignedVatRegime = new VatRegimes(this.Transaction).BelgiumStandard;
             this.Transaction.Derive(false);
 
-            Assert.Equal(quoteItem.VatRate, quote.AssignedVatRegime.VatRate);
+            Assert.Equal(quoteItem.VatRate, quote.AssignedVatRegime.VatRates[0]);
         }
 
         [Fact]
@@ -121,9 +121,36 @@ namespace Allors.Database.Domain.Tests
             quote.AssignedIrpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
             this.Transaction.Derive(false);
 
-            Assert.Equal(quoteItem.IrpfRate, quote.AssignedIrpfRegime.IrpfRate);
+            Assert.Equal(quoteItem.IrpfRate, quote.AssignedIrpfRegime.IrpfRates[0]);
         }
 
+        [Fact]
+        public void ChangedQuoteIssueDateDeriveVatRate()
+        {
+            var vatRegime = new VatRegimes(this.Transaction).SpainReduced;
+            vatRegime.VatRates[0].ThroughDate = this.Transaction.Now().AddDays(-1).Date;
+            this.Transaction.Derive(false);
+
+            var newVatRate = new VatRateBuilder(this.Transaction).WithFromDate(this.Transaction.Now().Date).WithRate(11).Build();
+            vatRegime.AddVatRate(newVatRate);
+            this.Transaction.Derive(false);
+
+            var quote = new ProductQuoteBuilder(this.Transaction)
+                .WithIssueDate(this.Transaction.Now().AddDays(-1).Date)
+                .WithAssignedVatRegime(vatRegime).Build();
+            this.Transaction.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Transaction).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Transaction.Derive(false);
+
+            Assert.NotEqual(newVatRate, quoteItem.VatRate);
+
+            quote.IssueDate = this.Transaction.Now().AddDays(1).Date;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(newVatRate, quoteItem.VatRate);
+        }
     }
 
     public class QuoteItemDerivationTests : DomainTest, IClassFixture<Fixture>

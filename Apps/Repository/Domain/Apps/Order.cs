@@ -247,6 +247,15 @@ namespace Allors.Repository
         VatRegime DerivedVatRegime { get; set; }
 
         #region Allors
+        [Id("571cce4c-d333-420d-88bb-64d9007a8c5b")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Derived]
+        [Workspace]
+        VatRate DerivedVatRate { get; set; }
+
+        #region Allors
         [Id("3182b8cf-477c-47fc-84c5-93ea78edcc7d")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
@@ -262,6 +271,15 @@ namespace Allors.Repository
         [Derived]
         [Workspace(Default)]
         IrpfRegime DerivedIrpfRegime { get; set; }
+
+        #region Allors
+        [Id("d0dba46d-afcc-4bcf-a8ce-c91cc65cb23b")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Derived]
+        [Workspace]
+        IrpfRate DerivedIrpfRate { get; set; }
 
         #region Allors
         [Id("e039e94d-db89-4a17-a692-e82fdb53bfea")]

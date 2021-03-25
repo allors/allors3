@@ -49,15 +49,19 @@ namespace Allors.Repository
 
         public VatRegime AssignedVatRegime { get; set; }
 
-        public VatClause AssignedVatClause { get; set; }
-
         public VatRegime DerivedVatRegime { get; set; }
+
+        public VatRate DerivedVatRate { get; set; }
+
+        public VatClause AssignedVatClause { get; set; }
 
         public VatClause DerivedVatClause { get; set; }
 
         public IrpfRegime DerivedIrpfRegime { get; set; }
 
         public IrpfRegime AssignedIrpfRegime { get; set; }
+
+        public IrpfRate DerivedIrpfRate { get; set; }
 
         public Locale Locale { get; set; }
 

@@ -130,6 +130,7 @@ namespace Allors.Database.Domain
                 .WithAutoGeneratePurchaseShipment(autoGeneratePurchaseShipment)
                 .WithIsAutomaticallyReceived(isAutomaticallyReceived)
                 .WithCollectiveWorkEffortInvoice(collectiveWorkEffortInvoice)
+                .WithCountry(country)
                 .Build();
 
             internalOrganisation.SerialisedItemSoldOns = serialisedItemSoldOns;

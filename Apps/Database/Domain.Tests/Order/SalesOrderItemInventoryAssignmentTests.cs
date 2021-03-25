@@ -40,7 +40,7 @@ namespace Allors.Database.Domain.Tests
                 .WithName("good")
                 .WithPart(this.part)
                 .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
-                .WithVatRate(new VatRateBuilder(this.Transaction).WithRate(21).Build())
+                .WithVatRegime(new VatRegimes(this.Transaction).BelgiumStandard)
                 .Build();
 
             this.Transaction.Derive();
