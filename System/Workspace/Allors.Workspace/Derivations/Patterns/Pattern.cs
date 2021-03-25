@@ -6,6 +6,7 @@
 
 namespace Allors.Workspace
 {
+    using Derivations;
     using Meta;
 
     public abstract class Pattern

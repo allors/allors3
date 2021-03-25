@@ -25,7 +25,10 @@ namespace Allors.Workspace
             var metaPopulation = (MetaPopulation)workspace.MetaPopulation;
 
             this.M = new M(metaPopulation);
-            this.DerivationFactory = new DerivationFactory(metaPopulation, this.CreateRules());
+
+            var engine = new Engine(metaPopulation, this.CreateRules());
+            this.DerivationFactory = new DerivationFactory(engine);
+
             this.Time = new Time();
         }
 

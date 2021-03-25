@@ -16,17 +16,14 @@ namespace Allors.Workspace.Derivations.Default
     {
         private readonly ISession session;
 
-        private readonly IDictionary<Rule, ISet<Class>> classesByRule;
-
-        private readonly IDictionary<Class, ClassRules> classRulesByClass;
+        private readonly Engine engine;
 
         private readonly int maxDomainDerivationCycles;
 
-        public Derivation(ISession session, IDictionary<Rule, ISet<Class>> classesByRule, IDictionary<Class, ClassRules> classRulesByClass, int maxDomainDerivationCycles)
+        public Derivation(ISession session, Engine engine, int maxDomainDerivationCycles)
         {
-            this.classRulesByClass = classRulesByClass;
             this.session = session;
-            this.classesByRule = classesByRule;
+            this.engine = engine;
             this.maxDomainDerivationCycles = maxDomainDerivationCycles;
 
             this.Validation = new Validation();
@@ -59,16 +56,16 @@ namespace Allors.Workspace.Derivations.Default
                     foreach (var instantiated in changeSet?.Instantiated)
                     {
                         var @class = (Class)instantiated.Class;
-                        var classRules = this.classRulesByClass[@class];
+                        var rules = this.engine.RulesByClass[@class];
 
-                        foreach (var rule in classRules.Rules)
+                        foreach (var rule in rules)
                         {
                             rule.Match(cycle, instantiated.Object);
                         }
                     }
                 }
 
-                foreach (var rule in this.classesByRule.Keys)
+                foreach (var rule in this.engine.ClassesByRule.Keys)
                 {
                     var matches = new HashSet<IObject>();
 

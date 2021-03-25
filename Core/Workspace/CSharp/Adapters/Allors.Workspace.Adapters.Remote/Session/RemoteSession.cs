@@ -253,15 +253,24 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var changeSet = new RemoteChangeSet(this, this.created, this.instantiated, this.SessionState.Checkpoint());
 
-            foreach (var changed in this.changedWorkspaceStates)
+            if (this.changedWorkspaceStates != null)
             {
-                changed.Checkpoint(changeSet);
+                foreach (var changed in this.changedWorkspaceStates)
+                {
+                    changed.Checkpoint(changeSet);
+                }
             }
 
-            foreach (var changed in this.changedDatabaseStates)
+            if (this.changedDatabaseStates != null)
             {
-                changed.Checkpoint(changeSet);
+                foreach (var changed in this.changedDatabaseStates)
+                {
+                    changed.Checkpoint(changeSet);
+                }
             }
+
+            this.created = null;
+            this.instantiated = null;
 
             return changeSet;
         }
