@@ -30,7 +30,7 @@ namespace Tests.Workspace
             };
 
             var session = this.Workspace.CreateSession();
-            var result = await session.Load(pull);
+            var result = await session.Pull(pull);
 
             var c1s = result.GetCollection<C1>();
 

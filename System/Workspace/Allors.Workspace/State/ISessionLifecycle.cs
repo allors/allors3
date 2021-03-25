@@ -3,13 +3,10 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-using System;
-
 namespace Allors.Workspace
 {
-    /// <summary>
-    /// The Session stateLifecycle.
-    /// </summary>
+    using System;
+
     public interface ISessionLifecycle : IDisposable
     {
         void OnInit(ISession session);

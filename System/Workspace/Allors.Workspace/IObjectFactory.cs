@@ -11,8 +11,6 @@ namespace Allors.Workspace
 
     public interface IObjectFactory
     {
-        string Namespace { get; }
-
         IObject Create(IStrategy strategy);
 
         IObjectType GetObjectType<T>();

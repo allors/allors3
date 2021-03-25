@@ -75,8 +75,6 @@ namespace Allors.Workspace.Adapters
                                     where method.IsStatic && method.IsDefined(typeof(ExtensionAttribute), false)
                                     select method).ToArray();
 
-            this.Namespace = instance.Namespace;
-
             metaPopulation.Bind(types, extensionMethods);
 
             this.typeByObjectType = new Dictionary<IObjectType, Type>();
@@ -109,11 +107,6 @@ namespace Allors.Workspace.Adapters
                 this.emptyArrayByObjectType.Add(objectType, Array.CreateInstance(type, 0));
             }
         }
-
-        /// <summary>
-        /// Gets the namespace.
-        /// </summary>
-        public string Namespace { get; }
 
         /// <summary>
         /// Creates a new <see cref="SessionObject"/> given the <see cref="SessionObject"/>.

@@ -54,7 +54,7 @@ namespace Allors.Database.Adapters.SqlClient
                                 }
 
                                 var objectTypeId = new Guid(objectTypeIdString);
-                                var objectType = this.database.ObjectFactory.GetObjectTypeForType(objectTypeId);
+                                var objectType = this.database.ObjectFactory.GetObjectType(objectTypeId);
 
                                 var objectIdsString = this.reader.ReadElementContentAsString();
                                 var objectIdStringArray = objectIdsString.Split(Serialization.ObjectsSplitterCharArray);

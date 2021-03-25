@@ -16,6 +16,7 @@ namespace Allors.Workspace.Adapters.Remote
     using Data;
     using Meta;
     using Protocol.Json;
+    using InvokeOptions = Workspace.InvokeOptions;
 
     public class RemoteSession : ISession
     {
@@ -36,17 +37,17 @@ namespace Allors.Workspace.Adapters.Remote
         {
             this.Workspace = workspace;
             this.Database = this.Workspace.Database;
-            this.SessionLifecycle = sessionLifecycle;
+            this.Lifecycle = sessionLifecycle;
 
             this.strategyByWorkspaceId = new Dictionary<long, RemoteStrategy>();
             this.strategiesByClass = new Dictionary<IClass, RemoteStrategy[]>();
             this.existingDatabaseStrategies = new List<RemoteStrategy>();
 
             this.SessionState = new RemoteSessionState();
-            this.SessionLifecycle.OnInit(this);
+            this.Lifecycle.OnInit(this);
         }
 
-        public ISessionLifecycle SessionLifecycle { get; }
+        public ISessionLifecycle Lifecycle { get; }
 
         IWorkspace ISession.Workspace => this.Workspace;
         internal RemoteWorkspace Workspace { get; }
@@ -57,19 +58,19 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal RemoteSessionState SessionState { get; }
 
-        public async Task<ICallResult> Call(Method method, CallOptions options = null) => await this.Call(new[] { method }, options);
+        public async Task<IInvokeResult> Invoke(Method method, InvokeOptions options = null) => await this.Invoke(new[] { method }, options);
 
-        public async Task<ICallResult> Call(Method[] methods, CallOptions options = null)
+        public async Task<IInvokeResult> Invoke(Method[] methods, InvokeOptions options = null)
         {
             var invokeRequest = new InvokeRequest
             {
                 Invocations = methods.Select(v => new Invocation
                 {
-                    Id = v.Object.Identity.ToString(),
+                    Id = v.Object.Id.ToString(),
                     Version = ((RemoteStrategy)v.Object.Strategy).DatabaseVersion.ToString(),
                     Method = v.MethodType.IdAsString,
                 }).ToArray(),
-                InvokeOptions = options != null ? new InvokeOptions
+                InvokeOptions = options != null ? new Allors.Protocol.Json.Api.Invoke.InvokeOptions
                 {
                     ContinueOnError = options.ContinueOnError,
                     Isolated = options.Isolated
@@ -77,7 +78,7 @@ namespace Allors.Workspace.Adapters.Remote
             };
 
             var invokeResponse = await this.Database.Invoke(invokeRequest);
-            return new RemoteCallResult(invokeResponse);
+            return new RemoteInvokeResult(this, invokeResponse);
         }
 
         public T Create<T>() where T : class, IObject => this.Create<T>((IClass)this.Workspace.ObjectFactory.GetObjectType<T>());
@@ -108,13 +109,23 @@ namespace Allors.Workspace.Adapters.Remote
             return (T)strategy.Object;
         }
 
-        public T Get<T>(IObject @object) where T : IObject => this.Get<T>(@object.Identity);
+        public T Get<T>(IObject @object) where T : IObject => this.Get<T>(@object.Id);
 
-        public T Get<T>(T @object) where T : IObject => this.Get<T>(@object.Identity);
+        public T Get<T>(T @object) where T : IObject => this.Get<T>(@object.Id);
 
         public T Get<T>(long? identity) where T : IObject => identity.HasValue ? this.Get<T>((long)identity) : default;
 
         public T Get<T>(long identity) where T : IObject => (T)this.GetStrategy(identity)?.Object;
+
+        public T Get<T>(string identity) where T : IObject
+        {
+            if (long.TryParse(identity, out var id))
+            {
+                return (T)this.GetStrategy(id)?.Object;
+            }
+
+            return default;
+        }
 
         public IEnumerable<T> Get<T>(IEnumerable<IObject> objects) where T : IObject => objects.Select(this.Get<T>);
 
@@ -122,7 +133,13 @@ namespace Allors.Workspace.Adapters.Remote
 
         public IEnumerable<T> Get<T>(IEnumerable<long> identities) where T : IObject => identities.Select(this.Get<T>);
 
-        public IEnumerable<T> GetAll<T>() where T : class, IObject
+        public IEnumerable<T> Get<T>(IEnumerable<string> identities) where T : IObject => this.Get<T>(identities.Select(v =>
+        {
+            _ = long.TryParse(v, out var id);
+            return id;
+        }));
+
+        public IEnumerable<T> GetAll<T>() where T : IObject
         {
             var objectType = (IComposite)this.Workspace.ObjectFactory.GetObjectType<T>();
             return this.GetAll<T>(objectType);
@@ -166,26 +183,26 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        public async Task<ILoadResult> Load(params Pull[] pulls)
+        public async Task<IPullResult> Pull(params Pull[] pulls)
         {
-            var pullRequest = new PullRequest { Pulls = pulls.Select(v => v.ToJson()).ToArray() };
+            var pullRequest = new PullRequest
+            {
+                Pulls = pulls.Select(v => v.ToJson()).ToArray()
+            };
+
             var pullResponse = await this.Database.Pull(pullRequest);
             return await this.OnPull(pullResponse);
         }
 
-        public async Task<ILoadResult> Load(string service, object args)
+        public async Task<IPullResult> Pull(Procedure procedure, params Pull[] pulls)
         {
-            if (args is Pull pull)
+            var pullRequest = new PullRequest
             {
-                args = new PullRequest { Pulls = new[] { pull.ToJson() } };
-            }
+                Procedure = procedure.ToJson(),
+                Pulls = pulls.Select(v => v.ToJson()).ToArray()
+            };
 
-            if (args is IEnumerable<Pull> pulls)
-            {
-                args = new PullRequest { Pulls = pulls.Select(v => v.ToJson()).ToArray() };
-            }
-
-            var pullResponse = await this.Database.Pull(service, args);
+            var pullResponse = await this.Database.Pull(pullRequest);
             return await this.OnPull(pullResponse);
         }
 
@@ -197,23 +214,15 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        public void Merge()
+        public async Task<IPushResult> Push()
         {
-            foreach (var kvp in this.strategyByWorkspaceId)
-            {
-                kvp.Value.Merge();
-            }
-        }
-
-        public async Task<ISaveResult> Save()
-        {
-            var saveRequest = this.PushRequest();
-            var pushResponse = await this.Database.Push(saveRequest);
+            var pushRequest = this.PushRequest();
+            var pushResponse = await this.Database.Push(pushRequest);
             if (!pushResponse.HasErrors)
             {
                 this.PushResponse(pushResponse);
 
-                var objects = saveRequest.Objects.Select(v => v.DatabaseId).ToArray();
+                var objects = pushRequest.Objects.Select(v => v.DatabaseId).ToArray();
                 if (pushResponse.NewObjects != null)
                 {
                     objects = objects.Union(pushResponse.NewObjects.Select(v => v.DatabaseId)).ToArray();
@@ -230,14 +239,14 @@ namespace Allors.Workspace.Adapters.Remote
                 {
                     foreach (var workspaceStrategy in this.workspaceStrategies)
                     {
-                        workspaceStrategy.WorkspaceSave();
+                        workspaceStrategy.WorkspacePush();
                     }
                 }
 
                 this.Reset();
             }
 
-            return new RemoteSaveResult(pushResponse);
+            return new RemotePushResult(this, pushResponse);
         }
 
         public IChangeSet Checkpoint()
@@ -292,7 +301,7 @@ namespace Allors.Workspace.Adapters.Remote
             return ids?.Select(this.Get<IObject>).ToArray() ?? this.Workspace.ObjectFactory.EmptyArray(roleType.ObjectType);
         }
 
-        internal IEnumerable<IObject> GetAssociation(RemoteStrategy role, IAssociationType associationType)
+        internal IEnumerable<T> GetAssociation<T>(RemoteStrategy role, IAssociationType associationType) where T : IObject
         {
             var roleType = associationType.RoleType;
 
@@ -305,15 +314,15 @@ namespace Allors.Workspace.Adapters.Remote
 
                 if (association.IsAssociationForRole(roleType, role))
                 {
-                    yield return association.Object;
+                    yield return (T)association.Object;
                 }
             }
         }
 
         internal PushRequest PushRequest() => new PushRequest
         {
-            NewObjects = this.newDatabaseStrategies?.Select(v => v.DatabaseSaveNew()).ToArray(),
-            Objects = this.existingDatabaseStrategies.Where(v => v.HasDatabaseChanges).Select(v => v.DatabaseSaveExisting()).ToArray(),
+            NewObjects = this.newDatabaseStrategies?.Select(v => v.DatabasePushNew()).ToArray(),
+            Objects = this.existingDatabaseStrategies.Where(v => v.HasDatabaseChanges).Select(v => v.DatabasePushExisting()).ToArray(),
         };
 
         internal void PushResponse(PushResponse pushResponse)
@@ -385,7 +394,7 @@ namespace Allors.Workspace.Adapters.Remote
             return strategy;
         }
 
-        private async Task<ILoadResult> OnPull(PullResponse pullResponse)
+        private async Task<IPullResult> OnPull(PullResponse pullResponse)
         {
             var syncRequest = this.Database.Diff(pullResponse);
             if (syncRequest.Objects.Length > 0)
@@ -402,7 +411,7 @@ namespace Allors.Workspace.Adapters.Remote
                 }
             }
 
-            return new RemoteLoadResult(this, pullResponse);
+            return new RemotePullResult(this, pullResponse);
         }
 
         private async Task Sync(SyncRequest syncRequest)
@@ -437,7 +446,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         private void AddStrategy(RemoteStrategy strategy)
         {
-            this.strategyByWorkspaceId.Add(strategy.Identity, strategy);
+            this.strategyByWorkspaceId.Add(strategy.Id, strategy);
 
             var @class = strategy.Class;
             if (!this.strategiesByClass.TryGetValue(@class, out var strategies))
@@ -454,7 +463,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         private void RemoveStrategy(RemoteStrategy strategy)
         {
-            this.strategyByWorkspaceId.Remove(strategy.Identity);
+            this.strategyByWorkspaceId.Remove(strategy.Id);
 
             var @class = strategy.Class;
             if (this.strategiesByClass.TryGetValue(@class, out var strategies))

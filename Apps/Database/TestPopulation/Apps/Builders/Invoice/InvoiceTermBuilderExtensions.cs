@@ -4,10 +4,10 @@
 // </copyright>
 // <summary>Defines the MediaTests type.</summary>
 
-using System.Linq;
-
 namespace Allors.Database.Domain.TestPopulation
 {
+    using System.Linq;
+
     public static partial class InvoiceTermBuilderExtensions
     {
         public static InvoiceTermBuilder WithDefaults(this InvoiceTermBuilder @this)

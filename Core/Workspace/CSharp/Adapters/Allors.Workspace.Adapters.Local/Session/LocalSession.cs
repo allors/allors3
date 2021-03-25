@@ -31,17 +31,17 @@ namespace Allors.Workspace.Adapters.Local
         {
             this.Workspace = workspace;
             this.Database = this.Workspace.LocalDatabase;
-            this.SessionLifecycle = sessionLifecycle;
+            this.Lifecycle = sessionLifecycle;
 
             this.strategyByWorkspaceId = new Dictionary<long, LocalStrategy>();
             this.strategiesByClass = new Dictionary<IClass, LocalStrategy[]>();
             this.existingDatabaseStrategies = new List<LocalStrategy>();
 
             this.SessionState = new LocalSessionState();
-            this.SessionLifecycle.OnInit(this);
+            this.Lifecycle.OnInit(this);
         }
 
-        public ISessionLifecycle SessionLifecycle { get; }
+        public ISessionLifecycle Lifecycle { get; }
 
         IWorkspace ISession.Workspace => this.Workspace;
         internal LocalWorkspace Workspace { get; }
@@ -50,13 +50,13 @@ namespace Allors.Workspace.Adapters.Local
 
         internal LocalSessionState SessionState { get; }
 
-        public Task<ICallResult> Call(Method method, CallOptions options = null) => this.Call(new[] { method }, options);
+        public Task<IInvokeResult> Invoke(Method method, InvokeOptions options = null) => this.Invoke(new[] { method }, options);
 
-        public Task<ICallResult> Call(Method[] methods, CallOptions options = null)
+        public Task<IInvokeResult> Invoke(Method[] methods, InvokeOptions options = null)
         {
-            var localInvokeResult = new LocalInvokeResult(this.Workspace);
+            var localInvokeResult = new LocalInvokeResult(this, this.Workspace);
             localInvokeResult.Execute(methods, options);
-            return Task.FromResult<ICallResult>(new LocalCallResult(localInvokeResult));
+            return Task.FromResult<IInvokeResult>(localInvokeResult);
         }
 
         public T Create<T>() where T : class, IObject => this.Create<T>((IClass)this.Workspace.ObjectFactory.GetObjectType<T>());
@@ -87,13 +87,23 @@ namespace Allors.Workspace.Adapters.Local
             return (T)strategy.Object;
         }
 
-        public T Get<T>(IObject @object) where T : IObject => this.Get<T>(@object.Identity);
+        public T Get<T>(IObject @object) where T : IObject => this.Get<T>(@object.Id);
 
-        public T Get<T>(T @object) where T : IObject => this.Get<T>(@object.Identity);
+        public T Get<T>(T @object) where T : IObject => this.Get<T>(@object.Id);
 
         public T Get<T>(long? identity) where T : IObject => identity.HasValue ? this.Get<T>((long)identity) : default;
 
         public T Get<T>(long identity) where T : IObject => (T)this.GetStrategy(identity)?.Object;
+
+        public T Get<T>(string identity) where T : IObject
+        {
+            if (long.TryParse(identity, out var id))
+            {
+                return (T)this.GetStrategy(id)?.Object;
+            }
+
+            return default;
+        }
 
         public IEnumerable<T> Get<T>(IEnumerable<IObject> objects) where T : IObject => objects.Select(this.Get<T>);
 
@@ -101,7 +111,13 @@ namespace Allors.Workspace.Adapters.Local
 
         public IEnumerable<T> Get<T>(IEnumerable<long> identities) where T : IObject => identities.Select(this.Get<T>);
 
-        public IEnumerable<T> GetAll<T>() where T : class, IObject
+        public IEnumerable<T> Get<T>(IEnumerable<string> identities) where T : IObject => this.Get<T>(identities.Select(v =>
+        {
+            _ = long.TryParse(v, out var id);
+            return id;
+        }));
+
+        public IEnumerable<T> GetAll<T>() where T : IObject
         {
             var objectType = (IComposite)this.Workspace.ObjectFactory.GetObjectType<T>();
             return this.GetAll<T>(objectType);
@@ -145,15 +161,24 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        public Task<ILoadResult> Load(params Data.Pull[] pulls)
+        public Task<IPullResult> Pull(params Data.Pull[] pulls)
         {
-            var pullResult = new LocalPullResult(this.Workspace);
+            var pullResult = new LocalPullResult(this, this.Workspace);
+
             pullResult.Execute(pulls);
 
             return this.OnPull(pullResult);
         }
 
-        public Task<ILoadResult> Load(string service, object args) => throw new System.NotImplementedException();
+        public Task<IPullResult> Pull(Procedure procedure, params Data.Pull[] pulls)
+        {
+            var pullResult = new LocalPullResult(this, this.Workspace);
+
+            pullResult.Execute(procedure);
+            pullResult.Execute(pulls);
+
+            return this.OnPull(pullResult);
+        }
 
         public void Reset()
         {
@@ -163,20 +188,12 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        public void Merge()
-        {
-            foreach (var kvp in this.strategyByWorkspaceId)
-            {
-                kvp.Value.Merge();
-            }
-        }
-
-        public Task<ISaveResult> Save()
+        public Task<IPushResult> Push()
         {
             var newStrategies = this.newDatabaseStrategies?.ToArray() ?? Array.Empty<LocalStrategy>();
             var changedStrategies = this.existingDatabaseStrategies?.Where(v => v.HasDatabaseChanges).ToArray() ?? Array.Empty<LocalStrategy>();
 
-            var localPushResult = new LocalPushResult(this.Workspace);
+            var localPushResult = new LocalPushResult(this, this.Workspace);
             localPushResult.Execute(newStrategies, changedStrategies);
 
             if (!localPushResult.HasErrors)
@@ -200,29 +217,38 @@ namespace Allors.Workspace.Adapters.Local
                 {
                     foreach (var workspaceStrategy in this.workspaceStrategies)
                     {
-                        workspaceStrategy.WorkspaceSave();
+                        workspaceStrategy.WorkspacePush();
                     }
                 }
 
                 this.Reset();
             }
 
-            return Task.FromResult<ISaveResult>(new LocalSaveResult(localPushResult));
+            return Task.FromResult<IPushResult>(localPushResult);
         }
 
         public IChangeSet Checkpoint()
         {
             var changeSet = new LocalChangeSet(this, this.created, this.instantiated, this.SessionState.Checkpoint());
 
-            foreach (var changed in this.changedWorkspaceStates)
+            if (this.changedWorkspaceStates != null)
             {
-                changed.Checkpoint(changeSet);
+                foreach (var changed in this.changedWorkspaceStates)
+                {
+                    changed.Checkpoint(changeSet);
+                }
             }
 
-            foreach (var changed in this.changedDatabaseStates)
+            if (this.changedDatabaseStates != null)
             {
-                changed.Checkpoint(changeSet);
+                foreach (var changed in this.changedDatabaseStates)
+                {
+                    changed.Checkpoint(changeSet);
+                }
             }
+
+            this.created = null;
+            this.instantiated = null;
 
             return changeSet;
         }
@@ -262,7 +288,7 @@ namespace Allors.Workspace.Adapters.Local
             return ids?.Select(this.Get<IObject>).ToArray() ?? this.Workspace.ObjectFactory.EmptyArray(roleType.ObjectType);
         }
 
-        internal IEnumerable<IObject> GetAssociation(LocalStrategy role, IAssociationType associationType)
+        internal IEnumerable<T> GetAssociation<T>(LocalStrategy role, IAssociationType associationType) where T : IObject
         {
             var roleType = associationType.RoleType;
 
@@ -275,7 +301,7 @@ namespace Allors.Workspace.Adapters.Local
 
                 if (association.IsAssociationForRole(roleType, role))
                 {
-                    yield return association.Object;
+                    yield return (T)association.Object;
                 }
             }
         }
@@ -292,7 +318,7 @@ namespace Allors.Workspace.Adapters.Local
             _ = this.changedWorkspaceStates.Add(state);
         }
 
-        internal LocalStrategy InstantiateDatabaseObject(long identity)
+        private LocalStrategy InstantiateDatabaseObject(long identity)
         {
             var databaseObject = this.Database.Get(identity);
             var strategy = new LocalStrategy(this, databaseObject);
@@ -325,7 +351,7 @@ namespace Allors.Workspace.Adapters.Local
             _ = this.instantiated.Add(strategy);
         }
 
-        internal IEnumerable<LocalStrategy> Get(IComposite objectType)
+        private IEnumerable<LocalStrategy> Get(IComposite objectType)
         {
             var classes = new HashSet<IClass>(objectType.DatabaseClasses);
             return this.strategyByWorkspaceId.Where(v => classes.Contains(v.Value.Class)).Select(v => v.Value);
@@ -333,7 +359,7 @@ namespace Allors.Workspace.Adapters.Local
 
         private void AddStrategy(LocalStrategy strategy)
         {
-            this.strategyByWorkspaceId.Add(strategy.Identity, strategy);
+            this.strategyByWorkspaceId.Add(strategy.Id, strategy);
 
             var @class = strategy.Class;
             if (!this.strategiesByClass.TryGetValue(@class, out var strategies))
@@ -350,7 +376,7 @@ namespace Allors.Workspace.Adapters.Local
 
         private void RemoveStrategy(LocalStrategy strategy)
         {
-            this.strategyByWorkspaceId.Remove(strategy.Identity);
+            this.strategyByWorkspaceId.Remove(strategy.Id);
 
             var @class = strategy.Class;
             if (this.strategiesByClass.TryGetValue(@class, out var strategies))
@@ -360,13 +386,13 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        private Task<ILoadResult> OnPull(LocalPullResult pullResult)
+        private Task<IPullResult> OnPull(LocalPullResult pullResult)
         {
             var syncObjects = this.Database.ObjectsToSync(pullResult);
 
             this.Workspace.LocalDatabase.Sync(syncObjects, pullResult.AccessControlLists);
 
-            foreach (var databaseObject in pullResult.Objects)
+            foreach (var databaseObject in pullResult.DatabaseObjects)
             {
                 var identity = databaseObject.Id;
                 if (!this.strategyByWorkspaceId.ContainsKey(identity))
@@ -375,11 +401,10 @@ namespace Allors.Workspace.Adapters.Local
                 }
             }
 
-            var loadResult = new LocalLoadResult(this, pullResult);
-            return Task.FromResult<ILoadResult>(loadResult);
+            return Task.FromResult<IPullResult>(pullResult);
         }
 
-        internal void PushResponse(LocalPushResult pushResponse)
+        private void PushResponse(LocalPushResult pushResponse)
         {
             if (pushResponse.ObjectByNewId?.Count > 0)
             {

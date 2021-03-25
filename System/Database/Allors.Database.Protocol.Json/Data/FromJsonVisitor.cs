@@ -9,18 +9,18 @@ namespace Allors.Database.Protocol.Json
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Protocol.Json.Data;
-    using Data;
     using Meta;
     using Extent = Data.Extent;
-    using IVisitor = Allors.Protocol.Json.Data.IVisitor;
     using Node = Data.Node;
     using Pull = Data.Pull;
     using Result = Data.Result;
     using Select = Data.Select;
     using Sort = Data.Sort;
     using Step = Data.Step;
+    using Procedure = Data.Procedure;
+    using Allors.Protocol.Json;
 
-    public class FromJsonVisitor : IVisitor
+    public class FromJsonVisitor : Allors.Protocol.Json.Data.IVisitor
     {
         private readonly ITransaction transaction;
         private IMetaPopulation metaPopulation;
@@ -52,6 +52,8 @@ namespace Allors.Database.Protocol.Json
         public Data.IExtent Extent => this.extents?.Peek();
 
         public Select Select => this.selects?.Peek();
+
+        public Procedure Procedure { get; private set; }
 
         public void VisitExtent(Allors.Protocol.Json.Data.Extent visited)
         {
@@ -317,7 +319,7 @@ namespace Allors.Database.Protocol.Json
                             }
                             else if (visited.Value != null)
                             {
-                                var value = UnitConvert.Parse(((IRoleType)propertyType).ObjectType.Id, visited.Value);
+                                var value = UnitConvert.FromString(((IRoleType)propertyType).ObjectType.Id, visited.Value);
                                 equals.Value = value;
                             }
 
@@ -329,7 +331,7 @@ namespace Allors.Database.Protocol.Json
                             {
                                 Dependencies = visited.Dependencies,
                                 Parameter = visited.Parameter,
-                                Values = visited.Values?.Select(v => UnitConvert.Parse(roleType.ObjectType.Id, v)).ToArray(),
+                                Values = visited.Values?.Select(v => UnitConvert.FromString(roleType.ObjectType.Id, v)).ToArray(),
                             };
 
                             this.predicates.Push(between);
@@ -342,7 +344,7 @@ namespace Allors.Database.Protocol.Json
                             {
                                 Dependencies = visited.Dependencies,
                                 Parameter = visited.Parameter,
-                                Value = UnitConvert.Parse(roleType.ObjectType.Id, visited.Value),
+                                Value = UnitConvert.FromString(roleType.ObjectType.Id, visited.Value),
                             };
 
                             this.predicates.Push(greaterThan);
@@ -355,7 +357,7 @@ namespace Allors.Database.Protocol.Json
                             {
                                 Dependencies = visited.Dependencies,
                                 Parameter = visited.Parameter,
-                                Value = UnitConvert.Parse(roleType.ObjectType.Id, visited.Value),
+                                Value = UnitConvert.FromString(roleType.ObjectType.Id, visited.Value),
                             };
 
                             this.predicates.Push(lessThan);
@@ -368,7 +370,7 @@ namespace Allors.Database.Protocol.Json
                             {
                                 Dependencies = visited.Dependencies,
                                 Parameter = visited.Parameter,
-                                Value = UnitConvert.Parse(roleType.ObjectType.Id, visited.Value)?.ToString(),
+                                Value = UnitConvert.FromString(roleType.ObjectType.Id, visited.Value)?.ToString(),
                             };
 
                             this.predicates.Push(like);
@@ -472,5 +474,14 @@ namespace Allors.Database.Protocol.Json
                 }
             }
         }
+
+        public void VisitProcedure(Allors.Protocol.Json.Data.Procedure procedure) =>
+            this.Procedure = new Procedure(procedure.Name)
+            {
+                CollectionByName = procedure.CollectionByName?.FromJsonForCollectionByName(this.transaction),
+                ObjectByName = procedure.ObjectByName?.FromJsonForObjectByName(this.transaction),
+                ValueByName = procedure.ValueByName.FromJsonForValueByName(),
+                VersionByObject = procedure.VersionByObject?.FromJsonForVersionByObject(this.transaction)
+            };
     }
 }

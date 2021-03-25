@@ -5,7 +5,6 @@
 
 namespace Allors.Database
 {
-    using System;
     using System.Collections.Generic;
     using System.Xml;
 
@@ -28,6 +27,8 @@ namespace Allors.Database
         event RelationNotLoadedEventHandler RelationNotLoaded;
 
         IDomainDerivation[] Derivations { get; }
+
+        IProcedures Procedures { get; }
 
         /// <summary>
         /// Gets a value indicating whether this database is shared with other databases with the same name.
@@ -57,7 +58,7 @@ namespace Allors.Database
         /// </summary>
         IMetaPopulation MetaPopulation { get; }
 
-        IDatabaseLifecycle StateLifecycle { get; }
+        IDatabaseLifecycle Lifecycle { get; }
 
         /// <summary>
         /// Initializes the database. If this population is persistent then

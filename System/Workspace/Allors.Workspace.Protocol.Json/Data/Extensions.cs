@@ -5,33 +5,62 @@
 
 namespace Allors.Workspace.Protocol.Json
 {
-    using Allors.Protocol.Json.Data;
-    using Data;
-    using Extent = Allors.Protocol.Json.Data.Extent;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Xml;
+    using System.Xml.Serialization;
+    using Procedure = Allors.Protocol.Json.Data.Procedure;
     using Pull = Allors.Protocol.Json.Data.Pull;
-    using Select = Allors.Protocol.Json.Data.Select;
 
     public static class Extensions
     {
-        public static Pull ToJson(this Allors.Workspace.Data.Pull pull)
+        public static Pull ToJson(this Data.Pull pull)
         {
             var toJsonVisitor = new ToJsonVisitor();
             pull.Accept(toJsonVisitor);
             return toJsonVisitor.Pull;
         }
 
-        public static Extent ToJson(this IExtent extent)
+        public static Procedure ToJson(this Data.Procedure procedure)
         {
             var toJsonVisitor = new ToJsonVisitor();
-            extent.Accept(toJsonVisitor);
-            return toJsonVisitor.Extent;
+            procedure.Accept(toJsonVisitor);
+            return toJsonVisitor.Procedure;
         }
 
-        public static Select ToJson(this Allors.Workspace.Data.Select @select)
-        {
-            var toJsonVisitor = new ToJsonVisitor();
-            @select.Accept(toJsonVisitor);
-            return toJsonVisitor.Select;
-        }
+        public static string[][] ToJsonForCollectionByName(this IDictionary<string, IObject[]> collectionByName) =>
+            collectionByName?.Select(kvp =>
+            {
+                var name = kvp.Key;
+                var collection = kvp.Value;
+
+                if (collection == null || collection.Length == 0)
+                {
+                    return new[] { name };
+                }
+
+                var jsonCollection = new string[collection.Length + 1];
+                jsonCollection[0] = name;
+
+                for (var i = 0; i < collection.Length; i++)
+                {
+                    jsonCollection[i + 1] = collection[i].Id.ToString();
+                }
+
+                return jsonCollection;
+            }).ToArray();
+
+        public static string[][] ToJsonForObjectByName(this IDictionary<string, IObject> objectByName) =>
+            objectByName?.Select(kvp =>
+            {
+                var name = kvp.Key;
+                var @object = kvp.Value;
+
+                return @object == null ? new[] { name } : new[] { name, @object.Id.ToString() };
+            }).ToArray();
+
+        public static string[][] ToJsonForVersionByObject(this IDictionary<IObject, long> versionByObject) =>
+            versionByObject?.Select(kvp => new[] { kvp.Key.Id.ToString(), kvp.Value.ToString() }).ToArray();
     }
 }

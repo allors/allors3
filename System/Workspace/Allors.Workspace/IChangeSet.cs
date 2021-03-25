@@ -36,6 +36,6 @@ namespace Allors.Workspace
 
         IDictionary<IRoleType, ISet<IStrategy>> AssociationByRoleType { get; }
 
-        IDictionary<IAssociationType, ISet<IStrategy>> RoleByRoleType { get; }
+        IDictionary<IAssociationType, ISet<IStrategy>> RoleByAssociationType { get; }
     }
 }

@@ -635,7 +635,7 @@ namespace Allors.Database.Adapters.Npgsql
                     var version = reader.GetInt64(2);
 
                     var objectId = long.Parse(objectIdString);
-                    var type = (IClass)this.Database.ObjectFactory.GetObjectTypeForType(classId);
+                    var type = (IClass)this.Database.ObjectFactory.GetObjectType(classId);
                     yield return this.transaction.State.GetOrCreateReferenceForExistingObject(type, objectId, version, this.transaction);
                 }
             }

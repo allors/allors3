@@ -8,7 +8,6 @@ namespace Allors.Workspace.Adapters.Remote
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Net.Http;
     using Derivations;
     using Meta;
@@ -21,7 +20,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             this.Name = name;
             this.MetaPopulation = metaPopulation;
-            this.StateLifecycle = state;
+            this.Lifecycle = state;
 
             this.ObjectFactory = new ObjectFactory(this.MetaPopulation, instance);
             this.Database = new RemoteDatabase(this.MetaPopulation, httpClient, new Identities());
@@ -29,31 +28,27 @@ namespace Allors.Workspace.Adapters.Remote
             this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
             this.WorkspaceIdsByWorkspaceClass = new Dictionary<IClass, long[]>();
 
-            this.DomainDerivationById = new ConcurrentDictionary<Guid, IDomainDerivation>();
-
             this.objectById = new Dictionary<long, RemoteWorkspaceObject>();
 
-            this.StateLifecycle.OnInit(this);
+            this.Lifecycle.OnInit(this);
         }
 
         public string Name { get; }
 
         public IMetaPopulation MetaPopulation { get; }
 
-        public IWorkspaceLifecycle StateLifecycle { get; }
-
-        public IDictionary<Guid, IDomainDerivation> DomainDerivationById { get; }
+        public IWorkspaceLifecycle Lifecycle { get; }
 
         IObjectFactory IWorkspace.ObjectFactory => this.ObjectFactory;
         internal ObjectFactory ObjectFactory { get; }
+
+        public ISession CreateSession() => new RemoteSession(this, this.Lifecycle.CreateSessionContext());
 
         public RemoteDatabase Database { get; }
 
         internal Dictionary<long, IClass> WorkspaceClassByWorkspaceId { get; }
 
         internal Dictionary<IClass, long[]> WorkspaceIdsByWorkspaceClass { get; }
-
-        public ISession CreateSession() => new RemoteSession(this, this.StateLifecycle.CreateSessionContext());
 
         internal RemoteWorkspaceObject Get(long identity)
         {

@@ -21,7 +21,7 @@ namespace Tests.Workspace.Local
 
             var session = this.Workspace.CreateSession();
             var pull = new Pull { Extent = new Extent(m.C1.ObjectType) };
-            var result = session.Load(pull).Result;
+            var result = session.Pull(pull).Result;
 
             var c1s = result.GetCollection<C1>();
             Assert.NotNull(c1s);

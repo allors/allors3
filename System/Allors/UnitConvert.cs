@@ -11,61 +11,68 @@ namespace Allors
 
     public static class UnitConvert
     {
-        public static object Parse(Guid objectTypeId, string value)
+        public static string ToString(object value) =>
+            value switch
+            {
+                DateTime dateTime => dateTime.ToString("o"),
+                byte[] binary => Convert.ToBase64String(binary),
+                bool @bool => @bool ? "true" : "false",
+                decimal @decimal => @decimal.ToString(CultureInfo.InvariantCulture),
+                double @double => @double.ToString(CultureInfo.InvariantCulture),
+                int @int => @int.ToString(CultureInfo.InvariantCulture),
+                string @string => @string,
+                Guid @guid => @guid.ToString("D"),
+                null => null,
+                _ => throw new ArgumentException()
+            };
+
+        public static string ToMnemonic(object value) =>
+            value switch
+            {
+                DateTime _ => "t",
+                byte[] _ => "#",
+                bool _ => "b",
+                decimal _ => "d",
+                double _ => "f",
+                int _ => "i",
+                string _ => "s",
+                Guid _ => "g",
+                _ => throw new ArgumentException()
+            };
+
+        public static object FromString(Guid objectTypeId, string value)
         {
             if (value == null)
             {
                 return null;
             }
 
-            switch (objectTypeId)
+            return objectTypeId switch
             {
-                case var u when u == UnitIds.DateTime:
-                    return XmlConvert.ToDateTime(value, XmlDateTimeSerializationMode.Utc);
-                case var u when u == UnitIds.Binary:
-                    return Convert.FromBase64String(value);
-                case var u when u == UnitIds.Boolean:
-                    return XmlConvert.ToBoolean(value);
-                case var u when u == UnitIds.Decimal:
-                    return XmlConvert.ToDecimal(value);
-                case var u when u == UnitIds.Float:
-                    return XmlConvert.ToDouble(value);
-                case var u when u == UnitIds.Integer:
-                    return XmlConvert.ToInt32(value);
-                case var u when u == UnitIds.String:
-                    return value;
-                case var u when u == UnitIds.Unique:
-                    return XmlConvert.ToGuid(value);
-                default:
-                    throw new Exception($"Unknown unit type with id {objectTypeId}");
-            }
+                var u when u == UnitIds.DateTime => XmlConvert.ToDateTime(value, XmlDateTimeSerializationMode.Utc),
+                var u when u == UnitIds.Binary => Convert.FromBase64String(value),
+                var u when u == UnitIds.Boolean => XmlConvert.ToBoolean(value),
+                var u when u == UnitIds.Decimal => XmlConvert.ToDecimal(value),
+                var u when u == UnitIds.Float => XmlConvert.ToDouble(value),
+                var u when u == UnitIds.Integer => XmlConvert.ToInt32(value),
+                var u when u == UnitIds.String => value,
+                var u when u == UnitIds.Unique => XmlConvert.ToGuid(value),
+                _ => throw new Exception($"Unknown unit type with id {objectTypeId}")
+            };
         }
 
-        public static string ToString(object value)
-        {
-            switch (value)
+        public static object FromString(string mnemonic, string value) =>
+            mnemonic switch
             {
-                case DateTime dateTime:
-                    return dateTime.ToString("o");
-                case byte[] binary:
-                    return Convert.ToBase64String(binary);
-                case bool @bool:
-                    return @bool ? "true" : "false";
-                case decimal @decimal:
-                    return @decimal.ToString(CultureInfo.InvariantCulture);
-                case double @double:
-                    return @double.ToString(CultureInfo.InvariantCulture);
-                case int @int:
-                    return @int.ToString(CultureInfo.InvariantCulture);
-                case string @string:
-                    return @string;
-                case Guid @guid:
-                    return @guid.ToString("D");
-                case null:
-                    return null;
-                default:
-                    throw new ArgumentException();
-            }
-        }
+                "t" => XmlConvert.ToDateTime(value, XmlDateTimeSerializationMode.Utc),
+                "#" => Convert.FromBase64String(value),
+                "b" => XmlConvert.ToBoolean(value),
+                "d" => XmlConvert.ToDecimal(value),
+                "f" => XmlConvert.ToDouble(value),
+                "i" => XmlConvert.ToInt32(value),
+                "s" => value,
+                "g" => XmlConvert.ToGuid(value),
+                _ => throw new Exception($"Unknown mnemonic {mnemonic}")
+            };
     }
 }

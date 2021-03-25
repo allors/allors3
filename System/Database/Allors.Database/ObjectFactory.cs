@@ -96,12 +96,7 @@ namespace Allors.Database
                 {
                     var parameterTypes = new[] { typeof(IStrategy) };
                     var constructor = type.GetTypeInfo().GetConstructor(parameterTypes);
-                    if (constructor == null)
-                    {
-                        throw new ArgumentException(objectType.Name + " has no Allors constructor.");
-                    }
-
-                    this.contructorInfoByObjectType[objectType] = constructor;
+                    this.contructorInfoByObjectType[objectType] = constructor ?? throw new ArgumentException(objectType.Name + " has no Allors constructor.");
                 }
             }
         }
@@ -135,19 +130,21 @@ namespace Allors.Database
             return (IObject)constructor.Invoke(parameters);
         }
 
+        public IObjectType GetObjectType<T>() => this.GetObjectType(typeof(T));
+
         /// <summary>
         /// Gets the .Net <see cref="Type"/> given the Allors <see cref="IObjectType"/>.
         /// </summary>
         /// <param name="type">The .Net <see cref="Type"/>.</param>
         /// <returns>The Allors <see cref="IObjectType"/>.</returns>
-        public IObjectType GetObjectTypeForType(Type type) => !this.objectTypeByType.TryGetValue(type, out var objectType) ? null : objectType;
+        public IObjectType GetObjectType(Type type) => !this.objectTypeByType.TryGetValue(type, out var objectType) ? null : objectType;
 
         /// <summary>
         /// Gets the .Net <see cref="Type"/> given the Allors <see cref="IObjectType"/>.
         /// </summary>
         /// <param name="objectType">The Allors <see cref="IObjectType"/>.</param>
         /// <returns>The .Net <see cref="Type"/>.</returns>
-        public Type GetTypeForObjectType(IObjectType objectType)
+        public Type GetType(IObjectType objectType)
         {
             this.typeByObjectType.TryGetValue(objectType, out var type);
             return type;
@@ -158,7 +155,7 @@ namespace Allors.Database
         /// </summary>
         /// <param name="objectTypeId">The Allors <see cref="IObjectType"/> id.</param>
         /// <returns>The .Net <see cref="Type"/>.</returns>
-        public IObjectType GetObjectTypeForType(Guid objectTypeId)
+        public IObjectType GetObjectType(Guid objectTypeId)
         {
             this.objectTypeByObjectTypeId.TryGetValue(objectTypeId, out var objectType);
             return objectType;

@@ -5,6 +5,7 @@
 
 namespace Tests.Workspace
 {
+    using Allors.Workspace;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
     using Xunit;
@@ -27,12 +28,12 @@ namespace Tests.Workspace
                 Extent = new Extent(this.M.C1.ObjectType),
             };
 
-            var result = session.Load(pull).Result;
+            var result = session.Pull(pull).Result;
 
             var c1s = result.GetCollection<C1>("C1s");
             Assert.Equal(4, c1s.Length);
 
-            result = session.Load(pull).Result;
+            result = session.Pull(pull).Result;
 
             var c1s2 = result.GetCollection<C1>("C1s");
             Assert.Equal(4, c1s2.Length);
@@ -50,7 +51,7 @@ namespace Tests.Workspace
                 Extent = new Extent(this.M.C1.ObjectType),
             };
 
-            var result = await session.Load(pull);
+            var result = await session.Pull(pull);
 
             var c1s = result.GetCollection<C1>("C1s");
 
@@ -65,12 +66,12 @@ namespace Tests.Workspace
                 {
                     if (associationType.IsOne)
                     {
-                        var association = c1.Strategy.GetAssociation(associationType);
+                        var association = c1.Strategy.GetComposite<IObject>(associationType);
                         Assert.Null(association);
                     }
                     else
                     {
-                        var association = c1.Strategy.GetAssociations(associationType);
+                        var association = c1.Strategy.GetComposites<IObject>(associationType);
                         Assert.Empty(association);
                     }
                 }
@@ -89,7 +90,7 @@ namespace Tests.Workspace
                 Extent = new Extent(this.M.C1.ObjectType),
             };
 
-            var result = session.Load(pull).Result;
+            var result = session.Pull(pull).Result;
 
             var c1s = result.GetCollection<C1>("C1s");
 
@@ -104,12 +105,12 @@ namespace Tests.Workspace
                 {
                     if (associationType.IsOne)
                     {
-                        var association = c1.Strategy.GetAssociation(associationType);
+                        var association = c1.Strategy.GetComposite<IObject>(associationType);
                         Assert.Null(association);
                     }
                     else
                     {
-                        var association = c1.Strategy.GetAssociations(associationType);
+                        var association = c1.Strategy.GetComposites<IObject>(associationType);
                         Assert.Empty(association);
                     }
                 }

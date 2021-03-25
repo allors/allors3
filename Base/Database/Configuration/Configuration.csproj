@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Base\Session\" />
+    <Folder Include="Base\Transaction\" />
   </ItemGroup>
 
 </Project>

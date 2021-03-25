@@ -26,7 +26,7 @@ namespace Tests.Workspace.Remote
             Assert.Equal("Koen", koen.FirstName);
             Assert.Null(koen.MiddleName);
             Assert.Equal("Van Exem", koen.LastName);
-            Assert.Equal(UnitConvert.Parse(this.M.Person.BirthDate.ObjectType.Id, "1973-03-27T18:00:00Z"), koen.BirthDate);
+            Assert.Equal(UnitConvert.FromString(this.M.Person.BirthDate.ObjectType.Id, "1973-03-27T18:00:00Z"), koen.BirthDate);
             Assert.True(koen.IsStudent);
 
             var patrick = session.InstantiateDatabaseObject(2).Object as Person;
@@ -455,7 +455,7 @@ namespace Tests.Workspace.Remote
             Assert.Equal(3, save.NewObjects.Length);
             Assert.Empty(save.Objects);
             {
-                var savedMathijs = save.NewObjects.First(v => v.NewWorkspaceId == mathijs.Strategy.Identity.ToString());
+                var savedMathijs = save.NewObjects.First(v => v.NewWorkspaceId == mathijs.Strategy.Id.ToString());
 
                 Assert.Equal(this.M.Person.Class.IdAsString, savedMathijs.ObjectType);
                 Assert.Equal(2, savedMathijs.Roles.Length);
@@ -468,24 +468,24 @@ namespace Tests.Workspace.Remote
             }
 
             {
-                var savedAcme2 = save.NewObjects.First(v => v.NewWorkspaceId == acme2.Strategy.Identity.ToString());
+                var savedAcme2 = save.NewObjects.First(v => v.NewWorkspaceId == acme2.Strategy.Id.ToString());
 
                 Assert.Equal(this.M.Organisation.Class.IdAsString, savedAcme2.ObjectType);
                 Assert.Equal(3, savedAcme2.Roles.Length);
 
                 var savedAcme2Manager = savedAcme2.Roles.First(v => v.RelationType == this.M.Organisation.Manager.RelationType.IdAsString);
 
-                Assert.Equal(mathijs.Strategy.Identity.ToString(), savedAcme2Manager.SetRole);
+                Assert.Equal(mathijs.Strategy.Id.ToString(), savedAcme2Manager.SetRole);
 
                 var savedAcme2Employees = savedAcme2.Roles.First(v => v.RelationType == this.M.Organisation.Employees.RelationType.IdAsString);
 
                 Assert.Null(savedAcme2Employees.SetRole);
-                Assert.Contains(mathijs.Strategy.Identity.ToString(), savedAcme2Employees.AddRole);
+                Assert.Contains(mathijs.Strategy.Id.ToString(), savedAcme2Employees.AddRole);
                 Assert.Null(savedAcme2Employees.RemoveRole);
             }
 
             {
-                var savedAcme3 = save.NewObjects.First(v => v.NewWorkspaceId == acme3.Strategy.Identity.ToString());
+                var savedAcme3 = save.NewObjects.First(v => v.NewWorkspaceId == acme3.Strategy.Id.ToString());
 
                 Assert.Equal(this.M.Organisation.Class.IdAsString, savedAcme3.ObjectType);
                 Assert.Equal(3, savedAcme3.Roles.Length);
@@ -525,12 +525,12 @@ namespace Tests.Workspace.Remote
             session.Reset();
 
             // Assert.Null(mathijs.DatabaseId);
-            Assert.True(mathijs.Strategy.Identity < 0);
+            Assert.True(mathijs.Strategy.Id < 0);
             Assert.Null(mathijs.FirstName);
             Assert.Null(mathijs.LastName);
 
             // Assert.Null(acme2.DatabaseId);
-            Assert.True(acme2.Strategy.Identity < 0);
+            Assert.True(acme2.Strategy.Id < 0);
             Assert.Null(acme2.Owner);
             Assert.Null(acme2.Manager);
 
@@ -552,7 +552,7 @@ namespace Tests.Workspace.Remote
             mathijs.FirstName = "Mathijs";
             mathijs.LastName = "Verwer";
 
-            var workspaceId = mathijs.Strategy.Identity;
+            var workspaceId = mathijs.Strategy.Id;
 
             pushResponse = new PushResponse
             {
@@ -561,8 +561,8 @@ namespace Tests.Workspace.Remote
 
             session.PushResponse(pushResponse);
 
-            Assert.NotNull(mathijs.Strategy.Identity);
-            Assert.Equal(10000, mathijs.Identity);
+            Assert.NotNull(mathijs.Strategy.Id);
+            Assert.Equal(10000, mathijs.Id);
             Assert.Equal("Person", mathijs.Strategy.Class.Name);
 
             var mathijs2 = session.Get<Person>(10000);
@@ -600,7 +600,7 @@ namespace Tests.Workspace.Remote
 
             var acme = (Organisation)session.Create<Organisation>(this.M.Organisation.Class);
 
-            var acmeAgain = session.Get<Organisation>(acme.Identity);
+            var acmeAgain = session.Get<Organisation>(acme.Id);
 
             Assert.Equal(acme, acmeAgain);
         }

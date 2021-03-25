@@ -50,5 +50,7 @@ namespace Allors.Workspace.Data
         void VisitStep(Step visited);
 
         void VisitUnion(Union visited);
+
+        void VisitProcedure(Procedure procedure);
     }
 }

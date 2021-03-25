@@ -24,7 +24,7 @@ namespace Allors.Workspace.Adapters.Local
             this.Name = name;
             this.UserId = userId;
             this.MetaPopulation = metaPopulation;
-            this.StateLifecycle = state;
+            this.Lifecycle = state;
 
             this.ObjectFactory = new ObjectFactory(this.MetaPopulation, instance);
             this.Database = database;
@@ -35,35 +35,31 @@ namespace Allors.Workspace.Adapters.Local
             this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
             this.WorkspaceIdsByWorkspaceClass = new Dictionary<IClass, long[]>();
 
-            this.DomainDerivationById = new ConcurrentDictionary<Guid, IDomainDerivation>();
-
             this.objectById = new Dictionary<long, LocalWorkspaceObject>();
 
-            this.StateLifecycle.OnInit(this);
+            this.Lifecycle.OnInit(this);
         }
 
         public string Name { get; }
 
-        public long UserId { get;  }
+        public long UserId { get; }
 
         public IMetaPopulation MetaPopulation { get; }
 
-        public IWorkspaceLifecycle StateLifecycle { get; }
-
-        public IDictionary<Guid, IDomainDerivation> DomainDerivationById { get; }
+        public IWorkspaceLifecycle Lifecycle { get; }
 
         IObjectFactory IWorkspace.ObjectFactory => this.ObjectFactory;
         internal ObjectFactory ObjectFactory { get; }
 
         public IDatabase Database { get; }
+        
+        public ISession CreateSession() => new LocalSession(this, this.Lifecycle.CreateSessionContext());
 
         internal LocalDatabase LocalDatabase { get; }
 
         internal Dictionary<long, IClass> WorkspaceClassByWorkspaceId { get; }
 
         internal Dictionary<IClass, long[]> WorkspaceIdsByWorkspaceClass { get; }
-
-        public ISession CreateSession() => new LocalSession(this, this.StateLifecycle.CreateSessionContext());
 
         internal LocalWorkspaceObject Get(long identity)
         {

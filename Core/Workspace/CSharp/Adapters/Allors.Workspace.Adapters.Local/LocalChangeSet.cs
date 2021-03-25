@@ -24,7 +24,7 @@ namespace Allors.Workspace.Adapters.Local
                 .ToDictionary(
                     v => v.Key,
                     v => (ISet<IStrategy>)new HashSet<IStrategy>(v.Value.Keys));
-            this.RoleByRoleType = sessionStateChangeSet.AssociationByRoleByRoleType.ToDictionary(
+            this.RoleByAssociationType = sessionStateChangeSet.AssociationByRoleByRoleType.ToDictionary(
                 v => v.Key,
                 v => (ISet<IStrategy>)new HashSet<IStrategy>(v.Value.Keys));
             ;
@@ -39,7 +39,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public IDictionary<IRoleType, ISet<IStrategy>> AssociationByRoleType { get; }
 
-        public IDictionary<IAssociationType, ISet<IStrategy>> RoleByRoleType { get; }
+        public IDictionary<IAssociationType, ISet<IStrategy>> RoleByAssociationType { get; }
 
         internal void AddAssociation(IRelationType relationType, LocalStrategy association)
         {
@@ -58,10 +58,10 @@ namespace Allors.Workspace.Adapters.Local
         {
             var associationType = relationType.AssociationType;
 
-            if (!this.RoleByRoleType.TryGetValue(associationType, out var roles))
+            if (!this.RoleByAssociationType.TryGetValue(associationType, out var roles))
             {
                 roles = new HashSet<IStrategy>();
-                this.RoleByRoleType.Add(associationType, roles);
+                this.RoleByAssociationType.Add(associationType, roles);
             }
 
             _ = roles.Add(role);
@@ -343,7 +343,7 @@ namespace Allors.Workspace.Adapters.Local
                 if (roleType.IsOne)
                 {
                     var previousRole = (LocalStrategy)previous;
-                    if (!Equals(current, previousRole?.Identity))
+                    if (!Equals(current, previousRole?.Id))
                     {
                         if (previous != null)
                         {
@@ -391,7 +391,7 @@ namespace Allors.Workspace.Adapters.Local
                         }
                         else
                         {
-                            var previousRoleIds = previousRole.Select(v => v.Identity).ToArray();
+                            var previousRoleIds = previousRole.Select(v => v.Id).ToArray();
                             var addedRoles = currentRole.Except(previousRoleIds);
                             var removedRoles = previousRoleIds.Except(currentRole);
 

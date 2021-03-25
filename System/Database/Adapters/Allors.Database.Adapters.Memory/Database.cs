@@ -6,6 +6,7 @@
 namespace Allors.Database.Adapters.Memory
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Xml;
 
@@ -19,8 +20,8 @@ namespace Allors.Database.Adapters.Memory
 
         public Database(IDatabaseLifecycle state, Configuration configuration)
         {
-            this.StateLifecycle = state;
-            if (this.StateLifecycle == null)
+            this.Lifecycle = state;
+            if (this.Lifecycle == null)
             {
                 throw new Exception("Services is missing");
             }
@@ -36,8 +37,9 @@ namespace Allors.Database.Adapters.Memory
             this.Id = string.IsNullOrWhiteSpace(configuration.Id) ? Guid.NewGuid().ToString("N").ToLowerInvariant() : configuration.Id;
 
             this.Derivations = Array.Empty<IDomainDerivation>();
+            this.Procedures = new DefaultProcedures(this.ObjectFactory.Assembly);
 
-            this.StateLifecycle.OnInit(this);
+            this.Lifecycle.OnInit(this);
         }
 
         public event ObjectNotLoadedEventHandler ObjectNotLoaded;
@@ -45,6 +47,8 @@ namespace Allors.Database.Adapters.Memory
         public event RelationNotLoadedEventHandler RelationNotLoaded;
 
         public IDomainDerivation[] Derivations { get; private set; }
+
+        public IProcedures Procedures { get; set; }
 
         public string Id { get; }
 
@@ -54,11 +58,11 @@ namespace Allors.Database.Adapters.Memory
 
         public IMetaPopulation MetaPopulation => this.ObjectFactory.MetaPopulation;
 
-        public IDatabaseLifecycle StateLifecycle { get; }
+        public IDatabaseLifecycle Lifecycle { get; }
 
         internal bool IsLoading { get; private set; }
 
-        protected virtual Transaction Transaction => this.transaction ??= new Transaction(this, this.StateLifecycle.CreateTransactionInstance());
+        protected virtual Transaction Transaction => this.transaction ??= new Transaction(this, this.Lifecycle.CreateTransactionInstance());
 
         public ITransaction CreateTransaction() => this.CreateDatabaseTransaction();
 
@@ -155,7 +159,7 @@ namespace Allors.Database.Adapters.Memory
 
             this.transaction = null;
 
-            this.StateLifecycle.OnInit(this);
+            this.Lifecycle.OnInit(this);
         }
 
         internal void OnObjectNotLoaded(Guid metaTypeId, long allorsObjectId)

@@ -14,7 +14,7 @@ namespace Allors.Workspace
     {
         IWorkspace Workspace { get; }
 
-        ISessionLifecycle SessionLifecycle { get; }
+        ISessionLifecycle Lifecycle { get; }
 
         T Create<T>() where T : class, IObject;
 
@@ -24,7 +24,11 @@ namespace Allors.Workspace
 
         T Get<T>(T @object) where T : IObject;
 
+        T Get<T>(long? identity) where T : IObject;
+
         T Get<T>(long identity) where T : IObject;
+
+        T Get<T>(string identity) where T : IObject;
 
         IEnumerable<T> Get<T>(IEnumerable<IObject> objects) where T : IObject;
 
@@ -32,24 +36,24 @@ namespace Allors.Workspace
 
         IEnumerable<T> Get<T>(IEnumerable<long> identities) where T : IObject;
 
-        IEnumerable<T> GetAll<T>() where T : class, IObject;
+        IEnumerable<T> Get<T>(IEnumerable<string> responseVersionErrors) where T : IObject;
+
+        IEnumerable<T> GetAll<T>() where T : IObject;
 
         IEnumerable<T> GetAll<T>(IComposite objectType) where T : IObject;
 
-        void Reset();
+        Task<IInvokeResult> Invoke(Method method, InvokeOptions options = null);
 
-        void Merge();
+        Task<IInvokeResult> Invoke(Method[] methods, InvokeOptions options = null);
 
-        Task<ICallResult> Call(Method method, CallOptions options = null);
+        Task<IPullResult> Pull(params Pull[] pulls);
 
-        Task<ICallResult> Call(Method[] methods, CallOptions options = null);
+        Task<IPullResult> Pull(Procedure procedure, params Pull[] pulls);
 
-        Task<ILoadResult> Load(params Pull[] pulls);
-
-        Task<ILoadResult> Load(string service, object args);
-
-        Task<ISaveResult> Save();
+        Task<IPushResult> Push();
 
         IChangeSet Checkpoint();
+
+        void Reset();
     }
 }

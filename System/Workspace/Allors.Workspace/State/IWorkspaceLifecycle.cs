@@ -7,9 +7,6 @@ namespace Allors.Workspace
 {
     using System;
 
-    /// <summary>
-    /// The InternalWorkspace stateLifecycle.
-    /// </summary>
     public interface IWorkspaceLifecycle : IDisposable
     {
         void OnInit(IWorkspace internalWorkspace);

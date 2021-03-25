@@ -6,6 +6,7 @@
 namespace Allors.Database.Adapters.SqlClient
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Data;
     using Microsoft.Data.SqlClient;
@@ -42,8 +43,8 @@ namespace Allors.Database.Adapters.SqlClient
 
         public Database(IDatabaseLifecycle state, Configuration configuration)
         {
-            this.StateLifecycle = state;
-            if (this.StateLifecycle == null)
+            this.Lifecycle = state;
+            if (this.Lifecycle == null)
             {
                 throw new Exception("Services is missing");
             }
@@ -82,19 +83,18 @@ namespace Allors.Database.Adapters.SqlClient
                 }
                 else
                 {
-                    using (var connection = new SqlConnection(this.ConnectionString))
-                    {
-                        connection.Open();
-                        this.Id = connection.Database.ToLowerInvariant();
-                    }
+                    using var connection = new SqlConnection(this.ConnectionString);
+                    connection.Open();
+                    this.Id = connection.Database.ToLowerInvariant();
                 }
             }
 
             this.SchemaName = (configuration.SchemaName ?? "allors").ToLowerInvariant();
 
             this.Derivations = Array.Empty<IDomainDerivation>();
+            this.Procedures = new DefaultProcedures(this.ObjectFactory.Assembly);
 
-            this.StateLifecycle.OnInit(this);
+            this.Lifecycle.OnInit(this);
         }
 
         public event ObjectNotLoadedEventHandler ObjectNotLoaded;
@@ -103,7 +103,9 @@ namespace Allors.Database.Adapters.SqlClient
 
         public IDomainDerivation[] Derivations { get; private set; }
 
-        public IDatabaseLifecycle StateLifecycle { get; }
+        public IProcedures Procedures { get; }
+
+        public IDatabaseLifecycle Lifecycle { get; }
 
         public IConnectionFactory ConnectionFactory
         {
@@ -200,7 +202,7 @@ namespace Allors.Database.Adapters.SqlClient
                 throw new Exception(this.validationMessage);
             }
 
-            return new Transaction(this, connection, this.StateLifecycle.CreateTransactionInstance());
+            return new Transaction(this, connection, this.Lifecycle.CreateTransactionInstance());
         }
 
         public void AddDerivation(IDomainDerivation derivation) => this.Derivations = new List<IDomainDerivation>(this.Derivations) { derivation }.ToArray();
@@ -215,7 +217,7 @@ namespace Allors.Database.Adapters.SqlClient
             {
                 this.ResetSchema();
                 this.Cache.Invalidate();
-                this.StateLifecycle.OnInit(this);
+                this.Lifecycle.OnInit(this);
             }
         }
 
@@ -317,7 +319,7 @@ namespace Allors.Database.Adapters.SqlClient
 
         internal IEnumerable<SqlDataRecord> CreateUnitRelationTable(IRoleType roleType, IEnumerable<UnitRelation> relations) => new UnitRoleDataRecords(this, roleType, relations);
 
-        internal Type GetDomainType(IObjectType objectType) => this.ObjectFactory.GetTypeForObjectType(objectType);
+        internal Type GetDomainType(IObjectType objectType) => this.ObjectFactory.GetType(objectType);
 
         internal IRoleType[] GetSortedUnitRolesByObjectType(IObjectType objectType)
         {

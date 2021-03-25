@@ -13,5 +13,8 @@ namespace Allors.Protocol.Json.Api.Pull
     {
         [JsonPropertyName("p")]
         public Pull[] Pulls { get; set; }
+
+        [JsonPropertyName("s")]
+        public Procedure Procedure { get; set; }
     }
 }

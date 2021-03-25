@@ -10,38 +10,50 @@ namespace Allors.Workspace
 
     public interface IStrategy
     {
+        IObject Object { get; }
+
         IClass Class { get; }
 
-        long Identity { get; }
-
-        IObject Object { get; }
+        long Id { get; }
 
         ISession Session { get; }
 
-        bool Exist(IRoleType roleType);
-
-        object GetRole(IRoleType roleType);
-
-        object GetUnitRole(IRoleType roleType);
-
-        T GetCompositeRole<T>(IRoleType roleType) where T : IObject;
-
-        IEnumerable<T> GetCompositesRole<T>(IRoleType roleType) where T : IObject;
-
-        void Set(IRoleType roleType, object value);
-
-        void Add(IRoleType roleType, IObject value);
-
-        void Remove(IRoleType roleType, IObject value);
-
-        IObject GetAssociation(IAssociationType associationType);
-
-        IEnumerable<IObject> GetAssociations(IAssociationType associationType);
+        IEnumerable<IRelationType> Diff();
 
         bool CanRead(IRoleType roleType);
 
         bool CanWrite(IRoleType roleType);
 
         bool CanExecute(IMethodType methodType);
+
+        bool Exist(IRoleType roleType);
+
+        object Get(IRoleType roleType);
+
+        object GetUnit(IRoleType roleType);
+
+        T GetComposite<T>(IRoleType roleType) where T : IObject;
+
+        IEnumerable<T> GetComposites<T>(IRoleType roleType) where T : IObject;
+
+        void Set(IRoleType roleType, object value);
+
+        void SetUnit(IRoleType roleType, object value);
+
+        void SetComposite<T>(IRoleType roleType, T value) where T : IObject;
+
+        void SetComposites<T>(IRoleType roleType, in IEnumerable<T> value) where T : IObject;
+
+        void Add<T>(IRoleType roleType, T value) where T : IObject;
+
+        void Remove<T>(IRoleType roleType, T value) where T : IObject;
+
+        void Remove(IRoleType roleType);
+
+        T GetComposite<T>(IAssociationType associationType) where T : IObject;
+
+        IEnumerable<T> GetComposites<T>(IAssociationType associationType) where T : IObject;
+
+        void Reset();
     }
 }

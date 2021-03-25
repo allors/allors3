@@ -73,7 +73,7 @@ namespace Allors.Database.Domain
             {
                 this.cache = cache;
                 this.transaction = cache.Transaction;
-                this.@class = (IClass)this.transaction.Database.ObjectFactory.GetObjectTypeForType(typeof(TObject));
+                this.@class = (IClass)this.transaction.Database.ObjectFactory.GetObjectType(typeof(TObject));
                 this.roleType = this.cache.RoleType;
             }
 

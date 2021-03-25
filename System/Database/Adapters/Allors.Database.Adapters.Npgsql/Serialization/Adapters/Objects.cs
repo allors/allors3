@@ -53,7 +53,7 @@ namespace Allors.Database.Adapters.Npgsql
                                 }
 
                                 var objectTypeId = new Guid(objectTypeIdString);
-                                var objectType = this.database.ObjectFactory.GetObjectTypeForType(objectTypeId);
+                                var objectType = this.database.ObjectFactory.GetObjectType(objectTypeId);
 
                                 var objectIdsString = this.reader.ReadElementContentAsString();
                                 foreach (var objectIdString in objectIdsString.Split(Serialization.ObjectsSplitterCharArray))

@@ -5,6 +5,7 @@
 
 namespace Tests.Workspace
 {
+    using Allors.Workspace;
     using Allors.Workspace.Domain;
     using Xunit;
 
@@ -23,7 +24,7 @@ namespace Tests.Workspace
 
             var newObject = session.Create<C1>();
 
-            var saved = await session.Save();
+            var saved = await session.Push();
 
             foreach (var roleType in this.M.C1.ObjectType.RoleTypes)
             {
@@ -34,12 +35,12 @@ namespace Tests.Workspace
             {
                 if (associationType.IsOne)
                 {
-                    var association = newObject.Strategy.GetAssociation(associationType);
+                    var association = newObject.Strategy.GetComposite<IObject>(associationType);
                     Assert.Null(association);
                 }
                 else
                 {
-                    var association = newObject.Strategy.GetAssociations(associationType);
+                    var association = newObject.Strategy.GetComposites<IObject>(associationType);
                     Assert.Empty(association);
                 }
             }

@@ -20,7 +20,7 @@ namespace Allors.Database.Domain.Derivations.Default
             this.Cycle = cycle;
             this.ChangeSet = new AccumulatedChangeSet();
             this.Graph = new Graph(this.Cycle.Derivation);
-            this.DerivationConfig = cycle.Derivation.DerivaitonConfig;
+            this.DerivationConfig = cycle.Derivation.DerivationConfig;
         }
 
         ICycle IIteration.Cycle => this.Cycle;
@@ -84,7 +84,7 @@ namespace Allors.Database.Domain.Derivations.Default
                 var domainAccumulatedChangeSet = domainDerive.Execute();
                 
                 // Object Derivations
-                var config = this.Cycle.Derivation.DerivaitonConfig;
+                var config = this.Cycle.Derivation.DerivationConfig;
                 var count = 1;
 
                 if (marked != null)

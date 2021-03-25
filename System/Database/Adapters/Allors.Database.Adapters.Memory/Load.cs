@@ -153,7 +153,7 @@ namespace Allors.Database.Adapters.Memory
                                 }
 
                                 var objectTypeId = new Guid(objectTypeIdString);
-                                var objectType = this.transaction.Database.ObjectFactory.GetObjectTypeForType(objectTypeId);
+                                var objectType = this.transaction.Database.ObjectFactory.GetObjectType(objectTypeId);
 
                                 var objectIdsString = this.reader.ReadElementContentAsString();
                                 var objectIdStringArray = objectIdsString.Split(Serialization.ObjectsSplitterCharArray);

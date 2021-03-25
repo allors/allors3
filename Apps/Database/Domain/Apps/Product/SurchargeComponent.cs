@@ -3,10 +3,10 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-using System.Linq;
-
 namespace Allors.Database.Domain
 {
+    using System.Linq;
+
     public partial class SurchargeComponent
     {
         public void AppsOnPostDerive(ObjectOnPostDerive method) => method.Derivation.Validation.AssertAtLeastOne(this, this.M.SurchargeComponent.Price, this.M.SurchargeComponent.Percentage);

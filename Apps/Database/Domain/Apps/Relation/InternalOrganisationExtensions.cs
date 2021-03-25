@@ -3,12 +3,12 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-using System;
-using System.Linq;
-using Allors.Database.Meta;
-
 namespace Allors.Database.Domain
 {
+    using System;
+    using System.Linq;
+    using Allors.Database.Meta;
+
     public static partial class InternalOrganisationExtensions
     {
         public static void AppsOnInit(this InternalOrganisation @this, ObjectOnInit method)

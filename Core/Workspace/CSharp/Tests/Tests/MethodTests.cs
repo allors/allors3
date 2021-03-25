@@ -25,17 +25,17 @@ namespace Tests.Workspace
 
             var pull = new[] { new Pull { Extent = new Extent(this.M.Organisation.ObjectType), }, };
 
-            var organisation = (await session.Load(pull)).GetCollection<Organisation>().First();
+            var organisation = (await session.Pull(pull)).GetCollection<Organisation>().First();
 
             Assert.False(organisation.JustDidIt);
 
-            var result = await session.Call(organisation.JustDoIt);
+            var result = await session.Invoke(organisation.JustDoIt);
 
             Assert.False(result.HasErrors);
 
             pull = new[] { new Pull { Object = organisation, }, };
 
-            organisation = (await session.Load(pull)).GetObject<Organisation>();
+            organisation = (await session.Pull(pull)).GetObject<Organisation>();
 
             session.Reset();
 
