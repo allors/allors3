@@ -15,8 +15,6 @@ namespace Allors.Database.Adapters.SqlClient
 
     internal class Load
     {
-        private static readonly byte[] EmptyByteArray = new byte[0];
-
         private readonly Database database;
         private readonly ObjectNotLoadedEventHandler objectNotLoaded;
         private readonly RelationNotLoadedEventHandler relationNotLoaded;
@@ -205,7 +203,7 @@ namespace Allors.Database.Adapters.SqlClient
 
                             case UnitTags.Binary:
                             {
-                                roleByObjectId.Add(associationId, EmptyByteArray);
+                                roleByObjectId.Add(associationId, Array.Empty<byte>());
                             }
 
                             break;

@@ -53,7 +53,7 @@ namespace Allors.Workspace.Derivations.Default
                     Session = this.session,
                     Validation = this.Validation
                 };
-                
+
                 if (changeSet.Instantiated != null)
                 {
                     foreach (var instantiated in changeSet?.Instantiated)
@@ -117,7 +117,7 @@ namespace Allors.Workspace.Derivations.Default
 
                             _ => Array.Empty<IObject>()
                         };
-                        
+
                         if (pattern.Steps?.Length > 0)
                         {
                             var step = new Step(pattern.Steps);

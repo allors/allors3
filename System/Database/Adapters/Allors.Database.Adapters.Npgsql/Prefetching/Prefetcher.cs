@@ -15,8 +15,6 @@ namespace Allors.Database.Adapters.Npgsql
 
     internal class Prefetcher
     {
-        private static readonly long[] EmptyObjectIds = { };
-
         private Dictionary<IClass, Command> prefetchUnitRolesByClass;
         private Dictionary<IRoleType, Command> prefetchCompositeRoleByRoleType;
         private Dictionary<IRoleType, Command> prefetchCompositesRoleByRoleType;
@@ -347,7 +345,7 @@ namespace Allors.Database.Adapters.Npgsql
                 var roleIds = dictionaryEntry.Value;
 
                 var cachedObject = cache.GetOrCreateCachedObject(association.Class, association.ObjectId, association.Version);
-                cachedObject.SetValue(roleType, roleIds?.ToArray() ?? EmptyObjectIds);
+                cachedObject.SetValue(roleType, roleIds?.ToArray() ?? Array.Empty<long>());
 
                 if (roleIds != null)
                 {
@@ -423,7 +421,7 @@ namespace Allors.Database.Adapters.Npgsql
                     }
                     else
                     {
-                        cachedObject.SetValue(roleType, EmptyObjectIds);
+                        cachedObject.SetValue(roleType, Array.Empty<long>());
                     }
                 }
             }
@@ -610,7 +608,7 @@ namespace Allors.Database.Adapters.Npgsql
                 {
                     if (!prefetchedAssociationByRole.TryGetValue(role, out var associationIds))
                     {
-                        associationsByRole[role] = EmptyObjectIds;
+                        associationsByRole[role] = Array.Empty<long>();
                     }
                     else
                     {
@@ -692,7 +690,7 @@ namespace Allors.Database.Adapters.Npgsql
                 {
                     if (!prefetchedAssociationByRole.TryGetValue(role, out var associationIds))
                     {
-                        associationsByRole[role] = EmptyObjectIds;
+                        associationsByRole[role] = Array.Empty<long>();
                     }
                     else
                     {

@@ -258,11 +258,6 @@ namespace Allors.Database
         private sealed class AllorsExtentConverted : Extent
         {
             /// <summary>
-            /// An array of empty objects.
-            /// </summary>
-            private static readonly IObject[] EmptyObjects = new IObject[0];
-
-            /// <summary>
             /// The objects.
             /// </summary>
             private readonly IObject[] objects;
@@ -275,7 +270,7 @@ namespace Allors.Database
             {
                 if (objects == null)
                 {
-                    this.objects = EmptyObjects;
+                    this.objects = Array.Empty<IObject>();
                 }
                 else
                 {

@@ -14,7 +14,6 @@ namespace Allors.Database.Adapters.Npgsql
 
     public sealed class Transaction : ITransaction
     {
-        private static readonly IObject[] EmptyObjects = { };
         private bool busyCommittingOrRollingBack;
 
         private Dictionary<string, object> properties;
@@ -149,22 +148,23 @@ namespace Allors.Database.Adapters.Npgsql
             return reference.Strategy;
         }
 
-        public IObject[] Instantiate(IEnumerable<string> objectIdStrings) => objectIdStrings != null ? this.Instantiate(objectIdStrings.Select(long.Parse)) : EmptyObjects;
+        public IObject[] Instantiate(IEnumerable<string> objectIdStrings) => objectIdStrings != null ? this.Instantiate(objectIdStrings.Select(long.Parse)) : Array.Empty<IObject>();
 
-        public IObject[] Instantiate(IEnumerable<IObject> objects) => objects != null ? this.Instantiate(objects.Select(v => v.Id)) : EmptyObjects;
+        public IObject[] Instantiate(IEnumerable<IObject> objects) => objects != null ? this.Instantiate(objects.Select(v => v.Id)) : Array.Empty<IObject>();
 
         public IObject[] Instantiate(IEnumerable<long> objectIds)
         {
+            IObject[] emptyObjects = Array.Empty<IObject>();
             if (objectIds == null)
             {
-                return EmptyObjects;
+                return emptyObjects;
             }
 
             var objectIdArray = objectIds.ToArray();
 
             if (objectIdArray.Length == 0)
             {
-                return EmptyObjects;
+                return emptyObjects;
             }
 
             var references = new List<Reference>(objectIdArray.Length);

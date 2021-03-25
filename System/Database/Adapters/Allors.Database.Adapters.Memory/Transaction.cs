@@ -17,7 +17,6 @@ namespace Allors.Database.Adapters.Memory
     public class Transaction : ITransaction, IOnAccess
     {
         private static readonly HashSet<Strategy> EmptyStrategies = new HashSet<Strategy>();
-        private static readonly IObject[] EmptyObjects = { };
 
         private readonly Dictionary<IObjectType, IObjectType[]> concreteClassesByObjectType;
         private bool busyCommittingOrRollingBack;
@@ -190,11 +189,11 @@ namespace Allors.Database.Adapters.Memory
 
         public IStrategy InstantiateStrategy(long objectId) => this.InstantiateMemoryStrategy(objectId);
 
-        public IObject[] Instantiate(IEnumerable<string> objectIdStrings) => objectIdStrings != null ? this.Instantiate(objectIdStrings.Select(long.Parse)) : EmptyObjects;
+        public IObject[] Instantiate(IEnumerable<string> objectIdStrings) => objectIdStrings != null ? this.Instantiate(objectIdStrings.Select(long.Parse)) : Array.Empty<IObject>();
 
-        public IObject[] Instantiate(IEnumerable<IObject> objects) => objects != null ? this.Instantiate(objects.Select(v => v.Id)) : EmptyObjects;
+        public IObject[] Instantiate(IEnumerable<IObject> objects) => objects != null ? this.Instantiate(objects.Select(v => v.Id)) : Array.Empty<IObject>();
 
-        public IObject[] Instantiate(IEnumerable<long> objectIds) => objectIds != null ? objectIds.Select(v => this.InstantiateMemoryStrategy(v)?.GetObject()).Where(v => v != null).ToArray() : EmptyObjects;
+        public IObject[] Instantiate(IEnumerable<long> objectIds) => objectIds != null ? objectIds.Select(v => this.InstantiateMemoryStrategy(v)?.GetObject()).Where(v => v != null).ToArray() : Array.Empty<IObject>();
 
         public void Prefetch(PrefetchPolicy prefetchPolicy, params IObject[] objects)
         {

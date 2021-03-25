@@ -17,8 +17,6 @@ namespace Allors.Database.Adapters.Npgsql
 
     public class Load
     {
-        private static readonly byte[] EmptyByteArray = new byte[0];
-
         private readonly Database database;
         private readonly NpgsqlConnection connection;
         private readonly ObjectNotLoadedEventHandler objectNotLoaded;
@@ -288,7 +286,7 @@ where c = '{@class.Id}'";
                                                 break;
 
                                             case UnitTags.Binary:
-                                                unit = EmptyByteArray;
+                                                unit = Array.Empty<byte>();
                                                 break;
                                         }
                                     }
