@@ -7,7 +7,6 @@
 namespace Allors.Workspace.Derivations
 {
     using System;
-    using System.Collections.Generic;
 
     public interface IRule
     {
@@ -15,6 +14,6 @@ namespace Allors.Workspace.Derivations
 
         Pattern[] Patterns { get; }
 
-        void Match(ICycle cycle, IEnumerable<IObject> matches);
+        void Match(ICycle cycle, IObject match);
     }
 }

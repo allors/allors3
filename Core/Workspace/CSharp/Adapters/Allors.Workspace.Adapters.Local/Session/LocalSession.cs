@@ -231,15 +231,24 @@ namespace Allors.Workspace.Adapters.Local
         {
             var changeSet = new LocalChangeSet(this, this.created, this.instantiated, this.SessionState.Checkpoint());
 
-            foreach (var changed in this.changedWorkspaceStates)
+            if (this.changedWorkspaceStates != null)
             {
-                changed.Checkpoint(changeSet);
+                foreach (var changed in this.changedWorkspaceStates)
+                {
+                    changed.Checkpoint(changeSet);
+                }
             }
 
-            foreach (var changed in this.changedDatabaseStates)
+            if (this.changedDatabaseStates != null)
             {
-                changed.Checkpoint(changeSet);
+                foreach (var changed in this.changedDatabaseStates)
+                {
+                    changed.Checkpoint(changeSet);
+                }
             }
+
+            this.created = null;
+            this.instantiated = null;
 
             return changeSet;
         }
@@ -279,7 +288,7 @@ namespace Allors.Workspace.Adapters.Local
             return ids?.Select(this.Get<IObject>).ToArray() ?? this.Workspace.ObjectFactory.EmptyArray(roleType.ObjectType);
         }
 
-        internal IEnumerable<T> GetAssociation<T>(LocalStrategy role, IAssociationType associationType) where T: IObject
+        internal IEnumerable<T> GetAssociation<T>(LocalStrategy role, IAssociationType associationType) where T : IObject
         {
             var roleType = associationType.RoleType;
 

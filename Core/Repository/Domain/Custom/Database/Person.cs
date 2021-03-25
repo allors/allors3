@@ -124,7 +124,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
         [Derived]
-        public string LocalFullName { get; set; }
+        public string WorkspaceFullName { get; set; }
 
         #region Allors
         [Id("4F2E08E1-2892-41F9-A71F-4148AD9803F4")]
@@ -133,7 +133,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         [Derived]
-        public string WorkingFullName { get; set; }
+        public string SessionFullName { get; set; }
 
         #region Allors
         [Id("105CF367-F076-45F8-8E2A-2431BB2D65C7")]

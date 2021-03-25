@@ -10,8 +10,10 @@ namespace Allors.Workspace.Derivations
 
     public interface IValidation
     {
-        void AddError(string error);
+        bool HasErrors { get; }
 
         IEnumerable<string> Errors { get; }
+
+        void AddError(string error);
     }
 }

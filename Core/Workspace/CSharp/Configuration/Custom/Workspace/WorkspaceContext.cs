@@ -8,24 +8,25 @@ namespace Allors.Workspace
     using System.Security;
     using Configuration;
     using Derivations;
+    using Derivations.Default;
     using Domain;
     using Meta;
 
     public partial class WorkspaceContext : IWorkspaceContext
     {
-        private readonly IRule[] rules = new IRule[]
-        {
-
-        };
-
-        public M M { get; set; }
+        public M M { get; private set; }
 
         public IDerivationFactory DerivationFactory { get; private set; }
 
+        public ITime Time { get; private set; }
+
         public void OnInit(IWorkspace workspace)
         {
-            this.M = new M((MetaPopulation)workspace.MetaPopulation);
-            this.DerivationFactory = new DefaultDerivationFactory(this.rules);
+            var metaPopulation = (MetaPopulation)workspace.MetaPopulation;
+
+            this.M = new M(metaPopulation);
+            this.DerivationFactory = new DerivationFactory(metaPopulation, this.CreateRules());
+            this.Time = new Time();
         }
 
         public void Dispose()
@@ -33,5 +34,15 @@ namespace Allors.Workspace
         }
 
         public ISessionLifecycle CreateSessionContext() => new SessionContext();
+
+        private Rule[] CreateRules()
+        {
+            var m = this.M;
+
+            return new Rule[]
+            {
+                new PersonSessionFullNameDerivation(m)
+            };
+        }
     }
 }

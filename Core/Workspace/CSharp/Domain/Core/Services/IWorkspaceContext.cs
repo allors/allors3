@@ -12,5 +12,7 @@ namespace Allors.Workspace.Domain
         M M { get; }
 
         IDerivationFactory DerivationFactory { get; }
+
+        ITime Time { get; }
     }
 }

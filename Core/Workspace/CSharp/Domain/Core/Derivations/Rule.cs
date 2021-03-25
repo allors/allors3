@@ -7,7 +7,6 @@
 namespace Allors.Workspace.Derivations
 {
     using System;
-    using System.Collections.Generic;
     using Meta;
 
     public abstract partial class Rule : IRule
@@ -18,12 +17,12 @@ namespace Allors.Workspace.Derivations
             this.Id = id;
         }
 
-        private M M { get; set; }
-
-        public Guid Id { get; protected set; }
+        public Guid Id { get; }
 
         public Pattern[] Patterns { get; protected set; }
 
-        public abstract void Match(ICycle cycle, IEnumerable<IObject> matches);
+        protected M M { get; }
+
+        public abstract void Match(ICycle cycle, IObject match);
     }
 }

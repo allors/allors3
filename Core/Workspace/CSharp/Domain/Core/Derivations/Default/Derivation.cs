@@ -16,14 +16,17 @@ namespace Allors.Workspace.Derivations.Default
     {
         private readonly ISession session;
 
-        private readonly IRule[] rules;
+        private readonly IDictionary<Rule, ISet<Class>> classesByRule;
+
+        private readonly IDictionary<Class, ClassRules> classRulesByClass;
 
         private readonly int maxDomainDerivationCycles;
 
-        public Derivation(ISession session, IRule[] rules, int maxDomainDerivationCycles)
+        public Derivation(ISession session, IDictionary<Rule, ISet<Class>> classesByRule, IDictionary<Class, ClassRules> classRulesByClass, int maxDomainDerivationCycles)
         {
-            this.rules = rules;
+            this.classRulesByClass = classRulesByClass;
             this.session = session;
+            this.classesByRule = classesByRule;
             this.maxDomainDerivationCycles = maxDomainDerivationCycles;
 
             this.Validation = new Validation();
@@ -31,16 +34,14 @@ namespace Allors.Workspace.Derivations.Default
 
         public IValidation Validation { get; }
 
-        public void Execute()
+        public IValidation Execute()
         {
             var cycles = 0;
 
             var changeSet = this.session.Checkpoint();
 
-            while (changeSet.RoleByAssociationType.Count > 0 || changeSet.AssociationByRoleType.Count > 0 || changeSet.Created.Count > 0 || changeSet.Instantiated.Count > 0)
+            while (changeSet.RoleByAssociationType?.Count > 0 || changeSet.AssociationByRoleType?.Count > 0 || changeSet.Created?.Count > 0 || changeSet.Instantiated?.Count > 0)
             {
-                var session = changeSet.Session;
-
                 if (++cycles > this.maxDomainDerivationCycles)
                 {
                     throw new Exception("Maximum amount of domain derivation cycles detected");
@@ -49,11 +50,25 @@ namespace Allors.Workspace.Derivations.Default
                 var cycle = new Cycle
                 {
                     ChangeSet = changeSet,
-                    Session = session,
+                    Session = this.session,
                     Validation = this.Validation
                 };
+                
+                if (changeSet.Instantiated != null)
+                {
+                    foreach (var instantiated in changeSet?.Instantiated)
+                    {
+                        var @class = (Class)instantiated.Class;
+                        var classRules = this.classRulesByClass[@class];
 
-                foreach (var rule in this.rules)
+                        foreach (var rule in classRules.Rules)
+                        {
+                            rule.Match(cycle, instantiated.Object);
+                        }
+                    }
+                }
+
+                foreach (var rule in this.classesByRule.Keys)
                 {
                     var matches = new HashSet<IObject>();
 
@@ -102,7 +117,7 @@ namespace Allors.Workspace.Derivations.Default
 
                             _ => Array.Empty<IObject>()
                         };
-
+                        
                         if (pattern.Steps?.Length > 0)
                         {
                             var step = new Step(pattern.Steps);
@@ -117,14 +132,21 @@ namespace Allors.Workspace.Derivations.Default
                         matches.UnionWith(source);
                     }
 
-                    if (matches.Count > 0)
+                    if (matches.Count == 0)
                     {
-                        rule.Match(cycle, matches);
+                        continue;
+                    }
+
+                    foreach (var match in matches)
+                    {
+                        rule.Match(cycle, match);
                     }
                 }
 
                 changeSet = this.session.Checkpoint();
             }
+
+            return this.Validation;
         }
     }
 }

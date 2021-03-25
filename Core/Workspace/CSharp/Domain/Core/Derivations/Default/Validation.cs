@@ -13,6 +13,8 @@ namespace Allors.Workspace.Derivations.Default
 
         public Validation() => this.errors = new List<string>();
 
+        public bool HasErrors { get; }
+
         public void AddError(string error) => this.errors.Add(error);
 
         public IEnumerable<string> Errors => this.errors;

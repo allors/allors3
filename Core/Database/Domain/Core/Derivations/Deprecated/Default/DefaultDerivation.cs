@@ -20,7 +20,7 @@ namespace Allors.Database.Domain.Derivations.Default
 
         public DefaultDerivation(ITransaction transaction, DerivationConfig config = null)
         {
-            this.DerivaitonConfig = config ?? new DerivationConfig();
+            this.DerivationConfig = config ?? new DerivationConfig();
             this.Transaction = transaction;
 
             this.Id = Guid.NewGuid();
@@ -37,7 +37,7 @@ namespace Allors.Database.Domain.Derivations.Default
 
         public ITransaction Transaction { get; }
 
-        public DerivationConfig DerivaitonConfig { get; }
+        public DerivationConfig DerivationConfig { get; }
 
         public Guid Id { get; }
 
@@ -92,7 +92,7 @@ namespace Allors.Database.Domain.Derivations.Default
 
                 while (derivedObjects.Any() || this.MarkedBacklog.Any())
                 {
-                    if (this.DerivaitonConfig.MaxCycles != 0 && count++ > this.DerivaitonConfig.MaxCycles)
+                    if (this.DerivationConfig.MaxCycles != 0 && count++ > this.DerivationConfig.MaxCycles)
                     {
                         throw new Exception("Maximum amount of cycles reached");
                     }

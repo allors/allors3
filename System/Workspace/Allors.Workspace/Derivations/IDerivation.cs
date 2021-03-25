@@ -8,8 +8,6 @@ namespace Allors.Workspace.Derivations
 {
     public interface IDerivation
     {
-        IValidation Validation { get; }
-
-        void Execute();
+        IValidation Execute();
     }
 }
