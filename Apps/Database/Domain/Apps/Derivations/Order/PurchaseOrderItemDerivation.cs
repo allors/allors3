@@ -18,13 +18,13 @@ namespace Allors.Database.Domain
         public PurchaseOrderItemDerivation(M m) : base(m, new Guid("A59A2EFC-AF5C-4F95-9212-4FD4B0306957")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.PurchaseOrderItem.Part),
-                new AssociationPattern(m.PurchaseOrderItem.SerialisedItem),
-                new AssociationPattern(m.PurchaseOrderItem.SerialNumber),
-                new AssociationPattern(m.PurchaseOrderItem.QuantityOrdered),
-                new AssociationPattern(m.PurchaseOrderItem.DerivationTrigger),
-                new AssociationPattern(m.PurchaseOrder.StoredInFacility) { Steps = new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems} },
-                new RolePattern(m.OrderItemBilling.OrderItem) { OfType = m.PurchaseOrderItem.Class },
+                new RolePattern(m.PurchaseOrderItem.Part),
+                new RolePattern(m.PurchaseOrderItem.SerialisedItem),
+                new RolePattern(m.PurchaseOrderItem.SerialNumber),
+                new RolePattern(m.PurchaseOrderItem.QuantityOrdered),
+                new RolePattern(m.PurchaseOrderItem.DerivationTrigger),
+                new RolePattern(m.PurchaseOrder.StoredInFacility) { Steps = new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems} },
+                new AssociationPattern(m.OrderItemBilling.OrderItem) { OfType = m.PurchaseOrderItem.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -18,17 +18,17 @@ namespace Allors.Database.Domain
         public RequestItemDerivation(M m) : base(m, new Guid("764C2996-50E5-4C53-A6DA-A527BCECF221")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.RequestItem.RequestItemState),
-                new AssociationPattern(m.RequestItem.Product),
-                new AssociationPattern(m.RequestItem.ProductFeature),
-                new AssociationPattern(m.RequestItem.Description),
-                new AssociationPattern(m.RequestItem.NeededSkill),
-                new AssociationPattern(m.RequestItem.Deliverable),
-                new AssociationPattern(m.RequestItem.SerialisedItem),
-                new AssociationPattern(m.RequestItem.UnitOfMeasure),
-                new AssociationPattern(m.RequestItem.Quantity),
-                new AssociationPattern(m.Request.RequestState) { Steps = new IPropertyType[] {m.Request.RequestItems } },
-                new RolePattern(m.Request.RequestItems),
+                new RolePattern(m.RequestItem.RequestItemState),
+                new RolePattern(m.RequestItem.Product),
+                new RolePattern(m.RequestItem.ProductFeature),
+                new RolePattern(m.RequestItem.Description),
+                new RolePattern(m.RequestItem.NeededSkill),
+                new RolePattern(m.RequestItem.Deliverable),
+                new RolePattern(m.RequestItem.SerialisedItem),
+                new RolePattern(m.RequestItem.UnitOfMeasure),
+                new RolePattern(m.RequestItem.Quantity),
+                new RolePattern(m.Request.RequestState) { Steps = new IPropertyType[] {m.Request.RequestItems } },
+                new AssociationPattern(m.Request.RequestItems),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

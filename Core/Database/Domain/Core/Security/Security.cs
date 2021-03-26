@@ -165,8 +165,6 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void Grant(Guid roleId, ObjectType objectType, RoleClass concreteRoleType, params Operations[] operations) => this.Grant(roleId, objectType, concreteRoleType, operations);
-
         public void Grant(Guid roleId, ObjectType objectType, OperandType operandType, params Operations[] operations)
         {
             if (this.roleById.TryGetValue(roleId, out var role))

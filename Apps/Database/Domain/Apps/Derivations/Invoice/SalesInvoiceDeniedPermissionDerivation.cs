@@ -16,12 +16,12 @@ namespace Allors.Database.Domain
         public SalesInvoiceDeniedPermissionDerivation(M m) : base(m, new Guid("8726348f-85af-429b-a514-55d00dbb14d9")) =>
             this.Patterns = new Pattern[]
         {
-            new AssociationPattern(this.M.SalesInvoice.TransitionalDeniedPermissions),
-            new AssociationPattern(this.M.SalesInvoice.IsRepeatingInvoice),
-            new AssociationPattern(this.M.SalesInvoice.SalesOrders),
-            new AssociationPattern(this.M.SalesInvoice.PurchaseInvoice),
-            new AssociationPattern(this.M.SalesInvoiceItem.SalesInvoiceItemState) { Steps = new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem } },
-            new RolePattern(this.M.RepeatingSalesInvoice.Source),
+            new RolePattern(m.SalesInvoice.TransitionalDeniedPermissions),
+            new RolePattern(m.SalesInvoice.IsRepeatingInvoice),
+            new RolePattern(m.SalesInvoice.SalesOrders),
+            new RolePattern(m.SalesInvoice.PurchaseInvoice),
+            new RolePattern(m.SalesInvoiceItem.SalesInvoiceItemState) { Steps = new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem } },
+            new AssociationPattern(m.RepeatingSalesInvoice.Source),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

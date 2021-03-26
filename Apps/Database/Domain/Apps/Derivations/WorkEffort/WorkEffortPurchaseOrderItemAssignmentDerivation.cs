@@ -16,9 +16,9 @@ namespace Allors.Database.Domain
         public WorkEffortPurchaseOrderItemAssignmentDerivation(M m) : base(m, new Guid("db1b303e-40e2-446a-a04c-a51521bc8fcd")) =>
             this.Patterns = new Pattern[]
         {
-            new AssociationPattern(m.WorkEffortPurchaseOrderItemAssignment.Assignment),
-            new AssociationPattern(m.WorkEffortPurchaseOrderItemAssignment.PurchaseOrderItem),
-            new AssociationPattern(m.PurchaseOrderItem.UnitPrice) { Steps = new IPropertyType[] { m.PurchaseOrderItem.WorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrderItem } },
+            new RolePattern(m.WorkEffortPurchaseOrderItemAssignment.Assignment),
+            new RolePattern(m.WorkEffortPurchaseOrderItemAssignment.PurchaseOrderItem),
+            new RolePattern(m.PurchaseOrderItem.UnitPrice) { Steps = new IPropertyType[] { m.PurchaseOrderItem.WorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrderItem } },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

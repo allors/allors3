@@ -18,22 +18,22 @@ namespace Allors.Database.Domain
         public SalesOrderItemDerivation(M m) : base(m, new Guid("FEF4E104-A0F0-4D83-A248-A1A606D93E41")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.SalesOrderItem.Product),
-                new AssociationPattern(m.SalesOrderItem.ProductFeature),
-                new AssociationPattern(m.SalesOrderItem.InvoiceItemType),
-                new AssociationPattern(m.SalesOrderItem.SerialisedItem),
-                new AssociationPattern(m.SalesOrderItem.NextSerialisedItemAvailability),
-                new AssociationPattern(m.SalesOrderItem.QuantityOrdered),
-                new AssociationPattern(m.SalesOrderItem.AssignedUnitPrice),
-                new AssociationPattern(m.SalesOrderItem.SalesOrderItemState),
-                new AssociationPattern(m.SalesOrderItem.SalesOrderItemShipmentState),
-                new AssociationPattern(m.SalesOrderItem.ReservedFromNonSerialisedInventoryItem),
-                new AssociationPattern(m.SalesOrderItem.ReservedFromSerialisedInventoryItem),
-                new AssociationPattern(m.SalesOrderItem.DiscountAdjustments),
-                new AssociationPattern(m.SalesOrderItem.SurchargeAdjustments),
-                new AssociationPattern(m.SalesOrderItem.SalesOrderItemInventoryAssignments),
-                new AssociationPattern(m.SerialisedInventoryItem.Quantity) { Steps = new IPropertyType[] { m.SerialisedInventoryItem.SerialisedItem, m.SerialisedItem.SalesOrderItemsWhereSerialisedItem }},
-                new RolePattern(m.InventoryItemTransaction.Part) { Steps = new IPropertyType[] { m.UnifiedGood.SalesOrderItemsWhereProduct }},
+                new RolePattern(m.SalesOrderItem.Product),
+                new RolePattern(m.SalesOrderItem.ProductFeature),
+                new RolePattern(m.SalesOrderItem.InvoiceItemType),
+                new RolePattern(m.SalesOrderItem.SerialisedItem),
+                new RolePattern(m.SalesOrderItem.NextSerialisedItemAvailability),
+                new RolePattern(m.SalesOrderItem.QuantityOrdered),
+                new RolePattern(m.SalesOrderItem.AssignedUnitPrice),
+                new RolePattern(m.SalesOrderItem.SalesOrderItemState),
+                new RolePattern(m.SalesOrderItem.SalesOrderItemShipmentState),
+                new RolePattern(m.SalesOrderItem.ReservedFromNonSerialisedInventoryItem),
+                new RolePattern(m.SalesOrderItem.ReservedFromSerialisedInventoryItem),
+                new RolePattern(m.SalesOrderItem.DiscountAdjustments),
+                new RolePattern(m.SalesOrderItem.SurchargeAdjustments),
+                new RolePattern(m.SalesOrderItem.SalesOrderItemInventoryAssignments),
+                new RolePattern(m.SerialisedInventoryItem.Quantity) { Steps = new IPropertyType[] { m.SerialisedInventoryItem.SerialisedItem, m.SerialisedItem.SalesOrderItemsWhereSerialisedItem }},
+                new AssociationPattern(m.InventoryItemTransaction.Part) { Steps = new IPropertyType[] { m.UnifiedGood.SalesOrderItemsWhereProduct }},
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -17,9 +17,9 @@ namespace Allors.Database.Domain
         public PackagingContentDerivation(M m) : base(m, new Guid("E6D43FBC-8501-4BEA-83D3-4034657E0D3A")) =>
             this.Patterns = new Pattern[]
         {
-            new AssociationPattern(this.M.PackagingContent.ShipmentItem),
-            new AssociationPattern(this.M.ShipmentItem.Quantity) { Steps = new IPropertyType[] { m.ShipmentItem.PackagingContentsWhereShipmentItem } },
-            new AssociationPattern(this.M.ShipmentItem.QuantityShipped) { Steps = new IPropertyType[] { m.ShipmentItem.PackagingContentsWhereShipmentItem } },
+            new RolePattern(m.PackagingContent.ShipmentItem),
+            new RolePattern(m.ShipmentItem.Quantity) { Steps = new IPropertyType[] { m.ShipmentItem.PackagingContentsWhereShipmentItem } },
+            new RolePattern(m.ShipmentItem.QuantityShipped) { Steps = new IPropertyType[] { m.ShipmentItem.PackagingContentsWhereShipmentItem } },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

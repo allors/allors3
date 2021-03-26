@@ -7,9 +7,10 @@ namespace Allors.Database.Meta
 {
     public partial class MetaBuilder
     {
-        private void BuildBase(MetaPopulation meta, Domains domains, ObjectTypes objectTypes, RelationTypes relationTypes, MethodTypes methodTypes, RoleClasses roleClasses)
+        private void BuildBase(MetaPopulation meta, Domains domains, ObjectTypes objectTypes, RelationTypes relationTypes, MethodTypes methodTypes)
         {
-            roleClasses.LocalisedTextLocale.IsRequired = true;
+            // TODO:
+            // roleClasses.LocalisedTextLocale.IsRequired = true;
         }
     }
 }

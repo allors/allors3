@@ -18,12 +18,12 @@ namespace Allors.Database.Domain
         public OwnCreditCardDerivation(M m) : base(m, new Guid("838dbea6-9123-4cfe-acfe-1c6347ec7ff2")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.OwnCreditCard.GeneralLedgerAccount),
-                new AssociationPattern(m.OwnCreditCard.Journal),
-                new AssociationPattern(m.OwnCreditCard.CreditCard),
-                new AssociationPattern(m.CreditCard.ExpirationYear) { Steps =  new IPropertyType[] {m.CreditCard.OwnCreditCardsWhereCreditCard} },
-                new AssociationPattern(m.CreditCard.ExpirationMonth) { Steps =  new IPropertyType[] {m.CreditCard.OwnCreditCardsWhereCreditCard} },
-                new RolePattern(m.InternalOrganisation.PaymentMethods) { OfType = m.OwnCreditCard.Class },
+                new RolePattern(m.OwnCreditCard.GeneralLedgerAccount),
+                new RolePattern(m.OwnCreditCard.Journal),
+                new RolePattern(m.OwnCreditCard.CreditCard),
+                new RolePattern(m.CreditCard.ExpirationYear) { Steps =  new IPropertyType[] {m.CreditCard.OwnCreditCardsWhereCreditCard} },
+                new RolePattern(m.CreditCard.ExpirationMonth) { Steps =  new IPropertyType[] {m.CreditCard.OwnCreditCardsWhereCreditCard} },
+                new AssociationPattern(m.InternalOrganisation.PaymentMethods) { OfType = m.OwnCreditCard.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

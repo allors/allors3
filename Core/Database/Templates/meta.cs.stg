@@ -94,10 +94,10 @@ $interface.AssociationTypes:{associationType|         public AssociationType $as
 			this.Interface = (Interface) meta.Find(new System.Guid("$interface.Id$"));
 
             // Methods
-$interface.MethodTypes:{methodType|             this.$methodType.Name$ = (MethodType)meta.Find(new System.Guid("$methodType.Id$"));}; separator="\n"$
+$interface.MethodTypes:{methodType|             this.$methodType.Name$ = meta.MethodType("$methodType.Id$");}; separator="\n"$
 
             // Roles
-$interface.RoleTypes:{roleType|             this.$roleType.Name$ = meta.RoleType(this.Interface, "$roleType.RelationType.Id$");}; separator="\n"$
+$interface.RoleTypes:{roleType|             this.$roleType.Name$ = meta.RoleType("$roleType.RelationType.Id$");}; separator="\n"$
 
             // Associations
 $interface.AssociationTypes:{associationType|           this.$associationType.Name$ = ((RelationType)meta.Find(new System.Guid("$associationType.RelationType.Id$"))).AssociationType;}; separator="\n"$
@@ -127,7 +127,7 @@ $class.AssociationTypes:{associationType|         public AssociationType $associ
 $class.MethodTypes:{methodType|             this.$methodType.Name$ = ((MethodType)meta.Find(new System.Guid("$methodType.Id$"))).MethodClassBy(this.Class);}; separator="\n"$
 
             // Roles
-$class.RoleTypes:{roleType|             this.$roleType.Name$ = meta.RoleType(this.Class, "$roleType.RelationType.Id$");}; separator="\n"$
+$class.RoleTypes:{roleType|             this.$roleType.Name$ = meta.RoleType("$roleType.RelationType.Id$");}; separator="\n"$
 
             // Associations
 $class.AssociationTypes:{associationType|           this.$associationType.Name$ = ((RelationType)meta.Find(new System.Guid("$associationType.RelationType.Id$"))).AssociationType;}; separator="\n"$

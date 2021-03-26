@@ -16,12 +16,12 @@ namespace Allors.Database.Domain
         public WorkTaskDeniedPermissionDerivation(M m) : base(m, new Guid("bbff43c6-24ad-4038-9bbd-d666c41751f6")) =>
             this.Patterns = new Pattern[]
         {
-            new AssociationPattern(m.WorkTask.TransitionalDeniedPermissions),
-            new AssociationPattern(m.WorkTask.CanInvoice),
-            new AssociationPattern(m.WorkTask.Customer),
-            new AssociationPattern(m.WorkTask.ExecutedBy),
-            new RolePattern(m.ServiceEntry.WorkEffort),
-            new AssociationPattern(m.ServiceEntry.ThroughDate) { Steps =  new IPropertyType[] {m.ServiceEntry.WorkEffort} },
+            new RolePattern(m.WorkTask.TransitionalDeniedPermissions),
+            new RolePattern(m.WorkTask.CanInvoice),
+            new RolePattern(m.WorkTask.Customer),
+            new RolePattern(m.WorkTask.ExecutedBy),
+            new AssociationPattern(m.ServiceEntry.WorkEffort),
+            new RolePattern(m.ServiceEntry.ThroughDate) { Steps =  new IPropertyType[] {m.ServiceEntry.WorkEffort} },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -18,8 +18,8 @@ namespace Allors.Database.Domain
         public DeliverableBasedServiceDerivation(M m) : base(m, new Guid("f0400e44-4b4b-4899-87dc-874038ceece3")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(this.M.DeliverableBasedService.Variants),
-                new RolePattern(m.PriceComponent.Product) { OfType = m.DeliverableBasedService.Class },
+                new RolePattern(m.DeliverableBasedService.Variants),
+                new AssociationPattern(m.PriceComponent.Product) { OfType = m.DeliverableBasedService.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

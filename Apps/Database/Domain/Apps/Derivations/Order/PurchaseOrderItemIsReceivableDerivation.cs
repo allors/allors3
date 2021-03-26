@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public PurchaseOrderItemIsReceivableDerivation(M m) : base(m, new Guid("525c9efa-5ba0-41bf-9118-a7b79441a9d9")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(this.M.PurchaseOrderItem.InvoiceItemType),
-                new AssociationPattern(this.M.PurchaseOrderItem.Part),
+                new RolePattern(m.PurchaseOrderItem.InvoiceItemType),
+                new RolePattern(m.PurchaseOrderItem.Part),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

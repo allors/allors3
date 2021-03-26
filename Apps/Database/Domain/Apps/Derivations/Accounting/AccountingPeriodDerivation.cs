@@ -17,8 +17,8 @@ namespace Allors.Database.Domain
         public AccountingPeriodDerivation(M m) : base(m, new Guid("3d328335-a10a-44b7-b001-ac0d98f89c64")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.AccountingPeriod.FromDate),
-                new AssociationPattern(m.AccountingPeriod.ThroughDate),
+                new RolePattern(m.AccountingPeriod.FromDate),
+                new RolePattern(m.AccountingPeriod.ThroughDate),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

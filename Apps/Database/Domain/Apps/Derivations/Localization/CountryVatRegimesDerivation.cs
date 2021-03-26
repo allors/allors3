@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         public CountryVatRegimesDerivation(M m) : base(m, new Guid("ac33cb9d-f694-4247-ad5d-fdae01d05c07")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.VatRegime.Country),
+                new AssociationPattern(m.VatRegime.Country),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -16,10 +16,10 @@ namespace Allors.Database.Domain
         public SerialisedInventoryItemQuantitiesDerivation(M m) : base(m, new Guid("0dd99432-c8e6-4278-8f49-fb1a4d7d6ddc")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.SerialisedInventoryItem.SerialisedInventoryItemState),
-                new RolePattern(m.InventoryItemTransaction.InventoryItem) { OfType = m.SerialisedInventoryItem.Class },
-                new AssociationPattern(m.InventoryItemTransaction.Quantity) { Steps = new IPropertyType[] {m.InventoryItemTransaction.InventoryItem }, OfType = m.SerialisedInventoryItem.Class },
-                new RolePattern(m.PickListItem.InventoryItem) { OfType = m.SerialisedInventoryItem.Class },
+                new RolePattern(m.SerialisedInventoryItem.SerialisedInventoryItemState),
+                new AssociationPattern(m.InventoryItemTransaction.InventoryItem) { OfType = m.SerialisedInventoryItem.Class },
+                new RolePattern(m.InventoryItemTransaction.Quantity) { Steps = new IPropertyType[] {m.InventoryItemTransaction.InventoryItem }, OfType = m.SerialisedInventoryItem.Class },
+                new AssociationPattern(m.PickListItem.InventoryItem) { OfType = m.SerialisedInventoryItem.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

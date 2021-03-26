@@ -18,17 +18,17 @@ namespace Allors.Database.Domain
         public UnifiedGoodDerivation(M m) : base(m, new Guid("B1C14106-C300-453D-989B-81E05767CFC4")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.UnifiedGood.DerivationTrigger),
-                new AssociationPattern(m.UnifiedGood.ProductIdentifications),
-                new AssociationPattern(m.UnifiedGood.Keywords),
-                new AssociationPattern(m.UnifiedGood.Variants),
-                new AssociationPattern(m.UnifiedGood.SerialisedItems),
-                new AssociationPattern(m.UnifiedGood.ProductType),
-                new AssociationPattern(m.UnifiedGood.Brand),
-                new AssociationPattern(m.UnifiedGood.Model),
-                new RolePattern(m.ProductCategory.AllProducts) { OfType = m.UnifiedGood.Class },
-                new RolePattern(m.PriceComponent.Product) { OfType = m.UnifiedGood.Class },
-                new RolePattern(m.SupplierOffering.Part) { OfType = m.UnifiedGood.Class },
+                new RolePattern(m.UnifiedGood.DerivationTrigger),
+                new RolePattern(m.UnifiedGood.ProductIdentifications),
+                new RolePattern(m.UnifiedGood.Keywords),
+                new RolePattern(m.UnifiedGood.Variants),
+                new RolePattern(m.UnifiedGood.SerialisedItems),
+                new RolePattern(m.UnifiedGood.ProductType),
+                new RolePattern(m.UnifiedGood.Brand),
+                new RolePattern(m.UnifiedGood.Model),
+                new AssociationPattern(m.ProductCategory.AllProducts) { OfType = m.UnifiedGood.Class },
+                new AssociationPattern(m.PriceComponent.Product) { OfType = m.UnifiedGood.Class },
+                new AssociationPattern(m.SupplierOffering.Part) { OfType = m.UnifiedGood.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

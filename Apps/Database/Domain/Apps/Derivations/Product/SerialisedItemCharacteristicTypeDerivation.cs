@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         public SerialisedItemCharacteristicTypeDerivation(M m) : base(m, new Guid("D24124E7-12FF-4F12-AC46-364D91570028")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(this.M.SerialisedItemCharacteristicType.LocalisedNames),
+                new RolePattern(m.SerialisedItemCharacteristicType.LocalisedNames),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

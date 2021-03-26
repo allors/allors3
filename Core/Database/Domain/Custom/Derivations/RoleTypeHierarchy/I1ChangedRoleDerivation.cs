@@ -14,11 +14,10 @@ namespace Allors.Database.Domain
     public class I1ChangedRoleDerivation : DomainDerivation
     {
         public I1ChangedRoleDerivation(M m) : base(m, new Guid("475E8B38-21BB-40F9-AD67-9A7432F73CDD")) =>
-            this.Patterns = new[]
+            this.Patterns = new Pattern[]
             {
-                new AssociationPattern(this.M.I1.ChangedRolePing)
+                new RolePattern(m.I1, m.I1.ChangedRolePing){ ObjectType = this.M.I1.ObjectType }
             };
-
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {

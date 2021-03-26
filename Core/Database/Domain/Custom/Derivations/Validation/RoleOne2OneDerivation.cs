@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public RoleOne2OneDerivation(M m) : base(m, new Guid("1C369F4C-CC12-4064-9261-BF899205E251")) =>
             this.Patterns = new[]
             {
-                new AssociationPattern(m.CC.Assigned) {Steps = new IPropertyType[]{m.CC.BBWhereOne2One, m.BB.AAWhereOne2One}},
-                new AssociationPattern(m.CC.Assigned) {Steps = new IPropertyType[]{m.CC.BBWhereUnusedOne2One, m.BB.AAWhereUnusedOne2One}},
+                new RolePattern(m.CC, m.CC.Assigned) {Steps = new IPropertyType[]{m.CC.BBWhereOne2One, m.BB.AAWhereOne2One}},
+                new RolePattern(m.CC, m.CC.Assigned) {Steps = new IPropertyType[]{m.CC.BBWhereUnusedOne2One, m.BB.AAWhereUnusedOne2One}},
             };
 
 

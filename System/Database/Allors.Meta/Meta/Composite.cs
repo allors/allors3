@@ -499,18 +499,10 @@ namespace Allors.Database.Meta
             {
                 if (roleTypesByAssociationObjectType.TryGetValue(superType, out var inheritedRoleTypes))
                 {
-                    if (this.IsInterface)
-                    {
-                        roleTypes.UnionWith(inheritedRoleTypes);
-                    }
-                    else
-                    {
-                        var roleClasses = inheritedRoleTypes.Select(v => v.RelationType.RoleClassBy((Class)this));
-                        roleTypes.UnionWith(roleClasses);
-                    }
+                    roleTypes.UnionWith(inheritedRoleTypes);
                 }
             }
-            
+
             this.derivedRoleTypes = new HashSet<RoleType>(roleTypes);
             this.derivedDatabaseRoleTypes = new HashSet<RoleType>(roleTypes.Where(v => v.Origin == Origin.Database));
         }

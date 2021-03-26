@@ -16,14 +16,14 @@ namespace Allors.Database.Domain
         public SalesInvoiceStateDerivation(M m) : base(m, new Guid("c273de35-fd1c-4353-8354-d3640ba5dff8")) =>
             this.Patterns = new Pattern[]
         {
-            new AssociationPattern(this.M.PaymentApplication.AmountApplied) { Steps =  new IPropertyType[] {m.PaymentApplication.Invoice}, OfType = m.SalesInvoice.Class },
-            new AssociationPattern(this.M.SalesInvoice.SalesInvoiceItems),
-            new AssociationPattern(this.M.SalesInvoice.AdvancePayment),
-            new AssociationPattern(this.M.SalesInvoice.DerivationTrigger),
-            new AssociationPattern(this.M.SalesInvoiceItem.SalesInvoiceItemState) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
-            new AssociationPattern(this.M.SalesInvoiceItem.TotalIncVat) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
-            new AssociationPattern(this.M.SalesInvoiceItem.DerivationTrigger) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
-            new AssociationPattern(this.M.SalesInvoiceItem.AmountPaid) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
+            new RolePattern(m.PaymentApplication.AmountApplied) { Steps =  new IPropertyType[] {m.PaymentApplication.Invoice}, OfType = m.SalesInvoice.Class },
+            new RolePattern(m.SalesInvoice.SalesInvoiceItems),
+            new RolePattern(m.SalesInvoice.AdvancePayment),
+            new RolePattern(m.SalesInvoice.DerivationTrigger),
+            new RolePattern(m.SalesInvoiceItem.SalesInvoiceItemState) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
+            new RolePattern(m.SalesInvoiceItem.TotalIncVat) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
+            new RolePattern(m.SalesInvoiceItem.DerivationTrigger) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
+            new RolePattern(m.SalesInvoiceItem.AmountPaid) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

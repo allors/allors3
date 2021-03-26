@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public PartyFinancialRelationshipOpenOrderAmountDerivation(M m) : base(m, new Guid("3132e3d6-69be-4dde-b06c-f0162f8aa5ed")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.SalesOrder.TotalIncVat) { Steps =  new IPropertyType[] {m.SalesOrder.BillToCustomer, m.Party.PartyFinancialRelationshipsWhereFinancialParty } },
-                new AssociationPattern(m.SalesOrder.SalesOrderState) { Steps =  new IPropertyType[] {m.SalesOrder.BillToCustomer, m.Party.PartyFinancialRelationshipsWhereFinancialParty } }
+                new RolePattern(m.SalesOrder.TotalIncVat) { Steps =  new IPropertyType[] {m.SalesOrder.BillToCustomer, m.Party.PartyFinancialRelationshipsWhereFinancialParty } },
+                new RolePattern(m.SalesOrder.SalesOrderState) { Steps =  new IPropertyType[] {m.SalesOrder.BillToCustomer, m.Party.PartyFinancialRelationshipsWhereFinancialParty } }
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

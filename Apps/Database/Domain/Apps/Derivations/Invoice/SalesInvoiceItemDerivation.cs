@@ -18,19 +18,19 @@ namespace Allors.Database.Domain
         public SalesInvoiceItemDerivation(M m) : base(m, new Guid("37C0910B-7C48-46B5-8F7A-F6B2E70BE05C")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.SalesInvoiceItem.Product),
-                new AssociationPattern(m.SalesInvoiceItem.ProductFeatures),
-                new AssociationPattern(m.SalesInvoiceItem.Part),
-                new AssociationPattern(m.SalesInvoiceItem.SerialisedItem),
-                new AssociationPattern(m.SalesInvoiceItem.InvoiceItemType),
-                new AssociationPattern(m.SalesInvoiceItem.AssignedVatRegime),
-                new AssociationPattern(m.SalesInvoiceItem.AssignedIrpfRegime),
-                new RolePattern(m.SalesInvoice.SalesInvoiceItems),
-                new AssociationPattern(m.SalesInvoice.SalesInvoiceState) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
-                new AssociationPattern(m.SalesInvoice.DerivedVatRegime) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
-                new AssociationPattern(m.SalesInvoice.DerivedIrpfRegime) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
-                new AssociationPattern(m.SalesInvoice.InvoiceDate) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
-                new AssociationPattern(m.PaymentApplication.AmountApplied) { Steps =  new IPropertyType[] {this.M.PaymentApplication.InvoiceItem}, OfType = m.SalesInvoiceItem.Class },
+                new RolePattern(m.SalesInvoiceItem.Product),
+                new RolePattern(m.SalesInvoiceItem.ProductFeatures),
+                new RolePattern(m.SalesInvoiceItem.Part),
+                new RolePattern(m.SalesInvoiceItem.SerialisedItem),
+                new RolePattern(m.SalesInvoiceItem.InvoiceItemType),
+                new RolePattern(m.SalesInvoiceItem.AssignedVatRegime),
+                new RolePattern(m.SalesInvoiceItem.AssignedIrpfRegime),
+                new AssociationPattern(m.SalesInvoice.SalesInvoiceItems),
+                new RolePattern(m.SalesInvoice.SalesInvoiceState) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
+                new RolePattern(m.SalesInvoice.DerivedVatRegime) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
+                new RolePattern(m.SalesInvoice.DerivedIrpfRegime) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
+                new RolePattern(m.SalesInvoice.InvoiceDate) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
+                new RolePattern(m.PaymentApplication.AmountApplied) { Steps =  new IPropertyType[] {this.M.PaymentApplication.InvoiceItem}, OfType = m.SalesInvoiceItem.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

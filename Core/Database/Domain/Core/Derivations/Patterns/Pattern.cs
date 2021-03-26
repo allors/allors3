@@ -8,8 +8,12 @@ namespace Allors.Database.Derivations
 {
     using Meta;
 
-    public abstract class Pattern
+    public abstract class Pattern : IPattern
     {
+        protected Pattern(IComposite objectType) => this.ObjectType = objectType;
+
+        public IComposite ObjectType { get; set; }
+
         public IPropertyType[] Steps { get; set; }
 
         public IComposite OfType { get; set; }

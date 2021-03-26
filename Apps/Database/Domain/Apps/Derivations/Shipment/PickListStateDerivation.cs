@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         public PickListStateDerivation(M m) : base(m, new Guid("71f5e0b8-a050-4e6f-8562-8b072a94ca58")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.Shipment.ShipmentState) { Steps = new IPropertyType[] { m.Shipment.ShipmentItems, m.ShipmentItem.ItemIssuancesWhereShipmentItem, m.ItemIssuance.PickListItem, m.PickListItem.PickListWherePickListItem } },
+                new RolePattern(m.Shipment.ShipmentState) { Steps = new IPropertyType[] { m.Shipment.ShipmentItems, m.ShipmentItem.ItemIssuancesWhereShipmentItem, m.ItemIssuance.PickListItem, m.PickListItem.PickListWherePickListItem } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

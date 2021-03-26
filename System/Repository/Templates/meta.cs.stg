@@ -50,16 +50,6 @@ $repository.Classes:{class|              public Class $class.SingularName$;}; se
 $repository.Composites:{composite|$define_relationTypes(composite)$}; separator="\n"$
         }
 
-         internal class RoleClasses
-        {
-$repository.Classes:{class|$define_roleClasses(class)$}; separator="\n"$
-
-            internal RoleClasses(ObjectTypes objectTypes, RelationTypes relationTypes)
-            {
-$repository.Classes:{class|$assign_roleClasses(class)$}; separator="\n"$
-            }
-        }
-
         internal class MethodTypes
         {
 $repository.Composites:{composite|$define_methods(composite)$}; separator="\n"$
@@ -81,9 +71,7 @@ $repository.Composites:{composite|$define_methods(composite)$}; separator="\n"$
             this.BuildRelationTypes(meta, domains, objectTypes, relationTypes);
             this.BuildMethodTypes(meta, domains, objectTypes, methodTypes);
 
-            var roleClasses = new RoleClasses(objectTypes, relationTypes);
-
-$repository.Domains:{assembly|             this.Build$assembly.Name$(meta, domains, objectTypes, relationTypes, methodTypes, roleClasses);}; separator="\n"$
+$repository.Domains:{assembly|             this.Build$assembly.Name$(meta, domains, objectTypes, relationTypes, methodTypes);}; separator="\n"$
 
             return meta;
         }

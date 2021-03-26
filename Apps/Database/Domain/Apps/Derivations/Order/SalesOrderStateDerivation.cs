@@ -16,13 +16,13 @@ namespace Allors.Database.Domain
         public SalesOrderStateDerivation(M m) : base(m, new Guid("1a17a901-7547-4c7f-bcf9-9c1d248efb4c")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(this.M.SalesOrder.SalesOrderState),
-                new AssociationPattern(this.M.SalesOrder.SalesOrderItems),
-                new AssociationPattern(this.M.SalesOrderItem.DerivationTrigger) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
-                new AssociationPattern(this.M.SalesOrderItem.SalesOrderItemState) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
-                new AssociationPattern(this.M.SalesOrderItem.SalesOrderItemShipmentState) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
-                new AssociationPattern(this.M.SalesOrderItem.SalesOrderItemPaymentState) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
-                new AssociationPattern(this.M.SalesOrderItem.SalesOrderItemInvoiceState) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
+                new RolePattern(m.SalesOrder.SalesOrderState),
+                new RolePattern(m.SalesOrder.SalesOrderItems),
+                new RolePattern(m.SalesOrderItem.DerivationTrigger) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
+                new RolePattern(m.SalesOrderItem.SalesOrderItemState) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
+                new RolePattern(m.SalesOrderItem.SalesOrderItemShipmentState) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
+                new RolePattern(m.SalesOrderItem.SalesOrderItemPaymentState) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
+                new RolePattern(m.SalesOrderItem.SalesOrderItemInvoiceState) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

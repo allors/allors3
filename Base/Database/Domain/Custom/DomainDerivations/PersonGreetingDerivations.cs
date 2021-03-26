@@ -11,19 +11,15 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class PersonGreetingDerivation : IDomainDerivation
+    public class PersonGreetingDerivation : DomainDerivation
     {
-        public PersonGreetingDerivation(M m) =>
+        public PersonGreetingDerivation(M m) : base(m, new Guid("5FFD5696-E735-4D05-8405-3A444B6F591E")) =>
             this.Patterns = new[]
             {
-                new AssociationPattern(m.Person.DomainFullName)
+                new RolePattern(m.Person, m.Person.DomainFullName)
             };
 
-        public Guid Id => new Guid("5FFD5696-E735-4D05-8405-3A444B6F591E");
-
-        public Pattern[] Patterns { get; }
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var person in matches.Cast<Person>())
             {

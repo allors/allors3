@@ -16,10 +16,10 @@ namespace Allors.Database.Domain
         public ProductQuoteItemByProductDerivation(M m) : base(m, new Guid("fb8b7202-76c5-48f0-972f-e77a56b9a0ab")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(this.M.QuoteItemVersion.Product) { Steps = new IPropertyType[] {m.QuoteItemVersion.QuoteItemWhereCurrentVersion, m.QuoteItem.QuoteWhereQuoteItem, m.ProductQuote.ProductQuoteItemsByProduct } },
-                new AssociationPattern(this.M.QuoteItem.Product) { Steps = new IPropertyType[] {m.QuoteItem.QuoteWhereQuoteItem, m.ProductQuote.ProductQuoteItemsByProduct} },
-                new AssociationPattern(this.M.QuoteItem.Quantity) { Steps = new IPropertyType[] {m.QuoteItem.QuoteWhereQuoteItem, m.ProductQuote.ProductQuoteItemsByProduct } },
-                new AssociationPattern(this.M.QuoteItem.TotalBasePrice) { Steps = new IPropertyType[] {m.QuoteItem.QuoteWhereQuoteItem, m.ProductQuote.ProductQuoteItemsByProduct } },
+                new RolePattern(m.QuoteItemVersion.Product) { Steps = new IPropertyType[] {m.QuoteItemVersion.QuoteItemWhereCurrentVersion, m.QuoteItem.QuoteWhereQuoteItem, m.ProductQuote.ProductQuoteItemsByProduct } },
+                new RolePattern(m.QuoteItem.Product) { Steps = new IPropertyType[] {m.QuoteItem.QuoteWhereQuoteItem, m.ProductQuote.ProductQuoteItemsByProduct} },
+                new RolePattern(m.QuoteItem.Quantity) { Steps = new IPropertyType[] {m.QuoteItem.QuoteWhereQuoteItem, m.ProductQuote.ProductQuoteItemsByProduct } },
+                new RolePattern(m.QuoteItem.TotalBasePrice) { Steps = new IPropertyType[] {m.QuoteItem.QuoteWhereQuoteItem, m.ProductQuote.ProductQuoteItemsByProduct } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

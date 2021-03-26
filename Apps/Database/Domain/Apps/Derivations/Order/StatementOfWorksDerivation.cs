@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public StatementOfWorkDerivation(M m) : base(m, new Guid("8307B027-0A59-409F-B47C-B2B2C98267C8")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(this.M.StatementOfWork.Issuer),
+                new RolePattern(m.StatementOfWork.Issuer),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

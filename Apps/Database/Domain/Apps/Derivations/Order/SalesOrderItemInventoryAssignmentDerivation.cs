@@ -16,9 +16,9 @@ namespace Allors.Database.Domain
         public SalesOrderItemInventoryAssignmentDerivation(M m) : base(m, new Guid("2B36132A-5557-4FBD-8611-F80302E8550C")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.SalesOrderItemInventoryAssignment.InventoryItemTransactions),
-                new AssociationPattern(m.SalesOrderItemInventoryAssignment.Quantity),
-                new AssociationPattern(m.SalesOrderItem.SalesOrderItemState) { Steps = new IPropertyType[] {m.SalesOrderItem.SalesOrderItemInventoryAssignments} },
+                new RolePattern(m.SalesOrderItemInventoryAssignment.InventoryItemTransactions),
+                new RolePattern(m.SalesOrderItemInventoryAssignment.Quantity),
+                new RolePattern(m.SalesOrderItem.SalesOrderItemState) { Steps = new IPropertyType[] {m.SalesOrderItem.SalesOrderItemInventoryAssignments} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

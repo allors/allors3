@@ -17,15 +17,15 @@ namespace Allors.Database.Domain
         public StoreDerivation(M m) : base(m, new Guid("cf3acae4-a895-4a0b-b154-18cfa30691bb")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.Store.InternalOrganisation),
-                new AssociationPattern(m.Store.DefaultCollectionMethod),
-                new AssociationPattern(m.Store.CollectionMethods),
-                new AssociationPattern(m.Store.FiscalYearsStoreSequenceNumbers),
-                new AssociationPattern(m.Store.SalesInvoiceNumberCounter),
-                new AssociationPattern(m.Store.CustomerShipmentNumberPrefix),
-                new AssociationPattern(m.Store.PurchaseReturnNumberPrefix),
-                new AssociationPattern(m.Store.DropShipmentNumberPrefix),
-                new AssociationPattern(m.Store.OutgoingTransferNumberPrefix),
+                new RolePattern(m.Store.InternalOrganisation),
+                new RolePattern(m.Store.DefaultCollectionMethod),
+                new RolePattern(m.Store.CollectionMethods),
+                new RolePattern(m.Store.FiscalYearsStoreSequenceNumbers),
+                new RolePattern(m.Store.SalesInvoiceNumberCounter),
+                new RolePattern(m.Store.CustomerShipmentNumberPrefix),
+                new RolePattern(m.Store.PurchaseReturnNumberPrefix),
+                new RolePattern(m.Store.DropShipmentNumberPrefix),
+                new RolePattern(m.Store.OutgoingTransferNumberPrefix),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

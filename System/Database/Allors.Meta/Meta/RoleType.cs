@@ -8,7 +8,7 @@ namespace Allors.Database.Meta
 {
     using System;
 
-    public abstract partial class RoleType : OperandType, IRoleType, IComparable
+    public sealed partial class RoleType : OperandType, IRoleType, IComparable
     {
         /// <summary>
         /// The maximum size value.
@@ -17,12 +17,22 @@ namespace Allors.Database.Meta
 
         public const string PluralSuffix = "s";
 
-        protected RoleType(RelationType relationType) : base(relationType.MetaPopulation) => this.RelationType = relationType;
+        private ObjectType objectType;
 
-        public bool ExistDefault => this.Default != null;
+        private string pluralName;
+        private int? precision;
+        private int? scale;
+        private string singularName;
+        private int? size;
+        private bool? isRequired;
+        private bool? isUnique;
 
-        IRoleDefault IRoleType.Default => this.Default;
-        public abstract RoleDefault Default { get; }
+        public RoleType(RelationType relationType) : base(relationType.MetaPopulation)
+        {
+            this.RelationType = relationType;
+
+            this.MetaPopulation.OnRoleTypeCreated(this);
+        }
 
         public override Origin Origin => this.RelationType.Origin;
 
@@ -36,10 +46,20 @@ namespace Allors.Database.Meta
         public AssociationType AssociationType => this.RelationType.AssociationType;
         IAssociationType IRoleType.AssociationType => this.AssociationType;
 
+        public Composite AssociationTypeComposite { get; }
         IComposite IRoleType.AssociationTypeComposite => this.AssociationTypeComposite;
-        public abstract Composite AssociationTypeComposite { get; }
 
-        public abstract ObjectType ObjectType { get; set; }
+        public ObjectType ObjectType
+        {
+            get => this.objectType;
+
+            set
+            {
+                this.MetaPopulation.AssertUnlocked();
+                this.objectType = value;
+                this.MetaPopulation.Stale();
+            }
+        }
 
         IObjectType IPropertyType.ObjectType => this.ObjectType;
 
@@ -66,7 +86,19 @@ namespace Allors.Database.Meta
         /// <value>The validation name.</value>
         public override string ValidationName => "RoleType: " + this.RelationType.Name;
 
-        public abstract string SingularName { get; set; }
+
+        public string SingularName
+        {
+            get => this.singularName;
+
+            set
+            {
+                this.MetaPopulation.AssertUnlocked();
+                this.singularName = value;
+                this.MetaPopulation.Stale();
+            }
+        }
+
 
         /// <summary>
         /// Gets the full singular name.
@@ -74,7 +106,17 @@ namespace Allors.Database.Meta
         /// <value>The full singular name.</value>
         public string SingularFullName => this.RelationType.AssociationType.ObjectType + this.SingularName;
 
-        public abstract string PluralName { get; set; }
+        public string PluralName
+        {
+            get => this.pluralName;
+
+            set
+            {
+                this.MetaPopulation.AssertUnlocked();
+                this.pluralName = value;
+                this.MetaPopulation.Stale();
+            }
+        }
 
         /// <summary>
         /// Gets the full plural name.
@@ -104,13 +146,67 @@ namespace Allors.Database.Meta
         /// <value><c>true</c> if this state is one; otherwise, <c>false</c>.</value>
         public bool IsOne => !this.IsMany;
 
-        public abstract int? Size { get; set; }
-        public abstract int? Precision { get; set; }
-        public abstract int? Scale { get; set; }
+        public int? Size
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.size;
+            }
 
-        public abstract bool IsRequired { get; set; }
-        public abstract bool IsUnique { get; set; }
-        public abstract string MediaType { get; set; }
+            set
+            {
+                this.MetaPopulation.AssertUnlocked();
+                this.size = value;
+                this.MetaPopulation.Stale();
+            }
+        }
+
+        public int? Precision
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.precision;
+            }
+
+            set
+            {
+                this.MetaPopulation.AssertUnlocked();
+                this.precision = value;
+                this.MetaPopulation.Stale();
+            }
+        }
+
+        public int? Scale
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.scale;
+            }
+
+            set
+            {
+                this.MetaPopulation.AssertUnlocked();
+                this.scale = value;
+                this.MetaPopulation.Stale();
+            }
+        }
+
+        public bool IsRequired
+        {
+            get => this.isRequired ?? false;
+            set => this.isRequired = value;
+        }
+
+        public bool IsUnique
+        {
+            get => this.isUnique ?? false;
+            set => this.isUnique = value;
+        }
+
+        public string MediaType { get; set; }
 
         /// <summary>
         /// Get the value of the role on this object.

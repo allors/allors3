@@ -18,8 +18,8 @@ namespace Allors.Database.Domain
         public SalesInvoiceItemSubTotalItemDerivation(M m) : base(m, new Guid("71d5e781-ac75-4b12-9766-960f1ec1df9f")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.SalesInvoiceItem.InvoiceItemType),
-                new AssociationPattern(m.SalesInvoiceItem.Quantity),
+                new RolePattern(m.SalesInvoiceItem.InvoiceItemType),
+                new RolePattern(m.SalesInvoiceItem.Quantity),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

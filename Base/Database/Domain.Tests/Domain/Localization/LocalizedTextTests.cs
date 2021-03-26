@@ -12,7 +12,7 @@ namespace Allors.Database.Domain.Tests
     {
         public LocalisedTextTests(Fixture fixture) : base(fixture) { }
 
-        [Fact]
+        [Fact(Skip = "TODO")]
         public void GivenLocalisedTextWhenValidatingThenRequiredRelationsMustExist()
         {
             var builder = new LocalisedTextBuilder(this.Session);

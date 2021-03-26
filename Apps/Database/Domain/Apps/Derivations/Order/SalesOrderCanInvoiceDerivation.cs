@@ -18,10 +18,10 @@ namespace Allors.Database.Domain
         {
             // Do not listen for changes in Store.BillingProcess.
 
-            new AssociationPattern(m.SalesOrder.SalesOrderState),
-            new AssociationPattern(m.SalesOrderItem.SalesOrderItemState) { Steps =  new IPropertyType[] { m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
-            new RolePattern(m.OrderItemBilling.OrderItem) { Steps =  new IPropertyType[] { m.SalesOrderItem.SalesOrderWhereSalesOrderItem }, OfType = m.SalesOrder.Class },
-            new AssociationPattern(m.OrderItemBilling.Amount) { Steps =  new IPropertyType[] { m.OrderItemBilling.OrderItem, m.SalesOrderItem.SalesOrderWhereSalesOrderItem }, OfType = m.SalesOrder.Class },
+            new RolePattern(m.SalesOrder.SalesOrderState),
+            new RolePattern(m.SalesOrderItem.SalesOrderItemState) { Steps =  new IPropertyType[] { m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
+            new AssociationPattern(m.OrderItemBilling.OrderItem) { Steps =  new IPropertyType[] { m.SalesOrderItem.SalesOrderWhereSalesOrderItem }, OfType = m.SalesOrder.Class },
+            new RolePattern(m.OrderItemBilling.Amount) { Steps =  new IPropertyType[] { m.OrderItemBilling.OrderItem, m.SalesOrderItem.SalesOrderWhereSalesOrderItem }, OfType = m.SalesOrder.Class },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

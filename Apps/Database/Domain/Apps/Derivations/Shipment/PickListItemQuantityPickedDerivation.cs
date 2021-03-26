@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         public PickListItemQuantityPickedDerivation(M m) : base(m, new Guid("c07f30af-09c4-409a-bfdc-fffcac2082fd")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(this.M.PickList.PickListState) { Steps = new IPropertyType[] { m.PickList.PickListItems } },
+                new RolePattern(m.PickList.PickListState) { Steps = new IPropertyType[] { m.PickList.PickListItems } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

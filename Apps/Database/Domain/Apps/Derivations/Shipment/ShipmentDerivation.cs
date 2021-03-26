@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public ShipmentDerivation(M m) : base(m, new Guid("C08727A3-808A-4CB1-B926-DA7432BAAC44")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.Shipment.DerivationTrigger),
-                new AssociationPattern(m.Shipment.ShipmentItems),
+                new RolePattern(m.Shipment.DerivationTrigger),
+                new RolePattern(m.Shipment.ShipmentItems),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -16,10 +16,10 @@ namespace Allors.Database.Domain
         public CustomerReturnDerivation(M m) : base(m, new Guid("F43BD748-619E-4A3C-A002-21AD436EA764")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.CustomerReturn.ShipFromParty),
-                new AssociationPattern(m.CustomerReturn.ShipFromAddress),
-                new AssociationPattern(m.CustomerReturn.ShipToParty),
-                new AssociationPattern(m.CustomerReturn.ShipToAddress),
+                new RolePattern(m.CustomerReturn.ShipFromParty),
+                new RolePattern(m.CustomerReturn.ShipFromAddress),
+                new RolePattern(m.CustomerReturn.ShipToParty),
+                new RolePattern(m.CustomerReturn.ShipToAddress),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

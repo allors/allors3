@@ -16,9 +16,8 @@ namespace Allors.Database.Domain
         public C1ChangedRoleDerivation(M m) : base(m, new Guid("84343F1E-7224-41CE-9B4C-69883417115F")) =>
             this.Patterns = new[]
             {
-                new AssociationPattern(this.M.C1.ChangedRolePing)
+                new RolePattern(m.C1, this.M.C1.ChangedRolePing)
             };
-
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {

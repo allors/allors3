@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public SingletonLocalesDerivation(M m) : base(m, new Guid("1a6c3dcc-0ddb-4788-8167-791cfd973b19")) =>
             this.Patterns = new[]
             {
-                new AssociationPattern(this.M.Singleton.DefaultLocale),
-                new AssociationPattern(this.M.Singleton.AdditionalLocales)
+                new RolePattern(m.Singleton.DefaultLocale),
+                new RolePattern(m.Singleton.AdditionalLocales)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

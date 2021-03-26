@@ -16,18 +16,18 @@ namespace Allors.Database.Domain
         public QuoteCreatedDerivation(M m) : base(m, new Guid("b66c0721-4aa5-4ca7-91a0-534f6cfc6718")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.Quote.QuoteState),
-                new AssociationPattern(m.Quote.Issuer),
-                new AssociationPattern(m.Quote.Receiver),
-                new AssociationPattern(m.Quote.Locale),
-                new AssociationPattern(m.Quote.AssignedVatRegime),
-                new AssociationPattern(m.Quote.AssignedIrpfRegime),
-                new AssociationPattern(m.Quote.AssignedCurrency),
-                new AssociationPattern(m.Quote.IssueDate),
-                new AssociationPattern(m.Organisation.Locale) { Steps = new IPropertyType[] { m.Organisation.QuotesWhereIssuer }},
-                new AssociationPattern(m.Party.Locale) { Steps = new IPropertyType[] { m.Party.QuotesWhereReceiver }},
-                new AssociationPattern(m.Party.PreferredCurrency) { Steps = new IPropertyType[] { m.Party.QuotesWhereReceiver }},
-                new AssociationPattern(m.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { m.Organisation.QuotesWhereReceiver }},
+                new RolePattern(m.Quote.QuoteState),
+                new RolePattern(m.Quote.Issuer),
+                new RolePattern(m.Quote.Receiver),
+                new RolePattern(m.Quote.Locale),
+                new RolePattern(m.Quote.AssignedVatRegime),
+                new RolePattern(m.Quote.AssignedIrpfRegime),
+                new RolePattern(m.Quote.AssignedCurrency),
+                new RolePattern(m.Quote.IssueDate),
+                new RolePattern(m.Organisation.Locale) { Steps = new IPropertyType[] { m.Organisation.QuotesWhereIssuer }},
+                new RolePattern(m.Party.Locale) { Steps = new IPropertyType[] { m.Party.QuotesWhereReceiver }},
+                new RolePattern(m.Party.PreferredCurrency) { Steps = new IPropertyType[] { m.Party.QuotesWhereReceiver }},
+                new RolePattern(m.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { m.Organisation.QuotesWhereReceiver }},
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

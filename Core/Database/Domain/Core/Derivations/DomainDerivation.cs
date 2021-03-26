@@ -19,10 +19,11 @@ namespace Allors.Database.Domain
             this.Id = id;
         }
 
-        public M M { get; set; }
+        public M M { get; }
 
-        public Guid Id { get; protected set; }
+        public Guid Id { get; }
 
+        IPattern[] IDomainDerivation.Patterns => this.Patterns;
         public Pattern[] Patterns { get; protected set; }
 
         public abstract void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches);

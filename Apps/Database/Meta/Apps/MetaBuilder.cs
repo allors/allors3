@@ -7,7 +7,7 @@ namespace Allors.Database.Meta
 {
     public partial class MetaBuilder
     {
-        private void BuildApps(MetaPopulation meta, Domains domains, ObjectTypes objectTypes, RelationTypes relationTypes, MethodTypes methodTypes, RoleClasses roleClasses)
+        private void BuildApps(MetaPopulation meta, Domains domains, ObjectTypes objectTypes, RelationTypes relationTypes, MethodTypes methodTypes)
         {
             //methodClasses.OrganisationDelete.Workspace = "Default";
             //methodClasses.PersonDelete.Workspace = "Default";

@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         public PurchaseReturnDeniedPermissionDerivation(M m) : base(m, new Guid("73e1af05-a7b3-433c-8f52-15bc1370d1fe")) =>
             this.Patterns = new Pattern[]
         {
-            new AssociationPattern(this.M.PurchaseReturn.TransitionalDeniedPermissions),
+            new RolePattern(m.PurchaseReturn.TransitionalDeniedPermissions),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

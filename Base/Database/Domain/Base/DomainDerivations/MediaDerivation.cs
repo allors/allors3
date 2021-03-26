@@ -19,10 +19,10 @@ namespace Allors.Database.Domain
         public MediaDerivation(M m) : base(m, new Guid("436E574A-FE3E-46ED-8AD2-A59CACC2C9C4")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.Media.InType),
-                new AssociationPattern(m.Media.InData),
-                new AssociationPattern(m.Media.InDataUri),
-                new AssociationPattern(m.Media.InFileName),
+                new RolePattern(m.Media, m.Media.InType),
+                new RolePattern(m.Media, m.Media.InData),
+                new RolePattern(m.Media, m.Media.InDataUri),
+                new RolePattern(m.Media, m.Media.InFileName),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

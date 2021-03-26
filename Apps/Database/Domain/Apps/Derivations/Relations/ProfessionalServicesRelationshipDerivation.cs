@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public ProfessionalServicesRelationshipDerivation(M m) : base(m, new Guid("DB0D802D-94D2-4850-91FC-703778ECFFC7")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(this.M.ProfessionalServicesRelationship.Professional),
-                new AssociationPattern(this.M.ProfessionalServicesRelationship.ProfessionalServicesProvider),
+                new RolePattern(m.ProfessionalServicesRelationship.Professional),
+                new RolePattern(m.ProfessionalServicesRelationship.ProfessionalServicesProvider),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

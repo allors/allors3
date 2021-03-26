@@ -17,17 +17,17 @@ namespace Allors.Database.Domain
         public PersonDerivation(M m) : base(m, new Guid("BC3969F4-4050-47A1-B80C-8F23879E3B10")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.Person.DerivationTrigger),
-                new AssociationPattern(m.Person.Salutation),
-                new AssociationPattern(m.Person.FirstName),
-                new AssociationPattern(m.Person.MiddleName),
-                new AssociationPattern(m.Person.LastName),
-                new AssociationPattern(m.Person.UserName),
-                new RolePattern(m.OrganisationContactRelationship.Contact),
-                new AssociationPattern(m.OrganisationContactRelationship.FromDate) {Steps = new IPropertyType[]{ m.OrganisationContactRelationship.Contact } },
-                new AssociationPattern(m.OrganisationContactRelationship.ThroughDate) {Steps = new IPropertyType[]{ m.OrganisationContactRelationship.Contact } },
-                new AssociationPattern(m.Employment.FromDate) { Steps =  new IPropertyType[] {m.Employment.Employee} },
-                new AssociationPattern(m.Employment.ThroughDate) { Steps =  new IPropertyType[] {m.Employment.Employee} },
+                new RolePattern(m.Person.DerivationTrigger),
+                new RolePattern(m.Person.Salutation),
+                new RolePattern(m.Person.FirstName),
+                new RolePattern(m.Person.MiddleName),
+                new RolePattern(m.Person.LastName),
+                new RolePattern(m.Person.UserName),
+                new AssociationPattern(m.OrganisationContactRelationship.Contact),
+                new RolePattern(m.OrganisationContactRelationship.FromDate) {Steps = new IPropertyType[]{ m.OrganisationContactRelationship.Contact } },
+                new RolePattern(m.OrganisationContactRelationship.ThroughDate) {Steps = new IPropertyType[]{ m.OrganisationContactRelationship.Contact } },
+                new RolePattern(m.Employment.FromDate) { Steps =  new IPropertyType[] {m.Employment.Employee} },
+                new RolePattern(m.Employment.ThroughDate) { Steps =  new IPropertyType[] {m.Employment.Employee} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

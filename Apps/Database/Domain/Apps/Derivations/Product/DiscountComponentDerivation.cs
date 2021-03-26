@@ -17,8 +17,8 @@ namespace Allors.Database.Domain
         public DiscountComponentDerivation(M m) : base(m, new Guid("C395DB2E-C4A6-4974-BE35-EF2CC70D347D")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(this.M.DiscountComponent.Price),
-                new AssociationPattern(this.M.DiscountComponent.Percentage),
+                new RolePattern(m.DiscountComponent.Price),
+                new RolePattern(m.DiscountComponent.Percentage),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

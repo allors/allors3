@@ -17,16 +17,16 @@ namespace Allors.Database.Domain
         public GeneralLedgerAccountDerivation(M m) : base(m, new Guid("e916d6c3-b31b-41e2-b7ef-3265977e0fea")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.GeneralLedgerAccount.AccountNumber),
-                new AssociationPattern(m.GeneralLedgerAccount.DefaultCostCenter),
-                new AssociationPattern(m.GeneralLedgerAccount.AssignedCostCentersAllowed),
-                new AssociationPattern(m.GeneralLedgerAccount.CostCenterAccount),
-                new AssociationPattern(m.GeneralLedgerAccount.CostCenterRequired),
-                new AssociationPattern(m.GeneralLedgerAccount.DefaultCostUnit),
-                new AssociationPattern(m.GeneralLedgerAccount.AssignedCostUnitsAllowed),
-                new AssociationPattern(m.GeneralLedgerAccount.CostUnitAccount),
-                new AssociationPattern(m.GeneralLedgerAccount.CostUnitRequired),
-                new RolePattern(m.ChartOfAccounts.GeneralLedgerAccounts),
+                new RolePattern(m.GeneralLedgerAccount.AccountNumber),
+                new RolePattern(m.GeneralLedgerAccount.DefaultCostCenter),
+                new RolePattern(m.GeneralLedgerAccount.AssignedCostCentersAllowed),
+                new RolePattern(m.GeneralLedgerAccount.CostCenterAccount),
+                new RolePattern(m.GeneralLedgerAccount.CostCenterRequired),
+                new RolePattern(m.GeneralLedgerAccount.DefaultCostUnit),
+                new RolePattern(m.GeneralLedgerAccount.AssignedCostUnitsAllowed),
+                new RolePattern(m.GeneralLedgerAccount.CostUnitAccount),
+                new RolePattern(m.GeneralLedgerAccount.CostUnitRequired),
+                new AssociationPattern(m.ChartOfAccounts.GeneralLedgerAccounts),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

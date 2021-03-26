@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public ProductQuoteApprovalParticipantsDerivation(M m) : base(m, new Guid("be3fae87-8d8b-478d-950e-ae9eb659a644")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(this.M.ProductQuoteApproval.DateClosed),
-                new AssociationPattern(this.M.ProductQuoteApproval.ProductQuote),
+                new RolePattern(m.ProductQuoteApproval.DateClosed),
+                new RolePattern(m.ProductQuoteApproval.ProductQuote),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
