@@ -18,15 +18,15 @@ namespace Allors.Database.Domain
         public PurchaseOrderItemCreatedDerivation(M m) : base(m, new Guid("7559bffd-7685-4023-bef7-9f5ff96b6f41")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PurchaseOrderItem.PurchaseOrderItemState),
-                new RolePattern(m.PurchaseOrderItem.AssignedDeliveryDate),
-                new RolePattern(m.PurchaseOrderItem.AssignedVatRegime),
-                new RolePattern(m.PurchaseOrderItem.AssignedIrpfRegime),
+                new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.PurchaseOrderItemState),
+                new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.AssignedDeliveryDate),
+                new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.AssignedVatRegime),
+                new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.AssignedIrpfRegime),
                 new AssociationPattern(m.PurchaseOrder.PurchaseOrderItems),
-                new RolePattern(m.PurchaseOrder.DeliveryDate) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
-                new RolePattern(m.PurchaseOrder.DerivedVatRegime) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
-                new RolePattern(m.PurchaseOrder.DerivedIrpfRegime) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
-                new RolePattern(m.PurchaseOrder.OrderDate) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
+                new RolePattern(m.PurchaseOrder, m.PurchaseOrder.DeliveryDate) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
+                new RolePattern(m.PurchaseOrder, m.PurchaseOrder.DerivedVatRegime) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
+                new RolePattern(m.PurchaseOrder, m.PurchaseOrder.DerivedIrpfRegime) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
+                new RolePattern(m.PurchaseOrder, m.PurchaseOrder.OrderDate) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

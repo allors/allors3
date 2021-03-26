@@ -16,9 +16,9 @@ namespace Allors.Database.Domain
         public WebSiteCommunicationsDerivation(M m) : base(m, new Guid("F960FDF6-8C3F-4D0F-9E41-48A30CB115F8")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.WebSiteCommunication.Subject),
-                new RolePattern(m.WebSiteCommunication.ToParty),
-                new RolePattern(m.Party.PartyName) { Steps = new IPropertyType[] { m.Party.CommunicationEventsWhereToParty}, OfType = m.WebSiteCommunication.Class },
+                new RolePattern(m.WebSiteCommunication, m.WebSiteCommunication.Subject),
+                new RolePattern(m.WebSiteCommunication, m.WebSiteCommunication.ToParty),
+                new RolePattern(m.Party, m.Party.PartyName) { Steps = new IPropertyType[] { m.Party.CommunicationEventsWhereToParty}, OfType = m.WebSiteCommunication.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

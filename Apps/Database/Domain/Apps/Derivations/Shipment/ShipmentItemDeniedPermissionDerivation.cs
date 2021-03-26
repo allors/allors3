@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         public ShipmentItemDeniedPermissionDerivation(M m) : base(m, new Guid("a690e467-5509-4e2a-905b-b5a3fb0bee12")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.ShipmentItem.TransitionalDeniedPermissions),
+            new RolePattern(m.ShipmentItem, m.ShipmentItem.TransitionalDeniedPermissions),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

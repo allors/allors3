@@ -17,8 +17,8 @@ namespace Allors.Database.Domain
         public ShipmentPackageDerivation(M m) : base(m, new Guid("9CB50263-5EA0-4B16-85A2-117BEE8A570A")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.ShipmentPackage.SequenceNumber),
-                new RolePattern(m.PickList.PickListState) { Steps = new IPropertyType[] { m.PickList.PickListItems, m.PickListItem.ItemIssuancesWherePickListItem, m.ItemIssuance.ShipmentItem, m.ShipmentItem.ShipmentWhereShipmentItem, m.Shipment.ShipmentPackages } },
+                new RolePattern(m.ShipmentPackage, m.ShipmentPackage.SequenceNumber),
+                new RolePattern(m.PickList, m.PickList.PickListState) { Steps = new IPropertyType[] { m.PickList.PickListItems, m.PickListItem.ItemIssuancesWherePickListItem, m.ItemIssuance.ShipmentItem, m.ShipmentItem.ShipmentWhereShipmentItem, m.Shipment.ShipmentPackages } },
                 new AssociationPattern(m.ItemIssuance.ShipmentItem) { Steps = new IPropertyType[] { m.ShipmentItem.ShipmentWhereShipmentItem, m.Shipment.ShipmentPackages } },
             };
 

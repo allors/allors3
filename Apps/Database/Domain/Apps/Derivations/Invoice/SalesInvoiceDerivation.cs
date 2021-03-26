@@ -17,21 +17,21 @@ namespace Allors.Database.Domain
         public SalesInvoiceDerivation(M m) : base(m, new Guid("5F9E688C-1805-4982-87EC-CE45100BDD30")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.SalesInvoice.BilledFrom),
-            new RolePattern(m.SalesInvoice.Store),
-            new RolePattern(m.SalesInvoice.BillToCustomer),
-            new RolePattern(m.SalesInvoice.BillToEndCustomer),
-            new RolePattern(m.SalesInvoice.ShipToCustomer),
-            new RolePattern(m.SalesInvoice.ShipToEndCustomer),
-            new RolePattern(m.SalesInvoice.InvoiceDate),
-            new RolePattern(m.SalesInvoice.SalesInvoiceItems),
-            new RolePattern(m.RepeatingSalesInvoice.NextExecutionDate) { Steps =  new IPropertyType[] {m.RepeatingSalesInvoice.Source} },
-            new RolePattern(m.RepeatingSalesInvoice.FinalExecutionDate) { Steps =  new IPropertyType[] {m.RepeatingSalesInvoice.Source} },
-            new RolePattern(m.InvoiceTerm.TermValue) { Steps =  new IPropertyType[] {m.InvoiceTerm.InvoiceWhereSalesTerm} },
-            new RolePattern(m.CustomerRelationship.FromDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesInvoicesWhereBillToCustomer} },
-            new RolePattern(m.CustomerRelationship.ThroughDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesInvoicesWhereBillToCustomer} },
-            new RolePattern(m.CustomerRelationship.FromDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesInvoicesWhereShipToCustomer} },
-            new RolePattern(m.CustomerRelationship.ThroughDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesInvoicesWhereShipToCustomer} },
+            new RolePattern(m.SalesInvoice, m.SalesInvoice.BilledFrom),
+            new RolePattern(m.SalesInvoice, m.SalesInvoice.Store),
+            new RolePattern(m.SalesInvoice, m.SalesInvoice.BillToCustomer),
+            new RolePattern(m.SalesInvoice, m.SalesInvoice.BillToEndCustomer),
+            new RolePattern(m.SalesInvoice, m.SalesInvoice.ShipToCustomer),
+            new RolePattern(m.SalesInvoice, m.SalesInvoice.ShipToEndCustomer),
+            new RolePattern(m.SalesInvoice, m.SalesInvoice.InvoiceDate),
+            new RolePattern(m.SalesInvoice, m.SalesInvoice.SalesInvoiceItems),
+            new RolePattern(m.RepeatingSalesInvoice, m.RepeatingSalesInvoice.NextExecutionDate) { Steps =  new IPropertyType[] {m.RepeatingSalesInvoice.Source} },
+            new RolePattern(m.RepeatingSalesInvoice, m.RepeatingSalesInvoice.FinalExecutionDate) { Steps =  new IPropertyType[] {m.RepeatingSalesInvoice.Source} },
+            new RolePattern(m.InvoiceTerm, m.InvoiceTerm.TermValue) { Steps =  new IPropertyType[] {m.InvoiceTerm.InvoiceWhereSalesTerm} },
+            new RolePattern(m.CustomerRelationship, m.CustomerRelationship.FromDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesInvoicesWhereBillToCustomer} },
+            new RolePattern(m.CustomerRelationship, m.CustomerRelationship.ThroughDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesInvoicesWhereBillToCustomer} },
+            new RolePattern(m.CustomerRelationship, m.CustomerRelationship.FromDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesInvoicesWhereShipToCustomer} },
+            new RolePattern(m.CustomerRelationship, m.CustomerRelationship.ThroughDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesInvoicesWhereShipToCustomer} },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

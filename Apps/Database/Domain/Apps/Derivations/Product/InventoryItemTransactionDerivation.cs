@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public InventoryItemTransactionDerivation(M m) : base(m, new Guid("E1F9D2DA-9C99-473D-B49F-17465CDEDBC9")) =>
             this.Patterns = new[]
             {
-                new RolePattern(m.InventoryItemTransaction.Quantity),
-                new RolePattern(m.SerialisedInventoryItem.Quantity) { Steps = new IPropertyType[] {m.SerialisedInventoryItem.InventoryItemTransactionsWhereInventoryItem} },
+                new RolePattern(m.InventoryItemTransaction, m.InventoryItemTransaction.Quantity),
+                new RolePattern(m.SerialisedInventoryItem, m.SerialisedInventoryItem.Quantity) { Steps = new IPropertyType[] {m.SerialisedInventoryItem.InventoryItemTransactionsWhereInventoryItem} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

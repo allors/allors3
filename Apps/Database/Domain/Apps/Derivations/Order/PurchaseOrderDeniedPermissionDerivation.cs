@@ -16,12 +16,12 @@ namespace Allors.Database.Domain
         public PurchaseOrderDeniedPermissionDerivation(M m) : base(m, new Guid("23ec4c76-b156-406f-ad16-4b83a17db3c6")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.PurchaseOrder.TransitionalDeniedPermissions),
-            new RolePattern(m.PurchaseOrder.PurchaseOrderShipmentState),
+            new RolePattern(m.PurchaseOrder, m.PurchaseOrder.TransitionalDeniedPermissions),
+            new RolePattern(m.PurchaseOrder, m.PurchaseOrder.PurchaseOrderShipmentState),
             new AssociationPattern(m.WorkEffortPurchaseOrderItemAssignment.PurchaseOrder),
             new AssociationPattern(m.PurchaseInvoice.PurchaseOrders),
             new AssociationPattern(m.SerialisedItem.PurchaseOrder),
-            new RolePattern(m.PurchaseOrderItem.PurchaseOrderItemState) { Steps =  new IPropertyType[] {m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem} },
+            new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.PurchaseOrderItemState) { Steps =  new IPropertyType[] {m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem} },
             new AssociationPattern(m.OrderItemBilling.OrderItem) { Steps =  new IPropertyType[] { m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem }, OfType = m.PurchaseOrder.Class },
             new AssociationPattern(m.OrderShipment.OrderItem) { Steps =  new IPropertyType[] { m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem }, OfType = m.PurchaseOrder.Class },
             new AssociationPattern(m.OrderRequirementCommitment.OrderItem) { Steps =  new IPropertyType[] { m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem }, OfType = m.PurchaseOrder.Class },

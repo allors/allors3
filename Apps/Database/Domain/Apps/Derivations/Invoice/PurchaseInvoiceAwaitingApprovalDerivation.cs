@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         public PurchaseInvoiceAwaitingApprovalDerivation(M m) : base(m, new Guid("6a5b8d85-c783-4b24-8272-7aa43ff05094")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PurchaseInvoice.PurchaseInvoiceState),
+                new RolePattern(m.PurchaseInvoice, m.PurchaseInvoice.PurchaseInvoiceState),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

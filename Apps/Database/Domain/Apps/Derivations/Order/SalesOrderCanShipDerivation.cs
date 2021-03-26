@@ -18,11 +18,11 @@ namespace Allors.Database.Domain
         {
             // Do not listen for changes in Store.BillingProcess.
 
-            new RolePattern(m.SalesOrder.SalesOrderState),
-            new RolePattern(m.SalesOrder.PartiallyShip),
-            new RolePattern(m.SalesOrderItem.SalesOrderItemState) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
-            new RolePattern(m.SalesOrderItem.QuantityRequestsShipping) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
-            new RolePattern(m.SalesOrderItem.QuantityOrdered) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
+            new RolePattern(m.SalesOrder, m.SalesOrder.SalesOrderState),
+            new RolePattern(m.SalesOrder, m.SalesOrder.PartiallyShip),
+            new RolePattern(m.SalesOrderItem, m.SalesOrderItem.SalesOrderItemState) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
+            new RolePattern(m.SalesOrderItem, m.SalesOrderItem.QuantityRequestsShipping) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
+            new RolePattern(m.SalesOrderItem, m.SalesOrderItem.QuantityOrdered) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public InventoryItemSearchStringDerivation(M m) : base(m, new Guid("5d253bff-4537-4b1b-96e4-74b4a16dbf48")) =>
             this.Patterns = new[]
             {
-                new RolePattern(m.InventoryItem.Part),
+                new RolePattern(m.InventoryItem, m.InventoryItem.Part),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

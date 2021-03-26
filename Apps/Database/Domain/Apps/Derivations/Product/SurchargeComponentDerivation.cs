@@ -17,8 +17,8 @@ namespace Allors.Database.Domain
         public SurchargeComponentDerivation(M m) : base(m, new Guid("1C8B75D1-3288-4DB7-987E-7A64A3225891")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SurchargeComponent.Price),
-                new RolePattern(m.SurchargeComponent.Percentage),
+                new RolePattern(m.SurchargeComponent, m.SurchargeComponent.Price),
+                new RolePattern(m.SurchargeComponent, m.SurchargeComponent.Percentage),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

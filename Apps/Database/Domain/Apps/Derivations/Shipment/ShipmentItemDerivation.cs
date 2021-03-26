@@ -18,18 +18,18 @@ namespace Allors.Database.Domain
         public ShipmentItemDerivation(M m) : base(m, new Guid("472FF004-E087-4237-8BE4-D9B9194D3BB3")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.ShipmentItem.NextSerialisedItemAvailability),
-                new RolePattern(m.ShipmentItem.SerialisedItem),
-                new RolePattern(m.ShipmentItem.Quantity),
-                new RolePattern(m.ShipmentItem.UnitPurchasePrice),
-                new RolePattern(m.ShipmentItem.Part),
-                new RolePattern(m.ShipmentItem.StoredInFacility),
-                new RolePattern(m.ItemIssuance.Quantity) { Steps = new IPropertyType[] {m.ItemIssuance.ShipmentItem } },
-                new RolePattern(m.PickList.PickListState) { Steps = new IPropertyType[] {m.PickList.PickListItems, m.PickListItem.ItemIssuancesWherePickListItem, m.ItemIssuance.ShipmentItem } },
-                new RolePattern(m.Shipment.ShipmentState) { Steps = new IPropertyType[] {m.Shipment.ShipmentItems } },
-                new RolePattern(m.Shipment.ShipToFacility) { Steps = new IPropertyType[] {m.Shipment.ShipmentItems } },
-                new RolePattern(m.ShipmentReceipt.QuantityAccepted) { Steps = new IPropertyType[] {m.ShipmentReceipt.ShipmentItem } },
-                new RolePattern(m.ShipmentReceipt.QuantityRejected) { Steps = new IPropertyType[] {m.ShipmentReceipt.ShipmentItem } },
+                new RolePattern(m.ShipmentItem, m.ShipmentItem.NextSerialisedItemAvailability),
+                new RolePattern(m.ShipmentItem, m.ShipmentItem.SerialisedItem),
+                new RolePattern(m.ShipmentItem, m.ShipmentItem.Quantity),
+                new RolePattern(m.ShipmentItem, m.ShipmentItem.UnitPurchasePrice),
+                new RolePattern(m.ShipmentItem, m.ShipmentItem.Part),
+                new RolePattern(m.ShipmentItem, m.ShipmentItem.StoredInFacility),
+                new RolePattern(m.ItemIssuance, m.ItemIssuance.Quantity) { Steps = new IPropertyType[] {m.ItemIssuance.ShipmentItem } },
+                new RolePattern(m.PickList, m.PickList.PickListState) { Steps = new IPropertyType[] {m.PickList.PickListItems, m.PickListItem.ItemIssuancesWherePickListItem, m.ItemIssuance.ShipmentItem } },
+                new RolePattern(m.Shipment, m.Shipment.ShipmentState) { Steps = new IPropertyType[] {m.Shipment.ShipmentItems } },
+                new RolePattern(m.Shipment, m.Shipment.ShipToFacility) { Steps = new IPropertyType[] {m.Shipment.ShipmentItems } },
+                new RolePattern(m.ShipmentReceipt, m.ShipmentReceipt.QuantityAccepted) { Steps = new IPropertyType[] {m.ShipmentReceipt.ShipmentItem } },
+                new RolePattern(m.ShipmentReceipt, m.ShipmentReceipt.QuantityRejected) { Steps = new IPropertyType[] {m.ShipmentReceipt.ShipmentItem } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -17,8 +17,8 @@ namespace Allors.Database.Domain
         public OwnBankAccountDerivation(M m) : base(m, new Guid("0e20e10e-fadf-4bf2-97be-98e0e7b09d0d")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.OwnBankAccount.GeneralLedgerAccount),
-                new RolePattern(m.OwnBankAccount.Journal),
+                new RolePattern(m.OwnBankAccount, m.OwnBankAccount.GeneralLedgerAccount),
+                new RolePattern(m.OwnBankAccount, m.OwnBankAccount.Journal),
                 new AssociationPattern(m.InternalOrganisation.DerivedActiveCollectionMethods) { OfType = m.OwnBankAccount.Class },
             };
 

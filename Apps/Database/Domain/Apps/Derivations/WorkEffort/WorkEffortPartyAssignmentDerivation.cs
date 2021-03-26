@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public WorkEffortPartyAssignmentDerivation(M m) : base(m, new Guid("072c0e19-ef0c-4ff5-8204-e5071f5ab7f1")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.WorkEffortPartyAssignment.AssignmentRates),
+            new RolePattern(m.WorkEffortPartyAssignment, m.WorkEffortPartyAssignment.AssignmentRates),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

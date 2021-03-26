@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         public OrganisationDeniedPermissionDerivation(M m) : base(m, new Guid("c10dd444-3107-448e-a690-02f4d839ec0c")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.Organisation.IsInternalOrganisation),
+            new RolePattern(m.Organisation, m.Organisation.IsInternalOrganisation),
             new AssociationPattern(m.ExternalAccountingTransaction.FromParty) { OfType = m.Organisation.Class },
             new AssociationPattern(m.ExternalAccountingTransaction.ToParty) { OfType = m.Organisation.Class },
             new AssociationPattern(m.Shipment.ShipFromParty) { OfType = m.Organisation.Class },

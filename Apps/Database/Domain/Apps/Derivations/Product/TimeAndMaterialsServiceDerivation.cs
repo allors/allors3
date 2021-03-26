@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
         public TimeAndMaterialsServiceDerivation(M m) : base(m, new Guid("60d9b0ad-2078-4921-a689-e15877983bb3")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.TimeAndMaterialsService.Variants),
+                new RolePattern(m.TimeAndMaterialsService, m.TimeAndMaterialsService.Variants),
                 new AssociationPattern(m.PriceComponent.Product) { OfType = m.TimeAndMaterialsService.Class },
             };
 

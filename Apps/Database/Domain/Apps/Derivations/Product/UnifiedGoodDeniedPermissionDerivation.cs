@@ -37,7 +37,7 @@ namespace Allors.Database.Domain
             new AssociationPattern(m.PartBillOfMaterial.Part) { OfType = m.UnifiedGood.Class },
             new AssociationPattern(m.PartBillOfMaterial.ComponentPart) { OfType = m.UnifiedGood.Class },
             new AssociationPattern(m.InventoryItemTransaction.Part) { OfType = m.UnifiedGood.Class },
-            new RolePattern(m.UnifiedGood.SerialisedItems),
+            new RolePattern(m.UnifiedGood, m.UnifiedGood.SerialisedItems),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -17,15 +17,15 @@ namespace Allors.Database.Domain
         public StoreDerivation(M m) : base(m, new Guid("cf3acae4-a895-4a0b-b154-18cfa30691bb")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.Store.InternalOrganisation),
-                new RolePattern(m.Store.DefaultCollectionMethod),
-                new RolePattern(m.Store.CollectionMethods),
-                new RolePattern(m.Store.FiscalYearsStoreSequenceNumbers),
-                new RolePattern(m.Store.SalesInvoiceNumberCounter),
-                new RolePattern(m.Store.CustomerShipmentNumberPrefix),
-                new RolePattern(m.Store.PurchaseReturnNumberPrefix),
-                new RolePattern(m.Store.DropShipmentNumberPrefix),
-                new RolePattern(m.Store.OutgoingTransferNumberPrefix),
+                new RolePattern(m.Store, m.Store.InternalOrganisation),
+                new RolePattern(m.Store, m.Store.DefaultCollectionMethod),
+                new RolePattern(m.Store, m.Store.CollectionMethods),
+                new RolePattern(m.Store, m.Store.FiscalYearsStoreSequenceNumbers),
+                new RolePattern(m.Store, m.Store.SalesInvoiceNumberCounter),
+                new RolePattern(m.Store, m.Store.CustomerShipmentNumberPrefix),
+                new RolePattern(m.Store, m.Store.PurchaseReturnNumberPrefix),
+                new RolePattern(m.Store, m.Store.DropShipmentNumberPrefix),
+                new RolePattern(m.Store, m.Store.OutgoingTransferNumberPrefix),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

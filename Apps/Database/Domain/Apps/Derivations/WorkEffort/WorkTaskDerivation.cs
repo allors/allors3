@@ -18,17 +18,17 @@ namespace Allors.Database.Domain
         public WorkTaskDerivation(M m) : base(m, new Guid("12794dc5-8a79-4983-b480-4324602ae717")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.WorkTask.TakenBy),
-            new RolePattern(m.WorkTask.ExecutedBy),
-            new RolePattern(m.WorkTask.ActualStart),
-            new RolePattern(m.WorkTask.WorkEffortState),
-            new RolePattern(m.TimeEntry.FromDate) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
-            new RolePattern(m.TimeEntry.ThroughDate) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
-            new RolePattern(m.TimeEntry.WorkEffort) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
-            new RolePattern(m.TimeSheet.TimeEntries) { Steps = new IPropertyType[] { m.TimeSheet.TimeEntries, m.TimeEntry.WorkEffort} },
+            new RolePattern(m.WorkTask, m.WorkTask.TakenBy),
+            new RolePattern(m.WorkTask, m.WorkTask.ExecutedBy),
+            new RolePattern(m.WorkTask, m.WorkTask.ActualStart),
+            new RolePattern(m.WorkTask, m.WorkTask.WorkEffortState),
+            new RolePattern(m.TimeEntry, m.TimeEntry.FromDate) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
+            new RolePattern(m.TimeEntry, m.TimeEntry.ThroughDate) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
+            new RolePattern(m.TimeEntry, m.TimeEntry.WorkEffort) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
+            new RolePattern(m.TimeSheet, m.TimeSheet.TimeEntries) { Steps = new IPropertyType[] { m.TimeSheet.TimeEntries, m.TimeEntry.WorkEffort} },
             new AssociationPattern(m.WorkEffortInventoryAssignment.Assignment),
-            new RolePattern(m.WorkEffortInventoryAssignment.Quantity) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
-            new RolePattern(m.WorkEffortInventoryAssignment.InventoryItem) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
+            new RolePattern(m.WorkEffortInventoryAssignment, m.WorkEffortInventoryAssignment.Quantity) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
+            new RolePattern(m.WorkEffortInventoryAssignment, m.WorkEffortInventoryAssignment.InventoryItem) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

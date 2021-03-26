@@ -18,11 +18,11 @@ namespace Allors.Database.Domain
         public PaymentApplicationDerivation(M m) : base(m, new Guid("D3D3B1B9-4619-4720-8E73-04419896B3AE")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PaymentApplication.Invoice),
-                new RolePattern(m.PaymentApplication.InvoiceItem),
-                new RolePattern(m.PaymentApplication.BillingAccount),
-                new RolePattern(m.PaymentApplication.AmountApplied),
-                new RolePattern(m.SalesInvoice.AdvancePayment) { Steps =  new IPropertyType[] {m.SalesInvoice.PaymentApplicationsWhereInvoice} },
+                new RolePattern(m.PaymentApplication, m.PaymentApplication.Invoice),
+                new RolePattern(m.PaymentApplication, m.PaymentApplication.InvoiceItem),
+                new RolePattern(m.PaymentApplication, m.PaymentApplication.BillingAccount),
+                new RolePattern(m.PaymentApplication, m.PaymentApplication.AmountApplied),
+                new RolePattern(m.SalesInvoice, m.SalesInvoice.AdvancePayment) { Steps =  new IPropertyType[] {m.SalesInvoice.PaymentApplicationsWhereInvoice} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

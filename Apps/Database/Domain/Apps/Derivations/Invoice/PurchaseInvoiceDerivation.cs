@@ -17,11 +17,11 @@ namespace Allors.Database.Domain
         public PurchaseInvoiceDerivation(M m) : base(m, new Guid("7F6A083E-1409-4158-B302-603F0973A98C")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PurchaseInvoice.BilledTo),
-                new RolePattern(m.PurchaseInvoice.BilledFrom),
-                new RolePattern(m.PurchaseInvoice.PurchaseInvoiceItems),
-                new RolePattern(m.PurchaseInvoiceItem.PurchaseInvoiceItemState) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem} },
-                new RolePattern(m.PurchaseInvoiceItem.AmountPaid) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem} },
+                new RolePattern(m.PurchaseInvoice, m.PurchaseInvoice.BilledTo),
+                new RolePattern(m.PurchaseInvoice, m.PurchaseInvoice.BilledFrom),
+                new RolePattern(m.PurchaseInvoice, m.PurchaseInvoice.PurchaseInvoiceItems),
+                new RolePattern(m.PurchaseInvoiceItem, m.PurchaseInvoiceItem.PurchaseInvoiceItemState) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem} },
+                new RolePattern(m.PurchaseInvoiceItem, m.PurchaseInvoiceItem.AmountPaid) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem} },
                 new AssociationPattern(m.PaymentApplication.Invoice) { OfType = m.PurchaseInvoice.Class },
             };
 

@@ -18,12 +18,12 @@ namespace Allors.Database.Domain
         public PurchaseOrderItemDerivation(M m) : base(m, new Guid("A59A2EFC-AF5C-4F95-9212-4FD4B0306957")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PurchaseOrderItem.Part),
-                new RolePattern(m.PurchaseOrderItem.SerialisedItem),
-                new RolePattern(m.PurchaseOrderItem.SerialNumber),
-                new RolePattern(m.PurchaseOrderItem.QuantityOrdered),
-                new RolePattern(m.PurchaseOrderItem.DerivationTrigger),
-                new RolePattern(m.PurchaseOrder.StoredInFacility) { Steps = new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems} },
+                new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.Part),
+                new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.SerialisedItem),
+                new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.SerialNumber),
+                new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.QuantityOrdered),
+                new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.DerivationTrigger),
+                new RolePattern(m.PurchaseOrder, m.PurchaseOrder.StoredInFacility) { Steps = new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems} },
                 new AssociationPattern(m.OrderItemBilling.OrderItem) { OfType = m.PurchaseOrderItem.Class },
             };
 

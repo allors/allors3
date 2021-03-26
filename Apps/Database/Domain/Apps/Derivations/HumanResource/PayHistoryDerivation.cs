@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public PayHistoryDerivation(M m) : base(m, new Guid("73e0bcd1-958e-451c-abf4-0b759d1ede4d")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PayHistory.SalaryStep),
+                new RolePattern(m.PayHistory, m.PayHistory.SalaryStep),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

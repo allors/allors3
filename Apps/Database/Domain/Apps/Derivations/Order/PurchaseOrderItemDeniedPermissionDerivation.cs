@@ -16,9 +16,9 @@ namespace Allors.Database.Domain
         public PurchaseOrderItemDeniedPermissionDerivation(M m) : base(m, new Guid("68b556f7-00ae-49a7-8d51-49c52ae18b4d")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.PurchaseOrderItem.TransitionalDeniedPermissions),
-            new RolePattern(m.OrderItemBilling.OrderItem) { Steps = new IPropertyType[] { m.OrderItemBilling.OrderItem}, OfType = m.PurchaseOrderItem.Class },
-            new RolePattern(m.OrderRequirementCommitment.OrderItem) { Steps = new IPropertyType[] { m.OrderRequirementCommitment.OrderItem}, OfType = m.PurchaseOrderItem.Class},
+            new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.TransitionalDeniedPermissions),
+            new RolePattern(m.OrderItemBilling, m.OrderItemBilling.OrderItem) { Steps = new IPropertyType[] { m.OrderItemBilling.OrderItem}, OfType = m.PurchaseOrderItem.Class },
+            new RolePattern(m.OrderRequirementCommitment, m.OrderRequirementCommitment.OrderItem) { Steps = new IPropertyType[] { m.OrderRequirementCommitment.OrderItem}, OfType = m.PurchaseOrderItem.Class},
             new AssociationPattern(m.WorkEffort.OrderItemFulfillment) { OfType = m.PurchaseOrderItem.Class },
             new AssociationPattern(m.OrderShipment.OrderItem) { OfType = m.PurchaseOrderItem.Class },
         };

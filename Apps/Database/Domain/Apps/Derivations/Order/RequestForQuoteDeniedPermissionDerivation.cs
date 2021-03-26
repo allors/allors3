@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public RequestForQuoteDeniedPermissionDerivation(M m) : base(m, new Guid("eb67ef60-1a60-4b52-85ac-979fb9346242")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.RequestForQuote.TransitionalDeniedPermissions),
-            new RolePattern(m.RequestItem.RequestItemState) { Steps =  new IPropertyType[] { m.RequestItem.RequestWhereRequestItem}, OfType = m.RequestForQuote.Class },
+            new RolePattern(m.RequestForQuote, m.RequestForQuote.TransitionalDeniedPermissions),
+            new RolePattern(m.RequestItem, m.RequestItem.RequestItemState) { Steps =  new IPropertyType[] { m.RequestItem.RequestWhereRequestItem}, OfType = m.RequestForQuote.Class },
             new AssociationPattern(m.Quote.Request) { OfType = m.RequestForQuote.Class },
         };
 

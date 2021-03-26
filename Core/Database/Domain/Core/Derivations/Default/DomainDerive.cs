@@ -88,16 +88,10 @@ namespace Allors.Database.Domain.Derivations.Default
                                 .SelectMany(v => this.Transaction.Instantiate(v.Value))
                                 .Where(v => rolePattern.ObjectType.IsAssignableFrom(v.Strategy.Class)),
 
-                            AssociationPattern { ObjectType: null } associationPattern => changeSet
+                            AssociationPattern associationPattern => changeSet
                                 .RolesByAssociationType
                                 .Where(v => v.Key.Equals(associationPattern.AssociationType))
                                 .SelectMany(v => this.Transaction.Instantiate(v.Value)),
-
-                            AssociationPattern { ObjectType: { } } associationPattern => changeSet
-                                .RolesByAssociationType
-                                .Where(v => v.Key.Equals(associationPattern.AssociationType))
-                                .SelectMany(v => this.Transaction.Instantiate(v.Value))
-                                .Where(v => associationPattern.ObjectType.IsAssignableFrom(v.Strategy.Class)),
 
                             _ => Array.Empty<IObject>()
                         };

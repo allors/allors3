@@ -17,14 +17,14 @@ namespace Allors.Database.Domain
         public NonUnifiedPartDerivation(M m) : base(m, new Guid("280E12F5-C2EA-4D9A-BEDA-D30F229D46A3")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.NonUnifiedPart.ProductIdentifications),
-                new RolePattern(m.NonUnifiedPart.Keywords),
-                new RolePattern(m.NonUnifiedPart.LocalisedNames),
-                new RolePattern(m.NonUnifiedPart.SerialisedItems),
-                new RolePattern(m.NonUnifiedPart.ProductType),
-                new RolePattern(m.NonUnifiedPart.Brand),
-                new RolePattern(m.NonUnifiedPart.Model),
-                new RolePattern(m.LocalisedText.Text) { Steps = new IPropertyType[]{ m.LocalisedText.UnifiedProductWhereLocalisedName }, OfType = m.NonUnifiedPart.Class },
+                new RolePattern(m.NonUnifiedPart, m.NonUnifiedPart.ProductIdentifications),
+                new RolePattern(m.NonUnifiedPart, m.NonUnifiedPart.Keywords),
+                new RolePattern(m.NonUnifiedPart, m.NonUnifiedPart.LocalisedNames),
+                new RolePattern(m.NonUnifiedPart, m.NonUnifiedPart.SerialisedItems),
+                new RolePattern(m.NonUnifiedPart, m.NonUnifiedPart.ProductType),
+                new RolePattern(m.NonUnifiedPart, m.NonUnifiedPart.Brand),
+                new RolePattern(m.NonUnifiedPart, m.NonUnifiedPart.Model),
+                new RolePattern(m.LocalisedText, m.LocalisedText.Text) { Steps = new IPropertyType[]{ m.LocalisedText.UnifiedProductWhereLocalisedName }, OfType = m.NonUnifiedPart.Class },
                 new AssociationPattern(m.PartCategory.Parts) { OfType = m.NonUnifiedPart.Class  },
                 new AssociationPattern(m.SupplierOffering.Part) { OfType = m.NonUnifiedPart.Class },
             };

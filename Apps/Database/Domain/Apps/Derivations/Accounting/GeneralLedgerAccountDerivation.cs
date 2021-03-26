@@ -17,15 +17,15 @@ namespace Allors.Database.Domain
         public GeneralLedgerAccountDerivation(M m) : base(m, new Guid("e916d6c3-b31b-41e2-b7ef-3265977e0fea")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.GeneralLedgerAccount.AccountNumber),
-                new RolePattern(m.GeneralLedgerAccount.DefaultCostCenter),
-                new RolePattern(m.GeneralLedgerAccount.AssignedCostCentersAllowed),
-                new RolePattern(m.GeneralLedgerAccount.CostCenterAccount),
-                new RolePattern(m.GeneralLedgerAccount.CostCenterRequired),
-                new RolePattern(m.GeneralLedgerAccount.DefaultCostUnit),
-                new RolePattern(m.GeneralLedgerAccount.AssignedCostUnitsAllowed),
-                new RolePattern(m.GeneralLedgerAccount.CostUnitAccount),
-                new RolePattern(m.GeneralLedgerAccount.CostUnitRequired),
+                new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.AccountNumber),
+                new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.DefaultCostCenter),
+                new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.AssignedCostCentersAllowed),
+                new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.CostCenterAccount),
+                new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.CostCenterRequired),
+                new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.DefaultCostUnit),
+                new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.AssignedCostUnitsAllowed),
+                new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.CostUnitAccount),
+                new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.CostUnitRequired),
                 new AssociationPattern(m.ChartOfAccounts.GeneralLedgerAccounts),
             };
 

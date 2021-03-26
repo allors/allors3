@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new AssociationPattern(m.OwnBankAccount.BankAccount),
-                new RolePattern(m.BankAccount.Iban),
+                new RolePattern(m.BankAccount, m.BankAccount.Iban),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

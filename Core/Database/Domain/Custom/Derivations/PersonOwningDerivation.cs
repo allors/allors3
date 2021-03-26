@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         public PersonOwningDerivation(M m) : base(m, new Guid("31564037-C654-45AA-BC2B-69735A93F227")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.Person, m.Person.OrganisationsWhereOwner),
+                new AssociationPattern(m.Organisation.Owner),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -16,9 +16,9 @@ namespace Allors.Database.Domain
         public PurchaseOrderItemStateDerivation(M m) : base(m, new Guid("046a8987-0a6a-4678-8959-2d1136a2b8f8")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PurchaseOrderItem.IsReceivable),
-                new RolePattern(m.PurchaseOrder.PurchaseOrderState) {Steps = new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
-                new RolePattern(m.ShipmentReceipt.QuantityAccepted) {Steps = new IPropertyType[] {m.ShipmentReceipt.OrderItem }, OfType = m.PurchaseOrderItem.Class },
+                new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.IsReceivable),
+                new RolePattern(m.PurchaseOrder, m.PurchaseOrder.PurchaseOrderState) {Steps = new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
+                new RolePattern(m.ShipmentReceipt, m.ShipmentReceipt.QuantityAccepted) {Steps = new IPropertyType[] {m.ShipmentReceipt.OrderItem }, OfType = m.PurchaseOrderItem.Class },
                 new AssociationPattern(m.OrderItemBilling.OrderItem) { OfType = m.PurchaseOrderItem.Class },
             };
 

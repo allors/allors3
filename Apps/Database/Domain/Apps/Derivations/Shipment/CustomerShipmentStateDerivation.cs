@@ -16,18 +16,18 @@ namespace Allors.Database.Domain
         public CustomerShipmentStateDerivation(M m) : base(m, new Guid("7ff771c2-af69-427a-aeb0-4ceb73e699c7")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.CustomerShipment.DerivationTrigger),
-                new RolePattern(m.CustomerShipment.ShipToParty),
-                new RolePattern(m.CustomerShipment.ShipmentItems),
-                new RolePattern(m.CustomerShipment.ShipmentState),
-                new RolePattern(m.CustomerShipment.ShipmentValue),
-                new RolePattern(m.CustomerShipment.ReleasedManually),
-                new RolePattern(m.ShipmentItem.Quantity) { Steps =  new IPropertyType[] {m.ShipmentItem.ShipmentWhereShipmentItem}, OfType = m.CustomerShipment.Class },
-                new RolePattern(m.PackagingContent.Quantity) { Steps =  new IPropertyType[] {m.PackagingContent.ShipmentItem, m.ShipmentItem.ShipmentWhereShipmentItem}, OfType = m.CustomerShipment.Class },
+                new RolePattern(m.CustomerShipment, m.CustomerShipment.DerivationTrigger),
+                new RolePattern(m.CustomerShipment, m.CustomerShipment.ShipToParty),
+                new RolePattern(m.CustomerShipment, m.CustomerShipment.ShipmentItems),
+                new RolePattern(m.CustomerShipment, m.CustomerShipment.ShipmentState),
+                new RolePattern(m.CustomerShipment, m.CustomerShipment.ShipmentValue),
+                new RolePattern(m.CustomerShipment, m.CustomerShipment.ReleasedManually),
+                new RolePattern(m.ShipmentItem, m.ShipmentItem.Quantity) { Steps =  new IPropertyType[] {m.ShipmentItem.ShipmentWhereShipmentItem}, OfType = m.CustomerShipment.Class },
+                new RolePattern(m.PackagingContent, m.PackagingContent.Quantity) { Steps =  new IPropertyType[] {m.PackagingContent.ShipmentItem, m.ShipmentItem.ShipmentWhereShipmentItem}, OfType = m.CustomerShipment.Class },
                 new AssociationPattern(m.PickList.ShipToParty) { Steps = new IPropertyType[] { m.Party.ShipmentsWhereShipToParty }, OfType = m.CustomerShipment.Class },
-                new RolePattern(m.PickList.PickListState) { Steps = new IPropertyType[] { m.PickList.ShipToParty, m.Party.ShipmentsWhereShipToParty }, OfType = m.CustomerShipment.Class },
-                new RolePattern(m.PickList.CurrentVersion) { Steps = new IPropertyType[] { m.PickList.AllVersions, m.PickListVersion.ShipToParty, m.Party.ShipmentsWhereShipToParty }, OfType = m.CustomerShipment.Class },
-                new RolePattern(m.Store.ShipmentThreshold) { Steps = new IPropertyType[] { m.Store.ShipmentsWhereStore }, OfType = m.CustomerShipment.Class },
+                new RolePattern(m.PickList, m.PickList.PickListState) { Steps = new IPropertyType[] { m.PickList.ShipToParty, m.Party.ShipmentsWhereShipToParty }, OfType = m.CustomerShipment.Class },
+                new RolePattern(m.PickList, m.PickList.CurrentVersion) { Steps = new IPropertyType[] { m.PickList.AllVersions, m.PickListVersion.ShipToParty, m.Party.ShipmentsWhereShipToParty }, OfType = m.CustomerShipment.Class },
+                new RolePattern(m.Store, m.Store.ShipmentThreshold) { Steps = new IPropertyType[] { m.Store.ShipmentsWhereStore }, OfType = m.CustomerShipment.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

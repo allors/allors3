@@ -16,9 +16,9 @@ namespace Allors.Database.Domain
         public FaceToFaceCommunicationDerivation(M m) : base(m, new Guid("165A1691-F94C-40D2-B183-EFC764582784")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.FaceToFaceCommunication.Subject),
-                new RolePattern(m.FaceToFaceCommunication.ToParty),
-                new RolePattern(m.Party.PartyName) { Steps = new IPropertyType[] { m.Party.CommunicationEventsWhereToParty}, OfType = m.FaceToFaceCommunication.Class },
+                new RolePattern(m.FaceToFaceCommunication, m.FaceToFaceCommunication.Subject),
+                new RolePattern(m.FaceToFaceCommunication, m.FaceToFaceCommunication.ToParty),
+                new RolePattern(m.Party, m.Party.PartyName) { Steps = new IPropertyType[] { m.Party.CommunicationEventsWhereToParty}, OfType = m.FaceToFaceCommunication.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public RequestForProposalDeniedPermissionDerivation(M m) : base(m, new Guid("1eb65d1c-7164-4c98-aef5-47c3e96f26d7")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.RequestForProposal.TransitionalDeniedPermissions),
-            new RolePattern(m.RequestItem.RequestItemState) { Steps =  new IPropertyType[] { m.RequestItem.RequestWhereRequestItem}, OfType = m.RequestForProposal.Class },
+            new RolePattern(m.RequestForProposal, m.RequestForProposal.TransitionalDeniedPermissions),
+            new RolePattern(m.RequestItem, m.RequestItem.RequestItemState) { Steps =  new IPropertyType[] { m.RequestItem.RequestWhereRequestItem}, OfType = m.RequestForProposal.Class },
             new AssociationPattern(m.Quote.Request) { OfType = m.RequestForProposal.Class },
         };
 

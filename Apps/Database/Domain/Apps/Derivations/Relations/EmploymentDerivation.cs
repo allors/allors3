@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public EmploymentDerivation(M m) : base(m, new Guid("F0587A19-E7CF-40FF-B715-5A6021525326")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.Employment.Employee),
-                new RolePattern(m.Employment.Employer),
+                new RolePattern(m.Employment, m.Employment.Employee),
+                new RolePattern(m.Employment, m.Employment.Employer),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

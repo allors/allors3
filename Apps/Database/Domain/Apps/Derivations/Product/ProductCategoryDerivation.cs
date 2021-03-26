@@ -16,18 +16,18 @@ namespace Allors.Database.Domain
         public ProductCategoryDerivation(M m) : base(m, new Guid("59C88605-9799-4849-A0E9-F107DB4BFBD1")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.ProductCategory.Name),
-                new RolePattern(m.ProductCategory.PrimaryParent),
-                new RolePattern(m.ProductCategory.SecondaryParents),
-                new RolePattern(m.ProductCategory.CategoryImage),
-                new RolePattern(m.ProductCategory.Products),
-                new RolePattern(m.LocalisedText.Text) {Steps = new IPropertyType[] {m.LocalisedText.ProductCategoryWhereLocalisedName } },
-                new RolePattern(m.LocalisedText.Text) {Steps = new IPropertyType[] {m.LocalisedText.ProductCategoryWhereLocalisedDescription } },
+                new RolePattern(m.ProductCategory, m.ProductCategory.Name),
+                new RolePattern(m.ProductCategory, m.ProductCategory.PrimaryParent),
+                new RolePattern(m.ProductCategory, m.ProductCategory.SecondaryParents),
+                new RolePattern(m.ProductCategory, m.ProductCategory.CategoryImage),
+                new RolePattern(m.ProductCategory, m.ProductCategory.Products),
+                new RolePattern(m.LocalisedText, m.LocalisedText.Text) {Steps = new IPropertyType[] {m.LocalisedText.ProductCategoryWhereLocalisedName } },
+                new RolePattern(m.LocalisedText, m.LocalisedText.Text) {Steps = new IPropertyType[] {m.LocalisedText.ProductCategoryWhereLocalisedDescription } },
                 new AssociationPattern(m.ProductCategory.PrimaryParent),
-                new RolePattern(m.ProductCategory.PrimaryParent) {Steps = new IPropertyType[] {m.ProductCategory.ProductCategoriesWhereDescendant} },
+                new RolePattern(m.ProductCategory, m.ProductCategory.PrimaryParent) {Steps = new IPropertyType[] {m.ProductCategory.ProductCategoriesWhereDescendant} },
                 new AssociationPattern(m.ProductCategory.SecondaryParents),
-                new RolePattern(m.ProductCategory.SecondaryParents) {Steps = new IPropertyType[] {m.ProductCategory.ProductCategoriesWhereDescendant} },
-                new RolePattern(m.ProductCategory.AllProducts) {Steps = new IPropertyType[] {m.ProductCategory.ProductCategoriesWhereDescendant} },
+                new RolePattern(m.ProductCategory, m.ProductCategory.SecondaryParents) {Steps = new IPropertyType[] {m.ProductCategory.ProductCategoriesWhereDescendant} },
+                new RolePattern(m.ProductCategory, m.ProductCategory.AllProducts) {Steps = new IPropertyType[] {m.ProductCategory.ProductCategoriesWhereDescendant} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

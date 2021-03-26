@@ -16,12 +16,12 @@ namespace Allors.Database.Domain
         public PartDerivation(M m) : base(m, new Guid("4F894B49-4922-4FC8-9172-DC600CCDB1CA")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.Part.Name),
-                new RolePattern(m.Part.DefaultFacility),
-                new RolePattern(m.Part.UnitOfMeasure),
-                new RolePattern(m.Part.ProductType),
+                new RolePattern(m.Part, m.Part.Name),
+                new RolePattern(m.Part, m.Part.DefaultFacility),
+                new RolePattern(m.Part, m.Part.UnitOfMeasure),
+                new RolePattern(m.Part, m.Part.ProductType),
                 new AssociationPattern(m.InventoryItem.Part),
-                new RolePattern(m.ProductType.SerialisedItemCharacteristicTypes) { Steps = new IPropertyType[]{ this.M.ProductType.PartsWhereProductType } },
+                new RolePattern(m.ProductType, m.ProductType.SerialisedItemCharacteristicTypes) { Steps = new IPropertyType[]{ this.M.ProductType.PartsWhereProductType } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

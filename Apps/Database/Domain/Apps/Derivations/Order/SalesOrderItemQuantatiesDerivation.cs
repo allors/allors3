@@ -16,9 +16,9 @@ namespace Allors.Database.Domain
         public SalesOrderItemQuantatiesDerivation(M m) : base(m, new Guid("5790f640-2435-466e-8f34-6cb817008e3d")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SalesOrderItem.SalesOrderItemState),
-                new RolePattern(m.SalesOrderItem.QuantityPendingShipment),
-                new RolePattern(m.SalesOrderItem.QuantityShipped),
+                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.SalesOrderItemState),
+                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.QuantityPendingShipment),
+                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.QuantityShipped),
                 new AssociationPattern(m.InventoryItemTransaction.InventoryItem) { Steps = new IPropertyType[] { m.NonSerialisedInventoryItem.SalesOrderItemInventoryAssignmentsWhereInventoryItem, m.SalesOrderItemInventoryAssignment.SalesOrderItemWhereSalesOrderItemInventoryAssignment } },
                 new AssociationPattern(m.PickListItem.InventoryItem) { Steps = new IPropertyType[] { m.NonSerialisedInventoryItem.SalesOrderItemInventoryAssignmentsWhereInventoryItem, m.SalesOrderItemInventoryAssignment.SalesOrderItemWhereSalesOrderItemInventoryAssignment } },
             };

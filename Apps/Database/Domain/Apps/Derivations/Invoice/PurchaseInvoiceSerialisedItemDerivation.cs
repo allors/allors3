@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         public PurchaseInvoiceSerialisedItemDerivation(M m) : base(m, new Guid("21aa08df-18b8-4d50-b882-455fb453a67a")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PurchaseInvoice.PurchaseInvoiceState),
+                new RolePattern(m.PurchaseInvoice, m.PurchaseInvoice.PurchaseInvoiceState),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -10,11 +10,17 @@ namespace Allors.Database.Derivations
 
     public class RolePattern : Pattern
     {
-        public RolePattern(IComposite objectType, IRoleType roleType) : base(objectType) => this.RoleType = roleType;
+        public RolePattern(IComposite objectType, IRoleType roleType)
+        {
+            this.ObjectType = objectType;
+            this.RoleType = roleType;
+        }
 
         public RolePattern(MetaInterface metaInterface, IRoleType roleType) : this(metaInterface.ObjectType, roleType) { }
 
         public RolePattern(MetaClass metaClass, IRoleType roleType) : this(metaClass.ObjectType, roleType) { }
+
+        public IComposite ObjectType { get; set; }
 
         public IRoleType RoleType { get; }
     }

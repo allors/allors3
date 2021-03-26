@@ -16,11 +16,11 @@ namespace Allors.Database.Domain
         public PurchaseInvoiceItemStateDerivation(M m) : base(m, new Guid("17686122-4e0d-4a4f-ad5c-6b3c77b969c4")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PurchaseInvoiceItem.DerivationTrigger),
-                new RolePattern(m.PurchaseInvoiceItem.AmountPaid),
-                new RolePattern(m.PurchaseInvoiceItem.TotalIncVat),
-                new RolePattern(m.PurchaseInvoice.PurchaseInvoiceState) { Steps =  new IPropertyType[] {m.PurchaseInvoice.PurchaseInvoiceItems} },
-                new RolePattern(m.PurchaseInvoice.AmountPaid) { Steps =  new IPropertyType[] {m.PurchaseInvoice.PurchaseInvoiceItems} },
+                new RolePattern(m.PurchaseInvoiceItem, m.PurchaseInvoiceItem.DerivationTrigger),
+                new RolePattern(m.PurchaseInvoiceItem, m.PurchaseInvoiceItem.AmountPaid),
+                new RolePattern(m.PurchaseInvoiceItem, m.PurchaseInvoiceItem.TotalIncVat),
+                new RolePattern(m.PurchaseInvoice, m.PurchaseInvoice.PurchaseInvoiceState) { Steps =  new IPropertyType[] {m.PurchaseInvoice.PurchaseInvoiceItems} },
+                new RolePattern(m.PurchaseInvoice, m.PurchaseInvoice.AmountPaid) { Steps =  new IPropertyType[] {m.PurchaseInvoice.PurchaseInvoiceItems} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

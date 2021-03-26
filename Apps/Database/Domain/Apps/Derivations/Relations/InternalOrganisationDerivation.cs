@@ -16,16 +16,16 @@ namespace Allors.Database.Domain
         public InternalOrganisationDerivation(M m) : base(m, new Guid("258A6E3B-7940-4FCC-A33E-AE07C6FBFC32")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.InternalOrganisation.DefaultCollectionMethod),
-                new RolePattern(m.InternalOrganisation.AssignedActiveCollectionMethods),
-                new RolePattern(m.InternalOrganisation.IsInternalOrganisation),
-                new RolePattern(m.InternalOrganisation.InvoiceSequence),
-                new RolePattern(m.InternalOrganisation.RequestSequence),
-                new RolePattern(m.InternalOrganisation.QuoteSequence),
-                new RolePattern(m.InternalOrganisation.WorkEffortSequence),
-                new RolePattern(m.InternalOrganisation.PurchaseShipmentSequence),
-                new RolePattern(m.InternalOrganisation.CustomerReturnSequence),
-                new RolePattern(m.InternalOrganisation.IncomingTransferSequence),
+                new RolePattern(m.InternalOrganisation, m.InternalOrganisation.DefaultCollectionMethod),
+                new RolePattern(m.InternalOrganisation, m.InternalOrganisation.AssignedActiveCollectionMethods),
+                new RolePattern(m.InternalOrganisation, m.InternalOrganisation.IsInternalOrganisation),
+                new RolePattern(m.InternalOrganisation, m.InternalOrganisation.InvoiceSequence),
+                new RolePattern(m.InternalOrganisation, m.InternalOrganisation.RequestSequence),
+                new RolePattern(m.InternalOrganisation, m.InternalOrganisation.QuoteSequence),
+                new RolePattern(m.InternalOrganisation, m.InternalOrganisation.WorkEffortSequence),
+                new RolePattern(m.InternalOrganisation, m.InternalOrganisation.PurchaseShipmentSequence),
+                new RolePattern(m.InternalOrganisation, m.InternalOrganisation.CustomerReturnSequence),
+                new RolePattern(m.InternalOrganisation, m.InternalOrganisation.IncomingTransferSequence),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

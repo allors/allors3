@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         public SerialisedInventoryItemDeniedPermissionDerivation(M m) : base(m, new Guid("30ae162a-ac07-4a80-817c-1f5455976f93")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.SerialisedInventoryItem.TransitionalDeniedPermissions),
+            new RolePattern(m.SerialisedInventoryItem, m.SerialisedInventoryItem.TransitionalDeniedPermissions),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

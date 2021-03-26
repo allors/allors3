@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         public CountryDerivation(M m) : base(m, new Guid("9cc7cee8-40b2-48bd-9f37-78d5fe86cd07")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.Country.IsoCode),
+                new RolePattern(m.Country, m.Country.IsoCode),
                 new AssociationPattern(m.VatRegime.Country),
             };
 

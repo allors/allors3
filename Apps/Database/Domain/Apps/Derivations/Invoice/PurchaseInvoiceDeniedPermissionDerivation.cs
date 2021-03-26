@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public PurchaseInvoiceDeniedPermissionDerivation(M m) : base(m, new Guid("f245b128-a597-4311-aad9-d68cb54bac7d")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.PurchaseInvoice.TransitionalDeniedPermissions),
-            new RolePattern(m.PurchaseInvoice.BilledFrom),
+            new RolePattern(m.PurchaseInvoice, m.PurchaseInvoice.TransitionalDeniedPermissions),
+            new RolePattern(m.PurchaseInvoice, m.PurchaseInvoice.BilledFrom),
             new AssociationPattern(m.SalesInvoice.PurchaseInvoice),
         };
 

@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new AssociationPattern(m.WorkEffortPurchaseOrderItemAssignment.Assignment),
-                new RolePattern(m.WorkEffortPurchaseOrderItemAssignment.Quantity) { Steps = new IPropertyType[] { m.WorkEffortPurchaseOrderItemAssignment.Assignment } },
-                new RolePattern(m.WorkEffortPurchaseOrderItemAssignment.UnitSellingPrice) { Steps = new IPropertyType[] { m.WorkEffortPurchaseOrderItemAssignment.Assignment } },
+                new RolePattern(m.WorkEffortPurchaseOrderItemAssignment, m.WorkEffortPurchaseOrderItemAssignment.Quantity) { Steps = new IPropertyType[] { m.WorkEffortPurchaseOrderItemAssignment.Assignment } },
+                new RolePattern(m.WorkEffortPurchaseOrderItemAssignment, m.WorkEffortPurchaseOrderItemAssignment.UnitSellingPrice) { Steps = new IPropertyType[] { m.WorkEffortPurchaseOrderItemAssignment.Assignment } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

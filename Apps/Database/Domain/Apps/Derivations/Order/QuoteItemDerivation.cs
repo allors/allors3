@@ -18,15 +18,15 @@ namespace Allors.Database.Domain
         public QuoteItemDerivation(M m) : base(m, new Guid("17010D27-1BE9-4A8C-8AF5-8A9F9589AAF6")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.QuoteItem.InvoiceItemType),
-                new RolePattern(m.QuoteItem.Product),
-                new RolePattern(m.QuoteItem.ProductFeature),
-                new RolePattern(m.QuoteItem.Deliverable),
-                new RolePattern(m.QuoteItem.WorkEffort),
-                new RolePattern(m.QuoteItem.SerialisedItem),
-                new RolePattern(m.QuoteItem.Quantity),
-                new RolePattern(m.QuoteItem.RequestItem),
-                new RolePattern(m.QuoteItem.UnitOfMeasure),
+                new RolePattern(m.QuoteItem, m.QuoteItem.InvoiceItemType),
+                new RolePattern(m.QuoteItem, m.QuoteItem.Product),
+                new RolePattern(m.QuoteItem, m.QuoteItem.ProductFeature),
+                new RolePattern(m.QuoteItem, m.QuoteItem.Deliverable),
+                new RolePattern(m.QuoteItem, m.QuoteItem.WorkEffort),
+                new RolePattern(m.QuoteItem, m.QuoteItem.SerialisedItem),
+                new RolePattern(m.QuoteItem, m.QuoteItem.Quantity),
+                new RolePattern(m.QuoteItem, m.QuoteItem.RequestItem),
+                new RolePattern(m.QuoteItem, m.QuoteItem.UnitOfMeasure),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

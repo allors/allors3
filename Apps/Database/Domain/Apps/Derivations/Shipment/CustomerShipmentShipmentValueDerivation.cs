@@ -18,8 +18,8 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new AssociationPattern(m.OrderShipment.ShipmentItem) { Steps = new IPropertyType[] { m.ShipmentItem.ShipmentWhereShipmentItem }, OfType = m.CustomerShipment.Class },
-                new RolePattern(m.OrderShipment.Quantity) { Steps = new IPropertyType[] { m.OrderShipment.ShipmentItem, m.ShipmentItem.ShipmentWhereShipmentItem }, OfType = m.CustomerShipment.Class },
-                new RolePattern(m.SalesOrderItem.UnitPrice) { Steps = new IPropertyType[] { m.SalesOrderItem.OrderShipmentsWhereOrderItem, m.OrderShipment.ShipmentItem, m.ShipmentItem.ShipmentWhereShipmentItem }, OfType = m.CustomerShipment.Class },
+                new RolePattern(m.OrderShipment, m.OrderShipment.Quantity) { Steps = new IPropertyType[] { m.OrderShipment.ShipmentItem, m.ShipmentItem.ShipmentWhereShipmentItem }, OfType = m.CustomerShipment.Class },
+                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.UnitPrice) { Steps = new IPropertyType[] { m.SalesOrderItem.OrderShipmentsWhereOrderItem, m.OrderShipment.ShipmentItem, m.ShipmentItem.ShipmentWhereShipmentItem }, OfType = m.CustomerShipment.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
