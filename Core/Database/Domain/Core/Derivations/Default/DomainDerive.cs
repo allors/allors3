@@ -67,7 +67,7 @@ namespace Allors.Database.Domain.Derivations.Default
                     Validation = domainValidation
                 };
 
-                var matchesByDerivation = new Dictionary<IDomainDerivation, IEnumerable<IObject>>();
+                var matchesByDerivation = new Dictionary<IRule, IEnumerable<IObject>>();
                 foreach (var domainDerivation in derivations)
                 {
                     var matches = new HashSet<IObject>();

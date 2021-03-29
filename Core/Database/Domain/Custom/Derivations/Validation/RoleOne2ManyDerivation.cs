@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class RoleOne2ManyDerivation : DomainDerivation
+    public class RoleOne2ManyDerivation : Rule
     {
         public RoleOne2ManyDerivation(M m) : base(m, new Guid("d40ab5c5-c248-4455-bad4-8c825f48e080")) =>
             this.Patterns = new Pattern[]

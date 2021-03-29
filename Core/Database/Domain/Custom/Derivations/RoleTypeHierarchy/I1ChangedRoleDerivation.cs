@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class I1ChangedRoleDerivation : DomainDerivation
+    public class I1ChangedRoleDerivation : Rule
     {
         public I1ChangedRoleDerivation(M m) : base(m, new Guid("475E8B38-21BB-40F9-AD67-9A7432F73CDD")) =>
             this.Patterns = new Pattern[]

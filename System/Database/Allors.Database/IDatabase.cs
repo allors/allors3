@@ -26,7 +26,7 @@ namespace Allors.Database
         /// </summary>
         event RelationNotLoadedEventHandler RelationNotLoaded;
 
-        IDomainDerivation[] Derivations { get; }
+        IRule[] Derivations { get; }
 
         IProcedures Procedures { get; }
 
@@ -84,6 +84,6 @@ namespace Allors.Database
         /// <param name="writer">The writer.</param>
         void Save(XmlWriter writer);
 
-        void AddDerivation(IDomainDerivation derivation);
+        void AddDerivation(IRule derivation);
     }
 }
