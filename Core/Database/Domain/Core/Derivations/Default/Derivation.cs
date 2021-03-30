@@ -10,6 +10,7 @@ namespace Allors.Database.Domain.Derivations.Default
     using System.Linq;
     using Database.Data;
     using Database.Derivations;
+    using Meta;
     using Object = Domain.Object;
 
     public class Derivation
@@ -67,61 +68,151 @@ namespace Allors.Database.Domain.Derivations.Default
                     Validation = domainValidation
                 };
 
-                var matchesByDerivation = new Dictionary<IRule, IEnumerable<IObject>>();
-                foreach (var rule in this.Engine.ClassesByRule.Keys)
+
+                var matchesByRule = new Dictionary<IRule, ISet<IObject>>();
+
+                foreach (var kvp in changeSet.AssociationsByRoleType)
                 {
-                    var matches = new HashSet<IObject>();
+                    var roleType = kvp.Key;
+                    var associations = this.Transaction.Instantiate(kvp.Value);
 
-                    foreach (var pattern in rule.Patterns)
+                    foreach (var association in associations)
                     {
-                        var source = pattern switch
+                        var strategy = association.Strategy;
+                        var @class = strategy.Class;
+
+                        if (this.Engine.PatternsByRoleTypeByClass.TryGetValue(@class, out var patternsByRoleType))
                         {
-
-                            RolePattern { ObjectType: null } rolePattern => changeSet
-                                .AssociationsByRoleType
-                                .Where(v => v.Key.Equals(rolePattern.RoleType))
-                                .SelectMany(v => this.Transaction.Instantiate(v.Value)),
-
-                            RolePattern { ObjectType: { } } rolePattern => changeSet
-                                .AssociationsByRoleType
-                                .Where(v => v.Key.RelationType.Equals(rolePattern.RoleType.RelationType))
-                                .SelectMany(v => this.Transaction.Instantiate(v.Value))
-                                .Where(v => rolePattern.ObjectType.IsAssignableFrom(v.Strategy.Class)),
-
-                            AssociationPattern associationPattern => changeSet
-                                .RolesByAssociationType
-                                .Where(v => v.Key.Equals(associationPattern.AssociationType))
-                                .SelectMany(v => this.Transaction.Instantiate(v.Value)),
-
-                            _ => Array.Empty<IObject>()
-                        };
-
-                        if (source != null)
-                        {
-                            if (pattern.Steps?.Length > 0)
+                            if (patternsByRoleType.TryGetValue(roleType, out var patterns))
                             {
-                                var step = new Step(pattern.Steps);
-                                source = source.SelectMany(v => step.Get(v));
-                            }
+                                foreach (var pattern in patterns)
+                                {
+                                    var rule = this.Engine.RuleByPattern[pattern];
+                                    if (!matchesByRule.TryGetValue(rule, out var matches))
+                                    {
+                                        matches = new HashSet<IObject>();
+                                        matchesByRule.Add(rule, matches);
+                                    }
 
-                            if (pattern.OfType != null)
-                            {
-                                source = source.Where(v => pattern.OfType.IsAssignableFrom(v.Strategy.Class));
-                            }
+                                    IEnumerable<IObject> source = new IObject[] { association };
 
-                            matches.UnionWith(source);
+                                    if (pattern.Steps?.Length > 0)
+                                    {
+                                        var step = new Step(pattern.Steps);
+                                        source = source.SelectMany(v => step.Get(v));
+                                    }
+
+                                    if (pattern.OfType != null)
+                                    {
+                                        source = source.Where(v => pattern.OfType.IsAssignableFrom(v.Strategy.Class));
+                                    }
+
+                                    matches.UnionWith(source);
+                                }
+                            }
                         }
-                    }
-
-                    if (matches.Count > 0)
-                    {
-                        matchesByDerivation[rule] = matches;
                     }
                 }
 
+                foreach (var kvp in changeSet.RolesByAssociationType)
+                {
+                    var associationType = kvp.Key;
+                    var roles = this.Transaction.Instantiate(kvp.Value);
+
+                    foreach (var role in roles)
+                    {
+                        var strategy = role.Strategy;
+                        var @class = strategy.Class;
+
+                        if (this.Engine.PatternsByAssociationTypeByClass.TryGetValue(@class, out var patternsByAssociationType))
+                        {
+                            if (patternsByAssociationType.TryGetValue(associationType, out var patterns))
+                            {
+                                foreach (var pattern in patterns)
+                                {
+                                    var rule = this.Engine.RuleByPattern[pattern];
+                                    if (!matchesByRule.TryGetValue(rule, out var matches))
+                                    {
+                                        matches = new HashSet<IObject>();
+                                        matchesByRule.Add(rule, matches);
+                                    }
+
+                                    IEnumerable<IObject> source = new IObject[] { role };
+
+                                    if (pattern.Steps?.Length > 0)
+                                    {
+                                        var step = new Step(pattern.Steps);
+                                        source = source.SelectMany(v => step.Get(v));
+                                    }
+
+                                    if (pattern.OfType != null)
+                                    {
+                                        source = source.Where(v => pattern.OfType.IsAssignableFrom(v.Strategy.Class));
+                                    }
+
+                                    matches.UnionWith(source);
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+                //var matchesByRule = new Dictionary<IRule, IEnumerable<IObject>>();
+                //foreach (var rule in this.Engine.ClassesByRule.Keys)
+                //{
+                //    var matches = new HashSet<IObject>();
+
+                //    foreach (var pattern in rule.Patterns)
+                //    {
+                //        var source = pattern switch
+                //        {
+
+                //            RolePattern { ObjectType: null } rolePattern => changeSet
+                //                .AssociationsByRoleType
+                //                .Where(v => v.Key.Equals(rolePattern.RoleType))
+                //                .SelectMany(v => this.Transaction.Instantiate(v.Value)),
+
+                //            RolePattern { ObjectType: { } } rolePattern => changeSet
+                //                .AssociationsByRoleType
+                //                .Where(v => v.Key.RelationType.Equals(rolePattern.RoleType.RelationType))
+                //                .SelectMany(v => this.Transaction.Instantiate(v.Value))
+                //                .Where(v => rolePattern.ObjectType.IsAssignableFrom(v.Strategy.Class)),
+
+                //            AssociationPattern associationPattern => changeSet
+                //                .RolesByAssociationType
+                //                .Where(v => v.Key.Equals(associationPattern.AssociationType))
+                //                .SelectMany(v => this.Transaction.Instantiate(v.Value)),
+
+                //            _ => Array.Empty<IObject>()
+                //        };
+
+                //        if (source != null)
+                //        {
+                //            if (pattern.Steps?.Length > 0)
+                //            {
+                //                var step = new Step(pattern.Steps);
+                //                source = source.SelectMany(v => step.Get(v));
+                //            }
+
+                //            if (pattern.OfType != null)
+                //            {
+                //                source = source.Where(v => pattern.OfType.IsAssignableFrom(v.Strategy.Class));
+                //            }
+
+                //            matches.UnionWith(source);
+                //        }
+                //    }
+
+                //    if (matches.Count > 0)
+                //    {
+                //        matchesByRule[rule] = matches;
+                //    }
+                //}
+
                 // TODO: Prefetching
 
-                foreach (var kvp in matchesByDerivation)
+                foreach (var kvp in matchesByRule)
                 {
                     var domainDerivation = kvp.Key;
                     var matches = kvp.Value;
