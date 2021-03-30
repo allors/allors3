@@ -34,11 +34,19 @@ namespace Allors.Database.Domain
                         {
                             @this.SerialisedItemAvailability = shipmentItem.NextSerialisedItemAvailability;
 
-                            if ((shipment.ShipFromParty as InternalOrganisation)?.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(@this.Transaction()).CustomerShipmentShip) == true
-                                && shipmentItem.NextSerialisedItemAvailability.Equals(new SerialisedItemAvailabilities(@this.Transaction()).Sold))
+                            if ((shipment.ShipFromParty as InternalOrganisation)?.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(@this.Transaction()).CustomerShipmentShip) == true)
                             {
-                                @this.OwnedBy = shipment.ShipToParty;
-                                @this.Ownership = new Ownerships(@this.Transaction()).ThirdParty;
+                                if (shipmentItem.NextSerialisedItemAvailability.Equals(new SerialisedItemAvailabilities(@this.Transaction()).Sold))
+                                {
+                                    @this.OwnedBy = shipment.ShipToParty;
+                                    @this.Ownership = new Ownerships(@this.Transaction()).ThirdParty;
+
+                                }
+
+                                if (shipmentItem.NextSerialisedItemAvailability.Equals(new SerialisedItemAvailabilities(@this.Transaction()).InRent))
+                                {
+                                    @this.RentedBy = shipment.ShipToParty;
+                                }
                             }
                         }
 
