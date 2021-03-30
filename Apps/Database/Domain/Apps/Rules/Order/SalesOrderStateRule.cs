@@ -121,6 +121,11 @@ namespace Allors.Database.Domain
                                 item.SerialisedItem.OwnedBy = @this.ShipToCustomer;
                                 item.SerialisedItem.Ownership = new Ownerships(@this.Transaction()).ThirdParty;
                             }
+
+                            if (item.NextSerialisedItemAvailability.Equals(new SerialisedItemAvailabilities(@this.Transaction()).InRent))
+                            {
+                                item.SerialisedItem.RentedBy = @this.ShipToCustomer;
+                            }
                         }
 
                         item.SerialisedItem.AvailableForSale = false;
