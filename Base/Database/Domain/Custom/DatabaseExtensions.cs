@@ -14,10 +14,10 @@ namespace Allors.Database.Domain
         public static void RegisterDerivations(this @IDatabase @this)
         {
             var m = @this.Context().M;
-            var derivations = new IDomainDerivation[]
+            var derivations = new IRule[]
             {
                 // Core
-                new MediaDerivation(m),
+                new MediaRule(m),
 
                 // Custom
                 new PersonFullNameDerivation(m),

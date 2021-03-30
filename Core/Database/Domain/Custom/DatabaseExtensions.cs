@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
         public static void RegisterDerivations(this @IDatabase @this)
         {
             var m = @this.Context().M;
-            var derivations = new IDomainDerivation[]
+            var derivations = new IRule[]
             {
                 // Custom
                 new PersonFullNameDerivation(m),

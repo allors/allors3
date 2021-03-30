@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class PersonGreetingDerivation : DomainDerivation
+    public class PersonGreetingDerivation : Rule
     {
         public PersonGreetingDerivation(M m) : base(m, new Guid("5FFD5696-E735-4D05-8405-3A444B6F591E")) =>
             this.Patterns = new Pattern[]
