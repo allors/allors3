@@ -15,27 +15,23 @@ namespace Allors.Database.Domain.Tests
 
     public abstract class DomainTest : IDisposable
     {
+        private readonly Fixture fixture;
+        private readonly bool populate;
+
         protected DomainTest(Fixture fixture, bool populate = true)
         {
-            var database = new Database(
-                new DefaultDatabaseContext(),
-                new Configuration
-                {
-                    ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(User)),
-                });
-
-            this.M = database.Context().M;
-
-            this.Setup(database, populate);
+            this.fixture = fixture;
+            this.populate = populate;
         }
 
         public static IEnumerable<object[]> TestedDerivationTypes
-            => new object[][] {
+            => new[]
+            {
                 new object[] {DerivationTypes.Coarse },
                 new object[] {DerivationTypes.Fine },
             };
         
-        public M M { get; }
+        public M M { get; private set; }
 
         public virtual Config Config { get; } = new Config { SetupSecurity = false };
 
@@ -63,8 +59,6 @@ namespace Allors.Database.Domain.Tests
         {
             database.Init();
 
-            database.RegisterDerivations();
-
             this.Transaction = database.CreateTransaction();
 
             if (populate)
@@ -74,16 +68,24 @@ namespace Allors.Database.Domain.Tests
             }
         }
 
-        protected void RegisterAdditionalDerivations(DerivationTypes derivationType)
+        protected void SelectDerivationType(DerivationTypes derivationType)
         {
-            if (derivationType == DerivationTypes.Fine)
+            DatabaseContext databaseContext = derivationType switch
             {
-                this.Transaction.Database.RegisterFineDerivations();
-            }
-            else
-            {
-                this.Transaction.Database.RegisterCoarseDerivations();
-            }
+                DerivationTypes.Fine => new FineDatabaseContext(),
+                _ => new CourseDatabaseContext()
+            };
+
+            var database = new Database(
+                databaseContext,
+                new Configuration
+                {
+                    ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(User)),
+                });
+
+            this.M = database.Context().M;
+
+            this.Setup(database, populate);
         }
     }
 }

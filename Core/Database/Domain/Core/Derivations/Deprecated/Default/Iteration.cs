@@ -20,7 +20,6 @@ namespace Allors.Database.Domain.Derivations.Default
             this.Cycle = cycle;
             this.ChangeSet = new AccumulatedChangeSet();
             this.Graph = new Graph(this.Cycle.Derivation);
-            this.DerivationConfig = cycle.Derivation.DerivationConfig;
         }
 
         ICycle IIteration.Cycle => this.Cycle;
@@ -28,8 +27,6 @@ namespace Allors.Database.Domain.Derivations.Default
         IPreparation IIteration.Preparation => this.Preparation;
 
         IAccumulatedChangeSet IIteration.ChangeSet => this.ChangeSet;
-
-        public DerivationConfig DerivationConfig { get; }
 
         internal Cycle Cycle { get; }
 
@@ -80,7 +77,7 @@ namespace Allors.Database.Domain.Derivations.Default
         {
             try
             {
-                var domainDerive = new DomainDerive(this.Cycle.Derivation.Transaction, this.Cycle.Derivation.Validation, this.DerivationConfig);
+                var domainDerive = new Derivation(this.Cycle.Derivation.Transaction, this.Cycle.Derivation.Validation, this.Cycle.Derivation.Engine, this.Cycle.Derivation.MaxCycles);
                 var domainAccumulatedChangeSet = domainDerive.Execute();
                 
                 // Object Derivations

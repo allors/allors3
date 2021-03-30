@@ -36,7 +36,6 @@ namespace Allors.Database.Adapters.Memory
 
             this.Id = string.IsNullOrWhiteSpace(configuration.Id) ? Guid.NewGuid().ToString("N").ToLowerInvariant() : configuration.Id;
 
-            this.Derivations = Array.Empty<IRule>();
             this.Procedures = new DefaultProcedures(this.ObjectFactory.Assembly);
 
             this.Lifecycle.OnInit(this);
@@ -45,8 +44,6 @@ namespace Allors.Database.Adapters.Memory
         public event ObjectNotLoadedEventHandler ObjectNotLoaded;
 
         public event RelationNotLoadedEventHandler RelationNotLoaded;
-
-        public IRule[] Derivations { get; private set; }
 
         public IProcedures Procedures { get; set; }
 
@@ -69,8 +66,6 @@ namespace Allors.Database.Adapters.Memory
         ITransaction IDatabase.CreateTransaction() => this.CreateDatabaseTransaction();
 
         public ITransaction CreateDatabaseTransaction() => this.Transaction;
-
-        public void AddDerivation(IRule derivation) => this.Derivations = new List<IRule>(this.Derivations) { derivation }.ToArray();
 
         public void Load(XmlReader reader)
         {

@@ -13,7 +13,9 @@ namespace Allors.Database.Domain
         public void AppsDelete(DeletableDelete method)
         {
             var transaction = this.strategy.Transaction;
-            var derivation = new Derivations.Default.DefaultDerivation(transaction);
+
+            // TODO: Avoid creating a Derivation
+            var derivation = this.DatabaseContext().DerivationFactory.CreateDerivation(transaction);
             this.SyncInventoryTransactions(derivation, this.InventoryItem, this.Quantity, new InventoryTransactionReasons(transaction).Consumption, true);
         }
 

@@ -7,7 +7,9 @@
 namespace Allors.Database.Configuration
 {
     using Database;
+    using Derivations;
     using Domain;
+    using Domain.Derivations.Default;
     using Microsoft.AspNetCore.Http;
 
     public class DefaultDatabaseContext : DatabaseContext
@@ -18,7 +20,30 @@ namespace Allors.Database.Configuration
         {
             base.OnInit(database);
 
-            this.DerivationFactory = new DefaultDerivationFactory();
+            var m = this.M;
+
+            var rules = new Rule[]
+            {
+                // Custom
+                new PersonFullNameRule(m),
+                new PersonGreetingRule(m),
+                new PersonOwningRule(m),
+
+                // Validation
+                new RoleOne2OneRule(m),
+                new RoleOne2ManyRule(m),
+                new RoleMany2OneRule(m),
+                new RoleMany2ManyRule(m),
+
+                // RoleTypeHierarchy
+                new C1ChangedRoleRule(m),
+                new I12ChangedRoleRule(m),
+                new I1ChangedRoleRule(m),
+                new S12ChangedRoleRule(m),
+            };
+
+            var engine = new Engine(this.MetaPopulation, rules);
+            this.DerivationFactory = new DerivationFactory(engine);
         }
     }
 }

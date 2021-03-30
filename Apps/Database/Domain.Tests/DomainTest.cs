@@ -65,8 +65,6 @@ namespace Allors.Database.Domain.Tests
         {
             database.Init();
 
-            database.RegisterDerivations();
-
             this.Transaction = database.CreateTransaction();
 
             if (populate)

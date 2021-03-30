@@ -77,7 +77,6 @@ namespace Commands
                 {
                     var databaseBuilder = new DatabaseBuilder(new DefaultDatabaseContext(), this.Configuration, new ObjectFactory(new MetaBuilder().Build(), typeof(User)), this.IsolationLevel, this.CommandTimeout);
                     this.database = databaseBuilder.Build();
-                    this.database.RegisterDerivations();
                 }
 
                 return this.database;

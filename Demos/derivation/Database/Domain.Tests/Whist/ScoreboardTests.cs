@@ -23,7 +23,7 @@ namespace Allors.Database.Domain.Tests.Whist
 
         private void Setup(DerivationTypes data)
         {
-            this.RegisterAdditionalDerivations(data);
+            this.SelectDerivationType(data);
 
             var people = new People(this.Transaction);
 
@@ -113,8 +113,7 @@ namespace Allors.Database.Domain.Tests.Whist
 
             game.AddWinner(this.player1);
 
-            var derive = new DefaultDerivation(this.Transaction);
-            var validation = derive.Derive();
+            var validation = this.Transaction.Derive(false);
 
             //Assert
             Assert.Equal(6, scoreboard.AccumulatedScores.First(v => v.Player == player1).Value);

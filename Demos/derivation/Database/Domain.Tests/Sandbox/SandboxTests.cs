@@ -15,7 +15,7 @@ namespace Allors.Database.Domain.Tests.Sandbox
         [MemberData(nameof(TestedDerivationTypes))]
         public void Dummy(object data)
         {
-            this.RegisterAdditionalDerivations((DerivationTypes)data);
+            this.SelectDerivationType((DerivationTypes)data);
 
             // arrange
 

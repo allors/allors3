@@ -45,10 +45,7 @@ namespace Allors.Database.Meta
         /// <value>The association.</value>
         public AssociationType AssociationType => this.RelationType.AssociationType;
         IAssociationType IRoleType.AssociationType => this.AssociationType;
-
-        public Composite AssociationTypeComposite { get; }
-        IComposite IRoleType.AssociationTypeComposite => this.AssociationTypeComposite;
-
+        
         public ObjectType ObjectType
         {
             get => this.objectType;

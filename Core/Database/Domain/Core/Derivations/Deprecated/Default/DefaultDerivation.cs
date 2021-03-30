@@ -18,10 +18,12 @@ namespace Allors.Database.Domain.Derivations.Default
 
         private Properties properties;
 
-        public DefaultDerivation(ITransaction transaction, DerivationConfig config = null)
+        public DefaultDerivation(ITransaction transaction, Engine engine, int maxCycles)
         {
-            this.DerivationConfig = config ?? new DerivationConfig();
+            this.DerivationConfig = new DerivationConfig();
             this.Transaction = transaction;
+            this.Engine = engine;
+            this.MaxCycles = maxCycles;
 
             this.Id = Guid.NewGuid();
             this.TimeStamp = this.Transaction.Now();
@@ -36,6 +38,10 @@ namespace Allors.Database.Domain.Derivations.Default
         }
 
         public ITransaction Transaction { get; }
+
+        public Engine Engine { get; }
+
+        public int MaxCycles { get; }
 
         public DerivationConfig DerivationConfig { get; }
 

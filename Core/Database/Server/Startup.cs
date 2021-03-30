@@ -7,6 +7,7 @@ namespace Allors.Server
 {
     using System.Collections.Generic;
     using System.Text;
+    using Database;
     using Database.Domain;
     using Database.Meta;
     using Services;
@@ -81,10 +82,7 @@ namespace Allors.Server
             // Allors
             var databaseScope = new DefaultDatabaseContext(httpContextAccessor);
             var databaseBuilder = new DatabaseBuilder(databaseScope, this.Configuration, new ObjectFactory(new MetaBuilder().Build(), typeof(User)));
-            var database = databaseBuilder.Build();
-            database.RegisterDerivations();
-
-            app.ApplicationServices.GetRequiredService<IDatabaseService>().Database = database;
+            app.ApplicationServices.GetRequiredService<IDatabaseService>().Database = databaseBuilder.Build();
 
             if (env.IsDevelopment())
             {

@@ -7,6 +7,7 @@
 namespace Allors.Database.Configuration
 {
     using Domain;
+    using Domain.Derivations.Default;
     using Microsoft.AspNetCore.Http;
     
 
@@ -18,7 +19,19 @@ namespace Allors.Database.Configuration
         {
             base.OnInit(database);
 
-            this.DerivationFactory = new DefaultDerivationFactory();
+            var m = this.M;
+
+            var rules = new Rule[]
+            {
+                // Core
+                new MediaRule(m),
+                new TransitionalDeniedPermissionRule(m),
+
+                // Custom
+            };
+
+            var engine = new Engine(this.MetaPopulation, rules);
+            this.DerivationFactory = new DerivationFactory(engine);
         }
     }
 }

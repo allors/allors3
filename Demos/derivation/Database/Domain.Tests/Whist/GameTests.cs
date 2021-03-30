@@ -21,7 +21,7 @@ namespace Allors.Database.Domain.Tests.Whist
 
         public void Setup(DerivationTypes data)
         {
-            this.RegisterAdditionalDerivations(data);
+            this.SelectDerivationType(data);
 
             var people = new People(this.Transaction);
 

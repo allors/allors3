@@ -134,9 +134,15 @@ namespace Allors.Repository
         public C1 I12C1Many2One { get; set; }
 
         public DateTime I12AllorsDateTime { get; set; }
-
-        public bool ChangedRolePing { get; set; }
-        public bool ChangedRolePong { get; set; }
+        
+        public bool ChangedRolePingS12 { get; set; }
+        public bool ChangedRolePongS12 { get; set; }
+        public bool ChangedRolePingI12 { get; set; }
+        public bool ChangedRolePongI12 { get; set; }
+        public bool ChangedRolePingI1 { get; set; }
+        public bool ChangedRolePongI1 { get; set; }
+        public bool ChangedRolePingC1 { get; set; }
+        public bool ChangedRolePongC1 { get; set; }
 
         #endregion
 

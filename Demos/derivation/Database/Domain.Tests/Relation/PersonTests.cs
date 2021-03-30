@@ -15,7 +15,7 @@ namespace Allors.Database.Domain.Tests.Relation
         [MemberData(nameof(TestedDerivationTypes))]
         public void GivenPerson_WhenDeriving_ThenRequiredRelationsMustExist(object data)
         {
-            this.RegisterAdditionalDerivations((DerivationTypes)data);
+            this.SelectDerivationType((DerivationTypes)data);
 
             var builder = new PersonBuilder(this.Transaction);
             builder.Build();
@@ -27,7 +27,7 @@ namespace Allors.Database.Domain.Tests.Relation
         [MemberData(nameof(TestedDerivationTypes))]
         public void OneDeclarerAndThreeDefenderDerivationTest(object data)
         {
-            this.RegisterAdditionalDerivations((DerivationTypes) data);
+            this.SelectDerivationType((DerivationTypes) data);
 
             var people = new People(this.Transaction);
 
@@ -69,7 +69,7 @@ namespace Allors.Database.Domain.Tests.Relation
         [MemberData(nameof(TestedDerivationTypes))]
         public void TwoDeclarerAndTwoDefenderDerivationTest(object data)
         {
-            this.RegisterAdditionalDerivations((DerivationTypes)data);
+            this.SelectDerivationType((DerivationTypes)data);
 
             var people = new People(this.Transaction);
 

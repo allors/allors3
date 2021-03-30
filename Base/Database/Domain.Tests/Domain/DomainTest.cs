@@ -73,8 +73,6 @@ namespace Allors.Database.Domain.Tests
         {
             database.Init();
 
-            database.RegisterDerivations();
-
             this.Session = database.CreateTransaction();
 
             if (populate)

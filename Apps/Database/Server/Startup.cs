@@ -82,7 +82,6 @@ namespace Allors.Database.Server.Controllers
             var defaultDatabaseContext = new DefaultDatabaseContext(httpContextAccessor);
             var databaseBuilder = new DatabaseBuilder(defaultDatabaseContext, this.Configuration, new ObjectFactory(new MetaBuilder().Build(), typeof(User)));
             var database = databaseBuilder.Build();
-            database.RegisterDerivations();
 
             app.ApplicationServices.GetRequiredService<IDatabaseService>().Database = database;
 

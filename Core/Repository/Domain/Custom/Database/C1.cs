@@ -137,6 +137,16 @@ namespace Allors.Repository
 
         public int DerivationCount { get; set; }
 
+        public bool ChangedRolePingS12 { get; set; }
+        public bool ChangedRolePongS12 { get; set; }
+        public bool ChangedRolePingI12 { get; set; }
+        public bool ChangedRolePongI12 { get; set; }
+        public bool ChangedRolePingI1 { get; set; }
+        public bool ChangedRolePongI1 { get; set; }
+        public bool ChangedRolePingC1 { get; set; }
+        public bool ChangedRolePongC1 { get; set; }
+
+
         #endregion
 
         #region Allors
@@ -387,10 +397,6 @@ namespace Allors.Repository
         public void OnPostDerive() { }
 
         public void InterfaceMethod() { }
-
-        public bool ChangedRolePing { get; set; }
-
-        public bool ChangedRolePong { get; set; }
 
         public void SuperinterfaceMethod() { }
 

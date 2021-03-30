@@ -21,8 +21,6 @@ namespace Allors.Database.Meta
 
         IAssociationType AssociationType { get; }
 
-        IComposite AssociationTypeComposite { get; }
-
         IRelationType RelationType { get; }
 
         int? Size { get; }

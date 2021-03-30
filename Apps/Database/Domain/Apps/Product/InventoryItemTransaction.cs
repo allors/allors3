@@ -138,7 +138,8 @@ namespace Allors.Database.Domain
 
         private void SyncInventoryItem()
         {
-            var derivation = new Derivations.Default.DefaultDerivation(this.Strategy.Transaction);
+            // TODO: Avoid creating a Derivation
+            var derivation = this.DatabaseContext().DerivationFactory.CreateDerivation(this.Strategy.Transaction);
             var facility = this.Facility ?? this.Part.DefaultFacility;
             var unitOfMeasure = this.UnitOfMeasure ?? this.Part.UnitOfMeasure;
 

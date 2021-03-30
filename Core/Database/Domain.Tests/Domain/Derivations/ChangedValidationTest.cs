@@ -110,73 +110,61 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void C1ChangedRole()
         {
-            var derivation = new C1ChangedRoleDerivation(this.M);
-            this.Transaction.Database.AddDerivation(derivation);
-
             var c1 = new C1Builder(this.Transaction).Build();
             var c2 = new C2Builder(this.Transaction).Build();
 
-            c1.ChangedRolePing = true;
-            c2.ChangedRolePing = true;
+            c1.ChangedRolePingC1 = true;
+            c2.ChangedRolePingC1 = true;
 
             this.Transaction.Derive();
 
-            Assert.True(c1.ChangedRolePong);
-            Assert.Null(c2.ChangedRolePong);
+            Assert.True(c1.ChangedRolePongC1);
+            Assert.Null(c2.ChangedRolePongC1);
         }
 
         [Fact]
         public void I1ChangedRole()
         {
-            var derivation = new I1ChangedRoleDerivation(this.M);
-            this.Transaction.Database.AddDerivation(derivation);
-
             var c1 = new C1Builder(this.Transaction).Build();
             var c2 = new C2Builder(this.Transaction).Build();
 
-            c1.ChangedRolePing = true;
-            c2.ChangedRolePing = true;
+            c1.ChangedRolePingI1 = true;
+            c2.ChangedRolePingI1 = true;
 
             this.Transaction.Derive();
 
-            Assert.True(c1.ChangedRolePong);
-            Assert.Null(c2.ChangedRolePong);
+            Assert.True(c1.ChangedRolePongI1);
+            Assert.Null(c2.ChangedRolePongI1);
         }
 
         [Fact]
         public void I12ChangedRole()
         {
-            var derivation = new I12ChangedRoleDerivation(this.M);
-            this.Transaction.Database.AddDerivation(derivation);
-
             var c1 = new C1Builder(this.Transaction).Build();
             var c2 = new C2Builder(this.Transaction).Build();
 
-            c1.ChangedRolePing = true;
-            c2.ChangedRolePing = true;
+            c1.ChangedRolePingI12 = true;
+            c2.ChangedRolePingI12 = true;
 
             this.Transaction.Derive();
 
-            Assert.True(c1.ChangedRolePong);
-            Assert.True(c2.ChangedRolePong);
+            Assert.True(c1.ChangedRolePongI12);
+            Assert.True(c2.ChangedRolePongI12);
         }
-        
+
         [Fact]
         public void S12ChangedRole()
         {
-            var derivation = new S12ChangedRoleDerivation(this.M);
-            this.Transaction.Database.AddDerivation(derivation);
-
             var c1 = new C1Builder(this.Transaction).Build();
             var c2 = new C2Builder(this.Transaction).Build();
 
-            c1.ChangedRolePing = true;
-            c2.ChangedRolePing = true;
+            c1.ChangedRolePingS12 = true;
+            c2.ChangedRolePingS12 = true;
 
             this.Transaction.Derive();
 
-            Assert.True(c1.ChangedRolePong);
-            Assert.True(c2.ChangedRolePong);
+            Assert.True(c1.ChangedRolePongS12);
+            Assert.True(c2.ChangedRolePongS12);
         }
     }
 }

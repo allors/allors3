@@ -27,18 +27,20 @@ namespace Allors.Database.Domain
 
         private void Derive(Extent extent)
         {
-            var derivation = new Derivations.Default.DefaultDerivation(this.transaction);
-            derivation.Mark(extent.Cast<Object>().ToArray());
-            var validation = derivation.Derive();
-            if (validation.HasErrors)
-            {
-                foreach (var error in validation.Errors)
-                {
-                    Console.WriteLine(error.Message);
-                }
+            // TODO:
 
-                throw new Exception("Derivation Error");
-            }
+            //var derivation = new Derivations.Default.DefaultDerivation(this.transaction);
+            //derivation.Mark(extent.Cast<Object>().ToArray());
+            //var validation = derivation.Derive();
+            //if (validation.HasErrors)
+            //{
+            //    foreach (var error in validation.Errors)
+            //    {
+            //        Console.WriteLine(error.Message);
+            //    }
+
+            //    throw new Exception("Derivation Error");
+            //}
         }
     }
 }

@@ -57,9 +57,6 @@ namespace Allors.Database.Domain.Tests
         protected void Setup(IDatabase database, bool populate)
         {
             database.Init();
-
-            database.RegisterDerivations();
-
             this.Session = database.CreateTransaction();
 
             if (populate)

@@ -91,7 +91,6 @@ namespace Allors.Database.Adapters.Npgsql
 
             this.SchemaName = (configuration.SchemaName ?? "allors").ToLowerInvariant();
 
-            this.Derivations = Array.Empty<IRule>();
             this.Procedures = new DefaultProcedures(this.ObjectFactory.Assembly);
 
             this.Lifecycle.OnInit(this);
@@ -100,8 +99,6 @@ namespace Allors.Database.Adapters.Npgsql
         public event ObjectNotLoadedEventHandler ObjectNotLoaded;
 
         public event RelationNotLoadedEventHandler RelationNotLoaded;
-
-        public IRule[] Derivations { get; private set; }
 
         public IDatabaseLifecycle Lifecycle { get; }
 
@@ -201,8 +198,6 @@ namespace Allors.Database.Adapters.Npgsql
 
             return new Transaction(this, connection, this.Lifecycle.CreateTransactionInstance());
         }
-
-        public void AddDerivation(IRule derivation) => this.Derivations = new List<IRule>(this.Derivations) { derivation }.ToArray();
 
         public void Init()
         {
