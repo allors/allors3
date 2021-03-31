@@ -8,11 +8,12 @@ namespace Allors.Database.Configuration
 {
     using Bogus;
     using Database;
+    using Domain.Derivations.Default;
     using Microsoft.AspNetCore.Http;
 
     public class FakerDatabaseContext : DefaultDatabaseContext
     {
-        public FakerDatabaseContext(IHttpContextAccessor httpContextAccessor = null) : base(httpContextAccessor) { }
+        public FakerDatabaseContext(Engine engine, IHttpContextAccessor httpContextAccessor = null) : base(engine, httpContextAccessor) { }
 
         public override void OnInit(IDatabase database)
         {

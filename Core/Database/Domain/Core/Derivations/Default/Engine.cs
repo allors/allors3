@@ -21,7 +21,7 @@ namespace Allors.Database.Domain.Derivations.Default
 
         public IDictionary<Pattern, IRule> RuleByPattern { get; }
 
-        public Engine(MetaPopulation m, Rule[] rules)
+        public Engine(Rule[] rules)
         {
             this.ClassesByRule = new Dictionary<Rule, ISet<IClass>>();
             this.PatternsByRoleTypeByClass = new Dictionary<IClass, IDictionary<IRoleType, ISet<RolePattern>>>();

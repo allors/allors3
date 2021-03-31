@@ -53,6 +53,9 @@ namespace Allors.Database.Adapters.Npgsql
                 throw new ArgumentException("Domain is invalid");
             }
 
+            this.MetaPopulation = this.ObjectFactory.MetaPopulation;
+            this.M = configuration.M;
+
             this.ConnectionString = configuration.ConnectionString;
             this.ConnectionFactory = configuration.ConnectionFactory;
             this.ManagementConnectionFactory = configuration.ManagementConnectionFactory;
@@ -100,6 +103,7 @@ namespace Allors.Database.Adapters.Npgsql
 
         public event RelationNotLoadedEventHandler RelationNotLoaded;
 
+
         public IDatabaseLifecycle Lifecycle { get; }
 
         public IConnectionFactory ConnectionFactory
@@ -129,7 +133,9 @@ namespace Allors.Database.Adapters.Npgsql
 
         public IObjectFactory ObjectFactory { get; }
 
-        public IMetaPopulation MetaPopulation => this.ObjectFactory.MetaPopulation;
+        public IMetaPopulation MetaPopulation { get; }
+
+        public object M { get; }
 
         public bool IsShared => true;
 

@@ -18,6 +18,7 @@ namespace Allors.Server.Tests
     using Database.Domain;
     using Database.Meta;
     using Database.Configuration;
+    using Database.Domain.Derivations.Default;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
     using Protocol.Json.Auth;
@@ -44,11 +45,15 @@ namespace Allors.Server.Tests
             var configuration = configurationBuilder.Build();
 
             var metaPopulation = new MetaBuilder().Build();
+            var m = new M(metaPopulation);
+            var rules = Rules.Create(this.M);
+            var engine = new Engine(rules);
             var database = new Database(
-                new DefaultDatabaseContext(),
+                new DefaultDatabaseContext(engine),
                 new Configuration
                 {
                     ConnectionString = configuration["ConnectionStrings:DefaultConnection"],
+                    M = m,
                     ObjectFactory = new ObjectFactory(metaPopulation, typeof(C1)),
                 });
 

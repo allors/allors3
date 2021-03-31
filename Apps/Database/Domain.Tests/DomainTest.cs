@@ -21,9 +21,10 @@ namespace Allors.Database.Domain.Tests
         public DomainTest(Fixture fixture, bool populate = true)
         {
             var database = new Database(
-                new FakerDatabaseContext(),
+                new FakerDatabaseContext(fixture.Engine),
                 new Configuration
                 {
+                    M = fixture.M,
                     ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(User)),
                 });
 

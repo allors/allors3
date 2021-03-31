@@ -6,12 +6,10 @@
 namespace Allors.Database.Adapters.Memory
 {
     using System;
-    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Xml;
 
     using Meta;
-    using Derivations;
 
     public class Database : IDatabase
     {
@@ -31,6 +29,9 @@ namespace Allors.Database.Adapters.Memory
             {
                 throw new Exception("Configuration.ObjectFactory is missing");
             }
+
+            this.MetaPopulation = this.ObjectFactory.MetaPopulation;
+            this.M = configuration.M;
 
             this.concreteClassesByObjectType = new Dictionary<IObjectType, object>();
 
@@ -53,7 +54,9 @@ namespace Allors.Database.Adapters.Memory
 
         public IObjectFactory ObjectFactory { get; }
 
-        public IMetaPopulation MetaPopulation => this.ObjectFactory.MetaPopulation;
+        public IMetaPopulation MetaPopulation { get; }
+
+        public object M { get; }
 
         public IDatabaseLifecycle Lifecycle { get; }
 

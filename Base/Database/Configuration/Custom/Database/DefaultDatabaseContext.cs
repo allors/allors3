@@ -6,34 +6,19 @@
 
 namespace Allors.Database.Configuration
 {
-    using Domain;
+    using Database;
     using Domain.Derivations.Default;
     using Microsoft.AspNetCore.Http;
 
-
     public class DefaultDatabaseContext : DatabaseContext
     {
-        public DefaultDatabaseContext(IHttpContextAccessor httpContextAccessor = null) : base(httpContextAccessor) { }
+        public DefaultDatabaseContext(Engine engine, IHttpContextAccessor httpContextAccessor = null) : base(engine, httpContextAccessor) { }
 
         public override void OnInit(IDatabase database)
         {
             base.OnInit(database);
 
-            var m = this.M;
-
-            var rules = new Rule[]
-            {
-                // Core
-                new MediaRule(m),
-                new TransitionalDeniedPermissionRule(m),
-
-                // Custom
-                new PersonFullNameDerivation(m),
-                new PersonGreetingDerivation(m),
-            };
-
-            var engine = new Engine(this.MetaPopulation, rules);
-            this.DerivationFactory = new DerivationFactory(engine);
+            this.DerivationFactory = new DerivationFactory(this.Engine);
         }
     }
 }
