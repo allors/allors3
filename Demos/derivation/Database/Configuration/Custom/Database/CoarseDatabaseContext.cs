@@ -31,7 +31,7 @@ namespace Allors.Database.Configuration
                 new CoarseRule(m),
             };
 
-            var engine = new Engine(this.MetaPopulation, rules);
+            var engine = new Engine(rules);
             this.DerivationFactory = new DerivationFactory(engine);
         }
     }

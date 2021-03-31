@@ -8,6 +8,7 @@ namespace Allors.Database.Configuration
 {
     using Database.Data;
     using Domain;
+    using Domain.Derivations.Default;
     using Meta;
     using Microsoft.AspNetCore.Http;
 
@@ -50,7 +51,7 @@ namespace Allors.Database.Configuration
         public MetaPopulation MetaPopulation { get; private set; }
 
         public M M { get; private set; }
-
+        
         public IMetaCache MetaCache { get; private set; }
 
         public IPrefetchPolicyCache PrefetchPolicyCache { get; set; }

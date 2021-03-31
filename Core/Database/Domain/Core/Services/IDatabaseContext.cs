@@ -17,8 +17,6 @@ namespace Allors.Database.Domain
 
         M M { get; }
 
-        Engine Engine { get; }
-
         IPrefetchPolicyCache PrefetchPolicyCache { get; }
 
         IPermissionsCache PermissionsCache { get; }

@@ -19,15 +19,14 @@ namespace Tests.Workspace.Local
         public Test(Fixture fixture, bool populate = true)
         {
             this.Database = new Database(
-                new DefaultDatabaseContext(),
+                new DefaultDatabaseContext(fixture.Engine),
                 new Configuration
                 {
-                    ObjectFactory = new Allors.Database.ObjectFactory(fixture.MetaPopulation, typeof(C1)),
+                    M = fixture.M,
+                    ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(User)),
                 });
 
             this.Database.Init();
-
-            this.Database.RegisterDerivations();
 
             if (populate)
             {

@@ -13,25 +13,14 @@ namespace Allors.Database.Configuration
 
     public class DefaultDatabaseContext : DatabaseContext
     {
-        public DefaultDatabaseContext(IHttpContextAccessor httpContextAccessor = null) : base(httpContextAccessor) { }
+        public DefaultDatabaseContext(Engine engine, IHttpContextAccessor httpContextAccessor = null) : base(httpContextAccessor) => this.Engine = engine;
+
+        public Engine Engine { get; }
 
         public override void OnInit(IDatabase database)
         {
             base.OnInit(database);
-
-            var m = this.M;
-
-            var rules = new Rule[]
-            {
-                // Core
-                new MediaRule(m),
-                new TransitionalDeniedPermissionRule(m),
-
-                // Custom
-            };
-
-            var engine = new Engine(this.MetaPopulation, rules);
-            this.DerivationFactory = new DerivationFactory(engine);
+            this.DerivationFactory = new DerivationFactory(this.Engine);
         }
     }
 }
