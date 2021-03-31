@@ -17,14 +17,16 @@ namespace Allors.Database.Adapters
         private readonly IDatabaseLifecycle scope;
         private readonly IConfiguration configuration;
         private readonly ObjectFactory objectFactory;
+        private readonly object m;
         private readonly IsolationLevel? isolationLevel;
         private readonly int? commandTimeout;
 
-        public DatabaseBuilder(IDatabaseLifecycle scope, IConfiguration configuration, ObjectFactory objectFactory, IsolationLevel? isolationLevel = null, int? commandTimeout = null)
+        public DatabaseBuilder(IDatabaseLifecycle scope, IConfiguration configuration, ObjectFactory objectFactory, object m, IsolationLevel? isolationLevel = null, int? commandTimeout = null)
         {
             this.scope = scope;
             this.configuration = configuration;
             this.objectFactory = objectFactory;
+            this.m = m;
             this.isolationLevel = isolationLevel;
             this.commandTimeout = commandTimeout;
         }
@@ -43,8 +45,9 @@ namespace Allors.Database.Adapters
 
                     return new Npgsql.Database(this.scope, new Npgsql.Configuration
                     {
-                        ConnectionString = connectionString,
+                        M = this.m,
                         ObjectFactory = this.objectFactory,
+                        ConnectionString = connectionString,
                         IsolationLevel = this.isolationLevel,
                         CommandTimeout = this.commandTimeout,
                     });
@@ -54,8 +57,9 @@ namespace Allors.Database.Adapters
 
                     return new SqlClient.Database(this.scope, new SqlClient.Configuration
                     {
-                        ConnectionString = connectionString,
+                        M = this.m,
                         ObjectFactory = this.objectFactory,
+                        ConnectionString = connectionString,
                         IsolationLevel = this.isolationLevel,
                         CommandTimeout = this.commandTimeout,
                     });

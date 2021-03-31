@@ -6,6 +6,7 @@
 namespace Allors.Database.Domain
 {
     using Database.Data;
+    using Derivations.Default;
     using Meta;
 
     public partial interface IDatabaseContext : IDatabaseLifecycle
@@ -15,6 +16,8 @@ namespace Allors.Database.Domain
         MetaPopulation MetaPopulation { get; }
 
         M M { get; }
+
+        Engine Engine { get; }
 
         IPrefetchPolicyCache PrefetchPolicyCache { get; }
 

@@ -56,6 +56,8 @@ namespace Allors.Database
         /// </summary>
         IMetaPopulation MetaPopulation { get; }
 
+        object M { get; }
+
         IDatabaseLifecycle Lifecycle { get; }
 
         /// <summary>

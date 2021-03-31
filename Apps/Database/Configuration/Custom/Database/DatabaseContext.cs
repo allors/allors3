@@ -8,6 +8,7 @@ namespace Allors.Database.Configuration
 {
     using Data;
     using Domain;
+    using Domain.Derivations.Default;
     using Meta;
     using Microsoft.AspNetCore.Http;
 
@@ -15,7 +16,11 @@ namespace Allors.Database.Configuration
     {
         private readonly IHttpContextAccessor httpContextAccessor;
 
-        protected DatabaseContext(IHttpContextAccessor httpContextAccessor = null) => this.httpContextAccessor = httpContextAccessor;
+        protected DatabaseContext(Engine engine, IHttpContextAccessor httpContextAccessor = null)
+        {
+            this.Engine = engine;
+            this.httpContextAccessor = httpContextAccessor;
+        }
 
         public virtual void OnInit(IDatabase database)
         {
@@ -50,6 +55,8 @@ namespace Allors.Database.Configuration
         public MetaPopulation MetaPopulation { get; private set; }
 
         public M M { get; private set; }
+
+        public Engine Engine { get; }
 
         public IMetaCache MetaCache { get; private set; }
 

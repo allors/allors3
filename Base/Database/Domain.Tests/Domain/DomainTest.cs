@@ -22,10 +22,11 @@ namespace Allors.Database.Domain.Tests
         public DomainTest(Fixture fixture, bool populate = true)
         {
             var database = new Database(
-                new DefaultDatabaseContext(),
+                new DefaultDatabaseContext(fixture.Engine),
                 new Configuration
                 {
-                    ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(C1)),
+                    M = fixture.M,
+                    ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(User)),
                 });
 
             this.M = database.Context().M;
