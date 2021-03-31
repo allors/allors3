@@ -46,7 +46,7 @@ namespace Allors.Server.Tests
 
             var metaPopulation = new MetaBuilder().Build();
             var m = new M(metaPopulation);
-            var rules = Rules.Create(this.M);
+            var rules = Rules.Create(m);
             var engine = new Engine(rules);
             var database = new Database(
                 new DefaultDatabaseContext(engine),
