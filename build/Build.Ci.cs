@@ -16,9 +16,7 @@ partial class Build
 
     private Target CiCoreWorkspaceTest => _ => _
         .DependsOn(this.CoreInstall)
-        // TODO: Reactivate
-        //.DependsOn(this.CoreWorkspaceTest)
-        ;
+        .DependsOn(this.CoreWorkspaceTest);
 
     private Target CiBaseDatabaseTest => _ => _
         .DependsOn(this.BaseDatabaseTest);

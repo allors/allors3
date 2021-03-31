@@ -158,11 +158,10 @@ partial class Build
                     .SetLogger("trx;LogFileName=CoreWorkspaceCSharpAdaptersLocalTests.trx")
                     .SetResultsDirectory(this.Paths.ArtifactsTests));
 
-                // TODO: Enable once stabilized
-                //DotNetTest(s => s
-                //    .SetProjectFile(this.Paths.CoreWorkspaceCSharpTestsLocal)
-                //    .SetLogger("trx;LogFileName=CoreWorkspaceCSharpTestsLocal.trx")
-                //    .SetResultsDirectory(this.Paths.ArtifactsTests));
+                DotNetTest(s => s
+                    .SetProjectFile(this.Paths.CoreWorkspaceCSharpTestsLocal)
+                    .SetLogger("trx;LogFileName=CoreWorkspaceCSharpTestsLocal.trx")
+                    .SetResultsDirectory(this.Paths.ArtifactsTests));
             }
 
             {
@@ -193,8 +192,9 @@ partial class Build
 
     Target CoreWorkspaceTest => _ => _
         .DependsOn(this.CoreWorkspaceCSharpTest);
+        // TODO: Reactivate
         //.DependsOn(this.CoreWorkspaceTypescriptTest);
-        
+
     Target CoreTest => _ => _
         .DependsOn(this.CoreDatabaseTest)
         .DependsOn(this.CoreWorkspaceTest);

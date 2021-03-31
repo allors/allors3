@@ -30,15 +30,15 @@ namespace Tests.Workspace.Local
         public Profile(Fixture fixture)
         {
             this.Database = new Database(
-                new DefaultDatabaseContext(),
+                new DefaultDatabaseContext(fixture.Engine),
                 new Configuration
                 {
+                    M = fixture.M,
                     ObjectFactory = new Allors.Database.ObjectFactory(fixture.MetaPopulation, typeof(Person)),
                 });
 
-            this.Database.Init();
 
-            this.Database.RegisterDerivations();
+            this.Database.Init();
 
             using var session = this.Database.CreateTransaction();
             new Setup(session, new Config()).Apply();
