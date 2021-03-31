@@ -22,12 +22,12 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(false);
 
             var glAccount = new GeneralLedgerAccountBuilder(this.Transaction)
-                .WithAccountNumber("0001")
+                .WithReferenceNumber("0001")
                 .WithName("GeneralLedgerAccount")
-                .WithBalanceSheetAccount(true)
-                .WithSide(new DebitCreditConstants(this.Transaction).Debit)
+                .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
+                .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
                 .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Transaction).WithDescription("accountGroup").Build())
+                .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction).WithName("accountGroup").Build())
                 .Build();
 
             var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction)
@@ -46,7 +46,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Rollback();
 
-            builder.WithDescription("description");
+            builder.WithName("description");
             builder.Build();
 
             Assert.False(this.Transaction.Derive(false).HasErrors);
@@ -59,12 +59,12 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(false);
 
             var glAccount = new GeneralLedgerAccountBuilder(this.Transaction)
-                .WithAccountNumber("0001")
+                .WithReferenceNumber("0001")
                 .WithName("GeneralLedgerAccount")
-                .WithBalanceSheetAccount(true)
-                .WithSide(new DebitCreditConstants(this.Transaction).Debit)
+                .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
+                .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
                 .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Transaction).WithDescription("accountGroup").Build())
+                .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction).WithName("accountGroup").Build())
                 .Build();
 
             var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction)
@@ -75,7 +75,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Commit();
 
             var builder = new JournalBuilder(this.Transaction);
-            builder.WithDescription("description");
+            builder.WithName("description");
             builder.WithJournalType(new JournalTypes(this.Transaction).Bank);
             builder.WithContraAccount(internalOrganisationGlAccount);
             builder.Build();
@@ -90,12 +90,12 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(false);
 
             var glAccount = new GeneralLedgerAccountBuilder(this.Transaction)
-                .WithAccountNumber("0001")
+                .WithReferenceNumber("0001")
                 .WithName("GeneralLedgerAccount")
-                .WithBalanceSheetAccount(true)
-                .WithSide(new DebitCreditConstants(this.Transaction).Debit)
+                .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
+                .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
                 .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Transaction).WithDescription("accountGroup").Build())
+                .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction).WithName("accountGroup").Build())
                 .Build();
 
             var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction)
@@ -106,7 +106,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Commit();
 
             var builder = new JournalBuilder(this.Transaction);
-            builder.WithDescription("description");
+            builder.WithName("description");
             builder.WithContraAccount(internalOrganisationGlAccount);
             builder.Build();
 
@@ -127,7 +127,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(false);
 
             var builder = new JournalBuilder(this.Transaction);
-            builder.WithDescription("description");
+            builder.WithName("description");
             builder.WithJournalType(new JournalTypes(this.Transaction).Bank);
             builder.Build();
 
@@ -136,12 +136,12 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Rollback();
 
             var glAccount = new GeneralLedgerAccountBuilder(this.Transaction)
-                .WithAccountNumber("0001")
+                .WithReferenceNumber("0001")
                 .WithName("GeneralLedgerAccount")
-                .WithBalanceSheetAccount(true)
-                .WithSide(new DebitCreditConstants(this.Transaction).Debit)
+                .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
+                .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
                 .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Transaction).WithDescription("accountGroup").Build())
+                .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction).WithName("accountGroup").Build())
                 .Build();
 
             var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction)
@@ -162,9 +162,9 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(false);
 
             var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Transaction)
-                .WithAccountNumber("0001")
+                .WithReferenceNumber("0001")
                 .WithName("GeneralLedgerAccount")
-                .WithBalanceSheetAccount(true)
+                .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
                 .Build();
 
             var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction)
@@ -174,7 +174,7 @@ namespace Allors.Database.Domain.Tests
             var journal = new JournalBuilder(this.Transaction)
                 .WithJournalType(new JournalTypes(this.Transaction).Bank)
                 .WithContraAccount(internalOrganisationGlAccount)
-                .WithDescription("journal")
+                .WithName("journal")
                 .Build();
 
             this.Transaction.Derive(false);
@@ -189,9 +189,9 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(false);
 
             var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Transaction)
-                .WithAccountNumber("0001")
+                .WithReferenceNumber("0001")
                 .WithName("GeneralLedgerAccount")
-                .WithBalanceSheetAccount(true)
+                .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
                 .Build();
 
             var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction)
@@ -201,7 +201,7 @@ namespace Allors.Database.Domain.Tests
             var journal = new JournalBuilder(this.Transaction)
                 .WithJournalType(new JournalTypes(this.Transaction).Bank)
                 .WithContraAccount(internalOrganisationGlAccount)
-                .WithDescription("journal")
+                .WithName("journal")
                 .Build();
 
             this.Transaction.Derive(false);
@@ -216,9 +216,9 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(false);
 
             var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Transaction)
-                .WithAccountNumber("0001")
+                .WithReferenceNumber("0001")
                 .WithName("GeneralLedgerAccount")
-                .WithBalanceSheetAccount(true)
+                .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
                 .Build();
 
             var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction)
@@ -228,7 +228,7 @@ namespace Allors.Database.Domain.Tests
             var journal = new JournalBuilder(this.Transaction)
                 .WithJournalType(new JournalTypes(this.Transaction).Bank)
                 .WithContraAccount(internalOrganisationGlAccount)
-                .WithDescription("journal")
+                .WithName("journal")
                 .Build();
 
             this.Transaction.Derive(false);
@@ -243,12 +243,12 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(false);
 
             var generalLedgerAccount1 = new GeneralLedgerAccountBuilder(this.Transaction)
-                .WithAccountNumber("0001")
+                .WithReferenceNumber("0001")
                 .WithName("bankAccount 1")
-                .WithBalanceSheetAccount(true)
-                .WithSide(new DebitCreditConstants(this.Transaction).Debit)
+                .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
+                .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
                 .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Transaction).WithDescription("accountGroup").Build())
+                .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction).WithName("accountGroup").Build())
                 .Build();
 
             var internalOrganisationGlAccount1 = new OrganisationGlAccountBuilder(this.Transaction)
@@ -257,12 +257,12 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var generalLedgerAccount2 = new GeneralLedgerAccountBuilder(this.Transaction)
-                .WithAccountNumber("0002")
+                .WithReferenceNumber("0002")
                 .WithName("bankAccount 2")
-                .WithBalanceSheetAccount(true)
-                .WithSide(new DebitCreditConstants(this.Transaction).Debit)
+                .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
+                .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
                 .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Transaction).WithDescription("accountGroup").Build())
+                .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction).WithName("accountGroup").Build())
                 .Build();
 
             var internalOrganisationGlAccount2 = new OrganisationGlAccountBuilder(this.Transaction)
@@ -271,7 +271,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var journal = new JournalBuilder(this.Transaction)
-                .WithDescription("description")
+                .WithName("description")
                 .WithContraAccount(internalOrganisationGlAccount1)
                 .WithJournalType(new JournalTypes(this.Transaction).Bank)
                 .Build();
@@ -292,12 +292,12 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(false);
 
             var generalLedgerAccount1 = new GeneralLedgerAccountBuilder(this.Transaction)
-                .WithAccountNumber("0001")
+                .WithReferenceNumber("0001")
                 .WithName("bankAccount 1")
-                .WithBalanceSheetAccount(true)
-                .WithSide(new DebitCreditConstants(this.Transaction).Debit)
+                .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
+                .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
                 .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Transaction).WithDescription("accountGroup").Build())
+                .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction).WithName("accountGroup").Build())
                 .Build();
 
             var internalOrganisationGlAccount1 = new OrganisationGlAccountBuilder(this.Transaction)
@@ -306,12 +306,12 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var generalLedgerAccount2 = new GeneralLedgerAccountBuilder(this.Transaction)
-                .WithAccountNumber("0002")
+                .WithReferenceNumber("0002")
                 .WithName("bankAccount 2")
-                .WithBalanceSheetAccount(true)
-                .WithSide(new DebitCreditConstants(this.Transaction).Debit)
+                .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
+                .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
                 .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Transaction).WithDescription("accountGroup").Build())
+                .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction).WithName("accountGroup").Build())
                 .Build();
 
             var internalOrganisationGlAccount2 = new OrganisationGlAccountBuilder(this.Transaction)
@@ -320,18 +320,18 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var journal = new JournalBuilder(this.Transaction)
-                .WithDescription("description")
+                .WithName("description")
                 .WithContraAccount(internalOrganisationGlAccount1)
                 .WithJournalType(new JournalTypes(this.Transaction).Bank)
                 .Build();
 
             this.Transaction.Derive();
 
-            journal.AddJournalEntry(new JournalEntryBuilder(this.Transaction)
-                                        .WithJournalEntryDetail(new JournalEntryDetailBuilder(this.Transaction)
+            journal.AddAccountingTransaction(new DepreciationBuilder(this.Transaction)
+                                        .WithAccountingTransactionDetail(new AccountingTransactionDetailBuilder(this.Transaction)
                                                                     .WithAmount(1)
                                                                     .WithDebit(true)
-                                                                    .WithGeneralLedgerAccount(internalOrganisationGlAccount1)
+                                                                    .WithOrganisationGlAccount(internalOrganisationGlAccount1)
                                                                     .Build())
                                         .Build());
 
@@ -349,12 +349,12 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(false);
 
             var generalLedgerAccount1 = new GeneralLedgerAccountBuilder(this.Transaction)
-                .WithAccountNumber("0001")
+                .WithReferenceNumber("0001")
                 .WithName("bankAccount 1")
-                .WithBalanceSheetAccount(true)
-                .WithSide(new DebitCreditConstants(this.Transaction).Debit)
+                .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
+                .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
                 .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Transaction).WithDescription("accountGroup").Build())
+                .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction).WithName("accountGroup").Build())
                 .Build();
 
             var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction)
@@ -363,7 +363,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var journal = new JournalBuilder(this.Transaction)
-                .WithDescription("description")
+                .WithName("description")
                 .WithContraAccount(internalOrganisationGlAccount)
                 .WithJournalType(new JournalTypes(this.Transaction).Bank)
                 .Build();
@@ -384,12 +384,12 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(false);
 
             var generalLedgerAccount1 = new GeneralLedgerAccountBuilder(this.Transaction)
-                .WithAccountNumber("0001")
+                .WithReferenceNumber("0001")
                 .WithName("bankAccount 1")
-                .WithBalanceSheetAccount(true)
-                .WithSide(new DebitCreditConstants(this.Transaction).Debit)
+                .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
+                .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
                 .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Transaction).WithDescription("accountGroup").Build())
+                .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction).WithName("accountGroup").Build())
                 .Build();
 
             var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction)
@@ -398,18 +398,18 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var journal = new JournalBuilder(this.Transaction)
-                .WithDescription("description")
+                .WithName("description")
                 .WithContraAccount(internalOrganisationGlAccount)
                 .WithJournalType(new JournalTypes(this.Transaction).Bank)
                 .Build();
 
             this.Transaction.Derive();
 
-            journal.AddJournalEntry(new JournalEntryBuilder(this.Transaction)
-                                        .WithJournalEntryDetail(new JournalEntryDetailBuilder(this.Transaction)
+            journal.AddAccountingTransaction(new DepreciationBuilder(this.Transaction)
+                                        .WithAccountingTransactionDetail(new AccountingTransactionDetailBuilder(this.Transaction)
                                                                     .WithAmount(1)
                                                                     .WithDebit(true)
-                                                                    .WithGeneralLedgerAccount(internalOrganisationGlAccount)
+                                                                    .WithOrganisationGlAccount(internalOrganisationGlAccount)
                                                                     .Build())
                                         .Build());
 
@@ -434,7 +434,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
             this.Transaction.Derive(false);
 
-            var detail = new JournalEntryDetailBuilder(this.Transaction).WithGeneralLedgerAccount(contraAccount).Build();
+            var detail = new AccountingTransactionDetailBuilder(this.Transaction).WithOrganisationGlAccount(contraAccount).Build();
             this.Transaction.Derive(false);
 
             journal.ContraAccount = new OrganisationGlAccountBuilder(this.Transaction).Build();
@@ -454,7 +454,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
             this.Transaction.Derive(false);
 
-            var detail = new JournalEntryDetailBuilder(this.Transaction).WithGeneralLedgerAccount(journal.ContraAccount).Build();
+            var detail = new AccountingTransactionDetailBuilder(this.Transaction).WithOrganisationGlAccount(journal.ContraAccount).Build();
             this.Transaction.Derive(false);
 
             journal.JournalType = new JournalTypeBuilder(this.Transaction).Build();

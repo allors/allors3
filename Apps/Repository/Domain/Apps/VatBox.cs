@@ -1,18 +1,16 @@
-// <copyright file="JournalEntry.cs" company="Allors bvba">
+// <copyright file="VatReturnBox.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
 namespace Allors.Repository
 {
-    using System;
-
     using Attributes;
 
     #region Allors
-    [Id("11d75a7a-2e86-4430-a6af-2916440c9ecb")]
+    [Id("8dc67774-c15a-47dd-9b8a-ce4e7139e8a3")]
     #endregion
-    public partial class JournalEntry : Object
+    public partial class VatBox : Object
     {
         #region inherited properties
         public Permission[] DeniedPermissions { get; set; }
@@ -22,36 +20,22 @@ namespace Allors.Repository
         #endregion
 
         #region Allors
-        [Id("09202ffd-6b78-455b-a140-a354a771d761")]
+        [Id("3bcc4fc9-5646-4ceb-b48b-bb1d7fbcba64")]
         #endregion
-        [Size(-1)]
-        public string Description { get; set; }
+        [Size(256)]
+        public string BoxNumber { get; set; }
 
         #region Allors
-        [Id("1452d159-857a-4fff-b1d6-6d27772e54bc")]
+        [Id("78e114b4-ec1d-49ce-ab32-40a3184dea31")]
         #endregion
-
-        public int EntryNumber { get; set; }
+        public string Name { get; set; }
 
         #region Allors
-        [Id("1b5f8acd-872d-498e-9c2d-ded4b7d31efe")]
+        [Id("beb55438-918d-4876-8d0b-989b7d9fabfa")]
         #endregion
-
-        public DateTime EntryDate { get; set; }
-
-        #region Allors
-        [Id("4eca8284-cc27-4440-8b5f-adeffd3b078b")]
-        #endregion
-
-        public DateTime JournalDate { get; set; }
-
-        #region Allors
-        [Id("e81fe73b-1486-4a9d-ab2b-2d49dfcbb777")]
-        #endregion
-        [Multiplicity(Multiplicity.OneToMany)]
+        [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-
-        public JournalEntryDetail[] JournalEntryDetails { get; set; }
+        public VatBoxType VatBoxType { get; set; }
 
         #region inherited methods
 
@@ -70,5 +54,6 @@ namespace Allors.Repository
         public void OnPostDerive() { }
 
         #endregion
+
     }
 }

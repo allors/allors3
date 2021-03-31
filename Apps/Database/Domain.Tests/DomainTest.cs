@@ -136,12 +136,10 @@ namespace Allors.Database.Domain.Tests
                 .WithIncomingTransferSequence(new IncomingTransferSequences(this.Transaction).EnforcedSequence)
                 .WithOutgoingTransferSequence(new OutgoingTransferSequences(this.Transaction).EnforcedSequence)
                 .WithWorkEffortSequence(new WorkEffortSequences(this.Transaction).EnforcedSequence)
-                .WithFiscalYearStartMonth(01)
                 .WithPurchaseShipmentNumberPrefix("incoming shipmentno: ")
                 .WithPurchaseInvoiceNumberPrefix("incoming invoiceno: ")
                 .WithPurchaseOrderNumberPrefix("purchase orderno: ")
                 .WithDefaultCollectionMethod(ownBankAccount)
-                .WithSubAccountCounter(new CounterBuilder(this.Transaction).WithUniqueId(Guid.NewGuid()).WithValue(0).Build())
                 .Build();
 
             this.InternalOrganisation.AddPartyContactMechanism(new PartyContactMechanismBuilder(this.Transaction)

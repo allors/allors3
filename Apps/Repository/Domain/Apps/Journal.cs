@@ -49,17 +49,10 @@ namespace Allors.Repository
         #endregion
 
         #region Allors
-        [Id("01abf1e4-c2f8-4d04-8046-f5ac5428ff11")]
+        [Id("37493cfc-e817-4b89-b7cb-7d29f69cf41e")]
         #endregion
         [Required]
-        public bool UseAsDefault { get; set; }
-
-        #region Allors
-        [Id("04f786b4-66be-4616-9966-ac026384c0d3")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        public OrganisationGlAccount GlPaymentInTransit { get; set; }
+        public string Name { get; set; }
 
         #region Allors
         [Id("1ec79ec4-60a8-4fdc-b11e-8c25697cd457")]
@@ -70,11 +63,32 @@ namespace Allors.Repository
         public JournalType JournalType { get; set; }
 
         #region Allors
-        [Id("37493cfc-e817-4b89-b7cb-7d29f69cf41e")]
+        [Id("01abf1e4-c2f8-4d04-8046-f5ac5428ff11")]
         #endregion
         [Required]
-        [Size(-1)]
-        public string Description { get; set; }
+        public bool UseAsDefault { get; set; }
+
+        #region Allors
+        [Id("1915b6f2-aada-457e-8723-8f196a1e2fde")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Derived]
+        public InternalOrganisation InternalOrganisation { get; set; }
+
+        #region Allors
+        [Id("9b7c3687-b268-4c2b-8b04-c04a0c55d79f")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Indexed]
+        public AccountingTransaction[] AccountingTransactions { get; set; }
+
+        #region Allors
+        [Id("04f786b4-66be-4616-9966-ac026384c0d3")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        public OrganisationGlAccount UnassignedAccount { get; set; }
 
         #region Allors
         [Id("3a52aa7c-fa01-4845-866c-976e48ea2179")]
@@ -91,27 +105,12 @@ namespace Allors.Repository
         public OrganisationGlAccount ContraAccount { get; set; }
 
         #region Allors
-        [Id("774f30df-26b4-41d5-9ecb-d1fd62244e1f")]
+        [Id("9491207d-1e98-48e2-bbfc-de1b7563ce1d")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Derived]
         [Indexed]
-        public JournalType PreviousJournalType { get; set; }
-
-        #region Allors
-        [Id("9aa48ebb-0ee0-4662-bfc5-f6b8ccb7a7c3")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Derived]
-        [Indexed]
-        public OrganisationGlAccount PreviousContraAccount { get; set; }
-
-        #region Allors
-        [Id("9b7c3687-b268-4c2b-8b04-c04a0c55d79f")]
-        #endregion
-        [Multiplicity(Multiplicity.OneToMany)]
-        [Indexed]
-        public JournalEntry[] JournalEntries { get; set; }
+        [Required]
+        public Currency Currency { get; set; }
 
         #region Allors
         [Id("dbdca15b-5337-44f1-b490-c69cb36df9c3")]

@@ -28,7 +28,7 @@ namespace Allors.Database.Domain
 
             foreach (OrganisationGlAccountBalance organisationGlAccountBalance in this.OrganisationGlAccountBalancesWhereOrganisationGlAccount)
             {
-                foreach (AccountingTransactionDetail accountingTransactionDetail in organisationGlAccountBalance.AccountingTransactionDetailsWhereOrganisationGlAccountBalance)
+                foreach (AccountingTransactionDetail accountingTransactionDetail in organisationGlAccountBalance.OrganisationGlAccount.AccountingTransactionDetailsWhereOrganisationGlAccount)
                 {
                     if (accountingTransactionDetail.AccountingTransactionWhereAccountingTransactionDetail.AccountingTransactionNumber.AccountingTransactionType.Equals(new AccountingTransactionTypes(this.Strategy.Transaction).BankStatement))
                     {

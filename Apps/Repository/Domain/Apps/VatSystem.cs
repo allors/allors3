@@ -1,40 +1,33 @@
-// <copyright file="GeneralLedgerAccountGroup.cs" company="Allors bvba">
+// <copyright file="VatSystem.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
 namespace Allors.Repository
 {
-    using Attributes;
-    using static Workspaces;
+    using System;
+
+    using Allors.Repository.Attributes;
 
     #region Allors
-    [Id("4a600c96-b813-46fc-8674-06bd3f85eae4")]
+    [Id("3b73eea7-6455-4fe5-87c0-99c852f57e6b")]
     #endregion
-    public partial class GeneralLedgerAccountGroup : Object
+    public partial class VatSystem : Enumeration
     {
         #region inherited properties
+        public LocalisedText[] LocalisedNames { get; set; }
+
+        public string Name { get; set; }
+
+        public bool IsActive { get; set; }
+
         public Permission[] DeniedPermissions { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
 
-        #endregion
+        public Guid UniqueId { get; set; }
 
-        #region Allors
-        [Id("3ab2ad60-3560-4817-9862-7f60c55bbc32")]
         #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        [Workspace(Default)]
-        public GeneralLedgerAccountGroup Parent { get; set; }
-
-        #region Allors
-        [Id("a48c3601-3d4c-43af-9502-d6beda764118")]
-        #endregion
-        [Required]
-        [Size(-1)]
-        [Workspace(Default)]
-        public string Description { get; set; }
 
         #region inherited methods
 
@@ -53,5 +46,6 @@ namespace Allors.Repository
         public void OnPostDerive() { }
 
         #endregion
+
     }
 }

@@ -81,6 +81,22 @@ namespace Allors.Repository
         public VatRate[] VatRates { get; set; }
 
         #region Allors
+        [Id("b2464c0e-668d-4906-9f66-ec57ab436052")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace]
+        public VatSystem VatSystem { get; set; }
+
+        #region Allors
+        [Id("36b9d86d-4e2e-4ff5-b167-8ea6c81dd6cc")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToMany)]
+        [Indexed]
+        [Workspace]
+        public VatBox[] VatBoxes { get; set; }
+
+        #region Allors
         [Id("00A91056-1F2D-462F-8A81-6DA277AD86E1")]
         #endregion
         [Workspace(Default)]

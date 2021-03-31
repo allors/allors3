@@ -23,7 +23,6 @@ namespace Allors.Repository
         [Id("180f9887-5973-4c4a-9277-a383e4f66bc6")]
         #endregion
         [Size(256)]
-
         public string Name { get; set; }
 
         #region Allors
@@ -31,8 +30,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-
-        public VatReturnBox[] VatReturnBoxes { get; set; }
+        public VatBox[] VatBoxes { get; set; }
 
         #region inherited methods
 

@@ -126,7 +126,6 @@ namespace Allors.Database.Domain.Tests
                 .WithPurchaseShipmentNumberPrefix("incoming shipmentno: ")
                 .WithPurchaseInvoiceNumberPrefix("incoming invoiceno: ")
                 .WithPurchaseOrderNumberPrefix("purchase orderno: ")
-                .WithSubAccountCounter(new CounterBuilder(this.Transaction).WithUniqueId(Guid.NewGuid()).WithValue(0).Build())
                 .Build();
 
             var customer = new OrganisationBuilder(this.Transaction).WithName("customer").Build();

@@ -82,7 +82,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenCustomerRelationshipBuilder_WhenBuild_ThenSubAccountNumerIsValidElevenTestNumber()
         {
             var internalOrganisation = this.InternalOrganisation;
-            internalOrganisation.SubAccountCounter.Value = 1000;
+            internalOrganisation.SettingsForAccounting.SubAccountCounter.Value = 1000;
 
             this.Transaction.Commit();
 
@@ -130,7 +130,6 @@ namespace Allors.Database.Domain.Tests
                 .WithIsInternalOrganisation(true)
                 .WithDoAccounting(true)
                 .WithName("internalOrganisation2")
-                .WithSubAccountCounter(new CounterBuilder(this.Transaction).WithUniqueId(Guid.NewGuid()).WithValue(0).Build())
                 .Build();
 
             var bank = new BankBuilder(this.Transaction).WithCountry(belgium).WithName("ING België").WithBic("BBRUBEBB").Build();
@@ -141,10 +140,10 @@ namespace Allors.Database.Domain.Tests
                 .WithGeneralLedgerAccount(new OrganisationGlAccountBuilder(this.Transaction)
                                                 .WithInternalOrganisation(internalOrganisation2)
                                                 .WithGeneralLedgerAccount(new GeneralLedgerAccountBuilder(this.Transaction)
-                                                                                .WithAccountNumber("1")
+                                                                                .WithReferenceNumber("1")
                                                                                 .WithName("name")
-                                                                                .WithSide(new DebitCreditConstants(this.Transaction).Debit)
-                                                                                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Transaction).WithDescription("desc").Build())
+                                                                                .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
+                                                                                .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction).WithName("desc").Build())
                                                                                 .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("desc").Build())
                                                                                 .Build())
                                                 .Build())

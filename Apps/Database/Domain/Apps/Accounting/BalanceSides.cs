@@ -1,4 +1,4 @@
-// <copyright file="DebitCreditConstants.cs" company="Allors bvba">
+// <copyright file="BalanceSides.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -7,20 +7,20 @@ namespace Allors.Database.Domain
 {
     using System;
 
-    public partial class DebitCreditConstants
+    public partial class BalanceSides
     {
         private static readonly Guid DebitId = new Guid("C957ED48-7A31-4308-8CC5-03C8014A8646");
         private static readonly Guid CreditId = new Guid("BECDF0E7-C2DD-4ddf-A1A0-FC5E9E15F0A8");
 
-        private UniquelyIdentifiableCache<DebitCreditConstant> cache;
+        private UniquelyIdentifiableCache<BalanceSide> cache;
 
-        public DebitCreditConstant Debit => this.Cache[DebitId];
+        public BalanceSide Debit => this.Cache[DebitId];
 
-        public DebitCreditConstant Credit => this.Cache[CreditId];
+        public BalanceSide Credit => this.Cache[CreditId];
 
-        private UniquelyIdentifiableCache<DebitCreditConstant> Cache => this.cache ??= new UniquelyIdentifiableCache<DebitCreditConstant>(this.Transaction);
+        private UniquelyIdentifiableCache<BalanceSide> Cache => this.cache ??= new UniquelyIdentifiableCache<BalanceSide>(this.Transaction);
 
-        protected override void AppsSetup(Setup setup)
+        protected override void BaseSetup(Setup setup)
         {
             var dutchLocale = new Locales(this.Transaction).DutchNetherlands;
 

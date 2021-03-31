@@ -121,8 +121,6 @@ namespace Allors.Database.Domain
                 .WithIncomingTransferSequence(new IncomingTransferSequences(transaction).EnforcedSequence)
                 .WithOutgoingTransferSequence(new OutgoingTransferSequences(transaction).EnforcedSequence)
                 .WithWorkEffortSequence(workEffortSequence)
-                .WithFiscalYearStartMonth(01)
-                .WithFiscalYearStartDay(01)
                 .WithDoAccounting(false)
                 .WithPurchaseOrderNeedsApproval(purchaseOrderNeedsApproval)
                 .WithPurchaseOrderApprovalThresholdLevel1(purchaseOrderApprovalThresholdLevel1)

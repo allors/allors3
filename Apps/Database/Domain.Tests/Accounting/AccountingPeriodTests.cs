@@ -45,14 +45,14 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(4, this.Transaction.Extent<AccountingPeriod>().Count);
 
-            var nextMonth = organisation.ActualAccountingPeriod.AddNextMonth();
+            var nextMonth = organisation.SettingsForAccounting.ActualAccountingPeriod.AddNextMonth();
 
             Assert.Equal(5, this.Transaction.Extent<AccountingPeriod>().Count);
 
-            Assert.Equal(organisation.ActualAccountingPeriod.PeriodNumber + 1, nextMonth.PeriodNumber);
+            Assert.Equal(organisation.SettingsForAccounting.ActualAccountingPeriod.PeriodNumber + 1, nextMonth.PeriodNumber);
             Assert.Equal(new TimeFrequencies(this.Transaction).Month, nextMonth.Frequency);
-            Assert.Equal(organisation.ActualAccountingPeriod.FromDate.AddMonths(1).Date, nextMonth.FromDate);
-            Assert.Equal(organisation.ActualAccountingPeriod.FromDate.AddMonths(2).AddSeconds(-1).Date, nextMonth.ThroughDate);
+            Assert.Equal(organisation.SettingsForAccounting.ActualAccountingPeriod.FromDate.AddMonths(1).Date, nextMonth.FromDate);
+            Assert.Equal(organisation.SettingsForAccounting.ActualAccountingPeriod.FromDate.AddMonths(2).AddSeconds(-1).Date, nextMonth.ThroughDate);
             Assert.True(nextMonth.ExistParent);
         }
 
@@ -81,31 +81,31 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(4, this.Transaction.Extent<AccountingPeriod>().Count);
 
-            organisation.ActualAccountingPeriod.AddNextMonth();
+            organisation.SettingsForAccounting.ActualAccountingPeriod.AddNextMonth();
 
             Assert.Equal(5, this.Transaction.Extent<AccountingPeriod>().Count);
 
-            organisation.ActualAccountingPeriod.AddNextMonth();
+            organisation.SettingsForAccounting.ActualAccountingPeriod.AddNextMonth();
 
             Assert.Equal(6, this.Transaction.Extent<AccountingPeriod>().Count);
 
-            var fourthMonth = organisation.ActualAccountingPeriod.AddNextMonth();
+            var fourthMonth = organisation.SettingsForAccounting.ActualAccountingPeriod.AddNextMonth();
 
             Assert.Equal(8, this.Transaction.Extent<AccountingPeriod>().Count);
 
-            Assert.Equal(organisation.ActualAccountingPeriod.PeriodNumber + 3, fourthMonth.PeriodNumber);
+            Assert.Equal(organisation.SettingsForAccounting.ActualAccountingPeriod.PeriodNumber + 3, fourthMonth.PeriodNumber);
             Assert.Equal(new TimeFrequencies(this.Transaction).Month, fourthMonth.Frequency);
-            Assert.Equal(organisation.ActualAccountingPeriod.FromDate.AddMonths(3).Date, fourthMonth.FromDate);
-            Assert.Equal(organisation.ActualAccountingPeriod.FromDate.AddMonths(4).AddSeconds(-1).Date, fourthMonth.ThroughDate);
+            Assert.Equal(organisation.SettingsForAccounting.ActualAccountingPeriod.FromDate.AddMonths(3).Date, fourthMonth.FromDate);
+            Assert.Equal(organisation.SettingsForAccounting.ActualAccountingPeriod.FromDate.AddMonths(4).AddSeconds(-1).Date, fourthMonth.ThroughDate);
             Assert.True(fourthMonth.ExistParent);
 
             var secondQuarter = fourthMonth.Parent;
 
-            Assert.Equal(organisation.ActualAccountingPeriod.Parent.PeriodNumber + 1, secondQuarter.PeriodNumber);
+            Assert.Equal(organisation.SettingsForAccounting.ActualAccountingPeriod.Parent.PeriodNumber + 1, secondQuarter.PeriodNumber);
             Assert.Equal(new TimeFrequencies(this.Transaction).Trimester, secondQuarter.Frequency);
-            Assert.Equal(organisation.ActualAccountingPeriod.Parent.FromDate.AddMonths(3).Date, secondQuarter.FromDate);
-            Assert.Equal(organisation.ActualAccountingPeriod.Parent.FromDate.AddMonths(6).AddSeconds(-1).Date, secondQuarter.ThroughDate);
-            Assert.Equal(organisation.ActualAccountingPeriod.Parent.Parent, secondQuarter.Parent);
+            Assert.Equal(organisation.SettingsForAccounting.ActualAccountingPeriod.Parent.FromDate.AddMonths(3).Date, secondQuarter.FromDate);
+            Assert.Equal(organisation.SettingsForAccounting.ActualAccountingPeriod.Parent.FromDate.AddMonths(6).AddSeconds(-1).Date, secondQuarter.ThroughDate);
+            Assert.Equal(organisation.SettingsForAccounting.ActualAccountingPeriod.Parent.Parent, secondQuarter.Parent);
         }
 
         [Fact]
@@ -133,44 +133,44 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(4, this.Transaction.Extent<AccountingPeriod>().Count);
 
-            organisation.ActualAccountingPeriod.AddNextMonth();
+            organisation.SettingsForAccounting.ActualAccountingPeriod.AddNextMonth();
 
             Assert.Equal(5, this.Transaction.Extent<AccountingPeriod>().Count);
 
-            organisation.ActualAccountingPeriod.AddNextMonth();
+            organisation.SettingsForAccounting.ActualAccountingPeriod.AddNextMonth();
 
             Assert.Equal(6, this.Transaction.Extent<AccountingPeriod>().Count);
 
-            organisation.ActualAccountingPeriod.AddNextMonth();
+            organisation.SettingsForAccounting.ActualAccountingPeriod.AddNextMonth();
 
             Assert.Equal(8, this.Transaction.Extent<AccountingPeriod>().Count);
 
-            organisation.ActualAccountingPeriod.AddNextMonth();
+            organisation.SettingsForAccounting.ActualAccountingPeriod.AddNextMonth();
 
             Assert.Equal(9, this.Transaction.Extent<AccountingPeriod>().Count);
 
-            organisation.ActualAccountingPeriod.AddNextMonth();
+            organisation.SettingsForAccounting.ActualAccountingPeriod.AddNextMonth();
 
             Assert.Equal(10, this.Transaction.Extent<AccountingPeriod>().Count);
 
-            var seventhMonth = organisation.ActualAccountingPeriod.AddNextMonth();
+            var seventhMonth = organisation.SettingsForAccounting.ActualAccountingPeriod.AddNextMonth();
 
             Assert.Equal(13, this.Transaction.Extent<AccountingPeriod>().Count);
 
             var thirdQuarter = seventhMonth.Parent;
 
-            Assert.Equal(organisation.ActualAccountingPeriod.Parent.PeriodNumber + 2, thirdQuarter.PeriodNumber);
+            Assert.Equal(organisation.SettingsForAccounting.ActualAccountingPeriod.Parent.PeriodNumber + 2, thirdQuarter.PeriodNumber);
             Assert.Equal(new TimeFrequencies(this.Transaction).Trimester, thirdQuarter.Frequency);
-            Assert.Equal(organisation.ActualAccountingPeriod.Parent.FromDate.AddMonths(6).Date, thirdQuarter.FromDate);
-            Assert.Equal(organisation.ActualAccountingPeriod.Parent.FromDate.AddMonths(9).AddSeconds(-1).Date, thirdQuarter.ThroughDate);
+            Assert.Equal(organisation.SettingsForAccounting.ActualAccountingPeriod.Parent.FromDate.AddMonths(6).Date, thirdQuarter.FromDate);
+            Assert.Equal(organisation.SettingsForAccounting.ActualAccountingPeriod.Parent.FromDate.AddMonths(9).AddSeconds(-1).Date, thirdQuarter.ThroughDate);
 
             var secondSemester = thirdQuarter.Parent;
 
-            Assert.Equal(organisation.ActualAccountingPeriod.Parent.Parent.PeriodNumber + 1, secondSemester.PeriodNumber);
+            Assert.Equal(organisation.SettingsForAccounting.ActualAccountingPeriod.Parent.Parent.PeriodNumber + 1, secondSemester.PeriodNumber);
             Assert.Equal(new TimeFrequencies(this.Transaction).Semester, secondSemester.Frequency);
-            Assert.Equal(organisation.ActualAccountingPeriod.Parent.Parent.FromDate.AddMonths(6).Date, secondSemester.FromDate);
-            Assert.Equal(organisation.ActualAccountingPeriod.Parent.Parent.FromDate.AddMonths(12).AddSeconds(-1).Date, secondSemester.ThroughDate);
-            Assert.Equal(organisation.ActualAccountingPeriod.Parent.Parent.Parent, secondSemester.Parent);
+            Assert.Equal(organisation.SettingsForAccounting.ActualAccountingPeriod.Parent.Parent.FromDate.AddMonths(6).Date, secondSemester.FromDate);
+            Assert.Equal(organisation.SettingsForAccounting.ActualAccountingPeriod.Parent.Parent.FromDate.AddMonths(12).AddSeconds(-1).Date, secondSemester.ThroughDate);
+            Assert.Equal(organisation.SettingsForAccounting.ActualAccountingPeriod.Parent.Parent.Parent, secondSemester.Parent);
         }
 
         [Fact]
@@ -196,34 +196,34 @@ namespace Allors.Database.Domain.Tests
 
             organisation.StartNewFiscalYear();
 
-            organisation.ActualAccountingPeriod.AddNextMonth();
-            organisation.ActualAccountingPeriod.AddNextMonth();
-            organisation.ActualAccountingPeriod.AddNextMonth();
-            organisation.ActualAccountingPeriod.AddNextMonth();
-            organisation.ActualAccountingPeriod.AddNextMonth();
-            organisation.ActualAccountingPeriod.AddNextMonth();
-            organisation.ActualAccountingPeriod.AddNextMonth();
-            organisation.ActualAccountingPeriod.AddNextMonth();
-            organisation.ActualAccountingPeriod.AddNextMonth();
-            organisation.ActualAccountingPeriod.AddNextMonth();
-            organisation.ActualAccountingPeriod.AddNextMonth();
+            organisation.SettingsForAccounting.ActualAccountingPeriod.AddNextMonth();
+            organisation.SettingsForAccounting.ActualAccountingPeriod.AddNextMonth();
+            organisation.SettingsForAccounting.ActualAccountingPeriod.AddNextMonth();
+            organisation.SettingsForAccounting.ActualAccountingPeriod.AddNextMonth();
+            organisation.SettingsForAccounting.ActualAccountingPeriod.AddNextMonth();
+            organisation.SettingsForAccounting.ActualAccountingPeriod.AddNextMonth();
+            organisation.SettingsForAccounting.ActualAccountingPeriod.AddNextMonth();
+            organisation.SettingsForAccounting.ActualAccountingPeriod.AddNextMonth();
+            organisation.SettingsForAccounting.ActualAccountingPeriod.AddNextMonth();
+            organisation.SettingsForAccounting.ActualAccountingPeriod.AddNextMonth();
+            organisation.SettingsForAccounting.ActualAccountingPeriod.AddNextMonth();
 
-            var period13 = organisation.ActualAccountingPeriod.AddNextMonth();
+            var period13 = organisation.SettingsForAccounting.ActualAccountingPeriod.AddNextMonth();
 
             Assert.Equal(20, this.Transaction.Extent<AccountingPeriod>().Count);
 
             Assert.Equal(13, period13.PeriodNumber);
             Assert.Equal(new TimeFrequencies(this.Transaction).Month, period13.Frequency);
-            Assert.Equal(organisation.ActualAccountingPeriod.FromDate.AddMonths(11).Date, period13.FromDate);
-            Assert.Equal(organisation.ActualAccountingPeriod.FromDate.AddMonths(12).AddSeconds(-1).Date, period13.ThroughDate);
+            Assert.Equal(organisation.SettingsForAccounting.ActualAccountingPeriod.FromDate.AddMonths(11).Date, period13.FromDate);
+            Assert.Equal(organisation.SettingsForAccounting.ActualAccountingPeriod.FromDate.AddMonths(12).AddSeconds(-1).Date, period13.ThroughDate);
             Assert.True(period13.ExistParent);
 
             var fourthQuarter = period13.Parent;
 
             Assert.Equal(4, fourthQuarter.PeriodNumber);
             Assert.Equal(new TimeFrequencies(this.Transaction).Trimester, fourthQuarter.Frequency);
-            Assert.Equal(organisation.ActualAccountingPeriod.Parent.FromDate.AddMonths(9).Date, fourthQuarter.FromDate);
-            Assert.Equal(organisation.ActualAccountingPeriod.Parent.FromDate.AddMonths(12).AddSeconds(-1).Date, fourthQuarter.ThroughDate);
+            Assert.Equal(organisation.SettingsForAccounting.ActualAccountingPeriod.Parent.FromDate.AddMonths(9).Date, fourthQuarter.FromDate);
+            Assert.Equal(organisation.SettingsForAccounting.ActualAccountingPeriod.Parent.FromDate.AddMonths(12).AddSeconds(-1).Date, fourthQuarter.ThroughDate);
         }
     }
 

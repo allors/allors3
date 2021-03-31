@@ -1,4 +1,4 @@
-// <copyright file="VatCalculationMethod.cs" company="Allors bvba">
+// <copyright file="BalanceSide.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -10,11 +10,13 @@ namespace Allors.Repository
     using Attributes;
 
     #region Allors
-    [Id("3b73eea7-6455-4fe5-87c0-99c852f57e6b")]
+    [Id("3b330b42-b359-4de7-a084-cc96ce1e6420")]
     #endregion
-    public partial class VatCalculationMethod : Enumeration
+    public partial class BalanceSide : UniquelyIdentifiable, Enumeration
     {
         #region inherited properties
+        public Guid UniqueId { get; set; }
+
         public LocalisedText[] LocalisedNames { get; set; }
 
         public string Name { get; set; }
@@ -24,8 +26,6 @@ namespace Allors.Repository
         public Permission[] DeniedPermissions { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
-
-        public Guid UniqueId { get; set; }
 
         #endregion
 
