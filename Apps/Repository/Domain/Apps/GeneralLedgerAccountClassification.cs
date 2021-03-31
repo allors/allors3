@@ -21,23 +21,6 @@ namespace Allors.Repository
         #endregion
 
         #region Allors
-        [Id("1fd64fca-5e9f-424b-ab9f-658ebb2b17d3")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        [Workspace]
-        public BalanceType BalanceType { get; set; }
-
-        #region Allors
-        [Id("4ea066a5-ccc8-457e-9ec9-1a90821a58f3")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        [Required]
-        [Workspace]
-        public BalanceSide BalanceSide { get; set; }
-
-        #region Allors
         [Id("186dff79-0769-443c-bc4d-6f60c317b5c8")]
         #endregion
         [Workspace]

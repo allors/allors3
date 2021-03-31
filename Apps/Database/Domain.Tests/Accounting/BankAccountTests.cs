@@ -29,6 +29,13 @@ namespace Allors.Database.Domain.Tests
             builder.WithIban("NL50RABO0109546784");
             builder.Build();
 
+            Assert.True(this.Transaction.Derive(false).HasErrors);
+
+            this.Transaction.Rollback();
+
+            builder.WithNameOnAccount("name");
+            builder.Build();
+
             Assert.False(this.Transaction.Derive(false).HasErrors);
         }
 
@@ -83,7 +90,7 @@ namespace Allors.Database.Domain.Tests
             var euro = netherlands.Currency;
 
             var bank = new BankBuilder(this.Transaction).WithCountry(netherlands).WithName("RABOBANK GROEP").WithBic("RABONL2U").Build();
-            new BankAccountBuilder(this.Transaction).WithBank(bank).WithCurrency(euro).WithIban("NL50RABO0109546784").Build();
+            new BankAccountBuilder(this.Transaction).WithBank(bank).WithCurrency(euro).WithIban("NL50RABO0109546784").WithNameOnAccount("name").Build();
 
             Assert.False(this.Transaction.Derive(false).HasErrors);
 
@@ -199,7 +206,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenValidIbanNumber_WhenValidatingIban_ThenValidationNoError()
         {
-            new BankAccountBuilder(this.Transaction).WithIban("TR330006100519786457841326").Build();
+            new BankAccountBuilder(this.Transaction).WithIban("TR330006100519786457841326").WithNameOnAccount("name").Build();
 
             Assert.False(this.Transaction.Derive(false).HasErrors);
         }
