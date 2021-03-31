@@ -2,7 +2,7 @@ group AllorsCSharpRepository;
 
 TemplateId() ::= <<7B7D955D-7C87-4198-A40D-4B70CABC7525>>
 TemplateName() ::= <<Allors C# Workspace Meta>>
-TemplateVersion() ::= <<3.0.0>>
+TemplateVersion() ::= <<3.0.1>>
 TemplateAllors() ::= <<1.0>>
 TemplateConfiguration(meta, workspaceName) ::= <<
 $!
@@ -58,18 +58,6 @@ $meta.WorkspaceRelationTypesByWorkspaceName.(workspaceName):{relationType|      
         }
         #endregion
 
-	    #region RoleClasses
-        internal class RoleClasses
-        {
-$meta.WorkspaceClassesByWorkspaceName.(workspaceName):{class|$define_roleClasses(class)$}; separator="\n"$
-
-            internal RoleClasses(ObjectTypes objectTypes, RelationTypes relationTypes)
-            {
-$meta.WorkspaceClassesByWorkspaceName.(workspaceName):{class|$assign_roleClasses(class)$}; separator="\n"$
-            }
-        }
-        #endregion
-
 	    #region MethodTypes
         internal class MethodTypes
         {
@@ -93,9 +81,7 @@ $meta.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|          
             this.BuildRelationTypes(meta, domains, objectTypes, relationTypes);
             this.BuildMethodTypes(meta, domains, objectTypes, methodTypes);
 
-            var roleClasses = new RoleClasses(objectTypes, relationTypes);
-
-$meta.Domains:{domain|            this.Build$domain.Name$(meta, domains, objectTypes, relationTypes, methodTypes, roleClasses);}; separator="\n"$
+$meta.Domains:{domain|            this.Build$domain.Name$(meta, domains, objectTypes, relationTypes, methodTypes);}; separator="\n"$
 
             return meta;
         }
@@ -146,11 +132,11 @@ $meta.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|$build_met
 >>
 
 define_roleClasses(class) ::= <<
-$class.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|$\n$             public RoleClass $class.Name$$roleType.SingularName$;}$
+$class.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|$\n$             public RoleType $class.Name$$roleType.SingularName$;}$
 >>
 
 assign_roleClasses(class) ::= <<
-$class.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|$\n$                 this.$class.Name$$roleType.SingularName$ = relationTypes.$roleType.RelationType.Name$.RoleClassByAssociationTypeClass[objectTypes.$class.Name$];}$
+$class.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|$\n$                 this.$class.Name$$roleType.SingularName$ = relationTypes.$roleType.RelationType.Name$.RoleType;}$
 >>
 
 build_domain(meta) ::= <<
@@ -317,7 +303,7 @@ meta_class(class) ::= <<
 $class.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|         public MethodClass $methodType.Name$;}; separator="\n"$
 
 		// Roles
-$class.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|         public RoleClass $roleType.Name$;}; separator="\n"$
+$class.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|         public RoleType $roleType.Name$;}; separator="\n"$
 
 		// Associations
 $class.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{associationType|         public AssociationType $associationType.Name$;}; separator="\n"$
@@ -330,7 +316,7 @@ $class.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{associationType
 $class.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|             this.$methodType.Name$ = ((MethodType)meta.Find(new System.Guid("$methodType.Id$"))).MethodClassBy(this.Class);}; separator="\n"$
 
             // Roles
-$class.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|             this.$roleType.Name$ = ((RelationType)meta.Find(new System.Guid("$roleType.RelationType.Id$"))).RoleClassBy(this.Class);}; separator="\n"$
+$class.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|             this.$roleType.Name$ = ((RelationType)meta.Find(new System.Guid("$roleType.RelationType.Id$"))).RoleType;}; separator="\n"$
 
             // Associations
 $class.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{associationType|           this.$associationType.Name$ = ((RelationType)meta.Find(new System.Guid("$associationType.RelationType.Id$"))).AssociationType;}; separator="\n"$

@@ -17,9 +17,6 @@ namespace Allors.Workspace.Meta
     /// </summary>
     public sealed partial class RelationType : MetaObjectBase, IRelationType, IComparable
     {
-        private static readonly IReadOnlyDictionary<Interface, RoleInterface> EmptyInterfaceByAssociationTypeInterface = new ReadOnlyDictionary<Interface, RoleInterface>(new Dictionary<Interface, RoleInterface>());
-        private static readonly IReadOnlyDictionary<Class, RoleClass> EmptyRoleClassByAssociationTypeClass = new ReadOnlyDictionary<Class, RoleClass>(new Dictionary<Class, RoleClass>());
-
         private Multiplicity assignedMultiplicity;
         private Multiplicity multiplicity;
 
@@ -29,10 +26,6 @@ namespace Allors.Workspace.Meta
 
         private string[] assignedWorkspaceNames;
         private string[] derivedWorkspaceNames;
-
-        private IReadOnlyDictionary<Interface, RoleInterface> derivedRoleInterfaceByAssociationTypeInterface = EmptyInterfaceByAssociationTypeInterface;
-
-        private IReadOnlyDictionary<Class, RoleClass> derivedRoleClassByAssociationTypeClass = EmptyRoleClassByAssociationTypeClass;
 
         public RelationType(Composite associationTypeComposite, Guid id)
             : base(associationTypeComposite.MetaPopulation)
@@ -46,25 +39,10 @@ namespace Allors.Workspace.Meta
                 ObjectType = associationTypeComposite
             };
 
-            this.RoleType = associationTypeComposite switch
-            {
-                Interface _ => new RoleDefault(this),
-                Class @class => new RoleClass(this, @class),
-            };
-
+            this.RoleType = new RoleType(this);
             this.MetaPopulation.OnRelationTypeCreated(this);
         }
-
-        public IReadOnlyDictionary<string, IEnumerable<RoleClass>> WorkspaceRoleClassesByWorkspaceName
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.WorkspaceNames
-                    .ToDictionary(v => v, v => this.RoleClassByAssociationTypeClass.Values.Where(w => w.RelationType.WorkspaceNames.Contains(v)));
-            }
-        }
-
+        
         public Guid Id { get; }
 
         public string IdAsString { get; }
@@ -172,46 +150,7 @@ namespace Allors.Workspace.Meta
         IRoleType IRelationType.RoleType => this.RoleType;
 
         public RoleType RoleType { get; set; }
-
-        public IReadOnlyDictionary<Interface, RoleInterface> RoleInterfaceByAssociationTypeInterface
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedRoleInterfaceByAssociationTypeInterface;
-            }
-        }
-
-        public IReadOnlyDictionary<Class, RoleClass> RoleClassByAssociationTypeClass
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedRoleClassByAssociationTypeClass;
-            }
-        }
-
-        public RoleClass RoleClassBy(Class @class) =>
-            this.RoleType switch
-            {
-                RoleDefault roleDefaultInterface when this.RoleClassByAssociationTypeClass.ContainsKey(@class) => this.RoleClassByAssociationTypeClass[@class],
-                RoleClass roleClass when Equals(this.AssociationType.ObjectType, @class) => roleClass,
-                _ => null,
-            };
-
-        public RoleType RoleTypeBy(IComposite composite) =>
-            composite switch
-            {
-                Class @class => this.RoleClassBy(@class),
-                Interface @interface => this.RoleType switch
-                {
-                    RoleDefault roleDefaultInterface when Equals(this.AssociationType.ObjectType, @interface) => roleDefaultInterface,
-                    _ when this.RoleInterfaceByAssociationTypeInterface.ContainsKey(@interface) => this.RoleInterfaceByAssociationTypeInterface[@interface],
-                    _ => null
-                },
-                _ => null
-            };
-
+     
         /// <summary>
         /// Gets a value indicating whether there exist exclusive classes.
         /// </summary>
@@ -313,43 +252,7 @@ namespace Allors.Workspace.Meta
                 return this.IdAsString;
             }
         }
-
-        internal void DeriveRoleInterfaces()
-        {
-            if (this.AssociationType.ObjectType is Interface @interface)
-            {
-                this.derivedRoleInterfaceByAssociationTypeInterface = @interface.Subinterfaces.ToDictionary(v => v,
-                    v =>
-                    {
-                        this.derivedRoleInterfaceByAssociationTypeInterface.TryGetValue(v, out var roleInterface);
-                        return roleInterface ?? new RoleInterface(this, v, (RoleDefault)this.RoleType);
-                    });
-            }
-            else
-            {
-                this.derivedRoleInterfaceByAssociationTypeInterface = EmptyInterfaceByAssociationTypeInterface;
-            }
-        }
-
-        internal void DeriveRoleClasses()
-        {
-            if (this.AssociationType.ObjectType is Interface @interface)
-            {
-                this.derivedRoleClassByAssociationTypeClass = @interface.Classes.ToDictionary(v => v, v =>
-                {
-                    this.derivedRoleClassByAssociationTypeClass.TryGetValue(v, out var roleClass);
-                    return roleClass ?? new RoleClass(this, v, (RoleDefault)this.RoleType);
-                });
-            }
-            else
-            {
-                this.derivedRoleClassByAssociationTypeClass = new Dictionary<Class, RoleClass>
-                {
-                    {(Class)this.AssociationType.ObjectType, (RoleClass)this.RoleType}
-                };
-            }
-        }
-
+        
         internal void DeriveMultiplicity()
         {
             if (this.RoleType?.ObjectType != null && this.RoleType.ObjectType.IsUnit)

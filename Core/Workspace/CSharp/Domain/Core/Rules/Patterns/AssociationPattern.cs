@@ -10,8 +10,10 @@ namespace Allors.Workspace
 
     public class AssociationPattern : Pattern
     {
-        public AssociationPattern(IRoleType roleType) => this.RoleType = roleType;
+        public AssociationPattern(IAssociationType associationType) => this.AssociationType = associationType;
 
-        public IRoleType RoleType { get; }
+        public AssociationPattern(IRoleType roleType) : this(roleType.AssociationType) { }
+
+        public IAssociationType AssociationType { get; }
     }
 }

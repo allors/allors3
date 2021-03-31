@@ -7,6 +7,7 @@
 namespace Allors.Workspace.Derivations
 {
     using System;
+    using System.Collections.Generic;
     using Meta;
 
     public abstract partial class Rule : IRule
@@ -23,6 +24,6 @@ namespace Allors.Workspace.Derivations
 
         protected M M { get; }
 
-        public abstract void Match(ICycle cycle, IObject match);
+        public abstract void Derive(ICycle cycle, IEnumerable<IObject> matches);
     }
 }

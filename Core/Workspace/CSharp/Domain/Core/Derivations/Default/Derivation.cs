@@ -37,7 +37,7 @@ namespace Allors.Workspace.Derivations.Default
 
             var changeSet = this.session.Checkpoint();
 
-            while (changeSet.RoleByAssociationType?.Count > 0 || changeSet.AssociationByRoleType?.Count > 0 || changeSet.Created?.Count > 0 || changeSet.Instantiated?.Count > 0)
+            while (changeSet.RolesByAssociationType?.Count > 0 || changeSet.AssociationsByRoleType?.Count > 0 || changeSet.Created?.Count > 0 || changeSet.Instantiated?.Count > 0)
             {
                 if (++cycles > this.maxDomainDerivationCycles)
                 {
@@ -51,93 +51,118 @@ namespace Allors.Workspace.Derivations.Default
                     Validation = this.Validation
                 };
 
+                var matchesByRule = new Dictionary<IRule, ISet<IObject>>();
+
                 if (changeSet.Instantiated != null)
                 {
                     foreach (var instantiated in changeSet?.Instantiated)
                     {
                         var @class = (Class)instantiated.Class;
-                        var rules = this.engine.RulesByClass[@class];
-
-                        foreach (var rule in rules)
+                        if (this.engine.RulesByClass.TryGetValue(@class, out var rules))
                         {
-                            rule.Match(cycle, instantiated.Object);
+                            foreach (var rule in rules)
+                            {
+                                if (!matchesByRule.TryGetValue(rule, out var matches))
+                                {
+                                    matches = new HashSet<IObject>();
+                                    matchesByRule.Add(rule, matches);
+                                }
+
+                                matches.Add(instantiated.Object);
+                            }
                         }
                     }
                 }
 
-                foreach (var rule in this.engine.ClassesByRule.Keys)
+                foreach (var kvp in changeSet.AssociationsByRoleType)
                 {
-                    var matches = new HashSet<IObject>();
+                    var roleType = kvp.Key;
+                    var associations = kvp.Value;
 
-                    foreach (var pattern in rule.Patterns)
+                    foreach (var association in associations)
                     {
-                        var source = pattern switch
+                        var @class = association.Class;
+
+                        if (this.engine.PatternsByRoleTypeByClass.TryGetValue(@class, out var patternsByRoleType))
                         {
-                            // RoleDefault
-                            AssociationPattern { RoleType: RoleDefault roleType } => changeSet
-                                .AssociationByRoleType
-                                .Where(v => v.Key.RelationType.Equals(roleType.RelationType))
-                                .SelectMany(v => v.Value)
-                                .Select(v => v.Object),
+                            if (patternsByRoleType.TryGetValue(roleType, out var patterns))
+                            {
+                                foreach (var pattern in patterns)
+                                {
+                                    var rule = this.engine.RuleByPattern[pattern];
+                                    if (!matchesByRule.TryGetValue(rule, out var matches))
+                                    {
+                                        matches = new HashSet<IObject>();
+                                        matchesByRule.Add(rule, matches);
+                                    }
 
-                            RolePattern { RoleType: RoleDefault roleType } => changeSet
-                                .RoleByAssociationType
-                                .Where(v => v.Key.RelationType.Equals(roleType.RelationType))
-                                .SelectMany(v => v.Value)
-                                .Select(v => v.Object),
+                                    IEnumerable<IObject> source = new IObject[] { association.Object };
 
-                            // RoleInterface
-                            AssociationPattern { RoleType: RoleInterface roleInterface } => changeSet
-                                .AssociationByRoleType
-                                .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
-                                .SelectMany(v => v.Value)
-                                .Where(v => roleInterface.AssociationTypeComposite.IsAssignableFrom(v.Class))
-                                .Select(v => v.Object),
+                                    if (pattern.Steps?.Length > 0)
+                                    {
+                                        var step = new Step(pattern.Steps);
+                                        source = source.SelectMany(v => step.Get(v));
+                                    }
 
-                            RolePattern { RoleType: RoleInterface roleInterface } => changeSet
-                                .RoleByAssociationType
-                                .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
-                                .SelectMany(v => v.Value)
-                                .Select(v => v.Object),
+                                    if (pattern.OfType != null)
+                                    {
+                                        source = source.Where(v => pattern.OfType.IsAssignableFrom(v.Strategy.Class));
+                                    }
 
-                            // RoleClass
-                            AssociationPattern { RoleType: RoleClass roleClass } => changeSet
-                                .AssociationByRoleType.Where(v => v.Key.Equals(roleClass))
-                                .SelectMany(v => v.Value)
-                                .Where(v => v.Class.Equals(roleClass.AssociationTypeComposite))
-                                .Select(v => v.Object),
-
-                            RolePattern { RoleType: RoleClass roleClass } => changeSet
-                                .RoleByAssociationType.Where(v => v.Key.RoleType.Equals(roleClass))
-                                .SelectMany(v => v.Value)
-                                .Select(v => v.Object),
-
-                            _ => Array.Empty<IObject>()
-                        };
-
-                        if (pattern.Steps?.Length > 0)
-                        {
-                            var step = new Step(pattern.Steps);
-                            source = source.SelectMany(v => step.Get(v));
+                                    matches.UnionWith(source);
+                                }
+                            }
                         }
+                    }
+                }
 
-                        if (pattern.OfType != null)
+                foreach (var kvp in changeSet.RolesByAssociationType)
+                {
+                    var associationType = kvp.Key;
+                    var roles = kvp.Value;
+
+                    foreach (var role in roles)
+                    {
+                        var @class = role.Class;
+
+                        if (this.engine.PatternsByAssociationTypeByClass.TryGetValue(@class, out var patternsByAssociationType))
                         {
-                            source = source.Where(v => pattern.OfType.IsAssignableFrom(v.Strategy.Class));
+                            if (patternsByAssociationType.TryGetValue(associationType, out var patterns))
+                            {
+                                foreach (var pattern in patterns)
+                                {
+                                    var rule = this.engine.RuleByPattern[pattern];
+                                    if (!matchesByRule.TryGetValue(rule, out var matches))
+                                    {
+                                        matches = new HashSet<IObject>();
+                                        matchesByRule.Add(rule, matches);
+                                    }
+
+                                    IEnumerable<IObject> source = new IObject[] { role.Object };
+
+                                    if (pattern.Steps?.Length > 0)
+                                    {
+                                        var step = new Step(pattern.Steps);
+                                        source = source.SelectMany(v => step.Get(v));
+                                    }
+
+                                    if (pattern.OfType != null)
+                                    {
+                                        source = source.Where(v => pattern.OfType.IsAssignableFrom(v.Strategy.Class));
+                                    }
+
+                                    matches.UnionWith(source);
+                                }
+                            }
                         }
-
-                        matches.UnionWith(source);
                     }
+                }
 
-                    if (matches.Count == 0)
-                    {
-                        continue;
-                    }
-
-                    foreach (var match in matches)
-                    {
-                        rule.Match(cycle, match);
-                    }
+                foreach (var kvp in matchesByRule)
+                {
+                    var domainDerivation = kvp.Key;
+                    var matches = kvp.Value;
+                    domainDerivation.Derive(cycle, matches);
                 }
 
                 changeSet = this.session.Checkpoint();

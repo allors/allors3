@@ -7,7 +7,7 @@ namespace Allors.Workspace.Meta
 {
     public partial class MetaBuilder
     {
-        private void BuildCore(MetaPopulation meta, Domains domains, ObjectTypes objectTypes, RelationTypes relationTypes, MethodTypes methodTypes, RoleClasses roleClasses)
+        private void BuildCore(MetaPopulation meta, Domains domains, ObjectTypes objectTypes, RelationTypes relationTypes, MethodTypes methodTypes)
         {
         }
     }

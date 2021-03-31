@@ -156,60 +156,7 @@ namespace Allors.Database.Domain.Derivations.Default
                         }
                     }
                 }
-
-
-                //var matchesByRule = new Dictionary<IRule, IEnumerable<IObject>>();
-                //foreach (var rule in this.Engine.ClassesByRule.Keys)
-                //{
-                //    var matches = new HashSet<IObject>();
-
-                //    foreach (var pattern in rule.Patterns)
-                //    {
-                //        var source = pattern switch
-                //        {
-
-                //            RolePattern { ObjectType: null } rolePattern => changeSet
-                //                .AssociationsByRoleType
-                //                .Where(v => v.Key.Equals(rolePattern.RoleType))
-                //                .SelectMany(v => this.Transaction.Instantiate(v.Value)),
-
-                //            RolePattern { ObjectType: { } } rolePattern => changeSet
-                //                .AssociationsByRoleType
-                //                .Where(v => v.Key.RelationType.Equals(rolePattern.RoleType.RelationType))
-                //                .SelectMany(v => this.Transaction.Instantiate(v.Value))
-                //                .Where(v => rolePattern.ObjectType.IsAssignableFrom(v.Strategy.Class)),
-
-                //            AssociationPattern associationPattern => changeSet
-                //                .RolesByAssociationType
-                //                .Where(v => v.Key.Equals(associationPattern.AssociationType))
-                //                .SelectMany(v => this.Transaction.Instantiate(v.Value)),
-
-                //            _ => Array.Empty<IObject>()
-                //        };
-
-                //        if (source != null)
-                //        {
-                //            if (pattern.Steps?.Length > 0)
-                //            {
-                //                var step = new Step(pattern.Steps);
-                //                source = source.SelectMany(v => step.Get(v));
-                //            }
-
-                //            if (pattern.OfType != null)
-                //            {
-                //                source = source.Where(v => pattern.OfType.IsAssignableFrom(v.Strategy.Class));
-                //            }
-
-                //            matches.UnionWith(source);
-                //        }
-                //    }
-
-                //    if (matches.Count > 0)
-                //    {
-                //        matchesByRule[rule] = matches;
-                //    }
-                //}
-
+                
                 // TODO: Prefetching
 
                 foreach (var kvp in matchesByRule)

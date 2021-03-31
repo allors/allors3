@@ -15,8 +15,6 @@ namespace Allors.Workspace.Meta
     /// </summary>
     public interface IRoleType : IPropertyType, IComparable
     {
-        IRoleDefault Default { get; }
-
         string SingularFullName { get; }
 
         string PluralFullName { get; }
