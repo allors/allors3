@@ -29,7 +29,7 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<Journal>())
             {
                 if (@this.ExistCurrentVersion
-                    && @this.CurrentVersion.ContraAccount.ExistJournalEntryDetailsWhereGeneralLedgerAccount
+                    && @this.CurrentVersion.ContraAccount.ExistAccountingTransactionDetailsWhereOrganisationGlAccount
                     && @this.CurrentVersion.ExistContraAccount
                     && @this.ContraAccount != @this.CurrentVersion.ContraAccount)
                 {
@@ -37,7 +37,7 @@ namespace Allors.Database.Domain
                 }
 
                 if (@this.ExistCurrentVersion
-                    && @this.CurrentVersion.ContraAccount.ExistJournalEntryDetailsWhereGeneralLedgerAccount
+                    && @this.CurrentVersion.ContraAccount.ExistAccountingTransactionDetailsWhereOrganisationGlAccount
                     && @this.CurrentVersion.ExistJournalType
                     && @this.JournalType != @this.CurrentVersion.JournalType)
                 {

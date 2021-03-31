@@ -101,82 +101,16 @@ namespace Allors.Database.Domain
                     @this.DefaultCollectionMethod = @this.Strategy.Transaction.Extent<PaymentMethod>().First;
                 }
 
-                if (!@this.ExistSubAccountCounter)
+                if (@this.DoAccounting == true && !@this.ExistSettingsForAccounting)
                 {
-                    @this.SubAccountCounter = new CounterBuilder(@this.Strategy.Transaction).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
-                }
-
-                if (!@this.ExistFiscalYearStartMonth)
-                {
-                    @this.FiscalYearStartMonth = 1;
-                }
-
-                if (!@this.ExistFiscalYearStartDay)
-                {
-                    @this.FiscalYearStartDay = 1;
+                    @this.SettingsForAccounting = new InternalOrganisationAccountingSettingsBuilder(@this.Strategy.Transaction).Build();
                 }
             }
-        }
-
-        public static void AppsStartNewFiscalYear(this InternalOrganisation @this, InternalOrganisationStartNewFiscalYear method)
-        {
-            var organisation = (Organisation)@this;
-            if (organisation.IsInternalOrganisation)
-            {
-                if (@this.ExistActualAccountingPeriod && @this.ActualAccountingPeriod.Active)
-                {
-                    return;
-                }
-
-                var year = @this.Strategy.Transaction.Now().Year;
-                if (@this.ExistActualAccountingPeriod)
-                {
-                    year = @this.ActualAccountingPeriod.FromDate.Date.Year + 1;
-                }
-
-                var fromDate = DateTimeFactory
-                    .CreateDate(year, @this.FiscalYearStartMonth.Value, @this.FiscalYearStartDay.Value).Date;
-
-                var yearPeriod = new AccountingPeriodBuilder(@this.Strategy.Transaction)
-                    .WithPeriodNumber(1)
-                    .WithFrequency(new TimeFrequencies(@this.Strategy.Transaction).Year)
-                    .WithFromDate(fromDate)
-                    .WithThroughDate(fromDate.AddYears(1).AddSeconds(-1).Date)
-                    .Build();
-
-                var semesterPeriod = new AccountingPeriodBuilder(@this.Strategy.Transaction)
-                    .WithPeriodNumber(1)
-                    .WithFrequency(new TimeFrequencies(@this.Strategy.Transaction).Semester)
-                    .WithFromDate(fromDate)
-                    .WithThroughDate(fromDate.AddMonths(6).AddSeconds(-1).Date)
-                    .WithParent(yearPeriod)
-                    .Build();
-
-                var trimesterPeriod = new AccountingPeriodBuilder(@this.Strategy.Transaction)
-                    .WithPeriodNumber(1)
-                    .WithFrequency(new TimeFrequencies(@this.Strategy.Transaction).Trimester)
-                    .WithFromDate(fromDate)
-                    .WithThroughDate(fromDate.AddMonths(3).AddSeconds(-1).Date)
-                    .WithParent(semesterPeriod)
-                    .Build();
-
-                var monthPeriod = new AccountingPeriodBuilder(@this.Strategy.Transaction)
-                    .WithPeriodNumber(1)
-                    .WithFrequency(new TimeFrequencies(@this.Strategy.Transaction).Month)
-                    .WithFromDate(fromDate)
-                    .WithThroughDate(fromDate.AddMonths(1).AddSeconds(-1).Date)
-                    .WithParent(trimesterPeriod)
-                    .Build();
-
-                @this.ActualAccountingPeriod = monthPeriod;
-            }
-
-            method.StopPropagation = true;
         }
 
         public static int NextSubAccountNumber(this InternalOrganisation @this)
         {
-            var next = @this.SubAccountCounter.NextElfProefValue();
+            var next = @this.SettingsForAccounting.SubAccountCounter.NextElfProefValue();
             return next;
         }
 

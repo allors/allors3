@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
             new RolePattern(m.SalesInvoice, m.SalesInvoice.AdvancePayment),
             new RolePattern(m.SalesInvoice, m.SalesInvoice.DerivationTrigger),
             new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.SalesInvoiceItemState) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
-            new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.TotalIncVat) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
+            new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.GrandTotal) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
             new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.DerivationTrigger) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
             new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.AmountPaid) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
         };
@@ -69,7 +69,7 @@ namespace Allors.Database.Domain
                             // this would disable the invoice for editing and adding new items
                             if (@this.AmountPaid - @this.AdvancePayment > 0)
                             {
-                                if (@this.AmountPaid >= @this.TotalIncVat) // TotalIncVat is immutable
+                                if (@this.AmountPaid >= @this.GrandTotal) // GrandTotal is immutable
                                 {
                                     invoiceItem.SalesInvoiceItemState = salesInvoiceItemStates.Paid;
                                 }
@@ -85,7 +85,7 @@ namespace Allors.Database.Domain
                         }
                         else if (invoiceItem.ExistAmountPaid
                                     && invoiceItem.AmountPaid > 0
-                                    && invoiceItem.AmountPaid >= invoiceItem.TotalIncVat)  // TotalIncVat is immutable
+                                    && invoiceItem.AmountPaid >= invoiceItem.GrandTotal)  // GrandTotal is immutable
                         {
                             invoiceItem.SalesInvoiceItemState = salesInvoiceItemStates.Paid;
                         }

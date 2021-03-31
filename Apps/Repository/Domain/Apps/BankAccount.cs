@@ -35,13 +35,6 @@ namespace Allors.Repository
         public string NameOnAccount { get; set; }
 
         #region Allors
-        [Id("93447a57-a049-4eaa-98ec-6fec60bdb64c")]
-        #endregion
-        [Multiplicity(Multiplicity.OneToMany)]
-        [Indexed]
-        public ContactMechanism[] ContactMechanisms { get; set; }
-
-        #region Allors
         [Id("a7d242b4-4d39-4254-beb2-914eb556f7b7")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
@@ -59,8 +52,10 @@ namespace Allors.Repository
         #region Allors
         [Id("b06a858d-a8ee-41b8-a747-7fd46336ae4f")]
         #endregion
+        [Required]
+        [Unique]
         [Size(256)]
-        public string Branch { get; set; }
+        public string Description { get; set; }
 
         #region Allors
         [Id("ecaedf71-98a2-425d-8046-cc8865fdbe73")]

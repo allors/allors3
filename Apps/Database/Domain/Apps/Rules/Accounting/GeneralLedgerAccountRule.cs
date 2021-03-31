@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public GeneralLedgerAccountRule(M m) : base(m, new Guid("e916d6c3-b31b-41e2-b7ef-3265977e0fea")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.AccountNumber),
+                new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.ReferenceNumber),
                 new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.DefaultCostCenter),
                 new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.AssignedCostCentersAllowed),
                 new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.CostCenterAccount),
@@ -43,11 +43,11 @@ namespace Allors.Database.Domain
 
                 if (@this.ExistChartOfAccountsWhereGeneralLedgerAccount)
                 {
-                    var generalLedgerAccounts = @this.ChartOfAccountsWhereGeneralLedgerAccount.GeneralLedgerAccounts.Where(v => v.AccountNumber == @this.AccountNumber);
+                    var generalLedgerAccounts = @this.ChartOfAccountsWhereGeneralLedgerAccount.GeneralLedgerAccounts.Where(v => v.ReferenceNumber == @this.ReferenceNumber);
 
                     if (generalLedgerAccounts.Count() > 1)
                     {
-                        validation.AddError($"{@this}, {@this.Meta.AccountNumber}, {ErrorMessages.AccountNumberUniqueWithinChartOfAccounts}");
+                        validation.AddError($"{@this}, {@this.Meta.ReferenceNumber}, {ErrorMessages.AccountNumberUniqueWithinChartOfAccounts}");
                     }
                 }
 

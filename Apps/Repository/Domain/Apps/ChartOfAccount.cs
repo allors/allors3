@@ -29,15 +29,18 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Size(256)]
-
         public string Name { get; set; }
+
+        #region Allors
+        [Id("d1e363c0-02ee-478b-94e7-c5aee846a55e")]
+        #endregion
+        public string Version { get; set; }
 
         #region Allors
         [Id("71d503fb-ebb9-45b3-af62-1b233677adce")]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-
         public GeneralLedgerAccount[] GeneralLedgerAccounts { get; set; }
 
         #region inherited methods

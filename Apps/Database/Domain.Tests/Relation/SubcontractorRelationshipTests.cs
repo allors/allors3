@@ -32,7 +32,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenSubContractorRelationshipBuilder_WhenBuild_ThenSubAccountNumerIsValidElevenTestNumber()
         {
-            this.InternalOrganisation.SubAccountCounter.Value = 1000;
+            this.InternalOrganisation.SettingsForAccounting.SubAccountCounter.Value = 1000;
 
             this.Transaction.Commit();
 

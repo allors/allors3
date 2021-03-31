@@ -32,7 +32,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        public OrganisationGlAccountBalance OrganisationGlAccountBalance { get; set; }
+        public OrganisationGlAccount OrganisationGlAccount { get; set; }
 
         #region Allors
         [Id("9b5a3978-9859-432a-939b-73838c2bb3b2")]

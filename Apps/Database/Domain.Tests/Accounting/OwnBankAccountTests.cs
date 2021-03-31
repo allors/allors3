@@ -91,16 +91,16 @@ namespace Allors.Database.Domain.Tests
         public void GivenOwnBankAccount_WhenDeriving_ThenGeneralLedgerAccountAndJournalAtMostOne()
         {
             var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Transaction)
-                .WithAccountNumber("0001")
+                .WithReferenceNumber("0001")
                 .WithName("GeneralLedgerAccount")
-                .WithBalanceSheetAccount(true)
+                .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
                 .Build();
 
             var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction)
                 .WithGeneralLedgerAccount(generalLedgerAccount)
                 .Build();
 
-            var journal = new JournalBuilder(this.Transaction).WithDescription("journal").Build();
+            var journal = new JournalBuilder(this.Transaction).WithName("journal").Build();
 
             var netherlands = new Countries(this.Transaction).CountryByIsoCode["NL"];
             var euro = netherlands.Currency;
@@ -137,16 +137,16 @@ namespace Allors.Database.Domain.Tests
             var internalOrganisation = this.InternalOrganisation;
 
             var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Transaction)
-                .WithAccountNumber("0001")
+                .WithReferenceNumber("0001")
                 .WithName("GeneralLedgerAccount")
-                .WithBalanceSheetAccount(true)
+                .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
                 .Build();
 
             var internalOrganisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction)
                 .WithGeneralLedgerAccount(generalLedgerAccount)
                 .Build();
 
-            var journal = new JournalBuilder(this.Transaction).WithDescription("journal").Build();
+            var journal = new JournalBuilder(this.Transaction).WithName("journal").Build();
 
             var netherlands = new Countries(this.Transaction).CountryByIsoCode["NL"];
             var euro = netherlands.Currency;

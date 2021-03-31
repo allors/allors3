@@ -17,11 +17,7 @@ namespace Allors.Repository
         #region inherited properties
         public string PurchaseOrderNumberPrefix { get; set; }
 
-        public string TransactionReferenceNumber { get; set; }
-
         public FiscalYearInternalOrganisationSequenceNumbers[] FiscalYearsInternalOrganisationSequenceNumbers { get; set; }
-
-        public JournalEntryNumber[] JournalEntryNumbers { get; set; }
 
         public Country EuListingState { get; set; }
 
@@ -32,8 +28,6 @@ namespace Allors.Repository
         public PaymentMethod DefaultCollectionMethod { get; set; }
 
         public Counter PurchaseInvoiceNumberCounter { get; set; }
-
-        public AccountingPeriod ActualAccountingPeriod { get; set; }
 
         public InvoiceSequence InvoiceSequence { get; set; }
 
@@ -61,27 +55,11 @@ namespace Allors.Repository
 
         public PaymentMethod[] DerivedActiveCollectionMethods { get; set; }
 
-        public decimal MaximumAllowedPaymentDifference { get; set; }
-
-        public CostCenterSplitMethod CostCenterSplitMethod { get; set; }
-
         public Counter PurchaseOrderNumberCounter { get; set; }
-
-        public GeneralLedgerAccount SalesPaymentDifferencesAccount { get; set; }
-
-        public string PurchaseTransactionReferenceNumber { get; set; }
-
-        public int FiscalYearStartMonth { get; set; }
 
         public CostOfGoodsSoldMethod CostOfGoodsSoldMethod { get; set; }
 
         public bool VatDeactivated { get; set; }
-
-        public int FiscalYearStartDay { get; set; }
-
-        public GeneralLedgerAccount[] GeneralLedgerAccounts { get; set; }
-
-        public Counter AccountingTransactionCounter { get; set; }
 
         public string PurchaseShipmentNumberPrefix { get; set; }
 
@@ -95,45 +73,21 @@ namespace Allors.Repository
 
         public Counter IncomingTransferNumberCounter { get; set; }
 
-        public GeneralLedgerAccount RetainedEarningsAccount { get; set; }
-
         public string PurchaseInvoiceNumberPrefix { get; set; }
-
-        public GeneralLedgerAccount SalesPaymentDiscountDifferencesAccount { get; set; }
-
-        public Counter SubAccountCounter { get; set; }
-
-        public AccountingTransactionNumber[] AccountingTransactionNumbers { get; set; }
-
-        public string TransactionReferenceNumberPrefix { get; set; }
 
         public Counter QuoteNumberCounter { get; set; }
 
         public Counter RequestNumberCounter { get; set; }
 
-        public GeneralLedgerAccount PurchasePaymentDifferencesAccount { get; set; }
-
-        public GeneralLedgerAccount SuspenceAccount { get; set; }
-
-        public GeneralLedgerAccount NetIncomeAccount { get; set; }
-
         public bool DoAccounting { get; set; }
 
-        public GeneralLedgerAccount PurchasePaymentDiscountDifferencesAccount { get; set; }
-
         public string QuoteNumberPrefix { get; set; }
-
-        public string PurchaseTransactionReferenceNumberPrefix { get; set; }
-
-        public GeneralLedgerAccount CalculationDifferencesAccount { get; set; }
 
         public string RequestNumberPrefix { get; set; }
 
         public Party[] ObsoleteCurrentCustomers { get; set; }
 
         public Organisation[] ObsoleteCurrentSuppliers { get; set; }
-
-        public GeneralLedgerAccount GlAccount { get; set; }
 
         public Party[] ActiveCustomers { get; set; }
 
@@ -282,6 +236,7 @@ namespace Allors.Repository
         public Guid DerivationTrigger { get; set; }
 
         public Country Country { get; set; }
+        public InternalOrganisationAccountingSettings SettingsForAccounting { get; set; }
 
         #endregion
 

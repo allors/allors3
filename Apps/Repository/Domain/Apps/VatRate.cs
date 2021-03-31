@@ -28,22 +28,6 @@ namespace Allors.Repository
         #endregion
 
         #region Allors
-        [Id("0d6bd6c4-7220-45b4-891c-719f4bd141ce")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        [Workspace(Default)]
-        public VatCalculationMethod VatCalculationMethod { get; set; }
-
-        #region Allors
-        [Id("36b9d86d-4e2e-4ff5-b167-8ea6c81dd6cc")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
-        [Indexed]
-        [Workspace(Default)]
-        public VatReturnBox[] VatReturnBoxes { get; set; }
-
-        #region Allors
         [Id("3f1ca41a-8443-4d81-a112-48fa1e28728b")]
         #endregion
         [Required]

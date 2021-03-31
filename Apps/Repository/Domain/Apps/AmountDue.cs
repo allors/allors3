@@ -91,7 +91,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        public DebitCreditConstant Side { get; set; }
+        public BalanceSide BalanceSide { get; set; }
 
         #region Allors
         [Id("b0570264-3211-4444-a69f-1cdb2eb6e783")]

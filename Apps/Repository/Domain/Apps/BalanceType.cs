@@ -1,30 +1,33 @@
-// <copyright file="VatReturnBoxType.cs" company="Allors bvba">
+// <copyright file="BalanceType.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
 namespace Allors.Repository
 {
-    using Attributes;
+    using System;
+
+    using Allors.Repository.Attributes;
 
     #region Allors
-    [Id("3b233161-d2a8-4d8f-a293-09d8a2bea3e2")]
+    [Id("e60e6320-e94e-437b-a0ad-7d580b24643d")]
     #endregion
-    public partial class VatReturnBoxType : Object
+    public partial class BalanceType: UniquelyIdentifiable, Enumeration
     {
         #region inherited properties
+        public Guid UniqueId { get; set; }
+
+        public LocalisedText[] LocalisedNames { get; set; }
+
+        public string Name { get; set; }
+
+        public bool IsActive { get; set; }
+
         public Permission[] DeniedPermissions { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
 
         #endregion
-
-        #region Allors
-        [Id("95935a8e-fac5-4798-ba2d-1408d231f97b")]
-        #endregion
-        [Size(256)]
-
-        public string Type { get; set; }
 
         #region inherited methods
 
@@ -43,6 +46,5 @@ namespace Allors.Repository
         public void OnPostDerive() { }
 
         #endregion
-
     }
 }
