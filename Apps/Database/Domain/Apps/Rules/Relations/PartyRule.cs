@@ -164,7 +164,7 @@ namespace Allors.Database.Domain
 
                 @this.DeriveRelationships();
 
-                var internalOrganisations = new Organisations(@this.Strategy.Transaction).InternalOrganisations();
+                var internalOrganisations = new Organisations(@this.Strategy.Transaction).InternalOrganisations().Where(v => v.DoAccounting == true);
 
                 if (!internalOrganisations.Contains(@this))
                 {

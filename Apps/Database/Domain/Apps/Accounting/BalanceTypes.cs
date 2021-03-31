@@ -20,7 +20,7 @@ namespace Allors.Database.Domain
 
         private UniquelyIdentifiableCache<BalanceType> Cache => this.cache ??= new UniquelyIdentifiableCache<BalanceType>(this.Transaction);
 
-        protected override void BaseSetup(Setup setup)
+        protected override void AppsSetup(Setup setup)
         {
             var dutchLocale = new Locales(this.Transaction).DutchNetherlands;
 

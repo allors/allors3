@@ -22,6 +22,18 @@ namespace Allors.Repository
         #endregion
 
         #region Allors
+        [Id("9877ddf0-ddd7-40d0-a81e-b3102f2252af")]
+        #endregion
+        [Workspace]
+        public int FiscalYearStartMonth { get; set; }
+
+        #region Allors
+        [Id("61dfb7f8-2c22-4808-8b38-17303e57c3d6")]
+        #endregion
+        [Workspace]
+        public int FiscalYearStartDay { get; set; }
+
+        #region Allors
         [Id("4cfd9d7c-476a-4244-87eb-801041f7e092")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]

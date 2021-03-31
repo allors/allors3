@@ -15,6 +15,16 @@ namespace Allors.Database.Domain
             {
                 this.SubAccountCounter = new CounterBuilder(this.Transaction()).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
             }
+
+            if (!this.ExistFiscalYearStartMonth)
+            {
+                this.FiscalYearStartMonth = 1;
+            }
+
+            if (!this.ExistFiscalYearStartDay)
+            {
+                this.FiscalYearStartDay = 1;
+            }
         }
     }
 }

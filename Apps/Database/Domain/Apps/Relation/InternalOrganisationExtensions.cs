@@ -101,12 +101,68 @@ namespace Allors.Database.Domain
                     @this.DefaultCollectionMethod = @this.Strategy.Transaction.Extent<PaymentMethod>().First;
                 }
 
-                if (@this.DoAccounting == true && !@this.ExistSettingsForAccounting)
+                if (@this.DoAccounting && !@this.ExistSettingsForAccounting)
                 {
                     @this.SettingsForAccounting = new InternalOrganisationAccountingSettingsBuilder(@this.Strategy.Transaction).Build();
                 }
             }
         }
+        public static void AppsStartNewFiscalYear(this InternalOrganisation @this, InternalOrganisationStartNewFiscalYear method)
+        {
+            var organisation = (Organisation)@this;
+            if (organisation.IsInternalOrganisation)
+            {
+                if (@this.SettingsForAccounting.ExistActualAccountingPeriod && @this.SettingsForAccounting.ActualAccountingPeriod.Active)
+                {
+                    return;
+                }
+
+                var year = @this.Strategy.Transaction.Now().Year;
+                if (@this.SettingsForAccounting.ExistActualAccountingPeriod)
+                {
+                    year = @this.SettingsForAccounting.ActualAccountingPeriod.FromDate.Date.Year + 1;
+                }
+
+                var fromDate = DateTimeFactory
+                    .CreateDate(year, @this.SettingsForAccounting.FiscalYearStartMonth.Value, @this.SettingsForAccounting.FiscalYearStartDay.Value).Date;
+
+                var yearPeriod = new AccountingPeriodBuilder(@this.Strategy.Transaction)
+                    .WithPeriodNumber(1)
+                    .WithFrequency(new TimeFrequencies(@this.Strategy.Transaction).Year)
+                    .WithFromDate(fromDate)
+                    .WithThroughDate(fromDate.AddYears(1).AddSeconds(-1).Date)
+                    .Build();
+
+                var semesterPeriod = new AccountingPeriodBuilder(@this.Strategy.Transaction)
+                    .WithPeriodNumber(1)
+                    .WithFrequency(new TimeFrequencies(@this.Strategy.Transaction).Semester)
+                    .WithFromDate(fromDate)
+                    .WithThroughDate(fromDate.AddMonths(6).AddSeconds(-1).Date)
+                    .WithParent(yearPeriod)
+                    .Build();
+
+                var trimesterPeriod = new AccountingPeriodBuilder(@this.Strategy.Transaction)
+                    .WithPeriodNumber(1)
+                    .WithFrequency(new TimeFrequencies(@this.Strategy.Transaction).Trimester)
+                    .WithFromDate(fromDate)
+                    .WithThroughDate(fromDate.AddMonths(3).AddSeconds(-1).Date)
+                    .WithParent(semesterPeriod)
+                    .Build();
+
+                var monthPeriod = new AccountingPeriodBuilder(@this.Strategy.Transaction)
+                    .WithPeriodNumber(1)
+                    .WithFrequency(new TimeFrequencies(@this.Strategy.Transaction).Month)
+                    .WithFromDate(fromDate)
+                    .WithThroughDate(fromDate.AddMonths(1).AddSeconds(-1).Date)
+                    .WithParent(trimesterPeriod)
+                    .Build();
+
+                @this.SettingsForAccounting.ActualAccountingPeriod = monthPeriod;
+            }
+
+            method.StopPropagation = true;
+        }
+
 
         public static int NextSubAccountNumber(this InternalOrganisation @this)
         {

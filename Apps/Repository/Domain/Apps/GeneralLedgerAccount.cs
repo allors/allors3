@@ -90,8 +90,6 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Required]
-
         public GeneralLedgerAccount CounterPartAccount { get; set; }
 
         #region Allors

@@ -32,6 +32,7 @@ namespace Allors.Repository
         [Id("53bb9d62-a8e5-417c-9392-c54cf99bc24b")]
         #endregion
         [Size(256)]
+        [Required]
         public string NameOnAccount { get; set; }
 
         #region Allors
@@ -52,7 +53,6 @@ namespace Allors.Repository
         #region Allors
         [Id("b06a858d-a8ee-41b8-a747-7fd46336ae4f")]
         #endregion
-        [Required]
         [Unique]
         [Size(256)]
         public string Description { get; set; }

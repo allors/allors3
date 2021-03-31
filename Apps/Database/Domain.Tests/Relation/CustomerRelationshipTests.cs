@@ -140,8 +140,11 @@ namespace Allors.Database.Domain.Tests
                 .WithGeneralLedgerAccount(new OrganisationGlAccountBuilder(this.Transaction)
                                                 .WithInternalOrganisation(internalOrganisation2)
                                                 .WithGeneralLedgerAccount(new GeneralLedgerAccountBuilder(this.Transaction)
+                                                                                .WithReferenceCode("A")
+                                                                                .WithSortCode("A")
                                                                                 .WithReferenceNumber("1")
                                                                                 .WithName("name")
+                                                                                .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
                                                                                 .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
                                                                                 .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction).WithName("desc").Build())
                                                                                 .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("desc").Build())
@@ -157,7 +160,7 @@ namespace Allors.Database.Domain.Tests
                 .WithFromDate(this.Transaction.Now())
                 .Build();
 
-            this.Transaction.Derive();
+            this.Transaction.Derive(false);
 
             var partyFinancial = customer2.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, customerRelationship2.InternalOrganisation));
             partyFinancial.SubAccountNumber = 19;

@@ -160,8 +160,8 @@ namespace Allors.Database.Domain
             var orderThreshold = this.Store.OrderThreshold;
             var partyFinancial = this.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.FirstOrDefault(v => Equals(v.InternalOrganisation, this.TakenBy));
 
-            var amountOverDue = partyFinancial.AmountOverDue;
-            var creditLimit = partyFinancial.CreditLimit ?? (this.Store.ExistCreditLimit ? this.Store.CreditLimit : 0);
+            var amountOverDue = partyFinancial?.AmountOverDue;
+            var creditLimit = partyFinancial?.CreditLimit ?? (this.Store.ExistCreditLimit ? this.Store.CreditLimit : 0);
 
             if (amountOverDue > creditLimit || this.TotalExVat < orderThreshold) // Theshold is minimum order amount required.
             {
