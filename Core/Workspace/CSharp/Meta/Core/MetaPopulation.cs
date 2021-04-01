@@ -462,18 +462,6 @@ namespace Allors.Workspace.Meta
                         type.DeriveExclusiveSubclass();
                     }
 
-                    // RoleClasses
-                    foreach (var relationType in this.RelationTypes)
-                    {
-                        relationType.DeriveRoleInterfaces();
-                    }
-
-                    // RoleClasses
-                    foreach (var relationType in this.RelationTypes)
-                    {
-                        relationType.DeriveRoleClasses();
-                    }
-
                     // RoleTypes & AssociationTypes
                     var roleTypesByAssociationTypeObjectType = this.RelationTypes
                         .GroupBy(v => v.AssociationType.ObjectType)
@@ -614,9 +602,7 @@ namespace Allors.Workspace.Meta
 
         internal void OnAssociationTypeCreated(AssociationType associationType) => this.Stale();
 
-        internal void OnRoleInterfaceCreated(RoleInterface roleInterface) => this.Stale();
-
-        internal void OnRoleClassCreated(RoleClass roleClass) => this.Stale();
+        internal void OnRoleTypeCreated(RoleType roleType) => this.Stale();
 
         internal void OnMethodInterfaceCreated(MethodInterface methodInterface)
         {
@@ -686,10 +672,6 @@ namespace Allors.Workspace.Meta
             return false;
         }
 
-        public RoleType RoleType(IComposite association, string relationTypeId)
-        {
-            var relationType = ((RelationType)this.Find(new Guid(relationTypeId)));
-            return relationType.RoleTypeBy(association);
-        }
+        public RoleType RoleType(string relationTypeId) => ((RelationType)this.Find(new Guid(relationTypeId))).RoleType;
     }
 }

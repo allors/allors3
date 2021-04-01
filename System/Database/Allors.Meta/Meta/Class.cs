@@ -9,7 +9,7 @@ namespace Allors.Database.Meta
     using System;
     using System.Collections.Generic;
 
-    public sealed partial class Class : Composite, IClass
+    public abstract partial class Class : Composite, IClass
     {
         private string[] assignedWorkspaceNames;
         private string[] derivedWorkspaceNames;

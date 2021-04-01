@@ -9,9 +9,15 @@ namespace Allors.Database.Adapters
     using System.Collections.Generic;
     using System.Linq;
     using Allors;
-    using Domain;
     using Meta;
     using Xunit;
+    using C1 = Domain.C1;
+    using C2 = Domain.C2;
+    using C3 = Domain.C3;
+    using C4 = Domain.C4;
+    using Company = Domain.Company;
+    using DateTime = System.DateTime;
+    using Person = Domain.Person;
 
     public enum Zero2Four
     {

@@ -8,7 +8,7 @@ namespace Allors.Database.Meta
 {
     using System;
 
-    public sealed partial class RoleType : OperandType, IRoleType, IComparable
+    public abstract partial class RoleType : OperandType, IRoleType, IComparable
     {
         /// <summary>
         /// The maximum size value.

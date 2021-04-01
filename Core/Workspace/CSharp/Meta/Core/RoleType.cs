@@ -8,7 +8,7 @@ namespace Allors.Workspace.Meta
 {
     using System;
 
-    public abstract partial class RoleType : OperandType, IRoleType, IComparable
+    public partial class RoleType : OperandType, IRoleType, IComparable
     {
         /// <summary>
         /// The maximum size value.
@@ -17,12 +17,126 @@ namespace Allors.Workspace.Meta
 
         public const string PluralSuffix = "s";
 
-        protected RoleType(RelationType relationType) : base(relationType.MetaPopulation) => this.RelationType = relationType;
+        private ObjectType objectType;
+        private string singularName;
+        private string pluralName;
+        private int? size;
+        private int? precision;
+        private int? scale;
+        private bool isRequired;
+        private bool isUnique;
+        private string mediaType;
 
-        public bool ExistDefault => this.Default != null;
+        public RoleType(RelationType relationType) : base(relationType.MetaPopulation)
+        {
+            this.RelationType = relationType;
+            relationType.MetaPopulation.OnRoleTypeCreated(this);
+        }
 
-        IRoleDefault IRoleType.Default => this.Default;
-        public abstract RoleDefault Default { get; }
+        IComposite IRoleType.AssociationTypeComposite => this.AssociationTypeComposite;
+        public Composite AssociationTypeComposite => this.AssociationType.ObjectType;
+
+        IObjectType IPropertyType.ObjectType => this.ObjectType;
+        public ObjectType ObjectType
+        {
+            get => this.objectType;
+            set
+            {
+                this.MetaPopulation.AssertUnlocked();
+                this.objectType = value;
+                this.MetaPopulation.Stale();
+            }
+        }
+
+        public string SingularName
+        {
+            get => this.singularName;
+            set
+            {
+                this.MetaPopulation.AssertUnlocked();
+                this.singularName = value;
+                this.MetaPopulation.Stale();
+            }
+        }
+
+        public string PluralName
+        {
+            get => this.pluralName;
+            set
+            {
+                this.MetaPopulation.AssertUnlocked();
+                this.pluralName = value;
+                this.MetaPopulation.Stale();
+            }
+        }
+
+        public int? Size
+        {
+            get => this.size;
+            set
+            {
+                this.MetaPopulation.AssertUnlocked();
+                this.size = value;
+                this.MetaPopulation.Stale();
+            }
+        }
+
+        public int? Precision
+        {
+            get => this.precision;
+            set
+            {
+                this.MetaPopulation.AssertUnlocked();
+                this.precision = value;
+                this.MetaPopulation.Stale();
+            }
+        }
+
+        public int? Scale
+        {
+            get => this.scale;
+            set
+            {
+                this.MetaPopulation.AssertUnlocked();
+                this.scale = value;
+                this.MetaPopulation.Stale();
+            }
+        }
+
+        public bool IsRequired
+        {
+            get => this.isRequired;
+            set
+            {
+                this.MetaPopulation.AssertUnlocked();
+                this.isRequired = value;
+                this.MetaPopulation.Stale();
+            }
+        }
+
+        public bool IsUnique
+        {
+            get => this.isUnique;
+            set
+            {
+                this.MetaPopulation.AssertUnlocked();
+                this.isUnique = value;
+                this.MetaPopulation.Stale();
+            }
+        }
+
+        public string MediaType
+        {
+            get => this.mediaType;
+            set
+            {
+                this.MetaPopulation.AssertUnlocked();
+                this.mediaType = value;
+                this.MetaPopulation.Stale();
+            }
+        }
+
+        public override Guid OperandId => this.RelationType.Id;
 
         public override Origin Origin => this.RelationType.Origin;
 
@@ -36,12 +150,6 @@ namespace Allors.Workspace.Meta
         public AssociationType AssociationType => this.RelationType.AssociationType;
         IAssociationType IRoleType.AssociationType => this.AssociationType;
 
-        IComposite IRoleType.AssociationTypeComposite => this.AssociationTypeComposite;
-        public abstract Composite AssociationTypeComposite { get; }
-
-        public abstract ObjectType ObjectType { get; set; }
-
-        IObjectType IPropertyType.ObjectType => this.ObjectType;
 
         /// <summary>
         /// Gets the name.
@@ -66,15 +174,12 @@ namespace Allors.Workspace.Meta
         /// <value>The validation name.</value>
         public override string ValidationName => "RoleType: " + this.RelationType.Name;
 
-        public abstract string SingularName { get; set; }
 
         /// <summary>
         /// Gets the full singular name.
         /// </summary>
         /// <value>The full singular name.</value>
         public string SingularFullName => this.RelationType.AssociationType.ObjectType + this.SingularName;
-
-        public abstract string PluralName { get; set; }
 
         /// <summary>
         /// Gets the full plural name.
@@ -103,14 +208,6 @@ namespace Allors.Workspace.Meta
         /// </summary>
         /// <value><c>true</c> if this state is one; otherwise, <c>false</c>.</value>
         public bool IsOne => !this.IsMany;
-
-        public abstract int? Size { get; set; }
-        public abstract int? Precision { get; set; }
-        public abstract int? Scale { get; set; }
-
-        public abstract bool IsRequired { get; set; }
-        public abstract bool IsUnique { get; set; }
-        public abstract string MediaType { get; set; }
 
         ///// <summary>
         ///// Instantiate the value of the role on this object.

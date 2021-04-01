@@ -7,7 +7,6 @@ namespace Allors.Database.Domain
 {
     using System;
     using System.Linq;
-    using Allors.Database.Meta;
 
     public static partial class InternalOrganisationExtensions
     {

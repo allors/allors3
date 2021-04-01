@@ -8,7 +8,6 @@ namespace Allors.Database.Server.Controllers
     using System.Text;
     using Adapters;
     using Domain;
-    using Meta;
     using Allors.Security;
     using Allors.Server;
     using Services;
@@ -16,6 +15,7 @@ namespace Allors.Database.Server.Controllers
     using Database;
     using Domain.Derivations.Default;
     using JSNLog;
+    using Meta;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -26,6 +26,7 @@ namespace Allors.Database.Server.Controllers
     using Microsoft.Extensions.Logging;
     using Microsoft.IdentityModel.Tokens;
     using ObjectFactory = ObjectFactory;
+    using User = Domain.User;
 
     public class Startup
     {

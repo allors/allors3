@@ -5,7 +5,6 @@
 
 namespace Allors.Workspace
 {
-    using System.Security;
     using Configuration;
     using Derivations;
     using Derivations.Default;
@@ -26,7 +25,7 @@ namespace Allors.Workspace
 
             this.M = new M(metaPopulation);
 
-            var engine = new Engine(metaPopulation, this.CreateRules());
+            var engine = new Engine(this.CreateRules());
             this.DerivationFactory = new DerivationFactory(engine);
 
             this.Time = new Time();
@@ -44,7 +43,7 @@ namespace Allors.Workspace
 
             return new Rule[]
             {
-                new PersonSessionFullNameDerivation(m)
+                new PersonSessionFullNameRule(m)
             };
         }
     }

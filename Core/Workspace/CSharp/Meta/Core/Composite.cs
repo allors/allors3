@@ -509,15 +509,7 @@ namespace Allors.Workspace.Meta
             {
                 if (roleTypesByAssociationObjectType.TryGetValue(superType, out var inheritedRoleTypes))
                 {
-                    if (this.IsInterface)
-                    {
-                        roleTypes.UnionWith(inheritedRoleTypes);
-                    }
-                    else
-                    {
-                        var roleClasses = inheritedRoleTypes.Select(v => v.RelationType.RoleClassBy((Class)this));
-                        roleTypes.UnionWith(roleClasses);
-                    }
+                    roleTypes.UnionWith(inheritedRoleTypes);
                 }
             }
 

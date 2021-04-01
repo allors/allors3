@@ -27,19 +27,17 @@ namespace Allors.Database.Meta
         private string[] assignedWorkspaceNames;
         private string[] derivedWorkspaceNames;
 
-        public RelationType(Composite associationTypeComposite, Guid id)
+        public RelationType(Composite associationTypeComposite, Guid id, Func<RelationType, AssociationType> associationTypeFactory, Func<RelationType, RoleType> roleTypeFactory)
             : base(associationTypeComposite.MetaPopulation)
         {
             this.Id = id;
             this.IdAsString = this.Id.ToString("D");
             this.AssignedOrigin = Origin.Database;
 
-            this.AssociationType = new AssociationType(this)
-            {
-                ObjectType = associationTypeComposite
-            };
+            this.AssociationType = associationTypeFactory(this);
+            this.AssociationType.ObjectType = associationTypeComposite;
 
-            this.RoleType = new RoleType(this);
+            this.RoleType = roleTypeFactory(this);
 
             this.MetaPopulation.OnRelationTypeCreated(this);
         }

@@ -9,7 +9,6 @@ namespace Allors.Database.Adapters
     using System.Collections.Generic;
     using Allors;
     using Domain;
-    using Meta;
     using Xunit;
 
     // TODO: Add remove with null and zero array

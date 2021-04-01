@@ -17,7 +17,8 @@ namespace Allors.Database.Protocol.Json
     using Derivations;
     using Domain;
     using Meta;
-    
+    using User = Domain.User;
+
     public class Api
     {
         public Api(ITransaction transaction, string workspaceName)

@@ -20,4 +20,8 @@
     <Compile Remove="..\..\..\..\Core\Workspace\CSharp\Domain\Core\State\ISessionStateState.cs" />
     <Compile Remove="..\..\..\..\Core\Workspace\CSharp\Domain\Core\State\IWorkspaceState.cs" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Custom\" />
+  </ItemGroup>
 </Project>

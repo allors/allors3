@@ -7,9 +7,7 @@ namespace Allors.Server
 {
     using System.Collections.Generic;
     using System.Text;
-    using Database;
     using Database.Domain;
-    using Database.Meta;
     using Services;
     using Security;
     using JSNLog;
@@ -26,6 +24,8 @@ namespace Allors.Server
     using Database.Adapters;
     using Database.Configuration;
     using Database.Domain.Derivations.Default;
+    using Database.Meta;
+    using User = Database.Domain.User;
 
     public class Startup
     {
