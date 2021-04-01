@@ -16,14 +16,16 @@ namespace Allors.Server.Tests
     using Database;
     using Database.Adapters.SqlClient;
     using Database.Domain;
-    using Database.Meta;
     using Database.Configuration;
     using Database.Domain.Derivations.Default;
+    using Database.Meta;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
     using Protocol.Json.Auth;
     using Xunit;
+    using C1 = Database.Domain.C1;
     using ObjectFactory = Database.ObjectFactory;
+    using User = Database.Domain.User;
 
     public abstract class ApiTest : IDisposable
     {

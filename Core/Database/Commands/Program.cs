@@ -8,7 +8,6 @@ namespace Commands
     using System;
     using System.Data;
     using System.IO;
-    using Allors;
     using Allors.Database;
     using Allors.Database.Adapters;
     using Allors.Database.Configuration;
@@ -20,6 +19,7 @@ namespace Commands
     using Microsoft.Extensions.Configuration;
     using NLog;
     using ObjectFactory = Allors.Database.ObjectFactory;
+    using User = Allors.Database.Domain.User;
 
     [Command(Description = "Allors Core Commands")]
     [Subcommand(

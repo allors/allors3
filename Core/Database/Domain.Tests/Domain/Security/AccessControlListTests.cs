@@ -10,6 +10,10 @@ namespace Allors.Database.Domain.Tests
     using Domain;
     using Meta;
     using Xunit;
+    using AccessControl = Domain.AccessControl;
+    using Object = Domain.Object;
+    using Permission = Domain.Permission;
+    using Role = Domain.Role;
 
     public class AccessControlListTests : DomainTest, IClassFixture<Fixture>
     {
