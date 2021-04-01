@@ -11,10 +11,13 @@ namespace Allors.Database.Domain.Tests
     using System.Linq;
     using Adapters.Memory;
     using Domain;
-    using Meta;
     using Configuration;
     using Database;
+    using Meta;
     using TestPopulation;
+    using Organisation = Domain.Organisation;
+    using Person = Domain.Person;
+    using User = Domain.User;
 
     public class DomainTest : IDisposable
     {

@@ -8,10 +8,12 @@ namespace Allors.Database.Adapters
     using System;
     using System.Collections.Generic;
     using Allors;
-    using Domain;
     using Meta;
     using Tracing;
     using Xunit;
+    using C1 = Domain.C1;
+    using C2 = Domain.C2;
+    using DateTime = System.DateTime;
 
     public abstract class OnAccessTest : IDisposable
     {

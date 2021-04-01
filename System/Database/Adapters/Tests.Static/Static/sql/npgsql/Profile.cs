@@ -9,9 +9,9 @@ namespace Allors.Database.Adapters.Npgsql
     using System.Collections.Generic;
     using System.Text;
     using Caching;
-    using Domain;
     using global::Npgsql;
     using Meta;
+    using C1 = Domain.C1;
     using ObjectFactory = ObjectFactory;
 
     public class Profile : Adapters.Profile

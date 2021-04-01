@@ -12,10 +12,11 @@ namespace Allors.Database.Domain.Tests
     using Database;
     using Adapters.Memory;
     using Domain;
-    using Meta;
     using Allors.Database.Security;
     using Configuration;
+    using Meta;
     using Moq;
+    using User = Domain.User;
 
     public class DomainTest : IDisposable
     {

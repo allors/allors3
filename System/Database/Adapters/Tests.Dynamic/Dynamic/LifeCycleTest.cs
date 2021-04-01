@@ -23,6 +23,7 @@ namespace Allors.Database.Adapters
     using Allors;
     using Meta;
     using Xunit;
+    using DateTime = System.DateTime;
 
     public abstract class LifeCycleTest : Test
     {

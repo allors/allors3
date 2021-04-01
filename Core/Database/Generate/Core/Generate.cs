@@ -7,9 +7,8 @@
 namespace Allors.Development.Repository.Tasks
 {
     using System.IO;
-
-    using Generation;
     using Database.Meta;
+    using StringTemplate = Generation.StringTemplate;
 
     public static class Generate
     {

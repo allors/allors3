@@ -27,6 +27,8 @@ For more information visit http://www.allors.com/legal
 	<generation template="units" output="units.g.cs"/>
 	<generation template="interfaces" output="interfaces.g.cs"/>
 	<generation template="classes" output="classes.g.cs"/>
+	<generation template="associationTypes" output="associationTypes.g.cs"/>
+	<generation template="roleTypes" output="roleTypes.g.cs"/>
 	<generation template="builder" output="builder.g.cs"/>
 </generations>
 >>
@@ -87,6 +89,46 @@ $repository.Classes:{class|$define_class(class)$}; separator="\n"$
 define_class(class) ::= <<
     public class $class.SingularName$ : Class {
         public $class.SingularName$(MetaPopulation metaPopulation, System.Guid id) : base(metaPopulation, id)
+        {
+        }
+    }
+>>
+
+associationTypes(repository) ::= <<
+namespace Allors.Database.Meta
+{
+$repository.Composites:{composite|$define_associationTypes(composite)$}; separator="\n"$
+}
+>>
+
+define_associationTypes(composite) ::= <<
+$composite.DefinedProperties:{property|$define_associationType(property)$}; separator="\n"$
+>>
+
+define_associationType(property) ::= <<
+    public class $property.AssociationName$ : AssociationType
+    {
+        public $property.AssociationName$(RelationType relationType) : base(relationType)
+        {
+        }
+    }
+>>
+
+roleTypes(repository) ::= <<
+namespace Allors.Database.Meta
+{
+$repository.Composites:{composite|$define_roleTypes(composite)$}; separator="\n"$
+}
+>>
+
+define_roleTypes(composite) ::= <<
+$composite.DefinedProperties:{property|$define_roleType(property)$}; separator="\n"$
+>>
+
+define_roleType(property) ::= <<
+    public class $property.DefiningType.SingularName$$property.RoleSingularName$ : RoleType
+    {
+        public $property.DefiningType.SingularName$$property.RoleSingularName$(RelationType relationType) : base(relationType)
         {
         }
     }
@@ -253,7 +295,7 @@ $composite.DefinedProperties:{property|$relation(property)$}; separator="\n"$
 relation(property) ::= <<
         private void Build$property.DefiningType.SingularName$$property.RoleSingularName$(MetaPopulation meta, Domains domains, ObjectTypes objectTypes, RelationTypes relationTypes)
         {
-            relationTypes.$property.DefiningType.SingularName$$property.RoleSingularName$ = new RelationType(objectTypes.$property.DefiningType.SingularName$, new System.Guid("$property.AttributeByName.Id.Value$"))
+            relationTypes.$property.DefiningType.SingularName$$property.RoleSingularName$ = new RelationType(objectTypes.$property.DefiningType.SingularName$, new System.Guid("$property.AttributeByName.Id.Value$"), v => new $property.AssociationName$(v), v => new $property.DefiningType.SingularName$$property.RoleSingularName$(v))
             {
 $if(!property.HasDatabaseOrigin)$                AssignedOrigin = Origin.$property.Origin$,$endif$
 $if(property.WorkspaceNames)$		        AssignedWorkspaceNames = new[] {$property.WorkspaceNames:{name|"$name$"}; separator=", "$},$endif$
