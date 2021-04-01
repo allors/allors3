@@ -10,8 +10,9 @@ namespace Allors.Database.Domain.Tests
     using System.Collections.Generic;
     using Allors.Database.Adapters.Memory;
     using Allors.Database.Domain;
-    using Allors.Database.Meta;
     using Configuration;
+    using Meta;
+    using User = Domain.User;
 
     public abstract class DomainTest : IDisposable
     {
