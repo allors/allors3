@@ -23,12 +23,19 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Rollback();
 
             builder.WithGeneralLedgerAccount(new GeneralLedgerAccountBuilder(this.Transaction)
-                                                .WithReferenceNumber("0001")
+                                                .WithReferenceNumber("ReferenceNumber")
+                                                .WithReferenceCode("ReferenceCode")
+                                                .WithSortCode("SortCode")
                                                 .WithName("GeneralLedgerAccount")
                                                 .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
                                                 .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
                                                 .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
-                                                .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction).WithName("accountGroup").Build())
+                                                .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction)
+                                                                                            .WithReferenceNumber("RNumber")
+                                                                                            .WithReferenceCode("RCode")
+                                                                                            .WithSortCode("SCode")
+                                                                                            .WithName("accountGroup")
+                                                                                            .Build())
                                                 .Build());
             builder.Build();
 
@@ -39,12 +46,19 @@ namespace Allors.Database.Domain.Tests
         public void GivenOrganisationGlAccount_WhenBuild_ThenHasBankStatementTransactionsIsAlwaysFalse()
         {
             var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Transaction)
-                .WithReferenceNumber("0001")
+                .WithReferenceNumber("ReferenceNumber")
+                .WithReferenceCode("ReferenceCode")
+                .WithSortCode("SortCode")
                 .WithName("GeneralLedgerAccount")
                 .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
                 .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
                 .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction).WithName("accountGroup").Build())
+                .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction)
+                                                            .WithReferenceNumber("RNumber")
+                                                            .WithReferenceCode("RCode")
+                                                            .WithSortCode("SCode")
+                                                            .WithName("accountGroup")
+                                                            .Build())
                 .Build();
 
             var organisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction)
@@ -60,12 +74,19 @@ namespace Allors.Database.Domain.Tests
         public void GivenOrganisationGlAccount_WhenNotReferenced_ThenAccountIsNeutral()
         {
             var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Transaction)
-                .WithReferenceNumber("0001")
+                .WithReferenceNumber("ReferenceNumber")
+                .WithReferenceCode("ReferenceCode")
+                .WithSortCode("SortCode")
                 .WithName("GeneralLedgerAccount")
                 .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
                 .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
                 .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction).WithName("accountGroup").Build())
+                .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction)
+                                                            .WithReferenceNumber("RNumber")
+                                                            .WithReferenceCode("RCode")
+                                                            .WithSortCode("SCode")
+                                                            .WithName("accountGroup")
+                                                            .Build())
                 .Build();
 
             var organisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction)

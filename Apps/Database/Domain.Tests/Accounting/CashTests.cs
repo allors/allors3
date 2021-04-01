@@ -18,7 +18,9 @@ namespace Allors.Database.Domain.Tests
         public void GivenCashPaymentMethod_WhenDeriving_ThenGeneralLedgerAccountAndJournalAtMostOne()
         {
             var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Transaction)
-                .WithReferenceNumber("0001")
+                .WithReferenceNumber("ReferenceNumber")
+                .WithReferenceCode("ReferenceCode")
+                .WithSortCode("SortCode")
                 .WithName("GeneralLedgerAccount")
                 .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
                 .Build();
@@ -57,7 +59,9 @@ namespace Allors.Database.Domain.Tests
             var internalOrganisation = this.InternalOrganisation;
 
             var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Transaction)
-                .WithReferenceNumber("0001")
+                .WithReferenceNumber("ReferenceNumber")
+                .WithReferenceCode("ReferenceCode")
+                .WithSortCode("SortCode")
                 .WithName("GeneralLedgerAccount")
                 .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
                 .Build();

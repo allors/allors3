@@ -66,11 +66,12 @@ namespace Allors.Database.Domain.Tests
 
             var internalOrganisation = new OrganisationBuilder(this.Transaction)
                 .WithIsInternalOrganisation(true)
+                .WithDoAccounting(true)
                 .WithName("Internal")
                 .WithDefaultCollectionMethod(this.ownBankAccount)
                 .Build();
 
-            this.Transaction.Derive();
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, internalOrganisation.SettingsForAccounting.FiscalYearStartMonth);
         }
@@ -82,11 +83,12 @@ namespace Allors.Database.Domain.Tests
 
             var internalOrganisation = new OrganisationBuilder(this.Transaction)
                 .WithIsInternalOrganisation(true)
+                .WithDoAccounting(true)
                 .WithName("Internal")
                 .WithDefaultCollectionMethod(this.ownBankAccount)
                 .Build();
 
-            this.Transaction.Derive();
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, internalOrganisation.SettingsForAccounting.FiscalYearStartDay);
         }
@@ -217,10 +219,11 @@ namespace Allors.Database.Domain.Tests
 
             var organisation = new OrganisationBuilder(this.Transaction)
                 .WithIsInternalOrganisation(true)
+                .WithDoAccounting(true)
                 .WithName("Internal")
                 .Build();
 
-            this.Transaction.Derive();
+            this.Transaction.Derive(false);
 
             organisation.SettingsForAccounting.FiscalYearStartMonth = 5;
             organisation.SettingsForAccounting.FiscalYearStartDay = 15;

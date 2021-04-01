@@ -21,7 +21,7 @@ namespace Allors.Database.Domain.Tests
                 .WithCardNumber("4012888888881881")
                 .WithExpirationYear(this.Transaction.Now().Year + 1)
                 .WithExpirationMonth(03)
-                .WithNameOnCard("M.E. van Knippenberg")
+                .WithNameOnCard("Name")
                 .WithCreditCardCompany(new CreditCardCompanyBuilder(this.Transaction).WithName("Visa").Build())
                 .Build();
 
@@ -41,13 +41,13 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void GivenOwnCreditCard_WhenBuild_ThenPostBuildRelationsMustExist()
+        public void GivenOwnCreditCardForSingleton_WhenDeriving_ThenCreditCardIsActivePaymentMethod()
         {
             var creditCard = new CreditCardBuilder(this.Transaction)
                 .WithCardNumber("4012888888881881")
                 .WithExpirationYear(this.Transaction.Now().Year + 1)
                 .WithExpirationMonth(03)
-                .WithNameOnCard("M.E. van Knippenberg")
+                .WithNameOnCard("Name")
                 .WithCreditCardCompany(new CreditCardCompanyBuilder(this.Transaction).WithName("Visa").Build())
                 .Build();
 
@@ -57,7 +57,7 @@ namespace Allors.Database.Domain.Tests
 
             this.InternalOrganisation.AddPaymentMethod(paymentMethod);
 
-            this.Transaction.Derive();
+            this.Transaction.Derive(false);
 
             Assert.True(paymentMethod.IsActive);
         }
@@ -69,7 +69,7 @@ namespace Allors.Database.Domain.Tests
                 .WithCardNumber("4012888888881881")
                 .WithExpirationYear(this.Transaction.Now().Year + 1)
                 .WithExpirationMonth(03)
-                .WithNameOnCard("M.E. van Knippenberg")
+                .WithNameOnCard("Name")
                 .WithCreditCardCompany(new CreditCardCompanyBuilder(this.Transaction).WithName("Visa").Build())
                 .Build();
 
@@ -79,13 +79,13 @@ namespace Allors.Database.Domain.Tests
 
             this.InternalOrganisation.AddPaymentMethod(paymentMethod);
 
-            this.Transaction.Derive();
+            this.Transaction.Derive(false);
             Assert.True(paymentMethod.IsActive);
 
             creditCard.ExpirationYear = this.Transaction.Now().Year;
             creditCard.ExpirationMonth = this.Transaction.Now().Month;
 
-            this.Transaction.Derive();
+            this.Transaction.Derive(false);
             Assert.False(paymentMethod.IsActive);
         }
 
@@ -97,7 +97,9 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(false);
 
             var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Transaction)
-                .WithReferenceNumber("0001")
+                .WithReferenceNumber("ReferenceNumber")
+                .WithReferenceCode("ReferenceCode")
+                .WithSortCode("SortCode")
                 .WithName("GeneralLedgerAccount")
                 .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
                 .Build();
@@ -112,7 +114,7 @@ namespace Allors.Database.Domain.Tests
                 .WithCardNumber("4012888888881881")
                 .WithExpirationYear(this.Transaction.Now().Year + 1)
                 .WithExpirationMonth(03)
-                .WithNameOnCard("M.E. van Knippenberg")
+                .WithNameOnCard("Name")
                 .WithCreditCardCompany(new CreditCardCompanyBuilder(this.Transaction).WithName("Visa").Build())
                 .Build();
 
@@ -148,7 +150,9 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(false);
 
             var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Transaction)
-                .WithReferenceNumber("0001")
+                .WithReferenceNumber("ReferenceNumber")
+                .WithReferenceCode("ReferenceCode")
+                .WithSortCode("SortCode")
                 .WithName("GeneralLedgerAccount")
                 .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
                 .Build();
@@ -163,7 +167,7 @@ namespace Allors.Database.Domain.Tests
                 .WithCardNumber("4012888888881881")
                 .WithExpirationYear(this.Transaction.Now().Year + 1)
                 .WithExpirationMonth(03)
-                .WithNameOnCard("M.E. van Knippenberg")
+                .WithNameOnCard("Name")
                 .WithCreditCardCompany(new CreditCardCompanyBuilder(this.Transaction).WithName("Visa").Build())
                 .Build();
 
