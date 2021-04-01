@@ -18,8 +18,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenGeneralLedgerAccount_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var accountGroup = new GeneralLedgerAccountClassificationBuilder(this.Transaction).WithName("accountGroup").Build();
             var accountType = new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build();
+            var accountGroup = new GeneralLedgerAccountClassificationBuilder(this.Transaction)
+                                    .WithReferenceNumber("RNumber")
+                                    .WithReferenceCode("RCode")
+                                    .WithSortCode("SCode")
+                                    .WithName("accountGroup")
+                                    .Build();
 
             this.Transaction.Commit();
 
@@ -30,7 +35,21 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Rollback();
 
-            builder.WithReferenceCode("0001");
+            builder.WithReferenceNumber("ReferenceNumber");
+            builder.Build();
+
+            Assert.True(this.Transaction.Derive(false).HasErrors);
+
+            this.Transaction.Rollback();
+
+            builder.WithReferenceCode("ReferenceCode");
+            builder.Build();
+
+            Assert.True(this.Transaction.Derive(false).HasErrors);
+
+            this.Transaction.Rollback();
+
+            builder.WithSortCode("SortCode");
             builder.Build();
 
             Assert.True(this.Transaction.Derive(false).HasErrors);
@@ -73,7 +92,9 @@ namespace Allors.Database.Domain.Tests
         public void GivenGeneralLedgerAccount_WhenBuild_ThenPostBuildRelationsMustExist()
         {
             var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Transaction)
-                .WithReferenceNumber("0001")
+                .WithReferenceNumber("ReferenceNumber")
+                .WithReferenceCode("ReferenceCode")
+                .WithSortCode("SortCode")
                 .WithName("GeneralLedgerAccount")
                 .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
                 .Build();
@@ -92,21 +113,35 @@ namespace Allors.Database.Domain.Tests
         public void GivenGeneralLedgerAccount_WhenAddedToChartOfAccounts_ThenAccountNumberMustBeUnique()
         {
             var glAccount0001 = new GeneralLedgerAccountBuilder(this.Transaction)
-                .WithReferenceNumber("0001")
+                .WithReferenceNumber("ReferenceNumber")
+                .WithReferenceCode("ReferenceCode")
+                .WithSortCode("SortCode")
                 .WithName("GeneralLedgerAccount")
                 .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
                 .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
                 .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction).WithName("accountGroup").Build())
+                .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction)
+                                                            .WithReferenceNumber("RNumber")
+                                                            .WithReferenceCode("RCode")
+                                                            .WithSortCode("SCode")
+                                                            .WithName("accountGroup")
+                                                            .Build())
                 .Build();
 
             var glAccount0001Dup = new GeneralLedgerAccountBuilder(this.Transaction)
-                .WithReferenceNumber("0001")
+                .WithReferenceNumber("ReferenceNumber")
+                .WithReferenceCode("ReferenceCode")
+                .WithSortCode("SortCode")
                 .WithName("GeneralLedgerAccount duplicate number")
                 .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
                 .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
                 .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction).WithName("accountGroup").Build())
+                .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction)
+                                                            .WithReferenceNumber("RNumber")
+                                                            .WithReferenceCode("RCode")
+                                                            .WithSortCode("SCode")
+                                                            .WithName("accountGroup")
+                                                            .Build())
                 .Build();
 
             var chart = new ChartOfAccountsBuilder(this.Transaction).WithName("name").WithGeneralLedgerAccount(glAccount0001).Build();
@@ -128,13 +163,20 @@ namespace Allors.Database.Domain.Tests
         public void GivenGeneralLedgerAccount_WhenSettingCostCenterRequired_ThenAccountMustBeMarkedAsCostCenterAccount()
         {
             var glAccount = new GeneralLedgerAccountBuilder(this.Transaction)
-                .WithReferenceNumber("0001")
+                .WithReferenceNumber("ReferenceNumber")
+                .WithReferenceCode("ReferenceCode")
+                .WithSortCode("SortCode")
                 .WithName("GeneralLedgerAccount")
                 .WithCostCenterRequired(true)
                 .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
                 .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
                 .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction).WithName("accountGroup").Build())
+                .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction)
+                                                            .WithReferenceNumber("RNumber")
+                                                            .WithReferenceCode("RCode")
+                                                            .WithSortCode("SCode")
+                                                            .WithName("accountGroup")
+                                                            .Build())
                 .Build();
 
             var expectedMessage = $"{glAccount}, { this.M.GeneralLedgerAccount.CostCenterRequired}, { ErrorMessages.NotACostCenterAccount}";
@@ -146,13 +188,20 @@ namespace Allors.Database.Domain.Tests
         public void GivenGeneralLedgerAccount_WhenSettingCostUnitRequired_ThenAccountMustBeMarkedAsCostUnitAccount()
         {
             var glAccount = new GeneralLedgerAccountBuilder(this.Transaction)
-                .WithReferenceNumber("0001")
+                .WithReferenceNumber("ReferenceNumber")
+                .WithReferenceCode("ReferenceCode")
+                .WithSortCode("SortCode")
                 .WithName("GeneralLedgerAccount")
                 .WithCostUnitRequired(true)
                 .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
                 .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
                 .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction).WithName("accountGroup").Build())
+                .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction)
+                                                            .WithReferenceNumber("RNumber")
+                                                            .WithReferenceCode("RCode")
+                                                            .WithSortCode("SCode")
+                                                            .WithName("accountGroup")
+                                                            .Build())
                 .Build();
 
             var expectedMessage = $"{glAccount}, { this.M.GeneralLedgerAccount.CostUnitRequired}, { ErrorMessages.NotACostUnitAccount}";

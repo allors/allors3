@@ -26,7 +26,6 @@ namespace Allors.Database.Domain
                 new RolePattern(m.InternalOrganisation, m.InternalOrganisation.PurchaseShipmentSequence),
                 new RolePattern(m.InternalOrganisation, m.InternalOrganisation.CustomerReturnSequence),
                 new RolePattern(m.InternalOrganisation, m.InternalOrganisation.IncomingTransferSequence),
-                new RolePattern(m.InternalOrganisation, m.InternalOrganisation.DoAccounting),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -36,11 +35,6 @@ namespace Allors.Database.Domain
                 var organisation = (Organisation)@this;
                 if (organisation.IsInternalOrganisation)
                 {
-                    if (@this.DoAccounting && !@this.ExistSettingsForAccounting)
-                    {
-                        @this.SettingsForAccounting = new InternalOrganisationAccountingSettingsBuilder(@this.Strategy.Transaction).Build();
-                    }
-
                     if (!@this.ExistDefaultCollectionMethod && @this.Strategy.Transaction.Extent<PaymentMethod>().Count == 1)
                     {
                         @this.DefaultCollectionMethod = @this.Strategy.Transaction.Extent<PaymentMethod>().First;

@@ -85,11 +85,12 @@ namespace Allors.Database.Domain.Tests
 
             var internalOrganisation2 = new OrganisationBuilder(this.Transaction)
                 .WithIsInternalOrganisation(true)
+                .WithDoAccounting(true)
                 .WithName("internalOrganisation2")
                 .WithDefaultCollectionMethod(ownBankAccount)
                 .Build();
 
-            this.Transaction.Derive();
+            this.Transaction.Derive(false);
 
             var subcontractor2 = internalOrganisation2.CreateSubContractor(this.Transaction.Faker());
 

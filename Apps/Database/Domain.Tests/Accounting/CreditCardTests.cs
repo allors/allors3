@@ -43,7 +43,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Rollback();
 
-            builder.WithNameOnCard("M.E. van Knippenberg");
+            builder.WithNameOnCard("Name");
             builder.Build();
 
             Assert.True(this.Transaction.Derive(false).HasErrors);
@@ -63,7 +63,7 @@ namespace Allors.Database.Domain.Tests
                 .WithCardNumber("4012888888881881")
                 .WithExpirationYear(2016)
                 .WithExpirationMonth(03)
-                .WithNameOnCard("M.E. van Knippenberg")
+                .WithNameOnCard("Name")
                 .WithCreditCardCompany(new CreditCardCompanyBuilder(this.Transaction).WithName("Visa").Build())
                 .Build();
 
@@ -73,7 +73,7 @@ namespace Allors.Database.Domain.Tests
                 .WithCardNumber("4012888888881881")
                 .WithExpirationYear(2016)
                 .WithExpirationMonth(03)
-                .WithNameOnCard("M.E. van Knippenberg")
+                .WithNameOnCard("Name")
                 .WithCreditCardCompany(new CreditCardCompanyBuilder(this.Transaction).WithName("Visa").Build())
                 .Build();
 

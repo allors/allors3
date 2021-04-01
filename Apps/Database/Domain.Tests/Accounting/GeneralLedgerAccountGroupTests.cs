@@ -25,6 +25,27 @@ namespace Allors.Database.Domain.Tests
             builder.WithName("GeneralLedgerAccountClassification");
             builder.Build();
 
+            Assert.True(this.Transaction.Derive(false).HasErrors);
+
+            this.Transaction.Rollback();
+
+            builder.WithReferenceCode("ReferenceCode");
+            builder.Build();
+
+            Assert.True(this.Transaction.Derive(false).HasErrors);
+
+            this.Transaction.Rollback();
+
+            builder.WithReferenceNumber("ReferenceNumber");
+            builder.Build();
+
+            Assert.True(this.Transaction.Derive(false).HasErrors);
+
+            this.Transaction.Rollback();
+
+            builder.WithSortCode("SortCode");
+            builder.Build();
+
             Assert.False(this.Transaction.Derive(false).HasErrors);
         }
     }

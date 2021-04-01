@@ -78,7 +78,7 @@ namespace Allors.Database.Domain
 
                 if (!@this.ExistActualEnd && openCommunicationTasks.Length == 0)
                 {
-                    new CommunicationTaskBuilder(@this.Strategy.Transaction).WithCommunicationEvent(@this).Build();
+                    new CommunicationTaskBuilder(@this.Strategy.Transaction).WithCommunicationEvent(@this).WithWorkItem(@this).Build();
                 }
 
                 var parties = new[] { @this.FromParty, @this.ToParty, @this.Owner }.Distinct().ToArray();
