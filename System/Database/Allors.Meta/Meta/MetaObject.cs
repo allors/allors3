@@ -8,13 +8,13 @@ namespace Allors.Database.Meta
     /// <summary>
     /// Base class for Meta objects.
     /// </summary>
-    public abstract partial class MetaObjectBase : IMetaObject
+    public abstract partial class MetaObjectBase : IMetaObjectBase
     {
-        protected MetaObjectBase(MetaPopulation metaPopulation) => this.MetaPopulation = metaPopulation;
+        protected MetaObjectBase(IMetaPopulationBase metaPopulation) => this.MetaPopulation = metaPopulation;
 
         IMetaPopulation IMetaObject.MetaPopulation => this.MetaPopulation;
 
-        public MetaPopulation MetaPopulation { get; private set; }
+        public IMetaPopulationBase MetaPopulation { get; }
 
         public abstract Origin Origin { get; }
 
@@ -30,5 +30,6 @@ namespace Allors.Database.Meta
         /// Gets the validation name.
         /// </summary>
         public abstract string ValidationName { get; }
+
     }
 }
