@@ -71,14 +71,14 @@ namespace Allors.Database.Domain
                     @this.InitialScheduledEnd = @this.ScheduledEnd;
                 }
 
-                var openCommunicationTasks = @this.TasksWhereWorkItem
+                var openCommunicationTasks = @this.CommunicationTasksWhereCommunicationEvent
                     .OfType<CommunicationTask>()
                     .Where(v => !v.ExistDateClosed)
                     .ToArray();
 
                 if (!@this.ExistActualEnd && openCommunicationTasks.Length == 0)
                 {
-                    new CommunicationTaskBuilder(@this.Strategy.Transaction).WithCommunicationEvent(@this).WithWorkItem(@this).Build();
+                    new CommunicationTaskBuilder(@this.Strategy.Transaction).WithCommunicationEvent(@this).Build();
                 }
 
                 var parties = new[] { @this.FromParty, @this.ToParty, @this.Owner }.Distinct().ToArray();

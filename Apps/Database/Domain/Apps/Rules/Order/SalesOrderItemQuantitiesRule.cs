@@ -28,7 +28,7 @@ namespace Allors.Database.Domain
             var validation = cycle.Validation;
             var transaction = cycle.Transaction;
 
-            foreach (var @this in matches.Cast<SalesOrderItem>().Where(v => v.SalesOrderItemState.IsInProcess && !v.SalesOrderItemShipmentState.IsShipped))
+            foreach (var @this in matches.Cast<SalesOrderItem>().Where(v => v.SalesOrderItemState.IsInProcess || v.SalesOrderItemState.IsCompleted))
             {
                 var salesOrder = @this.SalesOrderWhereSalesOrderItem;
                 var settings = @this.Strategy.Transaction.GetSingleton().Settings;
@@ -71,22 +71,7 @@ namespace Allors.Database.Domain
                             @this.QuantityCommittedOut = qoh;
                         }
 
-                        var wantToShip = @this.QuantityCommittedOut - @this.QuantityPendingShipment;
-
-                        //if (salesOrderItem.ExistPreviousReservedFromNonSerialisedInventoryItem
-                        //    && !Equals(salesOrderItem.ReservedFromNonSerialisedInventoryItem, salesOrderItem.PreviousReservedFromNonSerialisedInventoryItem))
-                        //{
-                        //    var previousInventoryAssignment = salesOrderItem.SalesOrderItemInventoryAssignments.FirstOrDefault(v => v.InventoryItem.Equals(salesOrderItem.PreviousReservedFromNonSerialisedInventoryItem));
-                        //    previousInventoryAssignment.Quantity = 0;
-
-                        //    foreach (OrderShipment orderShipment in salesOrderItem.OrderShipmentsWhereOrderItem)
-                        //    {
-                        //        orderShipment.Delete();
-                        //    }
-
-                        //    quantityCommittedOut = 0;
-                        //    wantToShip = 0;
-                        //}
+                        var wantToShip = @this.QuantityCommittedOut - @this.QuantityPendingShipment > 0? @this.QuantityCommittedOut - @this.QuantityPendingShipment : 0;
 
                         var neededFromInventory = @this.QuantityOrdered - @this.QuantityShipped - @this.QuantityCommittedOut;
                         var availableFromInventory = neededFromInventory < atp ? neededFromInventory : atp;
@@ -134,7 +119,20 @@ namespace Allors.Database.Domain
                             }
 
                             @this.QuantityReserved = @this.QuantityOrdered - @this.QuantityShipped;
-                            @this.QuantityShortFalled = neededFromInventory - availableFromInventory > 0 ? neededFromInventory - availableFromInventory : 0;
+
+                            if (@this.QuantityPendingShipment > 0)
+                            {
+                                @this.QuantityShortFalled = @this.QuantityOrdered - @this.QuantityPendingShipment - @this.QuantityShipped;
+                            }
+                            else
+                            {
+                                @this.QuantityShortFalled = @this.QuantityOrdered - @this.QuantityCommittedOut - @this.QuantityShipped;
+                            }
+
+                            if (@this.QuantityShortFalled < 0)
+                            {
+                                @this.QuantityShortFalled = 0;
+                            }
                         }
                     }
                 }
