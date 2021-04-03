@@ -49,7 +49,7 @@ namespace Allors.Database.Domain
             config.Deny(this.ObjectType, sent, approve, reject, hold, @continue, setReadyForProcessing, reopen, send);
             config.Deny(this.ObjectType, completed, approve, reject, hold, @continue, setReadyForProcessing, cancel, reopen, send, quickReceive);
 
-            var except = new HashSet<OperandType>
+            var except = new HashSet<IOperandType>
             {
                 this.Meta.ElectronicDocuments,
                 this.Meta.Print,

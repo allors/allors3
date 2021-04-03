@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public static partial class TransactionExtension
     {
-        public static IDictionary<T, long> GetCache<T>(this ITransaction @this, Type type, RoleType roleType)
+        public static IDictionary<T, long> GetCache<T>(this ITransaction @this, Type type, IRoleType roleType)
         {
             var key = $"{type}.{roleType}";
 

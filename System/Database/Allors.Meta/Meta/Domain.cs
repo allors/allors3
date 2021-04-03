@@ -10,7 +10,7 @@ namespace Allors.Database.Meta
     using System.Collections.Generic;
     using System.Linq;
 
-    public sealed partial class Domain : MetaObjectBase, IDomain
+    public sealed partial class Domain : MetaObjectBase, IDomainBase
     {
         private IList<Domain> directSuperdomains;
         private IList<Domain> derivedSuperdomains;

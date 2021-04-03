@@ -6,10 +6,15 @@
 
 namespace Allors.Database.Meta
 {
+    using System;
+    using System.Collections.Generic;
+
     public interface IMethodClass : IMethodType
     {
         new IClass ObjectType { get; }
 
         IMethodInterface MethodInterface { get; }
+
+        IEnumerable<Action<object, object>> Actions { get; }
     }
 }

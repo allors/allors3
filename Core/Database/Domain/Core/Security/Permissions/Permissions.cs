@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public partial class Permissions
     {
-        public Permission Get(Class @class, RoleType roleType, Operations operation)
+        public Permission Get(Class @class, IRoleType roleType, Operations operation)
         {
             var permissionCacheEntry = this.Transaction.Database.Context().PermissionsCache.Get(@class.Id);
             if (permissionCacheEntry != null)
@@ -37,7 +37,7 @@ namespace Allors.Database.Domain
             return null;
         }
 
-        public Permission Get(Class @class, MethodType methodType)
+        public Permission Get(Class @class, IMethodType methodType)
         {
             var permissionCacheEntry = this.Transaction.Database.Context().PermissionsCache.Get(@class.Id);
             if (permissionCacheEntry != null)

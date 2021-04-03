@@ -1369,6 +1369,6 @@ namespace Allors.Database.Adapters
             }
         }
 
-        private Class[] GetTestTypes() => this.GetMetaPopulation().Classes.ToArray();
+        private IClass[] GetTestTypes() => this.GetMetaPopulation().Classes.ToArray();
     }
 }

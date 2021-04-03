@@ -30,7 +30,7 @@ namespace Allors.Database.Meta
 
 
         public Interface Interface { get; }
-        public override Composite Composite => this.Interface;
+        public override ICompositeBase Composite => this.Interface;
 
         public string[] AssignedWorkspaceNames
         {
@@ -68,7 +68,7 @@ namespace Allors.Database.Meta
 
         public override string FullName => $"{this.Composite.Name}{this.Name}";
 
-        protected internal override void DeriveWorkspaceNames()
+        public override void DeriveWorkspaceNames()
         {
             this.derivedWorkspaceNames = this.assignedWorkspaceNames != null
                 ? this.assignedWorkspaceNames.Intersect(this.Composite.Classes.SelectMany(v => v.WorkspaceNames)).ToArray()

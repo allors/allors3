@@ -14,26 +14,26 @@ namespace Allors.Database.Domain.Derivations
         
         void AddError(IDerivationError derivationError);
 
-        void AddError(IObject association, RoleType roleType, string errorMessage, params object[] messageParam);
+        void AddError(IObject association, IRoleType roleType, string errorMessage, params object[] messageParam);
 
-        void AddError(IObject role, AssociationType associationType, string errorMessage, params object[] messageParam);
+        void AddError(IObject role, IAssociationType associationType, string errorMessage, params object[] messageParam);
 
-        void AssertExists(IObject association, RoleType roleType);
+        void AssertExists(IObject association, IRoleType roleType);
 
-        void AssertNotExists(IObject association, RoleType roleType);
+        void AssertNotExists(IObject association, IRoleType roleType);
 
-        void AssertNonEmptyString(IObject association, RoleType roleType);
+        void AssertNonEmptyString(IObject association, IRoleType roleType);
 
-        void AssertExistsNonEmptyString(IObject association, RoleType roleType);
+        void AssertExistsNonEmptyString(IObject association, IRoleType roleType);
 
-        void AssertIsUnique(IObject association, RoleType roleType);
+        void AssertIsUnique(IObject association, IRoleType roleType);
 
-        void AssertAtLeastOne(IObject association, params RoleType[] roleTypes);
+        void AssertAtLeastOne(IObject association, params IRoleType[] roleTypes);
 
-        void AssertExistsAtMostOne(IObject association, params RoleType[] roleTypes);
+        void AssertExistsAtMostOne(IObject association, params IRoleType[] roleTypes);
 
-        void AssertAreEqual(IObject association, RoleType roleType, RoleType otherRoleType);
+        void AssertAreEqual(IObject association, IRoleType roleType, IRoleType otherRoleType);
 
-        void AssertExists(IObject role, AssociationType associationType);
+        void AssertExists(IObject role, IAssociationType associationType);
     }
 }

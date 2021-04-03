@@ -11,9 +11,9 @@ namespace Allors.Database.Domain
 
     public partial interface IMetaCache
     {
-        RoleType[] GetRequiredRoleTypes(IClass @class);
+        IRoleType[] GetRequiredRoleTypes(IClass @class);
 
-        RoleType[] GetUniqueRoleTypes(IClass @class);
+        IRoleType[] GetUniqueRoleTypes(IClass @class);
 
         Type GetBuilderType(IClass @class);
 

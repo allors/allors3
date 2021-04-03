@@ -12,20 +12,25 @@ namespace Allors.Database.Domain
 
     public partial class TransitionalConfiguration
     {
-        public TransitionalConfiguration(Class objectType, RoleType roleType)
+
+        public TransitionalConfiguration(MetaClass objectType, IRoleType roleType) : this(objectType.ObjectType, roleType)
         {
-            var previousObjectState = objectType.RoleTypes.FirstOrDefault(v => v.Name.Equals("Previous" + roleType.Name));
-            var lastObjectState = objectType.RoleTypes.FirstOrDefault(v => v.Name.Equals("Last" + roleType.Name));
+        }
+
+        public TransitionalConfiguration(IClass objectType, IRoleType roleType)
+        {
+            var previousObjectState = objectType.DatabaseRoleTypes.FirstOrDefault(v => v.Name.Equals("Previous" + roleType.Name));
+            var lastObjectState = objectType.DatabaseRoleTypes.FirstOrDefault(v => v.Name.Equals("Last" + roleType.Name));
 
             this.ObjectState = roleType;
             this.PreviousObjectState = previousObjectState ?? throw new Exception("Previous ObjectState is not defined for " + roleType.Name + " in type " + roleType.AssociationType.ObjectType.Name);
             this.LastObjectState = lastObjectState ?? throw new Exception("Last ObjectState is not defined for " + roleType.Name + " in type " + roleType.AssociationType.ObjectType.Name);
         }
 
-        public RoleType ObjectState { get; set; }
+        public IRoleType ObjectState { get; set; }
 
-        public RoleType PreviousObjectState { get; set; }
+        public IRoleType PreviousObjectState { get; set; }
 
-        public RoleType LastObjectState { get; set; }
+        public IRoleType LastObjectState { get; set; }
     }
 }

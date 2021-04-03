@@ -15,7 +15,7 @@ namespace Allors.Database.Domain.Derivations.Errors
         {
         }
 
-        public DerivationErrorUnique(IValidation validation, IObject association, RoleType roleType) :
+        public DerivationErrorUnique(IValidation validation, IObject association, IRoleType roleType) :
             this(validation, new DerivationRelation(association, roleType))
         {
         }

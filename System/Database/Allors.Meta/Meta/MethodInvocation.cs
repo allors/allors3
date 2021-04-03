@@ -9,9 +9,9 @@ namespace Allors.Database.Meta
 
     public partial class MethodInvocation
     {
-        public MethodInvocation(MethodClass methodClass) => this.MethodClass = methodClass;
+        public MethodInvocation(IMethodClass methodClass) => this.MethodClass = methodClass;
 
-        public MethodClass MethodClass { get; }
+        public IMethodClass MethodClass { get; }
 
         //[DebuggerStepThrough]
         public void Execute(Method method)

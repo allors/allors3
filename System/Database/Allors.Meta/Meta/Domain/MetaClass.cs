@@ -17,5 +17,6 @@ namespace Allors.Database.Meta
         public static implicit operator Composite(MetaClass metaClass) => metaClass.Class;
 
         public static implicit operator Class(MetaClass metaClass) => metaClass.Class;
+
     }
 }

@@ -25,11 +25,11 @@ namespace Allors.Database.Domain
 
         public Extent<T> Extent() => this.Transaction.Extent<T>();
 
-        public T FindBy(RoleType roleType, object parameter)
+        public T FindBy(IRoleType roleType, object parameter)
         {
             if (parameter == null)
             {
-                return default(T);
+                return default;
             }
 
             var extent = this.Transaction.Extent(this.ObjectType);

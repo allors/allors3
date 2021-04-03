@@ -15,13 +15,13 @@ namespace Allors.Database.Domain
 
         public static bool IsCreated(this IChangeSet @this, Object derivable) => @this.Created.Contains(derivable.Strategy);
 
-        public static bool HasChangedRole(this IChangeSet @this, Object derivable, RoleType roleType)
+        public static bool HasChangedRole(this IChangeSet @this, Object derivable, IRoleType roleType)
         {
             @this.RoleTypesByAssociation.TryGetValue(derivable.Id, out var changedRoleTypes);
             return changedRoleTypes?.Contains(roleType) ?? false;
         }
 
-        public static bool HasChangedRoles(this IChangeSet @this, Object derivable, params RoleType[] roleTypes)
+        public static bool HasChangedRoles(this IChangeSet @this, Object derivable, params IRoleType[] roleTypes)
         {
             @this.RoleTypesByAssociation.TryGetValue(derivable.Id, out var changedRoleTypes);
             if (changedRoleTypes != null)

@@ -29,19 +29,19 @@ namespace Allors.Database.Domain.Derivations
 
         public void AddError(IDerivationError derivationError) => this.errors.Add(derivationError);
 
-        public void AddError(IObject association, RoleType roleType, string errorMessage, params object[] messageParam)
+        public void AddError(IObject association, IRoleType roleType, string errorMessage, params object[] messageParam)
         {
             var error = new DerivationErrorGeneric(this, new DerivationRelation(association, roleType), errorMessage, messageParam);
             this.AddError(error);
         }
 
-        public void AddError(IObject role, AssociationType associationType, string errorMessage, params object[] messageParam)
+        public void AddError(IObject role, IAssociationType associationType, string errorMessage, params object[] messageParam)
         {
             var error = new DerivationErrorGeneric(this, new DerivationRelation(role, associationType), errorMessage, messageParam);
             this.AddError(error);
         }
 
-        public void AssertExists(IObject association, RoleType roleType)
+        public void AssertExists(IObject association, IRoleType roleType)
         {
             if (!association.Strategy.ExistRole(roleType))
             {
@@ -49,7 +49,7 @@ namespace Allors.Database.Domain.Derivations
             }
         }
 
-        public void AssertNotExists(IObject association, RoleType roleType)
+        public void AssertNotExists(IObject association, IRoleType roleType)
         {
             if (association.Strategy.ExistRole(roleType))
             {
@@ -57,7 +57,7 @@ namespace Allors.Database.Domain.Derivations
             }
         }
 
-        public void AssertNonEmptyString(IObject association, RoleType roleType)
+        public void AssertNonEmptyString(IObject association, IRoleType roleType)
         {
             if (association.Strategy.ExistRole(roleType))
             {
@@ -68,13 +68,13 @@ namespace Allors.Database.Domain.Derivations
             }
         }
 
-        public void AssertExistsNonEmptyString(IObject association, RoleType roleType)
+        public void AssertExistsNonEmptyString(IObject association, IRoleType roleType)
         {
             this.AssertExists(association, roleType);
             this.AssertNonEmptyString(association, roleType);
         }
 
-        public void AssertIsUnique(IObject association, RoleType roleType)
+        public void AssertIsUnique(IObject association, IRoleType roleType)
         {
             if (this.Derivation.ChangeSet.RoleTypesByAssociation.TryGetValue(association.Id, out var roleTypes))
             {
@@ -97,7 +97,7 @@ namespace Allors.Database.Domain.Derivations
             }
         }
 
-        public void AssertAtLeastOne(IObject association, params RoleType[] roleTypes)
+        public void AssertAtLeastOne(IObject association, params IRoleType[] roleTypes)
         {
             foreach (var roleType in roleTypes)
             {
@@ -110,7 +110,7 @@ namespace Allors.Database.Domain.Derivations
             this.AddError(new DerivationErrorAtLeastOne(this, DerivationRelation.Create(association, roleTypes)));
         }
 
-        public void AssertExistsAtMostOne(IObject association, params RoleType[] roleTypes)
+        public void AssertExistsAtMostOne(IObject association, params IRoleType[] roleTypes)
         {
             var count = 0;
             foreach (var roleType in roleTypes)
@@ -127,7 +127,7 @@ namespace Allors.Database.Domain.Derivations
             }
         }
 
-        public void AssertAreEqual(IObject association, RoleType roleType, RoleType otherRoleType)
+        public void AssertAreEqual(IObject association, IRoleType roleType, IRoleType otherRoleType)
         {
             var value = association.Strategy.GetRole(roleType);
             var otherValue = association.Strategy.GetRole(otherRoleType);
@@ -148,7 +148,7 @@ namespace Allors.Database.Domain.Derivations
             }
         }
 
-        public void AssertExists(IObject role, AssociationType associationType)
+        public void AssertExists(IObject role, IAssociationType associationType)
         {
             if (!role.Strategy.ExistAssociation(associationType))
             {

@@ -95,7 +95,7 @@ namespace Allors.Database.Adapters
 
                         foreach (var allorsObject in extent)
                         {
-                            var roles = concreteClass.UnitRoleTypes;
+                            var roles = concreteClass.DatabaseRoleTypes.Where(v=>v.ObjectType.IsUnit);
                             foreach (var role in roles)
                             {
                                 var unitTypeTag = ((Unit)role.ObjectType).UnitTag;
@@ -149,7 +149,7 @@ namespace Allors.Database.Adapters
                             }
                         }
 
-                        var associationTypes = relationType.AssociationType.ObjectType.Classes.ToArray();
+                        var associationTypes = relationType.AssociationType.ObjectType.DatabaseClasses.ToArray();
                         foreach (var associationType in associationTypes)
                         {
                             var associations = (ArrayList)objectsByMetaType[associationType];
@@ -194,7 +194,7 @@ namespace Allors.Database.Adapters
                             }
                         }
 
-                        var associationTypes = relationType.AssociationType.ObjectType.Classes.ToArray();
+                        var associationTypes = relationType.AssociationType.ObjectType.DatabaseClasses.ToArray();
                         foreach (var associationType in associationTypes)
                         {
                             var associations = (ArrayList)objectsByMetaType[associationType];
@@ -231,7 +231,7 @@ namespace Allors.Database.Adapters
 
                         // Interleave AssociationTypes
                         var interleavedAssociations = new ArrayList();
-                        var associationTypes = relationType.AssociationType.ObjectType.Classes.ToArray();
+                        var associationTypes = relationType.AssociationType.ObjectType.DatabaseClasses.ToArray();
                         for (var i = 0; i < this.ObjectsPerClass; i++)
                         {
                             foreach (var associationType in associationTypes)
@@ -302,7 +302,7 @@ namespace Allors.Database.Adapters
 
                         // Interleave AssociationTypes
                         var interleavedAssociations = new ArrayList();
-                        var associationTypes = relationType.AssociationType.ObjectType.Classes.ToArray();
+                        var associationTypes = relationType.AssociationType.ObjectType.DatabaseClasses.ToArray();
                         for (var i = 0; i < this.ObjectsPerClass; i++)
                         {
                             foreach (var associationType in associationTypes)
@@ -428,6 +428,6 @@ namespace Allors.Database.Adapters
             }
         }
 
-        private Class[] GetTestTypes() => Enumerable.ToArray(this.GetMetaPopulation().Classes);
+        private IClass[] GetTestTypes() => Enumerable.ToArray(this.GetMetaPopulation().Classes);
     }
 }

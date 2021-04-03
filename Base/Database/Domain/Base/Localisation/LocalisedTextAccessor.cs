@@ -9,9 +9,9 @@ namespace Allors.Database.Domain
 
     public partial class LocalisedTextAccessor
     {
-        private readonly RoleType roleType;
+        private readonly IRoleType roleType;
 
-        public LocalisedTextAccessor(RoleType roleType) => this.roleType = roleType;
+        public LocalisedTextAccessor(IRoleType roleType) => this.roleType = roleType;
 
         public string Get(IObject @object, Locale locale)
         {

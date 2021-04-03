@@ -284,7 +284,7 @@ namespace Allors.Database.Domain.Tests
             }
         }
 
-        private Permission FindPermission(RoleType roleType, Operations operation)
+        private Permission FindPermission(IRoleType roleType, Operations operation)
         {
             var objectType = (Class)roleType.AssociationType.ObjectType;
             return new Permissions(this.Transaction).Get(objectType, roleType, operation);

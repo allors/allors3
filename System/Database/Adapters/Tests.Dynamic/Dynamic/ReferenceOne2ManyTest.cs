@@ -46,7 +46,7 @@ namespace Allors.Database.Adapters
                                 IObject[] emptyRoles = this.CreateArray(relationType.RoleType.ObjectType, 0);
 
                                 // Different AssociationTypes With Same ObjectType
-                                var associationTypes = relationType.AssociationType.ObjectType.Classes.ToArray();
+                                var associationTypes = relationType.AssociationType.ObjectType.DatabaseClasses.ToArray();
                                 for (int iAssociationType = 0; iAssociationType < associationTypes.Count(); iAssociationType++)
                                 {
                                     var associationType = associationTypes[iAssociationType];
@@ -178,7 +178,7 @@ namespace Allors.Database.Adapters
                                 var relationType = this.GetRelations()[iRelation];
                                 IObject[] emptyRoles = this.CreateArray(relationType.RoleType.ObjectType, 0);
 
-                                var associationTypes = relationType.AssociationType.ObjectType.Classes.ToArray();
+                                var associationTypes = relationType.AssociationType.ObjectType.DatabaseClasses.ToArray();
                                 for (int iAssociationType = 0; iAssociationType < associationTypes.Count(); iAssociationType++)
                                 {
                                     var associationType = associationTypes[iAssociationType];
@@ -253,10 +253,10 @@ namespace Allors.Database.Adapters
             }
         }
 
-        private IObject[] CreateAssociationsWithDifferentClass(RelationType relationType)
+        private IObject[] CreateAssociationsWithDifferentClass(IRelationType relationType)
         {
             IObject[] associations = this.CreateArray(relationType.AssociationType.ObjectType, this.GetAssociationCount());
-            var concreteClasses = relationType.AssociationType.ObjectType.Classes.ToArray();
+            var concreteClasses = relationType.AssociationType.ObjectType.DatabaseClasses.ToArray();
             for (int i = 0; i < associations.Count(); i++)
             {
                 int classIndex = i % concreteClasses.Count();
@@ -267,7 +267,7 @@ namespace Allors.Database.Adapters
             return associations;
         }
 
-        private IObject[] CreateAssociationsWithSameClass(RelationType relationType, Class associationClass)
+        private IObject[] CreateAssociationsWithSameClass(IRelationType relationType, IClass associationClass)
         {
             IObject[] associations = this.CreateArray(relationType.AssociationType.ObjectType, this.GetAssociationCount());
             for (int i = 0; i < this.GetAssociationCount(); i++)
@@ -278,16 +278,16 @@ namespace Allors.Database.Adapters
             return associations;
         }
 
-        private IObject[] CreateRoles(RelationType relationType, IObject role)
+        private IObject[] CreateRoles(IRelationType relationType, IObject role)
         {
             IObject[] roles = this.CreateArray(relationType.RoleType.ObjectType, 1);
             roles[0] = role;
             return roles;
         }
 
-        private IObject[] CreateRolesWithDifferentClass(RelationType relationType) => this.CreateRolesWithDifferentClass(this.GetTransaction(), relationType);
+        private IObject[] CreateRolesWithDifferentClass(IRelationType relationType) => this.CreateRolesWithDifferentClass(this.GetTransaction(), relationType);
 
-        private IObject[] CreateRolesWithDifferentClass(ITransaction transaction, RelationType relationType)
+        private IObject[] CreateRolesWithDifferentClass(ITransaction transaction, IRelationType relationType)
         {
             IObject[] allRoles = this.CreateArray(relationType.RoleType.ObjectType, this.GetRoleCount());
             var concreteClasses = this.GetClasses(relationType);
@@ -301,9 +301,9 @@ namespace Allors.Database.Adapters
             return allRoles;
         }
 
-        private IObject[] CreateRolesWithSameClass(RelationType relationType, Class roleClass) => this.CreateRolesWithSameClass(this.GetTransaction(), relationType, roleClass);
+        private IObject[] CreateRolesWithSameClass(IRelationType relationType, IClass roleClass) => this.CreateRolesWithSameClass(this.GetTransaction(), relationType, roleClass);
 
-        private IObject[] CreateRolesWithSameClass(ITransaction transaction, RelationType relationType, Class roleClass)
+        private IObject[] CreateRolesWithSameClass(ITransaction transaction, IRelationType relationType, IClass roleClass)
         {
             IObject[] allRoles = this.CreateArray(relationType.RoleType.ObjectType, this.GetRoleCount());
             for (int i = 0; i < allRoles.Count(); i++)
@@ -314,7 +314,7 @@ namespace Allors.Database.Adapters
             return allRoles;
         }
 
-        private RelationType[] GetRelations() => this.GetOne2ManyRelations(this.GetMetaPopulation());
+        private IRelationType[] GetRelations() => this.GetOne2ManyRelations(this.GetMetaPopulation());
 
         private class DifferentAssociationDifferentRolesByOne : ReferenceProxyTest
         {
@@ -322,7 +322,7 @@ namespace Allors.Database.Adapters
             {
             }
 
-            public void Test(RelationType relationType, IObject[] associations, IObject[] roles, bool transactionFlag, int repeat, int testRepeat, int assertRepeat)
+            public void Test(IRelationType relationType, IObject[] associations, IObject[] roles, bool transactionFlag, int repeat, int testRepeat, int assertRepeat)
             {
                 this.AssertRelationNotExists(relationType, associations, roles, transactionFlag, assertRepeat, testRepeat);
 
@@ -409,7 +409,7 @@ namespace Allors.Database.Adapters
                 }
             }
 
-            private void AssertRelationNotExists(RelationType relationType, IObject[] associations, IObject[] roles, bool transactionFlag, int testRepeat, int assertRepeat)
+            private void AssertRelationNotExists(IRelationType relationType, IObject[] associations, IObject[] roles, bool transactionFlag, int testRepeat, int assertRepeat)
             {
                 for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                 {
@@ -438,7 +438,7 @@ namespace Allors.Database.Adapters
                 }
             }
 
-            private void AssertRelationForwardExists(RelationType relationType, IObject[] associations, IObject[] roles, int index, bool transactionFlag, int testRepeat)
+            private void AssertRelationForwardExists(IRelationType relationType, IObject[] associations, IObject[] roles, int index, bool transactionFlag, int testRepeat)
             {
                 for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                 {
@@ -464,7 +464,7 @@ namespace Allors.Database.Adapters
                 }
             }
 
-            private void AssertRelationForwardNotExists(RelationType relationType, IObject[] associations, IObject[] roles, int index, bool transactionFlag, int testRepeat)
+            private void AssertRelationForwardNotExists(IRelationType relationType, IObject[] associations, IObject[] roles, int index, bool transactionFlag, int testRepeat)
             {
                 for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                 {
@@ -490,7 +490,7 @@ namespace Allors.Database.Adapters
                 }
             }
 
-            private void AssertRelationBackwardNotExists(RelationType relationType, IObject[] associations, IObject[] roles, int index, bool transactionFlag, int testRepeat)
+            private void AssertRelationBackwardNotExists(IRelationType relationType, IObject[] associations, IObject[] roles, int index, bool transactionFlag, int testRepeat)
             {
                 for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                 {
@@ -523,7 +523,7 @@ namespace Allors.Database.Adapters
             {
             }
 
-            public void Test(RelationType relationType, IObject[] associations, IObject[] roles, IObject[] emptyRoles, bool transactionFlag, int repeat, int testRepeat, int assertRepeat)
+            public void Test(IRelationType relationType, IObject[] associations, IObject[] roles, IObject[] emptyRoles, bool transactionFlag, int repeat, int testRepeat, int assertRepeat)
             {
                 for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                 {
@@ -776,7 +776,7 @@ namespace Allors.Database.Adapters
                 }
             }
 
-            private void AssertRoleNotExists(RelationType relationType, IObject[] associations, IObject[] roles, bool transactionFlag, int testRepeat, int assertRepeat)
+            private void AssertRoleNotExists(IRelationType relationType, IObject[] associations, IObject[] roles, bool transactionFlag, int testRepeat, int assertRepeat)
             {
                 for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                 {
@@ -805,7 +805,7 @@ namespace Allors.Database.Adapters
                 }
             }
 
-            private void AssertRelationExists(RelationType relationType, IObject[] associations, IObject[] roles, bool transactionFlag, int testRepeat, int assertRepeat)
+            private void AssertRelationExists(IRelationType relationType, IObject[] associations, IObject[] roles, bool transactionFlag, int testRepeat, int assertRepeat)
             {
                 for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                 {
@@ -890,7 +890,7 @@ namespace Allors.Database.Adapters
                 }
             }
 
-            private void AssertRelationForwardExists(RelationType relationType, IObject[] associations, int associationIndex, IObject[] roles, bool transactionFlag, int testRepeat, int assertRepeat)
+            private void AssertRelationForwardExists(IRelationType relationType, IObject[] associations, int associationIndex, IObject[] roles, bool transactionFlag, int testRepeat, int assertRepeat)
             {
                 for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                 {
@@ -982,7 +982,7 @@ namespace Allors.Database.Adapters
                 }
             }
 
-            private void AssertRelationForwardNotExists(RelationType relationType, IObject[] associations, int associationIndex, IObject[] roles, bool transactionFlag, int testRepeat, int assertRepeat)
+            private void AssertRelationForwardNotExists(IRelationType relationType, IObject[] associations, int associationIndex, IObject[] roles, bool transactionFlag, int testRepeat, int assertRepeat)
             {
                 for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                 {
@@ -1073,7 +1073,7 @@ namespace Allors.Database.Adapters
                 }
             }
 
-            private void AssertRelationBackwardNotExists(RelationType relationType, IObject[] associations, int associationIndex, IObject[] roles, bool transactionFlag, int testRepeat, int assertRepeat)
+            private void AssertRelationBackwardNotExists(IRelationType relationType, IObject[] associations, int associationIndex, IObject[] roles, bool transactionFlag, int testRepeat, int assertRepeat)
             {
                 for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                 {
@@ -1137,7 +1137,7 @@ namespace Allors.Database.Adapters
             {
             }
 
-            public void Test(RelationType relationType, IObject[] associations, IObject role, IObject[] roles, IObject[] emptyRoles, bool transactionFlag, int repeat, int testRepeat, int assertRepeat)
+            public void Test(IRelationType relationType, IObject[] associations, IObject role, IObject[] roles, IObject[] emptyRoles, bool transactionFlag, int repeat, int testRepeat, int assertRepeat)
             {
                 for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                 {
@@ -1286,7 +1286,7 @@ namespace Allors.Database.Adapters
                 }
             }
 
-            private void AssertRelationNotExists(RelationType relationType, IObject[] associations, IObject role, bool transactionFlag, int testRepeat, int assertRepeat)
+            private void AssertRelationNotExists(IRelationType relationType, IObject[] associations, IObject role, bool transactionFlag, int testRepeat, int assertRepeat)
             {
                 for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                 {
@@ -1311,7 +1311,7 @@ namespace Allors.Database.Adapters
                 }
             }
 
-            private void AssertExclusiveRelation(RelationType relationType, IObject[] associations, IObject association, IObject role, bool transactionFlag, int testRepeat, int assertRepeat)
+            private void AssertExclusiveRelation(IRelationType relationType, IObject[] associations, IObject association, IObject role, bool transactionFlag, int testRepeat, int assertRepeat)
             {
                 for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                 {
@@ -1352,7 +1352,7 @@ namespace Allors.Database.Adapters
             {
             }
 
-            public void Test(RelationType relationType, IObject[] associations, IObject[] roles, bool transactionFlag, int repeat, int testRepeat, int assertRepeat)
+            public void Test(IRelationType relationType, IObject[] associations, IObject[] roles, bool transactionFlag, int repeat, int testRepeat, int assertRepeat)
             {
                 for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                 {
@@ -1564,7 +1564,7 @@ namespace Allors.Database.Adapters
                 }
             }
 
-            private void AssertRelationNotExists(RelationType relationType, IObject[] associations, IObject[] roles, bool transactionFlag, int testRepeat, int assertRepeat)
+            private void AssertRelationNotExists(IRelationType relationType, IObject[] associations, IObject[] roles, bool transactionFlag, int testRepeat, int assertRepeat)
             {
                 for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                 {
@@ -1593,7 +1593,7 @@ namespace Allors.Database.Adapters
                 }
             }
 
-            private void AssertRelationExists(RelationType relationType, IObject[] associations, IObject association, IObject[] roles, bool transactionFlag, int testRepeat, int assertRepeat)
+            private void AssertRelationExists(IRelationType relationType, IObject[] associations, IObject association, IObject[] roles, bool transactionFlag, int testRepeat, int assertRepeat)
             {
                 for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                 {
@@ -1639,7 +1639,7 @@ namespace Allors.Database.Adapters
                 }
             }
 
-            private void AssertRelationForwardExists(RelationType relationType, IObject[] associations, int associationIndex, IObject[] roles, int roleIndex, bool transactionFlag, int testRepeat, int assertRepeat)
+            private void AssertRelationForwardExists(IRelationType relationType, IObject[] associations, int associationIndex, IObject[] roles, int roleIndex, bool transactionFlag, int testRepeat, int assertRepeat)
             {
                 for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                 {
@@ -1726,7 +1726,7 @@ namespace Allors.Database.Adapters
                 }
             }
 
-            private void AssertRelationForwardNotExists(RelationType relationType, IObject[] associations, IObject association, IObject[] roles, int roleIndex, bool transactionFlag, int testRepeat, int assertRepeat)
+            private void AssertRelationForwardNotExists(IRelationType relationType, IObject[] associations, IObject association, IObject[] roles, int roleIndex, bool transactionFlag, int testRepeat, int assertRepeat)
             {
                 for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                 {
@@ -1786,7 +1786,7 @@ namespace Allors.Database.Adapters
                 this.Commit(transactionFlag);
             }
 
-            private void AssertRelationBackwardNotExists(RelationType relationType, IObject[] associations, IObject association, IObject[] roles, int roleIndex, bool transactionFlag, int testRepeat, int assertRepeat)
+            private void AssertRelationBackwardNotExists(IRelationType relationType, IObject[] associations, IObject association, IObject[] roles, int roleIndex, bool transactionFlag, int testRepeat, int assertRepeat)
             {
                 for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                 {
@@ -1853,7 +1853,7 @@ namespace Allors.Database.Adapters
             {
             }
 
-            public void Test(RelationType relationType, IObject association, IObject role, IObject[] roles, IObject[] emptyRoles, bool transactionFlag, int repeat, int testRepeat, int assertRepeat)
+            public void Test(IRelationType relationType, IObject association, IObject role, IObject[] roles, IObject[] emptyRoles, bool transactionFlag, int repeat, int testRepeat, int assertRepeat)
             {
                 this.AssertRelationNotExists(relationType, association, role, transactionFlag, testRepeat, assertRepeat);
 
@@ -1908,7 +1908,7 @@ namespace Allors.Database.Adapters
                 }
             }
 
-            private void AssertRelation(RelationType relationType, IObject association, IObject role, bool transactionFlag, int testRepeat, int assertRepeat)
+            private void AssertRelation(IRelationType relationType, IObject association, IObject role, bool transactionFlag, int testRepeat, int assertRepeat)
             {
                 for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                 {
@@ -1931,7 +1931,7 @@ namespace Allors.Database.Adapters
                 }
             }
 
-            private void AssertRelationNotExists(RelationType relationType, IObject association, IObject role, bool transactionFlag, int testRepeat, int assertRepeat)
+            private void AssertRelationNotExists(IRelationType relationType, IObject association, IObject role, bool transactionFlag, int testRepeat, int assertRepeat)
             {
                 for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                 {
@@ -1956,7 +1956,7 @@ namespace Allors.Database.Adapters
             {
             }
 
-            public void Test(RelationType relationType, IObject association, IObject[] roles, IObject[] emptyRoles, bool transactionFlag, int repeat, int testRepeat, int assertRepeat)
+            public void Test(IRelationType relationType, IObject association, IObject[] roles, IObject[] emptyRoles, bool transactionFlag, int repeat, int testRepeat, int assertRepeat)
             {
                 this.AssertRelationNotExists(relationType, association, roles, transactionFlag, assertRepeat, testRepeat);
 
@@ -2095,7 +2095,7 @@ namespace Allors.Database.Adapters
                 // TODO: (Exist)
             }
 
-            private void AssertRelationNotExists(RelationType relationType, IObject association, IObject[] roles, bool transactionFlag, int assertRepeat, int testRepeat)
+            private void AssertRelationNotExists(IRelationType relationType, IObject association, IObject[] roles, bool transactionFlag, int assertRepeat, int testRepeat)
             {
                 for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                 {
@@ -2117,7 +2117,7 @@ namespace Allors.Database.Adapters
                 }
             }
 
-            private void AssertRelationExists(RelationType relationType, IObject association, IObject[] roles, bool transactionFlag, int testRepeat, int assertRepeat)
+            private void AssertRelationExists(IRelationType relationType, IObject association, IObject[] roles, bool transactionFlag, int testRepeat, int assertRepeat)
             {
                 for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                 {
@@ -2151,7 +2151,7 @@ namespace Allors.Database.Adapters
             {
             }
 
-            public void Test(RelationType relationType, IObject association, IObject[] roles, IObject[] emptyRoles, IObject[] rolesOtherDatabase, bool transactionFlag, int repeat, int testRepeat, int assertRepeat)
+            public void Test(IRelationType relationType, IObject association, IObject[] roles, IObject[] emptyRoles, IObject[] rolesOtherDatabase, bool transactionFlag, int repeat, int testRepeat, int assertRepeat)
             {
                 this.AssertRelationNotExists(relationType, association, roles, transactionFlag, assertRepeat, testRepeat);
 
@@ -2365,7 +2365,7 @@ namespace Allors.Database.Adapters
                 // TODO: (Exist)
             }
 
-            private void AssertRelationNotExists(RelationType relationType, IObject association, IObject[] roles, bool transactionFlag, int assertRepeat, int testRepeat)
+            private void AssertRelationNotExists(IRelationType relationType, IObject association, IObject[] roles, bool transactionFlag, int assertRepeat, int testRepeat)
             {
                 for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                 {
@@ -2387,7 +2387,7 @@ namespace Allors.Database.Adapters
                 }
             }
 
-            private void AssertRelationExists(RelationType relationType, IObject association, IObject[] roles, bool transactionFlag, int testRepeat, int assertRepeat)
+            private void AssertRelationExists(IRelationType relationType, IObject association, IObject[] roles, bool transactionFlag, int testRepeat, int assertRepeat)
             {
                 for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                 {
@@ -2414,7 +2414,7 @@ namespace Allors.Database.Adapters
                 }
             }
 
-            private void AssertRelationForwardExists(RelationType relationType, IObject association, IObject[] roles, int roleIndex, bool transactionFlag, int testRepeat, int assertRepeat)
+            private void AssertRelationForwardExists(IRelationType relationType, IObject association, IObject[] roles, int roleIndex, bool transactionFlag, int testRepeat, int assertRepeat)
             {
                 for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                 {
@@ -2456,7 +2456,7 @@ namespace Allors.Database.Adapters
                 }
             }
 
-            private void AssertRelationForwardNotExists(RelationType relationType, IObject association, IObject[] roles, int roleIndex, bool transactionFlag, int testRepeat, int assertRepeat)
+            private void AssertRelationForwardNotExists(IRelationType relationType, IObject association, IObject[] roles, int roleIndex, bool transactionFlag, int testRepeat, int assertRepeat)
             {
                 for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                 {
@@ -2493,7 +2493,7 @@ namespace Allors.Database.Adapters
                 this.Commit(transactionFlag);
             }
 
-            private void AssertRelationBackwardsNotExists(RelationType relationType, IObject association, IObject[] roles, int roleIndex, bool transactionFlag, int testRepeat, int assertRepeat)
+            private void AssertRelationBackwardsNotExists(IRelationType relationType, IObject association, IObject[] roles, int roleIndex, bool transactionFlag, int testRepeat, int assertRepeat)
             {
                 for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                 {

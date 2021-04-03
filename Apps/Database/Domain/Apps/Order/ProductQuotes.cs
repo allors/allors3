@@ -43,7 +43,7 @@ namespace Allors.Database.Domain
             config.Deny(this.ObjectType, rejected, setReadyForProcessing, approve, reject, order, send, accept, cancel, revise);
             config.Deny(this.ObjectType, cancelled, setReadyForProcessing, cancel, reject, order, send, accept, approve, revise);
 
-            var except = new HashSet<OperandType>
+            var except = new HashSet<IOperandType>
             {
                 this.Meta.ElectronicDocuments,
                 this.Meta.Print,

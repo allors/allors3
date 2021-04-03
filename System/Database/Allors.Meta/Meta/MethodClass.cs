@@ -12,15 +12,15 @@ namespace Allors.Database.Meta
     using System.Linq.Expressions;
     using System.Reflection;
 
-    public sealed partial class MethodClass : MethodType, IMethodClass
+    public sealed partial class MethodClass : MethodType, IMethodClassBase
     {
         private string[] assignedWorkspaceNames;
         private string[] derivedWorkspaceNames;
 
         private string name;
-        private Class @class;
+        private IClassBase @class;
 
-        private MethodClass(Class @class, Guid id, MethodInterface methodInterface) : base(@class.MetaPopulation)
+        private MethodClass(IClassBase @class, Guid id, MethodInterface methodInterface) : base(@class.MetaPopulation)
         {
             this.Class = @class;
             this.Id = id;
@@ -30,11 +30,11 @@ namespace Allors.Database.Meta
             this.MetaPopulation.OnMethodClassCreated(this);
         }
 
-        public MethodClass(Class @class, Guid id) : this(@class, id, null)
+        public MethodClass(IClassBase @class, Guid id) : this(@class, id, null)
         {
         }
 
-        public MethodClass(Class @class, MethodInterface methodInterface) : this(@class, methodInterface.Id, methodInterface)
+        public MethodClass(IClassBase @class, MethodInterface methodInterface) : this(@class, methodInterface.Id, methodInterface)
         {
         }
 
@@ -73,8 +73,7 @@ namespace Allors.Database.Meta
                 return this.derivedWorkspaceNames;
             }
         }
-
-
+        
         public override string Name
         {
             get => this.name ?? this.MethodInterface.Name;
@@ -96,11 +95,11 @@ namespace Allors.Database.Meta
             ? this.MethodInterface.FullName
             : $"{this.Composite.Name}{this.Name}";
 
-        public override Composite Composite => this.Class;
+        public override ICompositeBase Composite => this.Class;
 
         IClass IMethodClass.ObjectType => this.Class;
 
-        public Class Class
+        public IClassBase Class
         {
             get => this.@class;
 
@@ -113,8 +112,9 @@ namespace Allors.Database.Meta
         }
 
         public IList<Action<object, object>> Actions { get; private set; }
+        IEnumerable<Action<object, object>> IMethodClass.Actions => this.Actions;
 
-        protected internal override void DeriveWorkspaceNames() =>
+        public override void DeriveWorkspaceNames() =>
             this.derivedWorkspaceNames = this.assignedWorkspaceNames != null
                 ? this.assignedWorkspaceNames.Intersect(this.Composite.WorkspaceNames).ToArray()
                 : Array.Empty<string>();
@@ -125,7 +125,7 @@ namespace Allors.Database.Meta
         {
             this.Actions = new List<Action<object, object>>();
 
-            var interfaces = new List<Interface>(this.Class.Supertypes);
+            var interfaces = new List<IInterfaceBase>(this.Class.Supertypes);
 
             interfaces.Sort(
                 (a, b) =>
@@ -216,5 +216,7 @@ namespace Allors.Database.Meta
                         select method;
             return query.ToArray();
         }
+
+        void IMethodClassBase.ResetDerivedWorkspaceNames() => this.ResetDerivedWorkspaceNames();
     }
 }

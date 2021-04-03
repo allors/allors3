@@ -7,8 +7,9 @@
 namespace Allors.Database.Meta
 {
     using System;
+    using System.Collections.Generic;
 
-    public abstract partial class Unit : ObjectType, IUnit
+    public abstract partial class Unit : ObjectType, IUnitBase
     {
         private UnitTags unitTag;
 
@@ -86,7 +87,7 @@ namespace Allors.Database.Meta
 
         public override Type ClrType => this.clrType;
 
-        internal void Bind()
+        public void Bind()
         {
             switch (this.UnitTag)
             {
@@ -124,7 +125,7 @@ namespace Allors.Database.Meta
             }
         }
 
-        public override string[] WorkspaceNames => this.MetaPopulation.WorkspaceNames;
+        public override IEnumerable<string> WorkspaceNames => this.MetaPopulation.WorkspaceNames;
 
         public override Origin Origin => Origin.Database;
     }

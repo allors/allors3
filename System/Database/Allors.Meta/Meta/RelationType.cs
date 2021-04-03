@@ -15,7 +15,7 @@ namespace Allors.Database.Meta
     /// A <see cref="RelationType"/> defines the state and behavior for
     /// a set of <see cref="AssociationType"/>s and <see cref="RoleType"/>s.
     /// </summary>
-    public sealed partial class RelationType : MetaObjectBase, IRelationType, IComparable
+    public sealed partial class RelationType : MetaObjectBase, IRelationTypeBase
     {
         private Multiplicity assignedMultiplicity;
         private Multiplicity multiplicity;
@@ -27,7 +27,7 @@ namespace Allors.Database.Meta
         private string[] assignedWorkspaceNames;
         private string[] derivedWorkspaceNames;
 
-        public RelationType(Composite associationTypeComposite, Guid id, Func<RelationType, AssociationType> associationTypeFactory, Func<RelationType, RoleType> roleTypeFactory)
+        public RelationType(ICompositeBase associationTypeComposite, Guid id, Func<IRelationTypeBase, IAssociationTypeBase> associationTypeFactory, Func<IRelationTypeBase, IRoleTypeBase> roleTypeFactory)
             : base(associationTypeComposite.MetaPopulation)
         {
             this.Id = id;
@@ -143,12 +143,10 @@ namespace Allors.Database.Meta
         }
 
         IAssociationType IRelationType.AssociationType => this.AssociationType;
-
-        public AssociationType AssociationType { get; }
+        public IAssociationTypeBase AssociationType { get; }
 
         IRoleType IRelationType.RoleType => this.RoleType;
-
-        public RoleType RoleType { get; }
+        public IRoleTypeBase RoleType { get; }
 
         /// <summary>
         /// Gets a value indicating whether there exist exclusive classes.
@@ -252,7 +250,7 @@ namespace Allors.Database.Meta
             }
         }
 
-        internal void DeriveMultiplicity()
+        public void DeriveMultiplicity()
         {
             if (this.RoleType?.ObjectType != null && this.RoleType.ObjectType.IsUnit)
             {
@@ -264,7 +262,7 @@ namespace Allors.Database.Meta
             }
         }
 
-        internal void DeriveWorkspaceNames() =>
+        public void DeriveWorkspaceNames() =>
             this.derivedWorkspaceNames = this.assignedWorkspaceNames != null ?
                 this.assignedWorkspaceNames.Intersect(this.AssociationType.ObjectType switch
                 {
@@ -284,7 +282,7 @@ namespace Allors.Database.Meta
         /// Validates this. state.
         /// </summary>
         /// <param name="validationLog">The validation.</param>
-        internal void Validate(ValidationLog validationLog)
+        public void Validate(ValidationLog validationLog)
         {
             this.ValidateIdentity(validationLog);
 

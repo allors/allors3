@@ -82,7 +82,7 @@ namespace Allors.Database.Domain
                     @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta.Class, @this.Meta.Revise));
                     @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta.Class, @this.Meta.SetReadyForProcessing));
 
-                    var deniablePermissionByOperandTypeId = new Dictionary<OperandType, Permission>();
+                    var deniablePermissionByOperandTypeId = new Dictionary<IOperandType, Permission>();
 
                     foreach (Permission permission in @this.Transaction().Extent<Permission>())
                     {

@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
 
         bool ExistOperation { get; }
 
-        OperandType OperandType { get; }
+        IOperandType OperandType { get; }
 
         Operations Operation { get; }
 

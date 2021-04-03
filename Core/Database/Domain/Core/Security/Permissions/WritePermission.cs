@@ -37,7 +37,7 @@ namespace Allors.Database.Domain
 
         public bool ExistOperation => true;
 
-        public OperandType OperandType => this.RelationType.RoleType;
+        public IOperandType OperandType => this.RelationType.RoleType;
 
         IRelationType IWritePermission.RelationType => this.RelationType;
         public RelationType RelationType

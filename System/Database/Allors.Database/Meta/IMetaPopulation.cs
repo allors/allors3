@@ -12,13 +12,23 @@ namespace Allors.Database.Meta
 
     public interface IMetaPopulation
     {
+        IEnumerable<IDomain> Domains { get; }
+
+        IEnumerable<IUnit> Units { get; }
+
         IEnumerable<IComposite> DatabaseComposites { get; }
+
+        IEnumerable<IInterface> DatabaseInterfaces { get; }
 
         IEnumerable<IClass> DatabaseClasses { get; }
 
         IEnumerable<IRelationType> DatabaseRelationTypes { get; }
 
+        IEnumerable<IMethodType> MethodTypes { get; }
+
         IMetaObject Find(Guid metaObjectId);
+
+        IClass FindByName(string name);
 
         bool IsValid { get; }
 

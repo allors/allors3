@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
             var received = new ShipmentStates(this.Transaction).Received;
             var cancelled = new ShipmentStates(this.Transaction).Cancelled;
 
-            var except = new HashSet<OperandType>
+            var except = new HashSet<IOperandType>
             {
                 this.Meta.ElectronicDocuments,
             };

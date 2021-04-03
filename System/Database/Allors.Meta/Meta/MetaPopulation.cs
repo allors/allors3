@@ -17,27 +17,27 @@ namespace Allors.Database.Meta
 
         private string[] derivedWorkspaceNames;
 
-        private Dictionary<string, Class> derivedClassByLowercaseName;
+        private Dictionary<string, IClassBase> derivedClassByLowercaseName;
 
         private IList<Domain> domains;
-        private IList<Unit> units;
-        private IList<Interface> interfaces;
-        private IList<Class> classes;
+        private IList<IUnitBase> units;
+        private IList<IInterfaceBase> interfaces;
+        private IList<IClassBase> classes;
         private IList<Inheritance> inheritances;
-        private IList<RelationType> relationTypes;
-        private IList<AssociationType> associationTypes;
-        private IList<RoleType> roleTypes;
-        private IList<MethodType> methodTypes;
+        private IList<IRelationTypeBase> relationTypes;
+        private IList<IAssociationTypeBase> associationTypes;
+        private IList<IRoleTypeBase> roleTypes;
+        private IList<IMethodTypeBase> methodTypes;
 
         private bool isStale;
         private bool isDeriving;
 
-        private Composite[] derivedComposites;
+        private ICompositeBase[] derivedComposites;
 
-        private Composite[] derivedDatabaseComposites;
-        private Interface[] derivedDatabaseInterfaces;
-        private Class[] derivedDatabaseClasses;
-        private RelationType[] derivedDatabaseRelationTypes;
+        private ICompositeBase[] derivedDatabaseComposites;
+        private IInterfaceBase[] derivedDatabaseInterfaces;
+        private IClassBase[] derivedDatabaseClasses;
+        private IRelationTypeBase[] derivedDatabaseRelationTypes;
 
         public MetaPopulation()
         {
@@ -45,19 +45,19 @@ namespace Allors.Database.Meta
             this.isDeriving = false;
 
             this.domains = new List<Domain>();
-            this.units = new List<Unit>();
-            this.interfaces = new List<Interface>();
-            this.classes = new List<Class>();
+            this.units = new List<IUnitBase>();
+            this.interfaces = new List<IInterfaceBase>();
+            this.classes = new List<IClassBase>();
             this.inheritances = new List<Inheritance>();
-            this.relationTypes = new List<RelationType>();
-            this.associationTypes = new List<AssociationType>();
-            this.roleTypes = new List<RoleType>();
-            this.methodTypes = new List<MethodType>();
+            this.relationTypes = new List<IRelationTypeBase>();
+            this.associationTypes = new List<IAssociationTypeBase>();
+            this.roleTypes = new List<IRoleTypeBase>();
+            this.methodTypes = new List<IMethodTypeBase>();
 
             this.metaObjectById = new Dictionary<Guid, MetaObjectBase>();
         }
 
-        public string[] WorkspaceNames
+        public IEnumerable<string> WorkspaceNames
         {
             get
             {
@@ -66,37 +66,22 @@ namespace Allors.Database.Meta
             }
         }
 
-        public bool IsBound { get; private set; }
+        private bool IsBound { get; set; }
 
-        public IEnumerable<Domain> Domains => this.domains;
+        IEnumerable<IDomain> IMetaPopulation.Domains => this.Domains;
+        public IEnumerable<IDomainBase> Domains => this.domains;
 
-        public IEnumerable<Domain> SortedDomains
-        {
-            get
-            {
-                var sortedDomains = new List<Domain>(this.domains);
-                sortedDomains.Sort((x, y) => x.Superdomains.Contains(y) ? -1 : 1);
-                return sortedDomains.ToArray();
-            }
-        }
-
-        public IEnumerable<Unit> Units => this.units;
-
-        public IEnumerable<Interface> Interfaces => this.interfaces;
-
-        public IEnumerable<Class> Classes => this.classes;
+        public IEnumerable<IClassBase> Classes => this.classes;
 
         public IEnumerable<Inheritance> Inheritances => this.inheritances;
 
-        public IEnumerable<RelationType> RelationTypes => this.relationTypes;
+        public IEnumerable<IRelationTypeBase> RelationTypes => this.relationTypes;
 
-        public IEnumerable<AssociationType> AssociationTypes => this.associationTypes;
+        public IEnumerable<IAssociationTypeBase> AssociationTypes => this.associationTypes;
 
-        public IEnumerable<RoleType> RoleTypes => this.roleTypes;
-
-        public IEnumerable<MethodType> MethodTypes => this.methodTypes;
-
-        public IEnumerable<Composite> Composites
+        public IEnumerable<IRoleTypeBase> RoleTypes => this.roleTypes;
+        
+        public IEnumerable<ICompositeBase> Composites
         {
             get
             {
@@ -105,7 +90,7 @@ namespace Allors.Database.Meta
             }
         }
 
-        public IEnumerable<Composite> SortedComposites => this.Composites.OrderBy(v => v.Name);
+        public IEnumerable<ICompositeBase> SortedComposites => this.Composites.OrderBy(v => v.Name);
 
         /// <summary>
         /// Gets a value indicating whether this state is valid.
@@ -125,7 +110,11 @@ namespace Allors.Database.Meta
             }
         }
 
-        public IEnumerable<IComposite> DatabaseComposites
+        IEnumerable<IUnit> IMetaPopulation.Units => this.Units;
+        public IEnumerable<IUnitBase> Units => this.units;
+
+        IEnumerable<IComposite> IMetaPopulation.DatabaseComposites => this.DatabaseComposites;
+        public IEnumerable<ICompositeBase> DatabaseComposites
         {
             get
             {
@@ -134,7 +123,8 @@ namespace Allors.Database.Meta
             }
         }
 
-        public IEnumerable<IInterface> DatabaseInterfaces
+        IEnumerable<IInterface> IMetaPopulation.DatabaseInterfaces => this.DatabaseInterfaces;
+        public IEnumerable<IInterfaceBase> DatabaseInterfaces
         {
             get
             {
@@ -143,7 +133,8 @@ namespace Allors.Database.Meta
             }
         }
 
-        public IEnumerable<IClass> DatabaseClasses
+        IEnumerable<IClass> IMetaPopulation.DatabaseClasses => this.DatabaseClasses;
+        public IEnumerable<IClassBase> DatabaseClasses
         {
             get
             {
@@ -152,7 +143,8 @@ namespace Allors.Database.Meta
             }
         }
 
-        public IEnumerable<IRelationType> DatabaseRelationTypes
+        IEnumerable<IRelationType> IMetaPopulation.DatabaseRelationTypes => this.DatabaseRelationTypes;
+        public IEnumerable<IRelationTypeBase> DatabaseRelationTypes
         {
             get
             {
@@ -161,7 +153,7 @@ namespace Allors.Database.Meta
             }
         }
 
-        public IReadOnlyDictionary<string, IEnumerable<Composite>> WorkspaceCompositesByWorkspaceName
+        public IReadOnlyDictionary<string, IEnumerable<ICompositeBase>> WorkspaceCompositesByWorkspaceName
         {
             get
             {
@@ -171,17 +163,17 @@ namespace Allors.Database.Meta
             }
         }
 
-        public IReadOnlyDictionary<string, IEnumerable<Interface>> WorkspaceInterfacesByWorkspaceName
+        public IReadOnlyDictionary<string, IEnumerable<IInterfaceBase>> WorkspaceInterfacesByWorkspaceName
         {
             get
             {
                 this.Derive();
                 return this.WorkspaceNames
-                    .ToDictionary(v => v, v => this.Interfaces.Where(w => w.WorkspaceNames.Contains(v)));
+                    .ToDictionary(v => v, v => this.interfaces.Where(w => w.WorkspaceNames.Contains(v)));
             }
         }
 
-        public IReadOnlyDictionary<string, IEnumerable<Class>> WorkspaceClassesByWorkspaceName
+        public IReadOnlyDictionary<string, IEnumerable<IClassBase>> WorkspaceClassesByWorkspaceName
         {
             get
             {
@@ -191,7 +183,7 @@ namespace Allors.Database.Meta
             }
         }
 
-        public IReadOnlyDictionary<string, IEnumerable<RelationType>> WorkspaceRelationTypesByWorkspaceName
+        public IReadOnlyDictionary<string, IEnumerable<IRelationTypeBase>> WorkspaceRelationTypesByWorkspaceName
         {
             get
             {
@@ -201,7 +193,7 @@ namespace Allors.Database.Meta
             }
         }
 
-        public IReadOnlyDictionary<string, IEnumerable<MethodType>> WorkspaceMethodTypesByWorkspaceName
+        public IReadOnlyDictionary<string, IEnumerable<IMethodTypeBase>> WorkspaceMethodTypesByWorkspaceName
         {
             get
             {
@@ -210,6 +202,9 @@ namespace Allors.Database.Meta
                     .ToDictionary(v => v, v => this.MethodTypes.Where(w => w.WorkspaceNames.Contains(v)));
             }
         }
+
+        IEnumerable<IMethodType> IMetaPopulation.MethodTypes => this.MethodTypes;
+        public IEnumerable<IMethodTypeBase> MethodTypes => this.methodTypes;
 
         IMetaObject IMetaPopulation.Find(Guid id) => this.Find(id);
 
@@ -222,7 +217,7 @@ namespace Allors.Database.Meta
         /// <returns>
         /// The <see cref="IMetaObject"/>.
         /// </returns>
-        public MetaObjectBase Find(Guid id)
+        public IMetaObjectBase Find(Guid id)
         {
             this.metaObjectById.TryGetValue(id, out var metaObject);
 
@@ -238,7 +233,7 @@ namespace Allors.Database.Meta
         /// <returns>
         /// The <see cref="IMetaObject"/>.
         /// </returns>
-        public Class FindByName(string name)
+        public IClassBase FindByName(string name)
         {
             this.Derive();
 
@@ -257,17 +252,17 @@ namespace Allors.Database.Meta
         {
             var log = new ValidationLog();
 
-            foreach (var domain in this.Domains)
+            foreach (var domain in this.domains)
             {
                 domain.Validate(log);
             }
 
-            foreach (var unitType in this.Units)
+            foreach (var unitType in this.units)
             {
                 unitType.Validate(log);
             }
 
-            foreach (var @interface in this.Interfaces)
+            foreach (var @interface in this.interfaces)
             {
                 @interface.Validate(log);
             }
@@ -347,17 +342,18 @@ namespace Allors.Database.Meta
 
                 var typeByName = types.ToDictionary(type => type.Name, type => type);
 
-                foreach (var unit in this.Units)
+                foreach (var unit in this.units)
                 {
                     unit.Bind();
                 }
 
-                foreach (Interface @interface in this.DatabaseInterfaces)
+                this.Derive();
+                foreach (var @interface in this.derivedDatabaseInterfaces)
                 {
                     @interface.Bind(typeByName);
                 }
 
-                foreach (Class @class in this.DatabaseClasses)
+                foreach (var @class in this.DatabaseClasses)
                 {
                     @class.Bind(typeByName);
                 }
@@ -367,7 +363,7 @@ namespace Allors.Database.Meta
 
                 var actionByMethodInfoByType = new Dictionary<Type, Dictionary<MethodInfo, Action<object, object>>>();
 
-                foreach (Class @class in this.DatabaseClasses)
+                foreach (var @class in this.DatabaseClasses)
                 {
                     foreach (MethodClass concreteMethodType in @class.MethodTypes)
                     {
@@ -396,12 +392,12 @@ namespace Allors.Database.Meta
                     this.isDeriving = true;
 
                     var sharedDomains = new HashSet<Domain>();
-                    var sharedCompositeTypes = new HashSet<Composite>();
-                    var sharedInterfaces = new HashSet<Interface>();
-                    var sharedClasses = new HashSet<Class>();
-                    var sharedAssociationTypes = new HashSet<AssociationType>();
-                    var sharedRoleTypes = new HashSet<RoleType>();
-                    var sharedMethodTypes = new HashSet<MethodType>();
+                    var sharedCompositeTypes = new HashSet<ICompositeBase>();
+                    var sharedInterfaces = new HashSet<IInterfaceBase>();
+                    var sharedClasses = new HashSet<IClassBase>();
+                    var sharedAssociationTypes = new HashSet<IAssociationTypeBase>();
+                    var sharedRoleTypes = new HashSet<IRoleTypeBase>();
+                    var sharedMethodTypes = new HashSet<IMethodTypeBase>();
 
                     // Domains
                     foreach (var domain in this.domains)
@@ -410,7 +406,7 @@ namespace Allors.Database.Meta
                     }
 
                     // Unit & IComposite ObjectTypes
-                    var compositeTypes = new List<Composite>(this.Interfaces);
+                    var compositeTypes = new List<ICompositeBase>(this.interfaces);
                     compositeTypes.AddRange(this.Classes);
                     this.derivedComposites = compositeTypes.ToArray();
 
@@ -427,7 +423,7 @@ namespace Allors.Database.Meta
                     }
 
                     // DirectSubtypes
-                    foreach (var type in this.Interfaces)
+                    foreach (var type in this.interfaces)
                     {
                         type.DeriveDirectSubtypes(sharedCompositeTypes);
                     }
@@ -445,19 +441,19 @@ namespace Allors.Database.Meta
                     }
 
                     // Subtypes
-                    foreach (var type in this.Interfaces)
+                    foreach (var type in this.interfaces)
                     {
                         type.DeriveSubtypes(sharedCompositeTypes);
                     }
 
                     // Subclasses
-                    foreach (var type in this.Interfaces)
+                    foreach (var type in this.interfaces)
                     {
                         type.DeriveSubclasses(sharedClasses);
                     }
 
                     // Exclusive Subclass
-                    foreach (var type in this.Interfaces)
+                    foreach (var type in this.interfaces)
                     {
                         type.DeriveExclusiveSubclass();
                     }
@@ -465,12 +461,12 @@ namespace Allors.Database.Meta
                     // RoleTypes & AssociationTypes
                     var roleTypesByAssociationTypeObjectType = this.RelationTypes
                         .GroupBy(v => v.AssociationType.ObjectType)
-                        .ToDictionary(g => g.Key, g => new HashSet<RoleType>(g.Select(v => v.RoleType)));
+                        .ToDictionary(g => g.Key, g => new HashSet<IRoleTypeBase>(g.Select(v => v.RoleType)));
 
 
                     var associationTypesByRoleTypeObjectType = this.RelationTypes
                         .GroupBy(v => v.RoleType.ObjectType)
-                        .ToDictionary(g => g.Key, g => new HashSet<AssociationType>(g.Select(v => v.AssociationType)));
+                        .ToDictionary(g => g.Key, g => new HashSet<IAssociationTypeBase>(g.Select(v => v.AssociationType)));
 
                     // RoleTypes
                     foreach (var type in this.derivedComposites)
@@ -496,7 +492,7 @@ namespace Allors.Database.Meta
                         relationType.DeriveMultiplicity();
                     }
 
-                    var sharedMethodTypeList = new HashSet<MethodType>();
+                    var sharedMethodTypeList = new HashSet<IMethodTypeBase>();
 
                     // MethodClasses
                     foreach (var methodType in this.MethodTypes)
@@ -507,7 +503,7 @@ namespace Allors.Database.Meta
                     // MethodTypes
                     var methodTypeByClass = this.MethodTypes
                         .GroupBy(v => v.Composite)
-                        .ToDictionary(g => g.Key, g => new HashSet<MethodType>(g));
+                        .ToDictionary(g => g.Key, g => new HashSet<IMethodTypeBase>(g));
 
                     foreach (var type in this.derivedComposites)
                     {
@@ -539,7 +535,7 @@ namespace Allors.Database.Meta
                     }
 
                     // MetaPopulation
-                    this.derivedClassByLowercaseName = new Dictionary<string, Class>();
+                    this.derivedClassByLowercaseName = new Dictionary<string, IClassBase>();
                     foreach (var cls in this.classes)
                     {
                         this.derivedClassByLowercaseName[cls.Name.ToLowerInvariant()] = cls;
@@ -570,7 +566,7 @@ namespace Allors.Database.Meta
             this.Stale();
         }
 
-        internal void OnInterfaceCreated(Interface @interface)
+        public void OnInterfaceCreated(Interface @interface)
         {
             this.interfaces.Add(@interface);
             this.metaObjectById.Add(@interface.Id, @interface);
@@ -578,7 +574,7 @@ namespace Allors.Database.Meta
             this.Stale();
         }
 
-        internal void OnClassCreated(Class @class)
+        void IMetaPopulationBase.OnClassCreated(Class @class)
         {
             this.classes.Add(@class);
             this.metaObjectById.Add(@class.Id, @class);
@@ -623,10 +619,8 @@ namespace Allors.Database.Meta
             this.Stale();
         }
 
-
         void IMetaPopulationBase.Stale() => this.Stale();
         private void Stale() => this.isStale = true;
-
 
         private bool HasCycle(Composite subtype, HashSet<Interface> supertypes, Dictionary<Composite, List<Inheritance>> inheritancesBySubtype)
         {
@@ -647,7 +641,7 @@ namespace Allors.Database.Meta
 
         private bool HasCycle(Composite originalSubtype, Interface currentSupertype, HashSet<Interface> supertypes, Dictionary<Composite, List<Inheritance>> inheritancesBySubtype)
         {
-            if (originalSubtype is Interface && supertypes.Contains((Interface)originalSubtype))
+            if (originalSubtype is Interface @interface && supertypes.Contains(@interface))
             {
                 return true;
             }
@@ -675,8 +669,9 @@ namespace Allors.Database.Meta
             return false;
         }
 
-        public MethodType MethodType(string id) => ((MethodType)this.Find(new Guid(id)));
+        public IMethodTypeBase MethodType(string id) => ((MethodType)this.Find(new Guid(id)));
 
-        public RoleType RoleType(string id) => ((RelationType)this.Find(new Guid(id))).RoleType;
+        public IRoleTypeBase RoleType(string id) => ((RelationType)this.Find(new Guid(id))).RoleType;
+        IClass IMetaPopulation.FindByName(string name) => this.FindByName(name);
     }
 }

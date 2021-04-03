@@ -13,8 +13,8 @@ namespace Allors.Database.Configuration
 
     public class MetaCache : IMetaCache
     {
-        private readonly IReadOnlyDictionary<IClass, RoleType[]> requiredRoleTypesByClass;
-        private readonly IReadOnlyDictionary<IClass, RoleType[]> uniqueRoleTypesByClass;
+        private readonly IReadOnlyDictionary<IClass, IRoleType[]> requiredRoleTypesByClass;
+        private readonly IReadOnlyDictionary<IClass, IRoleType[]> uniqueRoleTypesByClass;
         private readonly IReadOnlyDictionary<IClass, Type> builderTypeByClass;
         private readonly IReadOnlyDictionary<string, HashSet<IClass>> workspaceClassesByWorkspaceName;
 
@@ -28,22 +28,24 @@ namespace Allors.Database.Configuration
 
             this.requiredRoleTypesByClass = metaPopulation.DatabaseClasses
                 .ToDictionary(
-                    v => v,
-                    v => ((Class)v).RoleTypes
+                    v => (IClass)v,
+                    v => v.RoleTypes
                           .Where(concreteRoleType => concreteRoleType.IsRequired)
+                          .Cast<IRoleType>()
                           .ToArray());
 
 
             this.uniqueRoleTypesByClass = metaPopulation.DatabaseClasses
                 .ToDictionary(
-                    v => v,
-                    v => ((Class)v).RoleTypes
+                    v => (IClass)v,
+                    v => v.RoleTypes
                         .Where(concreteRoleType => concreteRoleType.IsUnique)
+                        .Cast<IRoleType>()
                         .ToArray());
 
             this.builderTypeByClass = metaPopulation.DatabaseClasses.
                 ToDictionary(
-                    v => v,
+                    v => (IClass)v,
                     v => assembly.GetType($"Allors.Database.Domain.{v.Name}Builder", false));
 
             this.workspaceClassesByWorkspaceName = metaPopulation.WorkspaceNames
@@ -52,9 +54,9 @@ namespace Allors.Database.Configuration
 
         public IDatabaseContext DatabaseContext { get; }
 
-        public RoleType[] GetRequiredRoleTypes(IClass @class) => this.requiredRoleTypesByClass[@class];
+        public IRoleType[] GetRequiredRoleTypes(IClass @class) => this.requiredRoleTypesByClass[@class];
 
-        public RoleType[] GetUniqueRoleTypes(IClass @class) => this.uniqueRoleTypesByClass[@class];
+        public IRoleType[] GetUniqueRoleTypes(IClass @class) => this.uniqueRoleTypesByClass[@class];
 
         public Type GetBuilderType(IClass @class) => this.builderTypeByClass[@class];
 

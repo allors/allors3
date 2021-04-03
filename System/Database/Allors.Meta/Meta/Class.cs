@@ -9,7 +9,7 @@ namespace Allors.Database.Meta
     using System;
     using System.Collections.Generic;
 
-    public abstract partial class Class : Composite, IClass
+    public abstract partial class Class : Composite, IClassBase
     {
         private string[] assignedWorkspaceNames;
         private string[] derivedWorkspaceNames;
@@ -17,7 +17,7 @@ namespace Allors.Database.Meta
         private readonly Class[] classes;
         private Type clrType;
 
-        internal Class(MetaPopulation metaPopulation, Guid id) : base(metaPopulation, id)
+        internal Class(IMetaPopulationBase metaPopulation, Guid id) : base(metaPopulation, id)
         {
             this.classes = new[] { this };
             metaPopulation.OnClassCreated(this);
@@ -35,7 +35,7 @@ namespace Allors.Database.Meta
             }
         }
 
-        public override string[] WorkspaceNames
+        public override IEnumerable<string> WorkspaceNames
         {
             get
             {
@@ -47,21 +47,21 @@ namespace Allors.Database.Meta
         // TODO: Review
         public RoleType[] DelegatedAccessRoleTypes { get; set; }
 
-        public override IEnumerable<Class> Classes => this.classes;
+        public override IEnumerable<IClassBase> Classes => this.classes;
 
         public override IEnumerable<IClass> DatabaseClasses => this.Origin == Origin.Database ? this.classes : Array.Empty<Class>();
 
         public override bool ExistClass => true;
 
-        public override Class ExclusiveClass => this;
+        public override IClassBase ExclusiveClass => this;
 
         public override Type ClrType => this.clrType;
 
-        public override IEnumerable<Composite> Subtypes => new[] { this };
+        public override IEnumerable<ICompositeBase> Subtypes => new[] { this };
 
-        public override IEnumerable<Composite> DatabaseSubtypes => this.Origin == Origin.Database ? this.Subtypes : Array.Empty<Composite>();
+        public override IEnumerable<ICompositeBase> DatabaseSubtypes => this.Origin == Origin.Database ? this.Subtypes : Array.Empty<Composite>();
 
-        internal void DeriveWorkspaceNames(HashSet<string> workspaceNames)
+        public void DeriveWorkspaceNames(HashSet<string> workspaceNames)
         {
             this.derivedWorkspaceNames = this.assignedWorkspaceNames ?? Array.Empty<string>();
             workspaceNames.UnionWith(this.derivedWorkspaceNames);
@@ -69,6 +69,6 @@ namespace Allors.Database.Meta
 
         public override bool IsAssignableFrom(IComposite objectType) => this.Equals(objectType);
 
-        internal void Bind(Dictionary<string, Type> typeByTypeName) => this.clrType = typeByTypeName[this.Name];
+        public override void Bind(Dictionary<string, Type> typeByTypeName) => this.clrType = typeByTypeName[this.Name];
     }
 }

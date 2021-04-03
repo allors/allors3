@@ -11,11 +11,11 @@ namespace Allors.Database.Meta
     using System.Collections.ObjectModel;
     using System.Linq;
 
-    public abstract partial class MethodType : OperandType, IMethodType, IComparable
+    public abstract partial class MethodType : OperandType, IMethodTypeBase, IComparable
     {
-        private static readonly IReadOnlyDictionary<Class, MethodClass> EmptyMethodClassByAssociationTypeClass = new ReadOnlyDictionary<Class, MethodClass>(new Dictionary<Class, MethodClass>());
+        private static readonly IReadOnlyDictionary<IClassBase, IMethodClassBase> EmptyMethodClassByAssociationTypeClass = new ReadOnlyDictionary<IClassBase, IMethodClassBase>(new Dictionary<IClassBase, IMethodClassBase>());
 
-        private IReadOnlyDictionary<Class, MethodClass> derivedMethodClassByClass = EmptyMethodClassByAssociationTypeClass;
+        private IReadOnlyDictionary<IClassBase, IMethodClassBase> derivedMethodClassByClass = EmptyMethodClassByAssociationTypeClass;
         
         protected MethodType(IMetaPopulationBase metaPopulation) : base(metaPopulation)
         {
@@ -30,7 +30,7 @@ namespace Allors.Database.Meta
 
         IComposite IMethodType.ObjectType => this.Composite;
 
-        public abstract Composite Composite { get; }
+        public abstract ICompositeBase Composite { get; }
 
         public abstract string[] WorkspaceNames { get; }
 
@@ -57,7 +57,7 @@ namespace Allors.Database.Meta
             }
         }
 
-        public IReadOnlyDictionary<Class, MethodClass> MethodClassByClass
+        public IReadOnlyDictionary<IClassBase, IMethodClassBase> MethodClassByClass
         {
             get
             {
@@ -66,7 +66,7 @@ namespace Allors.Database.Meta
             }
         }
 
-        public MethodClass MethodClassBy(Class @class) =>
+        public IMethodClassBase MethodClassBy(IClassBase @class) =>
             this switch
             {
                 MethodClass methodClass => methodClass,
@@ -82,7 +82,7 @@ namespace Allors.Database.Meta
         /// </returns>
         public override string ToString() => this.Name;
 
-        internal void DeriveMethodClasses()
+        void IMethodTypeBase.DeriveMethodClasses()
         {
             if (this.Composite is Interface @interface)
             {
@@ -102,13 +102,13 @@ namespace Allors.Database.Meta
             }
         }
 
-        protected internal abstract void DeriveWorkspaceNames();
+        public abstract void DeriveWorkspaceNames();
 
         /// <summary>
         /// Validates the state.
         /// </summary>
         /// <param name="validationLog">The validation.</param>
-        protected internal void Validate(ValidationLog validationLog)
+        void IMethodTypeBase.Validate(ValidationLog validationLog)
         {
             if (string.IsNullOrEmpty(this.Name))
             {

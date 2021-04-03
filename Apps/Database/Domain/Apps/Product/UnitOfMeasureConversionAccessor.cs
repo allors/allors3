@@ -9,9 +9,9 @@ namespace Allors.Database.Domain
 
     public partial class UnitOfMeasureConversionAccessor
     {
-        private readonly RoleType roleType;
+        private readonly IRoleType roleType;
 
-        public UnitOfMeasureConversionAccessor(RoleType roleType) => this.roleType = roleType;
+        public UnitOfMeasureConversionAccessor(IRoleType roleType) => this.roleType = roleType;
 
         public decimal? Get(IObject @object, TimeFrequency toUnitOfMeasure)
         {

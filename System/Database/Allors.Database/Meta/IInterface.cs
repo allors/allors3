@@ -6,10 +6,7 @@
 
 namespace Allors.Database.Meta
 {
-    using System.Collections.Generic;
-
     public interface IInterface : IComposite
     {
-        IEnumerable<IClass> DatabaseClasses { get; }
     }
 }

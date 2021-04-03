@@ -7,6 +7,7 @@
 namespace Allors.Database.Meta
 {
     using System;
+    using System.Collections.Generic;
 
     public interface IObjectType : IMetaObject, IMetaIdentity, IComparable
     {
@@ -23,5 +24,9 @@ namespace Allors.Database.Meta
         string Name { get; }
 
         string PluralName { get; }
+
+        IEnumerable<string> WorkspaceNames { get; }
+
+        Type ClrType { get; }
     }
 }

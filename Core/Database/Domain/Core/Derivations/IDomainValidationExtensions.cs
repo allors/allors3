@@ -11,7 +11,7 @@ namespace Allors.Database.Domain.Derivations
 
     public static class IDomainValidationExtensions
     {
-        public static void AssertExists(this IDomainValidation @this, IObject association, RoleType roleType)
+        public static void AssertExists(this IDomainValidation @this, IObject association, IRoleType roleType)
         {
             if (!association.Strategy.ExistRole(roleType))
             {
@@ -19,7 +19,7 @@ namespace Allors.Database.Domain.Derivations
             }
         }
 
-        public static void AssertNotExists(this IDomainValidation @this, IObject association, RoleType roleType)
+        public static void AssertNotExists(this IDomainValidation @this, IObject association, IRoleType roleType)
         {
             if (association.Strategy.ExistRole(roleType))
             {
@@ -27,7 +27,7 @@ namespace Allors.Database.Domain.Derivations
             }
         }
 
-        public static void AssertNonEmptyString(this IDomainValidation @this, IObject association, RoleType roleType)
+        public static void AssertNonEmptyString(this IDomainValidation @this, IObject association, IRoleType roleType)
         {
             if (association.Strategy.ExistRole(roleType))
             {
@@ -38,13 +38,13 @@ namespace Allors.Database.Domain.Derivations
             }
         }
 
-        public static void AssertExistsNonEmptyString(this IDomainValidation @this, IObject association, RoleType roleType)
+        public static void AssertExistsNonEmptyString(this IDomainValidation @this, IObject association, IRoleType roleType)
         {
             AssertExists(@this, association, roleType);
             AssertNonEmptyString(@this, association, roleType);
         }
 
-        public static void AssertIsUnique(this IDomainValidation @this, IObject association, RoleType roleType, IChangeSet changeSet)
+        public static void AssertIsUnique(this IDomainValidation @this, IObject association, IRoleType roleType, IChangeSet changeSet)
         {
             if (changeSet.RoleTypesByAssociation.TryGetValue(association.Id, out var roleTypes))
             {
@@ -67,7 +67,7 @@ namespace Allors.Database.Domain.Derivations
             }
         }
 
-        public static void AssertAtLeastOne(this IDomainValidation @this, IObject association, params RoleType[] roleTypes)
+        public static void AssertAtLeastOne(this IDomainValidation @this, IObject association, params IRoleType[] roleTypes)
         {
             foreach (var roleType in roleTypes)
             {
@@ -80,7 +80,7 @@ namespace Allors.Database.Domain.Derivations
             @this.AddError($"AssertAtLeastOne: {string.Join("\n", DerivationRelation.Create(association, roleTypes).Select(v => v.ToString()))}");
         }
 
-        public static void AssertExistsAtMostOne(this IDomainValidation @this, IObject association, params RoleType[] roleTypes)
+        public static void AssertExistsAtMostOne(this IDomainValidation @this, IObject association, params IRoleType[] roleTypes)
         {
             var count = 0;
             foreach (var roleType in roleTypes)
@@ -97,7 +97,7 @@ namespace Allors.Database.Domain.Derivations
             }
         }
 
-        public static void AssertAreEqual(this IDomainValidation @this, IObject association, RoleType roleType, RoleType otherRoleType)
+        public static void AssertAreEqual(this IDomainValidation @this, IObject association, IRoleType roleType, IRoleType otherRoleType)
         {
             var value = association.Strategy.GetRole(roleType);
             var otherValue = association.Strategy.GetRole(otherRoleType);
@@ -118,7 +118,7 @@ namespace Allors.Database.Domain.Derivations
             }
         }
 
-        public static void AssertExists(this IDomainValidation @this, IObject role, AssociationType associationType)
+        public static void AssertExists(this IDomainValidation @this, IObject role, IAssociationType associationType)
         {
             if (!role.Strategy.ExistAssociation(associationType))
             {

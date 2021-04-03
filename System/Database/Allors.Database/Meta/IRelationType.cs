@@ -20,6 +20,14 @@ namespace Allors.Database.Meta
 
         Multiplicity Multiplicity { get; }
 
+        bool IsOneToOne { get; }
+
+        bool IsOneToMany { get; }
+
+        bool IsManyToOne { get; }
+
+        bool IsManyToMany { get; }
+
         bool ExistExclusiveDatabaseClasses { get; }
 
         bool IsIndexed { get; }

@@ -38,10 +38,10 @@ namespace Allors.Database.Meta
 $meta.Units:{unit|         public readonly Meta$unit.SingularName$ $unit.SingularName$;}; separator="\n"$
 
 		// Interfaces
-$meta.Interfaces:{interface|         public readonly Meta$interface.SingularName$ $interface.SingularName$;}; separator="\n"$
+$meta.DatabaseInterfaces:{interface|         public readonly Meta$interface.SingularName$ $interface.SingularName$;}; separator="\n"$
 
 		// Classes
-$meta.Classes:{class|         public readonly Meta$class.SingularName$ $class.SingularName$;}; separator="\n"$
+$meta.DatabaseClasses:{class|         public readonly Meta$class.SingularName$ $class.SingularName$;}; separator="\n"$
 
 
 		public M(MetaPopulation meta)
@@ -50,16 +50,16 @@ $meta.Classes:{class|         public readonly Meta$class.SingularName$ $class.Si
 $meta.Units:{unit|             $unit.SingularName$ = new Meta$unit.SingularName$(meta);}; separator="\n"$
 
 		    // Interfaces
-$meta.Interfaces:{interface|             $interface.SingularName$ = new Meta$interface.SingularName$(meta);}; separator="\n"$
+$meta.DatabaseInterfaces:{interface|             $interface.SingularName$ = new Meta$interface.SingularName$(meta);}; separator="\n"$
 
 		    // Classes
-$meta.Classes:{class|             $class.SingularName$ = new Meta$class.SingularName$(meta);}; separator="\n"$
+$meta.DatabaseClasses:{class|             $class.SingularName$ = new Meta$class.SingularName$(meta);}; separator="\n"$
 		}
 	}
 
 $meta.Units:{unit|$meta_unit(unit)$}; separator="\n\n"$
-$meta.Interfaces:{interface|$meta_interface(interface)$}; separator="\n\n"$
-$meta.Classes:{class|$meta_class(class)$}; separator="\n\n"$
+$meta.DatabaseInterfaces:{interface|$meta_interface(interface)$}; separator="\n\n"$
+$meta.DatabaseClasses:{class|$meta_class(class)$}; separator="\n\n"$
 }
 >>
 
@@ -81,13 +81,13 @@ meta_interface(interface) ::= <<
 		public override Interface Interface { get; }
 
         // Methods
-$interface.MethodTypes:{methodType|         public MethodType $methodType.Name$;}; separator="\n"$
+$interface.MethodTypes:{methodType|         public IMethodType $methodType.Name$;}; separator="\n"$
 
 		// Roles
-$interface.RoleTypes:{roleType|         public RoleType $roleType.Name$;}; separator="\n"$
+$interface.RoleTypes:{roleType|         public IRoleType $roleType.Name$;}; separator="\n"$
 
 		// Associations
-$interface.AssociationTypes:{associationType|         public AssociationType $associationType.Name$;}; separator="\n"$
+$interface.AssociationTypes:{associationType|         public IAssociationType $associationType.Name$;}; separator="\n"$
 
 		internal Meta$interface.SingularName$(MetaPopulation meta)
         {
@@ -100,7 +100,7 @@ $interface.MethodTypes:{methodType|             this.$methodType.Name$ = meta.Me
 $interface.RoleTypes:{roleType|             this.$roleType.Name$ = meta.RoleType("$roleType.RelationType.Id$");}; separator="\n"$
 
             // Associations
-$interface.AssociationTypes:{associationType|           this.$associationType.Name$ = ((RelationType)meta.Find(new System.Guid("$associationType.RelationType.Id$"))).AssociationType;}; separator="\n"$
+$interface.AssociationTypes:{associationType|           this.$associationType.Name$ = ((IRelationType)meta.Find(new System.Guid("$associationType.RelationType.Id$"))).AssociationType;}; separator="\n"$
         }
 	}
 >>
@@ -111,13 +111,13 @@ meta_class(class) ::= <<
 		public override Class Class { get; }
 
         // Methods
-$class.MethodTypes:{methodType|         public MethodClass $methodType.Name$;}; separator="\n"$
+$class.MethodTypes:{methodType|         public IMethodClass $methodType.Name$;}; separator="\n"$
 
 		// Roles
-$class.RoleTypes:{roleType|         public RoleType $roleType.Name$;}; separator="\n"$
+$class.RoleTypes:{roleType|         public IRoleType $roleType.Name$;}; separator="\n"$
 
 		// Associations
-$class.AssociationTypes:{associationType|         public AssociationType $associationType.Name$;}; separator="\n"$
+$class.AssociationTypes:{associationType|         public IAssociationType $associationType.Name$;}; separator="\n"$
 
 		internal Meta$class.SingularName$(MetaPopulation meta)
         {
@@ -130,7 +130,7 @@ $class.MethodTypes:{methodType|             this.$methodType.Name$ = ((MethodTyp
 $class.RoleTypes:{roleType|             this.$roleType.Name$ = meta.RoleType("$roleType.RelationType.Id$");}; separator="\n"$
 
             // Associations
-$class.AssociationTypes:{associationType|           this.$associationType.Name$ = ((RelationType)meta.Find(new System.Guid("$associationType.RelationType.Id$"))).AssociationType;}; separator="\n"$
+$class.AssociationTypes:{associationType|           this.$associationType.Name$ = ((IRelationType)meta.Find(new System.Guid("$associationType.RelationType.Id$"))).AssociationType;}; separator="\n"$
         }
 	}
 >>

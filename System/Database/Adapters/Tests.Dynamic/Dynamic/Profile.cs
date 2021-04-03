@@ -37,7 +37,7 @@ namespace Allors.Database.Adapters
 
         public M M { get; set; }
 
-        public IObject[] CreateArray(ObjectType objectType, int count)
+        public IObject[] CreateArray(IObjectType objectType, int count)
         {
             var type = objectType.ClrType;
             return (IObject[])Array.CreateInstance(type, count);

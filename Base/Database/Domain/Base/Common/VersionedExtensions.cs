@@ -28,7 +28,7 @@ namespace Allors.Database.Domain
             var isNewVersion = currentVersion == null;
             if (!isNewVersion)
             {
-                foreach (var versionRoleType in versionClass.RoleTypes.Where(v => versionTypeRegex.IsMatch(v.AssociationType.ObjectType.Name)))
+                foreach (var versionRoleType in versionClass.DatabaseRoleTypes.Where(v => versionTypeRegex.IsMatch(v.AssociationType.ObjectType.Name)))
                 {
                     var versionedRoleType = versionedClass.RoleTypes.FirstOrDefault(v => v.Name.Equals(versionRoleType.Name));
                     if (versionedRoleType == null)
@@ -69,7 +69,7 @@ namespace Allors.Database.Domain
                 newVersion.DerivationId = derivation.Id;
                 newVersion.DerivationTimeStamp = derivation.TimeStamp;
 
-                foreach (var versionRoleType in versionClass.RoleTypes.Where(v => versionTypeRegex.IsMatch(v.AssociationType.ObjectType.Name)))
+                foreach (var versionRoleType in versionClass.DatabaseRoleTypes.Where(v => versionTypeRegex.IsMatch(v.AssociationType.ObjectType.Name)))
                 {
                     var versionedRoleType = versionedClass.RoleTypes.FirstOrDefault(v => v.Name.Equals(versionRoleType.Name));
                     if (versionedRoleType == null)

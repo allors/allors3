@@ -8,7 +8,7 @@ namespace Allors.Database.Meta
 {
     using System;
 
-    public abstract partial class RoleType : OperandType, IRoleType, IComparable
+    public abstract partial class RoleType : OperandType, IRoleTypeBase, IComparable
     {
         /// <summary>
         /// The maximum size value.
@@ -17,7 +17,7 @@ namespace Allors.Database.Meta
 
         public const string PluralSuffix = "s";
 
-        private ObjectType objectType;
+        private IObjectTypeBase objectType;
 
         private string pluralName;
         private int? precision;
@@ -27,7 +27,7 @@ namespace Allors.Database.Meta
         private bool? isRequired;
         private bool? isUnique;
 
-        public RoleType(RelationType relationType) : base(relationType.MetaPopulation)
+        public RoleType(IRelationTypeBase relationType) : base(relationType.MetaPopulation)
         {
             this.RelationType = relationType;
 
@@ -36,17 +36,17 @@ namespace Allors.Database.Meta
 
         public override Origin Origin => this.RelationType.Origin;
 
-        public RelationType RelationType { get; }
+        public IRelationTypeBase RelationType { get; }
         IRelationType IRoleType.RelationType => this.RelationType;
 
         /// <summary>
         /// Gets the association.
         /// </summary>
         /// <value>The association.</value>
-        public AssociationType AssociationType => this.RelationType.AssociationType;
+        public IAssociationTypeBase AssociationType => this.RelationType.AssociationType;
         IAssociationType IRoleType.AssociationType => this.AssociationType;
         
-        public ObjectType ObjectType
+        public IObjectTypeBase ObjectType
         {
             get => this.objectType;
 
@@ -253,7 +253,7 @@ namespace Allors.Database.Meta
         /// <summary>
         /// Derive multiplicity, scale and size.
         /// </summary>
-        internal void DeriveScaleAndSize()
+        public void DeriveScaleAndSize()
         {
             if (this.ObjectType is IUnit unitType)
             {

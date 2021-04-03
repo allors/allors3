@@ -113,7 +113,7 @@ $composite.DefinedProperties:{property|$define_associationType(property)$}; sepa
 define_associationType(property) ::= <<
     public class $property.AssociationName$ : AssociationType
     {
-        public $property.AssociationName$(RelationType relationType) : base(relationType)
+        public $property.AssociationName$(IRelationTypeBase relationType) : base(relationType)
         {
         }
     }
@@ -133,7 +133,7 @@ $composite.DefinedProperties:{property|$define_roleType(property)$}; separator="
 define_roleType(property) ::= <<
     public class $property.DefiningType.SingularName$$property.RoleSingularName$ : RoleType
     {
-        public $property.DefiningType.SingularName$$property.RoleSingularName$(RelationType relationType) : base(relationType)
+        public $property.DefiningType.SingularName$$property.RoleSingularName$(IRelationTypeBase relationType) : base(relationType)
         {
         }
     }

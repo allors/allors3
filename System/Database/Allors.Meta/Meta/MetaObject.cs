@@ -30,6 +30,5 @@ namespace Allors.Database.Meta
         /// Gets the validation name.
         /// </summary>
         public abstract string ValidationName { get; }
-
     }
 }

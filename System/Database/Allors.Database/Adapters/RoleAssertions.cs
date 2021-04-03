@@ -54,7 +54,7 @@ namespace Allors.Database.Adapters
 
         private static void CompositeSharedChecks(this IRoleType roleType, IStrategy strategy, IObject role)
         {
-            if (!roleType.AssociationType.ObjectType.IsAssignableFrom(strategy.Class))
+            if (!((IComposite)roleType.AssociationType.ObjectType).IsAssignableFrom(strategy.Class))
             {
                 throw new ArgumentException(strategy.Class + " has no roleType with role " + roleType + ".");
             }

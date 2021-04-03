@@ -7,14 +7,15 @@
 namespace Allors.Database.Meta
 {
     using System;
+    using System.Collections.Generic;
 
-    public abstract partial class ObjectType : MetaObjectBase, IObjectType, IComparable
+    public abstract partial class ObjectType : MetaObjectBase, IObjectTypeBase
     {
         private string singularName;
 
         private string pluralName;
 
-        protected ObjectType(MetaPopulation metaPopulation, Guid id) : base(metaPopulation)
+        protected ObjectType(IMetaPopulationBase metaPopulation, Guid id) : base(metaPopulation)
         {
             this.Id = id;
             this.IdAsString = this.Id.ToString("D");
@@ -74,8 +75,8 @@ namespace Allors.Database.Meta
 
         public abstract Type ClrType { get; }
 
-        public abstract string[] WorkspaceNames { get; }
-
+        public abstract IEnumerable<string> WorkspaceNames { get; }
+       
         /// <summary>
         /// Gets the validation name.
         /// </summary>
@@ -128,7 +129,7 @@ namespace Allors.Database.Meta
         /// Validates this state.
         /// </summary>
         /// <param name="validationLog">The validation.</param>
-        protected internal void Validate(ValidationLog validationLog)
+        public void Validate(ValidationLog validationLog)
         {
             this.ValidateIdentity(validationLog);
 

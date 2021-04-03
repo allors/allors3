@@ -9,11 +9,29 @@ namespace Allors.Database.Meta
 
     public partial interface IMetaPopulationBase : IMetaPopulation
     {
-        string[] WorkspaceNames { get; }
+        new IEnumerable<IDomainBase> Domains { get; }
+
+        new IEnumerable<IUnitBase> Units { get; }
+        
+        new IEnumerable<ICompositeBase> DatabaseComposites { get; }
+
+        new IEnumerable<IInterfaceBase> DatabaseInterfaces { get; }
+
+        new IEnumerable<IClassBase> DatabaseClasses { get; }
+
+        new IEnumerable<IRelationTypeBase> DatabaseRelationTypes { get; }
+
+        new IEnumerable<IMethodTypeBase> MethodTypes { get; }
+
+        IEnumerable<string> WorkspaceNames { get; }
 
         IEnumerable<Inheritance> Inheritances { get; }
 
         void OnDomainCreated(Domain domain);
+
+        void OnInterfaceCreated(Interface @interface);
+
+        void OnClassCreated(Class @class);
 
         void OnMethodInterfaceCreated(MethodInterface methodInterface);
 

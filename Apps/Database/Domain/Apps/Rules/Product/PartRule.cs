@@ -8,8 +8,8 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Meta;
     using Database.Derivations;
+    using Meta;
 
     public class PartRule : Rule
     {
@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<Part>())
             {
-                if (cycle.ChangeSet.HasChangedRoles(@this, new RoleType[] { m.Part.UnitOfMeasure, m.Part.DefaultFacility }))
+                if (cycle.ChangeSet.HasChangedRoles(@this, m.Part.UnitOfMeasure, m.Part.DefaultFacility))
                 {
                     if (@this.InventoryItemKind.IsNonSerialised)
                     {

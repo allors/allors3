@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
     {
         private IDictionary<TKey, long> cache;
 
-        public Cache(ITransaction transaction, RoleType roleType)
+        public Cache(ITransaction transaction, IRoleType roleType)
         {
             if (!roleType.ObjectType.IsUnit)
             {
@@ -28,7 +28,7 @@ namespace Allors.Database.Domain
 
         public ITransaction Transaction { get; }
 
-        public RoleType RoleType { get; }
+        public IRoleType RoleType { get; }
 
         public TObject this[TKey key]
         {

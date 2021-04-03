@@ -13,7 +13,7 @@ namespace Allors.Database.Meta
     {
         string Name { get; }
 
-        string SingularName { get; }
+        string SingularName { get;  }
 
         string PluralName { get; }
 

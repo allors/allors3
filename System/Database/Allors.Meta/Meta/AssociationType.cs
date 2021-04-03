@@ -13,16 +13,16 @@ namespace Allors.Database.Meta
     /// This is also called the 'active', 'controlling' or 'owning' side.
     /// AssociationTypes can only have composite <see cref="ObjectType"/>s.
     /// </summary>
-    public abstract partial class AssociationType : OperandType, IAssociationType, IComparable
+    public abstract partial class AssociationType : OperandType, IAssociationTypeBase, IComparable
     {
         /// <summary>
         /// Used to create property names.
         /// </summary>
         private const string Where = "Where";
 
-        private Composite objectType;
+        private ICompositeBase composite;
 
-        internal AssociationType(RelationType relationType)
+        internal AssociationType(IRelationTypeBase relationType)
             : base(relationType.MetaPopulation)
         {
             this.RelationType = relationType;
@@ -31,31 +31,31 @@ namespace Allors.Database.Meta
 
         public override Origin Origin => this.RelationType.Origin;
 
-        public RelationType RelationType { get; }
+        IObjectTypeBase IPropertyTypeBase.ObjectType => this.ObjectType;
+        IObjectType IPropertyType.ObjectType => this.ObjectType;
+        IComposite IAssociationType.ObjectType => this.ObjectType;
 
-        IRelationType IAssociationType.RelationType => this.RelationType;
-
-        IRoleType IAssociationType.RoleType => this.RoleType;
-
-        /// <summary>
-        /// Gets the role.
-        /// </summary>
-        /// <value>The role .</value>
-        public RoleType RoleType => this.RelationType.RoleType;
-
-        public Composite ObjectType
+        public ICompositeBase ObjectType
         {
-            get => this.objectType;
+            get => this.composite;
 
             set
             {
                 this.MetaPopulation.AssertUnlocked();
-                this.objectType = value;
+                this.composite = value;
                 this.MetaPopulation.Stale();
             }
         }
-        IObjectType IPropertyType.ObjectType => this.ObjectType;
-        IComposite IAssociationType.ObjectType => this.ObjectType;
+
+        IRelationType IAssociationType.RelationType => this.RelationType;
+        public IRelationTypeBase RelationType { get; }
+
+        IRoleType IAssociationType.RoleType => this.RoleType;
+        /// <summary>
+        /// Gets the role.
+        /// </summary>
+        /// <value>The role .</value>
+        public IRoleTypeBase RoleType => this.RelationType.RoleType;
 
         /// <summary>
         /// Gets the display name.
@@ -164,7 +164,7 @@ namespace Allors.Database.Meta
         /// Validates this object.
         /// </summary>
         /// <param name="validationLog">The validation information.</param>
-        internal void Validate(ValidationLog validationLog)
+        public void Validate(ValidationLog validationLog)
         {
             if (this.ObjectType == null)
             {

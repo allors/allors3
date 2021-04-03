@@ -32,7 +32,7 @@ namespace Allors.Database.Adapters.Memory
 
         public override void Dispose() => this.profile.Dispose();
 
-        public override IObject[] CreateArray(ObjectType objectType, int count) => this.profile.CreateArray(objectType, count);
+        public override IObject[] CreateArray(IObjectType objectType, int count) => this.profile.CreateArray(objectType, count);
 
         public override IDatabase CreateMemoryPopulation() => this.profile.CreateMemoryDatabase();
 

@@ -43,7 +43,7 @@ namespace Allors.Database.Adapters
                             for (int iRelation = 0; iRelation < this.GetRelations().Length; iRelation++)
                             {
                                 var relationType = this.GetRelations()[iRelation];
-                                var associationTypes = relationType.AssociationType.ObjectType.Classes.ToArray();
+                                var associationTypes = relationType.AssociationType.ObjectType.DatabaseClasses.ToArray();
                                 for (int iAssociationType = 0; iAssociationType < associationTypes.Count(); iAssociationType++)
                                 {
                                     var associationType = associationTypes[iAssociationType];
@@ -348,7 +348,7 @@ namespace Allors.Database.Adapters
                             for (int iRelation = 0; iRelation < this.GetRelations().Length; iRelation++)
                             {
                                 var relationType = this.GetRelations()[iRelation];
-                                var associationTypes = relationType.AssociationType.ObjectType.Classes.ToArray();
+                                var associationTypes = relationType.AssociationType.ObjectType.DatabaseClasses.ToArray();
                                 for (int iAssociationType = 0; iAssociationType < associationTypes.Count(); iAssociationType++)
                                 {
                                     var associationType = associationTypes[iAssociationType];
@@ -655,7 +655,7 @@ namespace Allors.Database.Adapters
                             for (int iRelation = 0; iRelation < this.GetRelations().Length; iRelation++)
                             {
                                 var relationType = this.GetRelations()[iRelation];
-                                var associationTypes = relationType.AssociationType.ObjectType.Classes.ToArray();
+                                var associationTypes = relationType.AssociationType.ObjectType.DatabaseClasses.ToArray();
                                 for (int iAssociationType = 0; iAssociationType < associationTypes.Count(); iAssociationType++)
                                 {
                                     var associationType = associationTypes[iAssociationType];
@@ -897,7 +897,7 @@ namespace Allors.Database.Adapters
                             for (int iRelation = 0; iRelation < this.GetRelations().Length; iRelation++)
                             {
                                 var relationType = this.GetRelations()[iRelation];
-                                var associationTypes = relationType.AssociationType.ObjectType.Classes.ToArray();
+                                var associationTypes = relationType.AssociationType.ObjectType.DatabaseClasses.ToArray();
                                 for (int iAssociationType = 0; iAssociationType < associationTypes.Count(); iAssociationType++)
                                 {
                                     var associationType = associationTypes[iAssociationType];
@@ -1159,7 +1159,7 @@ namespace Allors.Database.Adapters
                             for (int iRelation = 0; iRelation < this.GetRelations().Length; iRelation++)
                             {
                                 var relationType = this.GetRelations()[iRelation];
-                                var associationTypes = relationType.AssociationType.ObjectType.Classes.ToArray();
+                                var associationTypes = relationType.AssociationType.ObjectType.DatabaseClasses.ToArray();
                                 for (int iAssociationType = 0; iAssociationType < associationTypes.Count(); iAssociationType++)
                                 {
                                     var associationType = associationTypes[iAssociationType];
@@ -1409,7 +1409,7 @@ namespace Allors.Database.Adapters
                             for (int iRelation = 0; iRelation < this.GetRelations().Length; iRelation++)
                             {
                                 var relationType = this.GetRelations()[iRelation];
-                                var associationTypes = relationType.AssociationType.ObjectType.Classes.ToArray();
+                                var associationTypes = relationType.AssociationType.ObjectType.DatabaseClasses.ToArray();
                                 for (int iAssociationType = 0; iAssociationType < associationTypes.Count(); iAssociationType++)
                                 {
                                     var associationType = associationTypes[iAssociationType];
@@ -1661,7 +1661,7 @@ namespace Allors.Database.Adapters
                             for (int iRelation = 0; iRelation < this.GetRelations().Length; iRelation++)
                             {
                                 var relationType = this.GetRelations()[iRelation];
-                                var associationTypes = relationType.AssociationType.ObjectType.Classes.ToArray();
+                                var associationTypes = relationType.AssociationType.ObjectType.DatabaseClasses.ToArray();
                                 for (int iAssociationType = 0; iAssociationType < associationTypes.Count(); iAssociationType++)
                                 {
                                     var associationType = associationTypes[iAssociationType];
@@ -1822,7 +1822,7 @@ namespace Allors.Database.Adapters
                             for (int iRelation = 0; iRelation < this.GetRelations().Length; iRelation++)
                             {
                                 var relationType = this.GetRelations()[iRelation];
-                                var associationTypes = relationType.AssociationType.ObjectType.Classes.ToArray();
+                                var associationTypes = relationType.AssociationType.ObjectType.DatabaseClasses.ToArray();
                                 for (int iAssociationType = 0; iAssociationType < associationTypes.Count(); iAssociationType++)
                                 {
                                     var associationType = associationTypes[iAssociationType];
@@ -2002,7 +2002,7 @@ namespace Allors.Database.Adapters
                             for (int iRelation = 0; iRelation < this.GetRelations().Length; iRelation++)
                             {
                                 var relationType = this.GetRelations()[iRelation];
-                                var associationTypes = relationType.AssociationType.ObjectType.Classes.ToArray();
+                                var associationTypes = relationType.AssociationType.ObjectType.DatabaseClasses.ToArray();
                                 for (int iAssociationType = 0; iAssociationType < associationTypes.Count(); iAssociationType++)
                                 {
                                     var associationType = associationTypes[iAssociationType];
@@ -2252,7 +2252,7 @@ namespace Allors.Database.Adapters
                             for (int iRelation = 0; iRelation < this.GetRelations().Length; iRelation++)
                             {
                                 var relationType = this.GetRelations()[iRelation];
-                                var associationTypes = relationType.AssociationType.ObjectType.Classes.ToArray();
+                                var associationTypes = relationType.AssociationType.ObjectType.DatabaseClasses.ToArray();
                                 for (int iAssociationType = 0; iAssociationType < associationTypes.Count(); iAssociationType++)
                                 {
                                     var associationType = associationTypes[iAssociationType];
@@ -2504,7 +2504,7 @@ namespace Allors.Database.Adapters
                             for (int iRelation = 0; iRelation < this.GetRelations().Length; iRelation++)
                             {
                                 var relationType = this.GetRelations()[iRelation];
-                                var associationTypes = relationType.AssociationType.ObjectType.Classes.ToArray();
+                                var associationTypes = relationType.AssociationType.ObjectType.DatabaseClasses.ToArray();
                                 for (int iAssociationType = 0; iAssociationType < associationTypes.Count(); iAssociationType++)
                                 {
                                     var associationType = associationTypes[iAssociationType];
@@ -2665,7 +2665,7 @@ namespace Allors.Database.Adapters
                             for (int iRelation = 0; iRelation < this.GetRelations().Length; iRelation++)
                             {
                                 var relationType = this.GetRelations()[iRelation];
-                                var associationTypes = relationType.AssociationType.ObjectType.Classes.ToArray();
+                                var associationTypes = relationType.AssociationType.ObjectType.DatabaseClasses.ToArray();
                                 for (int iAssociationType = 0; iAssociationType < associationTypes.Count(); iAssociationType++)
                                 {
                                     var associationType = associationTypes[iAssociationType];
@@ -2846,7 +2846,7 @@ namespace Allors.Database.Adapters
                             for (int iRelation = 0; iRelation < this.GetRelations().Length; iRelation++)
                             {
                                 var relationType = this.GetRelations()[iRelation];
-                                var associationTypes = relationType.AssociationType.ObjectType.Classes.ToArray();
+                                var associationTypes = relationType.AssociationType.ObjectType.DatabaseClasses.ToArray();
                                 for (int iAssociationType = 0; iAssociationType < associationTypes.Count(); iAssociationType++)
                                 {
                                     var associationType = associationTypes[iAssociationType];
@@ -2980,7 +2980,7 @@ namespace Allors.Database.Adapters
                             for (int iRelation = 0; iRelation < this.GetRelations().Length; iRelation++)
                             {
                                 var relationType = this.GetRelations()[iRelation];
-                                var associationTypes = relationType.AssociationType.ObjectType.Classes.ToArray();
+                                var associationTypes = relationType.AssociationType.ObjectType.DatabaseClasses.ToArray();
                                 for (int iAssociationType = 0; iAssociationType < associationTypes.Count(); iAssociationType++)
                                 {
                                     var associationType = associationTypes[iAssociationType];
@@ -3090,7 +3090,7 @@ namespace Allors.Database.Adapters
                             for (int iRelation = 0; iRelation < this.GetRelations().Length; iRelation++)
                             {
                                 var relationType = this.GetRelations()[iRelation];
-                                var associationTypes = relationType.AssociationType.ObjectType.Classes.ToArray();
+                                var associationTypes = relationType.AssociationType.ObjectType.DatabaseClasses.ToArray();
                                 for (int iAssociationType = 0; iAssociationType < associationTypes.Count(); iAssociationType++)
                                 {
                                     var associationType = associationTypes[iAssociationType];
@@ -3174,7 +3174,7 @@ namespace Allors.Database.Adapters
                             for (int iRelation = 0; iRelation < this.GetRelations().Length; iRelation++)
                             {
                                 var relationType = this.GetRelations()[iRelation];
-                                var associationTypes = relationType.AssociationType.ObjectType.Classes.ToArray();
+                                var associationTypes = relationType.AssociationType.ObjectType.DatabaseClasses.ToArray();
                                 for (int iAssociationType = 0; iAssociationType < associationTypes.Count(); iAssociationType++)
                                 {
                                     var associationType = associationTypes[iAssociationType];
@@ -3256,6 +3256,6 @@ namespace Allors.Database.Adapters
             }
         }
 
-        private RelationType[] GetRelations() => this.GetOne2OneRelations(this.GetMetaPopulation());
+        private IRelationType[] GetRelations() => this.GetOne2OneRelations(this.GetMetaPopulation());
     }
 }

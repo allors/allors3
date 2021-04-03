@@ -36,7 +36,7 @@ namespace Allors.Database.Domain
 
                 if (!@this.SalesOrderItemInvoiceState.IsNotInvoiced || !@this.SalesOrderItemShipmentState.IsNotShipped)
                 {
-                    var deniablePermissionByOperandTypeId = new Dictionary<OperandType, Permission>();
+                    var deniablePermissionByOperandTypeId = new Dictionary<IOperandType, Permission>();
 
                     foreach (Permission permission in @this.Transaction().Extent<Permission>())
                     {

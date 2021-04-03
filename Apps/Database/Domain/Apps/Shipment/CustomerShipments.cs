@@ -29,7 +29,7 @@ namespace Allors.Database.Domain
             var ship = this.Meta.Ship;
             var delete = this.Meta.Delete;
 
-            var except = new HashSet<OperandType>
+            var except = new HashSet<IOperandType>
             {
                 this.Meta.ElectronicDocuments,
             };

@@ -12,12 +12,20 @@ namespace Allors.Database.Domain
 
     public partial class Security
     {
-        public void Deny(ObjectType objectType, ObjectState objectState, params Operations[] operations)
+        public void Deny(MetaClass objectType, ObjectState objectState, params Operations[] operations) => this.Deny(objectType.ObjectType, objectState, operations);
+
+        public void Deny(MetaClass objectType, ObjectState objectState, params IOperandType[] operandTypes) => this.Deny(objectType.ObjectType, objectState, (IEnumerable<OperandType>)operandTypes);
+
+        public void Deny(MetaClass objectType, ObjectState objectState, IEnumerable<IOperandType> operandTypes) => this.Deny(objectType.ObjectType, objectState, operandTypes);
+
+        public void DenyExcept(MetaClass objectType, ObjectState objectState, IEnumerable<IOperandType> excepts, params Operations[] operations) => this.DenyExcept(objectType.ObjectType, objectState, excepts, operations);
+        
+        public void Deny(IObjectType objectType, ObjectState objectState, params Operations[] operations)
         {
             var actualOperations = operations ?? ReadWriteExecute;
             foreach (var operation in actualOperations)
             {
-                Dictionary<OperandType, Permission> permissionByOperandType;
+                Dictionary<IOperandType, Permission> permissionByOperandType;
                 switch (operation)
                 {
                     case Operations.Read:
@@ -46,9 +54,9 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void Deny(ObjectType objectType, ObjectState objectState, params OperandType[] operandTypes) => this.Deny(objectType, objectState, (IEnumerable<OperandType>)operandTypes);
+        public void Deny(IObjectType objectType, ObjectState objectState, params IOperandType[] operandTypes) => this.Deny(objectType, objectState, (IEnumerable<OperandType>)operandTypes);
 
-        public void Deny(ObjectType objectType, ObjectState objectState, IEnumerable<OperandType> operandTypes)
+        public void Deny(IObjectType objectType, ObjectState objectState, IEnumerable<IOperandType> operandTypes)
         {
             if (this.deniablePermissionByOperandTypeByObjectTypeId.TryGetValue(objectType.Id, out var deniablePermissionByOperandTypeId))
             {
@@ -62,12 +70,12 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void DenyExcept(ObjectType objectType, ObjectState objectState, IEnumerable<OperandType> excepts, params Operations[] operations)
+        public void DenyExcept(IObjectType objectType, ObjectState objectState, IEnumerable<IOperandType> excepts, params Operations[] operations)
         {
             var actualOperations = operations ?? ReadWriteExecute;
             foreach (var operation in actualOperations)
             {
-                Dictionary<OperandType, Permission> permissionByOperandType;
+                Dictionary<IOperandType, Permission> permissionByOperandType;
                 switch (operation)
                 {
                     case Operations.Read:
@@ -95,7 +103,6 @@ namespace Allors.Database.Domain
                 }
             }
         }
-
 
         private void BaseOnPostSetup()
         {

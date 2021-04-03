@@ -65,7 +65,7 @@ namespace Allors.Database.Adapters
 
         public virtual int[] GetTestRepeats() => this.testRepeats;
 
-        public abstract IObject[] CreateArray(ObjectType objectType, int count);
+        public abstract IObject[] CreateArray(IObjectType objectType, int count);
 
         public abstract IDatabase CreateMemoryPopulation();
 
@@ -87,7 +87,7 @@ namespace Allors.Database.Adapters
 
         public virtual IClass GetMetaType(IObject allorsObject) => allorsObject.Strategy.Class;
 
-        public RelationType[] GetOne2OneRelations(MetaPopulation metaPopulation)
+        public IRelationType[] GetOne2OneRelations(MetaPopulation metaPopulation)
         {
             var relations = new ArrayList();
             foreach (var metaRelation in metaPopulation.RelationTypes)
@@ -101,7 +101,7 @@ namespace Allors.Database.Adapters
             return (RelationType[])relations.ToArray(typeof(RelationType));
         }
 
-        public RelationType[] GetOne2ManyRelations(MetaPopulation metaPopulation)
+        public IRelationType[] GetOne2ManyRelations(MetaPopulation metaPopulation)
         {
             var relations = new ArrayList();
             foreach (var metaRelation in metaPopulation.RelationTypes)
@@ -115,7 +115,7 @@ namespace Allors.Database.Adapters
             return (RelationType[])relations.ToArray(typeof(RelationType));
         }
 
-        public RelationType[] GetMany2OneRelations(MetaPopulation metaPopulation)
+        public IRelationType[] GetMany2OneRelations(MetaPopulation metaPopulation)
         {
             var relations = new ArrayList();
             foreach (var metaRelation in metaPopulation.RelationTypes)
@@ -129,7 +129,7 @@ namespace Allors.Database.Adapters
             return (RelationType[])relations.ToArray(typeof(RelationType));
         }
 
-        public RelationType[] GetMany2ManyRelations(MetaPopulation metaPopulation)
+        public IRelationType[] GetMany2ManyRelations(MetaPopulation metaPopulation)
         {
             var relations = new ArrayList();
             foreach (var metaRelation in metaPopulation.RelationTypes)
@@ -143,12 +143,12 @@ namespace Allors.Database.Adapters
             return (RelationType[])relations.ToArray(typeof(RelationType));
         }
 
-        public Class[] GetClasses(RelationType relationType) => ((Composite)relationType.RoleType.ObjectType).Classes.ToArray();
+        public IClass[] GetClasses(IRelationType relationType) => ((IComposite)relationType.RoleType.ObjectType).DatabaseClasses.ToArray();
 
-        public RelationType[] GetBinaryRoles(Composite type)
+        public IRelationType[] GetBinaryRoles(IComposite type)
         {
-            var roleList = new List<RelationType>();
-            foreach (var metaRole in type.RoleTypes)
+            var roleList = new List<IRelationType>();
+            foreach (var metaRole in type.DatabaseRoleTypes)
             {
                 if (metaRole.ObjectType is Unit unit && unit.IsBinary)
                 {
@@ -159,10 +159,10 @@ namespace Allors.Database.Adapters
             return roleList.ToArray();
         }
 
-        public RelationType[] GetBooleanRoles(Composite type)
+        public IRelationType[] GetBooleanRoles(IComposite type)
         {
-            var roleList = new List<RelationType>();
-            foreach (var metaRole in type.RoleTypes)
+            var roleList = new List<IRelationType>();
+            foreach (var metaRole in type.DatabaseRoleTypes)
             {
                 if (metaRole.ObjectType is Unit unit && unit.IsBoolean)
                 {
@@ -173,10 +173,10 @@ namespace Allors.Database.Adapters
             return roleList.ToArray();
         }
 
-        public RelationType[] GetDateTimeRoles(Composite type)
+        public IRelationType[] GetDateTimeRoles(IComposite type)
         {
-            var roleList = new List<RelationType>();
-            foreach (var metaRole in type.RoleTypes)
+            var roleList = new List<IRelationType>();
+            foreach (var metaRole in type.DatabaseRoleTypes)
             {
                 if (metaRole.ObjectType is Unit unit && unit.IsDateTime)
                 {
@@ -187,10 +187,10 @@ namespace Allors.Database.Adapters
             return roleList.ToArray();
         }
 
-        public RelationType[] GetDecimalRoles(Composite type)
+        public IRelationType[] GetDecimalRoles(IComposite type)
         {
-            var roleList = new List<RelationType>();
-            foreach (var metaRole in type.RoleTypes)
+            var roleList = new List<IRelationType>();
+            foreach (var metaRole in type.DatabaseRoleTypes)
             {
                 if (metaRole.ObjectType is Unit unit && unit.IsDecimal)
                 {
@@ -201,10 +201,10 @@ namespace Allors.Database.Adapters
             return roleList.ToArray();
         }
 
-        public RelationType[] GetFloatRoles(Composite type)
+        public IRelationType[] GetFloatRoles(IComposite type)
         {
-            var roleList = new List<RelationType>();
-            foreach (var metaRole in type.RoleTypes)
+            var roleList = new List<IRelationType>();
+            foreach (var metaRole in type.DatabaseRoleTypes)
             {
                 if (metaRole.ObjectType is Unit unit && unit.IsFloat)
                 {
@@ -215,10 +215,10 @@ namespace Allors.Database.Adapters
             return roleList.ToArray();
         }
 
-        public RelationType[] GetIntegerRoles(Composite type)
+        public IRelationType[] GetIntegerRoles(IComposite type)
         {
-            var roleList = new List<RelationType>();
-            foreach (var metaRole in type.RoleTypes)
+            var roleList = new List<IRelationType>();
+            foreach (var metaRole in type.DatabaseRoleTypes)
             {
                 if (metaRole.ObjectType is Unit unit && unit.IsInteger)
                 {
@@ -229,10 +229,10 @@ namespace Allors.Database.Adapters
             return roleList.ToArray();
         }
 
-        public RelationType[] GetStringRoles(Composite type)
+        public IRelationType[] GetStringRoles(IComposite type)
         {
-            var roleList = new List<RelationType>();
-            foreach (var metaRole in type.RoleTypes)
+            var roleList = new List<IRelationType>();
+            foreach (var metaRole in type.DatabaseRoleTypes)
             {
                 if (metaRole.ObjectType is Unit unit && unit.IsString)
                 {
@@ -243,10 +243,10 @@ namespace Allors.Database.Adapters
             return roleList.ToArray();
         }
 
-        public RelationType[] GetUniqueRoles(Composite type)
+        public IRelationType[] GetUniqueRoles(IComposite type)
         {
-            var roleList = new List<RelationType>();
-            foreach (var metaRole in type.RoleTypes)
+            var roleList = new List<IRelationType>();
+            foreach (var metaRole in type.DatabaseRoleTypes)
             {
                 if (metaRole.ObjectType is Unit unit && unit.IsUnique)
                 {
@@ -257,10 +257,10 @@ namespace Allors.Database.Adapters
             return roleList.ToArray();
         }
 
-        public RelationType[] GetUnitRelations(MetaPopulation metaPopulation)
+        public IRelationType[] GetUnitRelations(IMetaPopulation metaPopulation)
         {
             var relations = new ArrayList();
-            foreach (var metaRelation in metaPopulation.RelationTypes)
+            foreach (var metaRelation in metaPopulation.DatabaseRelationTypes)
             {
                 if (metaRelation.RoleType.ObjectType.IsUnit)
                 {
@@ -271,10 +271,10 @@ namespace Allors.Database.Adapters
             return (RelationType[])relations.ToArray(typeof(RelationType));
         }
 
-        public RelationType[] GetUnitRoles(Composite type)
+        public IRelationType[] GetUnitRoles(IComposite type)
         {
-            var roleList = new List<RelationType>();
-            foreach (var metaRole in type.RoleTypes)
+            var roleList = new List<IRelationType>();
+            foreach (var metaRole in type.DatabaseRoleTypes)
             {
                 if (metaRole.ObjectType.IsUnit)
                 {

@@ -37,7 +37,7 @@ namespace Allors.Database.Domain
 
         public bool ExistOperation => true;
 
-        public OperandType OperandType => this.MethodType;
+        public IOperandType OperandType => this.MethodType;
 
         IMethodType IExecutePermission.MethodType => this.MethodType;
         public MethodType MethodType

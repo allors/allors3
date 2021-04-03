@@ -32,7 +32,7 @@ namespace Allors.Database.Adapters
         [Trait("Category", "Dynamic")]
         public void ObjectTypes()
         {
-            var objectsByObjectType = new Dictionary<ObjectType, List<IObject>>();
+            var objectsByObjectType = new Dictionary<IObjectType, List<IObject>>();
 
             const int Max = 1;
             foreach (var concreteCompositeType in this.GetMetaPopulation().Classes)
@@ -86,7 +86,7 @@ namespace Allors.Database.Adapters
             {
                 var extent = this.GetTransaction().Extent(concreteClass);
 
-                foreach (var role in concreteClass.RoleTypes)
+                foreach (var role in concreteClass.DatabaseRoleTypes)
                 {
                     if (role.ObjectType.IsUnit)
                     {
@@ -102,11 +102,11 @@ namespace Allors.Database.Adapters
                     }
                 }
 
-                foreach (var association in concreteClass.AssociationTypes)
+                foreach (var association in concreteClass.DatabaseAssociationTypes)
                 {
                     if (association.IsOne)
                     {
-                        foreach (var concreteType in association.ObjectType.Classes)
+                        foreach (var concreteType in association.ObjectType.DatabaseClasses)
                         {
                             var associationObject = this.GetTransaction().Create(concreteType);
                             extent.Filter.AddEquals(association, associationObject);
@@ -125,12 +125,12 @@ namespace Allors.Database.Adapters
             var concreteClasses = this.GetTestTypes();
             foreach (var concreteClass in concreteClasses)
             {
-                foreach (var role in concreteClass.RoleTypes)
+                foreach (var role in concreteClass.DatabaseRoleTypes)
                 {
                     var extent = this.GetTransaction().Extent(concreteClass);
                     extent.Filter.AddExists(role);
 
-                    foreach (var association in concreteClass.AssociationTypes)
+                    foreach (var association in concreteClass.DatabaseAssociationTypes)
                     {
                         extent.Filter.AddExists(association);
                     }
@@ -140,6 +140,6 @@ namespace Allors.Database.Adapters
             }
         }
 
-        private Class[] GetTestTypes() => this.GetMetaPopulation().Classes.ToArray();
+        private IClass[] GetTestTypes() => this.GetMetaPopulation().Classes.ToArray();
     }
 }

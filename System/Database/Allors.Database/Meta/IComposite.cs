@@ -10,6 +10,8 @@ namespace Allors.Database.Meta
 
     public interface IComposite : IObjectType
     {
+        IEnumerable<IInterface> Supertypes { get; }
+
         IEnumerable<IAssociationType> DatabaseAssociationTypes { get; }
 
         IEnumerable<IRoleType> DatabaseRoleTypes { get; }
@@ -23,7 +25,7 @@ namespace Allors.Database.Meta
         bool ExistExclusiveDatabaseClass { get; }
 
         IClass ExclusiveDatabaseClass { get; }
-
+        
         bool IsSynced { get; }
 
         // TODO: change to HasSuperType
