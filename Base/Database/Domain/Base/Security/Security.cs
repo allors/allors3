@@ -54,7 +54,7 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void Deny(IObjectType objectType, ObjectState objectState, params IOperandType[] operandTypes) => this.Deny(objectType, objectState, (IEnumerable<OperandType>)operandTypes);
+        public void Deny(IObjectType objectType, ObjectState objectState, params IOperandType[] operandTypes) => this.Deny(objectType, objectState, (IEnumerable<IOperandType>)operandTypes);
 
         public void Deny(IObjectType objectType, ObjectState objectState, IEnumerable<IOperandType> operandTypes)
         {

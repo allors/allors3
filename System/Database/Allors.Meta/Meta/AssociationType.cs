@@ -22,7 +22,7 @@ namespace Allors.Database.Meta
 
         private ICompositeBase composite;
 
-        internal AssociationType(IRelationTypeBase relationType)
+        protected AssociationType(IRelationTypeBase relationType)
             : base(relationType.MetaPopulation)
         {
             this.RelationType = relationType;
