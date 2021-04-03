@@ -245,11 +245,11 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             var item1 = new SalesOrderItemBuilder(this.Transaction).WithProduct(good1).WithQuantityOrdered(1).WithAssignedUnitPrice(15).WithComment("item1").Build();
-            //var item2 = new SalesOrderItemBuilder(this.Transaction).WithProduct(good1).WithQuantityOrdered(2).WithAssignedUnitPrice(15).WithComment("item2").Build();
-            //var item3 = new SalesOrderItemBuilder(this.Transaction).WithProduct(good2).WithQuantityOrdered(5).WithAssignedUnitPrice(15).WithComment("item3").Build();
+            var item2 = new SalesOrderItemBuilder(this.Transaction).WithProduct(good1).WithQuantityOrdered(2).WithAssignedUnitPrice(15).WithComment("item2").Build();
+            var item3 = new SalesOrderItemBuilder(this.Transaction).WithProduct(good2).WithQuantityOrdered(5).WithAssignedUnitPrice(15).WithComment("item3").Build();
             order.AddSalesOrderItem(item1);
-            //order.AddSalesOrderItem(item2);
-            //order.AddSalesOrderItem(item3);
+            order.AddSalesOrderItem(item2);
+            order.AddSalesOrderItem(item3);
 
             this.Transaction.Derive();
 
@@ -289,22 +289,22 @@ namespace Allors.Database.Domain.Tests
             shipment.Ship();
             this.Transaction.Derive();
 
-            //var salesInvoiceitem = (SalesInvoiceItem)shipment.ShipmentItems[0].ShipmentItemBillingsWhereShipmentItem[0].InvoiceItem;
-            //var invoice1 = (SalesInvoice)salesInvoiceitem.SalesInvoiceWhereSalesInvoiceItem;
-            //invoice1.Send();
+            var salesInvoiceitem = (SalesInvoiceItem)shipment.ShipmentItems[0].ShipmentItemBillingsWhereShipmentItem[0].InvoiceItem;
+            var invoice1 = (SalesInvoice)salesInvoiceitem.SalesInvoiceWhereSalesInvoiceItem;
+            invoice1.Send();
 
-            //new ReceiptBuilder(this.Transaction)
-            //    .WithAmount(15)
-            //    .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice1.SalesInvoiceItems[0]).WithAmountApplied(15).Build())
-            //    .WithEffectiveDate(this.Transaction.Now())
-            //    .Build();
+            new ReceiptBuilder(this.Transaction)
+                .WithAmount(15)
+                .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice1.SalesInvoiceItems[0]).WithAmountApplied(15).Build())
+                .WithEffectiveDate(this.Transaction.Now())
+                .Build();
 
-            //this.Transaction.Derive();
+            this.Transaction.Derive();
 
-            //Assert.Equal(new SalesOrderStates(this.Transaction).InProcess, order.SalesOrderState);
-            //Assert.Equal(new SalesOrderItemStates(this.Transaction).Finished, item1.SalesOrderItemState);
-            //Assert.Equal(new SalesOrderItemStates(this.Transaction).InProcess, item2.SalesOrderItemState);
-            //Assert.Equal(new SalesOrderItemStates(this.Transaction).InProcess, item3.SalesOrderItemState);
+            Assert.Equal(new SalesOrderStates(this.Transaction).InProcess, order.SalesOrderState);
+            Assert.Equal(new SalesOrderItemStates(this.Transaction).Finished, item1.SalesOrderItemState);
+            Assert.Equal(new SalesOrderItemStates(this.Transaction).InProcess, item2.SalesOrderItemState);
+            Assert.Equal(new SalesOrderItemStates(this.Transaction).InProcess, item3.SalesOrderItemState);
 
             Assert.Equal(1, item1.QuantityShipped);
             Assert.Equal(0, item1.QuantityCommittedOut);
@@ -312,110 +312,110 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(0, item1.QuantityRequestsShipping);
             Assert.Equal(0, item1.QuantityShortFalled);
 
-            //new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(100).WithReason(new InventoryTransactionReasons(this.Transaction).Unknown).WithPart(good1.Part).Build();
+            new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(100).WithReason(new InventoryTransactionReasons(this.Transaction).Unknown).WithPart(good1.Part).Build();
 
-            //this.Transaction.Derive();
+            this.Transaction.Derive();
 
-            //shipment = (CustomerShipment)item2.OrderShipmentsWhereOrderItem[0].ShipmentItem.ShipmentWhereShipmentItem;
+            shipment = (CustomerShipment)item2.OrderShipmentsWhereOrderItem[0].ShipmentItem.ShipmentWhereShipmentItem;
 
-            //shipment.Pick();
-            //this.Transaction.Derive();
+            shipment.Pick();
+            this.Transaction.Derive();
 
-            //pickList = shipment.ShipmentItems[0].ItemIssuancesWhereShipmentItem[0].PickListItem.PickListWherePickListItem;
-            //pickList.Picker = this.OrderProcessor;
+            pickList = shipment.ShipmentItems[0].ItemIssuancesWhereShipmentItem[0].PickListItem.PickListWherePickListItem;
+            pickList.Picker = this.OrderProcessor;
 
-            //pickList.SetPicked();
+            pickList.SetPicked();
 
-            //this.Transaction.Derive();
+            this.Transaction.Derive();
 
-            //package = new ShipmentPackageBuilder(this.Transaction).Build();
-            //shipment.AddShipmentPackage(package);
+            package = new ShipmentPackageBuilder(this.Transaction).Build();
+            shipment.AddShipmentPackage(package);
 
-            //foreach (ShipmentItem shipmentItem in shipment.ShipmentItems)
-            //{
-            //    package.AddPackagingContent(new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
-            //}
+            foreach (ShipmentItem shipmentItem in shipment.ShipmentItems)
+            {
+                package.AddPackagingContent(new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
+            }
 
-            //this.Transaction.Derive();
+            this.Transaction.Derive();
 
-            //shipment.Ship();
+            shipment.Ship();
 
-            //this.Transaction.Derive();
+            this.Transaction.Derive();
 
-            //salesInvoiceitem = (SalesInvoiceItem)shipment.ShipmentItems[0].ShipmentItemBillingsWhereShipmentItem[0].InvoiceItem;
-            //var invoice2 = (SalesInvoice)salesInvoiceitem.SalesInvoiceWhereSalesInvoiceItem;
-            //invoice2.Send();
+            salesInvoiceitem = (SalesInvoiceItem)shipment.ShipmentItems[0].ShipmentItemBillingsWhereShipmentItem[0].InvoiceItem;
+            var invoice2 = (SalesInvoice)salesInvoiceitem.SalesInvoiceWhereSalesInvoiceItem;
+            invoice2.Send();
 
-            //new ReceiptBuilder(this.Transaction)
-            //    .WithAmount(30)
-            //    .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice2.SalesInvoiceItems[0]).WithAmountApplied(30).Build())
-            //    .Build();
+            new ReceiptBuilder(this.Transaction)
+                .WithAmount(30)
+                .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice2.SalesInvoiceItems[0]).WithAmountApplied(30).Build())
+                .Build();
 
-            //this.Transaction.Derive();
+            this.Transaction.Derive();
 
-            //Assert.Equal(new SalesOrderStates(this.Transaction).InProcess, order.SalesOrderState);
-            //Assert.Equal(new SalesOrderItemStates(this.Transaction).Finished, item1.SalesOrderItemState);
-            //Assert.Equal(new SalesOrderItemStates(this.Transaction).Finished, item2.SalesOrderItemState);
-            //Assert.Equal(new SalesOrderItemStates(this.Transaction).InProcess, item3.SalesOrderItemState);
+            Assert.Equal(new SalesOrderStates(this.Transaction).InProcess, order.SalesOrderState);
+            Assert.Equal(new SalesOrderItemStates(this.Transaction).Finished, item1.SalesOrderItemState);
+            Assert.Equal(new SalesOrderItemStates(this.Transaction).Finished, item2.SalesOrderItemState);
+            Assert.Equal(new SalesOrderItemStates(this.Transaction).InProcess, item3.SalesOrderItemState);
 
-            //Assert.Equal(1, item1.QuantityShipped);
-            //Assert.Equal(0, item1.QuantityCommittedOut);
-            //Assert.Equal(0, item1.QuantityPendingShipment);
-            //Assert.Equal(0, item1.QuantityRequestsShipping);
-            //Assert.Equal(0, item1.QuantityShortFalled);
+            Assert.Equal(1, item1.QuantityShipped);
+            Assert.Equal(0, item1.QuantityCommittedOut);
+            Assert.Equal(0, item1.QuantityPendingShipment);
+            Assert.Equal(0, item1.QuantityRequestsShipping);
+            Assert.Equal(0, item1.QuantityShortFalled);
 
-            //Assert.Equal(2, item2.QuantityShipped);
-            //Assert.Equal(0, item2.QuantityCommittedOut);
-            //Assert.Equal(0, item2.QuantityPendingShipment);
-            //Assert.Equal(0, item2.QuantityRequestsShipping);
-            //Assert.Equal(0, item2.QuantityShortFalled);
+            Assert.Equal(2, item2.QuantityShipped);
+            Assert.Equal(0, item2.QuantityCommittedOut);
+            Assert.Equal(0, item2.QuantityPendingShipment);
+            Assert.Equal(0, item2.QuantityRequestsShipping);
+            Assert.Equal(0, item2.QuantityShortFalled);
 
-            //new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(100).WithReason(new InventoryTransactionReasons(this.Transaction).Unknown).WithPart(good2.Part).Build();
+            new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(100).WithReason(new InventoryTransactionReasons(this.Transaction).Unknown).WithPart(good2.Part).Build();
 
-            //this.Transaction.Derive();
+            this.Transaction.Derive();
 
-            //shipment = (CustomerShipment)item3.OrderShipmentsWhereOrderItem[0].ShipmentItem.ShipmentWhereShipmentItem;
+            shipment = (CustomerShipment)item3.OrderShipmentsWhereOrderItem[0].ShipmentItem.ShipmentWhereShipmentItem;
 
-            //shipment.Pick();
-            //this.Transaction.Derive();
+            shipment.Pick();
+            this.Transaction.Derive();
 
-            //pickList = shipment.ShipmentItems[0].ItemIssuancesWhereShipmentItem[0].PickListItem.PickListWherePickListItem;
-            //pickList.Picker = this.OrderProcessor;
+            pickList = shipment.ShipmentItems[0].ItemIssuancesWhereShipmentItem[0].PickListItem.PickListWherePickListItem;
+            pickList.Picker = this.OrderProcessor;
 
-            //pickList.SetPicked();
+            pickList.SetPicked();
 
-            //this.Transaction.Derive();
+            this.Transaction.Derive();
 
-            //package = new ShipmentPackageBuilder(this.Transaction).Build();
-            //shipment.AddShipmentPackage(package);
+            package = new ShipmentPackageBuilder(this.Transaction).Build();
+            shipment.AddShipmentPackage(package);
 
-            //foreach (ShipmentItem shipmentItem in shipment.ShipmentItems)
-            //{
-            //    package.AddPackagingContent(new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
-            //}
+            foreach (ShipmentItem shipmentItem in shipment.ShipmentItems)
+            {
+                package.AddPackagingContent(new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
+            }
 
-            //this.Transaction.Derive();
+            this.Transaction.Derive();
 
-            //shipment.Ship();
+            shipment.Ship();
 
-            //this.Transaction.Derive();
+            this.Transaction.Derive();
 
-            //salesInvoiceitem =
-            //    (SalesInvoiceItem)shipment.ShipmentItems[0].ShipmentItemBillingsWhereShipmentItem[0].InvoiceItem;
-            //var invoice3 = salesInvoiceitem.SalesInvoiceWhereSalesInvoiceItem;
-            //invoice3.Send();
+            salesInvoiceitem =
+                (SalesInvoiceItem)shipment.ShipmentItems[0].ShipmentItemBillingsWhereShipmentItem[0].InvoiceItem;
+            var invoice3 = salesInvoiceitem.SalesInvoiceWhereSalesInvoiceItem;
+            invoice3.Send();
 
-            //new ReceiptBuilder(this.Transaction)
-            //    .WithAmount(75)
-            //    .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice3.SalesInvoiceItems[0]).WithAmountApplied(75).Build())
-            //    .Build();
+            new ReceiptBuilder(this.Transaction)
+                .WithAmount(75)
+                .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice3.SalesInvoiceItems[0]).WithAmountApplied(75).Build())
+                .Build();
 
-            //this.Transaction.Derive();
+            this.Transaction.Derive();
 
-            //Assert.Equal(new SalesOrderStates(this.Transaction).Finished, order.SalesOrderState);
-            //Assert.Equal(new SalesOrderItemStates(this.Transaction).Finished, item1.SalesOrderItemState);
-            //Assert.Equal(new SalesOrderItemStates(this.Transaction).Finished, item2.SalesOrderItemState);
-            //Assert.Equal(new SalesOrderItemStates(this.Transaction).Finished, item3.SalesOrderItemState);
+            Assert.Equal(new SalesOrderStates(this.Transaction).Finished, order.SalesOrderState);
+            Assert.Equal(new SalesOrderItemStates(this.Transaction).Finished, item1.SalesOrderItemState);
+            Assert.Equal(new SalesOrderItemStates(this.Transaction).Finished, item2.SalesOrderItemState);
+            Assert.Equal(new SalesOrderItemStates(this.Transaction).Finished, item3.SalesOrderItemState);
         }
 
         [Fact]
