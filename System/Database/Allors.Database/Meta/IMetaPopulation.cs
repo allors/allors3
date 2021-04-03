@@ -16,6 +16,10 @@ namespace Allors.Database.Meta
 
         IEnumerable<IUnit> Units { get; }
 
+        IEnumerable<IMethodType> MethodTypes { get; }
+
+        IEnumerable<IInheritance> Inheritances { get; }
+
         IEnumerable<IComposite> DatabaseComposites { get; }
 
         IEnumerable<IInterface> DatabaseInterfaces { get; }
@@ -24,7 +28,7 @@ namespace Allors.Database.Meta
 
         IEnumerable<IRelationType> DatabaseRelationTypes { get; }
 
-        IEnumerable<IMethodType> MethodTypes { get; }
+        IEnumerable<string> WorkspaceNames { get; }
 
         IMetaObject Find(Guid metaObjectId);
 

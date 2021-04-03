@@ -22,7 +22,7 @@ namespace Allors.Database.Domain
             var versionClass = metaPopulation.FindByName(versionedClass.Name + "Version");
             var versionTypeRegex = new Regex(".+Version");
 
-            var currentVersionRole = versionedClass.RoleTypes.First(v => v.Name.Equals("CurrentVersion"));
+            var currentVersionRole = versionedClass.DatabaseRoleTypes.First(v => v.Name.Equals("CurrentVersion"));
             var currentVersion = @this.Strategy.GetCompositeRole(currentVersionRole);
 
             var isNewVersion = currentVersion == null;

@@ -9,16 +9,6 @@ namespace Allors.Database.Meta
     {
         new IMetaPopulationBase MetaPopulation { get; }
 
-        Origin Origin { get; }
-
-        int OriginAsInt { get; }
-
-        bool HasDatabaseOrigin { get; }
-
-        bool HasWorkspaceOrigin { get; }
-
-        bool HasSessionOrigin { get; }
-
         string ValidationName { get; }
     }
 }

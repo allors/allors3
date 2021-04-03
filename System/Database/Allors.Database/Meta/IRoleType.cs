@@ -29,6 +29,12 @@ namespace Allors.Database.Meta
 
         int? Scale { get; }
 
+        bool IsRequired { get; set; }
+
+        bool IsUnique { get; set; }
+
+        string MediaType { get; set; }
+
         void Set(IStrategy strategy, object value);
     }
 }

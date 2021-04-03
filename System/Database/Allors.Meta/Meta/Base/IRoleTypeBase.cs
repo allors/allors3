@@ -25,14 +25,6 @@ namespace Allors.Database.Meta
         
         void DeriveScaleAndSize();
 
-        Origin Origin { get; }
-
-        bool IsRequired { get; set; }
-
-        bool IsUnique { get; set; }
-
-        string MediaType { get; set; }
-
         void Validate(ValidationLog validationLog);
     }
 }

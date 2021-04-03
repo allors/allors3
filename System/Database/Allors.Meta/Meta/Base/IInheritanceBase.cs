@@ -5,11 +5,10 @@
 
 namespace Allors.Database.Meta
 {
-    using System;
-    using System.Collections.Generic;
-
-    public partial interface IClassBase : ICompositeBase, IClass
+    public partial interface IInheritanceBase : IMetaObjectBase, IInheritance
     {
-        void DeriveWorkspaceNames(HashSet<string> workspaceNames);
+        new IInterfaceBase Supertype { get;  }
+
+        new ICompositeBase Subtype { get; }
     }
 }

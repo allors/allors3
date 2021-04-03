@@ -12,7 +12,7 @@ namespace Allors.Database.Meta
         new IEnumerable<IDomainBase> Domains { get; }
 
         new IEnumerable<IUnitBase> Units { get; }
-        
+
         new IEnumerable<ICompositeBase> DatabaseComposites { get; }
 
         new IEnumerable<IInterfaceBase> DatabaseInterfaces { get; }
@@ -23,9 +23,7 @@ namespace Allors.Database.Meta
 
         new IEnumerable<IMethodTypeBase> MethodTypes { get; }
 
-        IEnumerable<string> WorkspaceNames { get; }
-
-        IEnumerable<Inheritance> Inheritances { get; }
+        new IEnumerable<IInheritanceBase> Inheritances { get; }
 
         void OnDomainCreated(Domain domain);
 

@@ -82,6 +82,7 @@ namespace Allors.Database.Meta
         /// Gets the sub types.
         /// </summary>
         /// <value>The super types.</value>
+        IEnumerable<IComposite> IInterface.Subtypes => this.Subtypes;
         public override IEnumerable<ICompositeBase> Subtypes
         {
             get

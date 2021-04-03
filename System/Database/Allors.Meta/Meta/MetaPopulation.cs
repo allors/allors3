@@ -73,6 +73,8 @@ namespace Allors.Database.Meta
 
         public IEnumerable<IClassBase> Classes => this.classes;
 
+        IEnumerable<IInheritanceBase> IMetaPopulationBase.Inheritances => this.Inheritances;
+        IEnumerable<IInheritance> IMetaPopulation.Inheritances => this.Inheritances;
         public IEnumerable<Inheritance> Inheritances => this.inheritances;
 
         public IEnumerable<IRelationTypeBase> RelationTypes => this.relationTypes;

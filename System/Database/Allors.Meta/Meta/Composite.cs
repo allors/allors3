@@ -426,6 +426,8 @@ namespace Allors.Database.Meta
             }
         }
 
+        IEnumerable<IClass> IComposite.Classes { get; }
+
         public bool ExistSupertype(IInterface @interface)
         {
             this.MetaPopulation.Derive();

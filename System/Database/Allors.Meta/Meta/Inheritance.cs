@@ -9,7 +9,7 @@ namespace Allors.Database.Meta
     using System;
     using System.Linq;
 
-    public sealed partial class Inheritance : MetaObjectBase, IComparable
+    public sealed partial class Inheritance : MetaObjectBase, IInheritanceBase, IComparable
     {
         private Composite subtype;
 
@@ -17,6 +17,8 @@ namespace Allors.Database.Meta
 
         internal Inheritance(MetaPopulation metaPopulation) : base(metaPopulation) => metaPopulation.OnInheritanceCreated(this);
 
+        ICompositeBase IInheritanceBase.Subtype => this.Subtype;
+        IComposite IInheritance.Subtype => this.Subtype;
         public Composite Subtype
         {
             get => this.subtype;
@@ -29,6 +31,8 @@ namespace Allors.Database.Meta
             }
         }
 
+        IInterfaceBase IInheritanceBase.Supertype => this.Supertype;
+        IInterface IInheritance.Supertype => this.Supertype;
         public Interface Supertype
         {
             get => this.supertype;
@@ -58,7 +62,7 @@ namespace Allors.Database.Meta
                 return "unknown inheritance";
             }
         }
-
+        
         public override bool Equals(object other) => this.Subtype.Id.Equals((other as Inheritance)?.Subtype.Id) && this.Supertype.Id.Equals((other as Inheritance)?.Supertype.Id);
 
         public override int GetHashCode() => this.Subtype.Id.GetHashCode() ^ this.Supertype.Id.GetHashCode();

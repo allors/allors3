@@ -11,5 +11,15 @@ namespace Allors.Database.Meta
     public interface IMetaObject
     {
         IMetaPopulation MetaPopulation { get; }
+
+        Origin Origin { get; }
+
+        int OriginAsInt { get; }
+
+        bool HasDatabaseOrigin { get; }
+
+        bool HasWorkspaceOrigin { get; }
+
+        bool HasSessionOrigin { get; }
     }
 }

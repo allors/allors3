@@ -29,7 +29,7 @@ namespace Allors.Database.Configuration
             this.requiredRoleTypesByClass = metaPopulation.DatabaseClasses
                 .ToDictionary(
                     v => (IClass)v,
-                    v => v.RoleTypes
+                    v => v.DatabaseRoleTypes
                           .Where(concreteRoleType => concreteRoleType.IsRequired)
                           .Cast<IRoleType>()
                           .ToArray());
@@ -38,7 +38,7 @@ namespace Allors.Database.Configuration
             this.uniqueRoleTypesByClass = metaPopulation.DatabaseClasses
                 .ToDictionary(
                     v => (IClass)v,
-                    v => v.RoleTypes
+                    v => v.DatabaseRoleTypes
                         .Where(concreteRoleType => concreteRoleType.IsUnique)
                         .Cast<IRoleType>()
                         .ToArray());

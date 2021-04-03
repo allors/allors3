@@ -6,11 +6,16 @@
 
 namespace Allors.Database.Meta
 {
+    using System;
     using System.Collections.Generic;
 
     public interface IComposite : IObjectType
     {
         IEnumerable<IInterface> Supertypes { get; }
+
+        IEnumerable<IClass> Classes { get; }
+
+        bool ExistExclusiveClass { get; }
 
         IEnumerable<IAssociationType> DatabaseAssociationTypes { get; }
 
@@ -25,10 +30,9 @@ namespace Allors.Database.Meta
         bool ExistExclusiveDatabaseClass { get; }
 
         IClass ExclusiveDatabaseClass { get; }
-        
+
         bool IsSynced { get; }
 
-        // TODO: change to HasSuperType
         bool ExistSupertype(IInterface @interface);
 
         bool ExistAssociationType(IAssociationType association);
@@ -36,5 +40,7 @@ namespace Allors.Database.Meta
         bool ExistRoleType(IRoleType roleType);
 
         bool IsAssignableFrom(IComposite objectType);
+
+        void Bind(Dictionary<string, Type> typeByName);
     }
 }

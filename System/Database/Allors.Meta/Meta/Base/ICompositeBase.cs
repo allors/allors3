@@ -5,26 +5,26 @@
 
 namespace Allors.Database.Meta
 {
-    using System;
     using System.Collections.Generic;
 
     public partial interface ICompositeBase : IObjectTypeBase, IComposite
     {
         new IEnumerable<IInterfaceBase> Supertypes { get; }
 
+        new IEnumerable<IClassBase> Classes { get; }
+
         new IEnumerable<IMethodTypeBase> MethodTypes { get; }
 
-        IEnumerable<IClassBase> Classes { get; }
-
-        bool ExistExclusiveClass { get; }
-       
-        void Bind(Dictionary<string, Type> typeByName);
-
         void DeriveDirectSupertypes(HashSet<IInterfaceBase> sharedInterfaces);
+
         void DeriveSupertypes(HashSet<IInterfaceBase> sharedInterfaces);
+
         void DeriveRoleTypes(HashSet<IRoleTypeBase> sharedRoleTypes, Dictionary<ICompositeBase, HashSet<IRoleTypeBase>> roleTypesByAssociationTypeObjectType);
+
         void DeriveAssociationTypes(HashSet<IAssociationTypeBase> sharedAssociationTypes, Dictionary<IObjectTypeBase, HashSet<IAssociationTypeBase>> associationTypesByRoleTypeObjectType);
+
         void DeriveMethodTypes(HashSet<IMethodTypeBase> sharedMethodTypeList, Dictionary<ICompositeBase, HashSet<IMethodTypeBase>> methodTypeByClass);
+
         void DeriveIsSynced();
     }
 }

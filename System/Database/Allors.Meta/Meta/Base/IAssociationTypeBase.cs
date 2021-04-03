@@ -7,8 +7,6 @@ namespace Allors.Database.Meta
 {
     public partial interface IAssociationTypeBase : IPropertyTypeBase, IAssociationType
     {
-        Origin Origin { get; }
-
         new ICompositeBase ObjectType { get; set; }
 
         new IRelationTypeBase RelationType { get; }
