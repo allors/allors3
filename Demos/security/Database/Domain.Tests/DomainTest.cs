@@ -14,6 +14,7 @@ namespace Allors.Database.Domain.Tests
     using Allors.Database.Domain;
     using Configuration;
     using Meta;
+    using User = Domain.User;
 
     public class DomainTest : IDisposable
     {

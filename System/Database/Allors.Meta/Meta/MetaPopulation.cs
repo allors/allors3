@@ -11,7 +11,7 @@ namespace Allors.Database.Meta
     using System.Linq;
     using System.Reflection;
 
-    public sealed partial class MetaPopulation : IMetaPopulation
+    public sealed partial class MetaPopulation : IMetaPopulationBase
     {
         private readonly Dictionary<Guid, MetaObjectBase> metaObjectById;
 
@@ -377,7 +377,7 @@ namespace Allors.Database.Meta
             }
         }
 
-        internal void AssertUnlocked()
+        void IMetaPopulationBase.AssertUnlocked()
         {
             if (this.IsBound)
             {
@@ -385,7 +385,9 @@ namespace Allors.Database.Meta
             }
         }
 
-        internal void Derive()
+        void IMetaPopulationBase.Derive() => this.Derive();
+
+        private void Derive()
         {
             if (this.isStale && !this.isDeriving)
             {
@@ -552,7 +554,7 @@ namespace Allors.Database.Meta
             }
         }
 
-        internal void OnDomainCreated(Domain domain)
+        void IMetaPopulationBase.OnDomainCreated(Domain domain)
         {
             this.domains.Add(domain);
             this.metaObjectById.Add(domain.Id, domain);
@@ -590,7 +592,7 @@ namespace Allors.Database.Meta
             this.Stale();
         }
 
-        internal void OnRelationTypeCreated(RelationType relationType)
+        void IMetaPopulationBase.OnRelationTypeCreated(RelationType relationType)
         {
             this.relationTypes.Add(relationType);
             this.metaObjectById.Add(relationType.Id, relationType);
@@ -598,11 +600,11 @@ namespace Allors.Database.Meta
             this.Stale();
         }
 
-        internal void OnAssociationTypeCreated(AssociationType associationType) => this.Stale();
+        void IMetaPopulationBase.OnAssociationTypeCreated(AssociationType associationType) => this.Stale();
 
-        internal void OnRoleTypeCreated(RoleType roleType) => this.Stale();
+        void IMetaPopulationBase.OnRoleTypeCreated(RoleType roleType) => this.Stale();
 
-        internal void OnMethodInterfaceCreated(MethodInterface methodInterface)
+        void IMetaPopulationBase.OnMethodInterfaceCreated(MethodInterface methodInterface)
         {
             this.methodTypes.Add(methodInterface);
             this.metaObjectById.Add(methodInterface.Id, methodInterface);
@@ -610,7 +612,7 @@ namespace Allors.Database.Meta
             this.Stale();
         }
 
-        internal void OnMethodClassCreated(MethodClass methodClass)
+        void IMetaPopulationBase.OnMethodClassCreated(MethodClass methodClass)
         {
             if (methodClass.MethodInterface == null)
             {
@@ -621,7 +623,10 @@ namespace Allors.Database.Meta
             this.Stale();
         }
 
-        internal void Stale() => this.isStale = true;
+
+        void IMetaPopulationBase.Stale() => this.Stale();
+        private void Stale() => this.isStale = true;
+
 
         private bool HasCycle(Composite subtype, HashSet<Interface> supertypes, Dictionary<Composite, List<Inheritance>> inheritancesBySubtype)
         {

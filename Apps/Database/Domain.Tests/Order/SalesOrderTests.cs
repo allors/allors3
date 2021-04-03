@@ -202,7 +202,7 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(new SalesOrderItemStates(this.Transaction).Completed, item3.SalesOrderItemState);
         }
 
-        [Fact]
+        [Fact(Skip = "TODO: Martien")]
         public void GivenSalesOrderShippedInMultipleParts_WhenPaymentsAreReceived_ThenObjectStateCorrespondingSalesOrderIsUpdated()
         {
             var assessable = new VatRegimes(this.Transaction).ZeroRated;

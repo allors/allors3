@@ -62,7 +62,7 @@ namespace Allors.Repository.Domain
 
         public Property[] DefinedProperties => this.PropertyByRoleName.Values.Where(v => v.DefiningProperty == null).ToArray();
 
-        public Property[] ImplementedProperties => this.PropertyByRoleName.Values.Where(v => v.DefiningProperty != null).ToArray();
+        public Property[] InheritedProperties => this.PropertyByRoleName.Values.Where(v => v.DefiningProperty != null).ToArray();
 
         public Property[] DefinedReverseProperties => this.DefinedReversePropertyByAssociationName.Values.ToArray();
 

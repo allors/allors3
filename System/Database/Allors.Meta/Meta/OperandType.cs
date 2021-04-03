@@ -7,7 +7,7 @@ namespace Allors.Database.Meta
 {
     public abstract partial class OperandType : MetaObjectBase, IOperandType
     {
-        protected OperandType(MetaPopulation metaPopulation)
+        protected OperandType(IMetaPopulationBase metaPopulation)
             : base(metaPopulation)
         {
         }

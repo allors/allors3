@@ -17,7 +17,7 @@ namespace Allors.Database.Meta
 
         private IReadOnlyDictionary<Class, MethodClass> derivedMethodClassByClass = EmptyMethodClassByAssociationTypeClass;
         
-        protected MethodType(MetaPopulation metaPopulation) : base(metaPopulation)
+        protected MethodType(IMetaPopulationBase metaPopulation) : base(metaPopulation)
         {
         }
 
