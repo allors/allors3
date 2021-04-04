@@ -82,9 +82,10 @@ namespace Allors.Development.Repository.Generation
 
             try
             {
-                TemplateGroup templateGroup = new TemplateGroupFile(this.fileInfo.FullName, '$', '$');
-
-                templateGroup.ErrorManager = new ErrorManager(new LogAdapter(log));
+                TemplateGroup templateGroup = new TemplateGroupFile(this.fileInfo.FullName, '$', '$')
+                {
+                    ErrorManager = new ErrorManager(new LogAdapter(log))
+                };
 
                 var configurationTemplate = templateGroup.GetInstanceOf(TemplateConfiguration);
                 configurationTemplate.Add(MetaKey, metaPopulation);

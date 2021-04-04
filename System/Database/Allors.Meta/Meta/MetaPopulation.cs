@@ -13,7 +13,7 @@ namespace Allors.Database.Meta
 
     public sealed partial class MetaPopulation : IMetaPopulationBase
     {
-        private readonly Dictionary<Guid, MetaObjectBase> metaObjectById;
+        private readonly Dictionary<Guid, IMetaObjectBase> metaObjectById;
 
         private string[] derivedWorkspaceNames;
 
@@ -54,7 +54,7 @@ namespace Allors.Database.Meta
             this.roleTypes = new List<IRoleTypeBase>();
             this.methodTypes = new List<IMethodTypeBase>();
 
-            this.metaObjectById = new Dictionary<Guid, MetaObjectBase>();
+            this.metaObjectById = new Dictionary<Guid, IMetaObjectBase>();
         }
 
         public IEnumerable<string> WorkspaceNames
@@ -584,7 +584,7 @@ namespace Allors.Database.Meta
             this.Stale();
         }
 
-        internal void OnInheritanceCreated(Inheritance inheritance)
+        void IMetaPopulationBase.OnInheritanceCreated(Inheritance inheritance)
         {
             this.inheritances.Add(inheritance);
             this.Stale();

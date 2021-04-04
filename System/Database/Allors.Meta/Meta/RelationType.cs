@@ -15,8 +15,10 @@ namespace Allors.Database.Meta
     /// A <see cref="RelationType"/> defines the state and behavior for
     /// a set of <see cref="AssociationType"/>s and <see cref="RoleType"/>s.
     /// </summary>
-    public sealed partial class RelationType : MetaObjectBase, IRelationTypeBase
+    public sealed partial class RelationType : IRelationTypeBase
     {
+        private readonly IMetaPopulationBase metaPopulation;
+
         private Multiplicity assignedMultiplicity;
         private Multiplicity multiplicity;
 
@@ -27,9 +29,11 @@ namespace Allors.Database.Meta
         private string[] assignedWorkspaceNames;
         private string[] derivedWorkspaceNames;
 
+        private RelationTypeProps props;
+
         public RelationType(ICompositeBase associationTypeComposite, Guid id, Func<IRelationTypeBase, IAssociationTypeBase> associationTypeFactory, Func<IRelationTypeBase, IRoleTypeBase> roleTypeFactory)
-            : base(associationTypeComposite.MetaPopulation)
         {
+            this.metaPopulation = associationTypeComposite.MetaPopulation;
             this.Id = id;
             this.IdAsString = this.Id.ToString("D");
             this.AssignedOrigin = Origin.Database;
@@ -39,8 +43,10 @@ namespace Allors.Database.Meta
 
             this.RoleType = roleTypeFactory(this);
 
-            this.MetaPopulation.OnRelationTypeCreated(this);
+            this.metaPopulation.OnRelationTypeCreated(this);
         }
+
+        public RelationTypeProps _ => this.props ??= new RelationTypeProps(this);
 
         public Guid Id { get; }
 
@@ -52,9 +58,9 @@ namespace Allors.Database.Meta
 
             set
             {
-                this.MetaPopulation.AssertUnlocked();
+                this.metaPopulation.AssertUnlocked();
                 this.assignedWorkspaceNames = value;
-                this.MetaPopulation.Stale();
+                this.metaPopulation.Stale();
             }
         }
 
@@ -62,13 +68,16 @@ namespace Allors.Database.Meta
         {
             get
             {
-                this.MetaPopulation.Derive();
+                this.metaPopulation.Derive();
                 return this.derivedWorkspaceNames;
             }
         }
 
-        public override Origin Origin => this.AssignedOrigin;
-
+        IMetaPopulationBase IMetaObjectBase.MetaPopulation => this.metaPopulation;
+        IMetaPopulation IMetaObject.MetaPopulation => this.metaPopulation;
+        Origin IMetaObject.Origin => this.AssignedOrigin;
+      
+        
         public Origin AssignedOrigin { get; set; }
 
         public bool IsDerived
@@ -77,9 +86,9 @@ namespace Allors.Database.Meta
 
             set
             {
-                this.MetaPopulation.AssertUnlocked();
+                this.metaPopulation.AssertUnlocked();
                 this.isDerived = value;
-                this.MetaPopulation.Stale();
+                this.metaPopulation.Stale();
             }
         }
 
@@ -89,9 +98,9 @@ namespace Allors.Database.Meta
 
             set
             {
-                this.MetaPopulation.AssertUnlocked();
+                this.metaPopulation.AssertUnlocked();
                 this.isSynced = value;
-                this.MetaPopulation.Stale();
+                this.metaPopulation.Stale();
             }
         }
 
@@ -101,9 +110,9 @@ namespace Allors.Database.Meta
 
             set
             {
-                this.MetaPopulation.AssertUnlocked();
+                this.metaPopulation.AssertUnlocked();
                 this.assignedMultiplicity = value;
-                this.MetaPopulation.Stale();
+                this.metaPopulation.Stale();
             }
         }
 
@@ -111,7 +120,7 @@ namespace Allors.Database.Meta
         {
             get
             {
-                this.MetaPopulation.Derive();
+                this.metaPopulation.Derive();
                 return this.multiplicity;
             }
         }
@@ -136,9 +145,9 @@ namespace Allors.Database.Meta
 
             set
             {
-                this.MetaPopulation.AssertUnlocked();
+                this.metaPopulation.AssertUnlocked();
                 this.isIndexed = value;
-                this.MetaPopulation.Stale();
+                this.metaPopulation.Stale();
             }
         }
 
@@ -215,7 +224,7 @@ namespace Allors.Database.Meta
         /// Gets the validation name.
         /// </summary>
         /// <value>The validation name.</value>
-        public override string ValidationName => "relation type" + this.Name;
+        public string ValidationName => "relation type" + this.Name;
 
         public override bool Equals(object other) => this.Id.Equals((other as RelationType)?.Id);
 

@@ -13,23 +13,31 @@ namespace Allors.Database.Meta
     /// This is also called the 'active', 'controlling' or 'owning' side.
     /// AssociationTypes can only have composite <see cref="ObjectType"/>s.
     /// </summary>
-    public abstract partial class AssociationType : MetaObjectBase, IAssociationTypeBase, IComparable
+    public abstract partial class AssociationType : IAssociationTypeBase, IComparable
     {
         /// <summary>
         /// Used to create property names.
         /// </summary>
         private const string Where = "Where";
 
+        private readonly IMetaPopulationBase metaPopulation;
         private ICompositeBase composite;
 
+        private AssociationTypeProps props;
+
         protected AssociationType(IRelationTypeBase relationType)
-            : base(relationType.MetaPopulation)
         {
+            this.metaPopulation = relationType.MetaPopulation;
             this.RelationType = relationType;
             relationType.MetaPopulation.OnAssociationTypeCreated(this);
         }
 
-        public override Origin Origin => this.RelationType.Origin;
+        public AssociationTypeProps _ => this.props ??= new AssociationTypeProps(this);
+
+
+        IMetaPopulationBase IMetaObjectBase.MetaPopulation => this.metaPopulation;
+        IMetaPopulation IMetaObject.MetaPopulation => this.metaPopulation;
+        Origin IMetaObject.Origin => this.RelationType.Origin;
 
         IObjectTypeBase IPropertyTypeBase.ObjectType => this.ObjectType;
         IObjectType IPropertyType.ObjectType => this.ObjectType;
@@ -41,9 +49,9 @@ namespace Allors.Database.Meta
 
             set
             {
-                this.MetaPopulation.AssertUnlocked();
+                this.metaPopulation.AssertUnlocked();
                 this.composite = value;
-                this.MetaPopulation.Stale();
+                this.metaPopulation.Stale();
             }
         }
 
@@ -66,7 +74,7 @@ namespace Allors.Database.Meta
         /// Gets the validation name.
         /// </summary>
         /// <value>The name of the validation.</value>
-        public override string ValidationName => "association type " + this.Name;
+        public string ValidationName => "association type " + this.Name;
 
         /// <summary>
         /// Gets the name.

@@ -61,9 +61,9 @@ $objectType.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|$met
 >>
 
 inherits() ::= <<
-$if(objectType.HasDatabaseOrigin)$DatabaseObject$endif$
-$if(objectType.HasWorkspaceOrigin)$WorkspaceObject$endif$
-$if(objectType.HasSessionOrigin)$SessionObject$endif$
+$if(objectType._.HasDatabaseOrigin)$DatabaseObject$endif$
+$if(objectType._.HasWorkspaceOrigin)$WorkspaceObject$endif$
+$if(objectType._.HasSessionOrigin)$SessionObject$endif$
 >>
 
 roleTypeWithDatabaseOrigin() ::= <<

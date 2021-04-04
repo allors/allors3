@@ -150,7 +150,7 @@ namespace Allors.Workspace.Domain
             this.m = strategy.Session.Workspace.Context().M;
         }
 
-$if(class.HasDatabaseOrigin)$
+$if(class._.HasDatabaseOrigin)$
         IStrategy IObject.Strategy => this.Strategy;
 $endif$
 
@@ -198,7 +198,7 @@ $class.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|$classMet
 >>
 
 classMethodType() ::= <<
-$if(methodType.HasDatabaseOrigin)$
+$if(methodType._.HasDatabaseOrigin)$
 			public bool CanExecute$methodType.Name$
 			{
 				get
@@ -217,7 +217,7 @@ $endif$
 >>
 
 classConcreteRoleType_Class() ::= <<
-$if(concreteRoleType.HasDatabaseOrigin)$
+$if(concreteRoleType._.HasDatabaseOrigin)$
 		public bool CanRead$concreteRoleType.Name$
 		{
 			get

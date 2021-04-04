@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
     {
         public void Deny(MetaClass objectType, ObjectState objectState, params Operations[] operations) => this.Deny(objectType.ObjectType, objectState, operations);
 
-        public void Deny(MetaClass objectType, ObjectState objectState, params IOperandType[] operandTypes) => this.Deny(objectType.ObjectType, objectState, (IEnumerable<OperandType>)operandTypes);
+        public void Deny(MetaClass objectType, ObjectState objectState, params IOperandType[] operandTypes) => this.Deny(objectType.ObjectType, objectState, (IEnumerable<IOperandType>)operandTypes);
 
         public void Deny(MetaClass objectType, ObjectState objectState, IEnumerable<IOperandType> operandTypes) => this.Deny(objectType.ObjectType, objectState, operandTypes);
 

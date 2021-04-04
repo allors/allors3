@@ -5,30 +5,30 @@
 
 namespace Allors.Database.Meta
 {
-    /// <summary>
-    /// Base class for Meta objects.
-    /// </summary>
-    public abstract partial class MetaObjectBase : IMetaObjectBase
-    {
-        protected MetaObjectBase(IMetaPopulationBase metaPopulation) => this.MetaPopulation = metaPopulation;
+    ///// <summary>
+    ///// Base class for Meta objects.
+    ///// </summary>
+    //public abstract partial class MetaObjectBase : IMetaObjectBase
+    //{
+    //    protected MetaObjectBase(IMetaPopulationBase metaPopulation) => this.MetaPopulation = metaPopulation;
 
-        IMetaPopulation IMetaObject.MetaPopulation => this.MetaPopulation;
+    //    IMetaPopulation IMetaObject.MetaPopulation => this.MetaPopulation;
 
-        public IMetaPopulationBase MetaPopulation { get; }
+    //    public IMetaPopulationBase MetaPopulation { get; }
 
-        public abstract Origin Origin { get; }
+    //    public abstract Origin Origin { get; }
 
-        public int OriginAsInt => (int)this.Origin;
+    //    public int OriginAsInt => (int)this.Origin;
 
-        public bool HasDatabaseOrigin => this.Origin == Origin.Database;
+    //    public bool HasDatabaseOrigin => this.Origin == Origin.Database;
 
-        public bool HasWorkspaceOrigin => this.Origin == Origin.Workspace;
+    //    public bool HasWorkspaceOrigin => this.Origin == Origin.Workspace;
 
-        public bool HasSessionOrigin => this.Origin == Origin.Session;
+    //    public bool HasSessionOrigin => this.Origin == Origin.Session;
 
-        /// <summary>
-        /// Gets the validation name.
-        /// </summary>
-        public abstract string ValidationName { get; }
-    }
+    //    /// <summary>
+    //    /// Gets the validation name.
+    //    /// </summary>
+    //    public abstract string ValidationName { get; }
+    //}
 }

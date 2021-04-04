@@ -10,22 +10,25 @@ namespace Allors.Database.Meta
     using System.Collections.Generic;
     using System.Linq;
 
-    public sealed partial class Domain : MetaObjectBase, IDomainBase
+    public sealed partial class Domain : IDomainBase
     {
+        private readonly IMetaPopulationBase metaPopulation;
+
         private IList<Domain> directSuperdomains;
         private IList<Domain> derivedSuperdomains;
 
         private string name;
 
         internal Domain(MetaPopulation metaPopulation, Guid id)
-            : base(metaPopulation)
         {
+            this.metaPopulation = metaPopulation;
+
             this.Id = id;
             this.IdAsString = this.Id.ToString("D");
 
             this.directSuperdomains = new List<Domain>();
 
-            this.MetaPopulation.OnDomainCreated(this);
+            this.metaPopulation.OnDomainCreated(this);
         }
 
         public Guid Id { get; }
@@ -38,9 +41,9 @@ namespace Allors.Database.Meta
 
             set
             {
-                this.MetaPopulation.AssertUnlocked();
+                this.metaPopulation.AssertUnlocked();
                 this.name = value;
-                this.MetaPopulation.Stale();
+                this.metaPopulation.Stale();
             }
         }
 
@@ -50,17 +53,19 @@ namespace Allors.Database.Meta
         {
             get
             {
-                this.MetaPopulation.Derive();
+                this.metaPopulation.Derive();
                 return this.derivedSuperdomains;
             }
         }
 
-        public override Origin Origin => Origin.Database;
+        IMetaPopulationBase IMetaObjectBase.MetaPopulation => this.metaPopulation;
+        IMetaPopulation IMetaObject.MetaPopulation => this.metaPopulation;
+        Origin IMetaObject.Origin => Origin.Database;
 
         /// <summary>
         /// Gets the validation name.
         /// </summary>
-        public override string ValidationName
+        public string ValidationName
         {
             get
             {
@@ -81,7 +86,7 @@ namespace Allors.Database.Meta
             }
 
             this.directSuperdomains.Add(superdomain);
-            this.MetaPopulation.Stale();
+            this.metaPopulation.Stale();
         }
 
         public override bool Equals(object other) => this.Id.Equals((other as Domain)?.Id);

@@ -13,13 +13,5 @@ namespace Allors.Database.Meta
         IMetaPopulation MetaPopulation { get; }
 
         Origin Origin { get; }
-
-        int OriginAsInt { get; }
-
-        bool HasDatabaseOrigin { get; }
-
-        bool HasWorkspaceOrigin { get; }
-
-        bool HasSessionOrigin { get; }
     }
 }

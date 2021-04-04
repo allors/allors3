@@ -17,11 +17,15 @@ namespace Allors.Database.Meta
         private readonly Class[] classes;
         private Type clrType;
 
+        private ClassProps props;
+
         internal Class(IMetaPopulationBase metaPopulation, Guid id) : base(metaPopulation, id)
         {
             this.classes = new[] { this };
             metaPopulation.OnClassCreated(this);
         }
+
+        public ClassProps _ => this.props ??= new ClassProps(this);
 
         public string[] AssignedWorkspaceNames
         {

@@ -9,14 +9,15 @@ namespace Allors.Database.Meta
     using System;
     using System.Collections.Generic;
 
-    public abstract partial class ObjectType : MetaObjectBase, IObjectTypeBase
+    public abstract partial class ObjectType : IObjectTypeBase
     {
         private string singularName;
 
         private string pluralName;
 
-        protected ObjectType(IMetaPopulationBase metaPopulation, Guid id) : base(metaPopulation)
+        protected ObjectType(IMetaPopulationBase metaPopulation, Guid id)
         {
+            this.MetaPopulation = metaPopulation;
             this.Id = id;
             this.IdAsString = this.Id.ToString("D");
         }
@@ -76,12 +77,14 @@ namespace Allors.Database.Meta
         public abstract Type ClrType { get; }
 
         public abstract IEnumerable<string> WorkspaceNames { get; }
-       
+
+        public IMetaPopulationBase MetaPopulation { get; }
+
         /// <summary>
         /// Gets the validation name.
         /// </summary>
         /// <value>The validation name.</value>
-        public override string ValidationName
+        public string ValidationName
         {
             get
             {
@@ -211,5 +214,16 @@ namespace Allors.Database.Meta
                 }
             }
         }
+
+        IMetaPopulation IMetaObject.MetaPopulation => this.MetaPopulation;
+
+        public abstract Origin Origin { get; }
+        public int OriginAsInt => (int)this.Origin;
+
+        public bool HasDatabaseOrigin => this.Origin == Origin.Database;
+
+        public bool HasWorkspaceOrigin => this.Origin == Origin.Workspace;
+
+        public bool HasSessionOrigin => this.Origin == Origin.Session;
     }
 }

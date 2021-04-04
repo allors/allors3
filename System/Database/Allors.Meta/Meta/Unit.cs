@@ -15,7 +15,11 @@ namespace Allors.Database.Meta
 
         private Type clrType;
 
+        private UnitProps props;
+
         internal Unit(MetaPopulation metaPopulation, Guid id) : base(metaPopulation, id) => metaPopulation.OnUnitCreated(this);
+
+        public UnitProps _ => this.props ??= new UnitProps(this);
 
         public UnitTags UnitTag
         {

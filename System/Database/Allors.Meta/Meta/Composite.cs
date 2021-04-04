@@ -252,17 +252,17 @@ namespace Allors.Database.Meta
 
         public abstract IEnumerable<ICompositeBase> DatabaseSubtypes { get; }
 
-        public IEnumerable<IRoleTypeBase> ExclusiveRoleTypesWithDatabaseOrigin => this.ExclusiveRoleTypes.Where(roleType => roleType.RelationType.HasDatabaseOrigin);
+        public IEnumerable<IRoleTypeBase> ExclusiveRoleTypesWithDatabaseOrigin => this.ExclusiveRoleTypes.Where(roleType => roleType.RelationType.Origin == Origin.Database);
 
-        public IEnumerable<IRoleTypeBase> ExclusiveRoleTypesWithWorkspaceOrigin => this.ExclusiveRoleTypes.Where(roleType => roleType.RelationType.HasWorkspaceOrigin);
+        public IEnumerable<IRoleTypeBase> ExclusiveRoleTypesWithWorkspaceOrigin => this.ExclusiveRoleTypes.Where(roleType => roleType.RelationType.Origin == Origin.Workspace);
 
-        public IEnumerable<IRoleTypeBase> ExclusiveRoleTypesWithSessionOrigin => this.ExclusiveRoleTypes.Where(roleType => roleType.RelationType.HasSessionOrigin);
+        public IEnumerable<IRoleTypeBase> ExclusiveRoleTypesWithSessionOrigin => this.ExclusiveRoleTypes.Where(roleType => roleType.RelationType.Origin == Origin.Session);
 
-        public IEnumerable<IAssociationTypeBase> ExclusiveAssociationTypesWithDatabaseOrigin => this.ExclusiveAssociationTypes.Where(roleType => roleType.RelationType.HasDatabaseOrigin);
+        public IEnumerable<IAssociationTypeBase> ExclusiveAssociationTypesWithDatabaseOrigin => this.ExclusiveAssociationTypes.Where(roleType => roleType.RelationType.Origin == Origin.Database);
 
-        public IEnumerable<IAssociationTypeBase> ExclusiveAssociationTypesWithWorkspaceOrigin => this.ExclusiveAssociationTypes.Where(roleType => roleType.RelationType.HasWorkspaceOrigin);
+        public IEnumerable<IAssociationTypeBase> ExclusiveAssociationTypesWithWorkspaceOrigin => this.ExclusiveAssociationTypes.Where(roleType => roleType.RelationType.Origin == Origin.Workspace);
 
-        public IEnumerable<IAssociationTypeBase> ExclusiveAssociationTypesWithSessionOrigin => this.ExclusiveAssociationTypes.Where(roleType => roleType.RelationType.HasSessionOrigin);
+        public IEnumerable<IAssociationTypeBase> ExclusiveAssociationTypesWithSessionOrigin => this.ExclusiveAssociationTypes.Where(roleType => roleType.RelationType.Origin == Origin.Session);
 
         #endregion Workspace
 

@@ -10,7 +10,7 @@ namespace Allors.Database.Meta
     using System.Collections.ObjectModel;
     using System.Linq;
 
-    public sealed partial class MethodInterface : MetaObjectBase, IMethodInterfaceBase, IComparable
+    public sealed partial class MethodInterface :  IMethodInterfaceBase, IComparable
     {
         private static readonly IReadOnlyDictionary<IClass, IMethodClassBase> EmptyMethodClassByAssociationTypeClass = new ReadOnlyDictionary<IClass, IMethodClassBase>(new Dictionary<IClass, IMethodClassBase>());
 
@@ -18,13 +18,31 @@ namespace Allors.Database.Meta
 
         //public Dictionary<string, bool> Workspace => this.WorkspaceNames.ToDictionary(k => k, v => true);
 
+        private readonly IMetaPopulationBase metaPopulation;
+
         private string[] assignedWorkspaceNames;
         private string[] derivedWorkspaceNames;
 
         private string name;
 
-        public override Origin Origin => Origin.Database;
+        private MethodInterfaceProps props;
 
+        public MethodInterface(Interface @interface, Guid id)
+        {
+            this.metaPopulation = @interface.MetaPopulation;
+            this.Interface = @interface;
+            this.Id = id;
+            this.IdAsString = this.Id.ToString("D");
+
+            this.metaPopulation.OnMethodInterfaceCreated(this);
+        }
+
+        public MethodInterfaceProps _ => this.props ??= new MethodInterfaceProps(this);
+
+        IMetaPopulationBase IMetaObjectBase.MetaPopulation => this.metaPopulation;
+        IMetaPopulation IMetaObject.MetaPopulation => this.metaPopulation;
+        Origin IMetaObject.Origin => Origin.Database;
+     
         IComposite IMethodType.ObjectType => this.Composite;
 
         public string DisplayName => this.Name;
@@ -33,7 +51,7 @@ namespace Allors.Database.Meta
         /// Gets the validation name.
         /// </summary>
         /// <value>The validation name.</value>
-        public override string ValidationName
+        public string ValidationName
         {
             get
             {
@@ -50,7 +68,7 @@ namespace Allors.Database.Meta
         {
             get
             {
-                this.MetaPopulation.Derive();
+                this.metaPopulation.Derive();
                 return this.derivedMethodClassByClass;
             }
         }
@@ -114,14 +132,7 @@ namespace Allors.Database.Meta
         /// <paramref name="other"/> is not the same type as this state. </exception>
         public int CompareTo(object other) => this.Id.CompareTo((other as IMethodTypeBase)?.Id);
 
-        public MethodInterface(Interface @interface, Guid id) : base(@interface.MetaPopulation)
-        {
-            this.Interface = @interface;
-            this.Id = id;
-            this.IdAsString = this.Id.ToString("D");
-
-            this.MetaPopulation.OnMethodInterfaceCreated(this);
-        }
+     
 
         public Guid Id { get; }
 
@@ -136,9 +147,9 @@ namespace Allors.Database.Meta
 
             set
             {
-                this.MetaPopulation.AssertUnlocked();
+                this.metaPopulation.AssertUnlocked();
                 this.assignedWorkspaceNames = value;
-                this.MetaPopulation.Stale();
+                this.metaPopulation.Stale();
             }
         }
 
@@ -146,7 +157,7 @@ namespace Allors.Database.Meta
         {
             get
             {
-                this.MetaPopulation.Derive();
+                this.metaPopulation.Derive();
                 return this.derivedWorkspaceNames;
             }
         }
@@ -157,9 +168,9 @@ namespace Allors.Database.Meta
 
             set
             {
-                this.MetaPopulation.AssertUnlocked();
+                this.metaPopulation.AssertUnlocked();
                 this.name = value;
-                this.MetaPopulation.Stale();
+                this.metaPopulation.Stale();
             }
         }
 

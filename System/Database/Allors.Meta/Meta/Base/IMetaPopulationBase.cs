@@ -27,6 +27,8 @@ namespace Allors.Database.Meta
 
         void OnDomainCreated(Domain domain);
 
+        void OnInheritanceCreated(Inheritance inheritance);
+
         void OnInterfaceCreated(Interface @interface);
 
         void OnClassCreated(Class @class);

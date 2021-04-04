@@ -13,13 +13,28 @@ namespace Allors.Database.Meta
     using System.Linq.Expressions;
     using System.Reflection;
 
-    public sealed partial class MethodClass : MetaObjectBase, IMethodClassBase, IComparable
+    public sealed partial class MethodClass : IMethodClassBase, IComparable
     {
         private static readonly IReadOnlyDictionary<IClassBase, IMethodClassBase> EmptyMethodClassByAssociationTypeClass = new ReadOnlyDictionary<IClassBase, IMethodClassBase>(new Dictionary<IClassBase, IMethodClassBase>());
 
         private IReadOnlyDictionary<IClassBase, IMethodClassBase> derivedMethodClassByClass = EmptyMethodClassByAssociationTypeClass;
 
-        public override Origin Origin => Origin.Database;
+        private readonly IMetaPopulationBase metaPopulation;
+
+        public IReadOnlyDictionary<IClassBase, IMethodClassBase> MethodClassByClass
+        {
+            get
+            {
+                this.metaPopulation.Derive();
+                return this.derivedMethodClassByClass;
+            }
+        }
+
+        public MethodClassProps _ => this.props ??= new MethodClassProps(this);
+
+        IMetaPopulationBase IMetaObjectBase.MetaPopulation => this.metaPopulation;
+        IMetaPopulation IMetaObject.MetaPopulation => this.metaPopulation;
+        Origin IMetaObject.Origin => Origin.Database;
 
         IComposite IMethodType.ObjectType => this.Composite;
         IMethodClass IMethodType.MethodClassBy(IClass @class) => this.MethodClassBy(@class);
@@ -30,7 +45,7 @@ namespace Allors.Database.Meta
         /// Gets the validation name.
         /// </summary>
         /// <value>The validation name.</value>
-        public override string ValidationName
+        public string ValidationName
         {
             get
             {
@@ -43,14 +58,6 @@ namespace Allors.Database.Meta
             }
         }
 
-        public IReadOnlyDictionary<IClassBase, IMethodClassBase> MethodClassByClass
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedMethodClassByClass;
-            }
-        }
 
         public IMethodClassBase MethodClassBy(IClass @class) => this;
 
@@ -97,15 +104,18 @@ namespace Allors.Database.Meta
 
         private string name;
         private IClassBase @class;
+        private MethodClassProps props;
 
-        private MethodClass(IClassBase @class, Guid id, IMethodInterfaceBase methodInterface) : base(@class.MetaPopulation)
+        private MethodClass(IClassBase @class, Guid id, IMethodInterfaceBase methodInterface)
         {
+            this.metaPopulation = @class.MetaPopulation;
+
             this.Class = @class;
             this.Id = id;
             this.IdAsString = this.Id.ToString("D");
             this.MethodInterface = methodInterface;
 
-            this.MetaPopulation.OnMethodClassCreated(this);
+            this.metaPopulation.OnMethodClassCreated(this);
         }
 
         public MethodClass(IClassBase @class, Guid id) : this(@class, id, null)
@@ -132,9 +142,9 @@ namespace Allors.Database.Meta
 
             set
             {
-                this.MetaPopulation.AssertUnlocked();
+                this.metaPopulation.AssertUnlocked();
                 this.assignedWorkspaceNames = value;
-                this.MetaPopulation.Stale();
+                this.metaPopulation.Stale();
             }
         }
 
@@ -147,7 +157,7 @@ namespace Allors.Database.Meta
                     return this.MethodInterface.WorkspaceNames;
                 }
 
-                this.MetaPopulation.Derive();
+                this.metaPopulation.Derive();
                 return this.derivedWorkspaceNames;
             }
         }
@@ -163,9 +173,9 @@ namespace Allors.Database.Meta
                     throw new ArgumentException("Name is readonly when ExistMethodInterface");
                 }
 
-                this.MetaPopulation.AssertUnlocked();
+                this.metaPopulation.AssertUnlocked();
                 this.name = value;
-                this.MetaPopulation.Stale();
+                this.metaPopulation.Stale();
             }
         }
 
@@ -183,9 +193,9 @@ namespace Allors.Database.Meta
 
             set
             {
-                this.MetaPopulation.AssertUnlocked();
+                this.metaPopulation.AssertUnlocked();
                 this.@class = value;
-                this.MetaPopulation.Stale();
+                this.metaPopulation.Stale();
             }
         }
 

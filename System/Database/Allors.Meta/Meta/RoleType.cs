@@ -8,7 +8,7 @@ namespace Allors.Database.Meta
 {
     using System;
 
-    public abstract partial class RoleType : MetaObjectBase, IRoleTypeBase, IComparable
+    public abstract partial class RoleType : IRoleTypeBase, IComparable
     {
         /// <summary>
         /// The maximum size value.
@@ -17,6 +17,7 @@ namespace Allors.Database.Meta
 
         public const string PluralSuffix = "s";
 
+        private readonly IMetaPopulationBase metaPopulation;
         private IObjectTypeBase objectType;
 
         private string pluralName;
@@ -27,14 +28,21 @@ namespace Allors.Database.Meta
         private bool? isRequired;
         private bool? isUnique;
 
-        public RoleType(IRelationTypeBase relationType) : base(relationType.MetaPopulation)
+        private RoleTypeProps props;
+
+        protected RoleType(IRelationTypeBase relationType)
         {
+            this.metaPopulation = relationType.MetaPopulation;
             this.RelationType = relationType;
 
-            this.MetaPopulation.OnRoleTypeCreated(this);
+            this.metaPopulation.OnRoleTypeCreated(this);
         }
 
-        public override Origin Origin => this.RelationType.Origin;
+        public RoleTypeProps _ => this.props ??= new RoleTypeProps(this);
+
+        IMetaPopulationBase IMetaObjectBase.MetaPopulation => this.metaPopulation;
+        IMetaPopulation IMetaObject.MetaPopulation => this.metaPopulation;
+        Origin IMetaObject.Origin => this.RelationType.Origin;
 
         public IRelationTypeBase RelationType { get; }
         IRelationType IRoleType.RelationType => this.RelationType;
@@ -52,9 +60,9 @@ namespace Allors.Database.Meta
 
             set
             {
-                this.MetaPopulation.AssertUnlocked();
+                this.metaPopulation.AssertUnlocked();
                 this.objectType = value;
-                this.MetaPopulation.Stale();
+                this.metaPopulation.Stale();
             }
         }
 
@@ -81,7 +89,7 @@ namespace Allors.Database.Meta
         /// Gets the validation name.
         /// </summary>
         /// <value>The validation name.</value>
-        public override string ValidationName => "RoleType: " + this.RelationType.Name;
+        public string ValidationName => "RoleType: " + this.RelationType.Name;
 
 
         public string SingularName
@@ -90,9 +98,9 @@ namespace Allors.Database.Meta
 
             set
             {
-                this.MetaPopulation.AssertUnlocked();
+                this.metaPopulation.AssertUnlocked();
                 this.singularName = value;
-                this.MetaPopulation.Stale();
+                this.metaPopulation.Stale();
             }
         }
 
@@ -109,9 +117,9 @@ namespace Allors.Database.Meta
 
             set
             {
-                this.MetaPopulation.AssertUnlocked();
+                this.metaPopulation.AssertUnlocked();
                 this.pluralName = value;
-                this.MetaPopulation.Stale();
+                this.metaPopulation.Stale();
             }
         }
 
@@ -147,15 +155,15 @@ namespace Allors.Database.Meta
         {
             get
             {
-                this.MetaPopulation.Derive();
+                this.metaPopulation.Derive();
                 return this.size;
             }
 
             set
             {
-                this.MetaPopulation.AssertUnlocked();
+                this.metaPopulation.AssertUnlocked();
                 this.size = value;
-                this.MetaPopulation.Stale();
+                this.metaPopulation.Stale();
             }
         }
 
@@ -163,15 +171,15 @@ namespace Allors.Database.Meta
         {
             get
             {
-                this.MetaPopulation.Derive();
+                this.metaPopulation.Derive();
                 return this.precision;
             }
 
             set
             {
-                this.MetaPopulation.AssertUnlocked();
+                this.metaPopulation.AssertUnlocked();
                 this.precision = value;
-                this.MetaPopulation.Stale();
+                this.metaPopulation.Stale();
             }
         }
 
@@ -179,15 +187,15 @@ namespace Allors.Database.Meta
         {
             get
             {
-                this.MetaPopulation.Derive();
+                this.metaPopulation.Derive();
                 return this.scale;
             }
 
             set
             {
-                this.MetaPopulation.AssertUnlocked();
+                this.metaPopulation.AssertUnlocked();
                 this.scale = value;
-                this.MetaPopulation.Stale();
+                this.metaPopulation.Stale();
             }
         }
 

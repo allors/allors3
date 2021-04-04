@@ -9,13 +9,18 @@ namespace Allors.Database.Meta
     using System;
     using System.Linq;
 
-    public sealed partial class Inheritance : MetaObjectBase, IInheritanceBase, IComparable
+    public sealed partial class Inheritance : IInheritanceBase, IComparable
     {
-        private Composite subtype;
+        private readonly IMetaPopulationBase metaPopulation;
 
+        private Composite subtype;
         private Interface supertype;
 
-        internal Inheritance(MetaPopulation metaPopulation) : base(metaPopulation) => metaPopulation.OnInheritanceCreated(this);
+        internal Inheritance(MetaPopulation metaPopulation)
+        {
+            this.metaPopulation = metaPopulation;
+            this.metaPopulation.OnInheritanceCreated(this);
+        }
 
         ICompositeBase IInheritanceBase.Subtype => this.Subtype;
         IComposite IInheritance.Subtype => this.Subtype;
@@ -25,9 +30,9 @@ namespace Allors.Database.Meta
 
             set
             {
-                this.MetaPopulation.AssertUnlocked();
+                this.metaPopulation.AssertUnlocked();
                 this.subtype = value;
-                this.MetaPopulation.Stale();
+                this.metaPopulation.Stale();
             }
         }
 
@@ -39,18 +44,23 @@ namespace Allors.Database.Meta
 
             set
             {
-                this.MetaPopulation.AssertUnlocked();
+                this.metaPopulation.AssertUnlocked();
                 this.supertype = value;
-                this.MetaPopulation.Stale();
+                this.metaPopulation.Stale();
             }
         }
 
-        public override Origin Origin => this.Subtype.AssignedOrigin;
+        IMetaPopulationBase IMetaObjectBase.MetaPopulation => this.metaPopulation;
+        IMetaPopulation IMetaObject.MetaPopulation => this.metaPopulation;
+
+        private Origin Origin => this.Subtype.AssignedOrigin;
+        Origin IMetaObject.Origin => this.Origin;
+
 
         /// <summary>
         /// Gets the validation name.
         /// </summary>
-        public override string ValidationName
+        public string ValidationName
         {
             get
             {
@@ -98,7 +108,7 @@ namespace Allors.Database.Meta
         {
             if (this.Subtype != null && this.Supertype != null)
             {
-                if (this.MetaPopulation.Inheritances.Count(inheritance => this.Subtype.Equals(inheritance.Subtype) && this.Supertype.Equals(inheritance.Supertype)) != 1)
+                if (this.metaPopulation.Inheritances.Count(inheritance => this.Subtype.Equals(inheritance.Subtype) && this.Supertype.Equals(inheritance.Supertype)) != 1)
                 {
                     var message = "name of " + this.ValidationName + " is already in use";
                     validationLog.AddError(message, this, ValidationKind.Unique, "Inheritance.Supertype");
