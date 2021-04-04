@@ -5,7 +5,7 @@
 
 namespace Allors.Database.Meta
 {
-    public partial interface IMethodTypeBase : IMethodType
+    public partial interface IMethodTypeBase : IOperandTypeBase, IMethodType
     {
         ICompositeBase Composite { get; }
 

@@ -165,7 +165,7 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void Grant(Guid roleId, ObjectType objectType, OperandType operandType, params Operations[] operations)
+        public void Grant(Guid roleId, ObjectType objectType, IOperandType operandType, params Operations[] operations)
         {
             if (this.roleById.TryGetValue(roleId, out var role))
             {
@@ -206,7 +206,7 @@ namespace Allors.Database.Domain
 
         public void GrantCreator(ObjectType objectType, params Operations[] operations) => this.Grant(Roles.CreatorId, objectType, operations);
 
-        public void GrantExcept(Guid roleId, ObjectType objectType, ICollection<OperandType> excepts, params Operations[] operations)
+        public void GrantExcept(Guid roleId, ObjectType objectType, ICollection<IOperandType> excepts, params Operations[] operations)
         {
             if (this.roleById.TryGetValue(roleId, out var role))
             {

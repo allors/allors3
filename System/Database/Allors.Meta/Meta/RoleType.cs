@@ -8,7 +8,7 @@ namespace Allors.Database.Meta
 {
     using System;
 
-    public abstract partial class RoleType : OperandType, IRoleTypeBase, IComparable
+    public abstract partial class RoleType : MetaObjectBase, IRoleTypeBase, IComparable
     {
         /// <summary>
         /// The maximum size value.
@@ -69,7 +69,7 @@ namespace Allors.Database.Meta
         /// <summary>
         /// Gets the display name.
         /// </summary>
-        public override string DisplayName => this.Name;
+        public string DisplayName => this.Name;
 
         /// <summary>
         /// Gets the full name.

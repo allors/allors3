@@ -13,7 +13,7 @@ namespace Allors.Database.Meta
     using System.Linq.Expressions;
     using System.Reflection;
 
-    public sealed partial class MethodClass : OperandType, IMethodClassBase, IComparable
+    public sealed partial class MethodClass : MetaObjectBase, IMethodClassBase, IComparable
     {
         private static readonly IReadOnlyDictionary<IClassBase, IMethodClassBase> EmptyMethodClassByAssociationTypeClass = new ReadOnlyDictionary<IClassBase, IMethodClassBase>(new Dictionary<IClassBase, IMethodClassBase>());
 
@@ -24,7 +24,7 @@ namespace Allors.Database.Meta
         IComposite IMethodType.ObjectType => this.Composite;
         IMethodClass IMethodType.MethodClassBy(IClass @class) => this.MethodClassBy(@class);
 
-        public override string DisplayName => this.Name;
+        public string DisplayName => this.Name;
 
         /// <summary>
         /// Gets the validation name.
