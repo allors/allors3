@@ -671,7 +671,7 @@ namespace Allors.Database.Meta
             return false;
         }
 
-        public IMethodTypeBase MethodType(string id) => ((MethodType)this.Find(new Guid(id)));
+        public IMethodTypeBase MethodType(string id) => ((IMethodTypeBase)this.Find(new Guid(id)));
 
         public IRoleTypeBase RoleType(string id) => ((RelationType)this.Find(new Guid(id))).RoleType;
         IClass IMetaPopulation.FindByName(string name) => this.FindByName(name);

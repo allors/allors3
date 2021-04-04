@@ -8,19 +8,97 @@ namespace Allors.Database.Meta
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
 
-    public sealed partial class MethodClass : MethodType, IMethodClassBase
+    public sealed partial class MethodClass : OperandType, IMethodClassBase, IComparable
     {
+        private static readonly IReadOnlyDictionary<IClassBase, IMethodClassBase> EmptyMethodClassByAssociationTypeClass = new ReadOnlyDictionary<IClassBase, IMethodClassBase>(new Dictionary<IClassBase, IMethodClassBase>());
+
+        private IReadOnlyDictionary<IClassBase, IMethodClassBase> derivedMethodClassByClass = EmptyMethodClassByAssociationTypeClass;
+
+        public override Origin Origin => Origin.Database;
+
+        IComposite IMethodType.ObjectType => this.Composite;
+        IMethodClass IMethodType.MethodClassBy(IClass @class) => this.MethodClassBy(@class);
+
+        public override string DisplayName => this.Name;
+
+        /// <summary>
+        /// Gets the validation name.
+        /// </summary>
+        /// <value>The validation name.</value>
+        public override string ValidationName
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(this.Name))
+                {
+                    return "method type " + this.Name;
+                }
+
+                return "unknown method type";
+            }
+        }
+
+        public IReadOnlyDictionary<IClassBase, IMethodClassBase> MethodClassByClass
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.derivedMethodClassByClass;
+            }
+        }
+
+        public IMethodClassBase MethodClassBy(IClass @class) => this;
+
+        /// <summary>
+        /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+        /// </returns>
+        public override string ToString() => this.Name;
+
+        void IMethodTypeBase.DeriveMethodClasses() => this.derivedMethodClassByClass = EmptyMethodClassByAssociationTypeClass;
+
+        /// <summary>
+        /// Validates the state.
+        /// </summary>
+        /// <param name="validationLog">The validation.</param>
+        void IMethodTypeBase.Validate(ValidationLog validationLog)
+        {
+            if (string.IsNullOrEmpty(this.Name))
+            {
+                var message = this.ValidationName + " has no name";
+                validationLog.AddError(message, this, ValidationKind.Required, "MethodType.Name");
+            }
+        }
+
+        public override bool Equals(object other) => this.Id.Equals((other as IMethodTypeBase)?.Id);
+
+        public override int GetHashCode() => this.Id.GetHashCode();
+
+        /// <summary>
+        /// Compares the current state with another object of the same type.
+        /// </summary>
+        /// <param name="other">An object to compare with this state.</param>
+        /// <returns>
+        /// A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has these meanings: Value Meaning Less than zero This state is less than <paramref name="obj"/>. Zero This state is equal to <paramref name="obj"/>. Greater than zero This state is greater than <paramref name="obj"/>.
+        /// </returns>
+        /// <exception cref="T:System.ArgumentException">
+        /// <paramref name="other"/> is not the same type as this state. </exception>
+        public int CompareTo(object other) => this.Id.CompareTo((other as IMethodTypeBase)?.Id);
+
         private string[] assignedWorkspaceNames;
         private string[] derivedWorkspaceNames;
 
         private string name;
         private IClassBase @class;
 
-        private MethodClass(IClassBase @class, Guid id, MethodInterface methodInterface) : base(@class.MetaPopulation)
+        private MethodClass(IClassBase @class, Guid id, IMethodInterfaceBase methodInterface) : base(@class.MetaPopulation)
         {
             this.Class = @class;
             this.Id = id;
@@ -34,17 +112,17 @@ namespace Allors.Database.Meta
         {
         }
 
-        public MethodClass(IClassBase @class, MethodInterface methodInterface) : this(@class, methodInterface.Id, methodInterface)
+        public MethodClass(IClassBase @class, IMethodInterfaceBase methodInterface) : this(@class, methodInterface.Id, methodInterface)
         {
         }
 
-        public override Guid Id { get; }
+        public Guid Id { get; }
 
-        public override string IdAsString { get; }
+        public string IdAsString { get; }
 
         IMethodInterface IMethodClass.MethodInterface => this.MethodInterface;
 
-        public MethodInterface MethodInterface { get; }
+        public IMethodInterfaceBase MethodInterface { get; }
 
         public bool ExistMethodInterface => this.MethodInterface != null;
 
@@ -60,7 +138,7 @@ namespace Allors.Database.Meta
             }
         }
 
-        public override string[] WorkspaceNames
+        public string[] WorkspaceNames
         {
             get
             {
@@ -73,8 +151,8 @@ namespace Allors.Database.Meta
                 return this.derivedWorkspaceNames;
             }
         }
-        
-        public override string Name
+
+        public string Name
         {
             get => this.name ?? this.MethodInterface.Name;
 
@@ -91,11 +169,11 @@ namespace Allors.Database.Meta
             }
         }
 
-        public override string FullName => this.MethodInterface != null
+        public string FullName => this.MethodInterface != null
             ? this.MethodInterface.FullName
             : $"{this.Composite.Name}{this.Name}";
 
-        public override ICompositeBase Composite => this.Class;
+        public ICompositeBase Composite => this.Class;
 
         IClass IMethodClass.ObjectType => this.Class;
 
@@ -114,7 +192,7 @@ namespace Allors.Database.Meta
         public IList<Action<object, object>> Actions { get; private set; }
         IEnumerable<Action<object, object>> IMethodClass.Actions => this.Actions;
 
-        public override void DeriveWorkspaceNames() =>
+        public void DeriveWorkspaceNames() =>
             this.derivedWorkspaceNames = this.assignedWorkspaceNames != null
                 ? this.assignedWorkspaceNames.Intersect(this.Composite.WorkspaceNames).ToArray()
                 : Array.Empty<string>();

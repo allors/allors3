@@ -13,5 +13,7 @@ namespace Allors.Database.Meta
         string[] WorkspaceNames { get; }
 
         IComposite ObjectType { get; }
+
+        IMethodClass MethodClassBy(IClass @class);
     }
 }

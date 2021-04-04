@@ -291,7 +291,7 @@ $class.ImplementedProperties:{property|                 this.$class.SingularName
 >>
 
 define_methods(composite) ::= <<
-$composite.DefinedMethods:{method|          public MethodType $method.DefiningType.SingularName$$method.Name$;}; separator="\n"$
+$composite.DefinedMethods:{method|          public IMethodType $method.DefiningType.SingularName$$method.Name$;}; separator="\n"$
 >>
 
 build_domain(assembly) ::= <<

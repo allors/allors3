@@ -124,7 +124,7 @@ $class.AssociationTypes:{associationType|         public IAssociationType $assoc
 			this.Class = (Class) meta.Find(new System.Guid("$class.Id$"));
 
             // Methods
-$class.MethodTypes:{methodType|             this.$methodType.Name$ = ((MethodType)meta.Find(new System.Guid("$methodType.Id$"))).MethodClassBy(this.Class);}; separator="\n"$
+$class.MethodTypes:{methodType|             this.$methodType.Name$ = ((IMethodType)meta.Find(new System.Guid("$methodType.Id$"))).MethodClassBy(this.Class);}; separator="\n"$
 
             // Roles
 $class.RoleTypes:{roleType|             this.$roleType.Name$ = meta.RoleType("$roleType.RelationType.Id$");}; separator="\n"$

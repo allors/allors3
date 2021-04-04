@@ -5,10 +5,6 @@
 
 namespace Allors.Database.Meta
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Reflection;
-
     public partial interface IMethodTypeBase : IMethodType
     {
         ICompositeBase Composite { get; }
@@ -17,7 +13,7 @@ namespace Allors.Database.Meta
 
         void DeriveMethodClasses();
 
-        IMethodClassBase MethodClassBy(IClassBase @class);
+        new IMethodClassBase MethodClassBy(IClass @class);
 
         void DeriveWorkspaceNames();
     }

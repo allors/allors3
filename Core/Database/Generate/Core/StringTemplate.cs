@@ -118,19 +118,19 @@ namespace Allors.Development.Repository.Generation
                         }
                         else
                         {
-                            if (metaPopulation.Find(input) is RelationType relationType)
+                            if (metaPopulation.Find(input) is IRelationType relationType)
                             {
                                 template.Add(RelationTypeKey, relationType);
                             }
                             else
                             {
-                                if (metaPopulation.Find(input) is Inheritance inheritance)
+                                if (metaPopulation.Find(input) is IInheritance inheritance)
                                 {
                                     template.Add(InheritanceKey, inheritance);
                                 }
                                 else
                                 {
-                                    if (metaPopulation.Find(input) is MethodType methodType)
+                                    if (metaPopulation.Find(input) is IMethodType methodType)
                                     {
                                         template.Add(MethodTypeKey, methodType);
                                     }

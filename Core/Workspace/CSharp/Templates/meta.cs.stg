@@ -61,7 +61,7 @@ $meta.WorkspaceRelationTypesByWorkspaceName.(workspaceName):{relationType|      
 	    #region MethodTypes
         internal class MethodTypes
         {
-$meta.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|              public MethodType $methodType.FullName$;}; separator="\n"$
+$meta.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|              public IMethodType $methodType.FullName$;}; separator="\n"$
         }
         #endregion
 
@@ -270,7 +270,7 @@ meta_interface(interface) ::= <<
 		public override Interface Interface { get; }
 
         // Methods
-$interface.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|         public MethodType $methodType.Name$;}; separator="\n"$
+$interface.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|         public IMethodType $methodType.Name$;}; separator="\n"$
 
 		// Roles
 $interface.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|         public RoleType $roleType.Name$;}; separator="\n"$
