@@ -6,14 +6,16 @@
 
 namespace Allors.Database.Meta
 {
-    public sealed partial class ClassProps : MetaObjectProps
+    public sealed partial class ClassProps : CompositeProps
     {
         private readonly IClassBase @class;
 
         internal ClassProps(IClassBase @class) => this.@class = @class;
 
-        public override IMetaPopulation MetaPopulation => this.@class.MetaPopulation;
+        protected override IMetaObjectBase AsMetaObject => this.@class;
 
-        public override Origin Origin => this.@class.Origin;
+        protected override IObjectTypeBase AsObjectType => this.@class;
+
+        protected override ICompositeBase AsComposite => this.@class;
     }
 }

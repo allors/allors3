@@ -8,9 +8,9 @@ namespace Allors.Database.Meta
 {
     public abstract partial class MetaObjectProps
     {
-        public abstract IMetaPopulation MetaPopulation { get; }
+        public IMetaPopulationBase MetaPopulation => this.AsMetaObject.MetaPopulation;
 
-        public abstract Origin Origin { get; }
+        public Origin Origin => this.AsMetaObject.Origin;
 
         public int OriginAsInt => (int)this.Origin;
 
@@ -19,5 +19,7 @@ namespace Allors.Database.Meta
         public bool HasWorkspaceOrigin => this.Origin == Origin.Workspace;
 
         public bool HasSessionOrigin => this.Origin == Origin.Session;
+
+        protected abstract IMetaObjectBase AsMetaObject { get; }
     }
 }

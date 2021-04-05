@@ -6,14 +6,20 @@
 
 namespace Allors.Database.Meta
 {
-    public sealed partial class InterfaceProps : MetaObjectProps
+    using System.Collections.Generic;
+
+    public sealed partial class InterfaceProps : CompositeProps
     {
-        private readonly IInterfaceBase @class;
+        private readonly IInterfaceBase @interface;
 
-        internal InterfaceProps(IInterfaceBase @class) => this.@class = @class;
+        internal InterfaceProps(IInterfaceBase @class) => this.@interface = @class;
 
-        public override IMetaPopulation MetaPopulation => this.@class.MetaPopulation;
+        public IEnumerable<ICompositeBase> Subtypes => this.@interface.Subtypes;
 
-        public override Origin Origin => this.@class.Origin;
+        protected override IMetaObjectBase AsMetaObject => this.@interface;
+
+        protected override IObjectTypeBase AsObjectType => this.@interface;
+
+        protected override ICompositeBase AsComposite => this.@interface;
     }
 }

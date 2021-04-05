@@ -6,14 +6,22 @@
 
 namespace Allors.Database.Meta
 {
-    public sealed partial class AssociationTypeProps : MetaObjectProps
+    public sealed partial class AssociationTypeProps : PropertyTypeProps
     {
         private readonly IAssociationTypeBase associationType;
 
         internal AssociationTypeProps(IAssociationTypeBase relationType) => this.associationType = relationType;
 
-        public override IMetaPopulation MetaPopulation => this.associationType.MetaPopulation;
+        public IRelationType RelationType => this.associationType.RelationType;
 
-        public override Origin Origin => this.associationType.Origin;
+        public IRoleType RoleType => this.associationType.RoleType;
+
+        public IComposite ObjectType => this.associationType.ObjectType;
+
+        public string SingularFullName => this.associationType.SingularFullName;
+
+        public string PluralFullName => this.associationType.PluralFullName;
+
+        protected override IMetaObjectBase AsMetaObject => this.associationType;
     }
 }

@@ -6,14 +6,18 @@
 
 namespace Allors.Database.Meta
 {
-    public sealed partial class MethodInterfaceProps : MetaObjectProps
+    using System.Collections.Generic;
+
+    public sealed partial class MethodInterfaceProps : MethodTypeProps
     {
-        private readonly IMethodInterfaceBase associationInterface;
+        private readonly IMethodInterfaceBase methodInterface;
 
-        internal MethodInterfaceProps(IMethodInterfaceBase relationInterface) => this.associationInterface = relationInterface;
+        internal MethodInterfaceProps(IMethodInterfaceBase relationInterface) => this.methodInterface = relationInterface;
 
-        public override IMetaPopulation MetaPopulation => this.associationInterface.MetaPopulation;
+        public string FullName => this.methodInterface.FullName;
 
-        public override Origin Origin => this.associationInterface.Origin;
+        protected override IMetaObjectBase AsMetaObject => this.methodInterface;
+
+        protected override IMethodTypeBase AsMethodType => this.methodInterface;
     }
 }

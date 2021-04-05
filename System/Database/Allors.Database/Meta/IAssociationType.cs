@@ -13,14 +13,14 @@ namespace Allors.Database.Meta
     /// </summary>
     public interface IAssociationType : IPropertyType
     {
+        IRelationType RelationType { get; }
+
+        IRoleType RoleType { get; }
+
         new IComposite ObjectType { get; }
 
         string SingularFullName { get; }
 
         string PluralFullName { get; }
-
-        IRelationType RelationType { get; }
-
-        IRoleType RoleType { get; }
     }
 }

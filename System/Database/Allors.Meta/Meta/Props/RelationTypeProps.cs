@@ -12,8 +12,12 @@ namespace Allors.Database.Meta
 
         internal RelationTypeProps(IRelationTypeBase relationType) => this.relationType = relationType;
 
-        public override IMetaPopulation MetaPopulation => this.relationType.MetaPopulation;
+        public string Name => this.relationType.Name;
 
-        public override Origin Origin => this.relationType.Origin;
+        public IAssociationTypeBase AssociationType => this.relationType.AssociationType;
+
+        public IRoleTypeBase RoleType => this.relationType.RoleType;
+
+        protected override IMetaObjectBase AsMetaObject => this.relationType;
     }
 }

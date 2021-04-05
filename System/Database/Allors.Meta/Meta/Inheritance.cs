@@ -16,11 +16,15 @@ namespace Allors.Database.Meta
         private Composite subtype;
         private Interface supertype;
 
+        private InheritanceProps props;
+
         internal Inheritance(MetaPopulation metaPopulation)
         {
             this.metaPopulation = metaPopulation;
             this.metaPopulation.OnInheritanceCreated(this);
         }
+
+        public InheritanceProps _ => this.props ??= new InheritanceProps(this);
 
         ICompositeBase IInheritanceBase.Subtype => this.Subtype;
         IComposite IInheritance.Subtype => this.Subtype;

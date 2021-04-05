@@ -21,9 +21,9 @@ namespace Allors.Database.Meta
 
         string SingularName { get; }
 
-        string Name { get; }
-
         string PluralName { get; }
+
+        string Name { get; }
 
         IEnumerable<string> WorkspaceNames { get; }
 

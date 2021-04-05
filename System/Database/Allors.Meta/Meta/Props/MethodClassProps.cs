@@ -6,14 +6,14 @@
 
 namespace Allors.Database.Meta
 {
-    public sealed partial class MethodClassProps : MetaObjectProps
+    public sealed partial class MethodClassProps : MethodTypeProps
     {
-        private readonly IMethodClassBase associationClass;
+        private readonly IMethodClassBase methodClass;
 
-        internal MethodClassProps(IMethodClassBase relationClass) => this.associationClass = relationClass;
+        internal MethodClassProps(IMethodClassBase relationClass) => this.methodClass = relationClass;
 
-        public override IMetaPopulation MetaPopulation => this.associationClass.MetaPopulation;
+        protected override IMetaObjectBase AsMetaObject => this.methodClass;
 
-        public override Origin Origin => this.associationClass.Origin;
+        protected override IMethodTypeBase AsMethodType => this.methodClass;
     }
 }

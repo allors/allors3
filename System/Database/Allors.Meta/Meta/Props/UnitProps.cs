@@ -6,14 +6,14 @@
 
 namespace Allors.Database.Meta
 {
-    public sealed partial class UnitProps : MetaObjectProps
+    public sealed partial class UnitProps : ObjectTypeProps
     {
-        private readonly IUnitBase @class;
+        private readonly IUnitBase unit;
 
-        internal UnitProps(IUnitBase @class) => this.@class = @class;
+        internal UnitProps(IUnitBase @class) => this.unit = @class;
 
-        public override IMetaPopulation MetaPopulation => this.@class.MetaPopulation;
+        protected override IMetaObjectBase AsMetaObject => this.unit;
 
-        public override Origin Origin => this.@class.Origin;
+        protected override IObjectTypeBase AsObjectType => this.unit;
     }
 }

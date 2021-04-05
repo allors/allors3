@@ -6,14 +6,33 @@
 
 namespace Allors.Database.Meta
 {
-    public sealed partial class RoleTypeProps : MetaObjectProps
+    public sealed partial class RoleTypeProps : PropertyTypeProps
     {
         private readonly IRoleTypeBase roleType;
 
         internal RoleTypeProps(IRoleTypeBase relationType) => this.roleType = relationType;
 
-        public override IMetaPopulation MetaPopulation => this.roleType.MetaPopulation;
+        public new IObjectTypeBase ObjectType => this.roleType.ObjectType;
 
-        public override Origin Origin => this.roleType.Origin;
+        public IAssociationTypeBase AssociationType => this.roleType.AssociationType;
+
+        public IRelationTypeBase RelationType => this.roleType.RelationType;
+
+        public string SingularName => this.roleType.SingularName;
+
+        public string PluralName => this.roleType.PluralName;
+
+        public int? Size => this.roleType.Size;
+
+        public int? Precision => this.roleType.Precision;
+
+        public int? Scale => this.roleType.Scale;
+
+        protected override IMetaObjectBase AsMetaObject => this.roleType;
+
+        protected override IOperandTypeBase AsOperandType => this.roleType;
+
+        protected override IPropertyTypeBase AsPropertyType => this.roleType;
+
     }
 }
