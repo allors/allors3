@@ -48,7 +48,7 @@ namespace Allors.Database.Protocol.Json
 
         public ISet<IClass> AllowedClasses { get; }
 
-        public M M { get; }
+        public MetaPopulation M { get; }
 
         public MetaPopulation MetaPopulation { get; }
 

@@ -31,7 +31,6 @@ namespace Allors.Database.Adapters.Memory
             }
 
             this.MetaPopulation = this.ObjectFactory.MetaPopulation;
-            this.M = configuration.M;
 
             this.concreteClassesByObjectType = new Dictionary<IObjectType, object>();
 
@@ -55,8 +54,6 @@ namespace Allors.Database.Adapters.Memory
         public IObjectFactory ObjectFactory { get; }
 
         public IMetaPopulation MetaPopulation { get; }
-
-        public object M { get; }
 
         public IDatabaseLifecycle Lifecycle { get; }
 

@@ -28,7 +28,6 @@ namespace Tests
                 new DefaultDatabaseContext(fixture.Engine),
                 new Configuration
                 {
-                    M = fixture.M,
                     ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(C1)),
                 });
 
@@ -37,7 +36,7 @@ namespace Tests
             this.Setup(database, populate);
         }
 
-        public M M { get; }
+        public MetaPopulation M { get; }
 
         public virtual Config Config { get; } = new Config { SetupSecurity = true };
 

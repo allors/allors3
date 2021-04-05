@@ -98,7 +98,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Select.TryParse(this.M.C2.ObjectType, "C1WhereC1C2One2Many", out var @select);
+            Select.TryParse(this.M.C2, "C1WhereC1C2One2Many", out var @select);
 
             var result = (C1)@select.Get(c2A, this.AclsMock.Object);
             Assert.Equal(result, c1A);

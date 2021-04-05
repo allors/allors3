@@ -18,10 +18,10 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void Type()
         {
-            var query = new Extent(this.M.Person.ObjectType);
+            var query = new Extent(this.M.Person);
             var queryExtent = query.Build(this.Transaction);
 
-            var extent = this.Transaction.Extent(this.M.Person.ObjectType);
+            var extent = this.Transaction.Extent(this.M.Person);
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
         }
@@ -29,7 +29,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void RoleEquals()
         {
-            var filter = new Extent(this.M.Person.ObjectType)
+            var filter = new Extent(this.M.Person)
             {
                 Predicate = new Equals
                 {
@@ -40,7 +40,7 @@ namespace Allors.Database.Domain.Tests
 
             var queryExtent = filter.Build(this.Transaction);
 
-            var extent = this.Transaction.Extent(this.M.Person.ObjectType);
+            var extent = this.Transaction.Extent(this.M.Person);
             extent.Filter.AddEquals(this.M.Person.FirstName, "John");
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
@@ -50,29 +50,29 @@ namespace Allors.Database.Domain.Tests
         public void And()
         {
             // select from Person where FirstName='John' and LastName='Doe'
-            var filter = new Extent(this.M.Person.ObjectType)
+            var filter = new Extent(this.M.Person)
             {
                 Predicate = new And
                 {
                     Operands = new IPredicate[]
-                                                                    {
-                                                                        new Equals
-                                                                            {
-                                                                                PropertyType = this.M.Person.FirstName,
-                                                                                Value = "John",
-                                                                            },
-                                                                        new Equals
-                                                                            {
-                                                                                PropertyType = this.M.Person.LastName,
-                                                                                Value = "Doe"
-                                                                            },
-                                                                    },
+                    {
+                        new Equals
+                            {
+                                PropertyType = this.M.Person.FirstName,
+                                Value = "John",
+                            },
+                        new Equals
+                            {
+                                PropertyType = this.M.Person.LastName,
+                                Value = "Doe"
+                            },
+                    },
                 },
             };
 
             var queryExtent = filter.Build(this.Transaction);
 
-            var extent = this.Transaction.Extent(this.M.Person.ObjectType);
+            var extent = this.Transaction.Extent(this.M.Person);
             var and = extent.Filter.AddAnd();
             and.AddEquals(this.M.Person.FirstName, "John");
             and.AddEquals(this.M.Person.LastName, "Doe");

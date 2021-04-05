@@ -13,13 +13,13 @@ namespace Allors.Database.Configuration
 
     public class PreparedSelects : IPreparedSelects
     {
-        public PreparedSelects(M m)
+        public PreparedSelects(MetaPopulation m)
         {
             this.M = m;
             this.SelectById = new ConcurrentDictionary<Guid, Select>();
         }
 
-        public M M { get; }
+        public MetaPopulation M { get; }
 
         public ConcurrentDictionary<Guid, Select> SelectById { get; }
 

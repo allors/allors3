@@ -54,7 +54,6 @@ namespace Allors.Database.Adapters.Npgsql
             }
 
             this.MetaPopulation = this.ObjectFactory.MetaPopulation;
-            this.M = configuration.M;
 
             this.ConnectionString = configuration.ConnectionString;
             this.ConnectionFactory = configuration.ConnectionFactory;
@@ -134,8 +133,6 @@ namespace Allors.Database.Adapters.Npgsql
         public IObjectFactory ObjectFactory { get; }
 
         public IMetaPopulation MetaPopulation { get; }
-
-        public object M { get; }
 
         public bool IsShared => true;
 

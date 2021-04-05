@@ -12,13 +12,13 @@ namespace Allors.Database.Configuration
 
     public class PreparedExtents : IPreparedExtents
     {
-        public PreparedExtents(M m )
+        public PreparedExtents(MetaPopulation m )
         {
             this.M = m;
             this.ExtentById = new ConcurrentDictionary<Guid, IExtent>();
         }
 
-        public M M { get; }
+        public MetaPopulation M { get; }
 
         public ConcurrentDictionary<Guid, IExtent> ExtentById { get; }
 
@@ -28,7 +28,7 @@ namespace Allors.Database.Configuration
         {
             if (id == OrganisationByName)
             {
-                return new Extent(this.M.Organisation.Class) { Predicate = new Equals(this.M.Organisation.Name) { Parameter = "name" } };
+                return new Extent(this.M.Organisation) { Predicate = new Equals(this.M.Organisation.Name) { Parameter = "name" } };
             }
 
             this.ExtentById.TryGetValue(id, out var extent);
