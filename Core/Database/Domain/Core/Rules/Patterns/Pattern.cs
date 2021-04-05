@@ -10,6 +10,10 @@ namespace Allors.Database.Derivations
 
     public abstract class Pattern : IPattern
     {
+        protected Pattern(IComposite objectType = null) => this.ObjectType = objectType;
+
+        public IComposite ObjectType { get; }
+
         public IPropertyType[] Steps { get; set; }
 
         public IComposite OfType { get; set; }

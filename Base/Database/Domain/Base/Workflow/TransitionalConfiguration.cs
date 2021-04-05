@@ -12,11 +12,6 @@ namespace Allors.Database.Domain
 
     public partial class TransitionalConfiguration
     {
-
-        public TransitionalConfiguration(MetaClass objectType, IRoleType roleType) : this(objectType.ObjectType, roleType)
-        {
-        }
-
         public TransitionalConfiguration(IClass objectType, IRoleType roleType)
         {
             var previousObjectState = objectType.DatabaseRoleTypes.FirstOrDefault(v => v.Name.Equals("Previous" + roleType.Name));

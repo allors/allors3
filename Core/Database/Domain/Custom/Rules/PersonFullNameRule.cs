@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public PersonFullNameRule(MetaPopulation m) : base(m, new Guid("C9895CF4-98B2-4023-A3EA-582107C7D80D")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.Person, m.Person.FirstName),
-                new RolePattern(m.Person, m.Person.LastName),
+                new RolePattern<Meta.Person>(m.Person, v => v.FirstName),
+                m.Person.RolePattern(v => v.LastName),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

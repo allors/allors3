@@ -12,14 +12,6 @@ namespace Allors.Database.Domain
 
     public partial class Security
     {
-        public void Deny(MetaClass objectType, ObjectState objectState, params Operations[] operations) => this.Deny(objectType.ObjectType, objectState, operations);
-
-        public void Deny(MetaClass objectType, ObjectState objectState, params IOperandType[] operandTypes) => this.Deny(objectType.ObjectType, objectState, (IEnumerable<IOperandType>)operandTypes);
-
-        public void Deny(MetaClass objectType, ObjectState objectState, IEnumerable<IOperandType> operandTypes) => this.Deny(objectType.ObjectType, objectState, operandTypes);
-
-        public void DenyExcept(MetaClass objectType, ObjectState objectState, IEnumerable<IOperandType> excepts, params Operations[] operations) => this.DenyExcept(objectType.ObjectType, objectState, excepts, operations);
-        
         public void Deny(IObjectType objectType, ObjectState objectState, params Operations[] operations)
         {
             var actualOperations = operations ?? ReadWriteExecute;

@@ -10,6 +10,8 @@ namespace Allors.Database.Derivations
 
     public class AssociationPattern : Pattern
     {
+        public AssociationPattern(IComposite objectType, IAssociationType associationType) : base(objectType) => this.AssociationType = associationType;
+
         public AssociationPattern(IAssociationType associationType) => this.AssociationType = associationType;
 
         public AssociationPattern(IRoleType roleType) : this(roleType.AssociationType) { }

@@ -112,7 +112,6 @@ namespace Allors.Database.Meta
 
         #endregion
 
-
         public IRoleTypeBase RoleType => this.relationType.RoleType;
 
         private bool IsMany
@@ -140,7 +139,7 @@ namespace Allors.Database.Meta
         private string DisplayName => this.Name;
 
         private string ValidationName => "association type " + this.Name;
-            
+
         public override bool Equals(object other) => this.relationType.Id.Equals((other as AssociationType)?.relationType.Id);
 
         public override int GetHashCode() => this.relationType.Id.GetHashCode();

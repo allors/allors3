@@ -6,14 +6,11 @@
 
 namespace Allors.Database.Derivations
 {
+    using Antlr.Runtime.Misc;
     using Meta;
 
-    public class RolePattern : Pattern
+    public class AssociationPattern<T> : AssociationPattern where T : IComposite
     {
-        public RolePattern(IRoleType roleType) => this.RoleType = roleType;
-
-        public RolePattern(IComposite objectType, IRoleType roleType) : base(objectType) => this.RoleType = roleType;
-
-        public IRoleType RoleType { get; }
+        public AssociationPattern(T objectType, Func<T, IAssociationType> association, Func<T, IPropertyType> step = null) : base(objectType, association(objectType)) => this.Steps = step != null ? new[] { step(objectType) } : null;
     }
 }

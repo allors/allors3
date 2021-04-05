@@ -150,6 +150,9 @@ define_roleType(property) ::= <<
         public $property.DefiningType.SingularName$$property.RoleName$(IRelationTypeBase relationType) : base(relationType)
         {
         }
+$if(property.Type.IsComposite)$
+        public $property.Type.SingularName$ $property.Type.SingularName$ => ($property.Type.SingularName$)this.ObjectType;
+$endif$
     }
 >>
 

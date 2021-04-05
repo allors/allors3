@@ -20,6 +20,14 @@ namespace Allors.Repository.Domain
 
         public string SingularName { get; }
 
+        public bool IsInterface => this is Interface;
+
+        public bool IsClass => this is Class;
+
+        public bool IsComposite => !this.IsUnit;
+
+        public bool IsUnit => this is Unit;
+
         public override string ToString() => this.SingularName;
     }
 }
