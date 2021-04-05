@@ -323,7 +323,7 @@ namespace Allors.Database.Domain.Tests
     [Trait("Category", "Security")]
     public class PersonSecurityTests : DomainTest, IClassFixture<Fixture>
     {
-        public PersonSecurityTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.Person.ObjectType, this.M.Person.Delete);
+        public PersonSecurityTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.Person, this.M.Person.Delete);
 
         public override Config Config => new Config { SetupSecurity = true };
 
@@ -367,7 +367,7 @@ namespace Allors.Database.Domain.Tests
     [Trait("Category", "Security")]
     public class PersonDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public PersonDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.Person.ObjectType, this.M.Person.Delete);
+        public PersonDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.Person, this.M.Person.Delete);
 
         public override Config Config => new Config { SetupSecurity = true };
 

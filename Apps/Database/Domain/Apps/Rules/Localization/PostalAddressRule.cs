@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class PostalAddressRule : Rule
     {
-        public PostalAddressRule(M m) : base(m, new Guid("412c754a-4806-40ab-ac49-b5569bb9b9a9")) =>
+        public PostalAddressRule(MetaPopulation m) : base(m, new Guid("412c754a-4806-40ab-ac49-b5569bb9b9a9")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.PostalAddress, m.PostalAddress.Address1),

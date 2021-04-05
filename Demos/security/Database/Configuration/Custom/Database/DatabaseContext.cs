@@ -22,8 +22,7 @@ namespace Allors.Database.Configuration
         {
             this.Database = database;
 
-            this.MetaPopulation = (MetaPopulation)database.ObjectFactory.MetaPopulation;
-            this.M = new M(this.MetaPopulation);
+            this.M = (MetaPopulation)database.ObjectFactory.MetaPopulation;
             this.MetaCache = new MetaCache(this);
             this.ClassById = new ClassById();
             this.VersionedIdByStrategy = new VersionedIdByStrategy();
@@ -48,9 +47,7 @@ namespace Allors.Database.Configuration
 
         public IDatabase Database { get; private set; }
 
-        public MetaPopulation MetaPopulation { get; private set; }
-
-        public M M { get; private set; }
+        public MetaPopulation M { get; private set; }
         
         public IMetaCache MetaCache { get; private set; }
 

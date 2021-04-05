@@ -20,7 +20,7 @@ namespace Allors.Database.Domain
             merge(ByName, v =>
             {
                 v.Description = "Organisation by name";
-                v.Extent = new Extent(this.M.Organisation.Class) { Predicate = new Equals(this.M.Organisation.Name) { Parameter = "name" } };
+                v.Extent = new Extent(this.M.Organisation) { Predicate = new Equals(this.M.Organisation.Name) { Parameter = "name" } };
             });
         }
     }

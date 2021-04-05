@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class BudgetDeniedPermissionRule : Rule
     {
-        public BudgetDeniedPermissionRule(M m) : base(m, new Guid("d0807b6c-a7c9-4bd5-a4eb-c84cadcd9a8f")) =>
+        public BudgetDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("d0807b6c-a7c9-4bd5-a4eb-c84cadcd9a8f")) =>
             this.Patterns = new Pattern[]
         {
             new RolePattern(m.Budget, m.Budget.TransitionalDeniedPermissions),

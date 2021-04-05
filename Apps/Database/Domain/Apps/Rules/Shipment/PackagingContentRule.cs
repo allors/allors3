@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class PackagingContentRule : Rule
     {
-        public PackagingContentRule(M m) : base(m, new Guid("E6D43FBC-8501-4BEA-83D3-4034657E0D3A")) =>
+        public PackagingContentRule(MetaPopulation m) : base(m, new Guid("E6D43FBC-8501-4BEA-83D3-4034657E0D3A")) =>
             this.Patterns = new Pattern[]
         {
             new RolePattern(m.PackagingContent, m.PackagingContent.ShipmentItem),

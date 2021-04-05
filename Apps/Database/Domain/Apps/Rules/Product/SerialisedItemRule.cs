@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
 
     public class SerialisedItemRule : Rule
     {
-        public SerialisedItemRule(M m) : base(m, new Guid("A871B4BB-3285-418F-9E10-5A786A6284DA")) =>
+        public SerialisedItemRule(MetaPopulation m) : base(m, new Guid("A871B4BB-3285-418F-9E10-5A786A6284DA")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.SerialisedItem, m.SerialisedItem.Name),

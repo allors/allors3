@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class ProductQuoteApprovalParticipantsRule : Rule
     {
-        public ProductQuoteApprovalParticipantsRule(M m) : base(m, new Guid("be3fae87-8d8b-478d-950e-ae9eb659a644")) =>
+        public ProductQuoteApprovalParticipantsRule(MetaPopulation m) : base(m, new Guid("be3fae87-8d8b-478d-950e-ae9eb659a644")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.ProductQuoteApproval, m.ProductQuoteApproval.DateClosed),

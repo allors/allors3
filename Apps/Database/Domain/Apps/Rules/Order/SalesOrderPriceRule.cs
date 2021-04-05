@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class SalesOrderPriceRule : Rule
     {
-        public SalesOrderPriceRule(M m) : base(m, new Guid("aa490071-772f-400d-a799-3f015e877c05")) =>
+        public SalesOrderPriceRule(MetaPopulation m) : base(m, new Guid("aa490071-772f-400d-a799-3f015e877c05")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.SalesOrder, m.SalesOrder.DerivationTrigger),
@@ -21,10 +21,10 @@ namespace Allors.Database.Domain
                 new RolePattern(m.SalesOrder, m.SalesOrder.SalesOrderItems),
                 new RolePattern(m.SalesOrder, m.SalesOrder.BillToCustomer),
                 new RolePattern(m.SalesOrder, m.SalesOrder.OrderAdjustments),
-                new RolePattern(m.DiscountAdjustment, m.DiscountAdjustment.Percentage) { Steps =  new IPropertyType[] {m.OrderAdjustment.OrderWhereOrderAdjustment}, OfType = m.SalesOrder.Class },
-                new RolePattern(m.DiscountAdjustment, m.DiscountAdjustment.Amount) { Steps =  new IPropertyType[] {m.OrderAdjustment.OrderWhereOrderAdjustment}, OfType = m.SalesOrder.Class },
-                new RolePattern(m.SurchargeAdjustment, m.SurchargeAdjustment.Percentage) { Steps =  new IPropertyType[] {m.OrderAdjustment.OrderWhereOrderAdjustment}, OfType = m.SalesOrder.Class },
-                new RolePattern(m.SurchargeAdjustment, m.SurchargeAdjustment.Amount) { Steps =  new IPropertyType[] {m.OrderAdjustment.OrderWhereOrderAdjustment}, OfType = m.SalesOrder.Class },
+                new RolePattern(m.DiscountAdjustment, m.DiscountAdjustment.Percentage) { Steps =  new IPropertyType[] {m.OrderAdjustment.OrderWhereOrderAdjustment}, OfType = m.SalesOrder },
+                new RolePattern(m.DiscountAdjustment, m.DiscountAdjustment.Amount) { Steps =  new IPropertyType[] {m.OrderAdjustment.OrderWhereOrderAdjustment}, OfType = m.SalesOrder },
+                new RolePattern(m.SurchargeAdjustment, m.SurchargeAdjustment.Percentage) { Steps =  new IPropertyType[] {m.OrderAdjustment.OrderWhereOrderAdjustment}, OfType = m.SalesOrder },
+                new RolePattern(m.SurchargeAdjustment, m.SurchargeAdjustment.Amount) { Steps =  new IPropertyType[] {m.OrderAdjustment.OrderWhereOrderAdjustment}, OfType = m.SalesOrder },
                 new RolePattern(m.SalesOrderItem, m.SalesOrderItem.TotalBasePrice) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem} },
                 new RolePattern(m.SalesOrderItem, m.SalesOrderItem.TotalDiscount) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem} },
                 new RolePattern(m.SalesOrderItem, m.SalesOrderItem.TotalSurcharge) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem} },

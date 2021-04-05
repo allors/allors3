@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class ShipmentItemDeniedPermissionRule : Rule
     {
-        public ShipmentItemDeniedPermissionRule(M m) : base(m, new Guid("a690e467-5509-4e2a-905b-b5a3fb0bee12")) =>
+        public ShipmentItemDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("a690e467-5509-4e2a-905b-b5a3fb0bee12")) =>
             this.Patterns = new Pattern[]
         {
             new RolePattern(m.ShipmentItem, m.ShipmentItem.TransitionalDeniedPermissions),

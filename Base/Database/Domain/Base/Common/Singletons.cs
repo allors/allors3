@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
     {
         public Singleton Instance => this.Transaction.GetSingleton();
 
-        protected override void CorePrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.Locale.ObjectType);
+        protected override void CorePrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.Locale);
 
         protected override void CoreSetup(Setup setup)
         {

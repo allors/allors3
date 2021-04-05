@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
 
         public Page Index => this.Cache[IndexId];
 
-        protected override void CustomPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.Media.ObjectType);
+        protected override void CustomPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.Media);
 
         protected override void CustomSetup(Setup setup)
         {

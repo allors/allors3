@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class SingletonLocalesRule : Rule
     {
-        public SingletonLocalesRule(M m) : base(m, new Guid("1a6c3dcc-0ddb-4788-8167-791cfd973b19")) =>
+        public SingletonLocalesRule(MetaPopulation m) : base(m, new Guid("1a6c3dcc-0ddb-4788-8167-791cfd973b19")) =>
             this.Patterns = new[]
             {
                 new RolePattern(m.Singleton, m.Singleton.DefaultLocale),

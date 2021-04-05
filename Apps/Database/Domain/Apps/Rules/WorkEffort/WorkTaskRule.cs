@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
 
     public class WorkTaskRule : Rule
     {
-        public WorkTaskRule(M m) : base(m, new Guid("12794dc5-8a79-4983-b480-4324602ae717")) =>
+        public WorkTaskRule(MetaPopulation m) : base(m, new Guid("12794dc5-8a79-4983-b480-4324602ae717")) =>
             this.Patterns = new Pattern[]
         {
             new RolePattern(m.WorkTask, m.WorkTask.TakenBy),

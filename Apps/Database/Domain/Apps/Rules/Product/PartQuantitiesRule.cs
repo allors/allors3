@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class PartQuantitiesRule : Rule
     {
-        public PartQuantitiesRule(M m) : base(m, new Guid("d0fc5096-5ea8-4c50-8979-0ac66d43e6d0")) =>
+        public PartQuantitiesRule(MetaPopulation m) : base(m, new Guid("d0fc5096-5ea8-4c50-8979-0ac66d43e6d0")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.InventoryItemTransaction, m.InventoryItemTransaction.Quantity) { Steps = new IPropertyType[]{ m.InventoryItemTransaction.InventoryItem, m.InventoryItem.Part } },

@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class CustomerRelationshipRule : Rule
     {
-        public CustomerRelationshipRule(M m) : base(m, new Guid("3E1DE413-1939-4369-AFA0-D3A6CA340DD5")) =>
+        public CustomerRelationshipRule(MetaPopulation m) : base(m, new Guid("3E1DE413-1939-4369-AFA0-D3A6CA340DD5")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.CustomerRelationship, m.CustomerRelationship.Customer),

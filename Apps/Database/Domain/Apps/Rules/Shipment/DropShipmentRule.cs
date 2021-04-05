@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class DropShipmentRule : Rule
     {
-        public DropShipmentRule(M m) : base(m, new Guid("1B7E3857-425A-4946-AB63-15AEE196350D")) =>
+        public DropShipmentRule(MetaPopulation m) : base(m, new Guid("1B7E3857-425A-4946-AB63-15AEE196350D")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.DropShipment, m.DropShipment.ShipFromParty),

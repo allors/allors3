@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class SerialisedItemPurchaseInvoiceRule : Rule
     {
-        public SerialisedItemPurchaseInvoiceRule(M m) : base(m, new Guid("510975a7-e210-4d30-8fde-b401cbbb3694")) =>
+        public SerialisedItemPurchaseInvoiceRule(MetaPopulation m) : base(m, new Guid("510975a7-e210-4d30-8fde-b401cbbb3694")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.PurchaseInvoice, m.PurchaseInvoice.ValidInvoiceItems) { Steps = new IPropertyType[] { m.PurchaseInvoice.PurchaseInvoiceItems, m.PurchaseInvoiceItem.SerialisedItem } },

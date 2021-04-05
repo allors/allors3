@@ -33,7 +33,7 @@ namespace Allors.Workspace.Adapters.Local
             this.PreparedSelects = databaseContext.PreparedSelects;
             this.PreparedExtents = databaseContext.PreparedExtents;
             this.M = databaseContext.M;
-            this.MetaPopulation = databaseContext.M;
+            this.M = databaseContext.M;
             this.Build = @class => (Database.IObject)DefaultObjectBuilder.Build(this.Transaction, @class);
             this.Derive = () => this.Transaction.Derive(false);
 
@@ -60,9 +60,7 @@ namespace Allors.Workspace.Adapters.Local
 
         internal IAccessControlLists AccessControlLists { get; }
 
-        public M M { get; set; }
-
-        public MetaPopulation MetaPopulation { get; set; }
+        public MetaPopulation M { get; set; }
 
         public Func<IClass, Database.IObject> Build { get; }
 
@@ -271,7 +269,7 @@ namespace Allors.Workspace.Adapters.Local
             foreach (var keyValuePair in local.DatabaseState.ChangedRoleByRelationType)
             {
                 var relationType = keyValuePair.Key;
-                var roleType = ((IRelationType)this.MetaPopulation.Find(keyValuePair.Key.Id)).RoleType;
+                var roleType = ((IRelationType)this.M.Find(keyValuePair.Key.Id)).RoleType;
 
                 if (acl.CanWrite(roleType))
                 {

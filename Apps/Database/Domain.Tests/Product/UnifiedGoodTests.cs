@@ -201,7 +201,7 @@ namespace Allors.Database.Domain.Tests
     [Trait("Category", "Security")]
     public class UnifiedGoodDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public UnifiedGoodDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.UnifiedGood.ObjectType, this.M.UnifiedGood.Delete);
+        public UnifiedGoodDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.UnifiedGood, this.M.UnifiedGood.Delete);
 
         public override Config Config => new Config { SetupSecurity = true };
 

@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class PurchaseInvoiceItemDeniedPermissionRule : Rule
     {
-        public PurchaseInvoiceItemDeniedPermissionRule(M m) : base(m, new Guid("169b5970-4d22-455a-8034-32fcbe04fc04")) =>
+        public PurchaseInvoiceItemDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("169b5970-4d22-455a-8034-32fcbe04fc04")) =>
             this.Patterns = new Pattern[]
         {
             new RolePattern(m.PurchaseInvoiceItem, m.PurchaseInvoiceItem.TransitionalDeniedPermissions),

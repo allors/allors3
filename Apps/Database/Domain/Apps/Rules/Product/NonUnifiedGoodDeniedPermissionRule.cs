@@ -13,26 +13,26 @@ namespace Allors.Database.Domain
 
     public class NonUnifiedGoodDeniedPermissionRule : Rule
     {
-        public NonUnifiedGoodDeniedPermissionRule(M m) : base(m, new Guid("af1b5c08-9903-4d80-ad7c-d8588e324e3d")) =>
+        public NonUnifiedGoodDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("af1b5c08-9903-4d80-ad7c-d8588e324e3d")) =>
             this.Patterns = new Pattern[]
         {
             new RolePattern(m.NonUnifiedGood, m.NonUnifiedGood.Part),
-            new AssociationPattern(m.Deployment.ProductOffering) { OfType = m.NonUnifiedGood.Class },
-            new AssociationPattern(m.GoodOrderItem.Product) { OfType = m.NonUnifiedGood.Class },
-            new AssociationPattern(m.GeneralLedgerAccount.DerivedCostUnitsAllowed) { OfType = m.NonUnifiedGood.Class },
-            new AssociationPattern(m.GeneralLedgerAccount.DefaultCostUnit) { OfType = m.NonUnifiedGood.Class },
-            new AssociationPattern(m.QuoteItem.Product) { OfType = m.NonUnifiedGood.Class },
-            new AssociationPattern(m.ShipmentItem.Good) { OfType = m.NonUnifiedGood.Class },
-            new AssociationPattern(m.WorkEffortGoodStandard.UnifiedProduct) { OfType = m.NonUnifiedGood.Class },
-            new AssociationPattern(m.MarketingPackage.ProductsUsedIn) { OfType = m.NonUnifiedGood.Class },
-            new AssociationPattern(m.MarketingPackage.Product) { OfType = m.NonUnifiedGood.Class },
-            new AssociationPattern(m.OrganisationGlAccount.Product) { OfType = m.NonUnifiedGood.Class },
-            new AssociationPattern(m.ProductConfiguration.ProductsUsedIn) { OfType = m.NonUnifiedGood.Class },
-            new AssociationPattern(m.ProductConfiguration.Product) { OfType = m.NonUnifiedGood.Class },
-            new AssociationPattern(m.RequestItem.Product) { OfType = m.NonUnifiedGood.Class },
-            new AssociationPattern(m.SalesInvoiceItem.Product) { OfType = m.NonUnifiedGood.Class },
-            new AssociationPattern(m.SalesOrderItem.Product) { OfType = m.NonUnifiedGood.Class },
-            new AssociationPattern(m.WorkEffortType.ProductToProduce) { OfType = m.NonUnifiedGood.Class },
+            new AssociationPattern(m.Deployment.ProductOffering) { OfType = m.NonUnifiedGood },
+            new AssociationPattern(m.GoodOrderItem.Product) { OfType = m.NonUnifiedGood },
+            new AssociationPattern(m.GeneralLedgerAccount.DerivedCostUnitsAllowed) { OfType = m.NonUnifiedGood },
+            new AssociationPattern(m.GeneralLedgerAccount.DefaultCostUnit) { OfType = m.NonUnifiedGood },
+            new AssociationPattern(m.QuoteItem.Product) { OfType = m.NonUnifiedGood },
+            new AssociationPattern(m.ShipmentItem.Good) { OfType = m.NonUnifiedGood },
+            new AssociationPattern(m.WorkEffortGoodStandard.UnifiedProduct) { OfType = m.NonUnifiedGood },
+            new AssociationPattern(m.MarketingPackage.ProductsUsedIn) { OfType = m.NonUnifiedGood },
+            new AssociationPattern(m.MarketingPackage.Product) { OfType = m.NonUnifiedGood },
+            new AssociationPattern(m.OrganisationGlAccount.Product) { OfType = m.NonUnifiedGood },
+            new AssociationPattern(m.ProductConfiguration.ProductsUsedIn) { OfType = m.NonUnifiedGood },
+            new AssociationPattern(m.ProductConfiguration.Product) { OfType = m.NonUnifiedGood },
+            new AssociationPattern(m.RequestItem.Product) { OfType = m.NonUnifiedGood },
+            new AssociationPattern(m.SalesInvoiceItem.Product) { OfType = m.NonUnifiedGood },
+            new AssociationPattern(m.SalesOrderItem.Product) { OfType = m.NonUnifiedGood },
+            new AssociationPattern(m.WorkEffortType.ProductToProduce) { OfType = m.NonUnifiedGood },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -42,7 +42,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<NonUnifiedGood>())
             {
-                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Delete);
                 if (@this.IsDeletable)
                 {
                     @this.RemoveDeniedPermission(deletePermission);

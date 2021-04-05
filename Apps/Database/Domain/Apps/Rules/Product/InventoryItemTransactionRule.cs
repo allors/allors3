@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class InventoryItemTransactionRule : Rule
     {
-        public InventoryItemTransactionRule(M m) : base(m, new Guid("E1F9D2DA-9C99-473D-B49F-17465CDEDBC9")) =>
+        public InventoryItemTransactionRule(MetaPopulation m) : base(m, new Guid("E1F9D2DA-9C99-473D-B49F-17465CDEDBC9")) =>
             this.Patterns = new[]
             {
                 new RolePattern(m.InventoryItemTransaction, m.InventoryItemTransaction.Quantity),

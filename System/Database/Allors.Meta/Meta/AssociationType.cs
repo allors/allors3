@@ -112,7 +112,8 @@ namespace Allors.Database.Meta
 
         #endregion
 
-        private IRoleTypeBase RoleType => this.relationType.RoleType;
+
+        public IRoleTypeBase RoleType => this.relationType.RoleType;
 
         private bool IsMany
         {

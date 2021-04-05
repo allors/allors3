@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class CommunicationTaskRule : Rule
     {
-        public CommunicationTaskRule(M m) : base(m, new Guid("0001CEF2-6A6F-4DB7-A932-07F854C66478")) =>
+        public CommunicationTaskRule(MetaPopulation m) : base(m, new Guid("0001CEF2-6A6F-4DB7-A932-07F854C66478")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.CommunicationTask, m.CommunicationTask.CommunicationEvent),

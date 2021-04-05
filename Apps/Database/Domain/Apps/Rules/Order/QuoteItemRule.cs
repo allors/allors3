@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
 
     public class QuoteItemRule : Rule
     {
-        public QuoteItemRule(M m) : base(m, new Guid("17010D27-1BE9-4A8C-8AF5-8A9F9589AAF6")) =>
+        public QuoteItemRule(MetaPopulation m) : base(m, new Guid("17010D27-1BE9-4A8C-8AF5-8A9F9589AAF6")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.QuoteItem, m.QuoteItem.InvoiceItemType),

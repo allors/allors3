@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
 
     public class BankRule : Rule
     {
-        public BankRule(M m) : base(m, new Guid("ee111e64-2d19-445a-b451-d2b23aadbf10")) =>
+        public BankRule(MetaPopulation m) : base(m, new Guid("ee111e64-2d19-445a-b451-d2b23aadbf10")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.Bank, m.Bank.Bic),

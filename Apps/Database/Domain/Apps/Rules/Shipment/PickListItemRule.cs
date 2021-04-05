@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class PickListItemRule : Rule
     {
-        public PickListItemRule(M m) : base(m, new Guid("7E5843FB-7D25-4D41-833B-077C1B83AAD1")) =>
+        public PickListItemRule(MetaPopulation m) : base(m, new Guid("7E5843FB-7D25-4D41-833B-077C1B83AAD1")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.PickListItem, m.PickListItem.Quantity),

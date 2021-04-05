@@ -12,7 +12,7 @@ namespace Allors.Database.Domain
 
     public class WorkEffortTotalSubContractedRevenueRule : Rule
     {
-        public WorkEffortTotalSubContractedRevenueRule(M m) : base(m, new Guid("102b3442-e1a6-4ff1-aec8-1620e345821c")) =>
+        public WorkEffortTotalSubContractedRevenueRule(MetaPopulation m) : base(m, new Guid("102b3442-e1a6-4ff1-aec8-1620e345821c")) =>
             this.Patterns = new Pattern[]
             {
                 new AssociationPattern(m.WorkEffortPurchaseOrderItemAssignment.Assignment),

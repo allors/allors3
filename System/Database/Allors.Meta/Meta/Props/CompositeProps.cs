@@ -11,6 +11,16 @@ namespace Allors.Database.Meta
 
     public abstract class CompositeProps : ObjectTypeProps
     {
+        public bool ExistDirectSupertypes => this.DirectSupertypes.Any();
+
+        public bool ExistSupertypes => this.Supertypes.Any();
+
+        public bool ExistAssociationTypes => this.AssociationTypes.Any();
+
+        public bool ExistRoleTypes => this.AssociationTypes.Any();
+
+        public bool ExistMethodTypes => this.MethodTypes.Any();
+
         public IEnumerable<IInterface> Supertypes => this.AsComposite.Supertypes;
 
         public IEnumerable<IClass> Classes => this.AsComposite.Classes;
@@ -38,9 +48,15 @@ namespace Allors.Database.Meta
 
         public IEnumerable<IAssociationType> DatabaseAssociationTypes => this.AsComposite.DatabaseAssociationTypes;
 
+        public IEnumerable<IAssociationType> ExclusiveDatabaseAssociationTypes => this.AsComposite.ExclusiveDatabaseAssociationTypes;
+
         public IEnumerable<IRoleType> DatabaseRoleTypes => this.AsComposite.DatabaseRoleTypes;
 
+        public IEnumerable<IRoleType> ExclusiveDatabaseRoleTypes => this.AsComposite.ExclusiveDatabaseRoleTypes;
+
         public IEnumerable<IMethodType> MethodTypes => this.AsComposite.MethodTypes;
+
+        public IEnumerable<IMethodType> ExclusiveMethodTypes => this.AsComposite.ExclusiveMethodTypes;
 
         public bool ExistDatabaseClass => this.AsComposite.ExistDatabaseClass;
 

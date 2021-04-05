@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class CountryVatRegimesRule : Rule
     {
-        public CountryVatRegimesRule(M m) : base(m, new Guid("ac33cb9d-f694-4247-ad5d-fdae01d05c07")) =>
+        public CountryVatRegimesRule(MetaPopulation m) : base(m, new Guid("ac33cb9d-f694-4247-ad5d-fdae01d05c07")) =>
             this.Patterns = new Pattern[]
             {
                 new AssociationPattern(m.VatRegime.Country),

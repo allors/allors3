@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class SubcontractorRelationshipRule : Rule
     {
-        public SubcontractorRelationshipRule(M m) : base(m, new Guid("CF18B16D-C8BD-4097-A959-3AA3929D4A3D")) =>
+        public SubcontractorRelationshipRule(MetaPopulation m) : base(m, new Guid("CF18B16D-C8BD-4097-A959-3AA3929D4A3D")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.SubContractorRelationship, m.SubContractorRelationship.Contractor),

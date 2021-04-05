@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
 
     public class SalesInvoiceItemRule : Rule
     {
-        public SalesInvoiceItemRule(M m) : base(m, new Guid("37C0910B-7C48-46B5-8F7A-F6B2E70BE05C")) =>
+        public SalesInvoiceItemRule(MetaPopulation m) : base(m, new Guid("37C0910B-7C48-46B5-8F7A-F6B2E70BE05C")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.Product),
@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
                 new RolePattern(m.SalesInvoice, m.SalesInvoice.DerivedVatRegime) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
                 new RolePattern(m.SalesInvoice, m.SalesInvoice.DerivedIrpfRegime) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
                 new RolePattern(m.SalesInvoice, m.SalesInvoice.InvoiceDate) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
-                new RolePattern(m.PaymentApplication, m.PaymentApplication.AmountApplied) { Steps =  new IPropertyType[] {this.M.PaymentApplication.InvoiceItem}, OfType = m.SalesInvoiceItem.Class },
+                new RolePattern(m.PaymentApplication, m.PaymentApplication.AmountApplied) { Steps =  new IPropertyType[] {this.M.PaymentApplication.InvoiceItem}, OfType = m.SalesInvoiceItem },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

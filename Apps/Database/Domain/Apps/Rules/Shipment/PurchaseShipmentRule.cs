@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class PurchaseShipmentRule : Rule
     {
-        public PurchaseShipmentRule(M m) : base(m, new Guid("89A2FB27-6839-40D4-AFAB-79E25259B1C8")) =>
+        public PurchaseShipmentRule(MetaPopulation m) : base(m, new Guid("89A2FB27-6839-40D4-AFAB-79E25259B1C8")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.PurchaseShipment, m.PurchaseShipment.ShipFromParty),

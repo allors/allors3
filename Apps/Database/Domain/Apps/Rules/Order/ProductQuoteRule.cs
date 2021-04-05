@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class ProductQuoteRule : Rule
     {
-        public ProductQuoteRule(M m) : base(m, new Guid("6F421122-37A0-4F8E-A08A-996F16CC0218")) =>
+        public ProductQuoteRule(MetaPopulation m) : base(m, new Guid("6F421122-37A0-4F8E-A08A-996F16CC0218")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.ProductQuote, m.ProductQuote.Issuer),

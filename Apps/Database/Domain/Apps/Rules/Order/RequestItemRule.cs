@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
 
     public class RequestItemRule : Rule
     {
-        public RequestItemRule(M m) : base(m, new Guid("764C2996-50E5-4C53-A6DA-A527BCECF221")) =>
+        public RequestItemRule(MetaPopulation m) : base(m, new Guid("764C2996-50E5-4C53-A6DA-A527BCECF221")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.RequestItem, m.RequestItem.RequestItemState),

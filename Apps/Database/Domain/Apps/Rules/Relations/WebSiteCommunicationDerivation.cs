@@ -13,12 +13,12 @@ namespace Allors.Database.Domain
 
     public class WebSiteCommunicationsRule : Rule
     {
-        public WebSiteCommunicationsRule(M m) : base(m, new Guid("F960FDF6-8C3F-4D0F-9E41-48A30CB115F8")) =>
+        public WebSiteCommunicationsRule(MetaPopulation m) : base(m, new Guid("F960FDF6-8C3F-4D0F-9E41-48A30CB115F8")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.WebSiteCommunication, m.WebSiteCommunication.Subject),
                 new RolePattern(m.WebSiteCommunication, m.WebSiteCommunication.ToParty),
-                new RolePattern(m.Party, m.Party.PartyName) { Steps = new IPropertyType[] { m.Party.CommunicationEventsWhereToParty}, OfType = m.WebSiteCommunication.Class },
+                new RolePattern(m.Party, m.Party.PartyName) { Steps = new IPropertyType[] { m.Party.CommunicationEventsWhereToParty}, OfType = m.WebSiteCommunication },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

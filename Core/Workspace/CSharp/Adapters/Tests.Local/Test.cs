@@ -22,8 +22,7 @@ namespace Tests.Workspace.Local
                 new DefaultDatabaseContext(fixture.Engine),
                 new Configuration
                 {
-                    M = fixture.M,
-                    ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(User)),
+                    ObjectFactory = new ObjectFactory(fixture.M, typeof(User)),
                 });
 
             this.Database.Init();

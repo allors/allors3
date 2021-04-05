@@ -13,15 +13,15 @@ namespace Allors.Database.Domain
 
     public class SalesOrderCanInvoiceRule : Rule
     {
-        public SalesOrderCanInvoiceRule(M m) : base(m, new Guid("18b732ae-c47a-4bd5-97cf-a41a69ec5005")) =>
+        public SalesOrderCanInvoiceRule(MetaPopulation m) : base(m, new Guid("18b732ae-c47a-4bd5-97cf-a41a69ec5005")) =>
             this.Patterns = new Pattern[]
         {
             // Do not listen for changes in Store.BillingProcess.
 
             new RolePattern(m.SalesOrder, m.SalesOrder.SalesOrderState),
             new RolePattern(m.SalesOrderItem, m.SalesOrderItem.SalesOrderItemState) { Steps =  new IPropertyType[] { m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
-            new AssociationPattern(m.OrderItemBilling.OrderItem) { Steps =  new IPropertyType[] { m.SalesOrderItem.SalesOrderWhereSalesOrderItem }, OfType = m.SalesOrder.Class },
-            new RolePattern(m.OrderItemBilling, m.OrderItemBilling.Amount) { Steps =  new IPropertyType[] { m.OrderItemBilling.OrderItem, m.SalesOrderItem.SalesOrderWhereSalesOrderItem }, OfType = m.SalesOrder.Class },
+            new AssociationPattern(m.OrderItemBilling.OrderItem) { Steps =  new IPropertyType[] { m.SalesOrderItem.SalesOrderWhereSalesOrderItem }, OfType = m.SalesOrder },
+            new RolePattern(m.OrderItemBilling, m.OrderItemBilling.Amount) { Steps =  new IPropertyType[] { m.OrderItemBilling.OrderItem, m.SalesOrderItem.SalesOrderWhereSalesOrderItem }, OfType = m.SalesOrder },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

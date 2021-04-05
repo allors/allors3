@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class PurchaseInvoiceDeniedPermissionRule : Rule
     {
-        public PurchaseInvoiceDeniedPermissionRule(M m) : base(m, new Guid("f245b128-a597-4311-aad9-d68cb54bac7d")) =>
+        public PurchaseInvoiceDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("f245b128-a597-4311-aad9-d68cb54bac7d")) =>
             this.Patterns = new Pattern[]
         {
             new RolePattern(m.PurchaseInvoice, m.PurchaseInvoice.TransitionalDeniedPermissions),
@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
             {
                 @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
 
-                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Delete);
                 if (@this.IsDeletable)
                 {
                     @this.RemoveDeniedPermission(deletePermission);
@@ -40,7 +40,7 @@ namespace Allors.Database.Domain
                     @this.AddDeniedPermission(deletePermission);
                 }
 
-                var createSalesInvoicePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta.ObjectType, @this.Meta.CreateSalesInvoice);
+                var createSalesInvoicePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.CreateSalesInvoice);
                 if (!@this.ExistSalesInvoiceWherePurchaseInvoice
                     && (@this.BilledFrom as Organisation)?.IsInternalOrganisation == true
                     && (@this.PurchaseInvoiceState.IsPaid || @this.PurchaseInvoiceState.IsPartiallyPaid || @this.PurchaseInvoiceState.IsNotPaid))

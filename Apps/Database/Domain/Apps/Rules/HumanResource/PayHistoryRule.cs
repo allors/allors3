@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class PayHistoryRule : Rule
     {
-        public PayHistoryRule(M m) : base(m, new Guid("73e0bcd1-958e-451c-abf4-0b759d1ede4d")) =>
+        public PayHistoryRule(MetaPopulation m) : base(m, new Guid("73e0bcd1-958e-451c-abf4-0b759d1ede4d")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.PayHistory, m.PayHistory.SalaryStep),

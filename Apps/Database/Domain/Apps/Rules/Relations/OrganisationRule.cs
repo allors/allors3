@@ -13,15 +13,15 @@ namespace Allors.Database.Domain
 
     public class OrganisationRule : Rule
     {
-        public OrganisationRule(M m) : base(m, new Guid("0379B923-210D-46DD-9D18-9D7BF5ED6FEA")) =>
+        public OrganisationRule(MetaPopulation m) : base(m, new Guid("0379B923-210D-46DD-9D18-9D7BF5ED6FEA")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.Organisation, m.Organisation.Name),
                 new RolePattern(m.Organisation, m.Organisation.UniqueId),
                 new RolePattern(m.Organisation, m.Organisation.DerivationTrigger),
                 new AssociationPattern(m.Employment.Employer),
-                new RolePattern(m.Employment, m.Employment.FromDate) {Steps = new IPropertyType[]{ m.Employment.Employer}, OfType = m.Organisation.Class},
-                new RolePattern(m.Employment, m.Employment.ThroughDate) {Steps = new IPropertyType[]{ m.Employment.Employer}, OfType = m.Organisation.Class},
+                new RolePattern(m.Employment, m.Employment.FromDate) {Steps = new IPropertyType[]{ m.Employment.Employer}, OfType = m.Organisation},
+                new RolePattern(m.Employment, m.Employment.ThroughDate) {Steps = new IPropertyType[]{ m.Employment.Employer}, OfType = m.Organisation},
                 new AssociationPattern(m.CustomerRelationship.InternalOrganisation),
                 new RolePattern(m.CustomerRelationship, m.CustomerRelationship.FromDate) {Steps = new IPropertyType[]{ m.CustomerRelationship.InternalOrganisation} },
                 new RolePattern(m.CustomerRelationship, m.CustomerRelationship.ThroughDate) {Steps = new IPropertyType[]{ m.CustomerRelationship.InternalOrganisation} },
@@ -35,8 +35,8 @@ namespace Allors.Database.Domain
                 new RolePattern(m.SubContractorRelationship, m.SubContractorRelationship.FromDate) {Steps = new IPropertyType[]{ m.SubContractorRelationship.Contractor } },
                 new RolePattern(m.SubContractorRelationship, m.SubContractorRelationship.ThroughDate) {Steps = new IPropertyType[]{ m.SubContractorRelationship.Contractor } },
                 new RolePattern(m.Organisation, m.Organisation.PartyContactMechanisms),
-                new RolePattern(m.PartyContactMechanism, m.PartyContactMechanism.FromDate) {Steps = new IPropertyType[]{ m.PartyContactMechanism.PartyWherePartyContactMechanism }, OfType = m.Organisation.Class },
-                new RolePattern(m.PartyContactMechanism, m.PartyContactMechanism.ThroughDate) {Steps = new IPropertyType[]{ m.PartyContactMechanism.PartyWherePartyContactMechanism }, OfType = m.Organisation.Class },
+                new RolePattern(m.PartyContactMechanism, m.PartyContactMechanism.FromDate) {Steps = new IPropertyType[]{ m.PartyContactMechanism.PartyWherePartyContactMechanism }, OfType = m.Organisation },
+                new RolePattern(m.PartyContactMechanism, m.PartyContactMechanism.ThroughDate) {Steps = new IPropertyType[]{ m.PartyContactMechanism.PartyWherePartyContactMechanism }, OfType = m.Organisation },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

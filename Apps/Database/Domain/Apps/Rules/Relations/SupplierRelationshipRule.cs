@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class SupplierRelationshipRule : Rule
     {
-        public SupplierRelationshipRule(M m) : base(m, new Guid("D0B8E2E4-3A11-474A-99FC-B39E4DDAD6E5")) =>
+        public SupplierRelationshipRule(MetaPopulation m) : base(m, new Guid("D0B8E2E4-3A11-474A-99FC-B39E4DDAD6E5")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.SupplierRelationship, m.SupplierRelationship.Supplier),

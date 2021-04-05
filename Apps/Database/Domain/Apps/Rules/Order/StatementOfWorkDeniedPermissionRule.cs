@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class StatementOfWorkDeniedPermissionRule : Rule
     {
-        public StatementOfWorkDeniedPermissionRule(M m) : base(m, new Guid("374f5554-ea5f-4186-913b-0d24f06a02e5")) =>
+        public StatementOfWorkDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("374f5554-ea5f-4186-913b-0d24f06a02e5")) =>
             this.Patterns = new Pattern[]
         {
             new RolePattern(m.StatementOfWork, m.StatementOfWork.TransitionalDeniedPermissions),
@@ -29,7 +29,7 @@ namespace Allors.Database.Domain
             {
                 @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
 
-                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Delete);
 
                 if (@this.IsDeletable())
                 {

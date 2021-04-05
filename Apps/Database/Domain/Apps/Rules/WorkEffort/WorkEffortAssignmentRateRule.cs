@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class WorkEffortAssignmentRateRule : Rule
     {
-        public WorkEffortAssignmentRateRule(M m) : base(m, new Guid("a733672e-cbd8-4816-b628-0ab9bdd55703")) =>
+        public WorkEffortAssignmentRateRule(MetaPopulation m) : base(m, new Guid("a733672e-cbd8-4816-b628-0ab9bdd55703")) =>
             this.Patterns = new Pattern[]
         {
             new RolePattern(m.WorkEffortAssignmentRate, m.WorkEffortAssignmentRate.WorkEffort),

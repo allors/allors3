@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class PurchaseInvoicePriceRule : Rule
     {
-        public PurchaseInvoicePriceRule(M m) : base(m, new Guid("cde03f3a-9151-4bb7-a3a5-5bc238f3cc54")) =>
+        public PurchaseInvoicePriceRule(MetaPopulation m) : base(m, new Guid("cde03f3a-9151-4bb7-a3a5-5bc238f3cc54")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.PurchaseInvoice, m.PurchaseInvoice.PurchaseInvoiceState),
@@ -28,14 +28,14 @@ namespace Allors.Database.Domain
                 new RolePattern(m.PurchaseInvoiceItem, m.PurchaseInvoiceItem.AssignedUnitPrice) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem } },
                 new RolePattern(m.PurchaseInvoiceItem, m.PurchaseInvoiceItem.DiscountAdjustments) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem } },
                 new RolePattern(m.PurchaseInvoiceItem, m.PurchaseInvoiceItem.SurchargeAdjustments) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem } },
-                new RolePattern(m.DiscountAdjustment, m.DiscountAdjustment.Percentage) { Steps =  new IPropertyType[] {m.DiscountAdjustment.PriceableWhereDiscountAdjustment, m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem}, OfType = m.PurchaseInvoice.Class },
-                new RolePattern(m.DiscountAdjustment, m.DiscountAdjustment.Percentage) { Steps =  new IPropertyType[] {m.OrderAdjustment.InvoiceWhereOrderAdjustment}, OfType = m.PurchaseInvoice.Class },
-                new RolePattern(m.DiscountAdjustment, m.DiscountAdjustment.Amount) { Steps =  new IPropertyType[] {m.DiscountAdjustment.PriceableWhereDiscountAdjustment, m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem}, OfType = m.PurchaseInvoice.Class },
-                new RolePattern(m.DiscountAdjustment, m.DiscountAdjustment.Amount) { Steps =  new IPropertyType[] {m.OrderAdjustment.InvoiceWhereOrderAdjustment}, OfType = m.PurchaseInvoice.Class },
-                new RolePattern(m.SurchargeAdjustment, m.SurchargeAdjustment.Percentage) { Steps =  new IPropertyType[] {m.SurchargeAdjustment.PriceableWhereSurchargeAdjustment, m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem}, OfType = m.PurchaseInvoice.Class },
-                new RolePattern(m.SurchargeAdjustment, m.SurchargeAdjustment.Percentage) { Steps =  new IPropertyType[] {m.OrderAdjustment.InvoiceWhereOrderAdjustment}, OfType = m.PurchaseInvoice.Class },
-                new RolePattern(m.SurchargeAdjustment, m.SurchargeAdjustment.Amount) { Steps =  new IPropertyType[] {m.SurchargeAdjustment.PriceableWhereSurchargeAdjustment, m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem}, OfType = m.PurchaseInvoice.Class },
-                new RolePattern(m.SurchargeAdjustment, m.SurchargeAdjustment.Amount) { Steps =  new IPropertyType[] {m.OrderAdjustment.InvoiceWhereOrderAdjustment}, OfType = m.PurchaseInvoice.Class },
+                new RolePattern(m.DiscountAdjustment, m.DiscountAdjustment.Percentage) { Steps =  new IPropertyType[] {m.DiscountAdjustment.PriceableWhereDiscountAdjustment, m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem}, OfType = m.PurchaseInvoice },
+                new RolePattern(m.DiscountAdjustment, m.DiscountAdjustment.Percentage) { Steps =  new IPropertyType[] {m.OrderAdjustment.InvoiceWhereOrderAdjustment}, OfType = m.PurchaseInvoice },
+                new RolePattern(m.DiscountAdjustment, m.DiscountAdjustment.Amount) { Steps =  new IPropertyType[] {m.DiscountAdjustment.PriceableWhereDiscountAdjustment, m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem}, OfType = m.PurchaseInvoice },
+                new RolePattern(m.DiscountAdjustment, m.DiscountAdjustment.Amount) { Steps =  new IPropertyType[] {m.OrderAdjustment.InvoiceWhereOrderAdjustment}, OfType = m.PurchaseInvoice },
+                new RolePattern(m.SurchargeAdjustment, m.SurchargeAdjustment.Percentage) { Steps =  new IPropertyType[] {m.SurchargeAdjustment.PriceableWhereSurchargeAdjustment, m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem}, OfType = m.PurchaseInvoice },
+                new RolePattern(m.SurchargeAdjustment, m.SurchargeAdjustment.Percentage) { Steps =  new IPropertyType[] {m.OrderAdjustment.InvoiceWhereOrderAdjustment}, OfType = m.PurchaseInvoice },
+                new RolePattern(m.SurchargeAdjustment, m.SurchargeAdjustment.Amount) { Steps =  new IPropertyType[] {m.SurchargeAdjustment.PriceableWhereSurchargeAdjustment, m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem}, OfType = m.PurchaseInvoice },
+                new RolePattern(m.SurchargeAdjustment, m.SurchargeAdjustment.Amount) { Steps =  new IPropertyType[] {m.OrderAdjustment.InvoiceWhereOrderAdjustment}, OfType = m.PurchaseInvoice },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

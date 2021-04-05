@@ -1063,10 +1063,10 @@ namespace Allors.Database.Adapters
         {
             var m = transaction.Database.Context().M;
 
-            Assert.Equal(4, this.GetExtent(transaction, m.C1.ObjectType).Length);
-            Assert.Equal(4, this.GetExtent(transaction, m.C2.ObjectType).Length);
-            Assert.Equal(4, this.GetExtent(transaction, m.C3.ObjectType).Length);
-            Assert.Equal(4, this.GetExtent(transaction, m.C4.ObjectType).Length);
+            Assert.Equal(4, this.GetExtent(transaction, m.C1).Length);
+            Assert.Equal(4, this.GetExtent(transaction, m.C2).Length);
+            Assert.Equal(4, this.GetExtent(transaction, m.C3).Length);
+            Assert.Equal(4, this.GetExtent(transaction, m.C4).Length);
 
             var c1ACopy = C1.Instantiate(transaction, this.c1A.Strategy.ObjectId);
             var c1BCopy = C1.Instantiate(transaction, this.c1B.Strategy.ObjectId);

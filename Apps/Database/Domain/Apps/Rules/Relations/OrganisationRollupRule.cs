@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class OrganisationRollupRule : Rule
     {
-        public OrganisationRollupRule(M m) : base(m, new Guid("F34E1F40-B1DD-4F0D-A87C-78F44ACF8512")) =>
+        public OrganisationRollupRule(MetaPopulation m) : base(m, new Guid("F34E1F40-B1DD-4F0D-A87C-78F44ACF8512")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.OrganisationRollUp, m.OrganisationRollUp.Parent),

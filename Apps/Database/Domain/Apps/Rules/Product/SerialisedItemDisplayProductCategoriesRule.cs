@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
 
     public class SerialisedItemDisplayProductCategoriesRule : Rule
     {
-        public SerialisedItemDisplayProductCategoriesRule(M m) : base(m, new Guid("8b6c78f6-f165-4179-acf5-1c3ef96b36b1")) =>
+        public SerialisedItemDisplayProductCategoriesRule(MetaPopulation m) : base(m, new Guid("8b6c78f6-f165-4179-acf5-1c3ef96b36b1")) =>
             this.Patterns = new Pattern[]
             {
                 new AssociationPattern(m.ProductCategory.AllProducts) { Steps = new IPropertyType[]{ m.Part.SerialisedItems } },

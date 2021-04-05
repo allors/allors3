@@ -1232,8 +1232,8 @@ namespace Allors.Database.Domain.Tests
     {
         public PurchaseInvoiceDeniedPermissionDerivationTests(Fixture fixture) : base(fixture)
         {
-            this.deletePermission = new Permissions(this.Transaction).Get(this.M.PurchaseInvoice.ObjectType, this.M.PurchaseInvoice.Delete);
-            this.createSalesInvoicePermission = new Permissions(this.Transaction).Get(this.M.PurchaseInvoice.ObjectType, this.M.PurchaseInvoice.CreateSalesInvoice);
+            this.deletePermission = new Permissions(this.Transaction).Get(this.M.PurchaseInvoice, this.M.PurchaseInvoice.Delete);
+            this.createSalesInvoicePermission = new Permissions(this.Transaction).Get(this.M.PurchaseInvoice, this.M.PurchaseInvoice.CreateSalesInvoice);
         }
 
         public override Config Config => new Config { SetupSecurity = true };

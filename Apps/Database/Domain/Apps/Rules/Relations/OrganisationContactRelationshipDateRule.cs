@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class OrganisationContactRelationshipDateRule : Rule
     {
-        public OrganisationContactRelationshipDateRule(M m) : base(m, new Guid("A00B983C-6766-406F-B137-19430890547A")) =>
+        public OrganisationContactRelationshipDateRule(MetaPopulation m) : base(m, new Guid("A00B983C-6766-406F-B137-19430890547A")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.OrganisationContactRelationship, m.OrganisationContactRelationship.Contact),

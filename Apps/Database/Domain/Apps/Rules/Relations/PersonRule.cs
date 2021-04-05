@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class PersonRule : Rule
     {
-        public PersonRule(M m) : base(m, new Guid("BC3969F4-4050-47A1-B80C-8F23879E3B10")) =>
+        public PersonRule(MetaPopulation m) : base(m, new Guid("BC3969F4-4050-47A1-B80C-8F23879E3B10")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.Person, m.Person.DerivationTrigger),

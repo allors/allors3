@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class ProductQuoteAwaitingApprovalRule : Rule
     {
-        public ProductQuoteAwaitingApprovalRule(M m) : base(m, new Guid("bd798939-8109-4b81-af62-f37be1042091")) =>
+        public ProductQuoteAwaitingApprovalRule(MetaPopulation m) : base(m, new Guid("bd798939-8109-4b81-af62-f37be1042091")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.ProductQuote, m.ProductQuote.QuoteState),

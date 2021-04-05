@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class WorkEffortPurchaseOrderItemAssignmentUnitSellingRule : Rule
     {
-        public WorkEffortPurchaseOrderItemAssignmentUnitSellingRule(M m) : base(m, new Guid("077db1a1-e1ae-4af1-be2f-5bd2c25c1df1")) =>
+        public WorkEffortPurchaseOrderItemAssignmentUnitSellingRule(MetaPopulation m) : base(m, new Guid("077db1a1-e1ae-4af1-be2f-5bd2c25c1df1")) =>
             this.Patterns = new Pattern[]
         {
             new RolePattern(m.WorkEffortPurchaseOrderItemAssignment, m.WorkEffortPurchaseOrderItemAssignment.Assignment),

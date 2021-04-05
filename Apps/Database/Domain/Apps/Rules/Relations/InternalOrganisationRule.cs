@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class InternalOrganisationRule : Rule
     {
-        public InternalOrganisationRule(M m) : base(m, new Guid("258A6E3B-7940-4FCC-A33E-AE07C6FBFC32")) =>
+        public InternalOrganisationRule(MetaPopulation m) : base(m, new Guid("258A6E3B-7940-4FCC-A33E-AE07C6FBFC32")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.InternalOrganisation, m.InternalOrganisation.DefaultCollectionMethod),

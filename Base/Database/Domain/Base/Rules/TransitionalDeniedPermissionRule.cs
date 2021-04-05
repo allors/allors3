@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class TransitionalDeniedPermissionRule : Rule
     {
-        public TransitionalDeniedPermissionRule(M m) : base(m, new Guid("5affa463-9365-4916-89ef-cfc18d41b4fb")) =>
+        public TransitionalDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("5affa463-9365-4916-89ef-cfc18d41b4fb")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.Transitional, m.Transitional.ObjectStates) ,

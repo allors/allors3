@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class EmailCommunicationRule : Rule
     {
-        public EmailCommunicationRule(M m) : base(m, new Guid("21A5FF76-FB80-4CA3-B3C4-A79066BADA8E")) =>
+        public EmailCommunicationRule(MetaPopulation m) : base(m, new Guid("21A5FF76-FB80-4CA3-B3C4-A79066BADA8E")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.EmailCommunication, m.EmailCommunication.Subject),

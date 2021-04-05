@@ -13,14 +13,14 @@ namespace Allors.Database.Domain
 
     public class PurchaseOrderItemDeniedPermissionRule : Rule
     {
-        public PurchaseOrderItemDeniedPermissionRule(M m) : base(m, new Guid("68b556f7-00ae-49a7-8d51-49c52ae18b4d")) =>
+        public PurchaseOrderItemDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("68b556f7-00ae-49a7-8d51-49c52ae18b4d")) =>
             this.Patterns = new Pattern[]
         {
             new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.TransitionalDeniedPermissions),
-            new RolePattern(m.OrderItemBilling, m.OrderItemBilling.OrderItem) { Steps = new IPropertyType[] { m.OrderItemBilling.OrderItem}, OfType = m.PurchaseOrderItem.Class },
-            new RolePattern(m.OrderRequirementCommitment, m.OrderRequirementCommitment.OrderItem) { Steps = new IPropertyType[] { m.OrderRequirementCommitment.OrderItem}, OfType = m.PurchaseOrderItem.Class},
-            new AssociationPattern(m.WorkEffort.OrderItemFulfillment) { OfType = m.PurchaseOrderItem.Class },
-            new AssociationPattern(m.OrderShipment.OrderItem) { OfType = m.PurchaseOrderItem.Class },
+            new RolePattern(m.OrderItemBilling, m.OrderItemBilling.OrderItem) { Steps = new IPropertyType[] { m.OrderItemBilling.OrderItem}, OfType = m.PurchaseOrderItem },
+            new RolePattern(m.OrderRequirementCommitment, m.OrderRequirementCommitment.OrderItem) { Steps = new IPropertyType[] { m.OrderRequirementCommitment.OrderItem}, OfType = m.PurchaseOrderItem},
+            new AssociationPattern(m.WorkEffort.OrderItemFulfillment) { OfType = m.PurchaseOrderItem },
+            new AssociationPattern(m.OrderShipment.OrderItem) { OfType = m.PurchaseOrderItem },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -32,7 +32,7 @@ namespace Allors.Database.Domain
             {
                 @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
 
-                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Delete);
                 if (@this.IsDeletable)
                 {
                     @this.RemoveDeniedPermission(deletePermission);

@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class QuoteItemDeniedPermissionRule : Rule
     {
-        public QuoteItemDeniedPermissionRule(M m) : base(m, new Guid("04ca22ef-d3b0-40f7-9f60-4c4bf5dc10d7")) =>
+        public QuoteItemDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("04ca22ef-d3b0-40f7-9f60-4c4bf5dc10d7")) =>
             this.Patterns = new Pattern[]
         {
             new RolePattern(m.QuoteItem, m.QuoteItem.TransitionalDeniedPermissions),
@@ -31,7 +31,7 @@ namespace Allors.Database.Domain
             {
                 @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
 
-                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Delete);
                 if (@this.QuoteWhereQuoteItem.IsDeletable())
                 {
                     @this.RemoveDeniedPermission(deletePermission);

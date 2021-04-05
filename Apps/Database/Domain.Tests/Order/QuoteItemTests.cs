@@ -832,7 +832,7 @@ namespace Allors.Database.Domain.Tests
     [Trait("Category", "Security")]
     public class QuoteItemDeniedPermissonDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public QuoteItemDeniedPermissonDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.QuoteItem.ObjectType, this.M.QuoteItem.Delete);
+        public QuoteItemDeniedPermissonDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.QuoteItem, this.M.QuoteItem.Delete);
 
         public override Config Config => new Config { SetupSecurity = true };
 

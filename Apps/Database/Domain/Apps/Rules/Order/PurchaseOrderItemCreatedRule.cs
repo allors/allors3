@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
 
     public class PurchaseOrderItemCreatedRule : Rule
     {
-        public PurchaseOrderItemCreatedRule(M m) : base(m, new Guid("7559bffd-7685-4023-bef7-9f5ff96b6f41")) =>
+        public PurchaseOrderItemCreatedRule(MetaPopulation m) : base(m, new Guid("7559bffd-7685-4023-bef7-9f5ff96b6f41")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.PurchaseOrderItemState),

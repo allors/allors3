@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class SurchargeComponentRule : Rule
     {
-        public SurchargeComponentRule(M m) : base(m, new Guid("1C8B75D1-3288-4DB7-987E-7A64A3225891")) =>
+        public SurchargeComponentRule(MetaPopulation m) : base(m, new Guid("1C8B75D1-3288-4DB7-987E-7A64A3225891")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.SurchargeComponent, m.SurchargeComponent.Price),

@@ -65,52 +65,7 @@ namespace Allors.Database.Meta
         }
 
         public abstract bool ExistClass { get; }
-
-        public bool ExistDirectSupertypes
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedDirectSupertypes.Count > 0;
-            }
-        }
-
-        public bool ExistSupertypes
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedSupertypes.Count > 0;
-            }
-        }
-
-        public bool ExistAssociationTypes
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedAssociationTypes.Count > 0;
-            }
-        }
-
-        public bool ExistRoleTypes
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedAssociationTypes.Count > 0;
-            }
-        }
-
-        public bool ExistMethodTypes
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedMethodTypes.Count > 0;
-            }
-        }
-
+        
         /// <summary>
         /// Gets the exclusive concrete subclass.
         /// </summary>
@@ -163,6 +118,7 @@ namespace Allors.Database.Meta
         IEnumerable<IAssociationType> ICompositeBase.ExclusiveAssociationTypes => this.ExclusiveAssociationTypes;
         public IEnumerable<IAssociationTypeBase> ExclusiveAssociationTypes => this.AssociationTypes.Where(associationType => this.Equals(associationType.RoleType.ObjectType)).ToArray();
 
+        IEnumerable<IAssociationType> IComposite.ExclusiveDatabaseAssociationTypes => this.ExclusiveDatabaseAssociationTypes;
         public IEnumerable<IAssociationTypeBase> ExclusiveDatabaseAssociationTypes => this.ExclusiveAssociationTypes.Where(v => v.Origin == Origin.Database).ToArray();
 
         IEnumerable<IRoleType> ICompositeBase.RoleTypes => this.RoleTypes;
@@ -186,6 +142,8 @@ namespace Allors.Database.Meta
         IEnumerable<IRoleType> ICompositeBase.ExclusiveRoleTypes => this.ExclusiveRoleTypes;
         public IEnumerable<IRoleTypeBase> ExclusiveRoleTypes => this.RoleTypes.Where(roleType => this.Equals(roleType.AssociationType.ObjectType)).ToArray();
 
+
+        IEnumerable<IRoleType> IComposite.ExclusiveDatabaseRoleTypes => this.ExclusiveDatabaseRoleTypes;
         public IEnumerable<IRoleTypeBase> ExclusiveDatabaseRoleTypes => this.ExclusiveRoleTypes.Where(v => v.Origin == Origin.Database).ToArray();
 
         public IEnumerable<IRoleTypeBase> SortedExclusiveRoleTypes => this.ExclusiveRoleTypes.OrderBy(v => v.Name);
@@ -205,6 +163,7 @@ namespace Allors.Database.Meta
             }
         }
 
+        IEnumerable<IMethodType> IComposite.ExclusiveMethodTypes => this.ExclusiveMethodTypes;
         public IEnumerable<IMethodTypeBase> ExclusiveMethodTypes => this.MethodTypes.Where(methodType => this.Equals(methodType.ObjectType)).ToArray();
 
         public IEnumerable<IMethodTypeBase> InheritedMethodTypes => this.MethodTypes.Except(this.ExclusiveMethodTypes);

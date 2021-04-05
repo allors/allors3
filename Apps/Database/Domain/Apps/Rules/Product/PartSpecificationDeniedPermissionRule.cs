@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class PartSpecificationDeniedPermissionRule : Rule
     {
-        public PartSpecificationDeniedPermissionRule(M m) : base(m, new Guid("6764a4ea-6335-4252-8957-93b352df8d7b")) =>
+        public PartSpecificationDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("6764a4ea-6335-4252-8957-93b352df8d7b")) =>
             this.Patterns = new Pattern[]
         {
             new RolePattern(m.PartSpecification, m.PartSpecification.TransitionalDeniedPermissions),

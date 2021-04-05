@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class AgreementTermRule : Rule
     {
-        public AgreementTermRule(M m) : base(m, new Guid("2F28CF03-571A-4F7B-B71C-D8ACEBC734AC")) =>
+        public AgreementTermRule(MetaPopulation m) : base(m, new Guid("2F28CF03-571A-4F7B-B71C-D8ACEBC734AC")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.AgreementTerm, m.AgreementTerm.TermType),

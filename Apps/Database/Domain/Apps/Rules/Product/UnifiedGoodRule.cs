@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
 
     public class UnifiedGoodRule : Rule
     {
-        public UnifiedGoodRule(M m) : base(m, new Guid("B1C14106-C300-453D-989B-81E05767CFC4")) =>
+        public UnifiedGoodRule(MetaPopulation m) : base(m, new Guid("B1C14106-C300-453D-989B-81E05767CFC4")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.UnifiedGood, m.UnifiedGood.DerivationTrigger),
@@ -26,9 +26,9 @@ namespace Allors.Database.Domain
                 new RolePattern(m.UnifiedGood, m.UnifiedGood.ProductType),
                 new RolePattern(m.UnifiedGood, m.UnifiedGood.Brand),
                 new RolePattern(m.UnifiedGood, m.UnifiedGood.Model),
-                new AssociationPattern(m.ProductCategory.AllProducts) { OfType = m.UnifiedGood.Class },
-                new AssociationPattern(m.PriceComponent.Product) { OfType = m.UnifiedGood.Class },
-                new AssociationPattern(m.SupplierOffering.Part) { OfType = m.UnifiedGood.Class },
+                new AssociationPattern(m.ProductCategory.AllProducts) { OfType = m.UnifiedGood },
+                new AssociationPattern(m.PriceComponent.Product) { OfType = m.UnifiedGood },
+                new AssociationPattern(m.SupplierOffering.Part) { OfType = m.UnifiedGood },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

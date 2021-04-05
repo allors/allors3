@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class AccountingPeriodRule : Rule
     {
-        public AccountingPeriodRule(M m) : base(m, new Guid("3d328335-a10a-44b7-b001-ac0d98f89c64")) =>
+        public AccountingPeriodRule(MetaPopulation m) : base(m, new Guid("3d328335-a10a-44b7-b001-ac0d98f89c64")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.AccountingPeriod, m.AccountingPeriod.FromDate),

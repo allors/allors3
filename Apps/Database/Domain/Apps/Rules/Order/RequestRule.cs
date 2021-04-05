@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class RequestRule : Rule
     {
-        public RequestRule(M m) : base(m, new Guid("AF5D09BF-9ACF-4C29-9445-6D24BE2F04E6")) =>
+        public RequestRule(MetaPopulation m) : base(m, new Guid("AF5D09BF-9ACF-4C29-9445-6D24BE2F04E6")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.Request, m.Request.AssignedCurrency),

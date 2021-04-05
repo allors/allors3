@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class ShipmentReceiptRule : Rule
     {
-        public ShipmentReceiptRule(M m) : base(m, new Guid("BE525828-2AAC-4996-98A0-08293485D7DD")) =>
+        public ShipmentReceiptRule(MetaPopulation m) : base(m, new Guid("BE525828-2AAC-4996-98A0-08293485D7DD")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.ShipmentReceipt, m.ShipmentReceipt.ShipmentItem),

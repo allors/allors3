@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class QuotePriceRule : Rule
     {
-        public QuotePriceRule(M m) : base(m, new Guid("21c53b93-36a1-4d8c-a003-e34ade4feca6")) =>
+        public QuotePriceRule(MetaPopulation m) : base(m, new Guid("21c53b93-36a1-4d8c-a003-e34ade4feca6")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.Quote, m.Quote.QuoteState),

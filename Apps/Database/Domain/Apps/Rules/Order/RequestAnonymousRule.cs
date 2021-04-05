@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class RequestAnonymousRule : Rule
     {
-        public RequestAnonymousRule(M m) : base(m, new Guid("c4e0b3b7-681d-46ba-8382-4a78a2e361e1")) =>
+        public RequestAnonymousRule(MetaPopulation m) : base(m, new Guid("c4e0b3b7-681d-46ba-8382-4a78a2e361e1")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.Request, m.Request.Originator),

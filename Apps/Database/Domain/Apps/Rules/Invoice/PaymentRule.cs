@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class PaymentRule : Rule
     {
-        public PaymentRule(M m) : base(m, new Guid("4C7D0834-A7F2-4ED6-AC58-9B2DFD719ED9")) =>
+        public PaymentRule(MetaPopulation m) : base(m, new Guid("4C7D0834-A7F2-4ED6-AC58-9B2DFD719ED9")) =>
             this.Patterns = new[]
             {
                 new RolePattern(m.Payment, m.Payment.PaymentApplications),

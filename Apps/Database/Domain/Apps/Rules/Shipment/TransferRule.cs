@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class TransferRule : Rule
     {
-        public TransferRule(M m) : base(m, new Guid("E915AF63-F1CE-4DD7-8A92-BA519C140753")) =>
+        public TransferRule(MetaPopulation m) : base(m, new Guid("E915AF63-F1CE-4DD7-8A92-BA519C140753")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.Transfer, m.Transfer.ShipFromParty),

@@ -18,4 +18,8 @@
     <Compile Include="..\..\..\Core\Database\Meta\Core*\**\*.cs" />
     <Compile Include="..\..\..\Base\Database\Meta\Base*\**\*.cs" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="generated\" />
+  </ItemGroup>
 </Project>

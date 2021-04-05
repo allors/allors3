@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class SerialisedInventoryItemDeniedPermissionRule : Rule
     {
-        public SerialisedInventoryItemDeniedPermissionRule(M m) : base(m, new Guid("30ae162a-ac07-4a80-817c-1f5455976f93")) =>
+        public SerialisedInventoryItemDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("30ae162a-ac07-4a80-817c-1f5455976f93")) =>
             this.Patterns = new Pattern[]
         {
             new RolePattern(m.SerialisedInventoryItem, m.SerialisedInventoryItem.TransitionalDeniedPermissions),

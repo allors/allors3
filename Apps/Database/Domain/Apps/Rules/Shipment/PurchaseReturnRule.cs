@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class PurchaseReturnRule : Rule
     {
-        public PurchaseReturnRule(M m) : base(m, new Guid("B5AB3B14-310A-42EE-9EF5-963290D812CC")) =>
+        public PurchaseReturnRule(MetaPopulation m) : base(m, new Guid("B5AB3B14-310A-42EE-9EF5-963290D812CC")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.PurchaseReturn, m.PurchaseReturn.Store),

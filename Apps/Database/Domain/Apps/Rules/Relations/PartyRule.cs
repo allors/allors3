@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class PartyRule : Rule
     {
-        public PartyRule(M m) : base(m, new Guid("C57CD79C-F75E-4282-BFAD-B2F5F54FD4A4")) =>
+        public PartyRule(MetaPopulation m) : base(m, new Guid("C57CD79C-F75E-4282-BFAD-B2F5F54FD4A4")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.Party, m.Party.DerivationTrigger),

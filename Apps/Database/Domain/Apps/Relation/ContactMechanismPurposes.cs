@@ -77,7 +77,7 @@ namespace Allors.Database.Domain
 
         private UniquelyIdentifiableCache<ContactMechanismPurpose> Cache => this.cache ??= new UniquelyIdentifiableCache<ContactMechanismPurpose>(this.Transaction);
 
-        protected override void AppsPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.Locale.ObjectType);
+        protected override void AppsPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.Locale);
 
         protected override void AppsSetup(Setup setup)
         {

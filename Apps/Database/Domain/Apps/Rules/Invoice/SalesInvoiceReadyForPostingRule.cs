@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class SalesInvoiceReadyForPostingRule : Rule
     {
-        public SalesInvoiceReadyForPostingRule(M m) : base(m, new Guid("9685bfd9-ec69-49ab-9cc4-7e9a93a6f03c")) =>
+        public SalesInvoiceReadyForPostingRule(MetaPopulation m) : base(m, new Guid("9685bfd9-ec69-49ab-9cc4-7e9a93a6f03c")) =>
             this.Patterns = new Pattern[]
         {
             new RolePattern(m.SalesInvoice, m.SalesInvoice.BilledFrom),

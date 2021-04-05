@@ -13,14 +13,14 @@ namespace Allors.Database.Domain
 
     public class NonUnifiedPartDeniedPermissionRule : Rule
     {
-        public NonUnifiedPartDeniedPermissionRule(M m) : base(m, new Guid("ec943224-e151-4b7a-9ed9-6bb47f285932")) =>
+        public NonUnifiedPartDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("ec943224-e151-4b7a-9ed9-6bb47f285932")) =>
             this.Patterns = new Pattern[]
         {
-            new AssociationPattern(m.WorkEffortInventoryProduced.Part) { OfType = m.NonUnifiedPart.Class },
-            new AssociationPattern(m.WorkEffortPartStandard.Part) { OfType = m.NonUnifiedPart.Class },
-            new AssociationPattern(m.PartBillOfMaterial.Part) { OfType = m.NonUnifiedPart.Class },
-            new AssociationPattern(m.PartBillOfMaterial.ComponentPart) { OfType = m.NonUnifiedPart.Class },
-            new AssociationPattern(m.InventoryItemTransaction.Part) { OfType = m.NonUnifiedPart.Class },
+            new AssociationPattern(m.WorkEffortInventoryProduced.Part) { OfType = m.NonUnifiedPart },
+            new AssociationPattern(m.WorkEffortPartStandard.Part) { OfType = m.NonUnifiedPart },
+            new AssociationPattern(m.PartBillOfMaterial.Part) { OfType = m.NonUnifiedPart },
+            new AssociationPattern(m.PartBillOfMaterial.ComponentPart) { OfType = m.NonUnifiedPart },
+            new AssociationPattern(m.InventoryItemTransaction.Part) { OfType = m.NonUnifiedPart },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<NonUnifiedPart>())
             {
-                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Delete);
 
                 if (@this.IsDeletable)
                 {

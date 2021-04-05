@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class CommunicationEventDeniedPermissionRule : Rule
     {
-        public CommunicationEventDeniedPermissionRule(M m) : base(m, new Guid("a2565a9c-cb13-43ba-bcf2-9db538e456ae")) =>
+        public CommunicationEventDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("a2565a9c-cb13-43ba-bcf2-9db538e456ae")) =>
             this.Patterns = new Pattern[]
         {
             new RolePattern(m.CommunicationEvent, m.CommunicationEvent.TransitionalDeniedPermissions),

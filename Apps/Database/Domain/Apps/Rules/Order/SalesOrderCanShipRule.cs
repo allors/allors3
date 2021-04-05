@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class SalesOrderCanShipRule : Rule
     {
-        public SalesOrderCanShipRule(M m) : base(m, new Guid("3f3129c8-2a62-4d2f-8652-cf2d503539a5")) =>
+        public SalesOrderCanShipRule(MetaPopulation m) : base(m, new Guid("3f3129c8-2a62-4d2f-8652-cf2d503539a5")) =>
             this.Patterns = new Pattern[]
         {
             // Do not listen for changes in Store.BillingProcess.

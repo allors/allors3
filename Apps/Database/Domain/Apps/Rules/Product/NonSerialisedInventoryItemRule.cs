@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class NonSerialisedInventoryItemRule : Rule
     {
-        public NonSerialisedInventoryItemRule(M m) : base(m, new Guid("DDB383AD-3B4C-43BE-8F30-7E3A8D16F6BE")) =>
+        public NonSerialisedInventoryItemRule(MetaPopulation m) : base(m, new Guid("DDB383AD-3B4C-43BE-8F30-7E3A8D16F6BE")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.NonSerialisedInventoryItem, m.NonSerialisedInventoryItem.Part),

@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class WorkTaskDeniedPermissionRule : Rule
     {
-        public WorkTaskDeniedPermissionRule(M m) : base(m, new Guid("bbff43c6-24ad-4038-9bbd-d666c41751f6")) =>
+        public WorkTaskDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("bbff43c6-24ad-4038-9bbd-d666c41751f6")) =>
             this.Patterns = new Pattern[]
         {
             new RolePattern(m.WorkTask, m.WorkTask.TransitionalDeniedPermissions),

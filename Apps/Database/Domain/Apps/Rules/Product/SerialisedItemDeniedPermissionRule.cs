@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class SerialisedItemDeniedPermissionRule : Rule
     {
-        public SerialisedItemDeniedPermissionRule(M m) : base(m, new Guid("14466d15-63cb-4ef2-9725-f93a361ec24c")) =>
+        public SerialisedItemDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("14466d15-63cb-4ef2-9725-f93a361ec24c")) =>
             this.Patterns = new Pattern[]
         {
             new AssociationPattern(m.InventoryItemTransaction.SerialisedItem),
@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<SerialisedItem>())
             {
-                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Delete);
 
                 if (@this.IsDeletable)
                 {

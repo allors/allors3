@@ -31,7 +31,7 @@ namespace Allors.Database.Configuration
                 {
                     var m = transaction.Database.Context().M;
 
-                    var filter = new Extent(m.PersistentPreparedExtent.Class)
+                    var filter = new Extent(m.PersistentPreparedExtent)
                     {
                         Predicate = new Equals(m.PersistentPreparedExtent.UniqueId) { Value = id },
                     };

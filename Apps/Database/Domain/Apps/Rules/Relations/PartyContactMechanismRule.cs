@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class PartyContactMechanismRule : Rule
     {
-        public PartyContactMechanismRule(M m) : base(m, new Guid("7C4E6217-8D71-4544-B8E4-8B2C51F6A5C1")) =>
+        public PartyContactMechanismRule(MetaPopulation m) : base(m, new Guid("7C4E6217-8D71-4544-B8E4-8B2C51F6A5C1")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.PartyContactMechanism, m.PartyContactMechanism.ContactPurposes),

@@ -13,13 +13,13 @@ namespace Allors.Database.Domain
 
     public class ProductQuoteDeniedPermissionRule : Rule
     {
-        public ProductQuoteDeniedPermissionRule(M m) : base(m, new Guid("5629cded-4afb-4ca7-9c78-24c998b8698c")) =>
+        public ProductQuoteDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("5629cded-4afb-4ca7-9c78-24c998b8698c")) =>
             this.Patterns = new Pattern[]
         {
             new RolePattern(m.ProductQuote, m.ProductQuote.TransitionalDeniedPermissions),
             new RolePattern(m.ProductQuote, m.ProductQuote.ValidQuoteItems),
             new RolePattern(m.ProductQuote, m.ProductQuote.Request),
-            new AssociationPattern(m.SalesOrder.Quote) { OfType = m.ProductQuote.Class},
+            new AssociationPattern(m.SalesOrder.Quote) { OfType = m.ProductQuote},
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -31,7 +31,7 @@ namespace Allors.Database.Domain
             {
                 @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
 
-                var SetReadyPermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta.ObjectType, @this.Meta.SetReadyForProcessing);
+                var SetReadyPermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.SetReadyForProcessing);
 
                 if (@this.QuoteState.IsCreated)
                 {
@@ -45,7 +45,7 @@ namespace Allors.Database.Domain
                     }
                 }
 
-                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Delete);
                 if (@this.IsDeletable())
                 {
                     @this.RemoveDeniedPermission(deletePermission);

@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class CoarseRule : Rule
     {
-        public CoarseRule(M m) : base(m, new Guid("2D54CAE9-D3A0-4D66-BBF5-BF988B7983D6")) =>
+        public CoarseRule(MetaPopulation m) : base(m, new Guid("2D54CAE9-D3A0-4D66-BBF5-BF988B7983D6")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.Scoreboard.Games) { Steps = new IPropertyType[]{m.Scoreboard.Games} },

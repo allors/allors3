@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class QuoteCreatedRule : Rule
     {
-        public QuoteCreatedRule(M m) : base(m, new Guid("b66c0721-4aa5-4ca7-91a0-534f6cfc6718")) =>
+        public QuoteCreatedRule(MetaPopulation m) : base(m, new Guid("b66c0721-4aa5-4ca7-91a0-534f6cfc6718")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.Quote, m.Quote.QuoteState),

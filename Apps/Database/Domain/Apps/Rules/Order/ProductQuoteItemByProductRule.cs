@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class ProductQuoteItemByProductRule : Rule
     {
-        public ProductQuoteItemByProductRule(M m) : base(m, new Guid("fb8b7202-76c5-48f0-972f-e77a56b9a0ab")) =>
+        public ProductQuoteItemByProductRule(MetaPopulation m) : base(m, new Guid("fb8b7202-76c5-48f0-972f-e77a56b9a0ab")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.QuoteItemVersion, m.QuoteItemVersion.Product) { Steps = new IPropertyType[] {m.QuoteItemVersion.QuoteItemWhereCurrentVersion, m.QuoteItem.QuoteWhereQuoteItem, m.ProductQuote.ProductQuoteItemsByProduct } },

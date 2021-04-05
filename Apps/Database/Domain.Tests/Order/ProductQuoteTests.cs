@@ -229,8 +229,8 @@ namespace Allors.Database.Domain.Tests
     {
         public ProductQuoteDeniedPermissionDerivationTests(Fixture fixture) : base(fixture)
         {
-            this.deletePermission = new Permissions(this.Transaction).Get(this.M.ProductQuote.ObjectType, this.M.ProductQuote.Delete);
-            this.setReadyPermission = new Permissions(this.Transaction).Get(this.M.ProductQuote.ObjectType, this.M.ProductQuote.SetReadyForProcessing);
+            this.deletePermission = new Permissions(this.Transaction).Get(this.M.ProductQuote, this.M.ProductQuote.Delete);
+            this.setReadyPermission = new Permissions(this.Transaction).Get(this.M.ProductQuote, this.M.ProductQuote.SetReadyForProcessing);
         }
 
         public override Config Config => new Config { SetupSecurity = true };

@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
 
     public class RepeatingSalesInvoiceRule : Rule
     {
-        public RepeatingSalesInvoiceRule(M m) : base(m, new Guid("BEC1F9FD-71CF-4B74-BF40-CDA30AB4C3FB")) =>
+        public RepeatingSalesInvoiceRule(MetaPopulation m) : base(m, new Guid("BEC1F9FD-71CF-4B74-BF40-CDA30AB4C3FB")) =>
             this.Patterns = new[]
             {
                 new RolePattern(m.RepeatingSalesInvoice, m.RepeatingSalesInvoice.Frequency),

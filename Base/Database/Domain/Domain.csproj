@@ -32,4 +32,8 @@
     <EmbeddedResource Include="Resources\madeliefje.jpg" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="generated\" />
+  </ItemGroup>
+
 </Project>

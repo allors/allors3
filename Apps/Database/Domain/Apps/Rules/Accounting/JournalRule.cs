@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
 
     public class JournalRule : Rule
     {
-        public JournalRule(M m) : base(m, new Guid("c52af46b-1cbd-47cd-a00f-76aa5c232db3")) =>
+        public JournalRule(MetaPopulation m) : base(m, new Guid("c52af46b-1cbd-47cd-a00f-76aa5c232db3")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.Journal, m.Journal.ContraAccount),

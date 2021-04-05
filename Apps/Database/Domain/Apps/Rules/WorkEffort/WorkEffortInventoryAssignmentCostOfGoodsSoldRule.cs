@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class WorkEffortInventoryAssignmentCostOfGoodsSoldRule : Rule
     {
-        public WorkEffortInventoryAssignmentCostOfGoodsSoldRule(M m) : base(m, new Guid("a6ce76fb-e8dd-4c87-b265-0ff8d0b2b049")) =>
+        public WorkEffortInventoryAssignmentCostOfGoodsSoldRule(MetaPopulation m) : base(m, new Guid("a6ce76fb-e8dd-4c87-b265-0ff8d0b2b049")) =>
             this.Patterns = new Pattern[]
         {
             new RolePattern(m.WorkEffortInventoryAssignment, m.WorkEffortInventoryAssignment.InventoryItem),

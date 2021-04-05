@@ -22,13 +22,13 @@ namespace Allors.Database.Domain
 
         protected override void AppsPrepare(Setup setup)
         {
-            setup.AddDependency(this.Meta.ObjectType, this.M.Role);
-            setup.AddDependency(this.Meta.ObjectType, this.M.PersonRole);
-            setup.AddDependency(this.Meta.ObjectType, this.M.InternalOrganisation);
-            setup.AddDependency(this.ObjectType, this.M.Locale.ObjectType);
-            setup.AddDependency(this.ObjectType, this.M.ContactMechanismPurpose.ObjectType);
-            setup.AddDependency(this.ObjectType, this.M.InternalOrganisation.ObjectType);
-            setup.AddDependency(this.ObjectType, this.M.PersonalTitle.ObjectType);
+            setup.AddDependency(this.Meta, this.M.Role);
+            setup.AddDependency(this.Meta, this.M.PersonRole);
+            setup.AddDependency(this.Meta, this.M.InternalOrganisation);
+            setup.AddDependency(this.ObjectType, this.M.Locale);
+            setup.AddDependency(this.ObjectType, this.M.ContactMechanismPurpose);
+            setup.AddDependency(this.ObjectType, this.M.InternalOrganisation);
+            setup.AddDependency(this.ObjectType, this.M.PersonalTitle);
         }
 
         protected override void AppsSetup(Setup setup)

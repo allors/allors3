@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class SupplierOfferingRule : Rule
     {
-        public SupplierOfferingRule(M m) : base(m, new Guid("0927C224-0233-4211-BB4F-5F62506D9635")) =>
+        public SupplierOfferingRule(MetaPopulation m) : base(m, new Guid("0927C224-0233-4211-BB4F-5F62506D9635")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.SupplierOffering, m.SupplierOffering.FromDate),

@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class PurchaseInvoiceStateRule : Rule
     {
-        public PurchaseInvoiceStateRule(M m) : base(m, new Guid("efdca6b3-b895-4a60-90a2-32f54120126b")) =>
+        public PurchaseInvoiceStateRule(MetaPopulation m) : base(m, new Guid("efdca6b3-b895-4a60-90a2-32f54120126b")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.PurchaseInvoice, m.PurchaseInvoice.AmountPaid),

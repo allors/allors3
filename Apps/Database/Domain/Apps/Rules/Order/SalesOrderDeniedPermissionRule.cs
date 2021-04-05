@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class SalesOrderDeniedPermissionRule : Rule
     {
-        public SalesOrderDeniedPermissionRule(M m) : base(m, new Guid("6e383218-1d0f-41bb-83ed-7f6f3bf551ca")) =>
+        public SalesOrderDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("6e383218-1d0f-41bb-83ed-7f6f3bf551ca")) =>
             this.Patterns = new Pattern[]
         {
             new RolePattern(m.SalesOrder, m.SalesOrder.TransitionalDeniedPermissions),
@@ -23,10 +23,10 @@ namespace Allors.Database.Domain
             new RolePattern(m.SalesOrder, m.SalesOrder.SalesOrderInvoiceState),
             new RolePattern(m.SalesOrder, m.SalesOrder.SalesOrderShipmentState),
             new RolePattern(m.SalesOrderItem, m.SalesOrderItem.SalesOrderItemState) { Steps = new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
-            new AssociationPattern(m.OrderItemBilling.OrderItem) { Steps =  new IPropertyType[] { m.SalesOrderItem.SalesOrderWhereSalesOrderItem }, OfType = m.SalesOrder.Class },
-            new AssociationPattern(m.OrderShipment.OrderItem) { Steps =  new IPropertyType[] { m.SalesOrderItem.SalesOrderWhereSalesOrderItem }, OfType = m.SalesOrder.Class },
-            new AssociationPattern(m.OrderRequirementCommitment.OrderItem) { Steps =  new IPropertyType[] { m.SalesOrderItem.SalesOrderWhereSalesOrderItem }, OfType = m.SalesOrder.Class },
-            new AssociationPattern(m.WorkEffort.OrderItemFulfillment) { Steps =  new IPropertyType[] { m.SalesOrderItem.SalesOrderWhereSalesOrderItem }, OfType = m.SalesOrder.Class },
+            new AssociationPattern(m.OrderItemBilling.OrderItem) { Steps =  new IPropertyType[] { m.SalesOrderItem.SalesOrderWhereSalesOrderItem }, OfType = m.SalesOrder },
+            new AssociationPattern(m.OrderShipment.OrderItem) { Steps =  new IPropertyType[] { m.SalesOrderItem.SalesOrderWhereSalesOrderItem }, OfType = m.SalesOrder },
+            new AssociationPattern(m.OrderRequirementCommitment.OrderItem) { Steps =  new IPropertyType[] { m.SalesOrderItem.SalesOrderWhereSalesOrderItem }, OfType = m.SalesOrder },
+            new AssociationPattern(m.WorkEffort.OrderItemFulfillment) { Steps =  new IPropertyType[] { m.SalesOrderItem.SalesOrderWhereSalesOrderItem }, OfType = m.SalesOrder },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -40,35 +40,35 @@ namespace Allors.Database.Domain
 
                 if (@this.CanShip)
                 {
-                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta.Class, @this.Meta.Ship));
+                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Ship));
                 }
                 else
                 {
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta.Class, @this.Meta.Ship));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Ship));
                 }
 
                 if (@this.CanInvoice)
                 {
-                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta.Class, @this.Meta.Invoice));
+                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Invoice));
                 }
                 else
                 {
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta.Class, @this.Meta.Invoice));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Invoice));
                 }
 
                 if (!@this.SalesOrderInvoiceState.IsNotInvoiced || !@this.SalesOrderShipmentState.IsNotShipped)
                 {
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta.Class, @this.Meta.SetReadyForPosting));
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta.Class, @this.Meta.Post));
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta.Class, @this.Meta.Reopen));
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta.Class, @this.Meta.Approve));
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta.Class, @this.Meta.Hold));
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta.Class, @this.Meta.Continue));
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta.Class, @this.Meta.Accept));
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta.Class, @this.Meta.Revise));
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta.Class, @this.Meta.Complete));
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta.Class, @this.Meta.Reject));
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta.Class, @this.Meta.Cancel));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.SetReadyForPosting));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Post));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Reopen));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Approve));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Hold));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Continue));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Accept));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Revise));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Complete));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Reject));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Cancel));
 
                     var deniablePermissionByOperandTypeId = new Dictionary<IOperandType, Permission>();
 
@@ -86,7 +86,7 @@ namespace Allors.Database.Domain
                     }
                 }
 
-                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Delete);
                 if (@this.IsDeletable)
                 {
                     @this.RemoveDeniedPermission(deletePermission);

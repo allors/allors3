@@ -11,11 +11,11 @@ namespace Allors.Database
 
     public class DatabaseContext : IDatabaseContext
     {
-        public void OnInit(IDatabase database) => this.M = new M((MetaPopulation)database.ObjectFactory.MetaPopulation);
+        public void OnInit(IDatabase database) => this.M = (MetaPopulation)database.ObjectFactory.MetaPopulation;
 
         public ITransactionLifecycle CreateTransactionInstance() => new TransactionContext();
 
-        public M M { get; set; }
+        public MetaPopulation M { get; set; }
         public void Dispose() { }
     }
 }

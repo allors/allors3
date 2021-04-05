@@ -14,18 +14,15 @@ namespace Allors.Database.Domain.Tests
 
         public Fixture()
         {
-            this.MetaPopulation = MetaBuilder.Build();
-            this.M = new M(this.MetaPopulation);
+            this.M = MetaBuilder.Build();
             var rules = Rules.Create(this.M);
             this.Engine = new Engine(rules);
         }
 
-        public MetaPopulation MetaPopulation { get; set; }
-
-        public M M { get; set; }
+        public MetaPopulation M { get; set; }
 
         public Engine Engine { get; set; }
 
-        public void Dispose() => this.MetaPopulation = null;
+        public void Dispose() => this.M = null;
     }
 }

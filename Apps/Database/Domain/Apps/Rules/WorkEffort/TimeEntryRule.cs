@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
 
     public class TimeEntryRule : Rule
     {
-        public TimeEntryRule(M m) : base(m, new Guid("fcacc37e-581a-4c6f-bb77-d06a2987ebcf")) =>
+        public TimeEntryRule(MetaPopulation m) : base(m, new Guid("fcacc37e-581a-4c6f-bb77-d06a2987ebcf")) =>
             this.Patterns = new Pattern[]
         {
             new RolePattern(m.TimeEntry, m.TimeEntry.WorkEffort),
@@ -28,31 +28,31 @@ namespace Allors.Database.Domain
             new RolePattern(m.TimeEntry, m.TimeEntry.ThroughDate),
             new RolePattern(m.TimeEntry, m.TimeEntry.AssignedAmountOfTime),
             new RolePattern(m.TimeEntry, m.TimeEntry.BillableAmountOfTime),
-            new RolePattern(m.WorkEffort, m.WorkEffort.Customer) { Steps = new IPropertyType[] { m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
-            new RolePattern(m.WorkEffort, m.WorkEffort.ExecutedBy) { Steps = new IPropertyType[] { m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
+            new RolePattern(m.WorkEffort, m.WorkEffort.Customer) { Steps = new IPropertyType[] { m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry },
+            new RolePattern(m.WorkEffort, m.WorkEffort.ExecutedBy) { Steps = new IPropertyType[] { m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry },
             new AssociationPattern(m.TimeSheet.TimeEntries),
-            new AssociationPattern(m.WorkEffortAssignmentRate.WorkEffort) { Steps = new IPropertyType[] { m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
-            new RolePattern(m.WorkEffortAssignmentRate, m.WorkEffortAssignmentRate.RateType) { Steps = new IPropertyType[] { m.WorkEffortAssignmentRate.WorkEffort, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
-            new RolePattern(m.WorkEffortAssignmentRate, m.WorkEffortAssignmentRate.Frequency) { Steps = new IPropertyType[] { m.WorkEffortAssignmentRate.WorkEffort, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
-            new RolePattern(m.WorkEffortAssignmentRate, m.WorkEffortAssignmentRate.Rate) { Steps = new IPropertyType[] { m.WorkEffortAssignmentRate.WorkEffort, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
-            new RolePattern(m.Party, m.Party.PartyRates) { Steps = new IPropertyType[] { m.Party.WorkEffortsWhereCustomer, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
-            new RolePattern(m.PartyRate, m.PartyRate.RateType) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Party.WorkEffortsWhereCustomer, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
-            new RolePattern(m.PartyRate, m.PartyRate.Frequency) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Party.WorkEffortsWhereCustomer, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
-            new RolePattern(m.PartyRate, m.PartyRate.Rate) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Party.WorkEffortsWhereCustomer, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
-            new RolePattern(m.PartyRate, m.PartyRate.FromDate) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Party.WorkEffortsWhereCustomer, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
-            new RolePattern(m.PartyRate, m.PartyRate.ThroughDate) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Party.WorkEffortsWhereCustomer, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
-            new RolePattern(m.Party, m.Party.PartyRates) { Steps = new IPropertyType[] { m.Person.TimeEntriesWhereWorker }, OfType = m.TimeEntry.Class },
+            new AssociationPattern(m.WorkEffortAssignmentRate.WorkEffort) { Steps = new IPropertyType[] { m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry },
+            new RolePattern(m.WorkEffortAssignmentRate, m.WorkEffortAssignmentRate.RateType) { Steps = new IPropertyType[] { m.WorkEffortAssignmentRate.WorkEffort, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry },
+            new RolePattern(m.WorkEffortAssignmentRate, m.WorkEffortAssignmentRate.Frequency) { Steps = new IPropertyType[] { m.WorkEffortAssignmentRate.WorkEffort, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry },
+            new RolePattern(m.WorkEffortAssignmentRate, m.WorkEffortAssignmentRate.Rate) { Steps = new IPropertyType[] { m.WorkEffortAssignmentRate.WorkEffort, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry },
+            new RolePattern(m.Party, m.Party.PartyRates) { Steps = new IPropertyType[] { m.Party.WorkEffortsWhereCustomer, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry },
+            new RolePattern(m.PartyRate, m.PartyRate.RateType) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Party.WorkEffortsWhereCustomer, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry },
+            new RolePattern(m.PartyRate, m.PartyRate.Frequency) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Party.WorkEffortsWhereCustomer, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry },
+            new RolePattern(m.PartyRate, m.PartyRate.Rate) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Party.WorkEffortsWhereCustomer, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry },
+            new RolePattern(m.PartyRate, m.PartyRate.FromDate) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Party.WorkEffortsWhereCustomer, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry },
+            new RolePattern(m.PartyRate, m.PartyRate.ThroughDate) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Party.WorkEffortsWhereCustomer, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry },
+            new RolePattern(m.Party, m.Party.PartyRates) { Steps = new IPropertyType[] { m.Person.TimeEntriesWhereWorker }, OfType = m.TimeEntry },
             new RolePattern(m.PartyRate, m.PartyRate.RateType) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Person.TimeEntriesWhereWorker } },
             new RolePattern(m.PartyRate, m.PartyRate.Frequency) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Person.TimeEntriesWhereWorker } },
             new RolePattern(m.PartyRate, m.PartyRate.Rate) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Person.TimeEntriesWhereWorker } },
             new RolePattern(m.PartyRate, m.PartyRate.FromDate) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Person.TimeEntriesWhereWorker } },
             new RolePattern(m.PartyRate, m.PartyRate.ThroughDate) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Person.TimeEntriesWhereWorker } },
-            new RolePattern(m.Party, m.Party.PartyRates) { Steps = new IPropertyType[] { m.Organisation.WorkEffortsWhereExecutedBy, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
-            new RolePattern(m.PartyRate, m.PartyRate.RateType) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Organisation.WorkEffortsWhereExecutedBy, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
-            new RolePattern(m.PartyRate, m.PartyRate.Frequency) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Organisation.WorkEffortsWhereExecutedBy, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
-            new RolePattern(m.PartyRate, m.PartyRate.Rate) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Organisation.WorkEffortsWhereExecutedBy, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
-            new RolePattern(m.PartyRate, m.PartyRate.FromDate) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Organisation.WorkEffortsWhereExecutedBy, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
-            new RolePattern(m.PartyRate, m.PartyRate.ThroughDate) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Organisation.WorkEffortsWhereExecutedBy, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
+            new RolePattern(m.Party, m.Party.PartyRates) { Steps = new IPropertyType[] { m.Organisation.WorkEffortsWhereExecutedBy, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry },
+            new RolePattern(m.PartyRate, m.PartyRate.RateType) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Organisation.WorkEffortsWhereExecutedBy, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry },
+            new RolePattern(m.PartyRate, m.PartyRate.Frequency) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Organisation.WorkEffortsWhereExecutedBy, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry },
+            new RolePattern(m.PartyRate, m.PartyRate.Rate) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Organisation.WorkEffortsWhereExecutedBy, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry },
+            new RolePattern(m.PartyRate, m.PartyRate.FromDate) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Organisation.WorkEffortsWhereExecutedBy, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry },
+            new RolePattern(m.PartyRate, m.PartyRate.ThroughDate) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Organisation.WorkEffortsWhereExecutedBy, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -7,6 +7,6 @@ namespace Allors.Database.Meta
 {
     public partial class MetaBuilder
     {
-        private void BuildCustom(MetaPopulation meta, Domains domains, ObjectTypes objectTypes, RelationTypes relationTypes, MethodTypes methodTypes) => relationTypes.OrganisationName.RoleType.IsRequired = true;
+        private void BuildCustom(MetaPopulation meta, Domains domains, RelationTypes relationTypes, MethodTypes methodTypes) => relationTypes.OrganisationName.RoleType.IsRequired = true;
     }
 }

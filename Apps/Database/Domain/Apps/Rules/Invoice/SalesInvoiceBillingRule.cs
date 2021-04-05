@@ -14,13 +14,13 @@ namespace Allors.Database.Domain
 
     public class SalesInvoiceBillingRule : Rule
     {
-        public SalesInvoiceBillingRule(M m) : base(m, new Guid("466ee750-47ad-4db3-bbb8-fce5c7a4b342")) =>
+        public SalesInvoiceBillingRule(MetaPopulation m) : base(m, new Guid("466ee750-47ad-4db3-bbb8-fce5c7a4b342")) =>
             this.Patterns = new Pattern[]
         {
-            new AssociationPattern(m.OrderItemBilling.InvoiceItem) { Steps =  new IPropertyType[] { m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem }, OfType = m.SalesInvoice.Class },
-            new AssociationPattern(m.WorkEffortBilling.InvoiceItem) { Steps =  new IPropertyType[] { m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem }, OfType = m.SalesInvoice.Class },
-            new AssociationPattern(m.ShipmentItemBilling.InvoiceItem) { Steps =  new IPropertyType[] { m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem }, OfType = m.SalesInvoice.Class },
-            new AssociationPattern(m.TimeEntryBilling.InvoiceItem) { Steps =  new IPropertyType[] { m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem }, OfType = m.SalesInvoice.Class },
+            new AssociationPattern(m.OrderItemBilling.InvoiceItem) { Steps =  new IPropertyType[] { m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem }, OfType = m.SalesInvoice },
+            new AssociationPattern(m.WorkEffortBilling.InvoiceItem) { Steps =  new IPropertyType[] { m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem }, OfType = m.SalesInvoice },
+            new AssociationPattern(m.ShipmentItemBilling.InvoiceItem) { Steps =  new IPropertyType[] { m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem }, OfType = m.SalesInvoice },
+            new AssociationPattern(m.TimeEntryBilling.InvoiceItem) { Steps =  new IPropertyType[] { m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem }, OfType = m.SalesInvoice },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

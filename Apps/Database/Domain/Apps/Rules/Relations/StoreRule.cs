@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class StoreRule : Rule
     {
-        public StoreRule(M m) : base(m, new Guid("cf3acae4-a895-4a0b-b154-18cfa30691bb")) =>
+        public StoreRule(MetaPopulation m) : base(m, new Guid("cf3acae4-a895-4a0b-b154-18cfa30691bb")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.Store, m.Store.InternalOrganisation),

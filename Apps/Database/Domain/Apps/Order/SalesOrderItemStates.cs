@@ -44,7 +44,7 @@ namespace Allors.Database.Domain
 
         private UniquelyIdentifiableCache<SalesOrderItemState> Cache => this.cache ??= new UniquelyIdentifiableCache<SalesOrderItemState>(this.Transaction);
 
-        protected override void AppsPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.InventoryTransactionReason.ObjectType);
+        protected override void AppsPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.InventoryTransactionReason);
 
         protected override void AppsSetup(Setup setup)
         {

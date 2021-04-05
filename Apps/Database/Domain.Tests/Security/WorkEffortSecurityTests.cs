@@ -167,8 +167,8 @@ namespace Allors.Database.Domain.Tests
     {
         public WorkEffortDeniedPermissionDerivationTests(Fixture fixture) : base(fixture)
         {
-            this.invoicePermission = new Permissions(this.Transaction).Get(this.M.WorkTask.ObjectType, this.M.WorkTask.Invoice);
-            this.completePermission = new Permissions(this.Transaction).Get(this.M.WorkTask.ObjectType, this.M.WorkTask.Complete);
+            this.invoicePermission = new Permissions(this.Transaction).Get(this.M.WorkTask, this.M.WorkTask.Invoice);
+            this.completePermission = new Permissions(this.Transaction).Get(this.M.WorkTask, this.M.WorkTask.Complete);
         }
 
         public override Config Config => new Config { SetupSecurity = true };

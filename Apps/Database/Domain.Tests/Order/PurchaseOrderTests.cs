@@ -1541,13 +1541,13 @@ namespace Allors.Database.Domain.Tests
     {
         public PurchaseOrderDeniedPermissionDerivationTests(Fixture fixture) : base(fixture)
         {
-            this.deletePermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.Delete);
-            this.setReadyPermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.SetReadyForProcessing);
-            this.invoicePermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.Invoice);
-            this.revisePermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.Revise);
-            this.quickReceivePermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.QuickReceive);
-            this.rejectPermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.Reject);
-            this.cancelPermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.Cancel);
+            this.deletePermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder, this.M.PurchaseOrder.Delete);
+            this.setReadyPermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder, this.M.PurchaseOrder.SetReadyForProcessing);
+            this.invoicePermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder, this.M.PurchaseOrder.Invoice);
+            this.revisePermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder, this.M.PurchaseOrder.Revise);
+            this.quickReceivePermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder, this.M.PurchaseOrder.QuickReceive);
+            this.rejectPermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder, this.M.PurchaseOrder.Reject);
+            this.cancelPermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder, this.M.PurchaseOrder.Cancel);
         }
 
         public override Config Config => new Config { SetupSecurity = true };

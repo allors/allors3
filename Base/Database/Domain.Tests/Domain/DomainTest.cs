@@ -26,7 +26,6 @@ namespace Allors.Database.Domain.Tests
                 new DefaultDatabaseContext(fixture.Engine),
                 new Configuration
                 {
-                    M = fixture.M,
                     ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(User)),
                 });
 
@@ -35,7 +34,7 @@ namespace Allors.Database.Domain.Tests
             this.Setup(database, populate);
         }
 
-        public M M { get; }
+        public MetaPopulation M { get; }
 
         public virtual Config Config { get; } = new Config { SetupSecurity = false };
 
@@ -58,7 +57,6 @@ namespace Allors.Database.Domain.Tests
             {
                 var aclMock = new Mock<IAccessControlList>();
                 aclMock.Setup(acl => acl.CanRead(It.IsAny<IRoleType>())).Returns(true);
-                aclMock.Setup(acl => acl.CanRead(It.IsAny<IRoleClass>())).Returns(true);
                 var aclsMock = new Mock<IAccessControlLists>();
                 aclsMock.Setup(acls => acls[It.IsAny<IObject>()]).Returns(aclMock.Object);
                 return aclsMock;

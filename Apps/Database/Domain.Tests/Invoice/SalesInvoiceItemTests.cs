@@ -2394,7 +2394,7 @@ namespace Allors.Database.Domain.Tests
     [Trait("Category", "Security")]
     public class SalesInvoiceItemDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesInvoiceItemDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.SalesInvoiceItem.ObjectType, this.M.SalesInvoiceItem.Delete);
+        public SalesInvoiceItemDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.SalesInvoiceItem, this.M.SalesInvoiceItem.Delete);
 
         public override Config Config => new Config { SetupSecurity = true };
 

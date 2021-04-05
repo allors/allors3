@@ -44,7 +44,7 @@ namespace Allors.Database.Adapters.Npgsql
 
                     marker();
 
-                    var extent = this.Transaction.Extent(m.C1.ObjectType);
+                    var extent = this.Transaction.Extent(m.C1);
                     extent.AddSort(m.C1.C1AllorsString);
 
                     var sortedObjects = (C1[])extent.ToArray(typeof(C1));
@@ -56,7 +56,7 @@ namespace Allors.Database.Adapters.Npgsql
 
                     marker();
 
-                    extent = this.Transaction.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1);
                     extent.AddSort(m.C1.C1AllorsString, SortDirection.Ascending);
 
                     sortedObjects = (C1[])extent.ToArray(typeof(C1));
@@ -68,7 +68,7 @@ namespace Allors.Database.Adapters.Npgsql
 
                     marker();
 
-                    extent = this.Transaction.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1);
                     extent.AddSort(m.C1.C1AllorsString, SortDirection.Ascending);
 
                     sortedObjects = (C1[])extent.ToArray(typeof(C1));
@@ -80,7 +80,7 @@ namespace Allors.Database.Adapters.Npgsql
 
                     marker();
 
-                    extent = this.Transaction.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1);
                     extent.AddSort(m.C1.C1AllorsString, SortDirection.Descending);
 
                     sortedObjects = (C1[])extent.ToArray(typeof(C1));
@@ -92,7 +92,7 @@ namespace Allors.Database.Adapters.Npgsql
 
                     marker();
 
-                    extent = this.Transaction.Extent(m.C1.ObjectType);
+                    extent = this.Transaction.Extent(m.C1);
                     extent.AddSort(m.C1.C1AllorsString, SortDirection.Descending);
 
                     sortedObjects = (C1[])extent.ToArray(typeof(C1));
@@ -108,9 +108,9 @@ namespace Allors.Database.Adapters.Npgsql
                         {
                             marker();
 
-                            var firstExtent = this.Transaction.Extent(m.C1.ObjectType);
+                            var firstExtent = this.Transaction.Extent(m.C1);
                             firstExtent.Filter.AddLike(m.C1.C1AllorsString, "1");
-                            var secondExtent = this.Transaction.Extent(m.C1.ObjectType);
+                            var secondExtent = this.Transaction.Extent(m.C1);
                             extent = this.Transaction.Union(firstExtent, secondExtent);
                             secondExtent.Filter.AddLike(m.C1.C1AllorsString, "3");
                             extent.AddSort(m.C1.C1AllorsString);
@@ -144,7 +144,7 @@ namespace Allors.Database.Adapters.Npgsql
 
                 this.Transaction.Commit();
 
-                var extent = this.Transaction.Extent(m.C1.ObjectType);
+                var extent = this.Transaction.Extent(m.C1);
                 extent.AddSort(m.C1.C1AllorsString);
                 extent.AddSort(m.C1.C1AllorsInteger);
 
@@ -155,7 +155,7 @@ namespace Allors.Database.Adapters.Npgsql
                 Assert.Equal(this.c1B, sortedObjects[2]);
                 Assert.Equal(this.c1C, sortedObjects[3]);
 
-                extent = this.Transaction.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1);
                 extent.AddSort(m.C1.C1AllorsString);
                 extent.AddSort(m.C1.C1AllorsInteger, SortDirection.Ascending);
 
@@ -166,7 +166,7 @@ namespace Allors.Database.Adapters.Npgsql
                 Assert.Equal(this.c1B, sortedObjects[2]);
                 Assert.Equal(this.c1C, sortedObjects[3]);
 
-                extent = this.Transaction.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1);
                 extent.AddSort(m.C1.C1AllorsString);
                 extent.AddSort(m.C1.C1AllorsInteger, SortDirection.Descending);
 
@@ -177,7 +177,7 @@ namespace Allors.Database.Adapters.Npgsql
                 Assert.Equal(this.c1D, sortedObjects[2]);
                 Assert.Equal(this.c1C, sortedObjects[3]);
 
-                extent = this.Transaction.Extent(m.C1.ObjectType);
+                extent = this.Transaction.Extent(m.C1);
                 extent.AddSort(m.C1.C1AllorsString, SortDirection.Descending);
                 extent.AddSort(m.C1.C1AllorsInteger, SortDirection.Descending);
 
@@ -207,7 +207,7 @@ namespace Allors.Database.Adapters.Npgsql
                 c1B.C1AllorsString = "1";
                 c1C.C1AllorsString = "3";
 
-                var extent = this.Transaction.Extent(m.C1.Class);
+                var extent = this.Transaction.Extent(m.C1);
                 extent.AddSort(m.C1.C1AllorsString, SortDirection.Ascending);
 
                 var sortedObjects = (C1[])extent.ToArray(typeof(C1));
@@ -228,7 +228,7 @@ namespace Allors.Database.Adapters.Npgsql
                 {
                     c1A = (C1)transaction2.Instantiate(c1AId);
 
-                    extent = transaction2.Extent(m.C1.Class);
+                    extent = transaction2.Extent(m.C1);
                     extent.AddSort(m.C1.C1AllorsString, SortDirection.Ascending);
 
                     sortedObjects = (C1[])extent.ToArray(typeof(C1));

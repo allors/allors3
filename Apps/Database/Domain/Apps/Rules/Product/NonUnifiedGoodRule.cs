@@ -15,14 +15,14 @@ namespace Allors.Database.Domain
 
     public class NonUnifiedGoodRule : Rule
     {
-        public NonUnifiedGoodRule(M m) : base(m, new Guid("1D67AC19-4D77-441D-AC98-3F274FADFB2C")) =>
+        public NonUnifiedGoodRule(MetaPopulation m) : base(m, new Guid("1D67AC19-4D77-441D-AC98-3F274FADFB2C")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.NonUnifiedGood, m.NonUnifiedGood.ProductIdentifications),
                 new RolePattern(m.NonUnifiedGood, m.NonUnifiedGood.Keywords),
                 new RolePattern(m.NonUnifiedGood, m.NonUnifiedGood.Variants),
-                new AssociationPattern(m.ProductCategory.AllProducts) { OfType = m.NonUnifiedGood.Class },
-                new AssociationPattern(m.PriceComponent.Product) { OfType = m.NonUnifiedGood.Class },
+                new AssociationPattern(m.ProductCategory.AllProducts) { OfType = m.NonUnifiedGood },
+                new AssociationPattern(m.PriceComponent.Product) { OfType = m.NonUnifiedGood },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

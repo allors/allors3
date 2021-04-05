@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class PartRule : Rule
     {
-        public PartRule(M m) : base(m, new Guid("4F894B49-4922-4FC8-9172-DC600CCDB1CA")) =>
+        public PartRule(MetaPopulation m) : base(m, new Guid("4F894B49-4922-4FC8-9172-DC600CCDB1CA")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.Part, m.Part.Name),

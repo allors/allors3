@@ -13,12 +13,12 @@ namespace Allors.Database.Domain
 
     public class RequestForQuoteDeniedPermissionRule : Rule
     {
-        public RequestForQuoteDeniedPermissionRule(M m) : base(m, new Guid("eb67ef60-1a60-4b52-85ac-979fb9346242")) =>
+        public RequestForQuoteDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("eb67ef60-1a60-4b52-85ac-979fb9346242")) =>
             this.Patterns = new Pattern[]
         {
             new RolePattern(m.RequestForQuote, m.RequestForQuote.TransitionalDeniedPermissions),
-            new RolePattern(m.RequestItem, m.RequestItem.RequestItemState) { Steps =  new IPropertyType[] { m.RequestItem.RequestWhereRequestItem}, OfType = m.RequestForQuote.Class },
-            new AssociationPattern(m.Quote.Request) { OfType = m.RequestForQuote.Class },
+            new RolePattern(m.RequestItem, m.RequestItem.RequestItemState) { Steps =  new IPropertyType[] { m.RequestItem.RequestWhereRequestItem}, OfType = m.RequestForQuote },
+            new AssociationPattern(m.Quote.Request) { OfType = m.RequestForQuote },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -32,14 +32,14 @@ namespace Allors.Database.Domain
 
                 if (@this.ExistOriginator)
                 {
-                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta.Class, @this.Meta.Submit));
+                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Submit));
                 }
                 else
                 {
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta.Class, @this.Meta.Submit));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Submit));
                 }
 
-                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Delete);
                 if (@this.IsDeletable())
                 {
                     @this.RemoveDeniedPermission(deletePermission);

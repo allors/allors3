@@ -13,30 +13,30 @@ namespace Allors.Database.Domain
 
     public class UnifiedGoodDeniedPermissionRule : Rule
     {
-        public UnifiedGoodDeniedPermissionRule(M m) : base(m, new Guid("2326b806-f01c-4bfb-9ed7-a2ca28a4d554")) =>
+        public UnifiedGoodDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("2326b806-f01c-4bfb-9ed7-a2ca28a4d554")) =>
             this.Patterns = new Pattern[]
         {
-            new AssociationPattern(m.Deployment.ProductOffering) { OfType = m.UnifiedGood.Class },
-            new AssociationPattern(m.EngagementItem.Product) { OfType = m.UnifiedGood.Class },
-            new AssociationPattern(m.GeneralLedgerAccount.DerivedCostUnitsAllowed) { OfType = m.UnifiedGood.Class },
-            new AssociationPattern(m.GeneralLedgerAccount.DefaultCostUnit) { OfType = m.UnifiedGood.Class },
-            new AssociationPattern(m.QuoteItem.Product) { OfType = m.UnifiedGood.Class },
-            new AssociationPattern(m.ShipmentItem.Good) { OfType = m.UnifiedGood.Class },
-            new AssociationPattern(m.WorkEffortGoodStandard.UnifiedProduct) { OfType = m.UnifiedGood.Class },
-            new AssociationPattern(m.MarketingPackage.ProductsUsedIn) { OfType = m.UnifiedGood.Class },
-            new AssociationPattern(m.MarketingPackage.Product) { OfType = m.UnifiedGood.Class },
-            new AssociationPattern(m.OrganisationGlAccount.Product) { OfType = m.UnifiedGood.Class },
-            new AssociationPattern(m.ProductConfiguration.ProductsUsedIn) { OfType = m.UnifiedGood.Class },
-            new AssociationPattern(m.ProductConfiguration.Product) { OfType = m.UnifiedGood.Class },
-            new AssociationPattern(m.RequestItem.Product) { OfType = m.UnifiedGood.Class },
-            new AssociationPattern(m.SalesInvoiceItem.Product) { OfType = m.UnifiedGood.Class },
-            new AssociationPattern(m.SalesOrderItem.Product) { OfType = m.UnifiedGood.Class },
-            new AssociationPattern(m.WorkEffortType.ProductToProduce) { OfType = m.UnifiedGood.Class },
-            new AssociationPattern(m.WorkEffortInventoryProduced.Part) { OfType = m.UnifiedGood.Class },
-            new AssociationPattern(m.WorkEffortPartStandard.Part) { OfType = m.UnifiedGood.Class },
-            new AssociationPattern(m.PartBillOfMaterial.Part) { OfType = m.UnifiedGood.Class },
-            new AssociationPattern(m.PartBillOfMaterial.ComponentPart) { OfType = m.UnifiedGood.Class },
-            new AssociationPattern(m.InventoryItemTransaction.Part) { OfType = m.UnifiedGood.Class },
+            new AssociationPattern(m.Deployment.ProductOffering) { OfType = m.UnifiedGood },
+            new AssociationPattern(m.EngagementItem.Product) { OfType = m.UnifiedGood },
+            new AssociationPattern(m.GeneralLedgerAccount.DerivedCostUnitsAllowed) { OfType = m.UnifiedGood },
+            new AssociationPattern(m.GeneralLedgerAccount.DefaultCostUnit) { OfType = m.UnifiedGood },
+            new AssociationPattern(m.QuoteItem.Product) { OfType = m.UnifiedGood },
+            new AssociationPattern(m.ShipmentItem.Good) { OfType = m.UnifiedGood },
+            new AssociationPattern(m.WorkEffortGoodStandard.UnifiedProduct) { OfType = m.UnifiedGood },
+            new AssociationPattern(m.MarketingPackage.ProductsUsedIn) { OfType = m.UnifiedGood },
+            new AssociationPattern(m.MarketingPackage.Product) { OfType = m.UnifiedGood },
+            new AssociationPattern(m.OrganisationGlAccount.Product) { OfType = m.UnifiedGood },
+            new AssociationPattern(m.ProductConfiguration.ProductsUsedIn) { OfType = m.UnifiedGood },
+            new AssociationPattern(m.ProductConfiguration.Product) { OfType = m.UnifiedGood },
+            new AssociationPattern(m.RequestItem.Product) { OfType = m.UnifiedGood },
+            new AssociationPattern(m.SalesInvoiceItem.Product) { OfType = m.UnifiedGood },
+            new AssociationPattern(m.SalesOrderItem.Product) { OfType = m.UnifiedGood },
+            new AssociationPattern(m.WorkEffortType.ProductToProduce) { OfType = m.UnifiedGood },
+            new AssociationPattern(m.WorkEffortInventoryProduced.Part) { OfType = m.UnifiedGood },
+            new AssociationPattern(m.WorkEffortPartStandard.Part) { OfType = m.UnifiedGood },
+            new AssociationPattern(m.PartBillOfMaterial.Part) { OfType = m.UnifiedGood },
+            new AssociationPattern(m.PartBillOfMaterial.ComponentPart) { OfType = m.UnifiedGood },
+            new AssociationPattern(m.InventoryItemTransaction.Part) { OfType = m.UnifiedGood },
             new RolePattern(m.UnifiedGood, m.UnifiedGood.SerialisedItems),
         };
 
@@ -47,7 +47,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<UnifiedGood>())
             {
-                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Delete);
 
                 if (@this.IsDeletable)
                 {

@@ -9,11 +9,11 @@ namespace Allors.Database.Domain
     {
         protected override void AppsPrepare(Setup setup)
         {
-            setup.AddDependency(this.ObjectType, this.M.Locale.ObjectType);
-            setup.AddDependency(this.ObjectType, this.M.TemplateType.ObjectType);
-            setup.AddDependency(this.ObjectType, this.M.ShipmentMethod.ObjectType);
-            setup.AddDependency(this.ObjectType, this.M.Carrier.ObjectType);
-            setup.AddDependency(this.ObjectType, this.M.BillingProcess.ObjectType);
+            setup.AddDependency(this.ObjectType, this.M.Locale);
+            setup.AddDependency(this.ObjectType, this.M.TemplateType);
+            setup.AddDependency(this.ObjectType, this.M.ShipmentMethod);
+            setup.AddDependency(this.ObjectType, this.M.Carrier);
+            setup.AddDependency(this.ObjectType, this.M.BillingProcess);
         }
     }
 }

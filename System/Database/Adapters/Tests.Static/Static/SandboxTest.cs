@@ -95,7 +95,7 @@ namespace Allors.Database.Adapters
 
                 var population = new TestPopulation(this.Transaction);
 
-                var extent = new Extent(m.C1.ObjectType)
+                var extent = new Extent(m.C1)
                 {
                     Predicate = new Equals(m.C1.C1AllorsString) { Parameter = "pString" },
                 };
@@ -116,7 +116,7 @@ namespace Allors.Database.Adapters
 
                 var population = new TestPopulation(this.Transaction);
 
-                var extent = new Extent(m.C1.ObjectType)
+                var extent = new Extent(m.C1)
                 {
                     Predicate = new Equals(m.C1.C1AllorsString) { Parameter = "pString" },
                 };

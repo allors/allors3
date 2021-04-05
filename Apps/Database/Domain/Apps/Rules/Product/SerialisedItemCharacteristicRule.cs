@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class SerialisedItemCharacteristicRule : Rule
     {
-        public SerialisedItemCharacteristicRule(M m) : base(m, new Guid("B9EB094F-4E60-4ABD-8AE6-CAA02D38AFA1")) =>
+        public SerialisedItemCharacteristicRule(MetaPopulation m) : base(m, new Guid("B9EB094F-4E60-4ABD-8AE6-CAA02D38AFA1")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.SerialisedItemCharacteristic, m.SerialisedItemCharacteristic.Value),

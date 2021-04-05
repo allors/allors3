@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class GameRule : Rule
     {
-        public GameRule(M m) : base(m, new Guid("6C84C0DD-2855-403A-934B-D2990063A669")) =>
+        public GameRule(MetaPopulation m) : base(m, new Guid("6C84C0DD-2855-403A-934B-D2990063A669")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.Game.GameMode),

@@ -13,16 +13,16 @@ namespace Allors.Database.Domain
 
     public class SalesOrderItemDeniedPermissionRule : Rule
     {
-        public SalesOrderItemDeniedPermissionRule(M m) : base(m, new Guid("84ff5d0c-c15d-426d-a019-ad8ab0bdbcf2")) =>
+        public SalesOrderItemDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("84ff5d0c-c15d-426d-a019-ad8ab0bdbcf2")) =>
             this.Patterns = new Pattern[]
         {
             new RolePattern(m.SalesOrderItem, m.SalesOrderItem.TransitionalDeniedPermissions),
             new RolePattern(m.SalesOrderItem, m.SalesOrderItem.SalesOrderItemInvoiceState),
             new RolePattern(m.SalesOrderItem, m.SalesOrderItem.SalesOrderItemShipmentState),
-            new AssociationPattern(m.OrderItemBilling.OrderItem) { OfType = m.SalesOrderItem.Class },
-            new AssociationPattern(m.OrderShipment.OrderItem) { OfType = m.SalesOrderItem.Class },
-            new AssociationPattern(m.OrderRequirementCommitment.OrderItem) { OfType = m.SalesOrderItem.Class },
-            new AssociationPattern(m.WorkEffort.OrderItemFulfillment) { OfType = m.SalesOrderItem.Class },
+            new AssociationPattern(m.OrderItemBilling.OrderItem) { OfType = m.SalesOrderItem },
+            new AssociationPattern(m.OrderShipment.OrderItem) { OfType = m.SalesOrderItem },
+            new AssociationPattern(m.OrderRequirementCommitment.OrderItem) { OfType = m.SalesOrderItem },
+            new AssociationPattern(m.WorkEffort.OrderItemFulfillment) { OfType = m.SalesOrderItem },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -53,7 +53,7 @@ namespace Allors.Database.Domain
                     }
                 }
 
-                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Delete);
                 if (@this.IsDeletable)
                 {
                     @this.RemoveDeniedPermission(deletePermission);

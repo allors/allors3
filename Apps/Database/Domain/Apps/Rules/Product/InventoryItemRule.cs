@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class InventoryItemRule : Rule
     {
-        public InventoryItemRule(M m) : base(m, new Guid("E1BE8D0A-DD31-404F-A0F5-B03B0D3DB3AB")) =>
+        public InventoryItemRule(MetaPopulation m) : base(m, new Guid("E1BE8D0A-DD31-404F-A0F5-B03B0D3DB3AB")) =>
             this.Patterns = new[]
             {
                 new RolePattern(m.InventoryItem, m.InventoryItem.Part)

@@ -410,22 +410,22 @@ namespace Allors.Database.Domain
 
         protected override void AppsPrepare(Setup setup)
         {
-            setup.AddDependency(this.Meta.ObjectType, this.M.InventoryStrategy);
-            setup.AddDependency(this.Meta.ObjectType, this.M.Role);
-            setup.AddDependency(this.Meta.ObjectType, this.M.OrganisationRole);
-            setup.AddDependency(this.Meta.ObjectType, this.M.InvoiceSequence);
-            setup.AddDependency(this.Meta.ObjectType, this.M.RequestSequence);
-            setup.AddDependency(this.Meta.ObjectType, this.M.QuoteSequence);
-            setup.AddDependency(this.Meta.ObjectType, this.M.CustomerShipmentSequence);
-            setup.AddDependency(this.Meta.ObjectType, this.M.CustomerReturnSequence);
-            setup.AddDependency(this.Meta.ObjectType, this.M.DropShipmentSequence);
-            setup.AddDependency(this.Meta.ObjectType, this.M.PurchaseShipmentSequence);
-            setup.AddDependency(this.Meta.ObjectType, this.M.PurchaseReturnSequence);
-            setup.AddDependency(this.Meta.ObjectType, this.M.IncomingTransferSequence);
-            setup.AddDependency(this.Meta.ObjectType, this.M.OutgoingTransferSequence);
-            setup.AddDependency(this.Meta.ObjectType, this.M.WorkEffortSequence);
-            setup.AddDependency(this.Meta.ObjectType, this.M.Singleton);
-            setup.AddDependency(this.Meta.ObjectType, this.M.FacilityType);
+            setup.AddDependency(this.Meta, this.M.InventoryStrategy);
+            setup.AddDependency(this.Meta, this.M.Role);
+            setup.AddDependency(this.Meta, this.M.OrganisationRole);
+            setup.AddDependency(this.Meta, this.M.InvoiceSequence);
+            setup.AddDependency(this.Meta, this.M.RequestSequence);
+            setup.AddDependency(this.Meta, this.M.QuoteSequence);
+            setup.AddDependency(this.Meta, this.M.CustomerShipmentSequence);
+            setup.AddDependency(this.Meta, this.M.CustomerReturnSequence);
+            setup.AddDependency(this.Meta, this.M.DropShipmentSequence);
+            setup.AddDependency(this.Meta, this.M.PurchaseShipmentSequence);
+            setup.AddDependency(this.Meta, this.M.PurchaseReturnSequence);
+            setup.AddDependency(this.Meta, this.M.IncomingTransferSequence);
+            setup.AddDependency(this.Meta, this.M.OutgoingTransferSequence);
+            setup.AddDependency(this.Meta, this.M.WorkEffortSequence);
+            setup.AddDependency(this.Meta, this.M.Singleton);
+            setup.AddDependency(this.Meta, this.M.FacilityType);
         }
     }
 }

@@ -62,18 +62,18 @@ namespace Allors.Database.Adapters
                 var total = 0;
                 foreach (var run in runs)
                 {
-                    var allorsObjects = this.Transaction.Create(m.C1.ObjectType, run);
+                    var allorsObjects = this.Transaction.Create(m.C1, run);
 
                     Assert.Equal(run, allorsObjects.Length);
 
                     total += run;
 
-                    Assert.Equal(total, this.GetExtent(m.C1.ObjectType).Length);
+                    Assert.Equal(total, this.GetExtent(m.C1).Length);
 
                     var ids = new ArrayList();
                     foreach (C1 allorsObject in allorsObjects)
                     {
-                        Assert.Equal(m.C1.ObjectType, allorsObject.Strategy.Class);
+                        Assert.Equal(m.C1, allorsObject.Strategy.Class);
                         ids.Add(allorsObject.Strategy.ObjectId);
                         allorsObject.C1AllorsString = "CreateMany";
                     }
@@ -85,11 +85,11 @@ namespace Allors.Database.Adapters
                     allorsObjects = this.Transaction.Instantiate((long[])ids.ToArray(typeof(long)));
                     foreach (C1 allorsObject in allorsObjects)
                     {
-                        Assert.Equal(m.C1.ObjectType, allorsObject.Strategy.Class);
+                        Assert.Equal(m.C1, allorsObject.Strategy.Class);
                         allorsObject.C1AllorsString = "CreateMany";
                     }
 
-                    var c2s = (C2[])this.Transaction.Create(m.C2.ObjectType, run);
+                    var c2s = (C2[])this.Transaction.Create(m.C2, run);
                     Assert.Equal(run, c2s.Length);
                 }
             }
@@ -429,7 +429,7 @@ namespace Allors.Database.Adapters
 
                 // Clean up
                 this.Transaction.Commit();
-                foreach (C1 removeObject in this.GetExtent(m.C1.ObjectType))
+                foreach (C1 removeObject in this.GetExtent(m.C1))
                 {
                     removeObject.Strategy.Delete();
                 }
@@ -685,7 +685,7 @@ namespace Allors.Database.Adapters
 
                     // Clean up
                     databaseTransaction.Commit();
-                    foreach (C1 removeObject in this.GetExtent(m.C1.ObjectType))
+                    foreach (C1 removeObject in this.GetExtent(m.C1))
                     {
                         removeObject.Strategy.Delete();
                     }
@@ -712,11 +712,11 @@ namespace Allors.Database.Adapters
                 var thirdObject = C1.Create(this.Transaction);
                 thirdObject.C1AllorsString = "c";
 
-                Assert.Equal(2, this.GetExtent(m.C1.ObjectType).Length);
+                Assert.Equal(2, this.GetExtent(m.C1).Length);
                 thirdObject.Strategy.Delete();
 
-                Assert.Single(this.GetExtent(m.C1.ObjectType));
-                Assert.Equal("b", ((C1)this.GetExtent(m.C1.ObjectType)[0]).C1AllorsString);
+                Assert.Single(this.GetExtent(m.C1));
+                Assert.Equal("b", ((C1)this.GetExtent(m.C1)[0]).C1AllorsString);
 
                 secondObject.Strategy.Delete();
 
@@ -745,15 +745,15 @@ namespace Allors.Database.Adapters
                 thirdObject = C1.Create(this.Transaction);
                 thirdObject.C1AllorsString = "c";
 
-                Assert.Equal(2, this.GetExtent(m.C1.ObjectType).Length);
+                Assert.Equal(2, this.GetExtent(m.C1).Length);
 
                 AllorsTestUtils.ForceRoleCaching(secondObject);
                 AllorsTestUtils.ForceRoleCaching(thirdObject);
 
                 thirdObject.Strategy.Delete();
 
-                Assert.Single(this.GetExtent(m.C1.ObjectType));
-                Assert.Equal("b", ((C1)this.GetExtent(m.C1.ObjectType)[0]).C1AllorsString);
+                Assert.Single(this.GetExtent(m.C1));
+                Assert.Equal("b", ((C1)this.GetExtent(m.C1)[0]).C1AllorsString);
 
                 secondObject.Strategy.Delete();
 
@@ -780,13 +780,13 @@ namespace Allors.Database.Adapters
                 thirdObject = C1.Create(this.Transaction);
                 thirdObject.C1AllorsString = "c";
 
-                Assert.Equal(2, this.GetExtent(m.C1.ObjectType).Length);
+                Assert.Equal(2, this.GetExtent(m.C1).Length);
                 thirdObject.Strategy.Delete();
 
                 this.Transaction.Commit();
 
-                Assert.Single(this.GetExtent(m.C1.ObjectType));
-                Assert.Equal("b", ((C1)this.GetExtent(m.C1.ObjectType)[0]).C1AllorsString);
+                Assert.Single(this.GetExtent(m.C1));
+                Assert.Equal("b", ((C1)this.GetExtent(m.C1)[0]).C1AllorsString);
 
                 secondObject.Strategy.Delete();
 
@@ -819,7 +819,7 @@ namespace Allors.Database.Adapters
                 thirdObject = C1.Create(this.Transaction);
                 thirdObject.C1AllorsString = "c";
 
-                Assert.Equal(2, this.GetExtent(m.C1.ObjectType).Length);
+                Assert.Equal(2, this.GetExtent(m.C1).Length);
 
                 AllorsTestUtils.ForceRoleCaching(secondObject);
                 AllorsTestUtils.ForceRoleCaching(thirdObject);
@@ -827,8 +827,8 @@ namespace Allors.Database.Adapters
                 thirdObject.Strategy.Delete();
                 this.Transaction.Commit();
 
-                Assert.Single(this.GetExtent(m.C1.ObjectType));
-                Assert.Equal("b", ((C1)this.GetExtent(m.C1.ObjectType)[0]).C1AllorsString);
+                Assert.Single(this.GetExtent(m.C1));
+                Assert.Equal("b", ((C1)this.GetExtent(m.C1)[0]).C1AllorsString);
 
                 secondObject.Strategy.Delete();
                 this.Transaction.Commit();
@@ -843,21 +843,21 @@ namespace Allors.Database.Adapters
 
                 this.Transaction.Rollback();
 
-                Assert.Single(this.GetExtent(m.C1.ObjectType));
-                Assert.Equal("a", ((C1)this.GetExtent(m.C1.ObjectType)[0]).C1AllorsString);
+                Assert.Single(this.GetExtent(m.C1));
+                Assert.Equal("a", ((C1)this.GetExtent(m.C1)[0]).C1AllorsString);
 
                 secondObject = C1.Create(this.Transaction);
                 secondObject.C1AllorsString = "b";
                 thirdObject = C1.Create(this.Transaction);
                 thirdObject.C1AllorsString = "c";
 
-                Assert.Equal(3, this.GetExtent(m.C1.ObjectType).Length);
+                Assert.Equal(3, this.GetExtent(m.C1).Length);
                 thirdObject.Strategy.Delete();
 
                 this.Transaction.Rollback();
 
-                Assert.Single(this.GetExtent(m.C1.ObjectType));
-                Assert.Equal("a", ((C1)this.GetExtent(m.C1.ObjectType)[0]).C1AllorsString);
+                Assert.Single(this.GetExtent(m.C1));
+                Assert.Equal("a", ((C1)this.GetExtent(m.C1)[0]).C1AllorsString);
 
                 anObject.Strategy.Delete();
 
@@ -874,15 +874,15 @@ namespace Allors.Database.Adapters
                 anObject.Strategy.Delete();
                 this.Transaction.Rollback();
 
-                Assert.Single(this.GetExtent(m.C1.ObjectType));
-                Assert.Equal("a", ((C1)this.GetExtent(m.C1.ObjectType)[0]).C1AllorsString);
+                Assert.Single(this.GetExtent(m.C1));
+                Assert.Equal("a", ((C1)this.GetExtent(m.C1)[0]).C1AllorsString);
 
                 secondObject = C1.Create(this.Transaction);
                 secondObject.C1AllorsString = "b";
                 thirdObject = C1.Create(this.Transaction);
                 thirdObject.C1AllorsString = "c";
 
-                Assert.Equal(3, this.GetExtent(m.C1.ObjectType).Length);
+                Assert.Equal(3, this.GetExtent(m.C1).Length);
 
                 AllorsTestUtils.ForceRoleCaching(secondObject);
                 AllorsTestUtils.ForceRoleCaching(thirdObject);
@@ -890,8 +890,8 @@ namespace Allors.Database.Adapters
                 thirdObject.Strategy.Delete();
                 this.Transaction.Rollback();
 
-                Assert.Single(this.GetExtent(m.C1.ObjectType));
-                Assert.Equal("a", ((C1)this.GetExtent(m.C1.ObjectType)[0]).C1AllorsString);
+                Assert.Single(this.GetExtent(m.C1));
+                Assert.Equal("a", ((C1)this.GetExtent(m.C1)[0]).C1AllorsString);
 
                 anObject.Strategy.Delete();
                 this.Transaction.Commit();
@@ -3980,7 +3980,7 @@ namespace Allors.Database.Adapters
                 var m = this.Transaction.Database.Context().M;
 
                 const int ObjectCount = 10;
-                var allorsObjects = this.Transaction.Create(m.Company.ObjectType, ObjectCount);
+                var allorsObjects = this.Transaction.Create(m.Company, ObjectCount);
                 var ids = new string[ObjectCount];
                 for (var i = 0; i < ObjectCount; i++)
                 {
@@ -4077,12 +4077,12 @@ namespace Allors.Database.Adapters
 
                 // TODO: Move to other tests
                 var withoutValueRoles = ClassWithoutUnitRoles.Create(this.Transaction);
-                var withoutValueRolesClone = (ClassWithoutUnitRoles)this.GetExtent(m.ClassWithoutUnitRoles.ObjectType)[0];
+                var withoutValueRolesClone = (ClassWithoutUnitRoles)this.GetExtent(m.ClassWithoutUnitRoles)[0];
 
                 Assert.Equal(withoutValueRoles, withoutValueRolesClone);
 
                 var withoutRoles = ClassWithoutRoles.Create(this.Transaction);
-                var withoutRolesClone = (ClassWithoutRoles)this.GetExtent(m.ClassWithoutRoles.ObjectType)[0];
+                var withoutRolesClone = (ClassWithoutRoles)this.GetExtent(m.ClassWithoutRoles)[0];
 
                 Assert.Equal(withoutRoles, withoutRolesClone);
             }
@@ -4113,16 +4113,16 @@ namespace Allors.Database.Adapters
 
                 var switchC1A = (C1)this.Transaction.Instantiate(c1A.Id.ToString());
 
-                Assert.Equal(m.C1.ObjectType, switchC1A.Strategy.Class);
+                Assert.Equal(m.C1, switchC1A.Strategy.Class);
 
                 var switchC2A = switchC1A.C1I12one2one;
 
-                Assert.Equal(m.C2.ObjectType, switchC2A.Strategy.Class);
+                Assert.Equal(m.C2, switchC2A.Strategy.Class);
 
                 var switchC2BC = switchC1A.C1I12one2manies;
 
-                Assert.Equal(m.C2.ObjectType, switchC2BC[0].Strategy.Class);
-                Assert.Equal(m.C2.ObjectType, switchC2BC[1].Strategy.Class);
+                Assert.Equal(m.C2, switchC2BC[0].Strategy.Class);
+                Assert.Equal(m.C2, switchC2BC[1].Strategy.Class);
 
                 this.Transaction.Commit();
 
@@ -4258,14 +4258,14 @@ namespace Allors.Database.Adapters
                 init();
                 var m = this.Transaction.Database.Context().M;
 
-                var c1a = this.Transaction.Create(m.C1.ObjectType);
-                Assert.Equal(m.C1.ObjectType, c1a.Strategy.Class);
+                var c1a = this.Transaction.Create(m.C1);
+                Assert.Equal(m.C1, c1a.Strategy.Class);
 
                 this.Transaction.Commit();
 
-                Assert.Equal(m.C1.ObjectType, c1a.Strategy.Class);
+                Assert.Equal(m.C1, c1a.Strategy.Class);
 
-                var c1b = this.Transaction.Create(m.C1.ObjectType);
+                var c1b = this.Transaction.Create(m.C1);
 
                 this.Transaction.Rollback();
 
@@ -4282,12 +4282,12 @@ namespace Allors.Database.Adapters
 
                 Assert.True(exceptionThrown);
 
-                var c2a = this.Transaction.Create(m.C2.ObjectType);
-                Assert.Equal(m.C2.ObjectType, c2a.Strategy.Class);
+                var c2a = this.Transaction.Create(m.C2);
+                Assert.Equal(m.C2, c2a.Strategy.Class);
 
                 this.Transaction.Commit();
 
-                Assert.Equal(m.C2.ObjectType, c2a.Strategy.Class);
+                Assert.Equal(m.C2, c2a.Strategy.Class);
             }
         }
 

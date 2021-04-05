@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class BasePriceRule : Rule
     {
-        public BasePriceRule(M m) : base(m, new Guid("499B0F1E-F653-4DB6-82D0-190C9738DA5A")) =>
+        public BasePriceRule(MetaPopulation m) : base(m, new Guid("499B0F1E-F653-4DB6-82D0-190C9738DA5A")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.BasePrice, m.BasePrice.OrderQuantityBreak),

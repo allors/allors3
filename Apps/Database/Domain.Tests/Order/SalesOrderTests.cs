@@ -4907,7 +4907,7 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var shipPermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Ship);
+            var shipPermission = new Permissions(this.Transaction).Get(this.M.SalesOrder, this.M.SalesOrder.Ship);
             Assert.Contains(shipPermission, order.DeniedPermissions);
         }
 
@@ -4920,7 +4920,7 @@ namespace Allors.Database.Domain.Tests
             order.CanShip = true;
             this.Transaction.Derive(false);
 
-            var shipPermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Ship);
+            var shipPermission = new Permissions(this.Transaction).Get(this.M.SalesOrder, this.M.SalesOrder.Ship);
             Assert.DoesNotContain(shipPermission, order.DeniedPermissions);
         }
 
@@ -4930,7 +4930,7 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var invoicePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Invoice);
+            var invoicePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder, this.M.SalesOrder.Invoice);
             Assert.Contains(invoicePermission, order.DeniedPermissions);
         }
 
@@ -4943,7 +4943,7 @@ namespace Allors.Database.Domain.Tests
             order.CanShip = true;
             this.Transaction.Derive(false);
 
-            var invoicePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Invoice);
+            var invoicePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder, this.M.SalesOrder.Invoice);
             Assert.Contains(invoicePermission, order.DeniedPermissions);
         }
 
@@ -4953,7 +4953,7 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Delete);
+            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder, this.M.SalesOrder.Delete);
             Assert.DoesNotContain(deletePermission, order.DeniedPermissions);
         }
 
@@ -4966,7 +4966,7 @@ namespace Allors.Database.Domain.Tests
             order.SalesOrderState = new SalesOrderStates(this.Transaction).OnHold;
             this.Transaction.Derive(false);
 
-            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Delete);
+            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder, this.M.SalesOrder.Delete);
             Assert.Contains(deletePermission, order.DeniedPermissions);
         }
 
@@ -4979,7 +4979,7 @@ namespace Allors.Database.Domain.Tests
             order.Quote = new ProductQuoteBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Delete);
+            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder, this.M.SalesOrder.Delete);
             Assert.Contains(deletePermission, order.DeniedPermissions);
         }
 
@@ -4989,7 +4989,7 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Delete);
+            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder, this.M.SalesOrder.Delete);
             Assert.DoesNotContain(deletePermission, order.DeniedPermissions);
 
             var orderItem = new SalesOrderItemBuilder(this.Transaction).Build();
@@ -5009,7 +5009,7 @@ namespace Allors.Database.Domain.Tests
             order.AddSalesOrderItem(orderItem);
             this.Transaction.Derive(false);
 
-            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Delete);
+            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder, this.M.SalesOrder.Delete);
             Assert.DoesNotContain(deletePermission, order.DeniedPermissions);
 
             orderItem.SalesOrderItemState = new SalesOrderItemStates(this.Transaction).InProcess;
@@ -5031,7 +5031,7 @@ namespace Allors.Database.Domain.Tests
             var orderItemBilling = new OrderItemBillingBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Delete);
+            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder, this.M.SalesOrder.Delete);
             Assert.DoesNotContain(deletePermission, order.DeniedPermissions);
 
             orderItemBilling.OrderItem = orderItem;
@@ -5053,7 +5053,7 @@ namespace Allors.Database.Domain.Tests
             var orderShipment = new OrderShipmentBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Delete);
+            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder, this.M.SalesOrder.Delete);
             Assert.DoesNotContain(deletePermission, order.DeniedPermissions);
 
             orderShipment.OrderItem = orderItem;
@@ -5075,7 +5075,7 @@ namespace Allors.Database.Domain.Tests
             var orderRequirementCommitment = new OrderRequirementCommitmentBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Delete);
+            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder, this.M.SalesOrder.Delete);
             Assert.DoesNotContain(deletePermission, order.DeniedPermissions);
 
             orderRequirementCommitment.OrderItem = orderItem;
@@ -5097,7 +5097,7 @@ namespace Allors.Database.Domain.Tests
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Delete);
+            var deletePermission = new Permissions(this.Transaction).Get(this.M.SalesOrder, this.M.SalesOrder.Delete);
             Assert.DoesNotContain(deletePermission, order.DeniedPermissions);
 
             workTask.OrderItemFulfillment = orderItem;
@@ -5112,7 +5112,7 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var cancelPermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Cancel);
+            var cancelPermission = new Permissions(this.Transaction).Get(this.M.SalesOrder, this.M.SalesOrder.Cancel);
             Assert.DoesNotContain(cancelPermission, order.DeniedPermissions);
 
             order.SalesOrderShipmentState = new SalesOrderShipmentStates(this.Transaction).Shipped;
@@ -5127,7 +5127,7 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var cancelPermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Cancel);
+            var cancelPermission = new Permissions(this.Transaction).Get(this.M.SalesOrder, this.M.SalesOrder.Cancel);
             Assert.DoesNotContain(cancelPermission, order.DeniedPermissions);
 
             order.SalesOrderInvoiceState = new SalesOrderInvoiceStates(this.Transaction).Invoiced;
@@ -5145,7 +5145,7 @@ namespace Allors.Database.Domain.Tests
             order.SalesOrderInvoiceState = new SalesOrderInvoiceStates(this.Transaction).Invoiced;
             this.Transaction.Derive(false);
 
-            var cancelPermission = new Permissions(this.Transaction).Get(this.M.SalesOrder.ObjectType, this.M.SalesOrder.Cancel);
+            var cancelPermission = new Permissions(this.Transaction).Get(this.M.SalesOrder, this.M.SalesOrder.Cancel);
             Assert.Contains(cancelPermission, order.DeniedPermissions);
 
             order.SalesOrderInvoiceState = new SalesOrderInvoiceStates(this.Transaction).NotInvoiced;

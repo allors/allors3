@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class NonUnifiedPartRule : Rule
     {
-        public NonUnifiedPartRule(M m) : base(m, new Guid("280E12F5-C2EA-4D9A-BEDA-D30F229D46A3")) =>
+        public NonUnifiedPartRule(MetaPopulation m) : base(m, new Guid("280E12F5-C2EA-4D9A-BEDA-D30F229D46A3")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.NonUnifiedPart, m.NonUnifiedPart.ProductIdentifications),
@@ -24,9 +24,9 @@ namespace Allors.Database.Domain
                 new RolePattern(m.NonUnifiedPart, m.NonUnifiedPart.ProductType),
                 new RolePattern(m.NonUnifiedPart, m.NonUnifiedPart.Brand),
                 new RolePattern(m.NonUnifiedPart, m.NonUnifiedPart.Model),
-                new RolePattern(m.LocalisedText, m.LocalisedText.Text) { Steps = new IPropertyType[]{ m.LocalisedText.UnifiedProductWhereLocalisedName }, OfType = m.NonUnifiedPart.Class },
-                new AssociationPattern(m.PartCategory.Parts) { OfType = m.NonUnifiedPart.Class  },
-                new AssociationPattern(m.SupplierOffering.Part) { OfType = m.NonUnifiedPart.Class },
+                new RolePattern(m.LocalisedText, m.LocalisedText.Text) { Steps = new IPropertyType[]{ m.LocalisedText.UnifiedProductWhereLocalisedName }, OfType = m.NonUnifiedPart },
+                new AssociationPattern(m.PartCategory.Parts) { OfType = m.NonUnifiedPart  },
+                new AssociationPattern(m.SupplierOffering.Part) { OfType = m.NonUnifiedPart },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

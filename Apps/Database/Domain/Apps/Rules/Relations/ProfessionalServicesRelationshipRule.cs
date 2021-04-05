@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class ProfessionalServicesRelationshipRule : Rule
     {
-        public ProfessionalServicesRelationshipRule(M m) : base(m, new Guid("DB0D802D-94D2-4850-91FC-703778ECFFC7")) =>
+        public ProfessionalServicesRelationshipRule(MetaPopulation m) : base(m, new Guid("DB0D802D-94D2-4850-91FC-703778ECFFC7")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.ProfessionalServicesRelationship, m.ProfessionalServicesRelationship.Professional),

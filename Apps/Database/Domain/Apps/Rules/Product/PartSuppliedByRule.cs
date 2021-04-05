@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class PartSuppliedByRule : Rule
     {
-        public PartSuppliedByRule(M m) : base(m, new Guid("9bdcfcf1-3140-4e89-bea7-41b1662148b1")) =>
+        public PartSuppliedByRule(MetaPopulation m) : base(m, new Guid("9bdcfcf1-3140-4e89-bea7-41b1662148b1")) =>
             this.Patterns = new Pattern[]
             {
                 new AssociationPattern(m.SupplierOffering.Part),

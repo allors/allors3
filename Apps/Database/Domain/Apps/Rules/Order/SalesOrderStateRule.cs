@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class SalesOrderStateRule : Rule
     {
-        public SalesOrderStateRule(M m) : base(m, new Guid("1a17a901-7547-4c7f-bcf9-9c1d248efb4c")) =>
+        public SalesOrderStateRule(MetaPopulation m) : base(m, new Guid("1a17a901-7547-4c7f-bcf9-9c1d248efb4c")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.SalesOrder, m.SalesOrder.SalesOrderState),

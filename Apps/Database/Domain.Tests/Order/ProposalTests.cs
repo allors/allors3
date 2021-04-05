@@ -29,7 +29,7 @@ namespace Allors.Database.Domain.Tests
     [Trait("Category", "Security")]
     public class ProposalDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public ProposalDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.Proposal.ObjectType, this.M.Proposal.Delete);
+        public ProposalDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.Proposal, this.M.Proposal.Delete);
 
         public override Config Config => new Config { SetupSecurity = true };
 

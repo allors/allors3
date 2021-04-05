@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class RequestForProposalRule : Rule
     {
-        public RequestForProposalRule(M m) : base(m, new Guid("E2C5250C-5C18-4720-BBFE-859AC31D8D49")) =>
+        public RequestForProposalRule(MetaPopulation m) : base(m, new Guid("E2C5250C-5C18-4720-BBFE-859AC31D8D49")) =>
             this.Patterns = new[]
             {
                 new RolePattern(m.RequestForProposal, m.RequestForProposal.Recipient),

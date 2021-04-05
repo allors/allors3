@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class RequestForQuoteRule : Rule
     {
-        public RequestForQuoteRule(M m) : base(m, new Guid("BD181210-419E-4F87-8B3C-3AEF43711514")) =>
+        public RequestForQuoteRule(MetaPopulation m) : base(m, new Guid("BD181210-419E-4F87-8B3C-3AEF43711514")) =>
             this.Patterns = new[]
             {
                 new RolePattern(m.RequestForQuote, m.RequestForQuote.Recipient),

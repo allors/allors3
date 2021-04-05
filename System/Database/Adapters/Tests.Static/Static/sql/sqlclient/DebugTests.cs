@@ -97,7 +97,7 @@ namespace Allors.Database.Adapters.SqlClient
 
                     foreach (C1 c1 in extent)
                     {
-                        Assert.Equal(c1.Strategy.Class, m.C1.ObjectType);
+                        Assert.Equal(c1.Strategy.Class, m.C1);
                     }
 
                     Assert.Equal(2, connection.Commands.Count);
@@ -115,7 +115,7 @@ namespace Allors.Database.Adapters.SqlClient
 
                     foreach (C1 c1 in extent)
                     {
-                        Assert.Equal(c1.Strategy.Class, m.C1.ObjectType);
+                        Assert.Equal(c1.Strategy.Class, m.C1);
                     }
 
                     Assert.Equal(2, connection.Commands.Count);
@@ -142,7 +142,7 @@ namespace Allors.Database.Adapters.SqlClient
 
                     foreach (var c1 in extent)
                     {
-                        Assert.Equal(c1.Strategy.Class, m.C1.ObjectType);
+                        Assert.Equal(c1.Strategy.Class, m.C1);
                     }
 
                     Assert.Equal(2, connection.Commands.Count);
@@ -158,7 +158,7 @@ namespace Allors.Database.Adapters.SqlClient
 
                     foreach (C1 c1 in extent)
                     {
-                        Assert.Equal(c1.Strategy.Class, m.C1.ObjectType);
+                        Assert.Equal(c1.Strategy.Class, m.C1);
                     }
 
                     Assert.Equal(2, connection.Commands.Count);

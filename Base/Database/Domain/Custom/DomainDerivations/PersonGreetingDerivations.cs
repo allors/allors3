@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class PersonGreetingDerivation : Rule
     {
-        public PersonGreetingDerivation(M m) : base(m, new Guid("5FFD5696-E735-4D05-8405-3A444B6F591E")) =>
+        public PersonGreetingDerivation(MetaPopulation m) : base(m, new Guid("5FFD5696-E735-4D05-8405-3A444B6F591E")) =>
             this.Patterns = new[]
             {
                 new RolePattern(m.Person, m.Person.DomainFullName)

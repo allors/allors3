@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class CountryRule : Rule
     {
-        public CountryRule(M m) : base(m, new Guid("9cc7cee8-40b2-48bd-9f37-78d5fe86cd07")) =>
+        public CountryRule(MetaPopulation m) : base(m, new Guid("9cc7cee8-40b2-48bd-9f37-78d5fe86cd07")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.Country, m.Country.IsoCode),

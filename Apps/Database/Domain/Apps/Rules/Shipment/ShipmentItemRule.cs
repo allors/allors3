@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
 
     public class ShipmentItemRule : Rule
     {
-        public ShipmentItemRule(M m) : base(m, new Guid("472FF004-E087-4237-8BE4-D9B9194D3BB3")) =>
+        public ShipmentItemRule(MetaPopulation m) : base(m, new Guid("472FF004-E087-4237-8BE4-D9B9194D3BB3")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.ShipmentItem, m.ShipmentItem.NextSerialisedItemAvailability),

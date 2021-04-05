@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class PriceComponentRule : Rule
     {
-        public PriceComponentRule(M m) : base(m, new Guid("34F7833F-170D-45C3-92F0-B8AD33C3A028")) =>
+        public PriceComponentRule(MetaPopulation m) : base(m, new Guid("34F7833F-170D-45C3-92F0-B8AD33C3A028")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.PriceComponent, m.PriceComponent.FromDate),

@@ -11,6 +11,6 @@ namespace Allors.Database
 
     public interface IDatabaseContext : IDatabaseLifecycle
     {
-        M M { get; }
+        MetaPopulation M { get; }
     }
 }

@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class AgreementProductApplicabilityRule : Rule
     {
-        public AgreementProductApplicabilityRule(M m) : base(m, new Guid("43ca02e8-a35b-4249-bb48-ca980ac3e648")) =>
+        public AgreementProductApplicabilityRule(MetaPopulation m) : base(m, new Guid("43ca02e8-a35b-4249-bb48-ca980ac3e648")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.AgreementProductApplicability, m.AgreementProductApplicability.Agreement),

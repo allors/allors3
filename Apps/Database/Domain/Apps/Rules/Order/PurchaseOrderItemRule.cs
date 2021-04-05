@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
 
     public class PurchaseOrderItemRule : Rule
     {
-        public PurchaseOrderItemRule(M m) : base(m, new Guid("A59A2EFC-AF5C-4F95-9212-4FD4B0306957")) =>
+        public PurchaseOrderItemRule(MetaPopulation m) : base(m, new Guid("A59A2EFC-AF5C-4F95-9212-4FD4B0306957")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.Part),
@@ -24,7 +24,7 @@ namespace Allors.Database.Domain
                 new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.QuantityOrdered),
                 new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.DerivationTrigger),
                 new RolePattern(m.PurchaseOrder, m.PurchaseOrder.StoredInFacility) { Steps = new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems} },
-                new AssociationPattern(m.OrderItemBilling.OrderItem) { OfType = m.PurchaseOrderItem.Class },
+                new AssociationPattern(m.OrderItemBilling.OrderItem) { OfType = m.PurchaseOrderItem },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

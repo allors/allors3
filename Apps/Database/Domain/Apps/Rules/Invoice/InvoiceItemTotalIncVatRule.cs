@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class InvoiceItemTotalIncVatRule : Rule
     {
-        public InvoiceItemTotalIncVatRule(M m) : base(m, new Guid("DB8D8C77-4E1A-4775-A243-79C7A558CFE4")) =>
+        public InvoiceItemTotalIncVatRule(MetaPopulation m) : base(m, new Guid("DB8D8C77-4E1A-4775-A243-79C7A558CFE4")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.TotalIncVat),

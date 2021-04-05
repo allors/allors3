@@ -32,7 +32,7 @@ namespace Allors.Database.Domain.Tests
                 new object[] {DerivationTypes.Fine },
             };
         
-        public M M { get; private set; }
+        public MetaPopulation M { get; private set; }
 
         public virtual Config Config { get; } = new Config { SetupSecurity = false };
 

@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class StatementOfWorkRule : Rule
     {
-        public StatementOfWorkRule(M m) : base(m, new Guid("8307B027-0A59-409F-B47C-B2B2C98267C8")) =>
+        public StatementOfWorkRule(MetaPopulation m) : base(m, new Guid("8307B027-0A59-409F-B47C-B2B2C98267C8")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.StatementOfWork, m.StatementOfWork.Issuer),

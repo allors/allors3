@@ -59,7 +59,7 @@ namespace Allors.Database.Domain
 
             foreach (var priceComponent in priceComponents)
             {
-                if (priceComponent.Strategy.Class.Equals(m.DiscountComponent.ObjectType) || priceComponent.Strategy.Class.Equals(m.SurchargeComponent.ObjectType))
+                if (priceComponent.Strategy.Class.Equals(m.DiscountComponent) || priceComponent.Strategy.Class.Equals(m.SurchargeComponent))
                 {
                     if (PriceComponents.AppsIsApplicable(new PriceComponents.IsApplicable
                     {
@@ -70,7 +70,7 @@ namespace Allors.Database.Domain
                         SalesInvoice = salesInvoice,
                     }))
                     {
-                        if (priceComponent.Strategy.Class.Equals(m.DiscountComponent.ObjectType))
+                        if (priceComponent.Strategy.Class.Equals(m.DiscountComponent))
                         {
                             var discountComponent = (DiscountComponent)priceComponent;
                             decimal discount;
@@ -88,7 +88,7 @@ namespace Allors.Database.Domain
                             }
                         }
 
-                        if (priceComponent.Strategy.Class.Equals(m.SurchargeComponent.ObjectType))
+                        if (priceComponent.Strategy.Class.Equals(m.SurchargeComponent))
                         {
                             var surchargeComponent = (SurchargeComponent)priceComponent;
                             decimal surcharge;

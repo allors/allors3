@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class AccumulatedScoreRule : Rule
     {
-        public AccumulatedScoreRule(M m) : base(m, new Guid("C280BFB1-543D-4B78-9397-DC956E032689")) =>
+        public AccumulatedScoreRule(MetaPopulation m) : base(m, new Guid("C280BFB1-543D-4B78-9397-DC956E032689")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.Scoreboard.AccumulatedScores),

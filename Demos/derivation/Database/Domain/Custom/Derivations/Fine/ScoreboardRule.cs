@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class ScoreboardRule : Rule
     {
-        public ScoreboardRule(M m) : base(m, new Guid("66659E72-C496-485C-A68D-E940A9A94F9C")) =>
+        public ScoreboardRule(MetaPopulation m) : base(m, new Guid("66659E72-C496-485C-A68D-E940A9A94F9C")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.Scoreboard.Players),

@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class SalesOrderItemStateRule : Rule
     {
-        public SalesOrderItemStateRule(M m) : base(m, new Guid("3d2c70e3-3751-4ffb-bfaa-f9c2b81b7a70")) =>
+        public SalesOrderItemStateRule(MetaPopulation m) : base(m, new Guid("3d2c70e3-3751-4ffb-bfaa-f9c2b81b7a70")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.SalesOrderItem, m.SalesOrderItem.ReservedFromNonSerialisedInventoryItem),
@@ -22,11 +22,11 @@ namespace Allors.Database.Domain
                 new RolePattern(m.SalesOrderItem, m.SalesOrderItem.QuantityShipped),
                 new RolePattern(m.SalesOrderItem, m.SalesOrderItem.TotalExVat),
                 new RolePattern(m.SalesOrder, m.SalesOrder.SalesOrderState) {Steps = new IPropertyType[]{ m.SalesOrder.SalesOrderItems} },
-                new RolePattern(m.OrderItemBilling, m.OrderItemBilling.OrderItem) {Steps = new IPropertyType[]{ m.OrderItemBilling.OrderItem}, OfType = m.SalesOrderItem.Class },
-                new AssociationPattern(m.ShipmentItemBilling.ShipmentItem) {Steps = new IPropertyType[]{ m.ShipmentItem.OrderShipmentsWhereShipmentItem, m.OrderShipment.OrderItem}, OfType = m.SalesOrderItem.Class },
+                new RolePattern(m.OrderItemBilling, m.OrderItemBilling.OrderItem) {Steps = new IPropertyType[]{ m.OrderItemBilling.OrderItem}, OfType = m.SalesOrderItem },
+                new AssociationPattern(m.ShipmentItemBilling.ShipmentItem) {Steps = new IPropertyType[]{ m.ShipmentItem.OrderShipmentsWhereShipmentItem, m.OrderShipment.OrderItem}, OfType = m.SalesOrderItem },
                 new RolePattern(m.NonSerialisedInventoryItem, m.NonSerialisedInventoryItem.QuantityOnHand) {Steps = new IPropertyType[]{ m.NonSerialisedInventoryItem.SalesOrderItemsWhereReservedFromNonSerialisedInventoryItem} },
-                new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.SalesInvoiceItemState) {Steps = new IPropertyType[]{ m.SalesInvoiceItem.OrderItemBillingsWhereInvoiceItem, m.OrderItemBilling.OrderItem }, OfType = m.SalesOrderItem.Class },
-                new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.SalesInvoiceItemState) {Steps = new IPropertyType[]{ m.SalesInvoiceItem.ShipmentItemBillingsWhereInvoiceItem, m.ShipmentItemBilling.ShipmentItem, m.ShipmentItem.OrderShipmentsWhereShipmentItem, m.OrderShipment.OrderItem }, OfType = m.SalesOrderItem.Class },
+                new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.SalesInvoiceItemState) {Steps = new IPropertyType[]{ m.SalesInvoiceItem.OrderItemBillingsWhereInvoiceItem, m.OrderItemBilling.OrderItem }, OfType = m.SalesOrderItem },
+                new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.SalesInvoiceItemState) {Steps = new IPropertyType[]{ m.SalesInvoiceItem.ShipmentItemBillingsWhereInvoiceItem, m.ShipmentItemBilling.ShipmentItem, m.ShipmentItem.OrderShipmentsWhereShipmentItem, m.OrderShipment.OrderItem }, OfType = m.SalesOrderItem },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

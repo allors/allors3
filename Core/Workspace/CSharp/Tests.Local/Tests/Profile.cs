@@ -33,8 +33,7 @@ namespace Tests.Workspace.Local
                 new DefaultDatabaseContext(fixture.Engine),
                 new Configuration
                 {
-                    M = fixture.M,
-                    ObjectFactory = new Allors.Database.ObjectFactory(fixture.MetaPopulation, typeof(Person)),
+                    ObjectFactory = new Allors.Database.ObjectFactory(fixture.M, typeof(Person)),
                 });
 
 

@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class EngineeringChangeDeniedPermissionRule : Rule
     {
-        public EngineeringChangeDeniedPermissionRule(M m) : base(m, new Guid("1e2ca1f7-3c8c-45e6-a8c1-640200d0beed")) =>
+        public EngineeringChangeDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("1e2ca1f7-3c8c-45e6-a8c1-640200d0beed")) =>
             this.Patterns = new Pattern[]
         {
             new RolePattern(m.EngineeringChange, m.EngineeringChange.TransitionalDeniedPermissions),

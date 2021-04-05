@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class ProductCategoryRule : Rule
     {
-        public ProductCategoryRule(M m) : base(m, new Guid("59C88605-9799-4849-A0E9-F107DB4BFBD1")) =>
+        public ProductCategoryRule(MetaPopulation m) : base(m, new Guid("59C88605-9799-4849-A0E9-F107DB4BFBD1")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.ProductCategory, m.ProductCategory.Name),

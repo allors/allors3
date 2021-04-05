@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class PartyFinancialRelationshipAmountDueRule : Rule
     {
-        public PartyFinancialRelationshipAmountDueRule(M m) : base(m, new Guid("0f4cb6d0-79ca-4a5f-ba8f-d69b67448a96")) =>
+        public PartyFinancialRelationshipAmountDueRule(MetaPopulation m) : base(m, new Guid("0f4cb6d0-79ca-4a5f-ba8f-d69b67448a96")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.SalesInvoice, m.SalesInvoice.TotalIncVat) { Steps =  new IPropertyType[] {m.SalesInvoice.BillToCustomer, m.Party.PartyFinancialRelationshipsWhereFinancialParty } },

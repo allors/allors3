@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class StartEndDateRule : Rule
     {
-        public StartEndDateRule(M m) : base(m, new Guid("F9080FC9-04D8-4072-92E9-936D2C34D028")) =>
+        public StartEndDateRule(MetaPopulation m) : base(m, new Guid("F9080FC9-04D8-4072-92E9-936D2C34D028")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.Game.StartDate),

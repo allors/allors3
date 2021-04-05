@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class DiscountComponentRule : Rule
     {
-        public DiscountComponentRule(M m) : base(m, new Guid("C395DB2E-C4A6-4974-BE35-EF2CC70D347D")) =>
+        public DiscountComponentRule(MetaPopulation m) : base(m, new Guid("C395DB2E-C4A6-4974-BE35-EF2CC70D347D")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.DiscountComponent, m.DiscountComponent.Price),

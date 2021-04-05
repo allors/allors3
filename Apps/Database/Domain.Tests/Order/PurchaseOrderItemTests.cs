@@ -1523,7 +1523,7 @@ namespace Allors.Database.Domain.Tests
     [Trait("Category", "Security")]
     public class PurchaseOrderItemDeniedPermissonDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseOrderItemDeniedPermissonDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrderItem.ObjectType, this.M.PurchaseOrderItem.Delete);
+        public PurchaseOrderItemDeniedPermissonDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrderItem, this.M.PurchaseOrderItem.Delete);
 
         public override Config Config => new Config { SetupSecurity = true };
 

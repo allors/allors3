@@ -15,11 +15,11 @@ namespace Allors.Database.Domain
 
     public class DeliverableBasedServiceRule : Rule
     {
-        public DeliverableBasedServiceRule(M m) : base(m, new Guid("f0400e44-4b4b-4899-87dc-874038ceece3")) =>
+        public DeliverableBasedServiceRule(MetaPopulation m) : base(m, new Guid("f0400e44-4b4b-4899-87dc-874038ceece3")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.DeliverableBasedService, m.DeliverableBasedService.Variants),
-                new AssociationPattern(m.PriceComponent.Product) { OfType = m.DeliverableBasedService.Class },
+                new AssociationPattern(m.PriceComponent.Product) { OfType = m.DeliverableBasedService },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

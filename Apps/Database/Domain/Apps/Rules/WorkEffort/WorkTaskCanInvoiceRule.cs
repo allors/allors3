@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class WorkTaskCanInvoiceRule : Rule
     {
-        public WorkTaskCanInvoiceRule(M m) : base(m, new Guid("17ee3e8a-2430-48db-b712-ba305d488459")) =>
+        public WorkTaskCanInvoiceRule(MetaPopulation m) : base(m, new Guid("17ee3e8a-2430-48db-b712-ba305d488459")) =>
             this.Patterns = new Pattern[]
         {
             new RolePattern(m.WorkTask, m.WorkTask.WorkEffortState),

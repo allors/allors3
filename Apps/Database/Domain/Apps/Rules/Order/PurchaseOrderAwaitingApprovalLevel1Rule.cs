@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class PurchaseOrderAwaitingApprovalLevel1Rule : Rule
     {
-        public PurchaseOrderAwaitingApprovalLevel1Rule(M m) : base(m, new Guid("22dc128b-8487-4606-8596-4337d87ed420")) =>
+        public PurchaseOrderAwaitingApprovalLevel1Rule(MetaPopulation m) : base(m, new Guid("22dc128b-8487-4606-8596-4337d87ed420")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.PurchaseOrder, m.PurchaseOrder.PurchaseOrderState)

@@ -15,11 +15,11 @@ namespace Allors.Database.Domain
 
     public class TimeAndMaterialsServiceRule : Rule
     {
-        public TimeAndMaterialsServiceRule(M m) : base(m, new Guid("60d9b0ad-2078-4921-a689-e15877983bb3")) =>
+        public TimeAndMaterialsServiceRule(MetaPopulation m) : base(m, new Guid("60d9b0ad-2078-4921-a689-e15877983bb3")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.TimeAndMaterialsService, m.TimeAndMaterialsService.Variants),
-                new AssociationPattern(m.PriceComponent.Product) { OfType = m.TimeAndMaterialsService.Class },
+                new AssociationPattern(m.PriceComponent.Product) { OfType = m.TimeAndMaterialsService },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

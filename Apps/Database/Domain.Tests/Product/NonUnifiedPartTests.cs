@@ -193,7 +193,7 @@ namespace Allors.Database.Domain.Tests
     [Trait("Category", "Security")]
     public class NonUnifiedPartDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public NonUnifiedPartDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.NonUnifiedPart.ObjectType, this.M.NonUnifiedPart.Delete);
+        public NonUnifiedPartDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.NonUnifiedPart, this.M.NonUnifiedPart.Delete);
         public override Config Config => new Config { SetupSecurity = true };
 
         private readonly Permission deletePermission;

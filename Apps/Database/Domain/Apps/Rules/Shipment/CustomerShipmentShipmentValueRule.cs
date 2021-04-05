@@ -14,12 +14,12 @@ namespace Allors.Database.Domain
 
     public class CustomerShipmentShipmentValueRule : Rule
     {
-        public CustomerShipmentShipmentValueRule(M m) : base(m, new Guid("fefff2c8-12dd-4ef5-b2c7-923bb80c2ec3")) =>
+        public CustomerShipmentShipmentValueRule(MetaPopulation m) : base(m, new Guid("fefff2c8-12dd-4ef5-b2c7-923bb80c2ec3")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.OrderShipment.ShipmentItem) { Steps = new IPropertyType[] { m.ShipmentItem.ShipmentWhereShipmentItem }, OfType = m.CustomerShipment.Class },
-                new RolePattern(m.OrderShipment, m.OrderShipment.Quantity) { Steps = new IPropertyType[] { m.OrderShipment.ShipmentItem, m.ShipmentItem.ShipmentWhereShipmentItem }, OfType = m.CustomerShipment.Class },
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.UnitPrice) { Steps = new IPropertyType[] { m.SalesOrderItem.OrderShipmentsWhereOrderItem, m.OrderShipment.ShipmentItem, m.ShipmentItem.ShipmentWhereShipmentItem }, OfType = m.CustomerShipment.Class },
+                new AssociationPattern(m.OrderShipment.ShipmentItem) { Steps = new IPropertyType[] { m.ShipmentItem.ShipmentWhereShipmentItem }, OfType = m.CustomerShipment },
+                new RolePattern(m.OrderShipment, m.OrderShipment.Quantity) { Steps = new IPropertyType[] { m.OrderShipment.ShipmentItem, m.ShipmentItem.ShipmentWhereShipmentItem }, OfType = m.CustomerShipment },
+                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.UnitPrice) { Steps = new IPropertyType[] { m.SalesOrderItem.OrderShipmentsWhereOrderItem, m.OrderShipment.ShipmentItem, m.ShipmentItem.ShipmentWhereShipmentItem }, OfType = m.CustomerShipment },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

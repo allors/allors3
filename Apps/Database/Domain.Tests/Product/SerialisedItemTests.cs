@@ -796,7 +796,7 @@ namespace Allors.Database.Domain.Tests
     [Trait("Category", "Security")]
     public class SerialisedItemDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public SerialisedItemDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.SerialisedItem.ObjectType, this.M.SerialisedItem.Delete);
+        public SerialisedItemDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.SerialisedItem, this.M.SerialisedItem.Delete);
 
         public override Config Config => new Config { SetupSecurity = true };
 

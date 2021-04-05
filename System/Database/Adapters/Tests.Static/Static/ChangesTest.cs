@@ -33,8 +33,8 @@ namespace Allors.Database.Adapters
                 init();
                 var m = this.Transaction.Database.Context().M;
 
-                var a = (C1)this.Transaction.Create(m.C1.ObjectType);
-                var c = this.Transaction.Create(m.C3.ObjectType);
+                var a = (C1)this.Transaction.Create(m.C1);
+                var c = this.Transaction.Create(m.C3);
                 this.Transaction.Commit();
 
                 a = (C1)this.Transaction.Instantiate(a);
@@ -225,9 +225,9 @@ namespace Allors.Database.Adapters
                 init();
                 var m = this.Transaction.Database.Context().M;
 
-                var c1a = (C1)this.Transaction.Create(m.C1.ObjectType);
-                var c1b = (C1)this.Transaction.Create(m.C1.ObjectType);
-                var c2a = (C2)this.Transaction.Create(m.C2.ObjectType);
+                var c1a = (C1)this.Transaction.Create(m.C1);
+                var c1b = (C1)this.Transaction.Create(m.C1);
+                var c2a = (C2)this.Transaction.Create(m.C2);
 
                 this.Transaction.Commit();
 
@@ -408,9 +408,9 @@ namespace Allors.Database.Adapters
                 init();
                 var m = this.Transaction.Database.Context().M;
 
-                var c1a = (C1)this.Transaction.Create(m.C1.ObjectType);
-                var c1b = (C1)this.Transaction.Create(m.C1.ObjectType);
-                var c2a = (C2)this.Transaction.Create(m.C2.ObjectType);
+                var c1a = (C1)this.Transaction.Create(m.C1);
+                var c1b = (C1)this.Transaction.Create(m.C1);
+                var c2a = (C2)this.Transaction.Create(m.C2);
 
                 this.Transaction.Commit();
 
@@ -591,9 +591,9 @@ namespace Allors.Database.Adapters
                 init();
                 var m = this.Transaction.Database.Context().M;
 
-                var c1a = (C1)this.Transaction.Create(m.C1.ObjectType);
-                var c1b = (C1)this.Transaction.Create(m.C1.ObjectType);
-                var c2a = (C2)this.Transaction.Create(m.C2.ObjectType);
+                var c1a = (C1)this.Transaction.Create(m.C1);
+                var c1b = (C1)this.Transaction.Create(m.C1);
+                var c2a = (C2)this.Transaction.Create(m.C2);
 
                 this.Transaction.Commit();
 
@@ -836,9 +836,9 @@ namespace Allors.Database.Adapters
                 init();
                 var m = this.Transaction.Database.Context().M;
 
-                var c1a = (C1)this.Transaction.Create(m.C1.ObjectType);
-                var c1b = (C1)this.Transaction.Create(m.C1.ObjectType);
-                var c2a = (C2)this.Transaction.Create(m.C2.ObjectType);
+                var c1a = (C1)this.Transaction.Create(m.C1);
+                var c1b = (C1)this.Transaction.Create(m.C1);
+                var c2a = (C2)this.Transaction.Create(m.C2);
 
                 this.Transaction.Commit();
 
@@ -1081,8 +1081,8 @@ namespace Allors.Database.Adapters
                 init();
                 var m = this.Transaction.Database.Context().M;
 
-                var a = (C1)this.Transaction.Create(m.C1.ObjectType);
-                var c = this.Transaction.Create(m.C3.ObjectType);
+                var a = (C1)this.Transaction.Create(m.C1);
+                var c = this.Transaction.Create(m.C3);
                 this.Transaction.Commit();
 
                 a = (C1)this.Transaction.Instantiate(a);
@@ -1122,8 +1122,8 @@ namespace Allors.Database.Adapters
                 init();
                 var m = this.Transaction.Database.Context().M;
 
-                var a = (C1)this.Transaction.Create(m.C1.ObjectType);
-                var c = this.Transaction.Create(m.C3.ObjectType);
+                var a = (C1)this.Transaction.Create(m.C1);
+                var c = this.Transaction.Create(m.C3);
                 this.Transaction.Commit();
 
                 a = (C1)this.Transaction.Instantiate(a);

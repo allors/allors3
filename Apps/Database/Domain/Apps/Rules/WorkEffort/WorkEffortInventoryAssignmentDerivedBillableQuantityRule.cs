@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class WorkEffortInventoryAssignmentDerivedBillableQuantityRule : Rule
     {
-        public WorkEffortInventoryAssignmentDerivedBillableQuantityRule(M m) : base(m, new Guid("fb0411a2-00ec-4e19-bb4d-f58f4aefef14")) =>
+        public WorkEffortInventoryAssignmentDerivedBillableQuantityRule(MetaPopulation m) : base(m, new Guid("fb0411a2-00ec-4e19-bb4d-f58f4aefef14")) =>
             this.Patterns = new Pattern[]
         {
             new RolePattern(m.WorkEffortInventoryAssignment, m.WorkEffortInventoryAssignment.Quantity),

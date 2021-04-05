@@ -15,12 +15,12 @@ namespace Allors.Database.Domain
 
     public class SalesOrderItemShipmentRule : Rule
     {
-        public SalesOrderItemShipmentRule(M m) : base(m, new Guid("0fc6919a-45d3-4e71-bf4d-1baca964f204")) =>
+        public SalesOrderItemShipmentRule(MetaPopulation m) : base(m, new Guid("0fc6919a-45d3-4e71-bf4d-1baca964f204")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.SalesOrderItem, m.SalesOrderItem.QuantityOrdered),
-                new RolePattern(m.OrderShipment, m.OrderShipment.Quantity) {Steps = new IPropertyType[]{ m.OrderShipment.OrderItem}, OfType = m.SalesOrderItem.Class },
-                new RolePattern(m.ShipmentItem, m.ShipmentItem.ShipmentItemState) {Steps = new IPropertyType[]{m.ShipmentItem.OrderShipmentsWhereShipmentItem, m.OrderShipment.OrderItem}, OfType = m.SalesOrderItem.Class },
+                new RolePattern(m.OrderShipment, m.OrderShipment.Quantity) {Steps = new IPropertyType[]{ m.OrderShipment.OrderItem}, OfType = m.SalesOrderItem },
+                new RolePattern(m.ShipmentItem, m.ShipmentItem.ShipmentItemState) {Steps = new IPropertyType[]{m.ShipmentItem.OrderShipmentsWhereShipmentItem, m.OrderShipment.OrderItem}, OfType = m.SalesOrderItem },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

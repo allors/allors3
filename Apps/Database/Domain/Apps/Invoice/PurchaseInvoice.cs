@@ -326,7 +326,7 @@ namespace Allors.Database.Domain
                     .Build();
             }
 
-            this.AddDeniedPermission(new Permissions(this.Strategy.Transaction).Get(this.Meta.ObjectType, this.Meta.CreateSalesInvoice));
+            this.AddDeniedPermission(new Permissions(this.Strategy.Transaction).Get(this.Meta, this.Meta.CreateSalesInvoice));
 
             method.StopPropagation = true;
         }

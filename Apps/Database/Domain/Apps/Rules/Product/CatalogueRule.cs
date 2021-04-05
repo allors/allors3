@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class CatalogueRule : Rule
     {
-        public CatalogueRule(M m) : base(m, new Guid("7B3BA380-A703-4E29-8D2D-0D2F74C6E7D8")) =>
+        public CatalogueRule(MetaPopulation m) : base(m, new Guid("7B3BA380-A703-4E29-8D2D-0D2F74C6E7D8")) =>
             this.Patterns = new[]
             {
                 new RolePattern(m.Catalogue, m.Catalogue.CatalogueImage),

@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class SerialisedItemOwnerRule : Rule
     {
-        public SerialisedItemOwnerRule(M m) : base(m, new Guid("4505de7b-8e45-4683-a90b-ffd31d981c1c")) =>
+        public SerialisedItemOwnerRule(MetaPopulation m) : base(m, new Guid("4505de7b-8e45-4683-a90b-ffd31d981c1c")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.Shipment, m.Shipment.ShipmentState) { Steps = new IPropertyType[] {m.Shipment.ShipmentItems, m.ShipmentItem.SerialisedItem } },

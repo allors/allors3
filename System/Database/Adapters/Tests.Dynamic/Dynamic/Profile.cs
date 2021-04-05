@@ -27,15 +27,9 @@ namespace Allors.Database.Adapters
         private ITransaction transaction;
         private ITransaction transaction2;
 
-        protected Profile()
-        {
-            this.MetaPopulation = new MetaBuilder().Build();
-            this.M = new M(this.MetaPopulation);
-        }
+        protected Profile() => this.M = new MetaBuilder().Build();
 
-        public MetaPopulation MetaPopulation { get; }
-
-        public M M { get; set; }
+        public MetaPopulation M { get; }
 
         public IObject[] CreateArray(IObjectType objectType, int count)
         {
@@ -46,7 +40,7 @@ namespace Allors.Database.Adapters
         public IDatabase CreateMemoryDatabase() =>
             new Database(new DatabaseContext(), new Memory.Configuration
             {
-                ObjectFactory = new ObjectFactory(this.MetaPopulation, typeof(C1)),
+                ObjectFactory = new ObjectFactory(this.M, typeof(C1)),
             });
 
         public ITransaction CreateTransaction() => this.GetDatabase().CreateTransaction();

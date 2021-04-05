@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class SalesOrderItemPriceRule : Rule
     {
-        public SalesOrderItemPriceRule(M m) : base(m, new Guid("f8c7f18b-7df0-4ed4-ba1b-30e4c32ee414")) =>
+        public SalesOrderItemPriceRule(MetaPopulation m) : base(m, new Guid("f8c7f18b-7df0-4ed4-ba1b-30e4c32ee414")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.SalesOrderItem, m.SalesOrderItem.Product),
@@ -25,10 +25,10 @@ namespace Allors.Database.Domain
                 new RolePattern(m.SalesOrderItem, m.SalesOrderItem.SurchargeAdjustments),
                 new RolePattern(m.SalesOrderItem, m.SalesOrderItem.VatRate),
                 new RolePattern(m.SalesOrderItem, m.SalesOrderItem.IrpfRate),
-                new RolePattern(m.DiscountAdjustment, m.DiscountAdjustment.Percentage) { Steps =  new IPropertyType[] {m.DiscountAdjustment.PriceableWhereDiscountAdjustment}, OfType = m.SalesOrderItem.Class },
-                new RolePattern(m.DiscountAdjustment, m.DiscountAdjustment.Amount) { Steps =  new IPropertyType[] {m.DiscountAdjustment.PriceableWhereDiscountAdjustment}, OfType = m.SalesOrderItem.Class },
-                new RolePattern(m.SurchargeAdjustment, m.SurchargeAdjustment.Percentage) { Steps =  new IPropertyType[] {m.SurchargeAdjustment.PriceableWhereSurchargeAdjustment}, OfType = m.SalesOrderItem.Class },
-                new RolePattern(m.SurchargeAdjustment, m.SurchargeAdjustment.Amount) { Steps =  new IPropertyType[] {m.SurchargeAdjustment.PriceableWhereSurchargeAdjustment}, OfType = m.SalesOrderItem.Class },
+                new RolePattern(m.DiscountAdjustment, m.DiscountAdjustment.Percentage) { Steps =  new IPropertyType[] {m.DiscountAdjustment.PriceableWhereDiscountAdjustment}, OfType = m.SalesOrderItem },
+                new RolePattern(m.DiscountAdjustment, m.DiscountAdjustment.Amount) { Steps =  new IPropertyType[] {m.DiscountAdjustment.PriceableWhereDiscountAdjustment}, OfType = m.SalesOrderItem },
+                new RolePattern(m.SurchargeAdjustment, m.SurchargeAdjustment.Percentage) { Steps =  new IPropertyType[] {m.SurchargeAdjustment.PriceableWhereSurchargeAdjustment}, OfType = m.SalesOrderItem },
+                new RolePattern(m.SurchargeAdjustment, m.SurchargeAdjustment.Amount) { Steps =  new IPropertyType[] {m.SurchargeAdjustment.PriceableWhereSurchargeAdjustment}, OfType = m.SalesOrderItem },
                 new RolePattern(m.SalesOrder, m.SalesOrder.BillToCustomer) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems } },
                 new RolePattern(m.SalesOrder, m.SalesOrder.OrderDate) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems } },
                 new RolePattern(m.SalesOrder, m.SalesOrder.DerivationTrigger) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems } },

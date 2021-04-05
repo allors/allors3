@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
 
     public class BankAccountRule : Rule
     {
-        public BankAccountRule(M m) : base(m, new Guid("633f58cd-ca1b-4a2e-8f6e-e1642466a9f7")) =>
+        public BankAccountRule(MetaPopulation m) : base(m, new Guid("633f58cd-ca1b-4a2e-8f6e-e1642466a9f7")) =>
             this.Patterns = new Pattern[]
             {
                 new AssociationPattern(m.OwnBankAccount.BankAccount),

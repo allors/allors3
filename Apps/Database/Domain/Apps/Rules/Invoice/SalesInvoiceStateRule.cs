@@ -13,10 +13,10 @@ namespace Allors.Database.Domain
 
     public class SalesInvoiceStateRule : Rule
     {
-        public SalesInvoiceStateRule(M m) : base(m, new Guid("c273de35-fd1c-4353-8354-d3640ba5dff8")) =>
+        public SalesInvoiceStateRule(MetaPopulation m) : base(m, new Guid("c273de35-fd1c-4353-8354-d3640ba5dff8")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.PaymentApplication, m.PaymentApplication.AmountApplied) { Steps =  new IPropertyType[] {m.PaymentApplication.Invoice}, OfType = m.SalesInvoice.Class },
+            new RolePattern(m.PaymentApplication, m.PaymentApplication.AmountApplied) { Steps =  new IPropertyType[] {m.PaymentApplication.Invoice}, OfType = m.SalesInvoice },
             new RolePattern(m.SalesInvoice, m.SalesInvoice.SalesInvoiceItems),
             new RolePattern(m.SalesInvoice, m.SalesInvoice.AdvancePayment),
             new RolePattern(m.SalesInvoice, m.SalesInvoice.DerivationTrigger),

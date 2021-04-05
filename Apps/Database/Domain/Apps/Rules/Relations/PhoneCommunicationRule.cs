@@ -13,12 +13,12 @@ namespace Allors.Database.Domain
 
     public class PhoneCommunicationRule : Rule
     {
-        public PhoneCommunicationRule(M m) : base(m, new Guid("6C8EB5C8-1E8C-41CF-B127-53C88E200F65")) =>
+        public PhoneCommunicationRule(MetaPopulation m) : base(m, new Guid("6C8EB5C8-1E8C-41CF-B127-53C88E200F65")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.PhoneCommunication, m.PhoneCommunication.Subject),
                 new RolePattern(m.PhoneCommunication, m.PhoneCommunication.ToParty),
-                new RolePattern(m.Party, m.Party.PartyName) { Steps = new IPropertyType[] { m.Party.CommunicationEventsWhereToParty}, OfType = m.PhoneCommunication.Class },
+                new RolePattern(m.Party, m.Party.PartyName) { Steps = new IPropertyType[] { m.Party.CommunicationEventsWhereToParty}, OfType = m.PhoneCommunication },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

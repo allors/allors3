@@ -30,70 +30,70 @@ For more information visit http://www.allors.com/legal
 domain(meta) ::= <<
 namespace Allors.Domain
 {
-	$meta.composites:{composite|$composite(meta=meta,composite=composite)$}$
+	$meta._.composites:{composite|$composite(meta=meta,composite=composite)$}$
 }
 >>
 
 composite(meta,composite) ::= <<
 
-	public interface $composite.Name$ $if(composite.ExistDirectSupertypes)$ : $first([composite.DirectSupertypes]):{it | $it.Name$}$$rest([composite.DirectSupertypes]):{it | , $it.Name$}$ $endif$
+	public interface $composite._.Name$ $if(composite._.ExistDirectSupertypes)$ : $first([composite._.DirectSupertypes]):{it | $it.Name$}$$rest([composite._.DirectSupertypes]):{it | , $it.Name$}$ $endif$
 	{
-		$composite.ExclusiveRoleTypes:{roleType|$roleType(roleType=roleType)$}$
+		$composite._.ExclusiveRoleTypes:{roleType|$roleType(roleType=roleType)$}$
 	}
 >>
 
 roleType(roleType) ::= <<
-$if(roleType.IsOne)$
-			$nullableName(roleType)$ $prefix(roleType)$$roleType.SingularName$ {set;}
+$if(roleType._.IsOne)$
+			$nullableName(roleType)$ $prefix(roleType)$$roleType._.SingularName$ {set;}
 $else$
-			$nullableName(roleType)$[] $prefix(roleType)$$roleType.PluralName$ {set;}
+			$nullableName(roleType)$[] $prefix(roleType)$$roleType._.PluralName$ {set;}
 $endif$
 >>
 
 prefix(roleType) ::= <%
-$if(roleType.RelationType.IsDerived)$_$endif$$if(roleType.RelationType.IsSynced)$__$endif$
+$if(roleType._.RelationType.IsDerived)$_$endif$$if(roleType._.RelationType.IsSynced)$__$endif$
 %>
 
 nullableName(roleType) ::= <%
-$if(roleType.ObjectType.IsUnit)$
-	$if(roleType.IsRequired)$
-		$if(roleType.ObjectType.IsBinary)$
+$if(roleType._.ObjectType._.IsUnit)$
+	$if(roleType._.IsRequired)$
+		$if(roleType._.ObjectType._.IsBinary)$
 			global::System.Byte[]
-		$elseif(roleType.ObjectType.IsBoolean)$
+		$elseif(roleType._.ObjectType._.IsBoolean)$
 			global::System.Boolean
-		$elseif(roleType.ObjectType.IsDateTime)$
+		$elseif(roleType._.ObjectType._.IsDateTime)$
 			global::System.DateTime
-		$elseif(roleType.ObjectType.IsDecimal)$
+		$elseif(roleType._.ObjectType._.IsDecimal)$
 			global::System.Decimal
-		$elseif(roleType.ObjectType.IsFloat)$
+		$elseif(roleType._.ObjectType._.IsFloat)$
 			global::System.Double
-		$elseif(roleType.ObjectType.IsInteger)$
+		$elseif(roleType._.ObjectType._.IsInteger)$
 			global::System.Int32
-		$elseif(roleType.ObjectType.IsString)$
+		$elseif(roleType._.ObjectType._.IsString)$
 			global::System.String
-		$elseif(roleType.ObjectType.IsUnique)$
+		$elseif(roleType._.ObjectType._.IsUnique)$
 			global::System.Guid
 		$endif$
 	$else$
-		$if(roleType.ObjectType.IsBinary)$
+		$if(roleType._.ObjectType._.IsBinary)$
 			global::System.Byte[]
-		$elseif(roleType.ObjectType.IsBoolean)$
+		$elseif(roleType._.ObjectType._.IsBoolean)$
 			global::System.Boolean?
-		$elseif(roleType.ObjectType.IsDateTime)$
+		$elseif(roleType._.ObjectType._.IsDateTime)$
 			global::System.DateTime?
-		$elseif(roleType.ObjectType.IsDecimal)$
+		$elseif(roleType._.ObjectType._.IsDecimal)$
 			global::System.Decimal?
-		$elseif(roleType.ObjectType.IsFloat)$
+		$elseif(roleType._.ObjectType._.IsFloat)$
 			global::System.Double?
-		$elseif(roleType.ObjectType.IsInteger)$
+		$elseif(roleType._.ObjectType._.IsInteger)$
 			global::System.Int32?
-		$elseif(roleType.ObjectType.IsString)$
+		$elseif(roleType._.ObjectType._.IsString)$
 			global::System.String
-		$elseif(roleType.ObjectType.IsUnique)$
+		$elseif(roleType._.ObjectType._.IsUnique)$
 			global::System.Guid?
 		$endif$
 	$endif$
 $else$
-	$roleType.ObjectType.SingularName$
+	$roleType._.ObjectType._.SingularName$
 $endif$
 %>

@@ -24,8 +24,7 @@ namespace Allors.Database.Domain.Tests
                 new DefaultDatabaseContext(fixture.Engine),
                 new Configuration
                 {
-                    M = fixture.M,
-                    ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(User)),
+                    ObjectFactory = new ObjectFactory(fixture.M, typeof(User)),
                 });
 
             this.M = database.Context().M;
@@ -33,7 +32,7 @@ namespace Allors.Database.Domain.Tests
             this.Setup(database, populate);
         }
 
-        public M M { get; }
+        public MetaPopulation M { get; }
 
         public virtual Config Config { get; } = new Config { SetupSecurity = false };
 

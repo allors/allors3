@@ -32,7 +32,7 @@ namespace Allors.Database.Domain.Tests
 
                 var guest = new AutomatedAgents(this.Session).Guest;
                 var acls = new DatabaseAccessControlLists(guest);
-                foreach (Object aco in (IObject[])session.Extent(this.M.Organisation.ObjectType))
+                foreach (Object aco in (IObject[])session.Extent(this.M.Organisation))
                 {
                     // When
                     var accessList = acls[aco];

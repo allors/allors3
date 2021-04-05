@@ -49,8 +49,8 @@ namespace Allors.Database.Domain.Tests
     {
         public RequestForQuoteDeniedPermissionDerivationTests(Fixture fixture) : base(fixture)
         {
-            this.deletePermission = new Permissions(this.Transaction).Get(this.M.RequestForQuote.ObjectType, this.M.RequestForQuote.Delete);
-            this.submitPermission = new Permissions(this.Transaction).Get(this.M.RequestForQuote.ObjectType, this.M.RequestForQuote.Submit);
+            this.deletePermission = new Permissions(this.Transaction).Get(this.M.RequestForQuote, this.M.RequestForQuote.Delete);
+            this.submitPermission = new Permissions(this.Transaction).Get(this.M.RequestForQuote, this.M.RequestForQuote.Submit);
         }
 
         public override Config Config => new Config { SetupSecurity = true };

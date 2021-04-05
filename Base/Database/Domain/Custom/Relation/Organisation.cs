@@ -18,11 +18,11 @@ namespace Allors.Database.Domain
             {
                 var permissions = new Permissions(this.strategy.Transaction);
                 var deniedPermissions = new[]
-                                            {
-                                                permissions.Get(this.Meta.Class, this.Meta.Name, Operations.Write),
-                                                permissions.Get(this.Meta.Class, this.Meta.Owner, Operations.Write),
-                                                permissions.Get(this.Meta.Class, this.Meta.Employees, Operations.Write),
-                                            };
+                {
+                    permissions.Get(this.Meta, this.Meta.Name, Operations.Write),
+                    permissions.Get(this.Meta, this.Meta.Owner, Operations.Write),
+                    permissions.Get(this.Meta, this.Meta.Employees, Operations.Write),
+                };
 
                 this.DeniedPermissions = deniedPermissions;
             }

@@ -13,12 +13,12 @@ namespace Allors.Database.Domain
 
     public class RequestForProposalDeniedPermissionRule : Rule
     {
-        public RequestForProposalDeniedPermissionRule(M m) : base(m, new Guid("1eb65d1c-7164-4c98-aef5-47c3e96f26d7")) =>
+        public RequestForProposalDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("1eb65d1c-7164-4c98-aef5-47c3e96f26d7")) =>
             this.Patterns = new Pattern[]
         {
             new RolePattern(m.RequestForProposal, m.RequestForProposal.TransitionalDeniedPermissions),
-            new RolePattern(m.RequestItem, m.RequestItem.RequestItemState) { Steps =  new IPropertyType[] { m.RequestItem.RequestWhereRequestItem}, OfType = m.RequestForProposal.Class },
-            new AssociationPattern(m.Quote.Request) { OfType = m.RequestForProposal.Class },
+            new RolePattern(m.RequestItem, m.RequestItem.RequestItemState) { Steps =  new IPropertyType[] { m.RequestItem.RequestWhereRequestItem}, OfType = m.RequestForProposal },
+            new AssociationPattern(m.Quote.Request) { OfType = m.RequestForProposal },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
             {
                 @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
 
-                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Delete);
                 if (@this.IsDeletable())
                 {
                     @this.RemoveDeniedPermission(deletePermission);

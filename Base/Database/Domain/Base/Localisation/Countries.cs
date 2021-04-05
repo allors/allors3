@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
         public Cache<string, Country> CountryByIsoCode => this.countryByIsoCode ??= new Cache<string, Country>(this.Transaction, this.M.Country.IsoCode);
 
-        protected override void CorePrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.Currency.ObjectType);
+        protected override void CorePrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.Currency);
 
         protected override void CoreSetup(Setup setup)
         {

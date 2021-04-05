@@ -19,10 +19,16 @@ namespace Allors.Database.Meta
 
         IEnumerable<IAssociationType> DatabaseAssociationTypes { get; }
 
+        IEnumerable<IAssociationType> ExclusiveDatabaseAssociationTypes { get; }
+
         IEnumerable<IRoleType> DatabaseRoleTypes { get; }
+
+        IEnumerable<IRoleType> ExclusiveDatabaseRoleTypes { get; }
 
         IEnumerable<IMethodType> MethodTypes { get; }
 
+        IEnumerable<IMethodType> ExclusiveMethodTypes { get; }
+        
         bool ExistDatabaseClass { get; }
 
         IEnumerable<IClass> DatabaseClasses { get; }

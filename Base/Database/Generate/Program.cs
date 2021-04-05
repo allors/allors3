@@ -18,8 +18,7 @@ namespace Allors.Database
         {
             string[,] database =
             {
-                { "../Core/Database/Templates/meta.cs.stg", "Database/Domain/generated/meta" },
-                { "../Core/Database/Templates/domain.cs.stg", "DataBase/Domain/generated/domain" },
+                { "../Core/Database/Templates/domain.cs.stg", "DataBase/Domain/generated" },
                 { "../Core/Database/Templates/uml.cs.stg", "DataBase/Diagrams/generated" },
                 // { "../Core/Database/Templates/uml.java.stg", "DataBase/Diagrams.java/allors" },
             };
