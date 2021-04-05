@@ -75,18 +75,23 @@ namespace Allors.Database.Meta
         IEnumerable<IDomain> IMetaPopulation.Domains => this.Domains;
         public IEnumerable<IDomainBase> Domains => this.domains;
 
+        IEnumerable<IClass> IMetaPopulation.Classes => this.classes;
         public IEnumerable<IClassBase> Classes => this.classes;
 
         IEnumerable<IInheritanceBase> IMetaPopulationBase.Inheritances => this.Inheritances;
         IEnumerable<IInheritance> IMetaPopulation.Inheritances => this.Inheritances;
         public IEnumerable<Inheritance> Inheritances => this.inheritances;
 
+        IEnumerable<IRelationType> IMetaPopulation.RelationTypes => this.relationTypes;
         public IEnumerable<IRelationTypeBase> RelationTypes => this.relationTypes;
 
         public IEnumerable<IAssociationTypeBase> AssociationTypes => this.associationTypes;
 
         public IEnumerable<IRoleTypeBase> RoleTypes => this.roleTypes;
-        
+
+        IEnumerable<IInterface> IMetaPopulation.Interfaces => this.interfaces;
+
+        IEnumerable<IComposite> IMetaPopulation.Composites => this.derivedComposites;
         public IEnumerable<ICompositeBase> Composites
         {
             get
@@ -158,57 +163,7 @@ namespace Allors.Database.Meta
                 return this.derivedDatabaseRelationTypes;
             }
         }
-
-        public IReadOnlyDictionary<string, IEnumerable<ICompositeBase>> WorkspaceCompositesByWorkspaceName
-        {
-            get
-            {
-                this.Derive();
-                return this.WorkspaceNames
-                    .ToDictionary(v => v, v => this.Composites.Where(w => w.WorkspaceNames.Contains(v)));
-            }
-        }
-
-        public IReadOnlyDictionary<string, IEnumerable<IInterfaceBase>> WorkspaceInterfacesByWorkspaceName
-        {
-            get
-            {
-                this.Derive();
-                return this.WorkspaceNames
-                    .ToDictionary(v => v, v => this.interfaces.Where(w => w.WorkspaceNames.Contains(v)));
-            }
-        }
-
-        public IReadOnlyDictionary<string, IEnumerable<IClassBase>> WorkspaceClassesByWorkspaceName
-        {
-            get
-            {
-                this.Derive();
-                return this.WorkspaceNames
-                    .ToDictionary(v => v, v => this.Classes.Where(w => w.WorkspaceNames.Contains(v)));
-            }
-        }
-
-        public IReadOnlyDictionary<string, IEnumerable<IRelationTypeBase>> WorkspaceRelationTypesByWorkspaceName
-        {
-            get
-            {
-                this.Derive();
-                return this.WorkspaceNames
-                    .ToDictionary(v => v, v => this.RelationTypes.Where(w => w.WorkspaceNames.Contains(v)));
-            }
-        }
-
-        public IReadOnlyDictionary<string, IEnumerable<IMethodTypeBase>> WorkspaceMethodTypesByWorkspaceName
-        {
-            get
-            {
-                this.Derive();
-                return this.WorkspaceNames
-                    .ToDictionary(v => v, v => this.MethodTypes.Where(w => w.WorkspaceNames.Contains(v)));
-            }
-        }
-
+        
         IEnumerable<IMethodType> IMetaPopulation.MethodTypes => this.MethodTypes;
         public IEnumerable<IMethodTypeBase> MethodTypes => this.methodTypes;
 

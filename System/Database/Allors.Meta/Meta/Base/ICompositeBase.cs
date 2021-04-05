@@ -15,6 +15,18 @@ namespace Allors.Database.Meta
 
         new IEnumerable<IMethodTypeBase> MethodTypes { get; }
 
+        IEnumerable<IAssociationType> AssociationTypes { get; }
+
+        IEnumerable<IAssociationType> ExclusiveAssociationTypes { get; }
+
+        IEnumerable<IRoleType> RoleTypes { get; }
+
+        IEnumerable<IRoleType> ExclusiveRoleTypes { get; }
+
+        IEnumerable<IInterface> DirectSupertypes { get; }
+
+        IEnumerable<IComposite> Subtypes { get; }
+
         void DeriveDirectSupertypes(HashSet<IInterfaceBase> sharedInterfaces);
 
         void DeriveSupertypes(HashSet<IInterfaceBase> sharedInterfaces);

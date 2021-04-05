@@ -28,7 +28,7 @@ namespace Tests
 
             this.Transaction.Commit();
 
-            var extent = new Extent(m.WorkspaceXObject1.ObjectType);
+            var extent = new Extent(m.WorkspaceXObject1);
             var pullRequest = new PullRequest
             {
                 Pulls = new[]
@@ -57,7 +57,7 @@ namespace Tests
 
             this.Transaction.Commit();
 
-            var extent = new Extent(m.WorkspaceXObject1.ObjectType);
+            var extent = new Extent(m.WorkspaceXObject1);
             var pullRequest = new PullRequest
             {
                 Pulls = new[]
@@ -84,7 +84,7 @@ namespace Tests
 
             this.Transaction.Commit();
 
-            var extent = new Extent(m.WorkspaceXObject1.ObjectType);
+            var extent = new Extent(m.WorkspaceXObject1);
             var pullRequest = new PullRequest
             {
                 Pulls = new[]

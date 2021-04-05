@@ -34,8 +34,7 @@ namespace Allors
 
             string[,] config =
                 {
-                    { "../../../core/database/templates/meta.cs.stg", "Domain/generated/meta" },
-                    { "Templates/adapters.cs.stg", "Domain/generated/adapters" },
+                    { "Templates/adapters.cs.stg", "Domain/generated" },
                 };
 
             for (var i = 0; i < config.GetLength(0); i++)

@@ -7,19 +7,24 @@
 namespace Allors.Database.Meta
 {
     using System;
+    using System.Collections.Generic;
 
     public sealed partial class DomainProps : MetaObjectProps, IMetaIdentifiableObjectProps
     {
-        private readonly IDomainBase inheritance;
+        private readonly IDomainBase domain;
 
-        internal DomainProps(IDomainBase @class) => this.inheritance = @class;
+        internal DomainProps(IDomainBase @class) => this.domain = @class;
 
-        public Guid Id => this.inheritance.Id;
+        public Guid Id => this.domain.Id;
 
-        public string IdAsString => this.inheritance.IdAsString;
+        public string IdAsString => this.domain.IdAsString;
+
+        public string Name => this.domain.Name;
+
+        public IEnumerable<IDomain> DirectSuperdomains => this.domain.DirectSuperdomains;
 
         #region As
-        protected override IMetaObjectBase AsMetaObject => this.inheritance;
+        protected override IMetaObjectBase AsMetaObject => this.domain;
         #endregion
     }
 }

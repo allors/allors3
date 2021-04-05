@@ -47,15 +47,13 @@ namespace Allors.Server.Tests
             var configuration = configurationBuilder.Build();
 
             var metaPopulation = new MetaBuilder().Build();
-            var m = new M(metaPopulation);
-            var rules = Rules.Create(m);
+            var rules = Rules.Create(metaPopulation);
             var engine = new Engine(rules);
             var database = new Database(
                 new DefaultDatabaseContext(engine),
                 new Configuration
                 {
                     ConnectionString = configuration["ConnectionStrings:DefaultConnection"],
-                    M = m,
                     ObjectFactory = new ObjectFactory(metaPopulation, typeof(C1)),
                 });
 
@@ -74,7 +72,7 @@ namespace Allors.Server.Tests
             this.Transaction = database.CreateTransaction();
         }
 
-        public M M => this.Transaction.Database.Context().M;
+        public MetaPopulation M => this.Transaction.Database.Context().M;
 
         public IConfigurationRoot Configuration { get; set; }
 

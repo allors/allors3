@@ -7,8 +7,12 @@
 namespace Allors.Database.Meta
 {
     using System;
+    using System.Collections.Generic;
 
     public interface IDomain : IMetaIdentifiableObject, IComparable
     {
+        IEnumerable<IDomain> DirectSuperdomains { get; }
+
+        string Name { get; }
     }
 }

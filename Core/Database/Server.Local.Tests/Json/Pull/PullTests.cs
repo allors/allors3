@@ -30,12 +30,12 @@ namespace Tests
 
             var data = new DataBuilder(this.Transaction).WithString("First").Build();
             var permissions = new Permissions(this.Transaction).Extent();
-            var permission = permissions.First(v => Equals(v.Class, this.M.Data.Class));
+            var permission = permissions.First(v => Equals(v.Class, this.M.Data));
             data.AddDeniedPermission(permission);
 
             this.Transaction.Commit();
 
-            var pull = new Pull { Extent = new Extent(m.Data.ObjectType) };
+            var pull = new Pull { Extent = new Extent(m.Data) };
             var pullRequest = new PullRequest
             {
                 Pulls = new[]
@@ -134,7 +134,7 @@ namespace Tests
 
             var uri = new Uri(@"allors/pull", UriKind.Relative);
 
-            var pull = new Pull { Extent = new Extent(this.M.Data.ObjectType) };
+            var pull = new Pull { Extent = new Extent(this.M.Data) };
 
             var pullRequest = new PullRequest
             {
@@ -183,7 +183,7 @@ namespace Tests
 
             var pull = new Pull
             {
-                Extent = new Extent(this.M.Data.ObjectType),
+                Extent = new Extent(this.M.Data),
                 Results = new[]
                 {
                     new  Result { Name = "Datas" },

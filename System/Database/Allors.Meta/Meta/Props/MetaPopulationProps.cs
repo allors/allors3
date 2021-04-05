@@ -8,8 +8,9 @@ namespace Allors.Database.Meta
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
-    public sealed partial class MetaPopulationProps 
+    public sealed partial class MetaPopulationProps
     {
         private readonly IMetaPopulationBase metaPopulation;
 
@@ -18,6 +19,14 @@ namespace Allors.Database.Meta
         public IEnumerable<IDomain> Domains => this.metaPopulation.Domains;
 
         public IEnumerable<IUnit> Units => this.metaPopulation.Units;
+
+        public IEnumerable<IComposite> Composites => this.metaPopulation.Composites;
+
+        public IEnumerable<IInterface> Interfaces => this.metaPopulation.Interfaces;
+
+        public IEnumerable<IClass> Classes => this.metaPopulation.Classes;
+
+        public IEnumerable<IRelationType> RelationTypes => this.metaPopulation.RelationTypes;
 
         public IEnumerable<IMethodType> MethodTypes => this.metaPopulation.MethodTypes;
 
@@ -32,6 +41,26 @@ namespace Allors.Database.Meta
         public IEnumerable<IRelationType> DatabaseRelationTypes => this.metaPopulation.DatabaseRelationTypes;
 
         public IEnumerable<string> WorkspaceNames => this.metaPopulation.WorkspaceNames;
+
+        public IReadOnlyDictionary<string, IEnumerable<IComposite>> WorkspaceCompositesByWorkspaceName =>
+            this.WorkspaceNames
+                .ToDictionary(v => v, v => this.Composites.Where(w => w.WorkspaceNames.Contains(v)));
+
+        public IReadOnlyDictionary<string, IEnumerable<IInterface>> WorkspaceInterfacesByWorkspaceName =>
+            this.WorkspaceNames
+                .ToDictionary(v => v, v => this.Interfaces.Where(w => w.WorkspaceNames.Contains(v)));
+
+        public IReadOnlyDictionary<string, IEnumerable<IClass>> WorkspaceClassesByWorkspaceName =>
+            this.WorkspaceNames
+                .ToDictionary(v => v, v => this.Classes.Where(w => w.WorkspaceNames.Contains(v)));
+
+        public IReadOnlyDictionary<string, IEnumerable<IRelationType>> WorkspaceRelationTypesByWorkspaceName =>
+            this.WorkspaceNames
+                .ToDictionary(v => v, v => this.RelationTypes.Where(w => w.WorkspaceNames.Contains(v)));
+
+        public IReadOnlyDictionary<string, IEnumerable<IMethodType>> WorkspaceMethodTypesByWorkspaceName =>
+            this.WorkspaceNames
+                .ToDictionary(v => v, v => this.MethodTypes.Where(w => w.WorkspaceNames.Contains(v)));
 
         public bool IsValid => this.metaPopulation.IsValid;
     }
