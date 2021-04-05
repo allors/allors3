@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
     public class RoleMany2OneRule : Rule
     {
-        public RoleMany2OneRule(M m) : base(m, new Guid("cbebe35e-9931-4701-8b05-8ed61b266bb2")) =>
+        public RoleMany2OneRule(MetaPopulation m) : base(m, new Guid("cbebe35e-9931-4701-8b05-8ed61b266bb2")) =>
             this.Patterns = new[]
             {
                 new RolePattern(m.CC, m.CC.Assigned) {Steps = new IPropertyType[]{m.CC.BBsWhereMany2One, m.BB.AAsWhereMany2One}},

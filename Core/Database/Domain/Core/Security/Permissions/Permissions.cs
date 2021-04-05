@@ -65,7 +65,7 @@ namespace Allors.Database.Domain
             var permissionIds = new HashSet<long>();
 
             // Create new permissions
-            foreach (var @class in this.DatabaseContext().MetaPopulation.Classes)
+            foreach (var @class in this.DatabaseContext().M.Classes)
             {
                 if (permissionCacheEntryByClassId.TryGetValue(@class.Id, out var permissionCacheEntry))
                 {

@@ -5,7 +5,7 @@
 
 namespace Allors.Database.Meta
 {
-    public partial interface IRelationTypeBase : IMetaObjectBase, IRelationType
+    public partial interface IRelationTypeBase : IMetaIdentifiableObjectBase, IRelationType
     {
         string Name { get; }
 

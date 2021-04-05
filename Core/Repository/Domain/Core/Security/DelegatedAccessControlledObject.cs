@@ -13,7 +13,9 @@ namespace Allors.Repository
     #endregion
     public partial interface DelegatedAccessControlledObject : Object
     {
+        #region Allors
         [Id("C56B5BC5-35BD-4762-B237-54EA3BFC7E7A")]
+        #endregion
         void DelegateAccess();
     }
 }

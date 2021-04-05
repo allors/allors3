@@ -11,13 +11,13 @@ namespace Allors.Database.Meta
     /// </summary>
     public interface IPropertyType : IOperandType
     {
+        IObjectType ObjectType { get; }
+
         string Name { get; }
 
         string SingularName { get;  }
 
         string PluralName { get; }
-
-        IObjectType ObjectType { get; }
 
         bool IsOne { get; }
 

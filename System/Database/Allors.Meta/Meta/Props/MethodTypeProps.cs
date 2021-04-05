@@ -6,10 +6,24 @@
 
 namespace Allors.Database.Meta
 {
-    public abstract partial class MethodTypeProps : OperandTypeProps
-    {
-        public ICompositeBase Composite => this.AsMethodType.Composite;
+    using System;
 
+    public abstract partial class MethodTypeProps : OperandTypeProps, IMetaIdentifiableObjectProps
+    {
+        public IComposite ObjectType => ((IMethodType)this.AsMethodType).ObjectType;
+
+        public Guid Id => this.AsMethodType.Id;
+
+        public string IdAsString => this.AsMethodType.IdAsString;
+
+        public string Name => this.AsMethodType.Name;
+
+        public string FullName => this.AsMethodType.FullName;
+
+        public string[] WorkspaceNames => this.AsMethodType.WorkspaceNames;
+
+        #region As
         protected abstract IMethodTypeBase AsMethodType { get; }
+        #endregion
     }
 }

@@ -4,20 +4,48 @@
 // </copyright>
 // <summary>Defines the RelationType type.</summary>
 
+using System;
+
 namespace Allors.Database.Meta
 {
-    public sealed partial class RelationTypeProps : MetaObjectProps
+    public sealed partial class RelationTypeProps : MetaObjectProps, IMetaIdentifiableObjectProps
     {
         private readonly IRelationTypeBase relationType;
 
         internal RelationTypeProps(IRelationTypeBase relationType) => this.relationType = relationType;
 
+        public Guid Id => this.relationType.Id;
+
+        public string IdAsString => this.relationType.IdAsString;
+
+        public IAssociationType AssociationType => this.relationType.AssociationType;
+
+        public IRoleType RoleType => this.relationType.RoleType;
+
+        public Multiplicity Multiplicity => this.relationType.Multiplicity;
+
+        public bool IsOneToOne => this.relationType.IsOneToOne;
+
+        public bool IsOneToMany => this.relationType.IsOneToMany;
+
+        public bool IsManyToOne => this.relationType.IsManyToOne;
+
+        public bool IsManyToMany => this.relationType.IsManyToMany;
+
+        public bool ExistExclusiveDatabaseClasses => this.relationType.ExistExclusiveDatabaseClasses;
+
+        public bool IsIndexed => this.relationType.IsIndexed;
+
+        public bool IsDerived => this.relationType.IsDerived;
+
+        public bool IsSynced => this.relationType.IsSynced;
+
+        public string[] WorkspaceNames => this.relationType.WorkspaceNames;
+
         public string Name => this.relationType.Name;
 
-        public IAssociationTypeBase AssociationType => this.relationType.AssociationType;
-
-        public IRoleTypeBase RoleType => this.relationType.RoleType;
-
+        #region As
         protected override IMetaObjectBase AsMetaObject => this.relationType;
+        #endregion
     }
 }

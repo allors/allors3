@@ -18,6 +18,7 @@ namespace Allors.Database.Meta
         private IList<Domain> derivedSuperdomains;
 
         private string name;
+        private DomainProps props;
 
         internal Domain(MetaPopulation metaPopulation, Guid id)
         {
@@ -30,6 +31,8 @@ namespace Allors.Database.Meta
 
             this.metaPopulation.OnDomainCreated(this);
         }
+
+        public DomainProps _ => this.props ??= new DomainProps(this);
 
         public Guid Id { get; }
 

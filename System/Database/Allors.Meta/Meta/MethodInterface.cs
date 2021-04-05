@@ -43,7 +43,7 @@ namespace Allors.Database.Meta
         IMetaPopulation IMetaObject.MetaPopulation => this.metaPopulation;
         Origin IMetaObject.Origin => Origin.Database;
      
-        IComposite IMethodType.ObjectType => this.Composite;
+        IComposite IMethodType.ObjectType => this.ObjectType;
 
         public string DisplayName => this.Name;
 
@@ -86,7 +86,7 @@ namespace Allors.Database.Meta
 
         void IMethodTypeBase.DeriveMethodClasses()
         {
-            if (this.Composite is IInterfaceBase @interface)
+            if (this.ObjectType is IInterfaceBase @interface)
             {
                 this.derivedMethodClassByClass = @interface.Classes.ToDictionary(v => (IClass)v, v =>
                 {
@@ -139,7 +139,7 @@ namespace Allors.Database.Meta
         public string IdAsString { get; }
 
         public Interface Interface { get; }
-        public ICompositeBase Composite => this.Interface;
+        public ICompositeBase ObjectType => this.Interface;
 
         public string[] AssignedWorkspaceNames
         {
@@ -174,12 +174,12 @@ namespace Allors.Database.Meta
             }
         }
 
-        public string FullName => $"{this.Composite.Name}{this.Name}";
+        public string FullName => $"{this.ObjectType.Name}{this.Name}";
 
         public void DeriveWorkspaceNames()
         {
             this.derivedWorkspaceNames = this.assignedWorkspaceNames != null
-                ? this.assignedWorkspaceNames.Intersect(this.Composite.Classes.SelectMany(v => v.WorkspaceNames)).ToArray()
+                ? this.assignedWorkspaceNames.Intersect(this.ObjectType.Classes.SelectMany(v => v.WorkspaceNames)).ToArray()
                 : Array.Empty<string>();
 
             foreach (var methodClass in this.MethodClassByClass.Values)

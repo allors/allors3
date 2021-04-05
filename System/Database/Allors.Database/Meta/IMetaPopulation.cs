@@ -30,11 +30,11 @@ namespace Allors.Database.Meta
 
         IEnumerable<string> WorkspaceNames { get; }
 
+        bool IsValid { get; }
+
         IMetaObject Find(Guid metaObjectId);
 
         IClass FindByName(string name);
-
-        bool IsValid { get; }
 
         IValidationLog Validate();
 

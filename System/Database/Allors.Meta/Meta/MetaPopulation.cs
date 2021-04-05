@@ -39,6 +39,8 @@ namespace Allors.Database.Meta
         private IClassBase[] derivedDatabaseClasses;
         private IRelationTypeBase[] derivedDatabaseRelationTypes;
 
+        private MetaPopulationProps props;
+
         public MetaPopulation()
         {
             this.isStale = true;
@@ -56,6 +58,8 @@ namespace Allors.Database.Meta
 
             this.metaObjectById = new Dictionary<Guid, IMetaObjectBase>();
         }
+
+        public MetaPopulationProps _ => this.props ??= new MetaPopulationProps(this);
 
         public IEnumerable<string> WorkspaceNames
         {
@@ -504,7 +508,7 @@ namespace Allors.Database.Meta
 
                     // MethodTypes
                     var methodTypeByClass = this.MethodTypes
-                        .GroupBy(v => v.Composite)
+                        .GroupBy(v => v.ObjectType)
                         .ToDictionary(g => g.Key, g => new HashSet<IMethodTypeBase>(g));
 
                     foreach (var type in this.derivedComposites)

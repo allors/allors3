@@ -12,10 +12,12 @@ namespace Allors.Database.Meta
 
         internal InheritanceProps(IInheritanceBase @class) => this.inheritance = @class;
 
-        public IInterfaceBase Supertype => this.inheritance.Supertype;
+        public IInterface Supertype => this.inheritance.Supertype;
 
-        public ICompositeBase Subtype => this.inheritance.Subtype;
+        public IComposite Subtype => this.inheritance.Subtype;
 
+        #region As
         protected override IMetaObjectBase AsMetaObject => this.inheritance;
+        #endregion
     }
 }

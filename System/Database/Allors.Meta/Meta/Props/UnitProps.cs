@@ -12,8 +12,28 @@ namespace Allors.Database.Meta
 
         internal UnitProps(IUnitBase @class) => this.unit = @class;
 
+        public bool IsBinary => this.unit.IsBinary;
+
+        public bool IsBoolean => this.unit.IsBoolean;
+
+        public bool IsDateTime => this.unit.IsDateTime;
+        
+        public bool IsDecimal => this.unit.IsDecimal;
+
+        public bool IsFloat => this.unit.IsFloat;
+
+        public bool IsInteger => this.unit.IsInteger;
+
+        public bool IsString => this.unit.IsString;
+
+        public bool IsUnique => this.unit.IsUnique;
+
+        public UnitTags UnitTag => this.unit.UnitTag;
+
+        #region As
         protected override IMetaObjectBase AsMetaObject => this.unit;
 
         protected override IObjectTypeBase AsObjectType => this.unit;
+        #endregion
     }
 }

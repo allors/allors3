@@ -24,7 +24,7 @@ namespace Allors.Database.Domain
 
         private UniquelyIdentifiableCache<SecurityToken> Cache => this.cache ??= new UniquelyIdentifiableCache<SecurityToken>(this.Transaction);
 
-        protected override void CorePrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.AccessControl.ObjectType);
+        protected override void CorePrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.AccessControl);
 
         protected override void CoreSetup(Setup setup)
         {

@@ -16,12 +16,16 @@ namespace Allors.Database.Meta
 
         public IRoleType RoleType => this.associationType.RoleType;
 
-        public IComposite ObjectType => this.associationType.ObjectType;
-
         public string SingularFullName => this.associationType.SingularFullName;
 
         public string PluralFullName => this.associationType.PluralFullName;
 
+        #region As
         protected override IMetaObjectBase AsMetaObject => this.associationType;
+
+        protected override IOperandTypeBase AsOperandType => this.associationType;
+
+        protected override IPropertyTypeBase AsPropertyType => this.associationType;
+        #endregion
     }
 }

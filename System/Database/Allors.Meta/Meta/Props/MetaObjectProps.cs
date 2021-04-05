@@ -20,6 +20,10 @@ namespace Allors.Database.Meta
 
         public bool HasSessionOrigin => this.Origin == Origin.Session;
 
+        public string ValidationName => this.AsMetaObject.ValidationName;
+
+        #region As
         protected abstract IMetaObjectBase AsMetaObject { get; }
+        #endregion
     }
 }

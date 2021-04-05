@@ -6,13 +6,15 @@
 
 namespace Allors.Database.Meta
 {
-    public interface IMethodType : IMetaIdentity, IOperandType
+    public interface IMethodType : IMetaIdentifiableObject, IOperandType
     {
+        IComposite ObjectType { get; }
+
         string Name { get; }
 
-        string[] WorkspaceNames { get; }
+        string FullName { get; }
 
-        IComposite ObjectType { get; }
+        string[] WorkspaceNames { get; }
 
         IMethodClass MethodClassBy(IClass @class);
     }

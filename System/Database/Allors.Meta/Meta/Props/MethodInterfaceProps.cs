@@ -13,11 +13,13 @@ namespace Allors.Database.Meta
         private readonly IMethodInterfaceBase methodInterface;
 
         internal MethodInterfaceProps(IMethodInterfaceBase relationInterface) => this.methodInterface = relationInterface;
-
-        public string FullName => this.methodInterface.FullName;
-
+        
+        #region As
         protected override IMetaObjectBase AsMetaObject => this.methodInterface;
 
+        protected override IOperandTypeBase AsOperandType => this.methodInterface;
+
         protected override IMethodTypeBase AsMethodType => this.methodInterface;
+        #endregion
     }
 }

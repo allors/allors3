@@ -13,9 +13,7 @@ namespace Allors.Database.Domain
     {
         IDatabase Database { get; }
 
-        MetaPopulation MetaPopulation { get; }
-
-        M M { get; }
+        MetaPopulation M { get; }
 
         IPrefetchPolicyCache PrefetchPolicyCache { get; }
 

@@ -10,6 +10,8 @@ namespace Allors.Database.Meta
     {
         public string DisplayName => this.AsOperandType.DisplayName;
 
+        #region As
         protected abstract IOperandTypeBase AsOperandType { get; }
+        #endregion
     }
 }

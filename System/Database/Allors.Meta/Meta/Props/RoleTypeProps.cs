@@ -12,15 +12,13 @@ namespace Allors.Database.Meta
 
         internal RoleTypeProps(IRoleTypeBase relationType) => this.roleType = relationType;
 
-        public new IObjectTypeBase ObjectType => this.roleType.ObjectType;
+        public IAssociationType AssociationType => this.roleType.AssociationType;
 
-        public IAssociationTypeBase AssociationType => this.roleType.AssociationType;
+        public IRelationType RelationType => this.roleType.RelationType;
 
-        public IRelationTypeBase RelationType => this.roleType.RelationType;
+        public string SingularFullName => this.roleType.SingularFullName;
 
-        public string SingularName => this.roleType.SingularName;
-
-        public string PluralName => this.roleType.PluralName;
+        public string PluralFullName => this.roleType.PluralFullName;
 
         public int? Size => this.roleType.Size;
 
@@ -28,11 +26,18 @@ namespace Allors.Database.Meta
 
         public int? Scale => this.roleType.Scale;
 
+        public bool IsRequired => this.roleType.IsRequired;
+
+        public bool IsUnique => this.roleType.IsUnique;
+
+        public string MediaType => this.roleType.MediaType;
+
+        #region As
         protected override IMetaObjectBase AsMetaObject => this.roleType;
 
         protected override IOperandTypeBase AsOperandType => this.roleType;
 
         protected override IPropertyTypeBase AsPropertyType => this.roleType;
-
+        #endregion
     }
 }

@@ -36,7 +36,7 @@ namespace Allors.Database.Meta
         IMetaPopulation IMetaObject.MetaPopulation => this.metaPopulation;
         Origin IMetaObject.Origin => Origin.Database;
 
-        IComposite IMethodType.ObjectType => this.Composite;
+        IComposite IMethodType.ObjectType => this.ObjectType;
         IMethodClass IMethodType.MethodClassBy(IClass @class) => this.MethodClassBy(@class);
 
         public string DisplayName => this.Name;
@@ -181,9 +181,9 @@ namespace Allors.Database.Meta
 
         public string FullName => this.MethodInterface != null
             ? this.MethodInterface.FullName
-            : $"{this.Composite.Name}{this.Name}";
+            : $"{this.ObjectType.Name}{this.Name}";
 
-        public ICompositeBase Composite => this.Class;
+        public ICompositeBase ObjectType => this.Class;
 
         IClass IMethodClass.ObjectType => this.Class;
 
@@ -204,7 +204,7 @@ namespace Allors.Database.Meta
 
         public void DeriveWorkspaceNames() =>
             this.derivedWorkspaceNames = this.assignedWorkspaceNames != null
-                ? this.assignedWorkspaceNames.Intersect(this.Composite.WorkspaceNames).ToArray()
+                ? this.assignedWorkspaceNames.Intersect(this.ObjectType.WorkspaceNames).ToArray()
                 : Array.Empty<string>();
 
         public void ResetDerivedWorkspaceNames() => this.derivedWorkspaceNames = null;

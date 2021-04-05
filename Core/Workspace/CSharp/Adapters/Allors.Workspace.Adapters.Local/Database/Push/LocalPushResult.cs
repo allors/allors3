@@ -33,7 +33,7 @@ namespace Allors.Workspace.Adapters.Local
             this.PreparedSelects = databaseContext.PreparedSelects;
             this.PreparedExtents = databaseContext.PreparedExtents;
             this.M = databaseContext.M;
-            this.MetaPopulation = databaseContext.MetaPopulation;
+            this.MetaPopulation = databaseContext.M;
             this.Build = @class => (Database.IObject)DefaultObjectBuilder.Build(this.Transaction, @class);
             this.Derive = () => this.Transaction.Derive(false);
 

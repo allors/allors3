@@ -33,7 +33,7 @@ namespace Allors.Database.Protocol.Json
             this.AccessControlLists = new WorkspaceAccessControlLists(workspaceName, this.User);
             this.AllowedClasses = metaCache.GetWorkspaceClasses(workspaceName);
             this.M = databaseContext.M;
-            this.MetaPopulation = databaseContext.MetaPopulation;
+            this.MetaPopulation = databaseContext.M;
             this.PreparedSelects = databaseContext.PreparedSelects;
             this.PreparedExtents = databaseContext.PreparedExtents;
             this.Build = @class => (IObject)DefaultObjectBuilder.Build(transaction, @class);

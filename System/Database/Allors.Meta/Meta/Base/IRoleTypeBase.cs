@@ -7,7 +7,7 @@ namespace Allors.Database.Meta
 {
     public partial interface IRoleTypeBase : IPropertyTypeBase, IRoleType
     {
-        new IObjectTypeBase ObjectType { get; set;  }
+        new IObjectTypeBase ObjectType { get; set; }
 
         new IAssociationTypeBase AssociationType { get; }
 
@@ -22,7 +22,7 @@ namespace Allors.Database.Meta
         new int? Precision { get; set; }
 
         new int? Scale { get; set; }
-        
+
         void DeriveScaleAndSize();
 
         void Validate(ValidationLog validationLog);

@@ -12,10 +12,12 @@ namespace Allors.Database.Meta
 
         internal ClassProps(IClassBase @class) => this.@class = @class;
 
+        #region As
         protected override IMetaObjectBase AsMetaObject => this.@class;
 
         protected override IObjectTypeBase AsObjectType => this.@class;
 
         protected override ICompositeBase AsComposite => this.@class;
+        #endregion
     }
 }

@@ -14,12 +14,16 @@ namespace Allors.Database.Meta
 
         internal InterfaceProps(IInterfaceBase @class) => this.@interface = @class;
 
-        public IEnumerable<ICompositeBase> Subtypes => this.@interface.Subtypes;
+        public IEnumerable<IComposite> Subtypes => this.@interface.Subtypes;
 
+        public bool AssignedIsSynced => this.@interface.AssignedIsSynced;
+
+        #region As
         protected override IMetaObjectBase AsMetaObject => this.@interface;
 
         protected override IObjectTypeBase AsObjectType => this.@interface;
 
         protected override ICompositeBase AsComposite => this.@interface;
+        #endregion
     }
 }

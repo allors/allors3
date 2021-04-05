@@ -14,7 +14,7 @@ namespace Allors.Database.Meta
         new IClass ObjectType { get; }
 
         IMethodInterface MethodInterface { get; }
-
+        
         IEnumerable<Action<object, object>> Actions { get; }
     }
 }

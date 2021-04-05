@@ -24,7 +24,7 @@ namespace Allors.Database.Domain
             }
         }
 
-        public static void WithSecurityRules(this PrefetchPolicyBuilder @this, Class @class, M m)
+        public static void WithSecurityRules(this PrefetchPolicyBuilder @this, Class @class, MetaPopulation m)
         {
             // TODO: Cache
             var AccessControlPrefetchPolicy = new PrefetchPolicyBuilder()

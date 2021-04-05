@@ -32,6 +32,8 @@ namespace Allors.Database.Meta
 
         public bool IsSynced => this.AsComposite.IsSynced;
 
+        #region As
         protected abstract ICompositeBase AsComposite { get; }
+        #endregion
     }
 }

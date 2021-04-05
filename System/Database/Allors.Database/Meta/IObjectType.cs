@@ -9,7 +9,7 @@ namespace Allors.Database.Meta
     using System;
     using System.Collections.Generic;
 
-    public interface IObjectType : IMetaObject, IMetaIdentity, IComparable
+    public interface IObjectType : IMetaIdentifiableObject, IComparable
     {
         bool IsUnit { get; }
 

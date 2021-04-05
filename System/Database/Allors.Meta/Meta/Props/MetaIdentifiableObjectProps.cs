@@ -1,16 +1,14 @@
-// <copyright file="IMetaObject.cs" company="Allors bvba">
+// <copyright file="RelationTypeProps.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
+// <summary>Defines the RelationType type.</summary>
 
 namespace Allors.Database.Meta
 {
     using System;
 
-    /// <summary>
-    /// Base interface for Meta objects.
-    /// </summary>
-    public interface IMetaIdentity
+    public partial interface IMetaIdentifiableObjectProps
     {
         Guid Id { get; }
 

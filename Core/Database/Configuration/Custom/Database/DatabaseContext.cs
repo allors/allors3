@@ -47,9 +47,7 @@ namespace Allors.Database.Configuration
 
         public IDatabase Database { get; private set; }
 
-        public MetaPopulation MetaPopulation => (MetaPopulation)this.Database.MetaPopulation;
-
-        public M M => (M)this.Database.M;
+        public MetaPopulation M => (MetaPopulation)this.Database.MetaPopulation;
 
         public IMetaCache MetaCache { get; private set; }
 

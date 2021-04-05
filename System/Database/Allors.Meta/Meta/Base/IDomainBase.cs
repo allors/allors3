@@ -6,7 +6,7 @@
 namespace Allors.Database.Meta
 {
 
-    public partial interface IDomainBase : IMetaObjectBase, IDomain
+    public partial interface IDomainBase : IMetaIdentifiableObjectBase, IDomain
     {
     }
 }

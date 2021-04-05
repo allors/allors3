@@ -9,8 +9,12 @@ namespace Allors.Database.Meta
     using System;
     using System.Collections.Generic;
 
-    public abstract partial class ObjectTypeProps : MetaObjectProps
+    public abstract partial class ObjectTypeProps : MetaObjectProps, IMetaIdentifiableObjectProps
     {
+        public Guid Id => this.AsObjectType.Id;
+
+        public string IdAsString => this.AsObjectType.IdAsString;
+
         public bool IsUnit => this.AsObjectType.IsUnit;
 
         public bool IsComposite => this.AsObjectType.IsComposite;
@@ -29,6 +33,8 @@ namespace Allors.Database.Meta
 
         public Type ClrType => this.AsObjectType.ClrType;
 
+        #region As
         protected abstract IObjectTypeBase AsObjectType { get; }
+        #endregion
     }
 }

@@ -10,7 +10,7 @@ namespace Allors.Database.Meta
 
     public static partial class MetaIdentityExtensions
     {
-        internal static void ValidateIdentity(this IMetaIdentity @this, ValidationLog validationLog)
+        internal static void ValidateIdentity(this IMetaIdentifiableObject @this, ValidationLog validationLog)
         {
             if (@this.Id == Guid.Empty)
             {

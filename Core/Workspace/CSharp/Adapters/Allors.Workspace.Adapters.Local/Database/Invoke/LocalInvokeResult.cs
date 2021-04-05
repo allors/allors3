@@ -30,7 +30,7 @@ namespace Allors.Workspace.Adapters.Local
 
             this.AccessControlLists = new WorkspaceAccessControlLists(this.Workspace.Name, user);
             this.AllowedClasses = metaCache.GetWorkspaceClasses(this.Workspace.Name);
-            this.MetaPopulation = databaseContext.MetaPopulation;
+            this.MetaPopulation = databaseContext.M;
             this.Derive = () => this.Transaction.Derive(false);
         }
 

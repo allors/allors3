@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
             this.M = this.Transaction.Database.Context().M;
         }
 
-        public M M { get; }
+        public MetaPopulation M { get; }
 
         public abstract Composite ObjectType { get; }
 
