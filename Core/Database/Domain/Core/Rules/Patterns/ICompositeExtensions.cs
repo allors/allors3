@@ -6,13 +6,14 @@
 
 namespace Allors.Database.Derivations
 {
-    using Antlr.Runtime.Misc;
+    using System;
+    using System.Linq.Expressions;
     using Meta;
 
     public static class ICompositeExtensions
     {
-        public static AssociationPattern<T> AssociationPattern<T>(this T composite, Func<T, IAssociationType> association, Func<T, IPropertyType> step = null) where T : IComposite => new AssociationPattern<T>(composite, association, step);
+        public static AssociationPattern<T> AssociationPattern<T>(this T composite, Func<T, IAssociationType> association, Expression<Func<T, IPropertyType>> step = null, IComposite ofType = null) where T : IComposite => new AssociationPattern<T>(composite, association, step, ofType);
 
-        public static RolePattern<T> RolePattern<T>(this T composite, Func<T, IRoleType> role, Func<T, IPropertyType> step = null) where T : IComposite => new RolePattern<T>(composite, role, step);
+        public static RolePattern<T> RolePattern<T>(this T composite, Func<T, IRoleType> role, Expression<Func<T, IPropertyType>> step = null, IComposite ofType = null) where T : IComposite => new RolePattern<T>(composite, role, step, ofType);
     }
 }

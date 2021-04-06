@@ -13,5 +13,7 @@ namespace Allors.Database.Derivations
         IPropertyType[] Steps { get; }
 
         IComposite OfType { get; }
+
+        IComposite ObjectType { get; }
     }
 }
