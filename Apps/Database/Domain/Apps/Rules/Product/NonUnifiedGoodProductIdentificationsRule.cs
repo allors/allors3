@@ -13,16 +13,14 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Derivations;
 
-    public class NonUnifiedGoodRule : Rule
+    public class NonUnifiedGoodProductIdentificationsRule : Rule
     {
-        public NonUnifiedGoodRule(MetaPopulation m) : base(m, new Guid("1D67AC19-4D77-441D-AC98-3F274FADFB2C")) =>
+        public NonUnifiedGoodProductIdentificationsRule(MetaPopulation m) : base(m, new Guid("1D67AC19-4D77-441D-AC98-3F274FADFB2C")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.NonUnifiedGood, m.NonUnifiedGood.ProductIdentifications),
                 new RolePattern(m.NonUnifiedGood, m.NonUnifiedGood.Keywords),
-                new RolePattern(m.NonUnifiedGood, m.NonUnifiedGood.Variants),
                 new AssociationPattern(m.ProductCategory.AllProducts) { OfType = m.NonUnifiedGood },
-                new AssociationPattern(m.PriceComponent.Product) { OfType = m.NonUnifiedGood },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -31,37 +29,6 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<NonUnifiedGood>())
             {
-                if (@this.ExistCurrentVersion)
-                {
-                    foreach (Good variant in @this.CurrentVersion.Variants)
-                    {
-                        if (!@this.Variants.Contains(variant))
-                        {
-                            variant.RemoveVirtualProductPriceComponents();
-                        }
-                    }
-                }
-
-                if (@this.ExistVariants)
-                {
-                    @this.RemoveVirtualProductPriceComponents();
-
-                    var priceComponents = @this.PriceComponentsWhereProduct;
-
-                    foreach (Good variant in @this.Variants)
-                    {
-                        foreach (PriceComponent priceComponent in priceComponents)
-                        {
-                            variant.AddVirtualProductPriceComponent(priceComponent);
-
-                            if (priceComponent is BasePrice basePrice && !priceComponent.ExistProductFeature)
-                            {
-                                variant.AddBasePrice(basePrice);
-                            }
-                        }
-                    }
-                }
-
                 var builder = new StringBuilder();
                 if (@this.ExistProductIdentifications)
                 {

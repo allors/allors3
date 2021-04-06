@@ -74,6 +74,7 @@ namespace Allors.Database.Domain
                 }
 
                 @this.Children = @this.PartCategoriesWherePrimaryParent.Union(@this.PartCategoriesWhereSecondaryParent).ToArray();
+
                 {
                     var descendants = new List<PartCategory>();
                     var children = @this.Children.ToArray();

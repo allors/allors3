@@ -24,11 +24,11 @@ namespace Allors.Database.Domain
                 new RolePattern(m.SerialisedItem, m.SerialisedItem.AcquiredDate),
                 new RolePattern(m.SerialisedItem, m.SerialisedItem.AcquisitionYear),
                 new RolePattern(m.SerialisedItem, m.SerialisedItem.SerialNumber),
-                new RolePattern(m.SerialisedItem, m.SerialisedItem.AssignedSuppliedBy),
-                new RolePattern(m.SerialisedItem, m.SerialisedItem.PurchaseOrder),
                 new RolePattern(m.SerialisedItem, m.SerialisedItem.OwnedBy),
                 new RolePattern(m.SerialisedItem, m.SerialisedItem.RentedBy),
+                new RolePattern(m.SerialisedItem, m.SerialisedItem.AssignedSuppliedBy),
                 new RolePattern(m.SerialisedItem, m.SerialisedItem.Ownership),
+                new RolePattern(m.SerialisedItem, m.SerialisedItem.PurchaseOrder),
                 new RolePattern(m.SerialisedItem, m.SerialisedItem.Buyer),
                 new RolePattern(m.SerialisedItem, m.SerialisedItem.Seller),
                 new RolePattern(m.SerialisedItem, m.SerialisedItem.SerialisedItemAvailability),
@@ -55,20 +55,6 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<SerialisedItem>())
             {
                 validation.AssertExistsAtMostOne(@this, @this.Meta.AcquiredDate, @this.Meta.AcquisitionYear);
-
-                if (!@this.ExistName && @this.ExistPartWhereSerialisedItem)
-                {
-                    @this.Name = @this.PartWhereSerialisedItem.Name;
-                }
-
-                if (!@this.ExistName && @this.ExistSerialNumber)
-                {
-                    @this.Name = @this.SerialNumber;
-                }
-
-                @this.SuppliedBy = @this.AssignedSuppliedBy ??
-                    @this.PurchaseOrder?.TakenViaSupplier ??
-                    @this.PartWhereSerialisedItem?.SupplierOfferingsWherePart?.FirstOrDefault()?.Supplier;
 
                 @this.SuppliedByPartyName = @this.ExistSuppliedBy ? @this.SuppliedBy.PartyName : string.Empty;
                 @this.OwnedByPartyName = @this.ExistOwnedBy ? @this.OwnedBy.PartyName : string.Empty;

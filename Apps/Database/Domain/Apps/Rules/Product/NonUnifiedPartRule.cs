@@ -38,12 +38,6 @@ namespace Allors.Database.Domain
                     @this.Name = "Part " + (@this.PartIdentification() ?? @this.UniqueId.ToString());
                 }
 
-                var identifications = @this.ProductIdentifications;
-                identifications.Filter.AddEquals(this.M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(@this.Strategy.Transaction).Part);
-                var partIdentification = identifications.FirstOrDefault();
-
-                @this.ProductNumber = partIdentification?.Identification;
-
                 var builder = new StringBuilder();
 
                 builder.Append(@this.Name);
