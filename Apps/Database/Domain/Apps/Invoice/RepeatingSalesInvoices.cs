@@ -9,11 +9,10 @@ namespace Allors.Database.Domain
     {
         public static void Daily(ITransaction transaction)
         {
-            var repeatingSalesInvoices = new RepeatingSalesInvoices(transaction).Extent();
-
-            foreach (RepeatingSalesInvoice repeatingSalesInvoice in repeatingSalesInvoices)
+            foreach (RepeatingSalesInvoice repeatingSalesInvoice in new RepeatingSalesInvoices(transaction).Extent())
             {
-                if (repeatingSalesInvoice.NextExecutionDate.Date == transaction.Now().Date)
+                if (repeatingSalesInvoice.NextExecutionDate.Date == transaction.Now().Date
+                    && (!repeatingSalesInvoice.ExistFinalExecutionDate || repeatingSalesInvoice.FinalExecutionDate >= transaction.Now().Date))
                 {
                     repeatingSalesInvoice.Repeat();
                 }

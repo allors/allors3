@@ -12,7 +12,7 @@ namespace Allors.Database.Domain.Tests
     {
         public LocalisedTextTests(Fixture fixture) : base(fixture) { }
 
-        [Fact(Skip = "TODO")]
+        [Fact(Skip = "TODO: Koen  Locale is required")]
         public void GivenLocalisedTextWhenValidatingThenRequiredRelationsMustExist()
         {
             var builder = new LocalisedTextBuilder(this.Session);
@@ -20,7 +20,10 @@ namespace Allors.Database.Domain.Tests
 
             Assert.True(this.Session.Derive(false).HasErrors);
 
-            builder.WithText("description");
+            this.Session.Rollback();
+
+            builder.WithLocale(new Locales(this.Session).EnglishGreatBritain);
+            builder.Build();
 
             Assert.False(this.Session.Derive(false).HasErrors);
         }

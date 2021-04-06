@@ -130,6 +130,8 @@ define_associationType(property) ::= <<
         public $property.AssociationName$(IRelationTypeBase relationType) : base(relationType)
         {
         }
+
+        public $property.DefiningType.SingularName$ $property.DefiningType.SingularName$ => ($property.DefiningType.SingularName$)((IAssociationType)this).ObjectType;
     }
 >>
 

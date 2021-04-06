@@ -6,11 +6,17 @@
 
 namespace Allors.Database.Derivations
 {
-    using Antlr.Runtime.Misc;
+    using System;
+    using System.Linq;
+    using System.Linq.Expressions;
     using Meta;
 
     public class RolePattern<T> : RolePattern where T : IComposite
     {
-        public RolePattern(T objectType, Func<T, IRoleType> role, Func<T, IPropertyType> step = null) : base(objectType, role(objectType)) => this.Steps = step != null ? new[] { step(objectType) } : null;
+        public RolePattern(T objectType, Func<T, IRoleType> role, Expression<Func<T, IPropertyType>> step = null, IComposite ofType = null) : base(objectType, role(objectType))
+        {
+            this.Steps = step?.ToPropertyTypes(objectType.MetaPopulation);
+            this.OfType = ofType;
+        }
     }
 }
