@@ -24,7 +24,6 @@ namespace Allors.Database.Domain
                 new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.QuantityOrdered),
                 new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.DerivationTrigger),
                 new RolePattern(m.PurchaseOrder, m.PurchaseOrder.StoredInFacility) { Steps = new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems} },
-                new AssociationPattern(m.OrderItemBilling.OrderItem) { OfType = m.PurchaseOrderItem },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -34,8 +33,6 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<PurchaseOrderItem>())
             {
-                var purchaseOrder = @this.PurchaseOrderWherePurchaseOrderItem;
-
                 if (!@this.ExistStoredInFacility
                     && @this.ExistPurchaseOrderWherePurchaseOrderItem
                     && @this.PurchaseOrderWherePurchaseOrderItem.ExistStoredInFacility)
@@ -64,14 +61,7 @@ namespace Allors.Database.Domain
                     validation.AddError($"{@this} {this.M.PurchaseOrderItem.QuantityOrdered} {ErrorMessages.InvalidQuantity}");
                 }
 
-                if (@this.IsValid && !@this.ExistOrderItemBillingsWhereOrderItem)
-                {
-                    @this.CanInvoice = true;
-                }
-                else
-                {
-                    @this.CanInvoice = false;
-                }
+                var purchaseOrder = @this.PurchaseOrderWherePurchaseOrderItem;
 
                 if (purchaseOrder != null
                     && @this.ExistPart

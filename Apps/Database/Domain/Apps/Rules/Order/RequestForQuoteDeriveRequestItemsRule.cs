@@ -12,12 +12,12 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Resources;
 
-    public class RequestForQuoteRule : Rule
+    public class RequestForQuoteDeriveRequestItemsRule : Rule
     {
-        public RequestForQuoteRule(MetaPopulation m) : base(m, new Guid("BD181210-419E-4F87-8B3C-3AEF43711514")) =>
+        public RequestForQuoteDeriveRequestItemsRule(MetaPopulation m) : base(m, new Guid("8505acf9-e8b6-4d35-b0c1-a6af03217df2")) =>
             this.Patterns = new[]
             {
-                new RolePattern(m.RequestForQuote, m.RequestForQuote.Recipient),
+                new RolePattern(m.RequestForQuote, m.RequestForQuote.RequestItems)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -26,11 +26,9 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<RequestForQuote>())
             {
-                if (@this.ExistCurrentVersion
-                      && @this.CurrentVersion.ExistRecipient
-                      && @this.Recipient != @this.CurrentVersion.Recipient)
+                foreach (RequestItem requestItem in @this.RequestItems)
                 {
-                    validation.AddError($"{@this} {this.M.RequestForQuote.Recipient} {ErrorMessages.InternalOrganisationChanged}");
+                    requestItem.Sync(@this);
                 }
             }
         }

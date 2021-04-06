@@ -19,28 +19,15 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.RequestItem, m.RequestItem.RequestItemState),
-                new RolePattern(m.RequestItem, m.RequestItem.Product),
-                new RolePattern(m.RequestItem, m.RequestItem.ProductFeature),
-                new RolePattern(m.RequestItem, m.RequestItem.Description),
-                new RolePattern(m.RequestItem, m.RequestItem.NeededSkill),
-                new RolePattern(m.RequestItem, m.RequestItem.Deliverable),
-                new RolePattern(m.RequestItem, m.RequestItem.SerialisedItem),
                 new RolePattern(m.RequestItem, m.RequestItem.UnitOfMeasure),
-                new RolePattern(m.RequestItem, m.RequestItem.Quantity),
-                new RolePattern(m.Request, m.Request.RequestState) { Steps = new IPropertyType[] {m.Request.RequestItems } },
+                new RolePattern(m.Request, m.Request.RequestState) { Steps = new IPropertyType[] { m.Request.RequestItems } },
                 new AssociationPattern(m.Request.RequestItems),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            var validation = cycle.Validation;
-
             foreach (var @this in matches.Cast<RequestItem>())
             {
-                validation.AssertAtLeastOne(@this, this.M.RequestItem.Product, this.M.RequestItem.ProductFeature, this.M.RequestItem.SerialisedItem, this.M.RequestItem.Description, this.M.RequestItem.NeededSkill, this.M.RequestItem.Deliverable);
-                validation.AssertExistsAtMostOne(@this, this.M.RequestItem.Product, this.M.RequestItem.ProductFeature, this.M.RequestItem.Description, this.M.RequestItem.NeededSkill, this.M.RequestItem.Deliverable);
-                validation.AssertExistsAtMostOne(@this, this.M.RequestItem.SerialisedItem, this.M.RequestItem.ProductFeature, this.M.RequestItem.Description, this.M.RequestItem.NeededSkill, this.M.RequestItem.Deliverable);
-
                 var requestItemStates = new RequestItemStates(cycle.Transaction);
                 if (@this.ExistRequestWhereRequestItem && @this.IsValid)
                 {
@@ -68,11 +55,6 @@ namespace Allors.Database.Domain
                 if (!@this.ExistUnitOfMeasure)
                 {
                     @this.UnitOfMeasure = new UnitsOfMeasure(@this.Strategy.Transaction).Piece;
-                }
-
-                if (@this.ExistSerialisedItem && @this.Quantity != 1)
-                {
-                    validation.AddError($"{@this}, {@this.Meta.Quantity}, {ErrorMessages.SerializedItemQuantity}");
                 }
             }
         }

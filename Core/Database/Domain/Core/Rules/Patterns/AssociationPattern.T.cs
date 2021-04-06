@@ -6,11 +6,17 @@
 
 namespace Allors.Database.Derivations
 {
-    using Antlr.Runtime.Misc;
+    using System;
+    using System.Linq;
+    using System.Linq.Expressions;
     using Meta;
 
     public class AssociationPattern<T> : AssociationPattern where T : IComposite
     {
-        public AssociationPattern(T objectType, Func<T, IAssociationType> association, Func<T, IPropertyType> step = null) : base(objectType, association(objectType)) => this.Steps = step != null ? new[] { step(objectType) } : null;
+        public AssociationPattern(T objectType, Func<T, IAssociationType> association, Expression<Func<T, IPropertyType>> step = null, IComposite ofType = null) : base(objectType, association(objectType))
+        {
+            this.Steps = step?.ToPropertyTypes(objectType.MetaPopulation);
+            this.OfType = ofType;
+        }
     }
 }

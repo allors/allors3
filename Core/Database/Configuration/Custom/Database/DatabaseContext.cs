@@ -15,7 +15,6 @@ namespace Allors.Database.Configuration
 
     public abstract class DatabaseContext : IDatabaseContext
     {
-        public Engine Engine { get; }
         private readonly IHttpContextAccessor httpContextAccessor;
 
         protected DatabaseContext(Engine engine, IHttpContextAccessor httpContextAccessor = null)
@@ -77,6 +76,8 @@ namespace Allors.Database.Configuration
 
         public ITransactionLifecycle CreateTransactionInstance() => new DefaultTransactionContext(this.httpContextAccessor);
 
+        protected Engine Engine { get; }
+        
         public void Dispose()
         {
         }
