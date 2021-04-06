@@ -13,20 +13,16 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Resources;
 
-    public class PurchaseOrderItemCreatedRule : Rule
+    public class PurchaseOrderItemCreatedDeriveIrpfRateRule : Rule
     {
-        public PurchaseOrderItemCreatedRule(MetaPopulation m) : base(m, new Guid("7559bffd-7685-4023-bef7-9f5ff96b6f41")) =>
+        public PurchaseOrderItemCreatedDeriveIrpfRateRule(MetaPopulation m) : base(m, new Guid("7559bffd-7685-4023-bef7-9f5ff96b6f41")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.PurchaseOrderItemState),
-                new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.AssignedDeliveryDate),
-                new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.AssignedVatRegime),
                 new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.AssignedIrpfRegime),
-                new AssociationPattern(m.PurchaseOrder.PurchaseOrderItems),
-                new RolePattern(m.PurchaseOrder, m.PurchaseOrder.DeliveryDate) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
-                new RolePattern(m.PurchaseOrder, m.PurchaseOrder.DerivedVatRegime) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
                 new RolePattern(m.PurchaseOrder, m.PurchaseOrder.DerivedIrpfRegime) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
                 new RolePattern(m.PurchaseOrder, m.PurchaseOrder.OrderDate) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
+                new AssociationPattern(m.PurchaseOrder.PurchaseOrderItems),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -38,9 +34,6 @@ namespace Allors.Database.Domain
             {
                 var order = @this.PurchaseOrderWherePurchaseOrderItem;
 
-                @this.DerivedDeliveryDate = @this.AssignedDeliveryDate ?? order?.DeliveryDate;
-                @this.DerivedVatRegime = @this.AssignedVatRegime ?? order?.DerivedVatRegime;
-                @this.VatRate = @this.DerivedVatRegime?.VatRates.First(v => v.FromDate <= order.OrderDate && (!v.ExistThroughDate || v.ThroughDate >= order.OrderDate));
                 @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? order?.DerivedIrpfRegime;
                 @this.IrpfRate = @this.DerivedIrpfRegime?.IrpfRates.First(v => v.FromDate <= order.OrderDate && (!v.ExistThroughDate || v.ThroughDate >= order.OrderDate));
             }

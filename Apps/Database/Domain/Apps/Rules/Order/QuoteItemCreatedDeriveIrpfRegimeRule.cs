@@ -11,16 +11,14 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Meta;
 
-    public class QuoteItemCreatedRule : Rule
+    public class QuoteItemCreatedDeriveIrpfRegimeRule : Rule
     {
-        public QuoteItemCreatedRule(MetaPopulation m) : base(m, new Guid("b66c0721-4aa5-4ca7-91a0-534f6cfc6718")) =>
+        public QuoteItemCreatedDeriveIrpfRegimeRule(MetaPopulation m) : base(m, new Guid("b66c0721-4aa5-4ca7-91a0-534f6cfc6718")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.QuoteItem, m.QuoteItem.AssignedVatRegime),
                 new RolePattern(m.QuoteItem, m.QuoteItem.AssignedIrpfRegime),
                 new AssociationPattern(m.Quote.QuoteItems),
                 new RolePattern(m.Quote, m.Quote.IssueDate) { Steps = new IPropertyType[] { m.Quote.QuoteItems }},
-                new RolePattern(m.Quote, m.Quote.DerivedVatRegime) { Steps = new IPropertyType[] { m.Quote.QuoteItems }},
                 new RolePattern(m.Quote, m.Quote.DerivedIrpfRegime) { Steps = new IPropertyType[] { m.Quote.QuoteItems }},
             };
 
@@ -32,9 +30,6 @@ namespace Allors.Database.Domain
 
                 if (quote.QuoteState.IsCreated)
                 {
-                    @this.DerivedVatRegime = @this.AssignedVatRegime ?? quote.DerivedVatRegime;
-                    @this.VatRate = @this.DerivedVatRegime?.VatRates.First(v => v.FromDate <= quote.IssueDate && (!v.ExistThroughDate || v.ThroughDate >= quote.IssueDate));
-
                     @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? quote.DerivedIrpfRegime;
                     @this.IrpfRate = @this.DerivedIrpfRegime?.IrpfRates.First(v => v.FromDate <= quote.IssueDate && (!v.ExistThroughDate || v.ThroughDate >= quote.IssueDate));
                 }

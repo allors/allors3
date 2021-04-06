@@ -16,11 +16,7 @@ namespace Allors.Database.Domain
         public RequestRule(MetaPopulation m) : base(m, new Guid("AF5D09BF-9ACF-4C29-9445-6D24BE2F04E6")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.Request, m.Request.AssignedCurrency),
                 new RolePattern(m.Request, m.Request.Recipient),
-                new RolePattern(m.Request, m.Request.Originator),
-                new RolePattern(m.Party, m.Party.PreferredCurrency) { Steps = new IPropertyType[] { this.M.Party.RequestsWhereOriginator}},
-                new RolePattern(m.Organisation, m.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { this.M.Organisation.RequestsWhereRecipient}},
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -38,8 +34,6 @@ namespace Allors.Database.Domain
                     var prefix = @this.Recipient.RequestSequence.IsEnforcedSequence ? @this.Recipient.RequestNumberPrefix : fiscalYearInternalOrganisationSequenceNumbers.RequestNumberPrefix;
                     @this.SortableRequestNumber = @this.Transaction().GetSingleton().SortableNumber(prefix, @this.RequestNumber, year.ToString());
                 }
-
-                @this.DerivedCurrency = @this.AssignedCurrency ?? @this.Originator?.PreferredCurrency ?? @this.Recipient?.PreferredCurrency;
             }
         }
     }

@@ -18,7 +18,6 @@ namespace Allors.Database.Domain
             this.Patterns = new[]
             {
                 new RolePattern(m.RequestForInformation, m.RequestForInformation.Recipient),
-                new RolePattern(m.RequestForInformation, m.RequestForInformation.RequestItems)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -32,11 +31,6 @@ namespace Allors.Database.Domain
                    && @this.Recipient != @this.CurrentVersion.Recipient)
                 {
                     validation.AddError($"{@this} {this.M.RequestForInformation.Recipient} {ErrorMessages.InternalOrganisationChanged}");
-                }
-
-                foreach (RequestItem requestItem in @this.RequestItems)
-                {
-                    requestItem.Sync(@this);
                 }
             }
         }

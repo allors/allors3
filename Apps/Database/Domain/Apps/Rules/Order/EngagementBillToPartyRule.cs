@@ -11,13 +11,12 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Meta;
 
-    public class EngagementRule : Rule
+    public class EngagementBillToPartyRule : Rule
     {
-        public EngagementRule(MetaPopulation m) : base(m, new Guid("D2E8DC2A-BB26-4E85-A3DF-6D379A3CD0F0")) =>
+        public EngagementBillToPartyRule(MetaPopulation m) : base(m, new Guid("65720881-aa46-4585-834b-41fb8c82a02e")) =>
             this.Patterns = new[]
             {
                 new RolePattern(m.Engagement, m.Engagement.BillToParty),
-                new RolePattern(m.Engagement, m.Engagement.PlacingParty),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -27,11 +26,6 @@ namespace Allors.Database.Domain
                 if (!@this.ExistBillToContactMechanism && @this.ExistBillToParty)
                 {
                     @this.BillToContactMechanism = @this.BillToParty.BillingAddress;
-                }
-
-                if (!@this.ExistPlacingContactMechanism && @this.ExistPlacingParty)
-                {
-                    @this.PlacingContactMechanism = @this.PlacingParty.OrderAddress;
                 }
             }
         }

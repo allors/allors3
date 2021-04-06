@@ -8,29 +8,27 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Meta;
     using Database.Derivations;
+    using Meta;
     using Resources;
 
-    public class RequestForQuoteRule : Rule
+    public class RequestForProposalDeriveRequestItemsRule : Rule
     {
-        public RequestForQuoteRule(MetaPopulation m) : base(m, new Guid("BD181210-419E-4F87-8B3C-3AEF43711514")) =>
+        public RequestForProposalDeriveRequestItemsRule(MetaPopulation m) : base(m, new Guid("2eb48653-bed2-4f58-8120-fa1f021b7c0b")) =>
             this.Patterns = new[]
             {
-                new RolePattern(m.RequestForQuote, m.RequestForQuote.Recipient),
+                new RolePattern(m.RequestForProposal, m.RequestForProposal.RequestItems)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
 
-            foreach (var @this in matches.Cast<RequestForQuote>())
+            foreach (var @this in matches.Cast<RequestForProposal>())
             {
-                if (@this.ExistCurrentVersion
-                      && @this.CurrentVersion.ExistRecipient
-                      && @this.Recipient != @this.CurrentVersion.Recipient)
+                foreach (RequestItem requestItem in @this.RequestItems)
                 {
-                    validation.AddError($"{@this} {this.M.RequestForQuote.Recipient} {ErrorMessages.InternalOrganisationChanged}");
+                    requestItem.Sync(@this);
                 }
             }
         }
