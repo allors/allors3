@@ -21,8 +21,6 @@ namespace Allors.Database.Domain
                 new RolePattern(m.ProductCategory, m.ProductCategory.SecondaryParents),
                 new RolePattern(m.ProductCategory, m.ProductCategory.CategoryImage),
                 new RolePattern(m.ProductCategory, m.ProductCategory.Products),
-                new RolePattern(m.LocalisedText, m.LocalisedText.Text) {Steps = new IPropertyType[] {m.LocalisedText.ProductCategoryWhereLocalisedName } },
-                new RolePattern(m.LocalisedText, m.LocalisedText.Text) {Steps = new IPropertyType[] {m.LocalisedText.ProductCategoryWhereLocalisedDescription } },
                 new AssociationPattern(m.ProductCategory.PrimaryParent),
                 new RolePattern(m.ProductCategory, m.ProductCategory.PrimaryParent) {Steps = new IPropertyType[] {m.ProductCategory.ProductCategoriesWhereDescendant} },
                 new AssociationPattern(m.ProductCategory.SecondaryParents),
@@ -36,22 +34,6 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<ProductCategory>())
             {
-                var defaultLocale = @this.Strategy.Transaction.GetSingleton().DefaultLocale;
-
-                @this.DisplayName = @this.Name;
-
-                if (@this.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))
-                {
-                    @this.Name =
-                        @this.LocalisedNames.First(x => x.Locale.Equals(defaultLocale)).Text;
-                }
-
-                if (@this.LocalisedDescriptions.Any(x => x.Locale.Equals(defaultLocale)))
-                {
-                    @this.Description = @this.LocalisedDescriptions
-                        .First(x => x.Locale.Equals(defaultLocale)).Text;
-                }
-
                 if (!@this.ExistCategoryImage)
                 {
                     @this.CategoryImage =

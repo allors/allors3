@@ -19,7 +19,6 @@ namespace Allors.Database.Domain
             {
                 new RolePattern(m.PriceComponent, m.PriceComponent.FromDate),
                 new RolePattern(m.PriceComponent, m.PriceComponent.ThroughDate),
-                new RolePattern(m.PriceComponent, m.PriceComponent.PricedBy),
                 new RolePattern(m.PriceComponent, m.PriceComponent.Price),
                 new RolePattern(m.PriceComponent, m.PriceComponent.Product),
                 new RolePattern(m.PriceComponent, m.PriceComponent.Part),
@@ -34,21 +33,6 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<PriceComponent>())
             {
-                foreach (var salesInvoice in (@this.PricedBy as InternalOrganisation)?.SalesInvoicesWhereBilledFrom.Where(v => v.ExistSalesInvoiceState && v.SalesInvoiceState.IsReadyForPosting))
-                {
-                    salesInvoice.DerivationTrigger = Guid.NewGuid();
-                }
-
-                foreach (var salesOrder in (@this.PricedBy as InternalOrganisation)?.SalesOrdersWhereTakenBy.Where(v => v.ExistSalesOrderState && v.SalesOrderState.IsProvisional))
-                {
-                    salesOrder.DerivationTrigger = Guid.NewGuid();
-                }
-
-                foreach (var quote in (@this.PricedBy as InternalOrganisation)?.QuotesWhereIssuer.Where(v => v.ExistQuoteState && v.QuoteState.IsCreated))
-                {
-                    quote.DerivationTrigger = Guid.NewGuid();
-                }
-
                 if (@this.ExistPrice)
                 {
                     if (!@this.ExistCurrency && @this.ExistPricedBy)

@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class GeneralLedgerAccountCostCenterRequiredRule : Rule
     {
-        public GeneralLedgerAccountCostCenterRequiredRule(MetaPopulation m) : base(m, new Guid("ea2b901c-fcb7-4ab5-a187-b50c28b4890b")) =>
+        public GeneralLedgerAccountCostCenterRequiredRule(MetaPopulation m) : base(m, new Guid("80069580-b47d-4250-854d-69c222d6a1e3")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.CostCenterAccount),

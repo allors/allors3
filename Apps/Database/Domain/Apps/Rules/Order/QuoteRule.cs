@@ -17,8 +17,6 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.Quote, m.Quote.Issuer),
-                new RolePattern(m.ProductQuote, m.ProductQuote.QuoteItems),
-                new RolePattern(m.QuoteItem, m.QuoteItem.QuoteItemState) { Steps =  new IPropertyType[] {m.QuoteItem.QuoteWhereQuoteItem} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -33,13 +31,6 @@ namespace Allors.Database.Domain
                     var fiscalYearInternalOrganisationSequenceNumbers = @this.Issuer.FiscalYearsInternalOrganisationSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
                     var prefix = @this.Issuer.QuoteSequence.IsEnforcedSequence ? @this.Issuer.QuoteNumberPrefix : fiscalYearInternalOrganisationSequenceNumbers.QuoteNumberPrefix;
                     @this.SortableQuoteNumber = @this.Transaction().GetSingleton().SortableNumber(prefix, @this.QuoteNumber, year.ToString());
-                }
-
-                @this.ValidQuoteItems = @this.QuoteItems.Where(v => v.IsValid).ToArray();
-
-                foreach (QuoteItem quoteItem in @this.QuoteItems)
-                {
-                    quoteItem.Sync(@this);
                 }
             }
         }
