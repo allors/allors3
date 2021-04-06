@@ -15,22 +15,13 @@ namespace Allors.Database.Domain
 
     public class SalesInvoiceItemRule : Rule
     {
-        public SalesInvoiceItemRule(MetaPopulation m) : base(m, new Guid("37C0910B-7C48-46B5-8F7A-F6B2E70BE05C")) =>
+        public SalesInvoiceItemRule(MetaPopulation m) : base(m, new Guid("cf575774-c5f3-4368-bb92-07576f59f4b7")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.Product),
                 new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.ProductFeatures),
                 new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.Part),
                 new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.SerialisedItem),
-                new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.InvoiceItemType),
-                new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.AssignedVatRegime),
-                new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.AssignedIrpfRegime),
-                new AssociationPattern(m.SalesInvoice.SalesInvoiceItems),
-                new RolePattern(m.SalesInvoice, m.SalesInvoice.SalesInvoiceState) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
-                new RolePattern(m.SalesInvoice, m.SalesInvoice.DerivedVatRegime) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
-                new RolePattern(m.SalesInvoice, m.SalesInvoice.DerivedIrpfRegime) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
-                new RolePattern(m.SalesInvoice, m.SalesInvoice.InvoiceDate) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
-                new RolePattern(m.PaymentApplication, m.PaymentApplication.AmountApplied) { Steps =  new IPropertyType[] {this.M.PaymentApplication.InvoiceItem}, OfType = m.SalesInvoiceItem },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -64,54 +55,6 @@ namespace Allors.Database.Domain
                 if (@this.Part != null && @this.Part.InventoryItemKind.IsNonSerialised && @this.Quantity == 0)
                 {
                     validation.AddError($"{@this}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}");
-                }
-
-                if (@this.ExistInvoiceItemType && @this.InvoiceItemType.MaxQuantity.HasValue && @this.Quantity > @this.InvoiceItemType.MaxQuantity.Value)
-                {
-                    validation.AddError($"{@this}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}");
-                }
-
-                @this.DerivedVatRegime = @this.ExistAssignedVatRegime ? @this.AssignedVatRegime : @this.SalesInvoiceWhereSalesInvoiceItem?.DerivedVatRegime;
-                @this.VatRate = @this.DerivedVatRegime?.VatRates.First(v => v.FromDate <= salesInvoice.InvoiceDate && (!v.ExistThroughDate || v.ThroughDate >= salesInvoice.InvoiceDate));
-
-                @this.DerivedIrpfRegime = @this.ExistAssignedIrpfRegime ? @this.AssignedIrpfRegime : @this.SalesInvoiceWhereSalesInvoiceItem?.DerivedIrpfRegime;
-                @this.IrpfRate = @this.DerivedIrpfRegime?.IrpfRates.First(v => v.FromDate <= salesInvoice.InvoiceDate && (!v.ExistThroughDate || v.ThroughDate >= salesInvoice.InvoiceDate));
-
-                var amountPaid = 0M;
-                foreach (PaymentApplication paymentApplication in @this.PaymentApplicationsWhereInvoiceItem)
-                {
-                    amountPaid += paymentApplication.AmountApplied;
-                }
-
-                if (amountPaid != @this.AmountPaid)
-                {
-                    @this.AmountPaid = amountPaid;
-                }
-
-                if (salesInvoice != null
-                    && salesInvoice.ExistSalesInvoiceState
-                    && salesInvoice.SalesInvoiceState.IsReadyForPosting
-                    && @this.ExistSalesInvoiceItemState
-                    && @this.SalesInvoiceItemState.IsCancelledByInvoice)
-                {
-                    @this.SalesInvoiceItemState = salesInvoiceItemStates.ReadyForPosting;
-                }
-
-                // SalesInvoiceItem States
-                if (salesInvoice != null
-                    && salesInvoice.ExistSalesInvoiceState
-                    && @this.ExistSalesInvoiceItemState
-                    && @this.IsValid)
-                {
-                    if (salesInvoice.SalesInvoiceState.IsWrittenOff)
-                    {
-                        @this.SalesInvoiceItemState = salesInvoiceItemStates.WrittenOff;
-                    }
-
-                    if (salesInvoice.SalesInvoiceState.IsCancelled)
-                    {
-                        @this.SalesInvoiceItemState = salesInvoiceItemStates.CancelledByInvoice;
-                    }
                 }
             }
         }

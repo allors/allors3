@@ -12,15 +12,12 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Resources;
 
-    public class SalesInvoiceBillingRule : Rule
+    public class SalesInvoiceBillingShipmentItemBillingRule : Rule
     {
-        public SalesInvoiceBillingRule(MetaPopulation m) : base(m, new Guid("466ee750-47ad-4db3-bbb8-fce5c7a4b342")) =>
+        public SalesInvoiceBillingShipmentItemBillingRule(MetaPopulation m) : base(m, new Guid("245140bb-ef98-487c-82dd-4ecdf5bc3f71")) =>
             this.Patterns = new Pattern[]
         {
-            new AssociationPattern(m.OrderItemBilling.InvoiceItem) { Steps =  new IPropertyType[] { m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem }, OfType = m.SalesInvoice },
-            new AssociationPattern(m.WorkEffortBilling.InvoiceItem) { Steps =  new IPropertyType[] { m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem }, OfType = m.SalesInvoice },
             new AssociationPattern(m.ShipmentItemBilling.InvoiceItem) { Steps =  new IPropertyType[] { m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem }, OfType = m.SalesInvoice },
-            new AssociationPattern(m.TimeEntryBilling.InvoiceItem) { Steps =  new IPropertyType[] { m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem }, OfType = m.SalesInvoice },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -32,23 +29,6 @@ namespace Allors.Database.Domain
             {
                 foreach (SalesInvoiceItem salesInvoiceItem in @this.SalesInvoiceItems)
                 {
-                    foreach (OrderItemBilling orderItemBilling in salesInvoiceItem.OrderItemBillingsWhereInvoiceItem)
-                    {
-                        if (orderItemBilling.OrderItem is SalesOrderItem salesOrderItem
-                            && !@this.SalesOrders.Contains(salesOrderItem.SalesOrderWhereSalesOrderItem))
-                        {
-                            @this.AddSalesOrder(salesOrderItem.SalesOrderWhereSalesOrderItem);
-                        }
-                    }
-
-                    foreach (WorkEffortBilling workEffortBilling in salesInvoiceItem.WorkEffortBillingsWhereInvoiceItem)
-                    {
-                        if (!@this.WorkEfforts.Contains(workEffortBilling.WorkEffort))
-                        {
-                            @this.AddWorkEffort(workEffortBilling.WorkEffort);
-                        }
-                    }
-
                     foreach (ShipmentItemBilling shipmentItemBilling in salesInvoiceItem.ShipmentItemBillingsWhereInvoiceItem)
                     {
                         if (!@this.Shipments.Contains(shipmentItemBilling.ShipmentItem.ShipmentWhereShipmentItem))
@@ -63,14 +43,6 @@ namespace Allors.Database.Domain
                                     @this.AddSalesOrder(salesOrderItem.SalesOrderWhereSalesOrderItem);
                                 }
                             }
-                        }
-                    }
-
-                    foreach (TimeEntryBilling timeEntryBilling in salesInvoiceItem.TimeEntryBillingsWhereInvoiceItem)
-                    {
-                        if (!@this.WorkEfforts.Contains(timeEntryBilling.TimeEntry.WorkEffort))
-                        {
-                            @this.AddWorkEffort(timeEntryBilling.TimeEntry.WorkEffort);
                         }
                     }
                 }

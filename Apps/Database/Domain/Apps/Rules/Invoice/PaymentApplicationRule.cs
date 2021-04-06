@@ -15,12 +15,9 @@ namespace Allors.Database.Domain
 
     public class PaymentApplicationRule : Rule
     {
-        public PaymentApplicationRule(MetaPopulation m) : base(m, new Guid("D3D3B1B9-4619-4720-8E73-04419896B3AE")) =>
+        public PaymentApplicationRule(MetaPopulation m) : base(m, new Guid("eec38edc-ea02-4bf2-8b1e-32511a019987")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PaymentApplication, m.PaymentApplication.Invoice),
-                new RolePattern(m.PaymentApplication, m.PaymentApplication.InvoiceItem),
-                new RolePattern(m.PaymentApplication, m.PaymentApplication.BillingAccount),
                 new RolePattern(m.PaymentApplication, m.PaymentApplication.AmountApplied),
                 new RolePattern(m.SalesInvoice, m.SalesInvoice.AdvancePayment) { Steps =  new IPropertyType[] {m.SalesInvoice.PaymentApplicationsWhereInvoice} },
             };
@@ -31,9 +28,6 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<PaymentApplication>())
             {
-                validation.AssertExistsAtMostOne(@this, this.M.PaymentApplication.Invoice, this.M.PaymentApplication.InvoiceItem, this.M.PaymentApplication.BillingAccount);
-                validation.AssertAtLeastOne(@this, this.M.PaymentApplication.Invoice, this.M.PaymentApplication.InvoiceItem, this.M.PaymentApplication.BillingAccount);
-
                 if (@this.ExistPaymentWherePaymentApplication && @this.AmountApplied > @this.PaymentWherePaymentApplication.Amount)
                 {
                     validation.AddError($"{@this} {this.M.PaymentApplication.AmountApplied} {ErrorMessages.PaymentApplicationNotLargerThanPaymentAmount}");

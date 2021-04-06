@@ -13,17 +13,13 @@ namespace Allors.Database.Domain
 
     public class PurchaseInvoiceCreatedRule : Rule
     {
-        public PurchaseInvoiceCreatedRule(MetaPopulation m) : base(m, new Guid("1982652b-9855-4f32-92b7-a2c46a887051")) =>
+        public PurchaseInvoiceCreatedRule(MetaPopulation m) : base(m, new Guid("be4a5700-8b16-4d7d-9c4a-ff5ba9cb07af")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.PurchaseInvoice, m.PurchaseInvoice.PurchaseInvoiceState),
                 new RolePattern(m.PurchaseInvoice, m.PurchaseInvoice.AssignedVatRegime),
                 new RolePattern(m.PurchaseInvoice, m.PurchaseInvoice.AssignedIrpfRegime),
-                new RolePattern(m.PurchaseInvoice, m.PurchaseInvoice.AssignedCurrency),
-                new RolePattern(m.PurchaseInvoice, m.PurchaseInvoice.BilledFrom),
                 new RolePattern(m.PurchaseInvoice, m.PurchaseInvoice.InvoiceDate),
-                new RolePattern(m.Organisation, m.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { m.Organisation.PurchaseInvoicesWhereBilledTo }},
-                new RolePattern(m.OrderItemBilling, m.OrderItemBilling.InvoiceItem) { Steps = new IPropertyType[] { m.OrderItemBilling.InvoiceItem, m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem }},
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -34,8 +30,6 @@ namespace Allors.Database.Domain
             {
                 @this.DerivedVatRegime = @this.AssignedVatRegime;
                 @this.DerivedIrpfRegime = @this.AssignedIrpfRegime;
-                @this.DerivedCurrency = @this.AssignedCurrency ?? @this.BilledTo?.PreferredCurrency;
-                @this.PurchaseOrders = @this.InvoiceItems.SelectMany(v => v.OrderItemBillingsWhereInvoiceItem).Select(v => v.OrderItem.OrderWhereValidOrderItem).ToArray();
 
                 if (@this.ExistInvoiceDate)
                 {

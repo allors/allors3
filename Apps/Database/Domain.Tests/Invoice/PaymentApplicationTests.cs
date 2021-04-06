@@ -89,7 +89,7 @@ namespace Allors.Database.Domain.Tests
                                         .WithAmountApplied(partialAmount)
                                         .Build();
 
-            var expectedMessage = $"{invoiceItem} { this.M.PaymentApplication.AmountApplied} { ErrorMessages.PaymentApplicationNotLargerThanInvoiceItemAmount}";
+            // var expectedMessage = $"{invoiceItem} { this.M.PaymentApplication.AmountApplied} { ErrorMessages.PaymentApplicationNotLargerThanInvoiceItemAmount}";
             var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Single(errors.FindAll(e => e.Message.StartsWith("AssertAtLeastOne")));
         }
