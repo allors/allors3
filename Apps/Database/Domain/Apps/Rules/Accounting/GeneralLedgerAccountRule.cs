@@ -18,14 +18,6 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.ReferenceNumber),
-                new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.DefaultCostCenter),
-                new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.AssignedCostCentersAllowed),
-                new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.CostCenterAccount),
-                new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.CostCenterRequired),
-                new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.DefaultCostUnit),
-                new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.AssignedCostUnitsAllowed),
-                new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.CostUnitAccount),
-                new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.CostUnitRequired),
                 new AssociationPattern(m.ChartOfAccounts.GeneralLedgerAccounts),
             };
 
@@ -35,12 +27,6 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<GeneralLedgerAccount>())
             {
-                @this.DerivedCostCentersAllowed = @this.AssignedCostCentersAllowed;
-                @this.AddDerivedCostCentersAllowed(@this.DefaultCostCenter);
-
-                @this.DerivedCostUnitsAllowed = @this.AssignedCostUnitsAllowed;
-                @this.AddDerivedCostUnitsAllowed(@this.DefaultCostUnit);
-
                 if (@this.ExistChartOfAccountsWhereGeneralLedgerAccount)
                 {
                     var generalLedgerAccounts = @this.ChartOfAccountsWhereGeneralLedgerAccount.GeneralLedgerAccounts.Where(v => v.ReferenceNumber == @this.ReferenceNumber);
@@ -49,16 +35,6 @@ namespace Allors.Database.Domain
                     {
                         validation.AddError($"{@this}, {@this.Meta.ReferenceNumber}, {ErrorMessages.AccountNumberUniqueWithinChartOfAccounts}");
                     }
-                }
-
-                if (!@this.CostCenterAccount && @this.CostCenterRequired)
-                {
-                    validation.AddError($"{@this}, {@this.Meta.CostCenterRequired}, {ErrorMessages.NotACostCenterAccount}");
-                }
-
-                if (!@this.CostUnitAccount && @this.CostUnitRequired)
-                {
-                    validation.AddError($"{@this}, {@this.Meta.CostUnitRequired}, {ErrorMessages.NotACostUnitAccount}");
                 }
             }
         }

@@ -11,26 +11,28 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
     using Derivations;
+    using Resources;
 
-    public class BankAccountRule : Rule
+    public class JournalTypeRule : Rule
     {
-        public BankAccountRule(MetaPopulation m) : base(m, new Guid("633f58cd-ca1b-4a2e-8f6e-e1642466a9f7")) =>
+        public JournalTypeRule(MetaPopulation m) : base(m, new Guid("c52af46b-1cbd-47cd-a00f-76aa5c232db3")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.OwnBankAccount.BankAccount),
+                new RolePattern(m.Journal, m.Journal.JournalType),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
 
-            foreach (var @this in matches.Cast<BankAccount>())
+            foreach (var @this in matches.Cast<Journal>())
             {
-                if (@this.ExistOwnBankAccountsWhereBankAccount)
+                if (@this.ExistCurrentVersion
+                    && @this.CurrentVersion.ContraAccount.ExistAccountingTransactionDetailsWhereOrganisationGlAccount
+                    && @this.CurrentVersion.ExistJournalType
+                    && @this.JournalType != @this.CurrentVersion.JournalType)
                 {
-                    validation.AssertExists(@this, @this.Meta.Bank);
-                    validation.AssertExists(@this, @this.Meta.Currency);
-                    validation.AssertExists(@this, @this.Meta.NameOnAccount);
+                    validation.AddError($"{@this} {this.M.Journal.JournalType} {ErrorMessages.JournalTypeChanged}");
                 }
             }
         }

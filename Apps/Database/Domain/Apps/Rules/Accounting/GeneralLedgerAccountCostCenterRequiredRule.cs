@@ -10,27 +10,27 @@ namespace Allors.Database.Domain
     using System.Linq;
     using Meta;
     using Database.Derivations;
-    using Derivations;
+    using Resources;
 
-    public class BankAccountRule : Rule
+    public class GeneralLedgerAccountCostCenterRequiredRule : Rule
     {
-        public BankAccountRule(MetaPopulation m) : base(m, new Guid("633f58cd-ca1b-4a2e-8f6e-e1642466a9f7")) =>
+        public GeneralLedgerAccountCostCenterRequiredRule(MetaPopulation m) : base(m, new Guid("ea2b901c-fcb7-4ab5-a187-b50c28b4890b")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.OwnBankAccount.BankAccount),
+                new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.CostCenterAccount),
+                new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.CostCenterRequired),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
 
-            foreach (var @this in matches.Cast<BankAccount>())
+            foreach (var @this in matches.Cast<GeneralLedgerAccount>())
             {
-                if (@this.ExistOwnBankAccountsWhereBankAccount)
+
+                if (!@this.CostCenterAccount && @this.CostCenterRequired)
                 {
-                    validation.AssertExists(@this, @this.Meta.Bank);
-                    validation.AssertExists(@this, @this.Meta.Currency);
-                    validation.AssertExists(@this, @this.Meta.NameOnAccount);
+                    validation.AddError($"{@this}, {@this.Meta.CostCenterRequired}, {ErrorMessages.NotACostCenterAccount}");
                 }
             }
         }
