@@ -16,7 +16,6 @@ namespace Allors.Database.Domain
         public CatalogueRule(MetaPopulation m) : base(m, new Guid("7B3BA380-A703-4E29-8D2D-0D2F74C6E7D8")) =>
             this.Patterns = new[]
             {
-                new RolePattern(m.Catalogue, m.Catalogue.CatalogueImage),
                 new RolePattern(m.Catalogue, m.Catalogue.LocalisedNames),
                 new RolePattern(m.Catalogue, m.Catalogue.LocalisedDescriptions),
                 new RolePattern(m.LocalisedText, m.LocalisedText.Text) { Steps = new IPropertyType[]{ this.M.LocalisedText.CatalogueWhereLocalisedName } },
@@ -37,11 +36,6 @@ namespace Allors.Database.Domain
                 if (@this.LocalisedDescriptions.Any(x => x.Locale.Equals(defaultLocale)))
                 {
                     @this.Description = @this.LocalisedDescriptions.First(x => x.Locale.Equals(defaultLocale)).Text;
-                }
-
-                if (!@this.ExistCatalogueImage)
-                {
-                    @this.CatalogueImage = @this.Strategy.Transaction.GetSingleton().Settings.NoImageAvailableImage;
                 }
             }
         }

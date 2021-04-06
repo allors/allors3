@@ -17,11 +17,9 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.Part, m.Part.Name),
-                new RolePattern(m.Part, m.Part.DefaultFacility),
-                new RolePattern(m.Part, m.Part.UnitOfMeasure),
                 new RolePattern(m.Part, m.Part.ProductType),
-                new AssociationPattern(m.InventoryItem.Part),
                 new RolePattern(m.ProductType, m.ProductType.SerialisedItemCharacteristicTypes) { Steps = new IPropertyType[]{ this.M.ProductType.PartsWhereProductType } },
+                new AssociationPattern(m.InventoryItem.Part),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -30,24 +28,6 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<Part>())
             {
-                if (cycle.ChangeSet.HasChangedRoles(@this, m.Part.UnitOfMeasure, m.Part.DefaultFacility))
-                {
-                    if (@this.InventoryItemKind.IsNonSerialised)
-                    {
-                        var inventoryItems = @this.InventoryItemsWherePart;
-
-                        if (!inventoryItems.Any(i => i.ExistFacility && i.Facility.Equals(@this.DefaultFacility)
-                                                    && i.ExistUnitOfMeasure && i.UnitOfMeasure.Equals(@this.UnitOfMeasure)))
-                        {
-                            var inventoryItem = (InventoryItem)new NonSerialisedInventoryItemBuilder(@this.Strategy.Transaction)
-                              .WithFacility(@this.DefaultFacility)
-                              .WithUnitOfMeasure(@this.UnitOfMeasure)
-                              .WithPart(@this)
-                              .Build();
-                        }
-                    }
-                }
-
                 var characteristicsToDelete = @this.SerialisedItemCharacteristics.ToList();
 
                 if (@this.ExistProductType)
