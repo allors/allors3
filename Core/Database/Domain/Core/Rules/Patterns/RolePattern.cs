@@ -12,8 +12,14 @@ namespace Allors.Database.Derivations
     {
         public RolePattern(IRoleType roleType) => this.RoleType = roleType;
 
-        public RolePattern(IComposite objectType, IRoleType roleType) : base(objectType) => this.RoleType = roleType;
+        public RolePattern(IComposite objectType, IRoleType roleType)
+        {
+            this.RoleType = roleType;
+            this.ObjectType = !this.RoleType.AssociationType.ObjectType.Equals(objectType) ? objectType : null;
+        }
 
         public IRoleType RoleType { get; }
+
+        public override IComposite ObjectType { get; }
     }
 }

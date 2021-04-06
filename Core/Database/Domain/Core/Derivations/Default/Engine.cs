@@ -39,7 +39,10 @@ namespace Allors.Database.Domain.Derivations.Default
                     {
                         RolePattern { ObjectType: null } rolePattern => rolePattern.RoleType.AssociationType.ObjectType.DatabaseClasses.ToArray(),
                         RolePattern { ObjectType: { } } rolePattern => rolePattern.ObjectType.DatabaseClasses.ToArray(),
-                        AssociationPattern associationPattern => associationPattern.AssociationType.RoleType.ObjectType.IsComposite ? ((Composite)associationPattern.AssociationType.RoleType.ObjectType).DatabaseClasses.ToArray() : Array.Empty<IClass>(),
+
+                        AssociationPattern { ObjectType: null } associationPattern => associationPattern.AssociationType.RoleType.ObjectType.IsComposite ? ((Composite)associationPattern.AssociationType.RoleType.ObjectType).DatabaseClasses.ToArray() : Array.Empty<IClass>(),
+                        AssociationPattern { ObjectType: { } } associationPattern => associationPattern.ObjectType.DatabaseClasses.ToArray(),
+
                         _ => Array.Empty<IClass>()
                     };
 
