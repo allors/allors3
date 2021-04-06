@@ -10,28 +10,26 @@ namespace Allors.Database.Domain
     using System.Linq;
     using Meta;
     using Database.Derivations;
-    using Derivations;
+    using Resources;
 
-    public class BankAccountRule : Rule
+    public class GeneralLedgerAccountCostUnitAllowedRule : Rule
     {
-        public BankAccountRule(MetaPopulation m) : base(m, new Guid("633f58cd-ca1b-4a2e-8f6e-e1642466a9f7")) =>
+        public GeneralLedgerAccountCostUnitAllowedRule(MetaPopulation m) : base(m, new Guid("b1f59562-0942-4a2e-b022-4c6979536ac0")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.OwnBankAccount.BankAccount),
+                new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.DefaultCostUnit),
+
+                new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.AssignedCostUnitsAllowed),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
 
-            foreach (var @this in matches.Cast<BankAccount>())
+            foreach (var @this in matches.Cast<GeneralLedgerAccount>())
             {
-                if (@this.ExistOwnBankAccountsWhereBankAccount)
-                {
-                    validation.AssertExists(@this, @this.Meta.Bank);
-                    validation.AssertExists(@this, @this.Meta.Currency);
-                    validation.AssertExists(@this, @this.Meta.NameOnAccount);
-                }
+                @this.DerivedCostUnitsAllowed = @this.AssignedCostUnitsAllowed;
+                @this.AddDerivedCostUnitsAllowed(@this.DefaultCostUnit);
             }
         }
     }
