@@ -14,24 +14,19 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Resources;
 
-    public class SerialisedItemPartWhereSerialisedItemRule : Rule
+    public class SerialisedItemSerialisedItemAvailabilityNameRule : Rule
     {
-        public SerialisedItemPartWhereSerialisedItemRule(MetaPopulation m) : base(m, new Guid("02b0e0bf-7fa6-453d-bef2-8b267979b1ff")) =>
+        public SerialisedItemSerialisedItemAvailabilityNameRule(MetaPopulation m) : base(m, new Guid("8c692f21-bfe7-41b7-b9de-ace2ddb45d7e")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SerialisedItem, m.SerialisedItem.Name),
-                new AssociationPattern(m.Part.SerialisedItems),
-                new AssociationPattern(m.SupplierOffering.Part) { Steps = new IPropertyType[] { m.Part.SerialisedItems } },
+                new RolePattern(m.SerialisedItem, m.SerialisedItem.SerialisedItemAvailability),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<SerialisedItem>())
             {
-                if (!@this.ExistName && @this.ExistPartWhereSerialisedItem)
-                {
-                    @this.Name = @this.PartWhereSerialisedItem.Name;
-                }
+                @this.SerialisedItemAvailabilityName = @this.ExistSerialisedItemAvailability ? @this.SerialisedItemAvailability.Name : string.Empty;
             }
         }
     }
