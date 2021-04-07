@@ -131,7 +131,11 @@ define_associationType(property) ::= <<
         {
         }
 
-        public $property.DefiningType.SingularName$ $property.DefiningType.SingularName$ => ($property.DefiningType.SingularName$)((IAssociationType)this).ObjectType;
+        private MetaPopulation M => (MetaPopulation)((IAssociationType)this).MetaPopulation;
+
+        public $property.DefiningType.SingularName$ $property.DefiningType.SingularName$ => this.M.$property.DefiningType.SingularName$;
+
+$property.DefiningType.Subtypes:{subtype|        public $subtype.SingularName$ As$subtype.SingularName$ => this.M.$subtype.SingularName$;}; separator="\n"$
     }
 >>
 
@@ -153,7 +157,11 @@ define_roleType(property) ::= <<
         {
         }
 $if(property.Type.IsComposite)$
-        public $property.Type.SingularName$ $property.Type.SingularName$ => ($property.Type.SingularName$)this.ObjectType;
+        private MetaPopulation M => (MetaPopulation)((IRoleType)this).MetaPopulation;
+
+        public $property.Type.SingularName$ $property.Type.SingularName$ => this.M.$property.Type.SingularName$;
+
+$property.Type.Subtypes:{subtype|        public $subtype.SingularName$ As$subtype.SingularName$ => this.M.$subtype.SingularName$;}; separator="\n"$
 $endif$
     }
 >>
