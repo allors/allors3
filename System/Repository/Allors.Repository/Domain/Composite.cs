@@ -70,6 +70,8 @@ namespace Allors.Repository.Domain
 
         public Method[] InheritedMethods => this.MethodByName.Values.Where(v => v.DefiningMethod != null).ToArray();
 
+        public Composite[] Subtypes { get; set; }
+
         public override string ToString() => this.SingularName;
     }
 }

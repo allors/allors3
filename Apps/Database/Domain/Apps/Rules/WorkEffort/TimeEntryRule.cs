@@ -30,7 +30,6 @@ namespace Allors.Database.Domain
             new RolePattern(m.TimeEntry, m.TimeEntry.BillableAmountOfTime),
             new RolePattern(m.WorkEffort, m.WorkEffort.Customer) { Steps = new IPropertyType[] { m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry },
             new RolePattern(m.WorkEffort, m.WorkEffort.ExecutedBy) { Steps = new IPropertyType[] { m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry },
-            new AssociationPattern(m.TimeSheet.TimeEntries),
             new AssociationPattern(m.WorkEffortAssignmentRate.WorkEffort) { Steps = new IPropertyType[] { m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry },
             new RolePattern(m.WorkEffortAssignmentRate, m.WorkEffortAssignmentRate.RateType) { Steps = new IPropertyType[] { m.WorkEffortAssignmentRate.WorkEffort, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry },
             new RolePattern(m.WorkEffortAssignmentRate, m.WorkEffortAssignmentRate.Frequency) { Steps = new IPropertyType[] { m.WorkEffortAssignmentRate.WorkEffort, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry },
@@ -64,24 +63,6 @@ namespace Allors.Database.Domain
             {
                 var useInternalRate = @this.WorkEffort?.Customer is Organisation organisation && organisation.IsInternalOrganisation;
                 var rateType = useInternalRate ? new RateTypes(@this.Transaction()).InternalRate : @this.RateType;
-
-                if (@this.ExistTimeSheetWhereTimeEntry)
-                {
-                    @this.Worker = @this.TimeSheetWhereTimeEntry.Worker;
-                }
-
-                //if (this.ExistWorker)
-                //{
-                //    var otherActiveTimeEntry = this.Worker.TimeEntriesWhereWorker.FirstOrDefault(v =>
-                //                    v.Id != this.Id
-                //                    && ((v.FromDate < this.FromDate && (!v.ExistThroughDate || v.ThroughDate > this.FromDate))
-                //                        || (v.FromDate > this.FromDate && v.FromDate < this.ThroughDate)));
-
-                //    if (otherActiveTimeEntry != null)
-                //    {
-                //        derivation.Validation.AddError(this, this.Meta.Worker, ErrorMessages.WorkerActiveTimeEntry.Replace("{0}", otherActiveTimeEntry.WorkEffort?.WorkEffortNumber));
-                //    }
-                //}
 
                 var billingRate = 0M;
                 if (@this.AssignedBillingRate.HasValue)
