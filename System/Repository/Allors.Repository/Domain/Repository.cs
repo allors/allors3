@@ -282,7 +282,9 @@ namespace Allors.Repository.Domain
         {
             var definedTypeBySingularName = repositoryProject.Assembly.DefinedTypes.Where(v => RepositoryNamespaceName.Equals(v.Namespace)).ToDictionary(v => v.Name);
 
-            foreach (var composite in this.CompositeByName.Values)
+            var composites = this.CompositeByName.Values.ToArray();
+
+            foreach (var composite in composites)
             {
                 var definedType = definedTypeBySingularName[composite.SingularName];
                 var allInterfaces = definedType.GetInterfaces();
@@ -298,6 +300,11 @@ namespace Allors.Repository.Domain
                         throw new Exception("Can not find implemented interface " + definedImplementedInterface.Name + " on " + composite.SingularName);
                     }
                 }
+            }
+            
+            foreach (var composite in composites)
+            {
+                composite.Subtypes = composites.Where(v => v.Interfaces.Contains(composite)).ToArray();
             }
         }
 
