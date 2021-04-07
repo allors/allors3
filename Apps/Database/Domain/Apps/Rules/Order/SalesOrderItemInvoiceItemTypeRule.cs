@@ -13,13 +13,13 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Resources;
 
-    public class SalesOrderItemRule : Rule
+    public class SalesOrderItemInvoiceItemTypeRule : Rule
     {
-        public SalesOrderItemRule(MetaPopulation m) : base(m, new Guid("FEF4E104-A0F0-4D83-A248-A1A606D93E41")) =>
+        public SalesOrderItemInvoiceItemTypeRule(MetaPopulation m) : base(m, new Guid("0bd194e2-b72b-4502-8609-a53c38cc2cb8")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.SalesOrderItem, m.SalesOrderItem.Product),
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.QuantityOrdered),
+                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.InvoiceItemType),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -29,19 +29,11 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<SalesOrderItem>())
             {
-                // TODO: Use versioning
-                // laten staan
-                if (@this.ExistPreviousProduct && !@this.PreviousProduct.Equals(@this.Product))
-                {
-                    validation.AddError($"{@this} {this.M.SalesOrderItem.Product} {ErrorMessages.SalesOrderItemProductChangeNotAllowed}");
-                }
-                else
-                {
-                    @this.PreviousProduct = @this.Product;
-                }
 
-                @this.PreviousQuantity = @this.QuantityOrdered;
-                @this.PreviousProduct = @this.Product;
+                if (@this.ExistProduct && !@this.ExistInvoiceItemType)
+                {
+                    @this.InvoiceItemType = new InvoiceItemTypes(@this.Transaction()).ProductItem;
+                }
             }
         }
     }
