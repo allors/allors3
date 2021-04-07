@@ -6,5 +6,6 @@ public partial class Paths
 
     public AbsolutePath Root { get; }
 
-    public AbsolutePath SignTool => (AbsolutePath)@"C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe";
+    public AbsolutePath SignTool =>
+        (AbsolutePath)@"C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe";
 }

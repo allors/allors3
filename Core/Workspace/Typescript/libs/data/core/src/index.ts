@@ -16,6 +16,7 @@ export { LessThan } from './lib/LessThan';
 export { Like } from './lib/Like';
 export { Not } from './lib/Not';
 export { Or } from './lib/Or';
+export { Procedure } from './lib/Procedure';
 export { Pull } from './lib/Pull';
 export { Union } from './lib/Union';
 export { Intersect } from './lib/Intersect';

@@ -6,10 +6,8 @@ using Nuke.Common.Tooling;
 using Nuke.Common.Tools.Npm;
 using static Nuke.Common.Logger;
 
-partial class Angular : IDisposable
+internal class Angular : IDisposable
 {
-    private IProcess Process { get; set; }
-
     public Angular(AbsolutePath path, string command)
     {
         var npmRunSetting = new NpmRunSettings()
@@ -17,8 +15,10 @@ partial class Angular : IDisposable
             .SetProcessWorkingDirectory(path)
             .SetCommand(command);
 
-        this.Process = ProcessTasks.StartProcess((ToolSettings)npmRunSetting);
+        this.Process = ProcessTasks.StartProcess(npmRunSetting);
     }
+
+    private IProcess Process { get; set; }
 
     public void Dispose()
     {
@@ -41,7 +41,7 @@ partial class Angular : IDisposable
         var run = 0;
 
         var success = false;
-        while (!success && (DateTime.Now < stop))
+        while (!success && DateTime.Now < stop)
         {
             await Task.Delay(1000);
 

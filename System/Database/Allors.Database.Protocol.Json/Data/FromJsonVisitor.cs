@@ -480,7 +480,7 @@ namespace Allors.Database.Protocol.Json
             {
                 CollectionByName = procedure.CollectionByName?.FromJsonForCollectionByName(this.transaction),
                 ObjectByName = procedure.ObjectByName?.FromJsonForObjectByName(this.transaction),
-                ValueByName = procedure.ValueByName.FromJsonForValueByName(),
+                ValueByName = procedure.ValueByName?.FromJsonForValueByName(),
                 VersionByObject = procedure.VersionByObject?.FromJsonForVersionByObject(this.transaction)
             };
     }

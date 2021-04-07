@@ -10,7 +10,10 @@ public partial class Paths
     public AbsolutePath SystemDatabase => this.System / "Database";
 
     public AbsolutePath SystemAdapters => this.SystemDatabase / "Adapters";
-    public AbsolutePath SystemAdaptersRepositoryDomainRepository => this.SystemAdapters / "Repository/Domain/Repository.csproj";
+
+    public AbsolutePath SystemAdaptersRepositoryDomainRepository =>
+        this.SystemAdapters / "Repository/Domain/Repository.csproj";
+
     public AbsolutePath SystemAdaptersMetaGenerated => this.SystemAdapters / "Meta/generated";
     public AbsolutePath SystemAdaptersGenerate => this.SystemAdapters / "Generate/Generate.csproj";
     public AbsolutePath SystemAdaptersStaticTests => this.SystemAdapters / "Tests.Static/Tests.Static.csproj";

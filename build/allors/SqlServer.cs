@@ -3,11 +3,11 @@ using MartinCostello.SqlLocalDb;
 using Microsoft.Data.SqlClient;
 using static Nuke.Common.Logger;
 
-partial class SqlServer : IDisposable
+internal class SqlServer : IDisposable
 {
-    private SqlLocalDbApi sqlLocalDbApi;
     private ISqlLocalDbInstanceInfo dbInstance;
     private ISqlLocalDbInstanceManager manager;
+    private SqlLocalDbApi sqlLocalDbApi;
 
     public SqlServer()
     {
@@ -34,7 +34,7 @@ partial class SqlServer : IDisposable
     public void Drop(string database) => this.ExecuteCommand($"DROP DATABASE IF EXISTS [{database}]");
 
     public void Create(string database) => this.ExecuteCommand($"CREATE DATABASE [{database}]");
-    
+
     private int ExecuteCommand(string commandText)
     {
         using var connection = this.manager.CreateConnection();

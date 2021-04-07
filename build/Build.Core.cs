@@ -7,7 +7,7 @@ using static Nuke.Common.Tools.Npm.NpmTasks;
 
 partial class Build
 {
-    Target CoreResetDatabase => _ => _
+    private Target CoreResetDatabase => _ => _
         .Executes(() =>
         {
             var database = "Core";
@@ -17,47 +17,47 @@ partial class Build
         });
 
     private Target CoreMerge => _ => _
-        .Executes(() =>
-        {
-            DotNetRun(s => s
-                .SetProjectFile(this.Paths.CoreDatabaseMerge)
-                .SetApplicationArguments($"{this.Paths.CoreDatabaseResourcesCore} {this.Paths.CoreDatabaseResourcesCustom} {this.Paths.CoreDatabaseResources}"));
-        });
+        .Executes(() => DotNetRun(s => s
+            .SetProjectFile(this.Paths.CoreDatabaseMerge)
+            .SetApplicationArguments(
+                $"{this.Paths.CoreDatabaseResourcesCore} {this.Paths.CoreDatabaseResourcesCustom} {this.Paths.CoreDatabaseResources}")));
 
-    Target CoreGenerate => _ => _
+    private Target CoreGenerate => _ => _
         .After(this.Clean)
         .DependsOn(this.CoreMerge)
         .Executes(() =>
         {
             DotNetRun(s => s
                 .SetProjectFile(this.Paths.SystemRepositoryGenerate)
-                .SetApplicationArguments($"{this.Paths.CoreRepositoryDomainRepository} {this.Paths.SystemRepositoryTemplatesMetaCs} {this.Paths.CoreDatabaseMetaGenerated}"));
+                .SetApplicationArguments(
+                    $"{this.Paths.CoreRepositoryDomainRepository} {this.Paths.SystemRepositoryTemplatesMetaCs} {this.Paths.CoreDatabaseMetaGenerated}"));
             DotNetRun(s => s
                 .SetProcessWorkingDirectory(this.Paths.Core)
                 .SetProjectFile(this.Paths.CoreDatabaseGenerate));
         });
 
-    Target CoreDatabaseTestDomain => _ => _
+    private Target CoreDatabaseTestMeta => _ => _
         .DependsOn(this.CoreGenerate)
-        .Executes(() =>
-        {
-            DotNetTest(s => s
-                .SetProjectFile(this.Paths.CoreDatabaseDomainTests)
-                .SetLogger("trx;LogFileName=CoreDatabaseDomain.trx")
-                .SetResultsDirectory(this.Paths.ArtifactsTests));
-        });
+        .Executes(() => DotNetTest(s => s
+            .SetProjectFile(this.Paths.CoreDatabaseMetaTests)
+            .SetLogger("trx;LogFileName=CoreDatabaseMeta.trx")
+            .SetResultsDirectory(this.Paths.ArtifactsTests)));
 
-    Target CoreDatabaseTestServerLocal => _ => _
+    private Target CoreDatabaseTestDomain => _ => _
         .DependsOn(this.CoreGenerate)
-        .Executes(() =>
-        {
-            DotNetTest(s => s
-                .SetProjectFile(this.Paths.CoreDatabaseServerLocalTests)
-                .SetLogger("trx;LogFileName=CoreDatabaseApi.trx")
-                .SetResultsDirectory(this.Paths.ArtifactsTests));
-        });
+        .Executes(() => DotNetTest(s => s
+            .SetProjectFile(this.Paths.CoreDatabaseDomainTests)
+            .SetLogger("trx;LogFileName=CoreDatabaseDomain.trx")
+            .SetResultsDirectory(this.Paths.ArtifactsTests)));
 
-    Target CorePublishCommands => _ => _
+    private Target CoreDatabaseTestServerLocal => _ => _
+        .DependsOn(this.CoreGenerate)
+        .Executes(() => DotNetTest(s => s
+            .SetProjectFile(this.Paths.CoreDatabaseServerLocalTests)
+            .SetLogger("trx;LogFileName=CoreDatabaseApi.trx")
+            .SetResultsDirectory(this.Paths.ArtifactsTests)));
+
+    private Target CorePublishCommands => _ => _
         .DependsOn(this.CoreGenerate)
         .Executes(() =>
         {
@@ -67,7 +67,7 @@ partial class Build
             DotNetPublish(dotNetPublishSettings);
         });
 
-    Target CorePublishServer => _ => _
+    private Target CorePublishServer => _ => _
         .DependsOn(this.CoreGenerate)
         .Executes(() =>
         {
@@ -77,7 +77,7 @@ partial class Build
             DotNetPublish(dotNetPublishSettings);
         });
 
-    Target CoreDatabaseTestServerRemote => _ => _
+    private Target CoreDatabaseTestServerRemote => _ => _
         .DependsOn(this.CoreGenerate)
         .DependsOn(this.CorePublishServer)
         .DependsOn(this.CorePublishCommands)
@@ -93,40 +93,30 @@ partial class Build
                 .SetResultsDirectory(this.Paths.ArtifactsTests));
         });
 
-    Target CoreInstall => _ => _
-        .Executes(() =>
-        {
-            NpmInstall(s => s
-                .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-                .SetProcessWorkingDirectory(this.Paths.CoreWorkspaceTypescript));
-        });
+    private Target CoreInstall => _ => _
+        .Executes(() => NpmInstall(s => s
+            .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
+            .SetProcessWorkingDirectory(this.Paths.CoreWorkspaceTypescript)));
 
-    Target CoreWorkspaceTypescriptMeta => _ => _
+    private Target CoreWorkspaceTypescriptMeta => _ => _
         .After(this.CoreInstall)
         .DependsOn(this.CoreGenerate)
         .DependsOn(this.EnsureDirectories)
-        .Executes(() =>
-        {
-            NpmRun(s => s
-                .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-                .SetProcessWorkingDirectory(this.Paths.CoreWorkspaceTypescript)
-                .SetCommand("test:meta"));
-        });
+        .Executes(() => NpmRun(s => s
+            .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
+            .SetProcessWorkingDirectory(this.Paths.CoreWorkspaceTypescript)
+            .SetCommand("test:meta")));
 
-
-    Target CoreWorkspaceTypescriptWorkspace => _ => _
+    private Target CoreWorkspaceTypescriptWorkspace => _ => _
         .After(this.CoreInstall)
         .DependsOn(this.CoreGenerate)
         .DependsOn(this.EnsureDirectories)
-        .Executes(() =>
-        {
-            NpmRun(s => s
-                .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-                .SetProcessWorkingDirectory(this.Paths.CoreWorkspaceTypescript)
-                .SetCommand("test:workspace"));
-        });
+        .Executes(() => NpmRun(s => s
+            .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
+            .SetProcessWorkingDirectory(this.Paths.CoreWorkspaceTypescript)
+            .SetCommand("test:workspace")));
 
-    Target CoreWorkspaceTypescriptClient => _ => _
+    private Target CoreWorkspaceTypescriptClient => _ => _
         .After(this.CoreInstall)
         .DependsOn(this.EnsureDirectories)
         .DependsOn(this.CoreGenerate)
@@ -144,7 +134,7 @@ partial class Build
                 .SetCommand("test:client"));
         });
 
-    Target CoreWorkspaceCSharpTest => _ => _
+    private Target CoreWorkspaceCSharpTest => _ => _
         .DependsOn(this.CorePublishServer)
         .DependsOn(this.CorePublishCommands)
         .DependsOn(this.CoreResetDatabase)
@@ -180,26 +170,26 @@ partial class Build
             }
         });
 
-    Target CoreDatabaseTest => _ => _
+    private Target CoreDatabaseTest => _ => _
+        .DependsOn(this.CoreDatabaseTestMeta)
         .DependsOn(this.CoreDatabaseTestDomain)
         .DependsOn(this.CoreDatabaseTestServerLocal)
         .DependsOn(this.CoreDatabaseTestServerRemote);
 
-    Target CoreWorkspaceTypescriptTest => _ => _
+    private Target CoreWorkspaceTypescriptTest => _ => _
         .DependsOn(this.CoreWorkspaceTypescriptMeta)
         .DependsOn(this.CoreWorkspaceTypescriptWorkspace)
         .DependsOn(this.CoreWorkspaceTypescriptClient);
 
-    Target CoreWorkspaceTest => _ => _
-        .DependsOn(this.CoreWorkspaceCSharpTest);
-        // TODO: Reactivate
-        //.DependsOn(this.CoreWorkspaceTypescriptTest);
+    private Target CoreWorkspaceTest => _ => _
+        .DependsOn(this.CoreWorkspaceCSharpTest)
+        .DependsOn(this.CoreWorkspaceTypescriptTest);
 
-    Target CoreTest => _ => _
+    private Target CoreTest => _ => _
         .DependsOn(this.CoreDatabaseTest)
         .DependsOn(this.CoreWorkspaceTest);
 
-    Target Core => _ => _
+    private Target Core => _ => _
         .DependsOn(this.Clean)
         .DependsOn(this.CoreTest);
 }

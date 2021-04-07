@@ -11,9 +11,15 @@ public partial class Paths
     public AbsolutePath CoreDatabaseMerge => this.CoreDatabase / "Merge/Merge.csproj";
     public AbsolutePath CoreDatabaseServer => this.CoreDatabase / "Server";
     public AbsolutePath CoreDatabaseCommands => this.CoreDatabase / "Commands";
+    public AbsolutePath CoreDatabaseMetaTests => this.CoreDatabase / "Meta.Tests/Meta.Tests.csproj";
     public AbsolutePath CoreDatabaseDomainTests => this.CoreDatabase / "Domain.Tests/Domain.Tests.csproj";
-    public AbsolutePath CoreDatabaseServerLocalTests => this.CoreDatabase / "Server.Local.Tests/Server.Local.Tests.csproj";
-    public AbsolutePath CoreDatabaseServerRemoteTests => this.CoreDatabase / "Server.Remote.Tests/Server.Remote.Tests.csproj";
+
+    public AbsolutePath CoreDatabaseServerLocalTests =>
+        this.CoreDatabase / "Server.Local.Tests/Server.Local.Tests.csproj";
+
+    public AbsolutePath CoreDatabaseServerRemoteTests =>
+        this.CoreDatabase / "Server.Remote.Tests/Server.Remote.Tests.csproj";
+
     public AbsolutePath CoreDatabaseResources => this.CoreDatabase / "Resources";
     public AbsolutePath CoreDatabaseResourcesCore => this.CoreDatabaseResources / "Core";
     public AbsolutePath CoreDatabaseResourcesCustom => this.CoreDatabaseResources / "Custom";
@@ -24,5 +30,5 @@ public partial class Paths
     public AbsolutePath CoreWorkspaceCSharpAdaptersLocalTests => this.Core / "Workspace/CSharp/Adapters/Tests.Local";
     public AbsolutePath CoreWorkspaceCSharpAdaptersRemoteTests => this.Core / "Workspace/CSharp/Adapters/Tests.Remote";
 
-    public AbsolutePath CoreWorkspaceTypescript=> this.Core / "Workspace/Typescript";
+    public AbsolutePath CoreWorkspaceTypescript => this.Core / "Workspace/Typescript";
 }

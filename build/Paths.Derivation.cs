@@ -8,4 +8,3 @@ public partial class Paths
     public AbsolutePath DerivationDatabaseGenerate => this.Derivation / "Database/Generate/Generate.csproj";
     public AbsolutePath DerivationDatabaseDomainTests => this.Derivation / "Database/Domain.Tests/Domain.Tests.csproj";
 }
-

@@ -5,30 +5,28 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 partial class Build
 {
-    Target AdaptersGenerate => _ => _
+    private Target AdaptersGenerate => _ => _
         .After(this.Clean)
         .Executes(() =>
         {
             DotNetRun(s => s
                 .SetProjectFile(this.Paths.SystemRepositoryGenerate)
-                .SetApplicationArguments($"{this.Paths.SystemAdaptersRepositoryDomainRepository} {this.Paths.SystemRepositoryTemplatesMetaCs} {this.Paths.SystemAdaptersMetaGenerated}"));
+                .SetApplicationArguments(
+                    $"{this.Paths.SystemAdaptersRepositoryDomainRepository} {this.Paths.SystemRepositoryTemplatesMetaCs} {this.Paths.SystemAdaptersMetaGenerated}"));
             DotNetRun(s => s
                 .SetProcessWorkingDirectory(this.Paths.SystemAdapters)
                 .SetProjectFile(this.Paths.SystemAdaptersGenerate));
         });
 
-    Target AdaptersTestMemory => _ => _
+    private Target AdaptersTestMemory => _ => _
         .DependsOn(this.AdaptersGenerate)
-        .Executes(() =>
-        {
-            DotNetTest(s => s
-                .SetProjectFile(this.Paths.SystemAdaptersStaticTests)
-                .SetFilter("FullyQualifiedName~Allors.Database.Adapters.Memory")
-                .SetLogger("trx;LogFileName=AdaptersMemory.trx")
-                .SetResultsDirectory(this.Paths.ArtifactsTests));
-        });
+        .Executes(() => DotNetTest(s => s
+            .SetProjectFile(this.Paths.SystemAdaptersStaticTests)
+            .SetFilter("FullyQualifiedName~Allors.Database.Adapters.Memory")
+            .SetLogger("trx;LogFileName=AdaptersMemory.trx")
+            .SetResultsDirectory(this.Paths.ArtifactsTests)));
 
-    Target AdaptersTestSqlClient => _ => _
+    private Target AdaptersTestSqlClient => _ => _
         .DependsOn(this.AdaptersGenerate)
         .Executes(() =>
         {
@@ -42,7 +40,7 @@ partial class Build
             }
         });
 
-    Target AdaptersTestNpgsql => _ => _
+    private Target AdaptersTestNpgsql => _ => _
         .DependsOn(this.AdaptersGenerate)
         .Executes(() =>
         {
@@ -56,7 +54,7 @@ partial class Build
             }
         });
 
-    Target Adapters => _ => _
+    private Target Adapters => _ => _
         .DependsOn(this.Clean)
         .DependsOn(this.AdaptersTestMemory)
         .DependsOn(this.AdaptersTestSqlClient)

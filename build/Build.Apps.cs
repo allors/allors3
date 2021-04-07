@@ -7,7 +7,7 @@ using static Nuke.Common.Tools.Npm.NpmTasks;
 
 partial class Build
 {
-    Target AppsResetDatabase => _ => _
+    private Target AppsResetDatabase => _ => _
         .Executes(() =>
         {
             var database = "Apps";
@@ -17,77 +17,67 @@ partial class Build
         });
 
     private Target AppsDatabaseTest => _ => _
-         .DependsOn(this.AppsDatabaseTestDomain);
+        .DependsOn(this.AppsDatabaseTestDomain);
 
     private Target AppsMerge => _ => _
+        .Executes(() => DotNetRun(s => s
+            .SetProjectFile(this.Paths.CoreDatabaseMerge)
+            .SetApplicationArguments(
+                $"{this.Paths.CoreDatabaseResourcesCore} {this.Paths.AppsDatabaseResourcesApps} {this.Paths.AppsDatabaseResources}")));
+
+    private Target AppsDatabaseTestDomain => _ => _
+        .DependsOn(this.AppsGenerate)
+        .Executes(() => DotNetTest(s => s
+            .SetProjectFile(this.Paths.AppsDatabaseDomainTests)
+            .SetLogger("trx;LogFileName=AppsDatabaseDomain.trx")
+            .SetResultsDirectory(this.Paths.ArtifactsTests)));
+
+    private Target AppsGenerate => _ => _
+        .After(this.Clean)
+        .DependsOn(this.AppsMerge)
         .Executes(() =>
         {
             DotNetRun(s => s
-                .SetProjectFile(this.Paths.CoreDatabaseMerge)
-                .SetApplicationArguments($"{this.Paths.CoreDatabaseResourcesCore} {this.Paths.AppsDatabaseResourcesApps} {this.Paths.AppsDatabaseResources}"));
+                .SetProjectFile(this.Paths.SystemRepositoryGenerate)
+                .SetApplicationArguments(
+                    $"{this.Paths.AppsRepositoryDomainRepository} {this.Paths.SystemRepositoryTemplatesMetaCs} {this.Paths.AppsDatabaseMetaGenerated}"));
+            DotNetRun(s => s
+                .SetProcessWorkingDirectory(this.Paths.Apps)
+                .SetProjectFile(this.Paths.AppsDatabaseGenerate));
         });
-
-    private Target AppsDatabaseTestDomain => _ => _
-         .DependsOn(this.AppsGenerate)
-         .Executes(() =>
-         {
-             DotNetTest(s => s
-                 .SetProjectFile(this.Paths.AppsDatabaseDomainTests)
-                 .SetLogger("trx;LogFileName=AppsDatabaseDomain.trx")
-                 .SetResultsDirectory(this.Paths.ArtifactsTests));
-         });
-
-    private Target AppsGenerate => _ => _
-         .After(this.Clean)
-         .DependsOn(this.AppsMerge)
-         .Executes(() =>
-         {
-             DotNetRun(s => s
-                 .SetProjectFile(this.Paths.SystemRepositoryGenerate)
-                 .SetApplicationArguments($"{this.Paths.AppsRepositoryDomainRepository} {this.Paths.SystemRepositoryTemplatesMetaCs} {this.Paths.AppsDatabaseMetaGenerated}"));
-             DotNetRun(s => s
-                 .SetProcessWorkingDirectory(this.Paths.Apps)
-                 .SetProjectFile(this.Paths.AppsDatabaseGenerate));
-         });
 
     private Target AppsPublishCommands => _ => _
-         .DependsOn(this.AppsGenerate)
-         .Executes(() =>
-         {
-             var dotNetPublishSettings = new DotNetPublishSettings()
-                 .SetProcessWorkingDirectory(this.Paths.AppsDatabaseCommands)
-                 .SetOutput(this.Paths.ArtifactsAppsCommands);
-             DotNetPublish(dotNetPublishSettings);
-         });
-
-    private Target AppsPublishServer => _ => _
-             .DependsOn(this.AppsGenerate)
-         .Executes(() =>
-         {
-             var dotNetPublishSettings = new DotNetPublishSettings()
-                 .SetProcessWorkingDirectory(this.Paths.AppsDatabaseServer)
-                 .SetOutput(this.Paths.ArtifactsAppsServer);
-             DotNetPublish(dotNetPublishSettings);
-         });
-
-    private Target AppsInstall => _ => _
+        .DependsOn(this.AppsGenerate)
         .Executes(() =>
         {
-            NpmInstall(s => s
-                .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-                .SetProcessWorkingDirectory(this.Paths.AppsWorkspaceTypescript));
+            var dotNetPublishSettings = new DotNetPublishSettings()
+                .SetProcessWorkingDirectory(this.Paths.AppsDatabaseCommands)
+                .SetOutput(this.Paths.ArtifactsAppsCommands);
+            DotNetPublish(dotNetPublishSettings);
         });
 
+    private Target AppsPublishServer => _ => _
+        .DependsOn(this.AppsGenerate)
+        .Executes(() =>
+        {
+            var dotNetPublishSettings = new DotNetPublishSettings()
+                .SetProcessWorkingDirectory(this.Paths.AppsDatabaseServer)
+                .SetOutput(this.Paths.ArtifactsAppsServer);
+            DotNetPublish(dotNetPublishSettings);
+        });
+
+    private Target AppsInstall => _ => _
+        .Executes(() => NpmInstall(s => s
+            .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
+            .SetProcessWorkingDirectory(this.Paths.AppsWorkspaceTypescript)));
+
     private Target AppsWorkspaceTypescriptSession => _ => _
-         .DependsOn(this.AppsGenerate)
-         .DependsOn(this.EnsureDirectories)
-         .Executes(() =>
-         {
-             NpmRun(s => s
-                 .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-                 .SetProcessWorkingDirectory(this.Paths.AppsWorkspaceTypescript)
-                 .SetCommand("domain:test"));
-         });
+        .DependsOn(this.AppsGenerate)
+        .DependsOn(this.EnsureDirectories)
+        .Executes(() => NpmRun(s => s
+            .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
+            .SetProcessWorkingDirectory(this.Paths.AppsWorkspaceTypescript)
+            .SetCommand("domain:test")));
 
     private Target AppsWorkspaceTypescriptTest => _ => _
         .DependsOn(this.AppsWorkspaceTypescriptSession);

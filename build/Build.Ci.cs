@@ -1,6 +1,6 @@
 using Nuke.Common;
 
-partial class Build 
+partial class Build
 {
     private Target CiAdaptersTestMemory => _ => _
         .DependsOn(this.AdaptersTestMemory);
@@ -26,7 +26,7 @@ partial class Build
         .DependsOn(this.BaseWorkspaceTest);
 
     private Target CiAppsDatabaseTest => _ => _
-       .DependsOn(this.AppsDatabaseTest);
+        .DependsOn(this.AppsDatabaseTest);
 
     private Target CiAppsWorkspaceTest => _ => _
         .DependsOn(this.AppsInstall)

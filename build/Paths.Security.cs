@@ -8,4 +8,3 @@ public partial class Paths
     public AbsolutePath SecurityDatabaseGenerate => this.Security / "Database/Generate/Generate.csproj";
     public AbsolutePath SecurityDatabaseDomainTests => this.Security / "Database/Domain.Tests/Domain.Tests.csproj";
 }
-
