@@ -8,26 +8,25 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Derivations;
     using Meta;
     using Database.Derivations;
 
-    public class CustomerShipmentRule : Rule
+    public class TransferDeriveShipFromAddressRule : Rule
     {
-        public CustomerShipmentRule(MetaPopulation m) : base(m, new Guid("7FE90E97-A4B4-4991-9063-91BF5670B4A9")) =>
+        public TransferDeriveShipFromAddressRule(MetaPopulation m) : base(m, new Guid("032f3068-356c-4e40-9fb3-6a7b5b05ece5")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.CustomerShipment, m.CustomerShipment.ShipFromParty),
-                new RolePattern(m.CustomerShipment, m.CustomerShipment.ShipFromAddress),
+                new RolePattern(m.Transfer, m.Transfer.ShipFromParty),
+                new RolePattern(m.Transfer, m.Transfer.ShipFromAddress),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var @this in matches.Cast<CustomerShipment>())
+            foreach (var @this in matches.Cast<Transfer>())
             {
-                if (!@this.ExistShipFromAddress)
+                if (!@this.ExistShipFromAddress && @this.ExistShipFromParty)
                 {
-                    @this.ShipFromAddress = @this.ShipFromParty?.ShippingAddress;
+                    @this.ShipFromAddress = @this.ShipFromParty.ShippingAddress;
                 }
             }
         }

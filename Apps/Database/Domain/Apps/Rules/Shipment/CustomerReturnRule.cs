@@ -18,29 +18,12 @@ namespace Allors.Database.Domain
             {
                 new RolePattern(m.CustomerReturn, m.CustomerReturn.ShipFromParty),
                 new RolePattern(m.CustomerReturn, m.CustomerReturn.ShipFromAddress),
-                new RolePattern(m.CustomerReturn, m.CustomerReturn.ShipToParty),
-                new RolePattern(m.CustomerReturn, m.CustomerReturn.ShipToAddress),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<CustomerReturn>())
             {
-                if (!@this.ExistShipmentNumber && @this.ShipToParty is InternalOrganisation shipToParty)
-                {
-                    var year = @this.Strategy.Transaction.Now().Year;
-                    @this.ShipmentNumber = shipToParty.NextCustomerReturnNumber(year);
-
-                    var fiscalYearInternalOrganisationSequenceNumbers = shipToParty.FiscalYearsInternalOrganisationSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
-                    var prefix = ((InternalOrganisation)@this.ShipToParty).CustomerShipmentSequence.IsEnforcedSequence ? ((InternalOrganisation)@this.ShipToParty).CustomerReturnNumberPrefix : fiscalYearInternalOrganisationSequenceNumbers.CustomerReturnNumberPrefix;
-                    @this.SortableShipmentNumber = @this.Transaction().GetSingleton().SortableNumber(prefix, @this.ShipmentNumber, year.ToString());
-                }
-
-                if (!@this.ExistShipToAddress && @this.ExistShipToParty)
-                {
-                    @this.ShipToAddress = @this.ShipToParty.ShippingAddress;
-                }
-
                 if (!@this.ExistShipFromAddress && @this.ExistShipFromParty)
                 {
                     @this.ShipFromAddress = @this.ShipFromParty.ShippingAddress;

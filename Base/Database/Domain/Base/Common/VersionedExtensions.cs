@@ -19,7 +19,7 @@ namespace Allors.Database.Domain
             var derivation = method.Derivation;
             var versionedClass = (Class)@this.Strategy.Class;
             var metaPopulation = versionedClass.MetaPopulation;
-            var versionClass = metaPopulation.FindByName(versionedClass.Name + "Version");
+            var versionClass = (IClass)metaPopulation.FindDatabaseCompositeByName(versionedClass.Name + "Version");
             var versionTypeRegex = new Regex(".+Version");
 
             var currentVersionRole = versionedClass.DatabaseRoleTypes.First(v => v.Name.Equals("CurrentVersion"));

@@ -17,7 +17,7 @@ namespace Allors.Database.Meta
 
         private string[] derivedWorkspaceNames;
 
-        private Dictionary<string, IClassBase> derivedClassByLowercaseName;
+        private Dictionary<string, ICompositeBase> derivedDatabaseCompositeByLowercaseName;
 
         private IList<Domain> domains;
         private IList<IUnitBase> units;
@@ -163,7 +163,7 @@ namespace Allors.Database.Meta
                 return this.derivedDatabaseRelationTypes;
             }
         }
-        
+
         IEnumerable<IMethodType> IMetaPopulation.MethodTypes => this.MethodTypes;
         public IEnumerable<IMethodTypeBase> MethodTypes => this.methodTypes;
 
@@ -194,13 +194,13 @@ namespace Allors.Database.Meta
         /// <returns>
         /// The <see cref="IMetaObject"/>.
         /// </returns>
-        public IClassBase FindByName(string name)
+        public ICompositeBase FindDatabaseCompositeByName(string name)
         {
             this.Derive();
 
-            this.derivedClassByLowercaseName.TryGetValue(name.ToLowerInvariant(), out var cls);
+            this.derivedDatabaseCompositeByLowercaseName.TryGetValue(name.ToLowerInvariant(), out var composite);
 
-            return cls;
+            return composite;
         }
 
         IValidationLog IMetaPopulation.Validate() => this.Validate();
@@ -358,7 +358,6 @@ namespace Allors.Database.Meta
                     var sharedClasses = new HashSet<IClassBase>();
                     var sharedAssociationTypes = new HashSet<IAssociationTypeBase>();
                     var sharedRoleTypes = new HashSet<IRoleTypeBase>();
-                    var sharedMethodTypes = new HashSet<IMethodTypeBase>();
 
                     // Domains
                     foreach (var domain in this.domains)
@@ -496,11 +495,7 @@ namespace Allors.Database.Meta
                     }
 
                     // MetaPopulation
-                    this.derivedClassByLowercaseName = new Dictionary<string, IClassBase>();
-                    foreach (var cls in this.classes)
-                    {
-                        this.derivedClassByLowercaseName[cls.Name.ToLowerInvariant()] = cls;
-                    }
+                    this.derivedDatabaseCompositeByLowercaseName = this.derivedDatabaseComposites.ToDictionary(v => v.Name.ToLowerInvariant());
                 }
                 finally
                 {
@@ -633,6 +628,6 @@ namespace Allors.Database.Meta
         public IMethodTypeBase MethodType(string id) => ((IMethodTypeBase)this.Find(new Guid(id)));
 
         public IRoleTypeBase RoleType(string id) => ((RelationType)this.Find(new Guid(id))).RoleType;
-        IClass IMetaPopulation.FindByName(string name) => this.FindByName(name);
+        IObjectType IMetaPopulation.FindDatabaseCompositeByName(string name) => this.FindDatabaseCompositeByName(name);
     }
 }

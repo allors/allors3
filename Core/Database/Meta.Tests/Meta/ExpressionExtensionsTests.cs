@@ -26,7 +26,18 @@ namespace Allors.Database.Domain.Tests
         private MetaPopulation M { get; }
 
         [Fact]
-        public void Association()
+        public void InterfaceAssociation()
+        {
+            Expression<Func<User, IPropertyType>> expression = v => v.Logins;
+
+            var properties = expression.ToPropertyTypes(this.M);
+
+            Assert.Single((IEnumerable)properties);
+            Assert.Contains(this.M.User.Logins, properties);
+        }
+
+        [Fact]
+        public void ClassAssociation()
         {
             Expression<Func<Person, IPropertyType>> expression = v => v.OrganisationWhereEmployee;
 
@@ -37,7 +48,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void AssociationRole()
+        public void ClassAssociationClassRole()
         {
             Expression<Func<Person, IPropertyType>> expression = v => v.OrganisationWhereEmployee.Organisation.Information;
 
@@ -49,7 +60,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void Role()
+        public void ClassRole()
         {
             Expression<Func<Organisation, IPropertyType>> expression = v => v.Name;
 
@@ -60,7 +71,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void RoleRole()
+        public void ClassRoleClassRole()
         {
             Expression<Func<Organisation, IPropertyType>> expression = v => v.Employees.Person.FirstName;
 

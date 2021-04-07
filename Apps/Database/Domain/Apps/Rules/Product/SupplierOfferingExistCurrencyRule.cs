@@ -8,26 +8,25 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Derivations;
     using Meta;
     using Database.Derivations;
 
-    public class CustomerShipmentRule : Rule
+    public class SupplierOfferingExistCurrencyRule : Rule
     {
-        public CustomerShipmentRule(MetaPopulation m) : base(m, new Guid("7FE90E97-A4B4-4991-9063-91BF5670B4A9")) =>
+        public SupplierOfferingExistCurrencyRule(MetaPopulation m) : base(m, new Guid("c80df6c4-cdaf-49bd-af52-200e1dea2a9b")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.CustomerShipment, m.CustomerShipment.ShipFromParty),
-                new RolePattern(m.CustomerShipment, m.CustomerShipment.ShipFromAddress),
+                new RolePattern(m.SupplierOffering, m.SupplierOffering.Price),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var @this in matches.Cast<CustomerShipment>())
+            var m = cycle.Transaction.Database.Context().M;
+            foreach (var @this in matches.Cast<SupplierOffering>())
             {
-                if (!@this.ExistShipFromAddress)
+                if (!@this.ExistCurrency)
                 {
-                    @this.ShipFromAddress = @this.ShipFromParty?.ShippingAddress;
+                    @this.Currency = @this.Transaction().GetSingleton().Settings.PreferredCurrency;
                 }
             }
         }

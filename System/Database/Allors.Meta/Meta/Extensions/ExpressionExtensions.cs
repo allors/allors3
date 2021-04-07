@@ -35,14 +35,14 @@ namespace Allors.Database.Derivations
             var propertyTypes = new List<IPropertyType>();
 
             var root = visitor.MemberExpressions[0].Member.DeclaringType;
-            IComposite composite = metaPopulation.FindByName(root.Name);
+            var composite = (IComposite)metaPopulation.FindDatabaseCompositeByName(root.Name);
 
             foreach (var memberExpression in visitor.MemberExpressions)
             {
                 if (memberExpression.Type.GetInterfaces().Contains(typeof(IComposite)))
                 {
                     var name = memberExpression.Member.Name;
-                    composite = metaPopulation.FindByName(name);
+                    composite = (IComposite)metaPopulation.FindDatabaseCompositeByName(name);
                 }
 
                 if (memberExpression.Type.GetInterfaces().Contains(typeof(IRoleType)))
