@@ -16,8 +16,6 @@ namespace Allors.Database.Domain
         public OrganisationRule(MetaPopulation m) : base(m, new Guid("0379B923-210D-46DD-9D18-9D7BF5ED6FEA")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.Organisation, m.Organisation.Name),
-                new RolePattern(m.Organisation, m.Organisation.UniqueId),
                 new RolePattern(m.Organisation, m.Organisation.DerivationTrigger),
                 new AssociationPattern(m.Employment.Employer),
                 new RolePattern(m.Employment, m.Employment.FromDate) {Steps = new IPropertyType[]{ m.Employment.Employer}, OfType = m.Organisation},
@@ -45,25 +43,9 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<Organisation>())
             {
-                var now = transaction.Now();
-
                 transaction.Prefetch(@this.PrefetchPolicy);
 
-                @this.PartyName = @this.Name;
-
-                if (!@this.ExistContactsUserGroup)
-                {
-                    var customerContactGroupName = $"Customer contacts at {@this.Name} ({@this.UniqueId})";
-                    @this.ContactsUserGroup = new UserGroupBuilder(@this.Strategy.Transaction).WithName(customerContactGroupName).Build();
-                }
-
                 @this.DeriveRelationships();
-
-                var partyContactMechanisms = @this.PartyContactMechanisms?.ToArray();
-                foreach (OrganisationContactRelationship organisationContactRelationship in @this.OrganisationContactRelationshipsWhereOrganisation)
-                {
-                    organisationContactRelationship.Contact?.Sync(partyContactMechanisms);
-                }
             }
         }
     }
