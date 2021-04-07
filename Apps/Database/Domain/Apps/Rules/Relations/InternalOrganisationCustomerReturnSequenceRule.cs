@@ -11,14 +11,12 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class InternalOrganisationRule : Rule
+    public class InternalOrganisationCustomerReturnSequenceRule : Rule
     {
-        public InternalOrganisationRule(MetaPopulation m) : base(m, new Guid("258A6E3B-7940-4FCC-A33E-AE07C6FBFC32")) =>
+        public InternalOrganisationCustomerReturnSequenceRule(MetaPopulation m) : base(m, new Guid("fbef3c80-a576-4a5c-9dbf-fd7cf2cc967c")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.InternalOrganisation, m.InternalOrganisation.PurchaseShipmentSequence),
                 new RolePattern(m.InternalOrganisation, m.InternalOrganisation.CustomerReturnSequence),
-                new RolePattern(m.InternalOrganisation, m.InternalOrganisation.IncomingTransferSequence),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -32,11 +30,6 @@ namespace Allors.Database.Domain
                     if (@this.CustomerReturnSequence != new CustomerReturnSequences(@this.Strategy.Transaction).RestartOnFiscalYear && !@this.ExistCustomerReturnNumberCounter)
                     {
                         @this.CustomerReturnNumberCounter = new CounterBuilder(@this.Strategy.Transaction).Build();
-                    }
-
-                    if (@this.IncomingTransferSequence != new IncomingTransferSequences(@this.Strategy.Transaction).RestartOnFiscalYear && !@this.ExistIncomingTransferNumberCounter)
-                    {
-                        @this.IncomingTransferNumberCounter = new CounterBuilder(@this.Strategy.Transaction).Build();
                     }
                 }
             }

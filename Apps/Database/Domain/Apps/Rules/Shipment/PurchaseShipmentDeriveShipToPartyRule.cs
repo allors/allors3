@@ -12,13 +12,11 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class PurchaseShipmentRule : Rule
+    public class PurchaseShipmentDeriveShipToPartyRule : Rule
     {
-        public PurchaseShipmentRule(MetaPopulation m) : base(m, new Guid("89A2FB27-6839-40D4-AFAB-79E25259B1C8")) =>
+        public PurchaseShipmentDeriveShipToPartyRule(MetaPopulation m) : base(m, new Guid("89A2FB27-6839-40D4-AFAB-79E25259B1C8")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PurchaseShipment, m.PurchaseShipment.ShipFromParty),
-                new RolePattern(m.PurchaseShipment, m.PurchaseShipment.ShipFromAddress),
                 new RolePattern(m.PurchaseShipment, m.PurchaseShipment.ShipToParty),
                 new RolePattern(m.PurchaseShipment, m.PurchaseShipment.ShipToAddress),
             };
@@ -38,11 +36,6 @@ namespace Allors.Database.Domain
                 }
 
                 @this.ShipToAddress ??= @this.ShipToParty?.ShippingAddress ?? @this.ShipToParty?.GeneralCorrespondence as PostalAddress;
-
-                if (!@this.ExistShipFromAddress && @this.ExistShipFromParty)
-                {
-                    @this.ShipFromAddress = @this.ShipFromParty.ShippingAddress;
-                }
             }
         }
     }

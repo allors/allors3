@@ -11,23 +11,23 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class PurchaseReturnRule : Rule
+    public class OrganisationPartyNameRule : Rule
     {
-        public PurchaseReturnRule(MetaPopulation m) : base(m, new Guid("B5AB3B14-310A-42EE-9EF5-963290D812CC")) =>
+        public OrganisationPartyNameRule(MetaPopulation m) : base(m, new Guid("27c869fa-60ff-478e-abec-c42ff5ba606f")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PurchaseReturn, m.PurchaseReturn.ShipFromParty),
-                new RolePattern(m.PurchaseReturn, m.PurchaseReturn.ShipFromAddress),
+                new RolePattern(m.Organisation, m.Organisation.Name),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var @this in matches.Cast<PurchaseReturn>())
+            var transaction = cycle.Transaction;
+
+            foreach (var @this in matches.Cast<Organisation>())
             {
-                if (!@this.ExistShipFromAddress && @this.ExistShipFromParty)
-                {
-                    @this.ShipFromAddress = @this.ShipFromParty.ShippingAddress;
-                }
+                transaction.Prefetch(@this.PrefetchPolicy);
+
+                @this.PartyName = @this.Name;
             }
         }
     }

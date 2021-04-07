@@ -12,23 +12,30 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class PersonRule : Rule
+    public class PersonTimeSheetWorkerRule : Rule
     {
-        public PersonRule(MetaPopulation m) : base(m, new Guid("BC3969F4-4050-47A1-B80C-8F23879E3B10")) =>
+        public PersonTimeSheetWorkerRule(MetaPopulation m) : base(m, new Guid("34705b9b-4634-4cbb-b9a0-a2cbec9f5cd9")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.Person, m.Person.DerivationTrigger),
+                new AssociationPattern(m.OrganisationContactRelationship.Contact),
                 new RolePattern(m.OrganisationContactRelationship, m.OrganisationContactRelationship.FromDate) {Steps = new IPropertyType[]{ m.OrganisationContactRelationship.Contact } },
                 new RolePattern(m.OrganisationContactRelationship, m.OrganisationContactRelationship.ThroughDate) {Steps = new IPropertyType[]{ m.OrganisationContactRelationship.Contact } },
+                new RolePattern(m.Employment, m.Employment.FromDate) { Steps =  new IPropertyType[] {m.Employment.Employee} },
+                new RolePattern(m.Employment, m.Employment.ThroughDate) { Steps =  new IPropertyType[] {m.Employment.Employee} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<Person>())
             {
+                var now = @this.Transaction().Now();
+
                 @this.Strategy.Transaction.Prefetch(@this.PrefetchPolicy);
 
-                @this.DeriveRelationships();
+                if (!@this.ExistTimeSheetWhereWorker && (@this.AppsIsActiveEmployee(now) || @this.CurrentOrganisationContactRelationships.Count > 0))
+                {
+                    new TimeSheetBuilder(@this.Strategy.Transaction).WithWorker(@this).Build();
+                }
             }
         }
     }
