@@ -17,6 +17,7 @@ namespace Allors.Database.Domain
         public PurchaseInvoiceAmountPaidRule(MetaPopulation m) : base(m, new Guid("d8166960-ce4a-44ad-9f3b-599d4b447cb3")) =>
             this.Patterns = new Pattern[]
             {
+                new AssociationPattern(m.PaymentApplication.Invoice) { OfType = m.PurchaseInvoice },
                 new RolePattern(m.PurchaseInvoiceItem, m.PurchaseInvoiceItem.AmountPaid) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem} },
             };
 

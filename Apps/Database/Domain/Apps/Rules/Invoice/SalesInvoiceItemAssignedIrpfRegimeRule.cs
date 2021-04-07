@@ -21,7 +21,6 @@ namespace Allors.Database.Domain
                 new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.AssignedIrpfRegime),
                 new RolePattern(m.SalesInvoice, m.SalesInvoice.InvoiceDate) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
                 new RolePattern(m.SalesInvoice, m.SalesInvoice.DerivedIrpfRegime) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
-                new AssociationPattern(m.TimeEntryBilling.InvoiceItem) { Steps =  new IPropertyType[] { m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem }, OfType = m.SalesInvoice },
                 new AssociationPattern(m.SalesInvoice.SalesInvoiceItems),
             };
 

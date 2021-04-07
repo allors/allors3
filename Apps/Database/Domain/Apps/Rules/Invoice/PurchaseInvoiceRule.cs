@@ -19,8 +19,6 @@ namespace Allors.Database.Domain
             {
                 new RolePattern(m.PurchaseInvoice, m.PurchaseInvoice.PurchaseInvoiceItems),
                 new RolePattern(m.PurchaseInvoiceItem, m.PurchaseInvoiceItem.PurchaseInvoiceItemState) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem} },
-                // unused?
-                //new AssociationPattern(m.PaymentApplication.Invoice) { OfType = m.PurchaseInvoice },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

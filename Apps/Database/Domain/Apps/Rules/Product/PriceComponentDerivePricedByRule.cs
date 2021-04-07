@@ -18,6 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.PriceComponent, m.PriceComponent.PricedBy),
+                new RolePattern(m.PriceComponent, m.PriceComponent.FromDate),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
