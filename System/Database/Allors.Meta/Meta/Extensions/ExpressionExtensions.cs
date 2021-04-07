@@ -35,7 +35,8 @@ namespace Allors.Database.Derivations
             var propertyTypes = new List<IPropertyType>();
 
             var root = visitor.MemberExpressions[0].Member.DeclaringType;
-            IComposite composite = metaPopulation.FindByName(root.Name);
+            // TODO: Koen
+            IComposite composite = metaPopulation.Composites.First(v => v.SingularName.Equals(root.Name));
 
             foreach (var memberExpression in visitor.MemberExpressions)
             {
