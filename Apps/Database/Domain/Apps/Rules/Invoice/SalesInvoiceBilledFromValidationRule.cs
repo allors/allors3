@@ -10,13 +10,14 @@ namespace Allors.Database.Domain
     using System.Linq;
     using Meta;
     using Database.Derivations;
+    using Resources;
 
-    public class WorkEffortPurchaseOrderItemAssignmentRule : Rule
+    public class SalesInvoiceBilledFromValidationRule : Rule
     {
-        public WorkEffortPurchaseOrderItemAssignmentRule(MetaPopulation m) : base(m, new Guid("db1b303e-40e2-446a-a04c-a51521bc8fcd")) =>
+        public SalesInvoiceBilledFromValidationRule(MetaPopulation m) : base(m, new Guid("b6270df4-2d9e-4b38-941d-fe81e8d6dbd6")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.WorkEffortPurchaseOrderItemAssignment, m.WorkEffortPurchaseOrderItemAssignment.Assignment),
+            new RolePattern(m.SalesInvoice, m.SalesInvoice.BilledFrom)
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -24,11 +25,13 @@ namespace Allors.Database.Domain
             var transaction = cycle.Transaction;
             var validation = cycle.Validation;
 
-            foreach (var @this in matches.Cast<WorkEffortPurchaseOrderItemAssignment>())
+            foreach (var @this in matches.Cast<SalesInvoice>())
             {
-                if (@this.ExistAssignment)
+                if (@this.ExistCurrentVersion
+                    && @this.CurrentVersion.ExistBilledFrom
+                    && @this.BilledFrom != @this.CurrentVersion.BilledFrom)
                 {
-                    @this.Assignment.ResetPrintDocument();
+                    validation.AddError($"{@this} {this.M.SalesInvoice.BilledFrom} {ErrorMessages.InternalOrganisationChanged}");
                 }
             }
         }

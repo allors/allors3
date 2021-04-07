@@ -38,29 +38,29 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<WorkTask>())
             {
-                if (@this.ExistCurrentVersion
-                    && @this.CurrentVersion.ExistTakenBy
-                    && @this.TakenBy != @this.CurrentVersion.TakenBy)
-                {
-                    validation.AddError($"{@this} {this.M.WorkTask.TakenBy} {ErrorMessages.InternalOrganisationChanged}");
-                }
+                //if (@this.ExistCurrentVersion
+                //    && @this.CurrentVersion.ExistTakenBy
+                //    && @this.TakenBy != @this.CurrentVersion.TakenBy)
+                //{
+                //    validation.AddError($"{@this} {this.M.WorkTask.TakenBy} {ErrorMessages.InternalOrganisationChanged}");
+                //}
 
-                @this.ResetPrintDocument();
+                //@this.ResetPrintDocument();
 
-                if (!@this.ExistWorkEffortNumber && @this.ExistTakenBy)
-                {
-                    var year = @this.Transaction().Now().Year;
-                    @this.WorkEffortNumber = @this.TakenBy.NextWorkEffortNumber(year);
+                //if (!@this.ExistWorkEffortNumber && @this.ExistTakenBy)
+                //{
+                //    var year = @this.Transaction().Now().Year;
+                //    @this.WorkEffortNumber = @this.TakenBy.NextWorkEffortNumber(year);
 
-                    var fiscalYearInternalOrganisationSequenceNumbers = @this.TakenBy.FiscalYearsInternalOrganisationSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
-                    var prefix = @this.TakenBy.WorkEffortSequence.IsEnforcedSequence ? @this.TakenBy.WorkEffortNumberPrefix : fiscalYearInternalOrganisationSequenceNumbers.WorkEffortNumberPrefix;
-                    @this.SortableWorkEffortNumber = @this.Transaction().GetSingleton().SortableNumber(prefix, @this.WorkEffortNumber, year.ToString());
-                }
+                //    var fiscalYearInternalOrganisationSequenceNumbers = @this.TakenBy.FiscalYearsInternalOrganisationSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
+                //    var prefix = @this.TakenBy.WorkEffortSequence.IsEnforcedSequence ? @this.TakenBy.WorkEffortNumberPrefix : fiscalYearInternalOrganisationSequenceNumbers.WorkEffortNumberPrefix;
+                //    @this.SortableWorkEffortNumber = @this.Transaction().GetSingleton().SortableNumber(prefix, @this.WorkEffortNumber, year.ToString());
+                //}
 
-                if (!@this.ExistExecutedBy && @this.ExistTakenBy)
-                {
-                    @this.ExecutedBy = @this.TakenBy;
-                }
+                //if (!@this.ExistExecutedBy && @this.ExistTakenBy)
+                //{
+                //    @this.ExecutedBy = @this.TakenBy;
+                //}
 
                 foreach (ServiceEntry serviceEntry in @this.ServiceEntriesWhereWorkEffort)
                 {

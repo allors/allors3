@@ -11,12 +11,13 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class WorkEffortPurchaseOrderItemAssignmentRule : Rule
+    public class WorkEffortPurchaseOrderItemAssignmentPurchaseOrderItemRule : Rule
     {
-        public WorkEffortPurchaseOrderItemAssignmentRule(MetaPopulation m) : base(m, new Guid("db1b303e-40e2-446a-a04c-a51521bc8fcd")) =>
+        public WorkEffortPurchaseOrderItemAssignmentPurchaseOrderItemRule(MetaPopulation m) : base(m, new Guid("723302f1-a8a4-40f8-9b75-51207ec65d60")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.WorkEffortPurchaseOrderItemAssignment, m.WorkEffortPurchaseOrderItemAssignment.Assignment),
+            new RolePattern(m.WorkEffortPurchaseOrderItemAssignment, m.WorkEffortPurchaseOrderItemAssignment.PurchaseOrderItem),
+            new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.UnitPrice) { Steps = new IPropertyType[] { m.PurchaseOrderItem.WorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrderItem } },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -26,9 +27,10 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<WorkEffortPurchaseOrderItemAssignment>())
             {
-                if (@this.ExistAssignment)
+                if (@this.ExistPurchaseOrderItem)
                 {
-                    @this.Assignment.ResetPrintDocument();
+                    @this.PurchaseOrder = @this.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem;
+                    @this.UnitPurchasePrice = @this.PurchaseOrderItem.UnitPrice;
                 }
             }
         }

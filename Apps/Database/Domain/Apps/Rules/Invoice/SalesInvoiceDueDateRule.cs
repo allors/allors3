@@ -10,13 +10,14 @@ namespace Allors.Database.Domain
     using System.Linq;
     using Meta;
     using Database.Derivations;
+    using Resources;
 
-    public class WorkEffortPurchaseOrderItemAssignmentRule : Rule
+    public class SalesInvoiceDueDateRule : Rule
     {
-        public WorkEffortPurchaseOrderItemAssignmentRule(MetaPopulation m) : base(m, new Guid("db1b303e-40e2-446a-a04c-a51521bc8fcd")) =>
+        public SalesInvoiceDueDateRule(MetaPopulation m) : base(m, new Guid("cb91f705-006d-43d8-8ca7-4ac0fe78c38f")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.WorkEffortPurchaseOrderItemAssignment, m.WorkEffortPurchaseOrderItemAssignment.Assignment),
+            new RolePattern(m.SalesInvoice, m.SalesInvoice.InvoiceDate),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -24,11 +25,13 @@ namespace Allors.Database.Domain
             var transaction = cycle.Transaction;
             var validation = cycle.Validation;
 
-            foreach (var @this in matches.Cast<WorkEffortPurchaseOrderItemAssignment>())
+            foreach (var @this in matches.Cast<SalesInvoice>())
             {
-                if (@this.ExistAssignment)
+                @this.PaymentDays = @this.PaymentNetDays;
+
+                if (@this.ExistInvoiceDate)
                 {
-                    @this.Assignment.ResetPrintDocument();
+                    @this.DueDate = @this.InvoiceDate.AddDays(@this.PaymentNetDays);
                 }
             }
         }
