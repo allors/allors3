@@ -21,6 +21,7 @@ namespace Allors.Database.Domain
                 new RolePattern(m.SalesOrderItem, m.SalesOrderItem.SerialisedItem),
                 new RolePattern(m.SalesOrderItem, m.SalesOrderItem.ReservedFromNonSerialisedInventoryItem),
                 new RolePattern(m.SalesOrderItem, m.SalesOrderItem.ReservedFromSerialisedInventoryItem),
+                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.SalesOrderItemState),
                 new RolePattern(m.SerialisedInventoryItem, m.SerialisedInventoryItem.Quantity) { Steps = new IPropertyType[] { m.SerialisedInventoryItem.SerialisedItem, m.SerialisedItem.SalesOrderItemsWhereSerialisedItem }},
                 new AssociationPattern(m.InventoryItemTransaction.Part) { Steps = new IPropertyType[] { m.UnifiedGood.SalesOrderItemsWhereProduct }},
             };
