@@ -23,7 +23,7 @@ namespace Allors.Database.Meta
         IEnumerable<IClass> Classes { get; }
 
         IEnumerable<IRelationType> RelationTypes { get; }
-        
+
         IEnumerable<IMethodType> MethodTypes { get; }
 
         IEnumerable<IInheritance> Inheritances { get; }
@@ -37,12 +37,12 @@ namespace Allors.Database.Meta
         IEnumerable<IRelationType> DatabaseRelationTypes { get; }
 
         IEnumerable<string> WorkspaceNames { get; }
-        
+
         bool IsValid { get; }
 
         IMetaObject Find(Guid metaObjectId);
 
-        IClass FindByName(string name);
+        IObjectType FindDatabaseCompositeByName(string name);
 
         IValidationLog Validate();
 
