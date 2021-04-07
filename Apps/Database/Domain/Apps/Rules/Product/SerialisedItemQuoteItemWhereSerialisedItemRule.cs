@@ -14,24 +14,22 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Resources;
 
-    public class SerialisedItemPartWhereSerialisedItemRule : Rule
+    public class SerialisedItemQuoteItemWhereSerialisedItemRule : Rule
     {
-        public SerialisedItemPartWhereSerialisedItemRule(MetaPopulation m) : base(m, new Guid("02b0e0bf-7fa6-453d-bef2-8b267979b1ff")) =>
+        public SerialisedItemQuoteItemWhereSerialisedItemRule(MetaPopulation m) : base(m, new Guid("7b19faf5-ee38-4571-8e1a-e188b5d41fa0")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SerialisedItem, m.SerialisedItem.Name),
-                new AssociationPattern(m.Part.SerialisedItems),
-                new AssociationPattern(m.SupplierOffering.Part) { Steps = new IPropertyType[] { m.Part.SerialisedItems } },
+                new AssociationPattern(m.QuoteItem.SerialisedItem),
+                new RolePattern(m.QuoteItem, m.QuoteItem.QuoteItemState) { Steps = new IPropertyType[] { m.QuoteItem.SerialisedItem } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<SerialisedItem>())
             {
-                if (!@this.ExistName && @this.ExistPartWhereSerialisedItem)
-                {
-                    @this.Name = @this.PartWhereSerialisedItem.Name;
-                }
+                @this.OnQuote = @this.QuoteItemsWhereSerialisedItem.Any(v => v.QuoteItemState.IsDraft
+                            || v.QuoteItemState.IsSubmitted || v.QuoteItemState.IsApproved
+                            || v.QuoteItemState.IsAwaitingAcceptance || v.QuoteItemState.IsAccepted);
             }
         }
     }

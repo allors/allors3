@@ -18,9 +18,7 @@ namespace Allors.Database.Domain
             {
                 new RolePattern(m.SupplierOffering, m.SupplierOffering.FromDate),
                 new RolePattern(m.SupplierOffering, m.SupplierOffering.ThroughDate),
-                new RolePattern(m.SupplierOffering, m.SupplierOffering.Price),
                 new RolePattern(m.SupplierOffering, m.SupplierOffering.Part),
-                new RolePattern(m.SupplierOffering, m.SupplierOffering.Supplier),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -28,24 +26,6 @@ namespace Allors.Database.Domain
             var m = cycle.Transaction.Database.Context().M;
             foreach (var @this in matches.Cast<SupplierOffering>())
             {
-                if (@this.ExistSupplier)
-                {
-                    foreach (var purchaseInvoice in @this.Supplier.PurchaseInvoicesWhereBilledFrom.Where(v => v.ExistPurchaseInvoiceState && (v.PurchaseInvoiceState.IsCreated || v.PurchaseInvoiceState.IsRevising)))
-                    {
-                        purchaseInvoice.DerivationTrigger = Guid.NewGuid();
-                    }
-
-                    foreach (var purchaseOrder in ((Organisation)@this.Supplier).PurchaseOrdersWhereTakenViaSupplier.Where(v => v.ExistPurchaseOrderState && v.PurchaseOrderState.IsCreated))
-                    {
-                        purchaseOrder.DerivationTrigger = Guid.NewGuid();
-                    }
-                }
-
-                if (!@this.ExistCurrency)
-                {
-                    @this.Currency = @this.Transaction().GetSingleton().Settings.PreferredCurrency;
-                }
-
                 if (@this.ExistPart && @this.Part.ExistInventoryItemKind &&
                     @this.Part.InventoryItemKind.Equals(new InventoryItemKinds(@this.Strategy.Transaction).NonSerialised))
                 {

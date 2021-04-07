@@ -19,16 +19,8 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.UnifiedGood, m.UnifiedGood.DerivationTrigger),
-                new RolePattern(m.UnifiedGood, m.UnifiedGood.ProductIdentifications),
-                new RolePattern(m.UnifiedGood, m.UnifiedGood.Keywords),
                 new RolePattern(m.UnifiedGood, m.UnifiedGood.Variants),
-                new RolePattern(m.UnifiedGood, m.UnifiedGood.SerialisedItems),
-                new RolePattern(m.UnifiedGood, m.UnifiedGood.ProductType),
-                new RolePattern(m.UnifiedGood, m.UnifiedGood.Brand),
-                new RolePattern(m.UnifiedGood, m.UnifiedGood.Model),
-                new AssociationPattern(m.ProductCategory.AllProducts) { OfType = m.UnifiedGood },
                 new AssociationPattern(m.PriceComponent.Product) { OfType = m.UnifiedGood },
-                new AssociationPattern(m.SupplierOffering.Part) { OfType = m.UnifiedGood },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -65,47 +57,6 @@ namespace Allors.Database.Domain
                         }
                     }
                 }
-
-                var builder = new StringBuilder();
-                if (@this.ExistProductIdentifications)
-                {
-                    builder.Append(string.Join(" ", @this.ProductIdentifications.Select(v => v.Identification)));
-                }
-
-                if (@this.ExistProductCategoriesWhereAllProduct)
-                {
-                    builder.Append(string.Join(" ", @this.ProductCategoriesWhereAllProduct.Select(v => v.Name)));
-                }
-
-                if (@this.ExistSupplierOfferingsWherePart)
-                {
-                    builder.Append(string.Join(" ", @this.SupplierOfferingsWherePart.Select(v => v.Supplier.PartyName)));
-                }
-
-                if (@this.ExistSerialisedItems)
-                {
-                    builder.Append(string.Join(" ", @this.SerialisedItems.Select(v => v.SerialNumber)));
-                    builder.Append(string.Join(" ", @this.SerialisedItems.Select(v => v.ItemNumber)));
-                }
-
-                if (@this.ExistProductType)
-                {
-                    builder.Append(string.Join(" ", @this.ProductType.Name));
-                }
-
-                if (@this.ExistBrand)
-                {
-                    builder.Append(string.Join(" ", @this.Brand.Name));
-                }
-
-                if (@this.ExistModel)
-                {
-                    builder.Append(string.Join(" ", @this.Model.Name));
-                }
-
-                builder.Append(string.Join(" ", @this.Keywords));
-
-                @this.SearchString = builder.ToString();
             }
         }
     }

@@ -14,24 +14,20 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Resources;
 
-    public class SerialisedItemPartWhereSerialisedItemRule : Rule
+    public class SerialisedItemOwnedByPartyNameRule : Rule
     {
-        public SerialisedItemPartWhereSerialisedItemRule(MetaPopulation m) : base(m, new Guid("02b0e0bf-7fa6-453d-bef2-8b267979b1ff")) =>
+        public SerialisedItemOwnedByPartyNameRule(MetaPopulation m) : base(m, new Guid("ad743eab-992e-4e9b-a6b6-f55ee748317b")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SerialisedItem, m.SerialisedItem.Name),
                 new AssociationPattern(m.Part.SerialisedItems),
-                new AssociationPattern(m.SupplierOffering.Part) { Steps = new IPropertyType[] { m.Part.SerialisedItems } },
+                new RolePattern(m.SerialisedItem, m.SerialisedItem.OwnedBy),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<SerialisedItem>())
             {
-                if (!@this.ExistName && @this.ExistPartWhereSerialisedItem)
-                {
-                    @this.Name = @this.PartWhereSerialisedItem.Name;
-                }
+                @this.OwnedByPartyName = @this.ExistOwnedBy ? @this.OwnedBy.PartyName : string.Empty;
             }
         }
     }
