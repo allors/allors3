@@ -15,20 +15,10 @@ namespace Allors.Database.Domain
 
     public class WorkTaskTakenByRule : Rule
     {
-        public WorkTaskTakenByRule(MetaPopulation m) : base(m, new Guid("12794dc5-8a79-4983-b480-4324602ae717")) =>
+        public WorkTaskTakenByRule(MetaPopulation m) : base(m, new Guid("02be092e-04ca-4cce-9255-19b562ee6dd4")) =>
             this.Patterns = new Pattern[]
         {
             new RolePattern(m.WorkTask, m.WorkTask.TakenBy),
-            new RolePattern(m.WorkTask, m.WorkTask.ExecutedBy),
-            new RolePattern(m.WorkTask, m.WorkTask.ActualStart),
-            new RolePattern(m.WorkTask, m.WorkTask.WorkEffortState),
-            new RolePattern(m.TimeEntry, m.TimeEntry.FromDate) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
-            new RolePattern(m.TimeEntry, m.TimeEntry.ThroughDate) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
-            new RolePattern(m.TimeEntry, m.TimeEntry.WorkEffort) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
-            new RolePattern(m.TimeSheet, m.TimeSheet.TimeEntries) { Steps = new IPropertyType[] { m.TimeSheet.TimeEntries, m.TimeEntry.WorkEffort} },
-            new AssociationPattern(m.WorkEffortInventoryAssignment.Assignment),
-            new RolePattern(m.WorkEffortInventoryAssignment, m.WorkEffortInventoryAssignment.Quantity) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
-            new RolePattern(m.WorkEffortInventoryAssignment, m.WorkEffortInventoryAssignment.InventoryItem) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
