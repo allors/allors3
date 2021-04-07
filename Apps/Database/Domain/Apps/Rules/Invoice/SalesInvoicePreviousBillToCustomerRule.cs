@@ -10,13 +10,14 @@ namespace Allors.Database.Domain
     using System.Linq;
     using Meta;
     using Database.Derivations;
+    using Resources;
 
-    public class WorkEffortPurchaseOrderItemAssignmentRule : Rule
+    public class SalesInvoicePreviousBillToCustomerRule : Rule
     {
-        public WorkEffortPurchaseOrderItemAssignmentRule(MetaPopulation m) : base(m, new Guid("db1b303e-40e2-446a-a04c-a51521bc8fcd")) =>
+        public SalesInvoicePreviousBillToCustomerRule(MetaPopulation m) : base(m, new Guid("ff2512b3-d50f-4972-81b7-3cd1ad1bc47b")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.WorkEffortPurchaseOrderItemAssignment, m.WorkEffortPurchaseOrderItemAssignment.Assignment),
+            new RolePattern(m.SalesInvoice, m.SalesInvoice.BillToCustomer),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -24,11 +25,11 @@ namespace Allors.Database.Domain
             var transaction = cycle.Transaction;
             var validation = cycle.Validation;
 
-            foreach (var @this in matches.Cast<WorkEffortPurchaseOrderItemAssignment>())
+            foreach (var @this in matches.Cast<SalesInvoice>())
             {
-                if (@this.ExistAssignment)
+                if (@this.ExistBillToCustomer)
                 {
-                    @this.Assignment.ResetPrintDocument();
+                    @this.PreviousBillToCustomer = @this.BillToCustomer;
                 }
             }
         }
