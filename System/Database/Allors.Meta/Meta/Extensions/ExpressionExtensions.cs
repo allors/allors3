@@ -43,6 +43,10 @@ namespace Allors.Database.Derivations
                 {
                     var name = memberExpression.Member.Name;
                     composite = (IComposite)metaPopulation.FindDatabaseCompositeByName(name);
+                    if(composite == null && name.StartsWith("As"))
+                    {
+                        composite = (IComposite)metaPopulation.FindDatabaseCompositeByName(name.Substring(2));
+                    }
                 }
 
                 if (memberExpression.Type.GetInterfaces().Contains(typeof(IRoleType)))
