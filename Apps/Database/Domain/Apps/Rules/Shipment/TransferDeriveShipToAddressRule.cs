@@ -11,13 +11,11 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class TransferRule : Rule
+    public class TransferDeriveShipToAddressRule : Rule
     {
-        public TransferRule(MetaPopulation m) : base(m, new Guid("E915AF63-F1CE-4DD7-8A92-BA519C140753")) =>
+        public TransferDeriveShipToAddressRule(MetaPopulation m) : base(m, new Guid("E915AF63-F1CE-4DD7-8A92-BA519C140753")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.Transfer, m.Transfer.ShipFromParty),
-                new RolePattern(m.Transfer, m.Transfer.ShipFromAddress),
                 new RolePattern(m.Transfer, m.Transfer.ShipToParty),
                 new RolePattern(m.Transfer, m.Transfer.ShipToAddress),
             };
@@ -29,11 +27,6 @@ namespace Allors.Database.Domain
                 if (!@this.ExistShipToAddress && @this.ExistShipToParty)
                 {
                     @this.ShipToAddress = @this.ShipToParty.ShippingAddress;
-                }
-
-                if (!@this.ExistShipFromAddress && @this.ExistShipFromParty)
-                {
-                    @this.ShipFromAddress = @this.ShipFromParty.ShippingAddress;
                 }
             }
         }
