@@ -31,6 +31,7 @@ namespace Allors.Database.Domain
                 m.ProductCategory.RolePattern(v => v.PrimaryParent),
                 m.ProductCategory.RolePattern(v => v.SecondaryParents),
                 m.ProductCategory.RolePattern(v => v.Products),
+                m.ProductCategory.RolePattern(v => v.Descendants),
                 m.ProductCategory.RolePattern(v => v.PrimaryParent, v => v.ProductCategoriesWhereDescendant),
                 m.ProductCategory.RolePattern(v => v.SecondaryParents, v => v.ProductCategoriesWhereDescendant),
                 m.ProductCategory.RolePattern(v => v.AllProducts, v => v.ProductCategoriesWhereDescendant),
