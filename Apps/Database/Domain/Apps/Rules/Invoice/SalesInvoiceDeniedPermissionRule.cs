@@ -16,12 +16,12 @@ namespace Allors.Database.Domain
         public SalesInvoiceDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("8726348f-85af-429b-a514-55d00dbb14d9")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.SalesInvoice, m.SalesInvoice.TransitionalDeniedPermissions),
-            new RolePattern(m.SalesInvoice, m.SalesInvoice.IsRepeatingInvoice),
-            new RolePattern(m.SalesInvoice, m.SalesInvoice.SalesOrders),
-            new RolePattern(m.SalesInvoice, m.SalesInvoice.PurchaseInvoice),
-            new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.SalesInvoiceItemState) { Steps = new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem } },
-            new AssociationPattern(m.RepeatingSalesInvoice.Source),
+            m.SalesInvoice.RolePattern(v => v.TransitionalDeniedPermissions),
+            m.SalesInvoice.RolePattern(v => v.IsRepeatingInvoice),
+            m.SalesInvoice.RolePattern(v => v.SalesOrders),
+            m.SalesInvoice.RolePattern(v => v.PurchaseInvoice),
+            m.SalesInvoiceItem.RolePattern(v => v.SalesInvoiceItemState, v => v.SalesInvoiceWhereSalesInvoiceItem),
+            m.SalesInvoice.AssociationPattern(v => v.RepeatingSalesInvoiceWhereSource),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

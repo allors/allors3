@@ -18,10 +18,10 @@ namespace Allors.Database.Domain
         public SalesInvoiceItemRule(MetaPopulation m) : base(m, new Guid("cf575774-c5f3-4368-bb92-07576f59f4b7")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.Product),
-                new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.ProductFeatures),
-                new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.Part),
-                new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.SerialisedItem),
+                m.SalesInvoiceItem.RolePattern(v => v.Product),
+                m.SalesInvoiceItem.RolePattern(v => v.ProductFeatures),
+                m.SalesInvoiceItem.RolePattern(v => v.Part),
+                m.SalesInvoiceItem.RolePattern(v => v.SerialisedItem),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

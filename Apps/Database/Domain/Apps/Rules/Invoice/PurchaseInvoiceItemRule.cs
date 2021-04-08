@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
         public PurchaseInvoiceItemRule(MetaPopulation m) : base(m, new Guid("54b6b925-f89f-4c77-9113-4b5eb72f9cfb")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PaymentApplication, m.PaymentApplication.AmountApplied) { Steps =  new IPropertyType[] {this.M.PaymentApplication.InvoiceItem}, OfType = m.PurchaseInvoiceItem },
+                m.PaymentApplication.RolePattern(v => v.AmountApplied, v => v.InvoiceItem, m.PurchaseInvoiceItem),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

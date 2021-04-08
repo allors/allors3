@@ -17,9 +17,9 @@ namespace Allors.Database.Domain
         public SalesInvoiceReadyForPostingDerivedLocaleRule(MetaPopulation m) : base(m, new Guid("fc682f78-6855-4f87-a95f-4183bcde68f9")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.SalesInvoice, m.SalesInvoice.Locale),
-            new RolePattern(m.Party, m.Party.Locale) { Steps = new IPropertyType[] { this.M.Party.SalesInvoicesWhereBillToCustomer }},
-            new RolePattern(m.Organisation, m.Organisation.Locale) { Steps = new IPropertyType[] { this.M.Organisation.SalesInvoicesWhereBilledFrom }},
+            m.SalesInvoice.RolePattern(v => v.Locale),
+            m.Party.RolePattern(v => v.Locale, v => v.SalesInvoicesWhereBillToCustomer),
+            m.Organisation.RolePattern(v => v.Locale, v => v.SalesInvoicesWhereBilledFrom),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

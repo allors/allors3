@@ -17,11 +17,11 @@ namespace Allors.Database.Domain
         public SalesInvoiceReadyForPostingDerivedCurrencyRule(MetaPopulation m) : base(m, new Guid("1f921f79-9a41-4bda-8aaf-e7474c067207")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.SalesInvoice, m.SalesInvoice.BilledFrom),
-            new RolePattern(m.SalesInvoice, m.SalesInvoice.AssignedCurrency),
-            new RolePattern(m.Party, m.Party.Locale) { Steps = new IPropertyType[] { this.M.Party.SalesInvoicesWhereBillToCustomer }},
-            new RolePattern(m.Party, m.Party.PreferredCurrency) { Steps = new IPropertyType[] { this.M.Party.SalesInvoicesWhereBillToCustomer }},
-            new RolePattern(m.Organisation, m.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { this.M.Organisation.SalesInvoicesWhereBilledFrom }},
+            m.SalesInvoice.RolePattern(v => v.BilledFrom),
+            m.SalesInvoice.RolePattern(v => v.AssignedCurrency),
+            m.Party.RolePattern(v => v.Locale, v => v.SalesInvoicesWhereBillToCustomer),
+            m.Party.RolePattern(v => v.PreferredCurrency, v => v.SalesInvoicesWhereBillToCustomer),
+            m.Organisation.RolePattern(v => v.PreferredCurrency, v => v.SalesInvoicesWhereBilledFrom)
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

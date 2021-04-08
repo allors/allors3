@@ -17,9 +17,9 @@ namespace Allors.Database.Domain
         public SalesInvoiceReadyForPostingDerivedBilledFromContactMechanismRule(MetaPopulation m) : base(m, new Guid("9f54a488-1768-4292-99c4-4d16ae86f942")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.SalesInvoice, m.SalesInvoice.AssignedBilledFromContactMechanism),
-            new RolePattern(m.Organisation, m.Organisation.BillingAddress) { Steps = new IPropertyType[] { this.M.Organisation.SalesInvoicesWhereBilledFrom }},
-            new RolePattern(m.Organisation, m.Organisation.GeneralCorrespondence) { Steps = new IPropertyType[] { this.M.Organisation.SalesInvoicesWhereBilledFrom }},
+            m.SalesInvoice.RolePattern(v => v.AssignedBilledFromContactMechanism),
+            m.Organisation.RolePattern(v => v.BillingAddress, v => v.SalesInvoicesWhereBilledFrom),
+            m.Organisation.RolePattern(v => v.GeneralCorrespondence, v => v.SalesInvoicesWhereBilledFrom),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

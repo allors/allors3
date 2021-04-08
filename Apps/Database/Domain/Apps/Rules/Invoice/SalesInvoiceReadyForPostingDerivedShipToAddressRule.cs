@@ -17,9 +17,9 @@ namespace Allors.Database.Domain
         public SalesInvoiceReadyForPostingDerivedShipToAddressRule(MetaPopulation m) : base(m, new Guid("1c3e0a2b-f8df-4702-95bc-4f6041f87de3")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.SalesInvoice, m.SalesInvoice.AssignedShipToAddress),
-            new RolePattern(m.Party, m.Party.ShippingAddress) { Steps = new IPropertyType[] { this.M.Party.SalesInvoicesWhereShipToCustomer}},
-            new RolePattern(m.SalesInvoice, m.SalesInvoice.ShipToCustomer),
+            m.SalesInvoice.RolePattern(v => v.AssignedShipToAddress),
+            m.SalesInvoice.RolePattern(v => v.ShipToCustomer),
+            m.Party.RolePattern(v => v.ShippingAddress, v => v.SalesInvoicesWhereShipToCustomer),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

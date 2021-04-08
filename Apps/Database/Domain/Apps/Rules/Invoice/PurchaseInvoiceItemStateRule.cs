@@ -16,11 +16,11 @@ namespace Allors.Database.Domain
         public PurchaseInvoiceItemStateRule(MetaPopulation m) : base(m, new Guid("17686122-4e0d-4a4f-ad5c-6b3c77b969c4")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PurchaseInvoiceItem, m.PurchaseInvoiceItem.DerivationTrigger),
-                new RolePattern(m.PurchaseInvoiceItem, m.PurchaseInvoiceItem.AmountPaid),
-                new RolePattern(m.PurchaseInvoiceItem, m.PurchaseInvoiceItem.TotalIncVat),
-                new RolePattern(m.PurchaseInvoice, m.PurchaseInvoice.PurchaseInvoiceState) { Steps =  new IPropertyType[] {m.PurchaseInvoice.PurchaseInvoiceItems} },
-                new RolePattern(m.PurchaseInvoice, m.PurchaseInvoice.AmountPaid) { Steps =  new IPropertyType[] {m.PurchaseInvoice.PurchaseInvoiceItems} },
+                m.PurchaseInvoiceItem.RolePattern(v => v.DerivationTrigger),
+                m.PurchaseInvoiceItem.RolePattern(v => v.AmountPaid),
+                m.PurchaseInvoiceItem.RolePattern(v => v.TotalIncVat),
+                m.PurchaseInvoice.RolePattern(v => v.PurchaseInvoiceState, v => v.PurchaseInvoiceItems),
+                m.PurchaseInvoice.RolePattern(v => v.AmountPaid, v => v.PurchaseInvoiceItems)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

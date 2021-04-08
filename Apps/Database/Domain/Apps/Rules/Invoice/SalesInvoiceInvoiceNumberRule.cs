@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public SalesInvoiceInvoiceNumberRule(MetaPopulation m) : base(m, new Guid("8aac4637-663a-4176-b0c3-a3147799469c")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.SalesInvoice, m.SalesInvoice.Store),
+            m.SalesInvoice.RolePattern(v => v.Store),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

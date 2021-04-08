@@ -18,10 +18,10 @@ namespace Allors.Database.Domain
         public SalesInvoiceItemAssignedIrpfRegimeRule(MetaPopulation m) : base(m, new Guid("559c4d50-b819-420c-9a3c-6289e2daeba6")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.AssignedIrpfRegime),
-                new RolePattern(m.SalesInvoice, m.SalesInvoice.InvoiceDate) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
-                new RolePattern(m.SalesInvoice, m.SalesInvoice.DerivedIrpfRegime) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
-                new AssociationPattern(m.SalesInvoice.SalesInvoiceItems),
+                m.SalesInvoiceItem.RolePattern(v => v.AssignedIrpfRegime),
+                m.SalesInvoice.RolePattern(v => v.InvoiceDate, v => v.SalesInvoiceItems),
+                m.SalesInvoice.RolePattern(v => v.DerivedIrpfRegime, v => v.SalesInvoiceItems),
+                m.SalesInvoiceItem.AssociationPattern(v => v.SalesInvoiceWhereSalesInvoiceItem),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

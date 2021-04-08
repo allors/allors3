@@ -18,10 +18,10 @@ namespace Allors.Database.Domain
         public SalesInvoiceItemAssignedVatRegimeRule(MetaPopulation m) : base(m, new Guid("6d795531-522d-4e57-9534-f4e6361836a3")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.AssignedVatRegime),
-                new RolePattern(m.SalesInvoice, m.SalesInvoice.InvoiceDate) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
-                new RolePattern(m.SalesInvoice, m.SalesInvoice.DerivedVatRegime) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
-                new AssociationPattern(m.SalesInvoice.SalesInvoiceItems),
+                m.SalesInvoiceItem.RolePattern(v => v.AssignedVatRegime),
+                m.SalesInvoice.RolePattern(v => v.InvoiceDate, v => v.SalesInvoiceItems),
+                m.SalesInvoice.RolePattern(v => v.DerivedVatRegime, v => v.SalesInvoiceItems),
+                m.SalesInvoiceItem.AssociationPattern(v => v.SalesInvoiceWhereSalesInvoiceItem),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

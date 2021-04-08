@@ -16,9 +16,9 @@ namespace Allors.Database.Domain
         public PurchaseInvoiceCreatedCurrencyRule(MetaPopulation m) : base(m, new Guid("488995ea-3b77-4c84-8679-fe0a6f071feb")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PurchaseInvoice, m.PurchaseInvoice.AssignedCurrency),
-                new RolePattern(m.PurchaseInvoice, m.PurchaseInvoice.BilledFrom),
-                new RolePattern(m.Organisation, m.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { m.Organisation.PurchaseInvoicesWhereBilledTo }},
+                m.PurchaseInvoice.RolePattern(v => v.AssignedCurrency),
+                m.PurchaseInvoice.RolePattern(v => v.BilledFrom),
+                m.Organisation.RolePattern(v => v.PreferredCurrency, v => v.PurchaseInvoicesWhereBilledTo),
 
             };
 
