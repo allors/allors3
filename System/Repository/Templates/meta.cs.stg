@@ -72,6 +72,8 @@ define_interface(interface) ::= <<
         {
         }
 
+$interface.Subtypes:{subtype|        public $subtype.SingularName$ As$subtype.SingularName$ => this.M.$subtype.SingularName$;}; separator="\n"$
+
         $interface.DefinedProperties:{property|$define_propertyType(property)$}; separator="\n"$
 
         $interface.InheritedProperties:{property|$define_inheritedpropertyType(property)$}; separator="\n"$
@@ -131,11 +133,7 @@ define_associationType(property) ::= <<
         {
         }
 
-        private MetaPopulation M => (MetaPopulation)((IAssociationType)this).MetaPopulation;
-
         public $property.DefiningType.SingularName$ $property.DefiningType.SingularName$ => this.M.$property.DefiningType.SingularName$;
-
-$property.DefiningType.Subtypes:{subtype|        public $subtype.SingularName$ As$subtype.SingularName$ => this.M.$subtype.SingularName$;}; separator="\n"$
     }
 >>
 
@@ -157,11 +155,7 @@ define_roleType(property) ::= <<
         {
         }
 $if(property.Type.IsComposite)$
-        private MetaPopulation M => (MetaPopulation)((IRoleType)this).MetaPopulation;
-
         public $property.Type.SingularName$ $property.Type.SingularName$ => this.M.$property.Type.SingularName$;
-
-$property.Type.Subtypes:{subtype|        public $subtype.SingularName$ As$subtype.SingularName$ => this.M.$subtype.SingularName$;}; separator="\n"$
 $endif$
     }
 >>

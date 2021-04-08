@@ -81,5 +81,18 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(this.M.Organisation.Employees, properties[0]);
             Assert.Equal(this.M.Person.FirstName, properties[1]);
         }
+
+
+        [Fact]
+        public void ClassRoleInterfaceAsClassRole()
+        {
+            Expression<Func<UserGroup, IPropertyType>> expression = v => v.Members.User.AsPerson.FirstName;
+
+            var properties = expression.ToPropertyTypes(this.M);
+
+            Assert.Equal(2, properties.Length);
+            Assert.Equal(this.M.UserGroup.Members, properties[0]);
+            Assert.Equal(this.M.Person.FirstName, properties[1]);
+        }
     }
 }

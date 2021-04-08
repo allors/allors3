@@ -33,6 +33,8 @@ namespace Allors.Database.Meta
             relationType.MetaPopulation.OnAssociationTypeCreated(this);
         }
 
+        public MetaPopulation M => (MetaPopulation)this.metaPopulation;
+
         public AssociationTypeProps _ => this.props ??= new AssociationTypeProps(this);
 
         #region IMetaObject & IMetaObjectBase

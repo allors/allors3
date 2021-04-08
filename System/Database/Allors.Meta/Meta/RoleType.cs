@@ -38,6 +38,8 @@ namespace Allors.Database.Meta
             this.metaPopulation.OnRoleTypeCreated(this);
         }
 
+        public MetaPopulation M => (MetaPopulation)this.metaPopulation;
+
         public RoleTypeProps _ => this.props ??= new RoleTypeProps(this);
 
         IMetaPopulationBase IMetaObjectBase.MetaPopulation => this.metaPopulation;

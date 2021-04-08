@@ -10,6 +10,7 @@ namespace Allors.Database.Derivations
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
+    using System.Reflection;
     using Meta;
 
     internal class MemberExpressionsVisitor : ExpressionVisitor
@@ -41,12 +42,9 @@ namespace Allors.Database.Derivations
             {
                 if (memberExpression.Type.GetInterfaces().Contains(typeof(IComposite)))
                 {
-                    var name = memberExpression.Member.Name;
-                    composite = (IComposite)metaPopulation.FindDatabaseCompositeByName(name);
-                    if(composite == null && name.StartsWith("As"))
-                    {
-                        composite = (IComposite)metaPopulation.FindDatabaseCompositeByName(name.Substring(2));
-                    }
+                    var propertyInfo = (PropertyInfo)memberExpression.Member;
+                    var propertyType = propertyInfo.PropertyType;
+                    composite = (IComposite)metaPopulation.FindDatabaseCompositeByName(propertyType.Name);
                 }
 
                 if (memberExpression.Type.GetInterfaces().Contains(typeof(IRoleType)))
