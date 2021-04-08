@@ -12,12 +12,20 @@ namespace Allors.Database.Derivations
 
     public static class ICompositeExtensions
     {
+        public static AssociationPattern<T> AssociationPattern<T>(this T composite, Func<T, IAssociationType> association) where T : IComposite => new AssociationPattern<T>(composite, association, null);
+
         public static AssociationPattern<T> AssociationPattern<T>(this T composite, Func<T, IAssociationType> association, IComposite ofType) where T : IComposite => new AssociationPattern<T>(composite, association, ofType);
 
-        public static AssociationPattern<T> AssociationPattern<T>(this T composite, Func<T, IAssociationType> association, Expression<Func<T, IPropertyType>> step = null, IComposite ofType = null) where T : IComposite => new AssociationPattern<T>(composite, association, step, ofType);
+        public static AssociationPattern<T> AssociationPattern<T>(this T composite, Func<T, IAssociationType> association, Expression<Func<T, IPropertyType>> step, IComposite ofType = null) where T : IComposite => new AssociationPattern<T>(composite, association, step, ofType);
+
+        public static AssociationPattern<T> AssociationPattern<T>(this T composite, Func<T, IAssociationType> association, Expression<Func<T, IComposite>> step, IComposite ofType = null) where T : IComposite => new AssociationPattern<T>(composite, association, step, ofType);
+
+        public static RolePattern<T> RolePattern<T>(this T composite, Func<T, IRoleType> role) where T : IComposite => new RolePattern<T>(composite, role, null);
 
         public static RolePattern<T> RolePattern<T>(this T composite, Func<T, IRoleType> role, IComposite ofType) where T : IComposite => new RolePattern<T>(composite, role, ofType);
 
-        public static RolePattern<T> RolePattern<T>(this T composite, Func<T, IRoleType> role, Expression<Func<T, IPropertyType>> step = null, IComposite ofType = null) where T : IComposite => new RolePattern<T>(composite, role, step, ofType);
+        public static RolePattern<T> RolePattern<T>(this T composite, Func<T, IRoleType> role, Expression<Func<T, IPropertyType>> step, IComposite ofType = null) where T : IComposite => new RolePattern<T>(composite, role, step, ofType);
+
+        public static RolePattern<T> RolePattern<T>(this T composite, Func<T, IRoleType> role, Expression<Func<T, IComposite>> step, IComposite ofType = null) where T : IComposite => new RolePattern<T>(composite, role, step, ofType);
     }
 }

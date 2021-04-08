@@ -20,7 +20,7 @@ namespace Allors.Database.Domain
             {
                 m.OwnCreditCard.RolePattern(v => v.GeneralLedgerAccount),
                 m.OwnCreditCard.RolePattern(v => v.Journal),
-                m.PaymentMethod.AssociationPattern(v => v.InternalOrganisationWherePaymentMethod, null, m.OwnCreditCard),
+                m.PaymentMethod.AssociationPattern(v => v.InternalOrganisationWherePaymentMethod, m.OwnCreditCard),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
