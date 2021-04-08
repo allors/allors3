@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         public CommunicationEventDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("a2565a9c-cb13-43ba-bcf2-9db538e456ae")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.CommunicationEvent, m.CommunicationEvent.TransitionalDeniedPermissions),
+            m.CommunicationEvent.RolePattern(v => v.TransitionalDeniedPermissions),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

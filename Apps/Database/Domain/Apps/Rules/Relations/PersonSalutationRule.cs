@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public PersonSalutationRule(MetaPopulation m) : base(m, new Guid("d418c1c6-4113-4d82-af35-e0cc46a08f8a")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.Person, m.Person.Salutation),
+                m.Person.RolePattern(v => v.Salutation),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

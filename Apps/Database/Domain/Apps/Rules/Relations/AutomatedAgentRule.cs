@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         public AutomatedAgentRule(MetaPopulation m) : base(m, new Guid("98237B56-E163-4FFC-84E7-2BB8E60BBEB8")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.AutomatedAgent, m.AutomatedAgent.Name),
+                m.AutomatedAgent.RolePattern(v => v.Name),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

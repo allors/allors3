@@ -17,8 +17,8 @@ namespace Allors.Database.Domain
         public AgreementProductApplicabilityRule(MetaPopulation m) : base(m, new Guid("43ca02e8-a35b-4249-bb48-ca980ac3e648")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.AgreementProductApplicability, m.AgreementProductApplicability.Agreement),
-                new RolePattern(m.AgreementProductApplicability, m.AgreementProductApplicability.AgreementItem),
+                m.AgreementProductApplicability.RolePattern(v => v.Agreement),
+                m.AgreementProductApplicability.RolePattern(v => v.AgreementItem),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

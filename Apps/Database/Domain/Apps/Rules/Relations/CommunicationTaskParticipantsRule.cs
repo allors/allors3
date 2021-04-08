@@ -16,9 +16,9 @@ namespace Allors.Database.Domain
         public CommunicationTaskParticipantsRule(MetaPopulation m) : base(m, new Guid("888c676f-3a56-4a99-8da5-70c3b4c7f9f9")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.CommunicationTask, m.CommunicationTask.DateClosed),
-                new RolePattern(m.CommunicationEvent, m.CommunicationEvent.FromParty) { Steps = new IPropertyType[] {m.CommunicationEvent.CommunicationTasksWhereCommunicationEvent} },
-                new RolePattern(m.CommunicationEvent, m.CommunicationEvent.ToParty) { Steps = new IPropertyType[] {m.CommunicationEvent.CommunicationTasksWhereCommunicationEvent} },
+                m.CommunicationTask.RolePattern(v => v.DateClosed),
+                m.CommunicationEvent.RolePattern(v => v.FromParty, v => v.CommunicationTasksWhereCommunicationEvent),
+                m.CommunicationEvent.RolePattern(v => v.ToParty, v => v.CommunicationTasksWhereCommunicationEvent),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

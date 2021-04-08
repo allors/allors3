@@ -16,9 +16,9 @@ namespace Allors.Database.Domain
         public LetterCorrespondenceRule(MetaPopulation m) : base(m, new Guid("7C1C3F73-2FE2-4713-8006-682E979E38CE")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.LetterCorrespondence, m.LetterCorrespondence.Subject),
-                new RolePattern(m.LetterCorrespondence, m.LetterCorrespondence.ToParty),
-                new RolePattern(m.Party, m.Party.PartyName) { Steps = new IPropertyType[] { m.Party.CommunicationEventsWhereToParty}, OfType = m.LetterCorrespondence },
+                m.LetterCorrespondence.RolePattern(v => v.Subject),
+                m.LetterCorrespondence.RolePattern(v => v.ToParty),
+                m.Party.RolePattern(v => v.PartyName, v => v.CommunicationEventsWhereToParty, m.LetterCorrespondence),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

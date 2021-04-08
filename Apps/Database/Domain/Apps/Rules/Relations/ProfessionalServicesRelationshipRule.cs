@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public ProfessionalServicesRelationshipRule(MetaPopulation m) : base(m, new Guid("DB0D802D-94D2-4850-91FC-703778ECFFC7")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.ProfessionalServicesRelationship, m.ProfessionalServicesRelationship.Professional),
-                new RolePattern(m.ProfessionalServicesRelationship, m.ProfessionalServicesRelationship.ProfessionalServicesProvider),
+                m.ProfessionalServicesRelationship.RolePattern(v => v.Professional),
+                m.ProfessionalServicesRelationship.RolePattern(v => v.ProfessionalServicesProvider),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
