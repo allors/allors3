@@ -12,8 +12,6 @@ namespace Allors.Database.Derivations
 
     public static class ICompositeExtensions
     {
-        public static AssociationPattern<T> AssociationPattern<T>(this T composite, Func<T, IRoleType> role, Expression<Func<T, IPropertyType>> step = null, IComposite ofType = null) where T : IComposite => new AssociationPattern<T>(composite, role, step, ofType);
-
         public static AssociationPattern<T> AssociationPattern<T>(this T composite, Func<T, IAssociationType> association, Expression<Func<T, IPropertyType>> step = null, IComposite ofType = null) where T : IComposite => new AssociationPattern<T>(composite, association, step, ofType);
 
         public static RolePattern<T> RolePattern<T>(this T composite, Func<T, IRoleType> role, Expression<Func<T, IPropertyType>> step = null, IComposite ofType = null) where T : IComposite => new RolePattern<T>(composite, role, step, ofType);

@@ -7,18 +7,11 @@
 namespace Allors.Database.Derivations
 {
     using System;
-    using System.Linq;
     using System.Linq.Expressions;
     using Meta;
 
     public class AssociationPattern<T> : AssociationPattern where T : IComposite
     {
-        public AssociationPattern(T objectType, Func<T, IRoleType> roleType, Expression<Func<T, IPropertyType>> step = null, IComposite ofType = null) : base(objectType, roleType(objectType).AssociationType)
-        {
-            this.Steps = step?.ToPropertyTypes(objectType.MetaPopulation);
-            this.OfType = ofType;
-        }
-
         public AssociationPattern(T objectType, Func<T, IAssociationType> associationType, Expression<Func<T, IPropertyType>> step = null, IComposite ofType = null) : base(objectType, associationType(objectType))
         {
             this.Steps = step?.ToPropertyTypes(objectType.MetaPopulation);
