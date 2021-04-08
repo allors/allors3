@@ -6,11 +6,20 @@
 
 namespace Allors.Database.Derivations
 {
+    using System;
+    using Data;
     using Meta;
 
     public abstract class Pattern : IPattern
     {
-        public IPropertyType[] Steps { get; set; }
+        public IPropertyType[] Steps
+        {
+            private get => throw new NotSupportedException();
+
+            set => this.Path = new Path(value);
+        }
+
+        public Path Path { get; set; }
 
         public IComposite OfType { get; set; }
 

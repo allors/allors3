@@ -29,7 +29,7 @@ namespace Allors.Database.Domain
         {
             foreach (var media in matches.Cast<Media>())
             {
-                var InvalidFileNameChars = Path.GetInvalidFileNameChars();
+                var InvalidFileNameChars = System.IO.Path.GetInvalidFileNameChars();
                 var InvalidFileNames = new[]
                 {
                             "CON", "PRN", "AUX", "NUL", "COM", "LPT"
@@ -56,7 +56,7 @@ namespace Allors.Database.Domain
 
                 if (media.ExistInFileName)
                 {
-                    media.Name = Path.GetFileNameWithoutExtension(media.InFileName);
+                    media.Name = System.IO.Path.GetFileNameWithoutExtension(media.InFileName);
                     media.RemoveInFileName();
                 }
 

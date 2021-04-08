@@ -13,9 +13,11 @@ namespace Allors.Database.Derivations
 
     public class RolePattern<T> : RolePattern where T : IComposite
     {
+        public RolePattern(T objectType, Func<T, IRoleType> role, IComposite ofType) : base(objectType, role(objectType)) => this.OfType = ofType;
+
         public RolePattern(T objectType, Func<T, IRoleType> role, Expression<Func<T, IPropertyType>> step = null, IComposite ofType = null) : base(objectType, role(objectType))
         {
-            this.Steps = step?.ToPropertyTypes(objectType.MetaPopulation);
+            this.Path = step?.ToPath(objectType.MetaPopulation);
             this.OfType = ofType;
         }
     }

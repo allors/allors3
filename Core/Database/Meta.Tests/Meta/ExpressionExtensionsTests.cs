@@ -30,10 +30,10 @@ namespace Allors.Database.Domain.Tests
         {
             Expression<Func<User, IPropertyType>> expression = v => v.Logins;
 
-            var properties = expression.ToPropertyTypes(this.M);
+            var path = expression.ToPath(this.M);
 
-            Assert.Single((IEnumerable)properties);
-            Assert.Contains(this.M.User.Logins, properties);
+            Assert.Equal(this.M.User.Logins, path.PropertyType);
+            Assert.Null(path.Next);
         }
 
         [Fact]
@@ -41,10 +41,10 @@ namespace Allors.Database.Domain.Tests
         {
             Expression<Func<Person, IPropertyType>> expression = v => v.OrganisationWhereEmployee;
 
-            var properties = expression.ToPropertyTypes(this.M);
+            var path = expression.ToPath(this.M);
 
-            Assert.Single((IEnumerable)properties);
-            Assert.Contains(this.M.Person.OrganisationWhereEmployee, properties);
+            Assert.Equal(this.M.Person.OrganisationWhereEmployee, path.PropertyType);
+            Assert.Null(path.Next);
         }
 
         [Fact]
@@ -52,11 +52,14 @@ namespace Allors.Database.Domain.Tests
         {
             Expression<Func<Person, IPropertyType>> expression = v => v.OrganisationWhereEmployee.Organisation.Information;
 
-            var properties = expression.ToPropertyTypes(this.M);
+            var path = expression.ToPath(this.M);
 
-            Assert.Equal(2, properties.Length);
-            Assert.Equal(this.M.Person.OrganisationWhereEmployee, properties[0]);
-            Assert.Equal(this.M.Organisation.Information, properties[1]);
+            Assert.Equal(this.M.Person.OrganisationWhereEmployee, path.PropertyType);
+
+            var next = path.Next;
+
+            Assert.Equal(this.M.Organisation.Information, next.PropertyType);
+            Assert.Null(next.Next);
         }
 
         [Fact]
@@ -64,10 +67,22 @@ namespace Allors.Database.Domain.Tests
         {
             Expression<Func<Organisation, IPropertyType>> expression = v => v.Name;
 
-            var properties = expression.ToPropertyTypes(this.M);
+            var path = expression.ToPath(this.M);
 
-            Assert.Single((IEnumerable)properties);
-            Assert.Contains(this.M.Organisation.Name, properties);
+            Assert.Equal(this.M.Organisation.Name, path.PropertyType);
+            Assert.Null(path.Next);
+        }
+
+        [Fact]
+        public void ClassRoleOfType()
+        {
+            Expression<Func<UserGroup, IComposite>> expression = v => v.Members.User.AsPerson;
+
+            var path = expression.ToPath(this.M);
+
+            Assert.Equal(this.M.UserGroup.Members, path.PropertyType);
+            Assert.Equal(this.M.Person, path.OfType);
+            Assert.Null(path.Next);
         }
 
         [Fact]
@@ -75,11 +90,14 @@ namespace Allors.Database.Domain.Tests
         {
             Expression<Func<Organisation, IPropertyType>> expression = v => v.Employees.Person.FirstName;
 
-            var properties = expression.ToPropertyTypes(this.M);
+            var path = expression.ToPath(this.M);
 
-            Assert.Equal(2, properties.Length);
-            Assert.Equal(this.M.Organisation.Employees, properties[0]);
-            Assert.Equal(this.M.Person.FirstName, properties[1]);
+            Assert.Equal(this.M.Organisation.Employees, path.PropertyType);
+
+            var next = path.Next;
+
+            Assert.Equal(this.M.Person.FirstName, next.PropertyType);
+            Assert.Null(next.Next);
         }
 
 
@@ -88,11 +106,14 @@ namespace Allors.Database.Domain.Tests
         {
             Expression<Func<UserGroup, IPropertyType>> expression = v => v.Members.User.AsPerson.FirstName;
 
-            var properties = expression.ToPropertyTypes(this.M);
+            var path = expression.ToPath(this.M);
 
-            Assert.Equal(2, properties.Length);
-            Assert.Equal(this.M.UserGroup.Members, properties[0]);
-            Assert.Equal(this.M.Person.FirstName, properties[1]);
+            Assert.Equal(this.M.UserGroup.Members, path.PropertyType);
+
+            var next = path.Next;
+
+            Assert.Equal(this.M.Person.FirstName, next.PropertyType);
+            Assert.Null(next.Next);
         }
     }
 }

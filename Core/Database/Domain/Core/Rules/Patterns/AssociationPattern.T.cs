@@ -12,9 +12,11 @@ namespace Allors.Database.Derivations
 
     public class AssociationPattern<T> : AssociationPattern where T : IComposite
     {
+        public AssociationPattern(T objectType, Func<T, IAssociationType> associationType, IComposite ofType) : base(objectType, associationType(objectType)) => this.OfType = ofType;
+
         public AssociationPattern(T objectType, Func<T, IAssociationType> associationType, Expression<Func<T, IPropertyType>> step = null, IComposite ofType = null) : base(objectType, associationType(objectType))
         {
-            this.Steps = step?.ToPropertyTypes(objectType.MetaPopulation);
+            this.Path = step?.ToPath(objectType.MetaPopulation);
             this.OfType = ofType;
         }
     }

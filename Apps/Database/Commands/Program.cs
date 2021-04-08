@@ -60,7 +60,7 @@ namespace Commands
 
                     configurationBuilder.AddCrossPlatform(".");
                     configurationBuilder.AddCrossPlatform(root);
-                    configurationBuilder.AddCrossPlatform(Path.Combine(root, "commands"));
+                    configurationBuilder.AddCrossPlatform(System.IO.Path.Combine(root, "commands"));
                     configurationBuilder.AddEnvironmentVariables();
 
                     this.configuration = configurationBuilder.Build();

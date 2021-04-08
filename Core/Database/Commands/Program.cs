@@ -19,6 +19,7 @@ namespace Commands
     using Microsoft.Extensions.Configuration;
     using NLog;
     using ObjectFactory = Allors.Database.ObjectFactory;
+    using Path = System.IO.Path;
     using User = Allors.Database.Domain.User;
 
     [Command(Description = "Allors Core Commands")]

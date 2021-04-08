@@ -6,11 +6,12 @@
 
 namespace Allors.Database.Derivations
 {
+    using Data;
     using Meta;
 
     public interface IPattern
     {
-        IPropertyType[] Steps { get; }
+        Path Path { get; }
 
         IComposite OfType { get; }
 

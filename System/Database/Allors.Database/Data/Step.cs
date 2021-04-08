@@ -72,7 +72,7 @@ namespace Allors.Database.Data
                     }
                     else
                     {
-                        yield return (IObject)this.PropertyType.Get(@object.Strategy);
+                        yield return (IObject)resolved;
                     }
                 }
             }
@@ -93,7 +93,7 @@ namespace Allors.Database.Data
                     }
                     else
                     {
-                        foreach (IObject child in (Database.Extent)this.PropertyType.Get(@object.Strategy))
+                        foreach (IObject child in resolved)
                         {
                             yield return child;
                         }
@@ -227,7 +227,6 @@ namespace Allors.Database.Data
             }
         }
 
-
         public IObjectType GetObjectType()
         {
             if (this.ExistNext)
@@ -237,7 +236,7 @@ namespace Allors.Database.Data
 
             return this.PropertyType.ObjectType;
         }
-        
+
         public override string ToString()
         {
             var name = new StringBuilder();

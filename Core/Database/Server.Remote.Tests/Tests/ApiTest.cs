@@ -25,6 +25,7 @@ namespace Allors.Server.Tests
     using Xunit;
     using C1 = Database.Domain.C1;
     using ObjectFactory = Database.ObjectFactory;
+    using Path = System.IO.Path;
     using User = Database.Domain.User;
 
     public abstract class ApiTest : IDisposable

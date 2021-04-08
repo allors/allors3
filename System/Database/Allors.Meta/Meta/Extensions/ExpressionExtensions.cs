@@ -11,6 +11,8 @@ namespace Allors.Database.Derivations
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
+    using System.Runtime.InteropServices;
+    using Data;
     using Meta;
 
     internal class MemberExpressionsVisitor : ExpressionVisitor
@@ -28,41 +30,74 @@ namespace Allors.Database.Derivations
 
     public static class ExpressionExtensions
     {
-        public static IPropertyType[] ToPropertyTypes<T>(this Expression<Func<T, IPropertyType>> @this, IMetaPopulation metaPopulation) where T : IComposite
+        public static Path ToPath<T>(this Expression<Func<T, IPropertyType>> @this, IMetaPopulation metaPopulation) where T : IComposite
         {
             var visitor = new MemberExpressionsVisitor();
             _ = visitor.Visit(@this);
 
-            var propertyTypes = new List<IPropertyType>();
+            return ToPath<T>(metaPopulation, visitor);
+        }
+
+        public static Path ToPath<T>(this Expression<Func<T, IComposite>> @this, IMetaPopulation metaPopulation) where T : IComposite
+        {
+            var visitor = new MemberExpressionsVisitor();
+            _ = visitor.Visit(@this);
+
+            return ToPath<T>(metaPopulation, visitor);
+        }
+
+        private static Path ToPath<T>(IMetaPopulation metaPopulation, MemberExpressionsVisitor visitor) where T : IComposite
+        {
+            Path path = null;
+            Path currentPath = null;
+
+            void AddPath(IPropertyType propertyType)
+            {
+                if (path == null)
+                {
+                    currentPath = new Path(propertyType);
+                    path = currentPath;
+                }
+                else
+                {
+                    currentPath.Next = new Path(propertyType);
+                    currentPath = currentPath.Next;
+                }
+            }
 
             var root = visitor.MemberExpressions[0].Member.DeclaringType;
-            var composite = (IComposite)metaPopulation.FindDatabaseCompositeByName(root.Name);
+            var composite = (IComposite) metaPopulation.FindDatabaseCompositeByName(root.Name);
 
             foreach (var memberExpression in visitor.MemberExpressions)
             {
                 if (memberExpression.Type.GetInterfaces().Contains(typeof(IComposite)))
                 {
-                    var propertyInfo = (PropertyInfo)memberExpression.Member;
+                    var propertyInfo = (PropertyInfo) memberExpression.Member;
                     var propertyType = propertyInfo.PropertyType;
-                    composite = (IComposite)metaPopulation.FindDatabaseCompositeByName(propertyType.Name);
+                    composite = (IComposite) metaPopulation.FindDatabaseCompositeByName(propertyType.Name);
+
+                    if (!currentPath.PropertyType.ObjectType.Equals(composite))
+                    {
+                        currentPath.OfType = composite;
+                    }
                 }
 
                 if (memberExpression.Type.GetInterfaces().Contains(typeof(IRoleType)))
                 {
                     var name = memberExpression.Member.Name;
                     var propertyType = composite.DatabaseRoleTypes.First(v => v.Name.Equals(name));
-                    propertyTypes.Add(propertyType);
+                    AddPath(propertyType);
                 }
 
                 if (memberExpression.Type.GetInterfaces().Contains(typeof(IAssociationType)))
                 {
                     var name = memberExpression.Member.Name;
                     var propertyType = composite.DatabaseAssociationTypes.First(v => v.Name.Equals(name));
-                    propertyTypes.Add(propertyType);
+                    AddPath(propertyType);
                 }
             }
 
-            return propertyTypes.ToArray();
+            return path;
         }
     }
 }
