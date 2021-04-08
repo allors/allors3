@@ -16,13 +16,11 @@ namespace Allors.Database.Domain
         public ProductCategoryImageRule(MetaPopulation m) : base(m, new Guid("72fbcc17-25e8-4313-a0bf-243f524c63c2")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.ProductCategory, m.ProductCategory.CategoryImage),
+                m.ProductCategory.RolePattern(v => v.CategoryImage),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            var validation = cycle.Validation;
-
             foreach (var @this in matches.Cast<ProductCategory>())
             {
                 if (!@this.ExistCategoryImage)

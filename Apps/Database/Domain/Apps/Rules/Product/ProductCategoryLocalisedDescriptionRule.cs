@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         public ProductCategoryLocalisedDescriptionRule(MetaPopulation m) : base(m, new Guid("3a03ae65-d6f5-4bdd-8b91-960f446c5f36")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.LocalisedText, m.LocalisedText.Text) {Steps = new IPropertyType[] {m.LocalisedText.ProductCategoryWhereLocalisedDescription } },
+                m.LocalisedText.RolePattern(v => v.Text, v => v.ProductCategoryWhereLocalisedDescription),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
