@@ -19,7 +19,7 @@ namespace Allors.Database.Domain
         public BankAccountIbanRule(MetaPopulation m) : base(m, new Guid("d9e80655-ac65-4c08-87b7-f2c8c8be6dc8")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.BankAccount, m.BankAccount.Iban),
+                m.BankAccount.RolePattern(v => v.Iban),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

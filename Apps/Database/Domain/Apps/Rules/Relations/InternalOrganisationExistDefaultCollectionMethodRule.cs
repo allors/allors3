@@ -16,9 +16,9 @@ namespace Allors.Database.Domain
         public InternalOrganisationExistDefaultCollectionMethodRule(MetaPopulation m) : base(m, new Guid("1f351066-cb01-4cbe-918e-6fe04c43ffd7")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.InternalOrganisation, m.InternalOrganisation.IsInternalOrganisation),
-                new RolePattern(m.InternalOrganisation, m.InternalOrganisation.DefaultCollectionMethod),
-                new RolePattern(m.InternalOrganisation, m.InternalOrganisation.AssignedActiveCollectionMethods),
+                m.InternalOrganisation.RolePattern(v => v.IsInternalOrganisation),
+                m.InternalOrganisation.RolePattern(v => v.DefaultCollectionMethod),
+                m.InternalOrganisation.RolePattern(v => v.AssignedActiveCollectionMethods),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public WorkEffortPurchaseOrderItemAssignmentPurchaseOrderItemRule(MetaPopulation m) : base(m, new Guid("723302f1-a8a4-40f8-9b75-51207ec65d60")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.WorkEffortPurchaseOrderItemAssignment, m.WorkEffortPurchaseOrderItemAssignment.PurchaseOrderItem),
-            new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.UnitPrice) { Steps = new IPropertyType[] { m.PurchaseOrderItem.WorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrderItem } },
+            m.WorkEffortPurchaseOrderItemAssignment.RolePattern(v => v.PurchaseOrderItem),
+            m.PurchaseOrderItem.RolePattern(v => v.UnitPrice, v => v.WorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrderItem),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

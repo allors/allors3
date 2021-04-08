@@ -17,8 +17,8 @@ namespace Allors.Database.Domain
         public GeneralLedgerAccountCostCenterRequiredRule(MetaPopulation m) : base(m, new Guid("80069580-b47d-4250-854d-69c222d6a1e3")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.CostCenterAccount),
-                new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.CostCenterRequired),
+                m.GeneralLedgerAccount.RolePattern(v => v.CostCenterAccount),
+                m.GeneralLedgerAccount.RolePattern(v => v.CostCenterRequired),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -27,7 +27,6 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<GeneralLedgerAccount>())
             {
-
                 if (!@this.CostCenterAccount && @this.CostCenterRequired)
                 {
                     validation.AddError($"{@this}, {@this.Meta.CostCenterRequired}, {ErrorMessages.NotACostCenterAccount}");

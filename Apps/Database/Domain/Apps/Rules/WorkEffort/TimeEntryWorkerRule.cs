@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
         public TimeEntryWorkerRule(MetaPopulation m) : base(m, new Guid("fcacc37e-581a-4c6f-bb77-d06a2987ebcf")) =>
             this.Patterns = new Pattern[]
         {
-            new AssociationPattern(m.TimeSheet.TimeEntries),
+            m.TimeEntry.AssociationPattern(v => v.TimeSheetWhereTimeEntry),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -17,12 +17,12 @@ namespace Allors.Database.Domain
         public PostalAddressRule(MetaPopulation m) : base(m, new Guid("412c754a-4806-40ab-ac49-b5569bb9b9a9")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PostalAddress, m.PostalAddress.Address1),
-                new RolePattern(m.PostalAddress, m.PostalAddress.Locality),
-                new RolePattern(m.PostalAddress, m.PostalAddress.Region),
-                new RolePattern(m.PostalAddress, m.PostalAddress.PostalCode),
-                new RolePattern(m.PostalAddress, m.PostalAddress.Country),
-                new RolePattern(m.PostalAddress, m.PostalAddress.PostalAddressBoundaries),
+                m.PostalAddress.RolePattern(v => v.Address1),
+                m.PostalAddress.RolePattern(v => v.Locality),
+                m.PostalAddress.RolePattern(v => v.Region),
+                m.PostalAddress.RolePattern(v => v.PostalCode),
+                m.PostalAddress.RolePattern(v => v.Country),
+                m.PostalAddress.RolePattern(v => v.PostalAddressBoundaries),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

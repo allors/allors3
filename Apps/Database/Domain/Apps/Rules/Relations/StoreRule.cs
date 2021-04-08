@@ -17,15 +17,15 @@ namespace Allors.Database.Domain
         public StoreRule(MetaPopulation m) : base(m, new Guid("cf3acae4-a895-4a0b-b154-18cfa30691bb")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.Store, m.Store.InternalOrganisation),
-                new RolePattern(m.Store, m.Store.DefaultCollectionMethod),
-                new RolePattern(m.Store, m.Store.CollectionMethods),
-                new RolePattern(m.Store, m.Store.FiscalYearsStoreSequenceNumbers),
-                new RolePattern(m.Store, m.Store.SalesInvoiceNumberCounter),
-                new RolePattern(m.Store, m.Store.CustomerShipmentNumberPrefix),
-                new RolePattern(m.Store, m.Store.PurchaseReturnNumberPrefix),
-                new RolePattern(m.Store, m.Store.DropShipmentNumberPrefix),
-                new RolePattern(m.Store, m.Store.OutgoingTransferNumberPrefix),
+                m.Store.RolePattern(v => v.InternalOrganisation),
+                m.Store.RolePattern(v => v.DefaultCollectionMethod),
+                m.Store.RolePattern(v => v.CollectionMethods),
+                m.Store.RolePattern(v => v.FiscalYearsStoreSequenceNumbers),
+                m.Store.RolePattern(v => v.SalesInvoiceNumberCounter),
+                m.Store.RolePattern(v => v.CustomerShipmentNumberPrefix),
+                m.Store.RolePattern(v => v.PurchaseReturnNumberPrefix),
+                m.Store.RolePattern(v => v.DropShipmentNumberPrefix),
+                m.Store.RolePattern(v => v.OutgoingTransferNumberPrefix),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

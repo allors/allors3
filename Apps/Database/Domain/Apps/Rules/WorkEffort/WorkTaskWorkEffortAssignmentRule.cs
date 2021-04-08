@@ -18,10 +18,10 @@ namespace Allors.Database.Domain
         public WorkTaskWorkEffortAssignmentRule(MetaPopulation m) : base(m, new Guid("ece68fb5-8622-4a6b-908e-6a867c895548")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.TimeEntry, m.TimeEntry.FromDate) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
-            new RolePattern(m.TimeEntry, m.TimeEntry.ThroughDate) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
-            new RolePattern(m.TimeEntry, m.TimeEntry.WorkEffort) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
-            new RolePattern(m.TimeSheet, m.TimeSheet.TimeEntries) { Steps = new IPropertyType[] { m.TimeSheet.TimeEntries, m.TimeEntry.WorkEffort} },
+            m.TimeEntry.RolePattern(v => v.FromDate, v => v.WorkEffort),
+            m.TimeEntry.RolePattern(v => v.ThroughDate, v => v.WorkEffort),
+            m.TimeEntry.RolePattern(v => v.WorkEffort, v => v.WorkEffort),
+            m.TimeSheet.RolePattern(v => v.TimeEntries, v => v.TimeEntries.TimeEntry.WorkEffort)
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

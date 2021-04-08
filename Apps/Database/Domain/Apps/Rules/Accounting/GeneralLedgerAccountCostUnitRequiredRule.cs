@@ -17,8 +17,8 @@ namespace Allors.Database.Domain
         public GeneralLedgerAccountCostUnitRequiredRule(MetaPopulation m) : base(m, new Guid("dcfae819-97cc-43bd-9c77-5ed4579f1656")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.CostUnitAccount),
-                new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.CostUnitRequired),
+                m.GeneralLedgerAccount.RolePattern(v => v.CostUnitAccount),
+                m.GeneralLedgerAccount.RolePattern(v => v.CostUnitRequired),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

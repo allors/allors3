@@ -15,9 +15,9 @@ namespace Allors.Database.Domain
         public WorkEffortTotalRevenueRule(MetaPopulation m) : base(m, new Guid("9d0acb9a-e517-40a9-9cd6-7e15b59a6c6b")) =>
             this.Patterns = new[]
             {
-                new RolePattern(m.WorkEffort, m.WorkEffort.Customer),
-                new RolePattern(m.WorkEffort, m.WorkEffort.ExecutedBy),
-                new RolePattern(m.WorkEffort, m.WorkEffort.GrandTotal),
+                m.WorkEffort.RolePattern(v => v.Customer),
+                m.WorkEffort.RolePattern(v => v.ExecutedBy),
+                m.WorkEffort.RolePattern(v => v.GrandTotal),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -17,10 +17,10 @@ namespace Allors.Database.Domain
         public PersonPartyNameRule(MetaPopulation m) : base(m, new Guid("0df200cd-bc85-4bb4-9d84-939dc2b47492")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.Person, m.Person.FirstName),
-                new RolePattern(m.Person, m.Person.MiddleName),
-                new RolePattern(m.Person, m.Person.LastName),
-                new RolePattern(m.Person, m.Person.UserName),
+                m.Person.RolePattern(v => v.FirstName),
+                m.Person.RolePattern(v => v.MiddleName),
+                m.Person.RolePattern(v => v.LastName),
+                m.Person.RolePattern(v => v.UserName),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

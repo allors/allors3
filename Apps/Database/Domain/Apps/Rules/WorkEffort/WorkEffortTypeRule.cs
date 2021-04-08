@@ -17,9 +17,9 @@ namespace Allors.Database.Domain
         public WorkEffortTypeRule(MetaPopulation m) : base(m, new Guid("765b3252-66a0-4358-8f7b-1765a1d8cf53")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.WorkEffortType, m.WorkEffortType.WorkEffortPartStandards),
-            new RolePattern(m.WorkEffortPartStandard, m.WorkEffortPartStandard.FromDate) { Steps = new IPropertyType[] { m.WorkEffortPartStandard .WorkEffortTypeWhereWorkEffortPartStandard } },
-            new RolePattern(m.WorkEffortPartStandard, m.WorkEffortPartStandard.ThroughDate) { Steps = new IPropertyType[] { m.WorkEffortPartStandard .WorkEffortTypeWhereWorkEffortPartStandard } },
+            m.WorkEffortType.RolePattern(v => v.WorkEffortPartStandards),
+            m.WorkEffortPartStandard.RolePattern(v => v.FromDate, v => v.WorkEffortTypeWhereWorkEffortPartStandard),
+            m.WorkEffortPartStandard.RolePattern(v => v.ThroughDate, v => v.WorkEffortTypeWhereWorkEffortPartStandard),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

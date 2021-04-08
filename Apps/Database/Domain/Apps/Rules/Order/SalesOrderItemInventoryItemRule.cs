@@ -33,6 +33,13 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<SalesOrderItem>())
             {
+                if (@this.SalesOrderItemState.IsInProcess
+                     && @this.ExistPreviousReservedFromNonSerialisedInventoryItem
+                    && !Equals(@this.ReservedFromNonSerialisedInventoryItem, @this.PreviousReservedFromNonSerialisedInventoryItem))
+                {
+                    validation.AddError($"{@this} {@this.Meta.ReservedFromNonSerialisedInventoryItem} {ErrorMessages.ReservedFromNonSerialisedInventoryItem}");
+                }
+
                 var salesOrder = @this.SalesOrderWhereSalesOrderItem;
 
                 if (@this.IsValid && @this.Part != null && salesOrder?.TakenBy != null)
