@@ -18,9 +18,9 @@ namespace Allors.Database.Domain
         public OwnCreditCardInternalOrganisationPaymentMethodsRule(MetaPopulation m) : base(m, new Guid("a85e1656-b65b-4af9-83ef-fb818c7527c6")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.OwnCreditCard, m.OwnCreditCard.GeneralLedgerAccount),
-                new RolePattern(m.OwnCreditCard, m.OwnCreditCard.Journal),
-                new AssociationPattern(m.InternalOrganisation.PaymentMethods) { OfType = m.OwnCreditCard },
+                m.OwnCreditCard.RolePattern(v => v.GeneralLedgerAccount),
+                m.OwnCreditCard.RolePattern(v => v.Journal),
+                m.PaymentMethod.AssociationPattern(v => v.InternalOrganisationWherePaymentMethod, null, m.OwnCreditCard),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

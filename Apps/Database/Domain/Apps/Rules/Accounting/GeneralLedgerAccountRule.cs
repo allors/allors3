@@ -17,8 +17,8 @@ namespace Allors.Database.Domain
         public GeneralLedgerAccountRule(MetaPopulation m) : base(m, new Guid("e916d6c3-b31b-41e2-b7ef-3265977e0fea")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.GeneralLedgerAccount, m.GeneralLedgerAccount.ReferenceNumber),
-                new AssociationPattern(m.ChartOfAccounts.GeneralLedgerAccounts),
+                m.GeneralLedgerAccount.RolePattern(v => v.ReferenceNumber),
+                m.GeneralLedgerAccount.AssociationPattern(v => v.ChartOfAccountsWhereGeneralLedgerAccount),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

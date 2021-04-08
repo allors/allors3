@@ -17,9 +17,9 @@ namespace Allors.Database.Domain
         public OwnBankAccountRule(MetaPopulation m) : base(m, new Guid("0e20e10e-fadf-4bf2-97be-98e0e7b09d0d")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.OwnBankAccount, m.OwnBankAccount.GeneralLedgerAccount),
-                new RolePattern(m.OwnBankAccount, m.OwnBankAccount.Journal),
-                new AssociationPattern(m.InternalOrganisation.DerivedActiveCollectionMethods) { OfType = m.OwnBankAccount },
+                m.OwnBankAccount.RolePattern(v => v.GeneralLedgerAccount),
+                m.OwnBankAccount.RolePattern(v => v.Journal),
+                m.PaymentMethod.AssociationPattern(v => v.InternalOrganisationWhereDerivedActiveCollectionMethod, null, m.OwnBankAccount),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
