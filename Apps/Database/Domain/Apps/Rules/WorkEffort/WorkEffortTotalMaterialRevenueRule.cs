@@ -15,10 +15,10 @@ namespace Allors.Database.Domain
         public WorkEffortTotalMaterialRevenueRule(MetaPopulation m) : base(m, new Guid("ccc168df-8e92-4635-8449-7b375d2bfb94")) =>
             this.Patterns = new[]
             {
-                new RolePattern(m.WorkEffortInventoryAssignment, m.WorkEffortInventoryAssignment.Assignment) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
-                new RolePattern(m.WorkEffortInventoryAssignment, m.WorkEffortInventoryAssignment.AssignedBillableQuantity) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
-                new RolePattern(m.WorkEffortInventoryAssignment, m.WorkEffortInventoryAssignment.Quantity) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
-                new RolePattern(m.WorkEffortInventoryAssignment, m.WorkEffortInventoryAssignment.UnitSellingPrice) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
+                m.WorkEffortInventoryAssignment.RolePattern(v => v.Assignment, v => v.Assignment),
+                m.WorkEffortInventoryAssignment.RolePattern(v => v.AssignedBillableQuantity, v => v.Assignment),
+                m.WorkEffortInventoryAssignment.RolePattern(v => v.Quantity, v => v.Assignment),
+                m.WorkEffortInventoryAssignment.RolePattern(v => v.UnitSellingPrice, v => v.Assignment),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

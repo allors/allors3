@@ -18,10 +18,10 @@ namespace Allors.Database.Domain
         public WorkTaskRule(MetaPopulation m) : base(m, new Guid("88da27ac-99cb-4a21-b9be-37628f1239d6")) =>
             this.Patterns = new Pattern[]
         {
-            new AssociationPattern(m.WorkEffortInventoryAssignment.Assignment),
-            new RolePattern(m.WorkTask, m.WorkTask.WorkEffortState),
-            new RolePattern(m.WorkEffortInventoryAssignment, m.WorkEffortInventoryAssignment.Quantity) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
-            new RolePattern(m.WorkEffortInventoryAssignment, m.WorkEffortInventoryAssignment.InventoryItem) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
+            m.WorkEffort.AssociationPattern(v => v.WorkEffortInventoryAssignmentsWhereAssignment),
+            m.WorkTask.RolePattern(v => v.WorkEffortState),
+            m.WorkEffortInventoryAssignment.RolePattern(v => v.Quantity, v => v.Assignment),
+            m.WorkEffortInventoryAssignment.RolePattern(v => v.InventoryItem, v => v.Assignment),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

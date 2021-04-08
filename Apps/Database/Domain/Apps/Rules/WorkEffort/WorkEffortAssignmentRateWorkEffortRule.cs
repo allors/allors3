@@ -17,8 +17,8 @@ namespace Allors.Database.Domain
         public WorkEffortAssignmentRateWorkEffortRule(MetaPopulation m) : base(m, new Guid("ae6797aa-5d30-4b9b-bc4b-0f8b899f7eaf")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.WorkEffortAssignmentRate, m.WorkEffortAssignmentRate.WorkEffort),
-            new RolePattern(m.WorkEffortAssignmentRate, m.WorkEffortAssignmentRate.WorkEffortPartyAssignment),
+            m.WorkEffortAssignmentRate.RolePattern(v => v.WorkEffort),
+            m.WorkEffortAssignmentRate.RolePattern(v => v.WorkEffortPartyAssignment),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

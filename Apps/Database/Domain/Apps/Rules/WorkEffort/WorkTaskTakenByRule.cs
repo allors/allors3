@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
         public WorkTaskTakenByRule(MetaPopulation m) : base(m, new Guid("02be092e-04ca-4cce-9255-19b562ee6dd4")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.WorkTask, m.WorkTask.TakenBy),
+            m.WorkTask.RolePattern(v => v.TakenBy),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

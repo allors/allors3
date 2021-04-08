@@ -16,13 +16,13 @@ namespace Allors.Database.Domain
         public WorkEffortPurchaseOrderItemAssignmentUnitSellingRule(MetaPopulation m) : base(m, new Guid("9c6d9950-de23-42de-b70e-84ef275eabc8")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.WorkEffortPurchaseOrderItemAssignment, m.WorkEffortPurchaseOrderItemAssignment.Assignment),
-            new RolePattern(m.WorkEffortPurchaseOrderItemAssignment, m.WorkEffortPurchaseOrderItemAssignment.PurchaseOrderItem),
-            new RolePattern(m.WorkEffortPurchaseOrderItemAssignment, m.WorkEffortPurchaseOrderItemAssignment.AssignedUnitSellingPrice),
-            new RolePattern(m.WorkEffort, m.WorkEffort.TakenBy) { Steps = new IPropertyType[] { m.WorkEffort.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment } },
-            new RolePattern(m.PriceComponent, m.PriceComponent.PricedBy) { Steps = new IPropertyType[] { m.PriceComponent.PricedBy, m.Organisation.WorkEffortsWhereTakenBy, m.WorkEffort.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment } },
-            new RolePattern(m.PriceComponent, m.PriceComponent.FromDate) { Steps = new IPropertyType[] { m.PriceComponent.PricedBy, m.Organisation.WorkEffortsWhereTakenBy, m.WorkEffort.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment } },
-            new RolePattern(m.PriceComponent, m.PriceComponent.ThroughDate) { Steps = new IPropertyType[] { m.PriceComponent.PricedBy, m.Organisation.WorkEffortsWhereTakenBy, m.WorkEffort.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment } },
+            m.WorkEffortPurchaseOrderItemAssignment.RolePattern(v => v.Assignment),
+            m.WorkEffortPurchaseOrderItemAssignment.RolePattern(v => v.PurchaseOrderItem),
+            m.WorkEffortPurchaseOrderItemAssignment.RolePattern(v => v.AssignedUnitSellingPrice),
+            m.WorkEffort.RolePattern(v => v.TakenBy, v => v.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment),
+            m.PriceComponent.RolePattern(v => v.PricedBy, v => v.PricedBy.Party.AsOrganisation.WorkEffortsWhereTakenBy.WorkEffort.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment),
+            m.PriceComponent.RolePattern(v => v.FromDate, v => v.PricedBy.Party.AsOrganisation.WorkEffortsWhereTakenBy.WorkEffort.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment),
+            m.PriceComponent.RolePattern(v => v.ThroughDate, v => v.PricedBy.Party.AsOrganisation.WorkEffortsWhereTakenBy.WorkEffort.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

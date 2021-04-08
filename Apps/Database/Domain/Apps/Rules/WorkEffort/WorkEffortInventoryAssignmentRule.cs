@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public WorkEffortInventoryAssignmentRule(MetaPopulation m) : base(m, new Guid("cd533d3e-922c-4938-a12d-cfacd6c3b9d9")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.WorkEffortInventoryAssignment, m.WorkEffortInventoryAssignment.Assignment),
+            m.WorkEffortInventoryAssignment.RolePattern(v => v.Assignment),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

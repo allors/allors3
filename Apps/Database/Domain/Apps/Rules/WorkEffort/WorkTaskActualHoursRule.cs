@@ -18,10 +18,10 @@ namespace Allors.Database.Domain
         public WorkTaskActualHoursRule(MetaPopulation m) : base(m, new Guid("ebe5b853-4b95-4b4f-b952-09bfe441eb8f")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.TimeEntry, m.TimeEntry.FromDate) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
-            new RolePattern(m.TimeEntry, m.TimeEntry.ThroughDate) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
-            new RolePattern(m.TimeEntry, m.TimeEntry.WorkEffort) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
-            new RolePattern(m.TimeSheet, m.TimeSheet.TimeEntries) { Steps = new IPropertyType[] { m.TimeSheet.TimeEntries, m.TimeEntry.WorkEffort} },
+            m.TimeEntry.RolePattern(v => v.FromDate, v => v.WorkEffort),
+            m.TimeEntry.RolePattern(v => v.ThroughDate, v => v.WorkEffort),
+            m.TimeEntry.RolePattern(v => v.WorkEffort, v => v.WorkEffort),
+            m.TimeSheet.RolePattern(v => v.TimeEntries, v => v.TimeEntries.TimeEntry.WorkEffort)
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

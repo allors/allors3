@@ -17,8 +17,8 @@ namespace Allors.Database.Domain
         public WorkTaskCanInvoiceRule(MetaPopulation m) : base(m, new Guid("17ee3e8a-2430-48db-b712-ba305d488459")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.WorkTask, m.WorkTask.WorkEffortState),
-            new AssociationPattern(m.TimeSheet.TimeEntries) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
+            m.WorkTask.RolePattern(v => v.WorkEffortState),
+            m.TimeEntry.AssociationPattern(v => v.TimeSheetWhereTimeEntry, v => v.WorkEffort),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
