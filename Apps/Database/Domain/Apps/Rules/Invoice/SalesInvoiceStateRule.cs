@@ -16,14 +16,14 @@ namespace Allors.Database.Domain
         public SalesInvoiceStateRule(MetaPopulation m) : base(m, new Guid("c273de35-fd1c-4353-8354-d3640ba5dff8")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.PaymentApplication, m.PaymentApplication.AmountApplied) { Steps =  new IPropertyType[] {m.PaymentApplication.Invoice}, OfType = m.SalesInvoice },
-            new RolePattern(m.SalesInvoice, m.SalesInvoice.SalesInvoiceItems),
-            new RolePattern(m.SalesInvoice, m.SalesInvoice.AdvancePayment),
-            new RolePattern(m.SalesInvoice, m.SalesInvoice.DerivationTrigger),
-            new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.SalesInvoiceItemState) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
-            new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.GrandTotal) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
-            new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.DerivationTrigger) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
-            new RolePattern(m.SalesInvoiceItem, m.SalesInvoiceItem.AmountPaid) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
+            m.PaymentApplication.RolePattern(v => v.AmountApplied, v => v.Invoice, m.SalesInvoice),
+            m.SalesInvoice.RolePattern(v => v.SalesInvoiceItems),
+            m.SalesInvoice.RolePattern(v => v.AdvancePayment),
+            m.SalesInvoice.RolePattern(v => v.DerivationTrigger),
+            m.SalesInvoiceItem.RolePattern(v => v.SalesInvoiceItemState, v => v.SalesInvoiceWhereSalesInvoiceItem),
+            m.SalesInvoiceItem.RolePattern(v => v.GrandTotal, v => v.SalesInvoiceWhereSalesInvoiceItem),
+            m.SalesInvoiceItem.RolePattern(v => v.DerivationTrigger, v => v.SalesInvoiceWhereSalesInvoiceItem),
+            m.SalesInvoiceItem.RolePattern(v => v.AmountPaid, v => v.SalesInvoiceWhereSalesInvoiceItem),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

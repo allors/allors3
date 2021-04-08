@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public SalesInvoiceBillingtimeEntryBillingRule(MetaPopulation m) : base(m, new Guid("0f32d928-4a86-4421-9249-dcb3bb0a5940")) =>
             this.Patterns = new Pattern[]
         {
-            new AssociationPattern(m.TimeEntryBilling.InvoiceItem) { Steps =  new IPropertyType[] { m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem }, OfType = m.SalesInvoice },
+            m.InvoiceItem.AssociationPattern(v => v.TimeEntryBillingsWhereInvoiceItem, v => v.AsSalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem, m.SalesInvoice),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

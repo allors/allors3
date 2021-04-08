@@ -18,9 +18,9 @@ namespace Allors.Database.Domain
         public RepeatingSalesInvoiceRule(MetaPopulation m) : base(m, new Guid("BEC1F9FD-71CF-4B74-BF40-CDA30AB4C3FB")) =>
             this.Patterns = new[]
             {
-                new RolePattern(m.RepeatingSalesInvoice, m.RepeatingSalesInvoice.Frequency),
-                new RolePattern(m.RepeatingSalesInvoice, m.RepeatingSalesInvoice.DayOfWeek),
-                new RolePattern(m.RepeatingSalesInvoice, m.RepeatingSalesInvoice.NextExecutionDate)
+                m.RepeatingSalesInvoice.RolePattern(v => v.Frequency),
+                m.RepeatingSalesInvoice.RolePattern(v => v.DayOfWeek),
+                m.RepeatingSalesInvoice.RolePattern(v => v.NextExecutionDate),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

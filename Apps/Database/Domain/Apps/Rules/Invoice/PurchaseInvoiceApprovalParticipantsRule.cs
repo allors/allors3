@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public PurchaseInvoiceApprovalParticipantsRule(MetaPopulation m) : base(m, new Guid("24dd13f4-270e-4ed7-b1d2-0520e74a992a")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PurchaseInvoiceApproval, m.PurchaseInvoiceApproval.DateClosed),
-                new RolePattern(m.PurchaseInvoiceApproval, m.PurchaseInvoiceApproval.PurchaseInvoice)
+                m.PurchaseInvoiceApproval.RolePattern(v => v.DateClosed),
+                m.PurchaseInvoiceApproval.RolePattern(v => v.PurchaseInvoice),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -17,10 +17,10 @@ namespace Allors.Database.Domain
         public SalesInvoiceReadyForPostingRule(MetaPopulation m) : base(m, new Guid("cc2c0d60-b488-4eed-be97-13c2cc17fdf8")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.SalesInvoice, m.SalesInvoice.AssignedVatRegime),
-            new RolePattern(m.SalesInvoice, m.SalesInvoice.AssignedIrpfRegime),
-            new RolePattern(m.SalesInvoice, m.SalesInvoice.InvoiceDate),
-            new RolePattern(m.SalesInvoice, m.SalesInvoice.AssignedVatClause),
+            m.SalesInvoice.RolePattern(v => v.AssignedVatRegime),
+            m.SalesInvoice.RolePattern(v => v.AssignedIrpfRegime),
+            m.SalesInvoice.RolePattern(v => v.InvoiceDate),
+            m.SalesInvoice.RolePattern(v => v.AssignedVatClause),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

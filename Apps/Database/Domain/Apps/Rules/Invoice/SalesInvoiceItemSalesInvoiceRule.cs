@@ -18,11 +18,11 @@ namespace Allors.Database.Domain
         public SalesInvoiceItemSalesInvoiceRule(MetaPopulation m) : base(m, new Guid("a5d2bc57-d83e-4518-b580-588ead561a0b")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.SalesInvoice.SalesInvoiceItems),
-                new RolePattern(m.SalesInvoice, m.SalesInvoice.SalesInvoiceState) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
-                new RolePattern(m.SalesInvoice, m.SalesInvoice.DerivedVatRegime) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
-                new RolePattern(m.SalesInvoice, m.SalesInvoice.DerivedIrpfRegime) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
-                new RolePattern(m.SalesInvoice, m.SalesInvoice.InvoiceDate) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
+                m.SalesInvoiceItem.AssociationPattern(v => v.SalesInvoiceWhereSalesInvoiceItem),
+                m.SalesInvoice.RolePattern(v => v.SalesInvoiceState, v => v.SalesInvoiceItems),
+                m.SalesInvoice.RolePattern(v => v.DerivedVatRegime, v => v.SalesInvoiceItems),
+                m.SalesInvoice.RolePattern(v => v.DerivedIrpfRegime, v => v.SalesInvoiceItems),
+                m.SalesInvoice.RolePattern(v => v.InvoiceDate, v => v.SalesInvoiceItems),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
