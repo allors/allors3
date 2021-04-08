@@ -16,14 +16,13 @@ namespace Allors.Database.Domain
         public CountryVatRegimesRule(MetaPopulation m) : base(m, new Guid("ac33cb9d-f694-4247-ad5d-fdae01d05c07")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.VatRegime.Country),
+                m.Country.AssociationPattern(v => v.VatRegimesWhereCountry),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<Country>())
             {
-
                 foreach (VatRegime vatRegime in @this.VatRegimesWhereCountry)
                 {
                     var previousCountry = vatRegime.CurrentVersion?.Country;
