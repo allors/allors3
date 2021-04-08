@@ -83,6 +83,7 @@ namespace Allors.Database.Domain
                 new SalesOrderProvisionalDerivePaymentMethodRule(m),
                 new SalesOrderProvisionalDeriveLocaleRule(m),
                 new SalesOrderProvisionalDeriveVatRegimeRule(m),
+                new SalesOrderProvisionalVatClauseRule(m),
                 new SalesOrderProvisionalDeriveIrpfRegimeRule(m),
                 new SalesOrderProvisionalDeriveCurrencyRule(m),
                 new SalesOrderProvisionalDeriveTakenByContactMechanismRule(m),
