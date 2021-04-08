@@ -96,10 +96,9 @@ namespace Allors.Database.Domain.Derivations.Default
 
                                     IEnumerable<IObject> source = new IObject[] { association };
 
-                                    if (pattern.Steps?.Length > 0)
+                                    if (pattern.Path != null)
                                     {
-                                        var step = new Step(pattern.Steps);
-                                        source = source.SelectMany(v => step.Get(v));
+                                        source = source.SelectMany(v => pattern.Path.Get(v));
                                     }
 
                                     if (pattern.OfType != null)
@@ -139,10 +138,9 @@ namespace Allors.Database.Domain.Derivations.Default
 
                                     IEnumerable<IObject> source = new IObject[] { role };
 
-                                    if (pattern.Steps?.Length > 0)
+                                    if (pattern.Path != null)
                                     {
-                                        var step = new Step(pattern.Steps);
-                                        source = source.SelectMany(v => step.Get(v));
+                                        source = source.SelectMany(v => pattern.Path.Get(v));
                                     }
 
                                     if (pattern.OfType != null)
@@ -156,7 +154,7 @@ namespace Allors.Database.Domain.Derivations.Default
                         }
                     }
                 }
-                
+
                 // TODO: Prefetching
 
                 foreach (var kvp in matchesByRule)

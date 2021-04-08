@@ -23,6 +23,6 @@ namespace Allors.Database.Meta
 
         bool IsMany { get; }
 
-        object Get(IStrategy strategy);
+        object Get(IStrategy strategy, IComposite ofType = null);
     }
 }

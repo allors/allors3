@@ -7,6 +7,7 @@
 namespace Allors.Database.Meta
 {
     using System;
+    using System.Linq;
 
     /// <summary>
     /// An <see cref="AssociationType"/> defines the association side of a relation.
@@ -64,7 +65,23 @@ namespace Allors.Database.Meta
 
         bool IPropertyType.IsMany => this.IsMany;
 
-        object IPropertyType.Get(IStrategy strategy) => strategy.GetAssociation(this);
+        object IPropertyType.Get(IStrategy strategy, IComposite ofType)
+        {
+            var association = strategy.GetAssociation(this);
+
+            if (ofType == null || association == null)
+            {
+                return association;
+            }
+
+            if (this.IsMany)
+            {
+                var extent = (Extent)association;
+                return extent.Where(v => ofType.IsAssignableFrom(v.Strategy.Class));
+            }
+
+            return !ofType.IsAssignableFrom(((IObject)association).Strategy.Class) ? null : association;
+        }
 
         IObjectTypeBase IPropertyTypeBase.ObjectType => this.objectType;
 

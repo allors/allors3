@@ -7,6 +7,7 @@
 namespace Allors.Database.Meta
 {
     using System;
+    using System.Linq;
 
     public abstract partial class RoleType : IRoleTypeBase, IComparable
     {
@@ -55,7 +56,7 @@ namespace Allors.Database.Meta
         /// <value>The association.</value>
         public IAssociationTypeBase AssociationType => this.RelationType.AssociationType;
         IAssociationType IRoleType.AssociationType => this.AssociationType;
-        
+
         public IObjectTypeBase ObjectType
         {
             get => this.objectType;
@@ -93,7 +94,6 @@ namespace Allors.Database.Meta
         /// <value>The validation name.</value>
         public string ValidationName => "RoleType: " + this.RelationType.Name;
 
-
         public string SingularName
         {
             get => this.singularName;
@@ -105,7 +105,6 @@ namespace Allors.Database.Meta
                 this.metaPopulation.Stale();
             }
         }
-
 
         /// <summary>
         /// Gets the full singular name.
@@ -224,7 +223,23 @@ namespace Allors.Database.Meta
         /// <returns>
         /// The role value.
         /// </returns>
-        public object Get(IStrategy strategy) => strategy.GetRole(this);
+        public object Get(IStrategy strategy, IComposite ofType)
+        {
+            var role = strategy.GetRole(this);
+
+            if (ofType == null || role == null || !this.ObjectType.IsComposite)
+            {
+                return role;
+            }
+
+            if (this.IsMany)
+            {
+                var extent = (Extent)role;
+                return extent.Where(v => ofType.IsAssignableFrom(v.Strategy.Class));
+            }
+
+            return !ofType.IsAssignableFrom(((IObject)role).Strategy.Class) ? null : role;
+        }
 
         /// <summary>
         /// Set the value of the role on this object.
