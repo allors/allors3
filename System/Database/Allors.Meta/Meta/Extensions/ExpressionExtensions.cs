@@ -76,7 +76,7 @@ namespace Allors.Database.Derivations
                     var propertyType = propertyInfo.PropertyType;
                     composite = (IComposite) metaPopulation.FindDatabaseCompositeByName(propertyType.Name);
 
-                    if (!currentPath.PropertyType.ObjectType.Equals(composite))
+                    if (currentPath != null && !currentPath.PropertyType.ObjectType.Equals(composite))
                     {
                         currentPath.OfType = composite;
                     }
