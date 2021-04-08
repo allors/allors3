@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public SerialisedInventoryItemRule(MetaPopulation m) : base(m, new Guid("29B3C9B5-7BB2-4851-A424-F984E7AE348B")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SerialisedInventoryItem, m.SerialisedInventoryItem.Part),
-                new RolePattern(m.SerialisedInventoryItem, m.SerialisedInventoryItem.Facility),
+                m.SerialisedInventoryItem.RolePattern(v => v.Part),
+                m.SerialisedInventoryItem.RolePattern(v => v.Facility),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

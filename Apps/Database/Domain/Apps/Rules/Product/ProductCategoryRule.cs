@@ -16,17 +16,6 @@ namespace Allors.Database.Domain
         public ProductCategoryRule(MetaPopulation m) : base(m, new Guid("59C88605-9799-4849-A0E9-F107DB4BFBD1")) =>
             this.Patterns = new Pattern[]
             {
-                //new RolePattern(m.ProductCategory, m.ProductCategory.Name),
-                //new RolePattern(m.ProductCategory, m.ProductCategory.PrimaryParent),
-                //new RolePattern(m.ProductCategory, m.ProductCategory.SecondaryParents),
-                //new RolePattern(m.ProductCategory, m.ProductCategory.CategoryImage),
-                //new RolePattern(m.ProductCategory, m.ProductCategory.Products),
-                //new AssociationPattern(m.ProductCategory.PrimaryParent),
-                //new RolePattern(m.ProductCategory, m.ProductCategory.PrimaryParent) {Steps = new IPropertyType[] {m.ProductCategory.ProductCategoriesWhereDescendant} },
-                //new AssociationPattern(m.ProductCategory.SecondaryParents),
-                //new RolePattern(m.ProductCategory, m.ProductCategory.SecondaryParents) {Steps = new IPropertyType[] {m.ProductCategory.ProductCategoriesWhereDescendant} },
-                //new RolePattern(m.ProductCategory, m.ProductCategory.AllProducts) {Steps = new IPropertyType[] {m.ProductCategory.ProductCategoriesWhereDescendant} },
-
                 m.ProductCategory.RolePattern(v => v.Name),
                 m.ProductCategory.RolePattern(v => v.PrimaryParent),
                 m.ProductCategory.RolePattern(v => v.SecondaryParents),
@@ -45,14 +34,6 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<ProductCategory>())
             {
-                //if (!@this.ExistCategoryImage)
-                //{
-                //    @this.CategoryImage =
-                //        @this.Strategy.Transaction.GetSingleton().Settings.NoImageAvailableImage;
-                //}
-
-                // TODO: Met bovenstaande if werkt ProductCategoriesWhereDescendant wel, zonder niet
-
                 {
                     var primaryAncestors = new List<ProductCategory>();
                     var primaryAncestor = @this.PrimaryParent;

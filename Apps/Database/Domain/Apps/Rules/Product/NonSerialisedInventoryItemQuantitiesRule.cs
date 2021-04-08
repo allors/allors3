@@ -16,14 +16,14 @@ namespace Allors.Database.Domain
         public NonSerialisedInventoryItemQuantitiesRule(MetaPopulation m) : base(m, new Guid("36bb6207-ff7d-4bc1-afaf-a2c12d649c1c")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.NonSerialisedInventoryItem, m.NonSerialisedInventoryItem.NonSerialisedInventoryItemState),
-                new RolePattern(m.InventoryItemTransaction, m.InventoryItemTransaction.InventoryItem) { Steps = new IPropertyType[] {m.InventoryItemTransaction.InventoryItem }, OfType = m.NonSerialisedInventoryItem },
-                new RolePattern(m.InventoryItemTransaction, m.InventoryItemTransaction.Quantity) { Steps = new IPropertyType[] {m.InventoryItemTransaction.InventoryItem }, OfType = m.NonSerialisedInventoryItem },
-                new RolePattern(m.PickList, m.PickList.PickListState) { Steps = new IPropertyType[] { m.PickList.PickListItems, m.PickListItem.InventoryItem }, OfType = m.NonSerialisedInventoryItem },
-                new AssociationPattern(m.PickListItem.InventoryItem) { OfType = m.NonSerialisedInventoryItem },
-                new RolePattern(m.PickListItem, m.PickListItem.QuantityPicked) { Steps = new IPropertyType[] {m.PickListItem.InventoryItem }, OfType = m.NonSerialisedInventoryItem },
-                new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.QuantityOrdered) { Steps = new IPropertyType[] {m.PurchaseOrderItem.Part, m.Part.InventoryItemsWherePart }, OfType = m.NonSerialisedInventoryItem },
-                new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.PurchaseOrderItemState) { Steps = new IPropertyType[] {m.PurchaseOrderItem.Part, m.Part.InventoryItemsWherePart }, OfType = m.NonSerialisedInventoryItem },
+                m.NonSerialisedInventoryItem.RolePattern(v => v.NonSerialisedInventoryItemState),
+                m.InventoryItemTransaction.RolePattern(v => v.InventoryItem, v => v.InventoryItem, m.NonSerialisedInventoryItem),
+                m.InventoryItemTransaction.RolePattern(v => v.Quantity, v => v.InventoryItem, m.NonSerialisedInventoryItem),
+                m.PickList.RolePattern(v => v.PickListState, v => v.PickListItems.PickListItem.InventoryItem, m.NonSerialisedInventoryItem),
+                m.PickListItem.RolePattern(v => v.QuantityPicked, v => v.InventoryItem, m.NonSerialisedInventoryItem),
+                m.PurchaseOrderItem.RolePattern(v => v.QuantityOrdered, v => v.Part.Part.InventoryItemsWherePart, m.NonSerialisedInventoryItem),
+                m.PurchaseOrderItem.RolePattern(v => v.PurchaseOrderItemState, v => v.Part.Part.InventoryItemsWherePart, m.NonSerialisedInventoryItem),
+                m.InventoryItem.AssociationPattern(v => v.PickListItemsWhereInventoryItem, m.NonSerialisedInventoryItem),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

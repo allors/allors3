@@ -11,12 +11,12 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class PartCategoryDeriveImageRule : Rule
+    public class PartCategoryImageRule : Rule
     {
-        public PartCategoryDeriveImageRule(MetaPopulation m) : base(m, new Guid("d2ce530e-4e2c-4bf6-b2de-ea08e3e17145")) =>
+        public PartCategoryImageRule(MetaPopulation m) : base(m, new Guid("90cbc963-0307-46ca-86ce-20af7c6bdb41")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PartCategory, m.PartCategory.CategoryImage),
+                m.PartCategory.RolePattern(v => v.CategoryImage),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

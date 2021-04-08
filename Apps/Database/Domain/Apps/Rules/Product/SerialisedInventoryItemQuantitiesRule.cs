@@ -16,10 +16,10 @@ namespace Allors.Database.Domain
         public SerialisedInventoryItemQuantitiesRule(MetaPopulation m) : base(m, new Guid("0dd99432-c8e6-4278-8f49-fb1a4d7d6ddc")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SerialisedInventoryItem, m.SerialisedInventoryItem.SerialisedInventoryItemState),
-                new AssociationPattern(m.InventoryItemTransaction.InventoryItem) { OfType = m.SerialisedInventoryItem },
-                new RolePattern(m.InventoryItemTransaction, m.InventoryItemTransaction.Quantity) { Steps = new IPropertyType[] {m.InventoryItemTransaction.InventoryItem }, OfType = m.SerialisedInventoryItem },
-                new AssociationPattern(m.PickListItem.InventoryItem) { OfType = m.SerialisedInventoryItem },
+                m.SerialisedInventoryItem.RolePattern(v => v.SerialisedInventoryItemState),
+                m.InventoryItemTransaction.RolePattern(v => v.Quantity, v => v.InventoryItem.InventoryItem.AsSerialisedInventoryItem),
+                m.InventoryItem.AssociationPattern(v => v.InventoryItemTransactionsWhereInventoryItem, m.SerialisedInventoryItem),
+                m.InventoryItem.AssociationPattern(v => v.PickListItemsWhereInventoryItem, m.SerialisedInventoryItem),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

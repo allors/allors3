@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public InventoryItemSearchStringRule(MetaPopulation m) : base(m, new Guid("5d253bff-4537-4b1b-96e4-74b4a16dbf48")) =>
             this.Patterns = new[]
             {
-                new RolePattern(m.InventoryItem, m.InventoryItem.Part),
+               m.InventoryItem.RolePattern(v => v.Part),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

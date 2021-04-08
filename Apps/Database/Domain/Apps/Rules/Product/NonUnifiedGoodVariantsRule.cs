@@ -18,8 +18,8 @@ namespace Allors.Database.Domain
         public NonUnifiedGoodVariantsRule(MetaPopulation m) : base(m, new Guid("438788be-d450-446d-aca6-54f9027fa67f")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.NonUnifiedGood, m.NonUnifiedGood.Variants),
-                new AssociationPattern(m.PriceComponent.Product) { OfType = m.NonUnifiedGood },
+                m.NonUnifiedGood.RolePattern(v => v.Variants),
+                m.Product.AssociationPattern(v => v.PriceComponentsWhereProduct, m.NonUnifiedGood),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

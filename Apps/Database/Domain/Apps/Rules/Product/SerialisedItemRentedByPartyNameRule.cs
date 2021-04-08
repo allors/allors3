@@ -19,9 +19,8 @@ namespace Allors.Database.Domain
         public SerialisedItemRentedByPartyNameRule(MetaPopulation m) : base(m, new Guid("34d325e4-dc52-4e5f-a698-4a5f64d52dc2")) =>
             this.Patterns = new Pattern[]
             {
-
-                new AssociationPattern(m.Part.SerialisedItems),
-                new RolePattern(m.SerialisedItem, m.SerialisedItem.RentedBy),
+                m.SerialisedItem.RolePattern(v => v.RentedBy),
+                m.SerialisedItem.AssociationPattern(v => v.PartWhereSerialisedItem),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

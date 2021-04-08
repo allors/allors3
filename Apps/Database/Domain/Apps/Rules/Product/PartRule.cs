@@ -16,10 +16,8 @@ namespace Allors.Database.Domain
         public PartRule(MetaPopulation m) : base(m, new Guid("4F894B49-4922-4FC8-9172-DC600CCDB1CA")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.Part, m.Part.Name),
-                new RolePattern(m.Part, m.Part.ProductType),
-                new RolePattern(m.ProductType, m.ProductType.SerialisedItemCharacteristicTypes) { Steps = new IPropertyType[]{ this.M.ProductType.PartsWhereProductType } },
-                new AssociationPattern(m.InventoryItem.Part),
+                m.Part.RolePattern(v => v.ProductType),
+                m.ProductType.RolePattern(v => v.SerialisedItemCharacteristicTypes, v => v.PartsWhereProductType),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -52,13 +50,6 @@ namespace Allors.Database.Domain
                 foreach (var characteristic in characteristicsToDelete)
                 {
                     @this.RemoveSerialisedItemCharacteristic(characteristic);
-                }
-
-                @this.SetDisplayName();
-
-                foreach (InventoryItem inventoryItem in @this.InventoryItemsWherePart)
-                {
-                    inventoryItem.Sync(@this);
                 }
             }
         }

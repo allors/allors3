@@ -11,15 +11,13 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class CatalogueRule : Rule
+    public class CatalogueLocalisedDescriptionsRule : Rule
     {
-        public CatalogueRule(MetaPopulation m) : base(m, new Guid("7B3BA380-A703-4E29-8D2D-0D2F74C6E7D8")) =>
-            this.Patterns = new[]
+        public CatalogueLocalisedDescriptionsRule(MetaPopulation m) : base(m, new Guid("7B3BA380-A703-4E29-8D2D-0D2F74C6E7D8")) =>
+            this.Patterns = new Pattern[]
             {
-                new RolePattern(m.Catalogue, m.Catalogue.LocalisedNames),
-                new RolePattern(m.Catalogue, m.Catalogue.LocalisedDescriptions),
-                new RolePattern(m.LocalisedText, m.LocalisedText.Text) { Steps = new IPropertyType[]{ this.M.LocalisedText.CatalogueWhereLocalisedName } },
-                new RolePattern(m.LocalisedText, m.LocalisedText.Text) { Steps = new IPropertyType[]{ this.M.LocalisedText.CatalogueWhereLocalisedDescription } },
+                m.Catalogue.RolePattern(v => v.LocalisedDescriptions),
+                m.LocalisedText.RolePattern(v => v.Text, v => v.CatalogueWhereLocalisedDescription),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -27,11 +25,6 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<Catalogue>())
             {
                 var defaultLocale = @this.Strategy.Transaction.GetSingleton().DefaultLocale;
-
-                if (@this.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))
-                {
-                    @this.Name = @this.LocalisedNames.First(x => x.Locale.Equals(defaultLocale)).Text;
-                }
 
                 if (@this.LocalisedDescriptions.Any(x => x.Locale.Equals(defaultLocale)))
                 {

@@ -17,8 +17,8 @@ namespace Allors.Database.Domain
         public PriceComponentDerivePricedByRule(MetaPopulation m) : base(m, new Guid("e52fd97f-a6b7-4fc9-8f35-249fde8ad0a6")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PriceComponent, m.PriceComponent.PricedBy),
-                new RolePattern(m.PriceComponent, m.PriceComponent.FromDate),
+                m.PriceComponent.RolePattern(v => v.PricedBy),
+                m.PriceComponent.RolePattern(v => v.FromDate),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

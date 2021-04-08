@@ -11,13 +11,13 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class PartCategoryDeriveTextsRule : Rule
+    public class PartCategoryNameRule : Rule
     {
-        public PartCategoryDeriveTextsRule(MetaPopulation m) : base(m, new Guid("e680c875-e9e3-4d20-86ce-cb36f74ff26f")) =>
+        public PartCategoryNameRule(MetaPopulation m) : base(m, new Guid("e680c875-e9e3-4d20-86ce-cb36f74ff26f")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PartCategory, m.PartCategory.Name),
-                new RolePattern(m.LocalisedText, m.LocalisedText.Text) {Steps = new IPropertyType[] {m.LocalisedText.PartCategoryWhereLocalisedName } },
+                m.PartCategory.RolePattern(v => v.Name),
+                m.LocalisedText.RolePattern(v => v.Text, v => v.PartCategoryWhereLocalisedName)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

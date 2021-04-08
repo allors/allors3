@@ -14,10 +14,10 @@ namespace Allors.Database.Domain
     public class InventoryItemTransactionRule : Rule
     {
         public InventoryItemTransactionRule(MetaPopulation m) : base(m, new Guid("E1F9D2DA-9C99-473D-B49F-17465CDEDBC9")) =>
-            this.Patterns = new[]
+            this.Patterns = new Pattern[]
             {
-                new RolePattern(m.InventoryItemTransaction, m.InventoryItemTransaction.Quantity),
-                new RolePattern(m.SerialisedInventoryItem, m.SerialisedInventoryItem.Quantity) { Steps = new IPropertyType[] {m.SerialisedInventoryItem.InventoryItemTransactionsWhereInventoryItem} },
+                m.InventoryItemTransaction.RolePattern(v => v.Quantity),
+                m.SerialisedInventoryItem.RolePattern(v => v.Quantity, v => v.InventoryItemTransactionsWhereInventoryItem),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
