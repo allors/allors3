@@ -17,9 +17,9 @@ namespace Allors.Database.Domain
         public CashRule(MetaPopulation m) : base(m, new Guid("5b0365cc-0b8e-4ee1-89c5-c5955e3ce44c")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.Cash, m.Cash.GeneralLedgerAccount),
-                new RolePattern(m.Cash, m.Cash.Journal),
-                new AssociationPattern(m.InternalOrganisation.DerivedActiveCollectionMethods) { OfType = m.Cash },
+                m.Cash.RolePattern(v => v.GeneralLedgerAccount),
+                m.Cash.RolePattern(v => v.Journal),
+                m.PaymentMethod.AssociationPattern(v => v.InternalOrganisationWhereDerivedActiveCollectionMethod, null, m.Cash),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

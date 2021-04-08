@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public BankAccountRule(MetaPopulation m) : base(m, new Guid("633f58cd-ca1b-4a2e-8f6e-e1642466a9f7")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.OwnBankAccount.BankAccount),
+                m.BankAccount.AssociationPattern(v => v.OwnBankAccountsWhereBankAccount),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

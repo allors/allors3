@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public PartyFinancialRelationshipOpenOrderAmountRule(MetaPopulation m) : base(m, new Guid("3132e3d6-69be-4dde-b06c-f0162f8aa5ed")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SalesOrder, m.SalesOrder.TotalIncVat) { Steps =  new IPropertyType[] {m.SalesOrder.BillToCustomer, m.Party.PartyFinancialRelationshipsWhereFinancialParty } },
-                new RolePattern(m.SalesOrder, m.SalesOrder.SalesOrderState) { Steps =  new IPropertyType[] {m.SalesOrder.BillToCustomer, m.Party.PartyFinancialRelationshipsWhereFinancialParty } }
+                m.SalesOrder.RolePattern(v => v.TotalIncVat, v => v.BillToCustomer.Party.PartyFinancialRelationshipsWhereFinancialParty),
+                m.SalesOrder.RolePattern(v => v.SalesOrderState, v => v.BillToCustomer.Party.PartyFinancialRelationshipsWhereFinancialParty),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

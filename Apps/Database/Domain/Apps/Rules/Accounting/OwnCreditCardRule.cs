@@ -18,9 +18,9 @@ namespace Allors.Database.Domain
         public OwnCreditCardRule(MetaPopulation m) : base(m, new Guid("838dbea6-9123-4cfe-acfe-1c6347ec7ff2")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.OwnCreditCard, m.OwnCreditCard.CreditCard),
-                new RolePattern(m.CreditCard, m.CreditCard.ExpirationYear) { Steps =  new IPropertyType[] {m.CreditCard.OwnCreditCardsWhereCreditCard} },
-                new RolePattern(m.CreditCard, m.CreditCard.ExpirationMonth) { Steps =  new IPropertyType[] {m.CreditCard.OwnCreditCardsWhereCreditCard} },
+                m.OwnCreditCard.RolePattern(v => v.CreditCard),
+                m.CreditCard.RolePattern(v => v.ExpirationYear, v => v.OwnCreditCardsWhereCreditCard),
+                m.CreditCard.RolePattern(v => v.ExpirationMonth, v => v.OwnCreditCardsWhereCreditCard),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
