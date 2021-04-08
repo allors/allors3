@@ -16,9 +16,9 @@ namespace Allors.Database.Domain
         public FaxCommunicationRule(MetaPopulation m) : base(m, new Guid("A6D89A8A-641F-4D11-8E92-CC10A7A2A89E")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.FaxCommunication, m.FaxCommunication.Subject),
-                new RolePattern(m.FaxCommunication, m.FaxCommunication.ToParty),
-                new RolePattern(m.Party, m.Party.PartyName) { Steps = new IPropertyType[] { m.Party.CommunicationEventsWhereToParty}, OfType = m.FaxCommunication },
+                m.FaxCommunication.RolePattern(v => v.Subject),
+                m.FaxCommunication.RolePattern(v => v.ToParty),
+                m.Party.RolePattern(v => v.PartyName, v => v.CommunicationEventsWhereToParty, m.FaxCommunication),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

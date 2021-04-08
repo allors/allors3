@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         public InternalOrganisationRequestSequenceRule(MetaPopulation m) : base(m, new Guid("95ef5957-9b9c-4692-a135-433a011faa40")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.InternalOrganisation, m.InternalOrganisation.RequestSequence),
+                m.InternalOrganisation.RolePattern(v => v.RequestSequence),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

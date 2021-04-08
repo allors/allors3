@@ -17,11 +17,11 @@ namespace Allors.Database.Domain
         public PersonTimeSheetWorkerRule(MetaPopulation m) : base(m, new Guid("34705b9b-4634-4cbb-b9a0-a2cbec9f5cd9")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.OrganisationContactRelationship.Contact),
-                new RolePattern(m.OrganisationContactRelationship, m.OrganisationContactRelationship.FromDate) {Steps = new IPropertyType[]{ m.OrganisationContactRelationship.Contact } },
-                new RolePattern(m.OrganisationContactRelationship, m.OrganisationContactRelationship.ThroughDate) {Steps = new IPropertyType[]{ m.OrganisationContactRelationship.Contact } },
-                new RolePattern(m.Employment, m.Employment.FromDate) { Steps =  new IPropertyType[] {m.Employment.Employee} },
-                new RolePattern(m.Employment, m.Employment.ThroughDate) { Steps =  new IPropertyType[] {m.Employment.Employee} },
+                m.Person.AssociationPattern(v => v.OrganisationContactRelationshipsWhereContact),
+                m.OrganisationContactRelationship.RolePattern(v => v.FromDate, v => v.Contact),
+                m.OrganisationContactRelationship.RolePattern(v => v.ThroughDate, v => v.Contact),
+                m.Employment.RolePattern(v => v.FromDate, v => v.Employee),
+                m.Employment.RolePattern(v => v.ThroughDate, v => v.Employee),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

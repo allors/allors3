@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public EmploymentRule(MetaPopulation m) : base(m, new Guid("F0587A19-E7CF-40FF-B715-5A6021525326")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.Employment, m.Employment.Employee),
-                new RolePattern(m.Employment, m.Employment.Employer),
+                m.Employment.RolePattern(v => v.Employee),
+                m.Employment.RolePattern(v => v.Employer),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

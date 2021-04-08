@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
         public JournalTypeRule(MetaPopulation m) : base(m, new Guid("c52af46b-1cbd-47cd-a00f-76aa5c232db3")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.Journal, m.Journal.JournalType),
+                m.Journal.RolePattern(v => v.JournalType),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

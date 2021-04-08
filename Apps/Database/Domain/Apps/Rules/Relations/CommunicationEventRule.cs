@@ -16,15 +16,15 @@ namespace Allors.Database.Domain
         public CommunicationEventRule(MetaPopulation m) : base(m, new Guid("6ABC8FDF-B4BC-40A2-9396-04292779E5F5")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.CommunicationEvent, m.CommunicationEvent.Owner),
-                new RolePattern(m.CommunicationEvent, m.CommunicationEvent.ActualStart),
-                new RolePattern(m.CommunicationEvent, m.CommunicationEvent.ActualEnd),
-                new RolePattern(m.CommunicationEvent, m.CommunicationEvent.ScheduledStart),
-                new RolePattern(m.CommunicationEvent, m.CommunicationEvent.ScheduledEnd),
-                new RolePattern(m.CommunicationEvent, m.CommunicationEvent.InitialScheduledStart),
-                new RolePattern(m.CommunicationEvent, m.CommunicationEvent.InitialScheduledEnd),
-                new RolePattern(m.CommunicationEvent, m.CommunicationEvent.FromParty),
-                new RolePattern(m.CommunicationEvent, m.CommunicationEvent.ToParty),
+                m.CommunicationEvent.RolePattern(v => v.Owner),
+                m.CommunicationEvent.RolePattern(v => v.ActualStart),
+                m.CommunicationEvent.RolePattern(v => v.ActualEnd),
+                m.CommunicationEvent.RolePattern(v => v.ScheduledStart),
+                m.CommunicationEvent.RolePattern(v => v.ScheduledEnd),
+                m.CommunicationEvent.RolePattern(v => v.InitialScheduledStart),
+                m.CommunicationEvent.RolePattern(v => v.InitialScheduledEnd),
+                m.CommunicationEvent.RolePattern(v => v.FromParty),
+                m.CommunicationEvent.RolePattern(v => v.ToParty),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

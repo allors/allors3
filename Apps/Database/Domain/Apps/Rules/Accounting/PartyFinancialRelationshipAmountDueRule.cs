@@ -16,10 +16,10 @@ namespace Allors.Database.Domain
         public PartyFinancialRelationshipAmountDueRule(MetaPopulation m) : base(m, new Guid("0f4cb6d0-79ca-4a5f-ba8f-d69b67448a96")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SalesInvoice, m.SalesInvoice.TotalIncVat) { Steps =  new IPropertyType[] {m.SalesInvoice.BillToCustomer, m.Party.PartyFinancialRelationshipsWhereFinancialParty } },
-                new RolePattern(m.SalesInvoice, m.SalesInvoice.AmountPaid) { Steps =  new IPropertyType[] {m.SalesInvoice.BillToCustomer, m.Party.PartyFinancialRelationshipsWhereFinancialParty } },
-                new RolePattern(m.SalesInvoice, m.SalesInvoice.DueDate) { Steps =  new IPropertyType[] {m.SalesInvoice.BillToCustomer, m.Party.PartyFinancialRelationshipsWhereFinancialParty } },
-                new RolePattern(m.Store, m.Store.PaymentGracePeriod) { Steps =  new IPropertyType[] { m.Store.SalesInvoicesWhereStore, m.SalesInvoice.BillToCustomer, m.Party.PartyFinancialRelationshipsWhereFinancialParty } }
+                m.SalesInvoice.RolePattern(v => v.TotalIncVat, v => v.BillToCustomer.Party.PartyFinancialRelationshipsWhereFinancialParty),
+                m.SalesInvoice.RolePattern(v => v.AmountPaid, v => v.BillToCustomer.Party.PartyFinancialRelationshipsWhereFinancialParty),
+                m.SalesInvoice.RolePattern(v => v.DueDate, v => v.BillToCustomer.Party.PartyFinancialRelationshipsWhereFinancialParty),
+                m.Store.RolePattern(v => v.PaymentGracePeriod, v => v.SalesInvoicesWhereStore.SalesInvoice.BillToCustomer.Party.PartyFinancialRelationshipsWhereFinancialParty),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -42,7 +42,6 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<SalesOrderItem>())
             {
-
                 if (@this.ExistSerialisedItem && !@this.ExistNextSerialisedItemAvailability)
                 {
                     validation.AssertExists(@this, @this.Meta.NextSerialisedItemAvailability);
@@ -99,13 +98,6 @@ namespace Allors.Database.Domain
                 validation.AssertExistsAtMostOne(@this, this.M.SalesOrderItem.SerialisedItem, this.M.SalesOrderItem.ProductFeature);
                 validation.AssertExistsAtMostOne(@this, this.M.SalesOrderItem.ReservedFromSerialisedInventoryItem, this.M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem);
                 validation.AssertExistsAtMostOne(@this, this.M.SalesOrderItem.AssignedUnitPrice, this.M.SalesOrderItem.DiscountAdjustments, this.M.SalesOrderItem.SurchargeAdjustments);
-
-                if (@this.SalesOrderItemState.IsInProcess
-                     && @this.ExistPreviousReservedFromNonSerialisedInventoryItem
-                    && !Equals(@this.ReservedFromNonSerialisedInventoryItem, @this.PreviousReservedFromNonSerialisedInventoryItem))
-                {
-                    validation.AddError($"{@this} {@this.Meta.ReservedFromNonSerialisedInventoryItem} {ErrorMessages.ReservedFromNonSerialisedInventoryItem}");
-                }
 
                 if (@this.ExistSerialisedItem && @this.QuantityOrdered != 1)
                 {

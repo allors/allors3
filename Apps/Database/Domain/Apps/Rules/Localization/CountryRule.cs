@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public CountryRule(MetaPopulation m) : base(m, new Guid("9cc7cee8-40b2-48bd-9f37-78d5fe86cd07")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.Country, m.Country.IsoCode),
-                new AssociationPattern(m.VatRegime.Country),
+                m.Country.RolePattern(v => v.IsoCode),
+                m.Country.AssociationPattern(v => v.VatRegimesWhereCountry),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

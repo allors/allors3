@@ -16,9 +16,9 @@ namespace Allors.Database.Domain
         public WebSiteCommunicationsRule(MetaPopulation m) : base(m, new Guid("F960FDF6-8C3F-4D0F-9E41-48A30CB115F8")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.WebSiteCommunication, m.WebSiteCommunication.Subject),
-                new RolePattern(m.WebSiteCommunication, m.WebSiteCommunication.ToParty),
-                new RolePattern(m.Party, m.Party.PartyName) { Steps = new IPropertyType[] { m.Party.CommunicationEventsWhereToParty}, OfType = m.WebSiteCommunication },
+                m.WebSiteCommunication.RolePattern(v => v.Subject),
+                m.WebSiteCommunication.RolePattern(v => v.ToParty),
+                m.Party.RolePattern(v => v.PartyName, v => v.CommunicationEventsWhereToParty, m.WebSiteCommunication),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

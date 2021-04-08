@@ -18,7 +18,6 @@ namespace Allors.Database.Domain
             {
                 new RolePattern(m.SalesOrder, m.SalesOrder.SalesOrderState),
                 new RolePattern(m.SalesOrder, m.SalesOrder.AssignedVatRegime),
-                new RolePattern(m.SalesOrder, m.SalesOrder.AssignedVatClause),
                 new RolePattern(m.SalesOrder, m.SalesOrder.OrderDate),
             };
 
@@ -35,24 +34,6 @@ namespace Allors.Database.Domain
                 {
                     @this.DerivedVatRate = @this.DerivedVatRegime?.VatRates.First(v => v.FromDate <= @this.OrderDate && (!v.ExistThroughDate || v.ThroughDate >= @this.OrderDate));
                 }
-
-                if (@this.ExistDerivedVatRegime)
-                {
-                    if (@this.DerivedVatRegime.ExistVatClause)
-                    {
-                        @this.DerivedVatClause = @this.DerivedVatRegime.VatClause;
-                    }
-                    else
-                    {
-                        @this.RemoveDerivedVatClause();
-                    }
-                }
-                else
-                {
-                    @this.RemoveDerivedVatClause();
-                }
-
-                @this.DerivedVatClause = @this.ExistAssignedVatClause ? @this.AssignedVatClause : @this.DerivedVatClause;
             }
         }
     }
