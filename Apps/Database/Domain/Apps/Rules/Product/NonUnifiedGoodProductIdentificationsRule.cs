@@ -18,9 +18,9 @@ namespace Allors.Database.Domain
         public NonUnifiedGoodProductIdentificationsRule(MetaPopulation m) : base(m, new Guid("1D67AC19-4D77-441D-AC98-3F274FADFB2C")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.NonUnifiedGood, m.NonUnifiedGood.ProductIdentifications),
-                new RolePattern(m.NonUnifiedGood, m.NonUnifiedGood.Keywords),
-                new AssociationPattern(m.ProductCategory.AllProducts) { OfType = m.NonUnifiedGood },
+                m.NonUnifiedGood.RolePattern(v => v.ProductIdentifications),
+                m.NonUnifiedGood.RolePattern(v => v.Keywords),
+                m.Product.AssociationPattern(v => v.ProductCategoriesWhereAllProduct, m.NonUnifiedGood),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

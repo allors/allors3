@@ -16,10 +16,10 @@ namespace Allors.Database.Domain
         public PartSuppliedByRule(MetaPopulation m) : base(m, new Guid("9bdcfcf1-3140-4e89-bea7-41b1662148b1")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.SupplierOffering.Part),
-                new RolePattern(m.SupplierOffering, m.SupplierOffering.FromDate) { Steps = new IPropertyType[]{ m.SupplierOffering.Part }},
-                new RolePattern(m.SupplierOffering, m.SupplierOffering.ThroughDate) { Steps = new IPropertyType[]{ m.SupplierOffering.Part } },
-                new RolePattern(m.SupplierOffering, m.SupplierOffering.AllVersions) { Steps = new IPropertyType[]{ m.SupplierOffering.AllVersions, m.SupplierOfferingVersion.Part } },
+                m.Part.AssociationPattern(v => v.SupplierOfferingsWherePart),
+                m.SupplierOffering.RolePattern(v => v.FromDate, v => v.Part),
+                m.SupplierOffering.RolePattern(v => v.ThroughDate, v => v.Part),
+                m.SupplierOffering.RolePattern(v => v.AllVersions, v => v.AllVersions.SupplierOfferingVersion.Part),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

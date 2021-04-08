@@ -12,24 +12,25 @@ namespace Allors.Database.Domain
     using Derivations;
     using Meta;
     using Database.Derivations;
-    using Resources;
 
-    public class SerialisedItemNameRule : Rule
+    public class GoodLocalisedNamesRule : Rule
     {
-        public SerialisedItemNameRule(MetaPopulation m) : base(m, new Guid("3d6cf84b-b2af-4a0f-b2d9-a5b9f991f2cb")) =>
+        public GoodLocalisedNamesRule(MetaPopulation m) : base(m, new Guid("797142eb-b474-4872-b426-b1e7cd728ffa")) =>
             this.Patterns = new Pattern[]
             {
-                m.SerialisedItem.RolePattern(v => v.Name),
-                m.SerialisedItem.RolePattern(v => v.SerialNumber),
+                m.Good.RolePattern(v => v.LocalisedNames),
+                m.LocalisedText.RolePattern(v => v.Text, v => v.UnifiedProductWhereLocalisedName, m.Good),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var @this in matches.Cast<SerialisedItem>())
+            foreach (var @this in matches.Cast<Good>())
             {
-                if (!@this.ExistName && @this.ExistSerialNumber)
+                var defaultLocale = @this.Strategy.Transaction.GetSingleton().DefaultLocale;
+
+                if (@this.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))
                 {
-                    @this.Name = @this.SerialNumber;
+                    @this.Name = @this.LocalisedNames.First(x => x.Locale.Equals(defaultLocale)).Text;
                 }
             }
         }

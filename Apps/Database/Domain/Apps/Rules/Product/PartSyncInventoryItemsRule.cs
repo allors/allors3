@@ -1,4 +1,4 @@
-// <copyright file="Domain.cs" company="Allors bvba">
+// <copyright file="PartDerivation.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -8,27 +8,24 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Meta;
     using Database.Derivations;
-    using Resources;
+    using Meta;
 
-    public class BasePriceProductRule : Rule
+    public class PartSyncInventoryItemsRule : Rule
     {
-        public BasePriceProductRule(MetaPopulation m) : base(m, new Guid("11a5592c-6f47-412a-879f-9d1c6d97169a")) =>
+        public PartSyncInventoryItemsRule(MetaPopulation m) : base(m, new Guid("e5580f5b-a6be-4546-86ab-14db5bafca8e")) =>
             this.Patterns = new Pattern[]
             {
-                m.BasePrice.RolePattern(v => v.Product),
+                m.Part.AssociationPattern(v => v.InventoryItemsWherePart),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            var validation = cycle.Validation;
-
-            foreach (var @this in matches.Cast<BasePrice>())
+            foreach (var @this in matches.Cast<Part>())
             {
-                if (@this.ExistProduct && !@this.ExistProductFeature)
+                foreach (InventoryItem inventoryItem in @this.InventoryItemsWherePart)
                 {
-                    @this.Product.AddBasePrice(@this);
+                    inventoryItem.Sync(@this);
                 }
             }
         }

@@ -16,5 +16,7 @@ namespace Allors.Database.Domain
                 this.CatScope = new Scopes(this.Strategy.Transaction).Public;
             }
         }
+
+        public void AppsOnInit(ObjectOnInit method) => this.CategoryImage ??= this.Transaction().GetSingleton().Settings.NoImageAvailableImage;
     }
 }

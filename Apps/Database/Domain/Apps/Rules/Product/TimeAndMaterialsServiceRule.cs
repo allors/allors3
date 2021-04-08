@@ -18,8 +18,8 @@ namespace Allors.Database.Domain
         public TimeAndMaterialsServiceRule(MetaPopulation m) : base(m, new Guid("60d9b0ad-2078-4921-a689-e15877983bb3")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.TimeAndMaterialsService, m.TimeAndMaterialsService.Variants),
-                new AssociationPattern(m.PriceComponent.Product) { OfType = m.TimeAndMaterialsService },
+                m.TimeAndMaterialsService.RolePattern(v => v.Variants),
+                m.Product.AssociationPattern(v => v.PriceComponentsWhereProduct, m.TimeAndMaterialsService),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -18,16 +18,16 @@ namespace Allors.Database.Domain
         public UnifiedGoodSearchStringRule(MetaPopulation m) : base(m, new Guid("e2623257-5b06-4a98-a6bc-0dd9d6049a2c")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.UnifiedGood, m.UnifiedGood.DerivationTrigger),
-                new RolePattern(m.UnifiedGood, m.UnifiedGood.ProductIdentifications),
-                new RolePattern(m.UnifiedGood, m.UnifiedGood.Keywords),
-                new RolePattern(m.UnifiedGood, m.UnifiedGood.SerialisedItems),
-                new RolePattern(m.UnifiedGood, m.UnifiedGood.ProductType),
-                new RolePattern(m.UnifiedGood, m.UnifiedGood.Brand),
-                new RolePattern(m.UnifiedGood, m.UnifiedGood.Model),
-                new AssociationPattern(m.ProductCategory.AllProducts) { OfType = m.UnifiedGood },
-                new AssociationPattern(m.PriceComponent.Product) { OfType = m.UnifiedGood },
-                new AssociationPattern(m.SupplierOffering.Part) { OfType = m.UnifiedGood },
+                m.UnifiedGood.RolePattern(v => v.DerivationTrigger),
+                m.UnifiedGood.RolePattern(v => v.ProductIdentifications),
+                m.UnifiedGood.RolePattern(v => v.Keywords),
+                m.UnifiedGood.RolePattern(v => v.SerialisedItems),
+                m.UnifiedGood.RolePattern(v => v.ProductType),
+                m.UnifiedGood.RolePattern(v => v.Brand),
+                m.UnifiedGood.RolePattern(v => v.Model),
+                m.Product.AssociationPattern(v => v.ProductCategoriesWhereAllProduct, m.UnifiedGood),
+                m.Product.AssociationPattern(v => v.PriceComponentsWhereProduct, m.UnifiedGood),
+                m.Part.AssociationPattern(v => v.SupplierOfferingsWherePart, m.UnifiedGood),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

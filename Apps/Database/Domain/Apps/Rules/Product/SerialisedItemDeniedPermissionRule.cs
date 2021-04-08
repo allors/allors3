@@ -16,14 +16,14 @@ namespace Allors.Database.Domain
         public SerialisedItemDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("14466d15-63cb-4ef2-9725-f93a361ec24c")) =>
             this.Patterns = new Pattern[]
         {
-            new AssociationPattern(m.InventoryItemTransaction.SerialisedItem),
-            new AssociationPattern(m.PurchaseInvoiceItem.SerialisedItem),
-            new AssociationPattern(m.PurchaseOrderItem.SerialisedItem),
-            new AssociationPattern(m.QuoteItem.SerialisedItem),
-            new AssociationPattern(m.SalesInvoiceItem.SerialisedItem),
-            new AssociationPattern(m.SalesOrderItem.SerialisedItem),
-            new AssociationPattern(m.SerialisedInventoryItem.SerialisedItem),
-            new AssociationPattern(m.ShipmentItem.SerialisedItem),
+            m.SerialisedItem.AssociationPattern(v => v.InventoryItemTransactionsWhereSerialisedItem),
+            m.SerialisedItem.AssociationPattern(v => v.PurchaseInvoiceItemsWhereSerialisedItem),
+            m.SerialisedItem.AssociationPattern(v => v.PurchaseOrderItemsWhereSerialisedItem),
+            m.SerialisedItem.AssociationPattern(v => v.QuoteItemsWhereSerialisedItem),
+            m.SerialisedItem.AssociationPattern(v => v.SalesInvoiceItemsWhereSerialisedItem),
+            m.SerialisedItem.AssociationPattern(v => v.SalesOrderItemsWhereSerialisedItem),
+            m.SerialisedItem.AssociationPattern(v => v.SerialisedInventoryItemsWhereSerialisedItem),
+            m.SerialisedItem.AssociationPattern(v => v.ShipmentItemsWhereSerialisedItem),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

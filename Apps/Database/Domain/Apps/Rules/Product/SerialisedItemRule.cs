@@ -19,15 +19,15 @@ namespace Allors.Database.Domain
         public SerialisedItemRule(MetaPopulation m) : base(m, new Guid("A871B4BB-3285-418F-9E10-5A786A6284DA")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SerialisedItem, m.SerialisedItem.AcquiredDate),
-                new RolePattern(m.SerialisedItem, m.SerialisedItem.AcquisitionYear),
-                new RolePattern(m.SerialisedItem, m.SerialisedItem.SerialNumber),
-                new RolePattern(m.SerialisedItem, m.SerialisedItem.PurchaseOrder),
-                new RolePattern(m.SerialisedItem, m.SerialisedItem.SerialisedItemAvailability),
-                new AssociationPattern(m.Part.SerialisedItems),
-                new AssociationPattern(m.SupplierOffering.Part) { Steps = new IPropertyType[] { m.Part.SerialisedItems } },
-                new RolePattern(m.Part, m.Part.ProductType) { Steps = new IPropertyType[] { m.Part.SerialisedItems } },
-                new RolePattern(m.ProductType, m.ProductType.SerialisedItemCharacteristicTypes) { Steps = new IPropertyType[]{ this.M.ProductType.PartsWhereProductType, m.Part.SerialisedItems } },
+                m.SerialisedItem.RolePattern(v => v.AcquiredDate),
+                m.SerialisedItem.RolePattern(v => v.AcquisitionYear),
+                m.SerialisedItem.RolePattern(v => v.SerialNumber),
+                m.SerialisedItem.RolePattern(v => v.PurchaseOrder),
+                m.SerialisedItem.RolePattern(v => v.SerialisedItemAvailability),
+                m.Part.RolePattern(v => v.ProductType, v => v.SerialisedItems),
+                m.ProductType.RolePattern(v => v.SerialisedItemCharacteristicTypes, v => v.PartsWhereProductType.Part.SerialisedItems),
+                m.SerialisedItem.AssociationPattern(v => v.PartWhereSerialisedItem),
+                m.Part.AssociationPattern(v => v.SupplierOfferingsWherePart, v => v.SerialisedItems),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -17,16 +17,16 @@ namespace Allors.Database.Domain
         public NonUnifiedPartRule(MetaPopulation m) : base(m, new Guid("280E12F5-C2EA-4D9A-BEDA-D30F229D46A3")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.NonUnifiedPart, m.NonUnifiedPart.ProductIdentifications),
-                new RolePattern(m.NonUnifiedPart, m.NonUnifiedPart.Keywords),
-                new RolePattern(m.NonUnifiedPart, m.NonUnifiedPart.LocalisedNames),
-                new RolePattern(m.NonUnifiedPart, m.NonUnifiedPart.SerialisedItems),
-                new RolePattern(m.NonUnifiedPart, m.NonUnifiedPart.ProductType),
-                new RolePattern(m.NonUnifiedPart, m.NonUnifiedPart.Brand),
-                new RolePattern(m.NonUnifiedPart, m.NonUnifiedPart.Model),
-                new RolePattern(m.LocalisedText, m.LocalisedText.Text) { Steps = new IPropertyType[]{ m.LocalisedText.UnifiedProductWhereLocalisedName }, OfType = m.NonUnifiedPart },
-                new AssociationPattern(m.PartCategory.Parts) { OfType = m.NonUnifiedPart  },
-                new AssociationPattern(m.SupplierOffering.Part) { OfType = m.NonUnifiedPart },
+                m.NonUnifiedPart.RolePattern(v => v.ProductIdentifications),
+                m.NonUnifiedPart.RolePattern(v => v.Keywords),
+                m.NonUnifiedPart.RolePattern(v => v.LocalisedNames),
+                m.NonUnifiedPart.RolePattern(v => v.SerialisedItems),
+                m.NonUnifiedPart.RolePattern(v => v.ProductType),
+                m.NonUnifiedPart.RolePattern(v => v.Brand),
+                m.NonUnifiedPart.RolePattern(v => v.Model),
+                m.LocalisedText.RolePattern(v => v.Text, v => v.UnifiedProductWhereLocalisedName, m.NonUnifiedPart),
+                m.Part.AssociationPattern(v => v.PartCategoriesWherePart, m.NonUnifiedPart),
+                m.Part.AssociationPattern(v => v.SupplierOfferingsWherePart, m.NonUnifiedPart),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

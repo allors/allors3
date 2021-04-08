@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public BasePriceOrderQuantityBreakRule(MetaPopulation m) : base(m, new Guid("6cd22bfa-6a21-44e4-8fc8-f04906aca33e")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.BasePrice, m.BasePrice.OrderQuantityBreak),
+                m.BasePrice.RolePattern(v => v.OrderQuantityBreak),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

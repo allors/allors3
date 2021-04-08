@@ -11,21 +11,24 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class CatalogueImageRule : Rule
+    public class CatalogueLocalisedNamesRule : Rule
     {
-        public CatalogueImageRule(MetaPopulation m) : base(m, new Guid("005645b4-b150-4edc-a9a6-034774db7b08")) =>
-            this.Patterns = new[]
+        public CatalogueLocalisedNamesRule(MetaPopulation m) : base(m, new Guid("4bd61c11-e431-4355-a729-66659608ca01")) =>
+            this.Patterns = new Pattern[]
             {
-                m.Catalogue.RolePattern(v => v.CatalogueImage),
+                m.Catalogue.RolePattern(v => v.LocalisedNames),
+                m.LocalisedText.RolePattern(v => v.Text, v => v.CatalogueWhereLocalisedName),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<Catalogue>())
             {
-                if (!@this.ExistCatalogueImage)
+                var defaultLocale = @this.Strategy.Transaction.GetSingleton().DefaultLocale;
+
+                if (@this.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))
                 {
-                    @this.CatalogueImage = @this.Strategy.Transaction.GetSingleton().Settings.NoImageAvailableImage;
+                    @this.Name = @this.LocalisedNames.First(x => x.Locale.Equals(defaultLocale)).Text;
                 }
             }
         }

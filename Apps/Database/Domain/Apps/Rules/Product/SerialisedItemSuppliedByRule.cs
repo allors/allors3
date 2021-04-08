@@ -19,11 +19,11 @@ namespace Allors.Database.Domain
         public SerialisedItemSuppliedByRule(MetaPopulation m) : base(m, new Guid("444245c3-7e2a-4c94-877d-c7a1490b2c6e")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SerialisedItem, m.SerialisedItem.AssignedSuppliedBy),
-                new RolePattern(m.SerialisedItem, m.SerialisedItem.PurchaseOrder),
-                new AssociationPattern(m.SupplierOffering.Part) { Steps = new IPropertyType[] { m.Part.SerialisedItems } },
-                new AssociationPattern(m.Part.SerialisedItems),
-                new RolePattern(m.SerialisedItem, m.SerialisedItem.SerialNumber),
+                m.SerialisedItem.RolePattern(v => v.SerialNumber),
+                m.SerialisedItem.RolePattern(v => v.AssignedSuppliedBy),
+                m.SerialisedItem.RolePattern(v => v.PurchaseOrder),
+                m.Part.AssociationPattern(v => v.SupplierOfferingsWherePart, v => v.SerialisedItems),
+                m.SerialisedItem.AssociationPattern(v => v.PartWhereSerialisedItem),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

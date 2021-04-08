@@ -19,8 +19,8 @@ namespace Allors.Database.Domain
         public SerialisedItemQuoteItemWhereSerialisedItemRule(MetaPopulation m) : base(m, new Guid("7b19faf5-ee38-4571-8e1a-e188b5d41fa0")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.QuoteItem.SerialisedItem),
-                new RolePattern(m.QuoteItem, m.QuoteItem.QuoteItemState) { Steps = new IPropertyType[] { m.QuoteItem.SerialisedItem } },
+                m.QuoteItem.RolePattern(v => v.QuoteItemState, v => v.SerialisedItem),
+                m.SerialisedItem.AssociationPattern(v => v.QuoteItemsWhereSerialisedItem),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

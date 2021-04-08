@@ -16,13 +16,13 @@ namespace Allors.Database.Domain
         public PartQuantitiesRule(MetaPopulation m) : base(m, new Guid("d0fc5096-5ea8-4c50-8979-0ac66d43e6d0")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.InventoryItemTransaction, m.InventoryItemTransaction.Quantity) { Steps = new IPropertyType[]{ m.InventoryItemTransaction.InventoryItem, m.InventoryItem.Part } },
-                new RolePattern(m.NonSerialisedInventoryItem, m.NonSerialisedInventoryItem.QuantityOnHand) { Steps = new IPropertyType[]{ m.NonSerialisedInventoryItem.Part } },
-                new RolePattern(m.SerialisedInventoryItem, m.SerialisedInventoryItem.Quantity) { Steps = new IPropertyType[]{ m.SerialisedInventoryItem.Part } },
-                new RolePattern(m.NonSerialisedInventoryItem, m.NonSerialisedInventoryItem.AvailableToPromise) { Steps = new IPropertyType[]{ m.NonSerialisedInventoryItem.Part } },
-                new RolePattern(m.SerialisedInventoryItem, m.SerialisedInventoryItem.SerialisedInventoryItemState) { Steps = new IPropertyType[]{ m.SerialisedInventoryItem.Part } },
-                new RolePattern(m.NonSerialisedInventoryItem, m.NonSerialisedInventoryItem.QuantityCommittedOut) { Steps = new IPropertyType[]{ m.NonSerialisedInventoryItem.Part } },
-                new RolePattern(m.NonSerialisedInventoryItem, m.NonSerialisedInventoryItem.QuantityExpectedIn) { Steps = new IPropertyType[]{ m.NonSerialisedInventoryItem.Part } },
+                m.InventoryItemTransaction.RolePattern(v => v.Quantity, v => v.InventoryItem.InventoryItem.Part),
+                m.SerialisedInventoryItem.RolePattern(v => v.Quantity, v => v.Part),
+                m.SerialisedInventoryItem.RolePattern(v => v.SerialisedInventoryItemState, v => v.Part),
+                m.NonSerialisedInventoryItem.RolePattern(v => v.QuantityOnHand, v => v.Part),
+                m.NonSerialisedInventoryItem.RolePattern(v => v.AvailableToPromise, v => v.Part),
+                m.NonSerialisedInventoryItem.RolePattern(v => v.QuantityCommittedOut, v => v.Part),
+                m.NonSerialisedInventoryItem.RolePattern(v => v.QuantityExpectedIn, v => v.Part),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
