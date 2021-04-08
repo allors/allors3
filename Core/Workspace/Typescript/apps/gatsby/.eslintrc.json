@@ -3,10 +3,21 @@
   "ignorePatterns": ["!**/*", "public", ".cache"],
   "overrides": [
     {
-      "files": ["*.tsx", "*.ts"],
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "parserOptions": {
+        "project": ["apps/gatsby/tsconfig.*?.json"]
+      },
+      "rules": {}
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
       "rules": {
         "@typescript-eslint/camelcase": "off"
       }
+    },
+    {
+      "files": ["*.js", "*.jsx"],
+      "rules": {}
     }
   ]
 }

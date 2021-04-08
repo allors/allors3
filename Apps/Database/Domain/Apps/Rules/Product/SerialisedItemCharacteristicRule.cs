@@ -16,9 +16,9 @@ namespace Allors.Database.Domain
         public SerialisedItemCharacteristicRule(MetaPopulation m) : base(m, new Guid("B9EB094F-4E60-4ABD-8AE6-CAA02D38AFA1")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SerialisedItemCharacteristic, m.SerialisedItemCharacteristic.Value),
-                new RolePattern(m.SerialisedItemCharacteristic, m.SerialisedItemCharacteristic.SerialisedItemCharacteristicType),
-                new RolePattern(m.SerialisedItemCharacteristicType, m.SerialisedItemCharacteristicType.UnitOfMeasure) { Steps = new IPropertyType[] {m.SerialisedItemCharacteristicType.SerialisedItemCharacteristicsWhereSerialisedItemCharacteristicType } },
+                m.SerialisedItemCharacteristic.RolePattern(v => v.Value),
+                m.SerialisedItemCharacteristic.RolePattern(v => v.SerialisedItemCharacteristicType),
+                m.SerialisedItemCharacteristicType.RolePattern(v => v.UnitOfMeasure, v => v.SerialisedItemCharacteristicsWhereSerialisedItemCharacteristicType),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

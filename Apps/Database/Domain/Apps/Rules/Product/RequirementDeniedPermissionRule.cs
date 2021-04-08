@@ -16,14 +16,11 @@ namespace Allors.Database.Domain
         public RequirementDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("f0023baa-b40f-4840-8f8f-db90304809e5")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.Requirement, m.Requirement.TransitionalDeniedPermissions),
+            m.Requirement.RolePattern(v => v.TransitionalDeniedPermissions),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            var transaction = cycle.Transaction;
-            var validation = cycle.Validation;
-
             foreach (var @this in matches.Cast<Requirement>())
             {
                 @this.DeniedPermissions = @this.TransitionalDeniedPermissions;

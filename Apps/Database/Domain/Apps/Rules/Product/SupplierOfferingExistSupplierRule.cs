@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public SupplierOfferingExistSupplierRule(MetaPopulation m) : base(m, new Guid("aa226c51-1c2a-4d0f-8dec-2338f32c9b9a")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SupplierOffering, m.SupplierOffering.Price),
-                new RolePattern(m.SupplierOffering, m.SupplierOffering.Supplier),
+                m.SupplierOffering.RolePattern(v => v.Price),
+                m.SupplierOffering.RolePattern(v => v.Supplier),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

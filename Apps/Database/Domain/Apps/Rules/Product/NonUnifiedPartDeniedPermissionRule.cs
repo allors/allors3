@@ -16,11 +16,11 @@ namespace Allors.Database.Domain
         public NonUnifiedPartDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("ec943224-e151-4b7a-9ed9-6bb47f285932")) =>
             this.Patterns = new Pattern[]
         {
-            new AssociationPattern(m.WorkEffortInventoryProduced.Part) { OfType = m.NonUnifiedPart },
-            new AssociationPattern(m.WorkEffortPartStandard.Part) { OfType = m.NonUnifiedPart },
-            new AssociationPattern(m.PartBillOfMaterial.Part) { OfType = m.NonUnifiedPart },
-            new AssociationPattern(m.PartBillOfMaterial.ComponentPart) { OfType = m.NonUnifiedPart },
-            new AssociationPattern(m.InventoryItemTransaction.Part) { OfType = m.NonUnifiedPart },
+            m.Part.AssociationPattern(v => v.WorkEffortInventoryProducedsWherePart, m.NonUnifiedPart),
+            m.Part.AssociationPattern(v => v.WorkEffortPartStandardsWherePart, m.NonUnifiedPart),
+            m.Part.AssociationPattern(v => v.PartBillOfMaterialsWherePart, m.NonUnifiedPart),
+            m.Part.AssociationPattern(v => v.PartBillOfMaterialsWhereComponentPart, m.NonUnifiedPart),
+            m.Part.AssociationPattern(v => v.InventoryItemTransactionsWherePart, m.NonUnifiedPart),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

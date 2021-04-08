@@ -19,7 +19,7 @@ namespace Allors.Database.Domain
         public SerialisedItemSerialisedItemAvailabilityNameRule(MetaPopulation m) : base(m, new Guid("8c692f21-bfe7-41b7-b9de-ace2ddb45d7e")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SerialisedItem, m.SerialisedItem.SerialisedItemAvailability),
+                m.SerialisedItem.RolePattern(v => v.SerialisedItemAvailability),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public BasePriceProductRule(MetaPopulation m) : base(m, new Guid("11a5592c-6f47-412a-879f-9d1c6d97169a")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.BasePrice, m.BasePrice.Product),
+                m.BasePrice.RolePattern(v => v.Product),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

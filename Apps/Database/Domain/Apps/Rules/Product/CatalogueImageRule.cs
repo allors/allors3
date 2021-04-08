@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         public CatalogueImageRule(MetaPopulation m) : base(m, new Guid("005645b4-b150-4edc-a9a6-034774db7b08")) =>
             this.Patterns = new[]
             {
-                new RolePattern(m.Catalogue, m.Catalogue.CatalogueImage),
+                m.Catalogue.RolePattern(v => v.CatalogueImage),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

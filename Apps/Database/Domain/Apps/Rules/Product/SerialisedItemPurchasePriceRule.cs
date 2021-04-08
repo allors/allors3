@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         public SerialisedItemPurchasePriceRule(MetaPopulation m) : base(m, new Guid("d9748a88-862d-4793-8fa2-0e052c6c13c9")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SerialisedItem, m.SerialisedItem.PurchaseInvoice),
+                m.SerialisedItem.RolePattern(v => v.PurchaseInvoice),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -17,8 +17,8 @@ namespace Allors.Database.Domain
         public SurchargeComponentRule(MetaPopulation m) : base(m, new Guid("1C8B75D1-3288-4DB7-987E-7A64A3225891")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SurchargeComponent, m.SurchargeComponent.Price),
-                new RolePattern(m.SurchargeComponent, m.SurchargeComponent.Percentage),
+                m.SurchargeComponent.RolePattern(v => v.Price),
+                m.SurchargeComponent.RolePattern(v => v.Percentage),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

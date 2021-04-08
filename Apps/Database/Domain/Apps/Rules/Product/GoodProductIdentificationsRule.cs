@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
         public GoodProductIdentificationsRule(MetaPopulation m) : base(m, new Guid("868a05f7-326b-47f5-8275-668f0948c7aa")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.Good, m.Good.ProductIdentifications),
+                m.Good.RolePattern(v => v.ProductIdentifications),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

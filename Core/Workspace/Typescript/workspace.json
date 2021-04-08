@@ -1,5 +1,23 @@
 {
   "version": 2,
+  "cli": { "defaultCollection": "@nrwl/angular" },
+  "defaultProject": "angular-app",
+  "generators": {
+    "@nrwl/angular:application": {
+      "style": "css",
+      "linter": "eslint",
+      "unitTestRunner": "jest",
+      "e2eTestRunner": "none"
+    },
+    "@nrwl/angular:library": {
+      "style": "css",
+      "linter": "eslint",
+      "unitTestRunner": "jest"
+    },
+    "@nrwl/angular:component": { "style": "css" },
+    "@nrwl/react": { "application": { "babel": true } },
+    "@nrwl/gatsby": { "application": { "style": "css" } }
+  },
   "projects": {
     "angular-app": {
       "projectType": "application",
@@ -171,7 +189,6 @@
       "root": "apps/gatsby",
       "sourceRoot": "apps/gatsby/src",
       "projectType": "application",
-      "generators": {},
       "targets": {
         "build": {
           "executor": "@nrwl/gatsby:build",
@@ -453,22 +470,5 @@
         }
       }
     }
-  },
-  "cli": { "defaultCollection": "@nrwl/angular" },
-  "generators": {
-    "@nrwl/angular:application": {
-      "style": "css",
-      "linter": "eslint",
-      "unitTestRunner": "jest",
-      "e2eTestRunner": "none"
-    },
-    "@nrwl/angular:library": {
-      "style": "css",
-      "linter": "eslint",
-      "unitTestRunner": "jest"
-    },
-    "@nrwl/angular:component": { "style": "css" },
-    "@nrwl/gatsby": { "application": {} }
-  },
-  "defaultProject": "angular-app"
+  }
 }

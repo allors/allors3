@@ -14,20 +14,20 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Resources;
 
-    public class SerialisedItemDeriveSearchStringRule : Rule
+    public class SerialisedItemSearchStringRule : Rule
     {
-        public SerialisedItemDeriveSearchStringRule(MetaPopulation m) : base(m, new Guid("9d4316ae-3abf-4b6a-839e-1acbcea8995f")) =>
+        public SerialisedItemSearchStringRule(MetaPopulation m) : base(m, new Guid("9d4316ae-3abf-4b6a-839e-1acbcea8995f")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SerialisedItem, m.SerialisedItem.Name),
-                new RolePattern(m.SerialisedItem, m.SerialisedItem.ItemNumber),
-                new RolePattern(m.SerialisedItem, m.SerialisedItem.SerialNumber),
-                new RolePattern(m.SerialisedItem, m.SerialisedItem.OwnedBy),
-                new RolePattern(m.SerialisedItem, m.SerialisedItem.Buyer),
-                new RolePattern(m.SerialisedItem, m.SerialisedItem.Seller),
-                new AssociationPattern(m.Part.SerialisedItems),
-                new RolePattern(m.Brand, m.Brand.Name) { Steps = new IPropertyType[] { m.Brand.PartsWhereBrand, m.Part.SerialisedItems } },
-                new RolePattern(m.Model, m.Model.Name) { Steps = new IPropertyType[] { m.Model.PartsWhereModel, m.Part.SerialisedItems } },
+                m.SerialisedItem.RolePattern(v => v.Name),
+                m.SerialisedItem.RolePattern(v => v.ItemNumber),
+                m.SerialisedItem.RolePattern(v => v.SerialNumber),
+                m.SerialisedItem.RolePattern(v => v.OwnedBy),
+                m.SerialisedItem.RolePattern(v => v.Buyer),
+                m.SerialisedItem.RolePattern(v => v.Seller),
+                m.Brand.RolePattern(v => v.Name, v => v.PartsWhereBrand.Part.SerialisedItems),
+                m.Model.RolePattern(v => v.Name, v => v.PartsWhereModel.Part.SerialisedItems),
+                m.SerialisedItem.AssociationPattern(v => v.PartWhereSerialisedItem),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

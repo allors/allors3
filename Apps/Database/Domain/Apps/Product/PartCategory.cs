@@ -8,5 +8,7 @@ namespace Allors.Database.Domain
     public partial class PartCategory
     {
         public override string ToString() => this.Name;
+
+        public void AppsOnInit(ObjectOnInit method) => this.CategoryImage ??= this.Transaction().GetSingleton().Settings.NoImageAvailableImage;
     }
 }
