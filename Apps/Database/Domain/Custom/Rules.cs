@@ -187,7 +187,7 @@ namespace Allors.Database.Domain
                 new PurchaseReturnExistShipmentNumberRule(m),
                 new PurchaseReturnRule(m),
                 new PurchaseShipmentShipFromAddressRule(m),
-                new PurchaseShipmentDeriveShipToPartyRule(m),
+                new PurchaseShipmentShipToPartyRule(m),
                 new PurchaseShipmentStateRule(m),
                 new ShipmentPackageRule(m),
                 new PickListItemRule(m),

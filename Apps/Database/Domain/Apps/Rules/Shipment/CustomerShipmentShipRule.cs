@@ -17,11 +17,11 @@ namespace Allors.Database.Domain
         public CustomerShipmentShipRule(MetaPopulation m) : base(m, new Guid("09c6d242-b089-4fe3-860c-3df2e39c00f3")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.CustomerShipment, m.CustomerShipment.ShipmentState),
-                new AssociationPattern(m.PickList.ShipToParty) { Steps = new IPropertyType[] { m.Party.ShipmentsWhereShipToParty }, OfType = m.CustomerShipment },
-                new RolePattern(m.PickList, m.PickList.PickListState) { Steps = new IPropertyType[] { m.PickList.ShipToParty, m.Party.ShipmentsWhereShipToParty }, OfType = m.CustomerShipment },
-                new RolePattern(m.PickListVersion, m.PickListVersion.ShipToParty) { Steps = new IPropertyType[] { m.PickListVersion.PickListWhereCurrentVersion, m.PickList.ShipToParty, m.Party.ShipmentsWhereShipToParty }, OfType = m.CustomerShipment },
-                new RolePattern(m.SalesOrder, m.SalesOrder.SalesOrderState) { Steps = new IPropertyType[] { m.SalesOrder.SalesOrderItems, m.SalesOrderItem.OrderShipmentsWhereOrderItem, m.OrderShipment.ShipmentItem, m.ShipmentItem.ShipmentWhereShipmentItem }, OfType = m.CustomerShipment },
+                m.CustomerShipment.RolePattern(v => v.ShipmentState),
+                m.PickList.RolePattern(v => v.PickListState, v => v.ShipToParty.Party.ShipmentsWhereShipToParty.Shipment.AsCustomerShipment),
+                m.PickListVersion.RolePattern(v => v.ShipToParty, v => v.PickListWhereCurrentVersion.PickList.ShipToParty.Party.ShipmentsWhereShipToParty.Shipment.AsCustomerShipment),
+                m.SalesOrder.RolePattern(v => v.SalesOrderState, v => v.SalesOrderItems.SalesOrderItem.OrderShipmentsWhereOrderItem.OrderShipment.ShipmentItem.ShipmentItem.ShipmentWhereShipmentItem.Shipment.AsCustomerShipment),
+                m.Party.AssociationPattern(v => v.PickListsWhereShipToParty, v => v.ShipmentsWhereShipToParty.Shipment.AsCustomerShipment),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

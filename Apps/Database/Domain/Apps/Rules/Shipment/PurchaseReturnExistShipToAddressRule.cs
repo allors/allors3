@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public PurchaseReturnExistShipToAddressRule(MetaPopulation m) : base(m, new Guid("82fa069b-fb5a-4d6d-89eb-6098bf214cc5")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PurchaseReturn, m.PurchaseReturn.ShipToParty),
-                new RolePattern(m.PurchaseReturn, m.PurchaseReturn.ShipToAddress),
+                m.PurchaseReturn.RolePattern(v => v.ShipToParty),
+                m.PurchaseReturn.RolePattern(v => v.ShipToAddress),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

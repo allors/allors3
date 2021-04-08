@@ -12,13 +12,13 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class PurchaseShipmentDeriveShipToPartyRule : Rule
+    public class PurchaseShipmentShipToPartyRule : Rule
     {
-        public PurchaseShipmentDeriveShipToPartyRule(MetaPopulation m) : base(m, new Guid("89A2FB27-6839-40D4-AFAB-79E25259B1C8")) =>
+        public PurchaseShipmentShipToPartyRule(MetaPopulation m) : base(m, new Guid("89A2FB27-6839-40D4-AFAB-79E25259B1C8")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PurchaseShipment, m.PurchaseShipment.ShipToParty),
-                new RolePattern(m.PurchaseShipment, m.PurchaseShipment.ShipToAddress),
+                m.PurchaseShipment.RolePattern(v => v.ShipToParty),
+                m.PurchaseShipment.RolePattern(v => v.ShipToAddress),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

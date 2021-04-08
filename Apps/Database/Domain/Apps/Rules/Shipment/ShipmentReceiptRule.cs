@@ -16,12 +16,12 @@ namespace Allors.Database.Domain
         public ShipmentReceiptRule(MetaPopulation m) : base(m, new Guid("BE525828-2AAC-4996-98A0-08293485D7DD")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.ShipmentReceipt, m.ShipmentReceipt.ShipmentItem),
-                new RolePattern(m.ShipmentReceipt, m.ShipmentReceipt.OrderItem),
-                new RolePattern(m.ShipmentReceipt, m.ShipmentReceipt.QuantityAccepted),
-                new RolePattern(m.ShipmentReceipt, m.ShipmentReceipt.Facility),
-                new RolePattern(m.ShipmentItem, m.ShipmentItem.SerialisedItem) { Steps = new IPropertyType[] { m.ShipmentItem.ShipmentReceiptWhereShipmentItem } },
-                new RolePattern(m.ShipmentItem, m.ShipmentItem.Part) { Steps = new IPropertyType[] { m.ShipmentItem.ShipmentReceiptWhereShipmentItem } },
+                m.ShipmentReceipt.RolePattern(v => v.ShipmentItem),
+                m.ShipmentReceipt.RolePattern(v => v.OrderItem),
+                m.ShipmentReceipt.RolePattern(v => v.QuantityAccepted),
+                m.ShipmentReceipt.RolePattern(v => v.Facility),
+                m.ShipmentItem.RolePattern(v => v.SerialisedItem, v => v.ShipmentReceiptWhereShipmentItem),
+                m.ShipmentItem.RolePattern(v => v.Part, v => v.ShipmentReceiptWhereShipmentItem),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

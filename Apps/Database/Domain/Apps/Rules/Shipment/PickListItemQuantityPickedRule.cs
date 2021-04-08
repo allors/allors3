@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         public PickListItemQuantityPickedRule(MetaPopulation m) : base(m, new Guid("c07f30af-09c4-409a-bfdc-fffcac2082fd")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PickList, m.PickList.PickListState) { Steps = new IPropertyType[] { m.PickList.PickListItems } },
+                m.PickList.RolePattern(v => v.PickListState, v => v.PickListItems),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

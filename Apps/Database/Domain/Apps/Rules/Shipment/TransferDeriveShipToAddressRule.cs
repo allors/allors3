@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public TransferDeriveShipToAddressRule(MetaPopulation m) : base(m, new Guid("E915AF63-F1CE-4DD7-8A92-BA519C140753")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.Transfer, m.Transfer.ShipToParty),
-                new RolePattern(m.Transfer, m.Transfer.ShipToAddress),
+                m.Transfer.RolePattern(v => v.ShipToParty),
+                m.Transfer.RolePattern(v => v.ShipToAddress),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
