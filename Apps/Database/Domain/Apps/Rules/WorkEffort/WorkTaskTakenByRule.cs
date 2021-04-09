@@ -35,8 +35,6 @@ namespace Allors.Database.Domain
                     validation.AddError($"{@this} {this.M.WorkTask.TakenBy} {ErrorMessages.InternalOrganisationChanged}");
                 }
 
-                @this.ResetPrintDocument();
-
                 if (!@this.ExistWorkEffortNumber && @this.ExistTakenBy)
                 {
                     var year = @this.Transaction().Now().Year;

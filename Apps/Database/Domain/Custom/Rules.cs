@@ -375,7 +375,7 @@ namespace Allors.Database.Domain
                 new TimeEntryWorkerRule(m),
                 new WorkEffortAssignmentRateWorkEffortRule(m),
                 new WorkEffortAssignmentRateValidationRule(m),
-                new WorkEffortInventoryAssignmentRule(m),
+                new WorkTaskPrintRule(m),
                 new WorkEffortInventoryAssignmentSyncInventoryTransactionsRule(m),
                 new WorkEffortInventoryAssignmentCostOfGoodsSoldRule(m),
                 new WorkEffortInventoryAssignmentDerivedBillableQuantityRule(m),

@@ -103,8 +103,7 @@ namespace Allors.Database.Domain.Print.ProductQuoteModel
                 if (product.Photos.Count > 1)
                 {
                     this.SecondaryPhotoName2 = $"{item.Id}_secondaryPhoto2";
-                    //[0] => [1]
-                    imageByImageName.Add(this.SecondaryPhotoName2, product.Photos[0].MediaContent.Data);
+                    imageByImageName.Add(this.SecondaryPhotoName2, product.Photos[1].MediaContent.Data);
                 }
             }
         }
