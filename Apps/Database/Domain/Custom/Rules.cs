@@ -293,6 +293,7 @@ namespace Allors.Database.Domain
                 new PurchaseInvoiceCreatedRule(m),
                 new PurchaseInvoiceStateRule(m),
                 new PurchaseInvoicePriceRule(m),
+                new PurchaseInvoicePrintRule(m),
                 new PurchaseInvoiceSerialisedItemRule(m),
                 new PurchaseInvoiceAwaitingApprovalRule(m),
                 new PurchaseOrderItemBillingsWhereOrderItemRule(m),
