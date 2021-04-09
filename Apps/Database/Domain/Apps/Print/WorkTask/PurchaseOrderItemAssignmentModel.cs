@@ -16,6 +16,7 @@ namespace Allors.Database.Domain.Print.WorkTaskModel
 
             this.Name = purchaseOrderItem.Part?.Name ?? purchaseOrderItem.Description;
             this.Quantity = assignment.Quantity;
+            //Gestopt op regel 20
             this.UnitOfMeasure = purchaseOrderItem.Part?.UnitOfMeasure?.Abbreviation?.ToUpperInvariant() ??
                                  purchaseOrderItem.Part?.UnitOfMeasure?.Name?.ToUpperInvariant() ??
                                  "EA";
