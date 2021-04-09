@@ -118,7 +118,7 @@ namespace Allors.Database.Domain
                 m.OrderItemBilling.RolePattern(v => v.OrderItem, v => v.InvoiceItem.InvoiceItem.AsPurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem),
                 m.PurchaseOrder.RolePattern(v => v.OrderNumber, v => v.PurchaseOrderItems.PurchaseOrderItem.PurchaseInvoiceItemsWherePurchaseOrderItem.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem),
 
-                m.PurchaseOrder.RolePattern(v => v.OrderAdjustments),
+                m.PurchaseOrder.RolePattern(v => v.OrderAdjustments, v => v.PurchaseInvoicesWherePurchaseOrder),
                 m.OrderAdjustment.AssociationPattern(v => v.InvoiceWhereOrderAdjustment, v => v.OrderWhereOrderAdjustment.Order.AsPurchaseOrder),
                 m.OrderAdjustment.RolePattern(v => v.Description, v => v.OrderWhereOrderAdjustment.Order.AsPurchaseOrder),
                 m.Invoice.RolePattern(v => v.TotalDiscount, v => v.OrderAdjustments.OrderAdjustment.OrderWhereOrderAdjustment.Order.AsPurchaseOrder),
