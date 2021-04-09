@@ -23,7 +23,7 @@ namespace Allors.Database.Domain.Print.SalesOrderModel
                 {
                     this.Telephone = $"{phone.CountryCode} {phone.AreaCode} {phone.ContactNumber}";
                 }
-
+                //Ben hier gestopt, vanaf hier verder doen.
                 if (billedFrom.GeneralCorrespondence is PostalAddress generalAddress)
                 {
                     this.Address = generalAddress.Address1;
