@@ -17,26 +17,26 @@ namespace Allors.Database.Domain
         public QuoteItemPriceRule(MetaPopulation m) : base(m, new Guid("01b4ac5d-fbd9-4f94-a1cf-2f5b5875063f")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.QuoteItem, m.QuoteItem.Product),
-                new RolePattern(m.QuoteItem, m.QuoteItem.ProductFeature),
-                new RolePattern(m.QuoteItem, m.QuoteItem.QuotedWithFeatures),
-                new RolePattern(m.QuoteItem, m.QuoteItem.Quantity),
-                new RolePattern(m.QuoteItem, m.QuoteItem.AssignedUnitPrice),
-                new RolePattern(m.QuoteItem, m.QuoteItem.DiscountAdjustments),
-                new RolePattern(m.QuoteItem, m.QuoteItem.SurchargeAdjustments),
-                new RolePattern(m.QuoteItem, m.QuoteItem.VatRate),
-                new RolePattern(m.QuoteItem, m.QuoteItem.IrpfRate),
-                new RolePattern(m.DiscountAdjustment, m.DiscountAdjustment.Percentage) { Steps =  new IPropertyType[] {m.DiscountAdjustment.PriceableWhereDiscountAdjustment}, OfType = m.QuoteItem },
-                new RolePattern(m.DiscountAdjustment, m.DiscountAdjustment.Amount) { Steps =  new IPropertyType[] {m.DiscountAdjustment.PriceableWhereDiscountAdjustment}, OfType = m.QuoteItem },
-                new RolePattern(m.SurchargeAdjustment, m.SurchargeAdjustment.Percentage) { Steps =  new IPropertyType[] {m.SurchargeAdjustment.PriceableWhereSurchargeAdjustment}, OfType = m.QuoteItem },
-                new RolePattern(m.SurchargeAdjustment, m.SurchargeAdjustment.Amount) { Steps =  new IPropertyType[] {m.SurchargeAdjustment.PriceableWhereSurchargeAdjustment}, OfType = m.QuoteItem },
-                new RolePattern(m.Quote, m.Quote.Receiver) { Steps =  new IPropertyType[] {m.Quote.QuoteItems } },
-                new RolePattern(m.Quote, m.Quote.IssueDate) { Steps =  new IPropertyType[] {m.Quote.QuoteItems } },
-                new RolePattern(m.Quote, m.Quote.DerivationTrigger) { Steps =  new IPropertyType[] {m.Quote.QuoteItems } },
-                new RolePattern(m.ProductQuoteItemByProduct, m.ProductQuoteItemByProduct.Product) { Steps =  new IPropertyType[] {m.ProductQuoteItemByProduct.ProductQuoteWhereProductQuoteItemsByProduct, m.Quote.QuoteItems } },
-                new RolePattern(m.ProductQuoteItemByProduct, m.ProductQuoteItemByProduct.QuantityOrdered) { Steps =  new IPropertyType[] {m.ProductQuoteItemByProduct.ProductQuoteWhereProductQuoteItemsByProduct, m.Quote.QuoteItems } },
-                new RolePattern(m.ProductQuoteItemByProduct, m.ProductQuoteItemByProduct.ValueOrdered) { Steps =  new IPropertyType[] {m.ProductQuoteItemByProduct.ProductQuoteWhereProductQuoteItemsByProduct, m.Quote.QuoteItems } },
-            };
+                m.QuoteItem.RolePattern(v => v.Product),
+                m.QuoteItem.RolePattern(v => v.ProductFeature),
+                m.QuoteItem.RolePattern(v => v.QuotedWithFeatures),
+                m.QuoteItem.RolePattern(v => v.Quantity),
+                m.QuoteItem.RolePattern(v => v.AssignedUnitPrice),
+                m.QuoteItem.RolePattern(v => v.DiscountAdjustments),
+                m.QuoteItem.RolePattern(v => v.SurchargeAdjustments),
+                m.QuoteItem.RolePattern(v => v.VatRate),
+                m.QuoteItem.RolePattern(v => v.IrpfRate),
+                m.DiscountAdjustment.RolePattern(v => v.Percentage, v => v.PriceableWhereDiscountAdjustment, m.QuoteItem),
+                m.DiscountAdjustment.RolePattern(v => v.Amount, v => v.PriceableWhereDiscountAdjustment, m.QuoteItem),
+                m.SurchargeAdjustment.RolePattern(v => v.Percentage, v => v.PriceableWhereSurchargeAdjustment, m.QuoteItem),
+                m.SurchargeAdjustment.RolePattern(v => v.Amount, v => v.PriceableWhereSurchargeAdjustment, m.QuoteItem),
+                m.Quote.RolePattern(v => v.Receiver, v => v.QuoteItems),
+                m.Quote.RolePattern(v => v.IssueDate, v => v.QuoteItems),
+                m.Quote.RolePattern(v => v.DerivationTrigger, v => v.QuoteItems),
+                m.ProductQuoteItemByProduct.RolePattern(v => v.Product, v => v.ProductQuoteWhereProductQuoteItemsByProduct.ProductQuote.QuoteItems),
+                m.ProductQuoteItemByProduct.RolePattern(v => v.QuantityOrdered, v => v.ProductQuoteWhereProductQuoteItemsByProduct.ProductQuote.QuoteItems),
+                m.ProductQuoteItemByProduct.RolePattern(v => v.ValueOrdered, v => v.ProductQuoteWhereProductQuoteItemsByProduct.ProductQuote.QuoteItems),
+                };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {

@@ -16,11 +16,11 @@ namespace Allors.Database.Domain
         public SalesOrderItemQuantitiesRule(MetaPopulation m) : base(m, new Guid("5790f640-2435-466e-8f34-6cb817008e3d")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.SalesOrderItemState),
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.QuantityPendingShipment),
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.QuantityShipped),
-                new AssociationPattern(m.InventoryItemTransaction.InventoryItem) { Steps = new IPropertyType[] { m.NonSerialisedInventoryItem.SalesOrderItemInventoryAssignmentsWhereInventoryItem, m.SalesOrderItemInventoryAssignment.SalesOrderItemWhereSalesOrderItemInventoryAssignment } },
-                new AssociationPattern(m.PickListItem.InventoryItem) { Steps = new IPropertyType[] { m.NonSerialisedInventoryItem.SalesOrderItemInventoryAssignmentsWhereInventoryItem, m.SalesOrderItemInventoryAssignment.SalesOrderItemWhereSalesOrderItemInventoryAssignment } },
+                m.SalesOrderItem.RolePattern(v => v.SalesOrderItemState),
+                m.SalesOrderItem.RolePattern(v => v.QuantityPendingShipment),
+                m.SalesOrderItem.RolePattern(v => v.QuantityShipped),
+                m.InventoryItem.AssociationPattern(v => v.InventoryItemTransactionsWhereInventoryItem, v => v.SalesOrderItemInventoryAssignmentsWhereInventoryItem.SalesOrderItemInventoryAssignment.SalesOrderItemWhereSalesOrderItemInventoryAssignment),
+                m.InventoryItem.AssociationPattern(v => v.PickListItemsWhereInventoryItem, v => v.SalesOrderItemInventoryAssignmentsWhereInventoryItem.SalesOrderItemInventoryAssignment.SalesOrderItemWhereSalesOrderItemInventoryAssignment),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

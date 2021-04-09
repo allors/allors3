@@ -11,17 +11,17 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class SalesOrderProvisionalDeriveBillToContactMechanismRule : Rule
+    public class SalesOrderProvisionalBillToContactMechanismRule : Rule
     {
-        public SalesOrderProvisionalDeriveBillToContactMechanismRule(MetaPopulation m) : base(m, new Guid("1dba5834-84ff-4fe0-8c86-32ed97db792d")) =>
+        public SalesOrderProvisionalBillToContactMechanismRule(MetaPopulation m) : base(m, new Guid("1dba5834-84ff-4fe0-8c86-32ed97db792d")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SalesOrder, m.SalesOrder.SalesOrderState),
-                new RolePattern(m.SalesOrder, m.SalesOrder.AssignedBillToContactMechanism),
-                new RolePattern(m.SalesOrder, m.SalesOrder.BillToCustomer),
-                new RolePattern(m.Party, m.Party.BillingAddress) { Steps = new IPropertyType[] { this.M.Party.SalesOrdersWhereBillToCustomer }},
-                new RolePattern(m.Party, m.Party.ShippingAddress) { Steps = new IPropertyType[] { this.M.Party.SalesOrdersWhereBillToCustomer }},
-                new RolePattern(m.Party, m.Party.GeneralCorrespondence) { Steps = new IPropertyType[] { this.M.Party.SalesOrdersWhereBillToCustomer }},
+                m.SalesOrder.RolePattern(v => v.SalesOrderState),
+                m.SalesOrder.RolePattern(v => v.AssignedBillToContactMechanism),
+                m.SalesOrder.RolePattern(v => v.BillToCustomer),
+                m.Party.RolePattern(v => v.BillingAddress, v => v.SalesOrdersWhereBillToCustomer),
+                m.Party.RolePattern(v => v.ShippingAddress, v => v.SalesOrdersWhereBillToCustomer),
+                m.Party.RolePattern(v => v.GeneralCorrespondence, v => v.SalesOrdersWhereBillToCustomer),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

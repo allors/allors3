@@ -12,12 +12,12 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Resources;
 
-    public class RequestForQuoteDeriveRequestItemsRule : Rule
+    public class RequestForQuoteRequestItemsRule : Rule
     {
-        public RequestForQuoteDeriveRequestItemsRule(MetaPopulation m) : base(m, new Guid("8505acf9-e8b6-4d35-b0c1-a6af03217df2")) =>
+        public RequestForQuoteRequestItemsRule(MetaPopulation m) : base(m, new Guid("8505acf9-e8b6-4d35-b0c1-a6af03217df2")) =>
             this.Patterns = new[]
             {
-                new RolePattern(m.RequestForQuote, m.RequestForQuote.RequestItems)
+                m.RequestForQuote.RolePattern(v => v.RequestItems)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -11,16 +11,16 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Meta;
 
-    public class RequestDeriveCurrencyRule : Rule
+    public class RequestCurrencyRule : Rule
     {
-        public RequestDeriveCurrencyRule(MetaPopulation m) : base(m, new Guid("aea23418-c816-44ad-9c49-e82edd65dfc3")) =>
+        public RequestCurrencyRule(MetaPopulation m) : base(m, new Guid("aea23418-c816-44ad-9c49-e82edd65dfc3")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.Request, m.Request.Recipient),
-                new RolePattern(m.Request, m.Request.Originator),
-                new RolePattern(m.Request, m.Request.AssignedCurrency),
-                new RolePattern(m.Party, m.Party.PreferredCurrency) { Steps = new IPropertyType[] { this.M.Party.RequestsWhereOriginator}},
-                new RolePattern(m.Organisation, m.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { this.M.Organisation.RequestsWhereRecipient}},
+                m.Request.RolePattern(v => v.Recipient),
+                m.Request.RolePattern(v => v.Originator),
+                m.Request.RolePattern(v => v.AssignedCurrency),
+                m.Party.RolePattern(v => v.PreferredCurrency, v => v.RequestsWhereOriginator),
+                m.Organisation.RolePattern(v => v.PreferredCurrency, v => v.RequestsWhereRecipient),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

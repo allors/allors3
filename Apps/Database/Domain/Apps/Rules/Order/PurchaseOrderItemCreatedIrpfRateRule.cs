@@ -13,16 +13,16 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Resources;
 
-    public class PurchaseOrderItemCreatedDeriveIrpfRateRule : Rule
+    public class PurchaseOrderItemCreatedIrpfRateRule : Rule
     {
-        public PurchaseOrderItemCreatedDeriveIrpfRateRule(MetaPopulation m) : base(m, new Guid("7559bffd-7685-4023-bef7-9f5ff96b6f41")) =>
+        public PurchaseOrderItemCreatedIrpfRateRule(MetaPopulation m) : base(m, new Guid("7559bffd-7685-4023-bef7-9f5ff96b6f41")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.PurchaseOrderItemState),
-                new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.AssignedIrpfRegime),
-                new RolePattern(m.PurchaseOrder, m.PurchaseOrder.DerivedIrpfRegime) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
-                new RolePattern(m.PurchaseOrder, m.PurchaseOrder.OrderDate) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
-                new AssociationPattern(m.PurchaseOrder.PurchaseOrderItems),
+                m.PurchaseOrderItem.RolePattern(v => v.PurchaseOrderItemState),
+                m.PurchaseOrderItem.RolePattern(v => v.AssignedIrpfRegime),
+                m.PurchaseOrder.RolePattern(v => v.DerivedIrpfRegime, v => v.PurchaseOrderItems),
+                m.PurchaseOrder.RolePattern(v => v.OrderDate, v => v.PurchaseOrderItems),
+                m.PurchaseOrderItem.AssociationPattern(v => v.PurchaseOrderWherePurchaseOrderItem),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

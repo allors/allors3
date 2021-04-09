@@ -16,13 +16,13 @@ namespace Allors.Database.Domain
         public SalesOrderItemDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("84ff5d0c-c15d-426d-a019-ad8ab0bdbcf2")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.SalesOrderItem, m.SalesOrderItem.TransitionalDeniedPermissions),
-            new RolePattern(m.SalesOrderItem, m.SalesOrderItem.SalesOrderItemInvoiceState),
-            new RolePattern(m.SalesOrderItem, m.SalesOrderItem.SalesOrderItemShipmentState),
-            new AssociationPattern(m.OrderItemBilling.OrderItem) { OfType = m.SalesOrderItem },
-            new AssociationPattern(m.OrderShipment.OrderItem) { OfType = m.SalesOrderItem },
-            new AssociationPattern(m.OrderRequirementCommitment.OrderItem) { OfType = m.SalesOrderItem },
-            new AssociationPattern(m.WorkEffort.OrderItemFulfillment) { OfType = m.SalesOrderItem },
+            m.SalesOrderItem.RolePattern(v => v.TransitionalDeniedPermissions),
+            m.SalesOrderItem.RolePattern(v => v.SalesOrderItemInvoiceState),
+            m.SalesOrderItem.RolePattern(v => v.SalesOrderItemShipmentState),
+            m.OrderItem.AssociationPattern(v => v.OrderItemBillingsWhereOrderItem, m.SalesOrderItem),
+            m.OrderItem.AssociationPattern(v => v.OrderShipmentsWhereOrderItem, m.SalesOrderItem),
+            m.OrderItem.AssociationPattern(v => v.OrderRequirementCommitmentsWhereOrderItem, m.SalesOrderItem),
+            m.OrderItem.AssociationPattern(v => v.WorkEffortsWhereOrderItemFulfillment, m.SalesOrderItem),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

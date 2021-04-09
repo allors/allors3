@@ -13,14 +13,14 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Resources;
 
-    public class PurchaseOrderCreatedDeriveVatRegimeRule : Rule
+    public class PurchaseOrderCreatedVatRegimeRule : Rule
     {
-        public PurchaseOrderCreatedDeriveVatRegimeRule(MetaPopulation m) : base(m, new Guid("16c4358a-bbfd-405d-9c54-e7450b0721e6")) =>
+        public PurchaseOrderCreatedVatRegimeRule(MetaPopulation m) : base(m, new Guid("16c4358a-bbfd-405d-9c54-e7450b0721e6")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PurchaseOrder, m.PurchaseOrder.PurchaseOrderState),
-                new RolePattern(m.PurchaseOrder, m.PurchaseOrder.AssignedVatRegime),
-                new RolePattern(m.PurchaseOrder, m.PurchaseOrder.OrderDate),
+                m.PurchaseOrder.RolePattern(v => v.PurchaseOrderState),
+                m.PurchaseOrder.RolePattern(v => v.AssignedVatRegime),
+                m.PurchaseOrder.RolePattern(v => v.OrderDate),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

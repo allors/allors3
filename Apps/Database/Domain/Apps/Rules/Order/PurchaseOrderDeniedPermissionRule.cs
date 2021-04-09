@@ -16,16 +16,16 @@ namespace Allors.Database.Domain
         public PurchaseOrderDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("23ec4c76-b156-406f-ad16-4b83a17db3c6")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.PurchaseOrder, m.PurchaseOrder.TransitionalDeniedPermissions),
-            new RolePattern(m.PurchaseOrder, m.PurchaseOrder.PurchaseOrderShipmentState),
-            new AssociationPattern(m.WorkEffortPurchaseOrderItemAssignment.PurchaseOrder),
-            new AssociationPattern(m.PurchaseInvoice.PurchaseOrders),
-            new AssociationPattern(m.SerialisedItem.PurchaseOrder),
-            new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.PurchaseOrderItemState) { Steps =  new IPropertyType[] {m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem} },
-            new AssociationPattern(m.OrderItemBilling.OrderItem) { Steps =  new IPropertyType[] { m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem }, OfType = m.PurchaseOrder },
-            new AssociationPattern(m.OrderShipment.OrderItem) { Steps =  new IPropertyType[] { m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem }, OfType = m.PurchaseOrder },
-            new AssociationPattern(m.OrderRequirementCommitment.OrderItem) { Steps =  new IPropertyType[] { m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem }, OfType = m.PurchaseOrder },
-            new AssociationPattern(m.WorkEffort.OrderItemFulfillment) { Steps =  new IPropertyType[] { m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem }, OfType = m.PurchaseOrder },
+            m.PurchaseOrder.RolePattern(v => v.TransitionalDeniedPermissions),
+            m.PurchaseOrder.RolePattern(v => v.PurchaseOrderShipmentState),
+            m.PurchaseOrder.AssociationPattern(v => v.WorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrder),
+            m.PurchaseOrder.AssociationPattern(v => v.PurchaseInvoicesWherePurchaseOrder),
+            m.PurchaseOrder.AssociationPattern(v => v.SerialisedItemsWherePurchaseOrder),
+            m.PurchaseOrderItem.RolePattern(v => v.PurchaseOrderItemState, v => v.PurchaseOrderWherePurchaseOrderItem),
+            m.OrderItem.AssociationPattern(v => v.OrderItemBillingsWhereOrderItem, v => v.AsPurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem, m.PurchaseOrder),
+            m.OrderItem.AssociationPattern(v => v.OrderShipmentsWhereOrderItem, v => v.AsPurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem, m.PurchaseOrder),
+            m.OrderItem.AssociationPattern(v => v.OrderRequirementCommitmentsWhereOrderItem, v => v.AsPurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem, m.PurchaseOrder),
+            m.OrderItem.AssociationPattern(v => v.WorkEffortsWhereOrderItemFulfillment, v => v.AsPurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem, m.PurchaseOrder),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -13,14 +13,15 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Resources;
 
-    public class PurchaseOrderCreatedDeriveIrpfRegimeRule : Rule
+    public class PurchaseOrderCreatedShipToAddressRule : Rule
     {
-        public PurchaseOrderCreatedDeriveIrpfRegimeRule(MetaPopulation m) : base(m, new Guid("856625a8-bdac-4de6-928d-1d415dba80ef")) =>
+        public PurchaseOrderCreatedShipToAddressRule(MetaPopulation m) : base(m, new Guid("1b414d7b-ad1f-412c-8856-03642c105bec")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PurchaseOrder, m.PurchaseOrder.PurchaseOrderState),
-                new RolePattern(m.PurchaseOrder, m.PurchaseOrder.AssignedIrpfRegime),
-                new RolePattern(m.PurchaseOrder, m.PurchaseOrder.OrderDate),
+                m.PurchaseOrder.RolePattern(v => v.PurchaseOrderState),
+                m.PurchaseOrder.RolePattern(v => v.AssignedShipToAddress),
+                m.PurchaseOrder.RolePattern(v => v.OrderedBy),
+                m.Organisation.RolePattern(v => v.ShippingAddress, v => v.PurchaseOrdersWhereOrderedBy),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -29,12 +30,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<PurchaseOrder>().Where(v => v.PurchaseOrderState.IsCreated))
             {
-                @this.DerivedIrpfRegime = @this.AssignedIrpfRegime;
-
-                if (@this.ExistOrderDate)
-                {
-                    @this.DerivedIrpfRate = @this.DerivedIrpfRegime?.IrpfRates.First(v => v.FromDate <= @this.OrderDate && (!v.ExistThroughDate || v.ThroughDate >= @this.OrderDate));
-                }
+                @this.DerivedShipToAddress = @this.AssignedShipToAddress ?? @this.OrderedBy?.ShippingAddress;
             }
         }
     }

@@ -18,12 +18,12 @@ namespace Allors.Database.Domain
         public PurchaseOrderItemRule(MetaPopulation m) : base(m, new Guid("A59A2EFC-AF5C-4F95-9212-4FD4B0306957")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.Part),
-                new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.SerialisedItem),
-                new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.SerialNumber),
-                new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.QuantityOrdered),
-                new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.DerivationTrigger),
-                new RolePattern(m.PurchaseOrder, m.PurchaseOrder.StoredInFacility) { Steps = new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems} },
+                m.PurchaseOrderItem.RolePattern(v => v.Part),
+                m.PurchaseOrderItem.RolePattern(v => v.SerialisedItem),
+                m.PurchaseOrderItem.RolePattern(v => v.SerialNumber),
+                m.PurchaseOrderItem.RolePattern(v => v.QuantityOrdered),
+                m.PurchaseOrderItem.RolePattern(v => v.DerivationTrigger),
+                m.PurchaseOrder.RolePattern(v => v.StoredInFacility, v => v.PurchaseOrderItems),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

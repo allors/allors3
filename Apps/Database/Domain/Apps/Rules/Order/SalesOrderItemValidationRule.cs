@@ -18,21 +18,21 @@ namespace Allors.Database.Domain
         public SalesOrderItemValidationRule(MetaPopulation m) : base(m, new Guid("aacada18-bce7-44e3-92fa-50d0a9b0790b")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.Product),
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.ProductFeature),
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.InvoiceItemType),
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.SerialisedItem),
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.NextSerialisedItemAvailability),
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.QuantityOrdered),
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.AssignedUnitPrice),
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.SalesOrderItemState),
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.ReservedFromNonSerialisedInventoryItem),
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.ReservedFromSerialisedInventoryItem),
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.DiscountAdjustments),
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.SurchargeAdjustments),
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.SalesOrderItemInventoryAssignments),
-                new RolePattern(m.SerialisedInventoryItem, m.SerialisedInventoryItem.Quantity) { Steps = new IPropertyType[] { m.SerialisedInventoryItem.SerialisedItem, m.SerialisedItem.SalesOrderItemsWhereSerialisedItem }},
-                new AssociationPattern(m.InventoryItemTransaction.Part) { Steps = new IPropertyType[] { m.UnifiedGood.SalesOrderItemsWhereProduct }},
+                m.SalesOrderItem.RolePattern(v => v.Product),
+                m.SalesOrderItem.RolePattern(v => v.ProductFeature),
+                m.SalesOrderItem.RolePattern(v => v.InvoiceItemType),
+                m.SalesOrderItem.RolePattern(v => v.SerialisedItem),
+                m.SalesOrderItem.RolePattern(v => v.NextSerialisedItemAvailability),
+                m.SalesOrderItem.RolePattern(v => v.QuantityOrdered),
+                m.SalesOrderItem.RolePattern(v => v.AssignedUnitPrice),
+                m.SalesOrderItem.RolePattern(v => v.SalesOrderItemState),
+                m.SalesOrderItem.RolePattern(v => v.ReservedFromNonSerialisedInventoryItem),
+                m.SalesOrderItem.RolePattern(v => v.ReservedFromSerialisedInventoryItem),
+                m.SalesOrderItem.RolePattern(v => v.DiscountAdjustments),
+                m.SalesOrderItem.RolePattern(v => v.SurchargeAdjustments),
+                m.SalesOrderItem.RolePattern(v => v.SalesOrderItemInventoryAssignments),
+                m.SerialisedInventoryItem.RolePattern(v => v.Quantity, v => v.SerialisedItem.SerialisedItem.SalesOrderItemsWhereSerialisedItem),
+                m.Part.AssociationPattern(v => v.InventoryItemTransactionsWherePart, v => v.AsUnifiedGood.SalesOrderItemsWhereProduct),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

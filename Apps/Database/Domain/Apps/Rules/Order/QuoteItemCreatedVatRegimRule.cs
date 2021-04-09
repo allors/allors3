@@ -11,15 +11,15 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Meta;
 
-    public class QuoteItemCreatedDeriveVatRegimeRule : Rule
+    public class QuoteItemCreatedVatRegimeRule : Rule
     {
-        public QuoteItemCreatedDeriveVatRegimeRule(MetaPopulation m) : base(m, new Guid("0bd97653-57ad-468a-85df-e4abda86d4ae")) =>
+        public QuoteItemCreatedVatRegimeRule(MetaPopulation m) : base(m, new Guid("0bd97653-57ad-468a-85df-e4abda86d4ae")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.QuoteItem, m.QuoteItem.AssignedVatRegime),
-                new AssociationPattern(m.Quote.QuoteItems),
-                new RolePattern(m.Quote, m.Quote.IssueDate) { Steps = new IPropertyType[] { m.Quote.QuoteItems }},
-                new RolePattern(m.Quote, m.Quote.DerivedVatRegime) { Steps = new IPropertyType[] { m.Quote.QuoteItems }},
+                m.QuoteItem.RolePattern(v => v.AssignedVatRegime),
+                m.QuoteItem.AssociationPattern(v => v.QuoteWhereQuoteItem),
+                m.Quote.RolePattern(v => v.IssueDate, v => v.QuoteItems),
+                m.Quote.RolePattern(v => v.DerivedVatRegime, v => v.QuoteItems),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

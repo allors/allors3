@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         public RequestItemDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("45bfa303-4cff-4e8f-889a-eac847d02849")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.RequestItem, m.RequestItem.TransitionalDeniedPermissions),
+            m.RequestItem.RolePattern(v => v.TransitionalDeniedPermissions),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

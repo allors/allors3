@@ -16,17 +16,17 @@ namespace Allors.Database.Domain
         public SalesOrderDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("6e383218-1d0f-41bb-83ed-7f6f3bf551ca")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.SalesOrder, m.SalesOrder.TransitionalDeniedPermissions),
-            new RolePattern(m.SalesOrder, m.SalesOrder.CanShip),
-            new RolePattern(m.SalesOrder, m.SalesOrder.CanInvoice),
-            new RolePattern(m.SalesOrder, m.SalesOrder.Quote),
-            new RolePattern(m.SalesOrder, m.SalesOrder.SalesOrderInvoiceState),
-            new RolePattern(m.SalesOrder, m.SalesOrder.SalesOrderShipmentState),
-            new RolePattern(m.SalesOrderItem, m.SalesOrderItem.SalesOrderItemState) { Steps = new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
-            new AssociationPattern(m.OrderItemBilling.OrderItem) { Steps =  new IPropertyType[] { m.SalesOrderItem.SalesOrderWhereSalesOrderItem }, OfType = m.SalesOrder },
-            new AssociationPattern(m.OrderShipment.OrderItem) { Steps =  new IPropertyType[] { m.SalesOrderItem.SalesOrderWhereSalesOrderItem }, OfType = m.SalesOrder },
-            new AssociationPattern(m.OrderRequirementCommitment.OrderItem) { Steps =  new IPropertyType[] { m.SalesOrderItem.SalesOrderWhereSalesOrderItem }, OfType = m.SalesOrder },
-            new AssociationPattern(m.WorkEffort.OrderItemFulfillment) { Steps =  new IPropertyType[] { m.SalesOrderItem.SalesOrderWhereSalesOrderItem }, OfType = m.SalesOrder },
+            m.SalesOrder.RolePattern(v => v.TransitionalDeniedPermissions),
+            m.SalesOrder.RolePattern(v => v.CanShip),
+            m.SalesOrder.RolePattern(v => v.CanInvoice),
+            m.SalesOrder.RolePattern(v => v.Quote),
+            m.SalesOrder.RolePattern(v => v.SalesOrderInvoiceState),
+            m.SalesOrder.RolePattern(v => v.SalesOrderShipmentState),
+            m.SalesOrderItem.RolePattern(v => v.SalesOrderItemState, v => v.SalesOrderWhereSalesOrderItem),
+            m.OrderItem.AssociationPattern(v => v.OrderItemBillingsWhereOrderItem, v => v.AsSalesOrderItem.SalesOrderWhereSalesOrderItem),
+            m.OrderItem.AssociationPattern(v => v.OrderShipmentsWhereOrderItem, v => v.AsSalesOrderItem.SalesOrderWhereSalesOrderItem, m.SalesOrder),
+            m.OrderItem.AssociationPattern(v => v.OrderRequirementCommitmentsWhereOrderItem, v => v.AsSalesOrderItem.SalesOrderWhereSalesOrderItem, m.SalesOrder),
+            m.OrderItem.AssociationPattern(v => v.WorkEffortsWhereOrderItemFulfillment, v => v.AsSalesOrderItem.SalesOrderWhereSalesOrderItem, m.SalesOrder),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

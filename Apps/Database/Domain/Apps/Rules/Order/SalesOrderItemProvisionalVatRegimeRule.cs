@@ -11,16 +11,16 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class SalesOrderItemProvisionalDeriveVatRegimeRule : Rule
+    public class SalesOrderItemProvisionalVatRegimeRule : Rule
     {
-        public SalesOrderItemProvisionalDeriveVatRegimeRule(MetaPopulation m) : base(m, new Guid("69ce53b7-28ce-405b-83ae-1bb800d53048")) =>
+        public SalesOrderItemProvisionalVatRegimeRule(MetaPopulation m) : base(m, new Guid("69ce53b7-28ce-405b-83ae-1bb800d53048")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.SalesOrder.SalesOrderItems),
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.SalesOrderItemState),
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.AssignedVatRegime),
-                new RolePattern(m.SalesOrder, m.SalesOrder.DerivedVatRegime) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems} },
-                new RolePattern(m.SalesOrder, m.SalesOrder.OrderDate) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems} },
+                m.SalesOrderItem.AssociationPattern(v => v.SalesOrderWhereSalesOrderItem),
+                m.SalesOrderItem.RolePattern(v => v.SalesOrderItemState),
+                m.SalesOrderItem.RolePattern(v => v.AssignedVatRegime),
+                m.SalesOrder.RolePattern(v => v.DerivedVatRegime, v => v.SalesOrderItems),
+                m.SalesOrder.RolePattern(v => v.OrderDate, v => v.SalesOrderItems),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

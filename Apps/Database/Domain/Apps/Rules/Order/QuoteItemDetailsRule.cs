@@ -19,8 +19,8 @@ namespace Allors.Database.Domain
         public QuoteItemDetailsRule(MetaPopulation m) : base(m, new Guid("9f1ff793-4ad5-4694-8e15-a918954727f1")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.QuoteItem, m.QuoteItem.SerialisedItem),
-                new RolePattern(m.QuoteItem, m.QuoteItem.Product),
+                m.QuoteItem.RolePattern(v => v.SerialisedItem),
+                m.QuoteItem.RolePattern(v => v.Product),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

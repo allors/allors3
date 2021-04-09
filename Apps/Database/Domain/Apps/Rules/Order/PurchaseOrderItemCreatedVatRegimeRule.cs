@@ -13,15 +13,16 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Resources;
 
-    public class PurchaseOrderItemCreatedDeriveDeliveryDateRule : Rule
+    public class PurchaseOrderItemCreatedVatRegimeRule : Rule
     {
-        public PurchaseOrderItemCreatedDeriveDeliveryDateRule(MetaPopulation m) : base(m, new Guid("f2b5b9d4-0496-4237-8722-ad4c5521c721")) =>
+        public PurchaseOrderItemCreatedVatRegimeRule(MetaPopulation m) : base(m, new Guid("4eb0b3b1-479d-46c0-9e4d-5761e07bceb8")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.PurchaseOrderItemState),
-                new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.AssignedDeliveryDate),
-                new RolePattern(m.PurchaseOrder, m.PurchaseOrder.DeliveryDate) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
-                new AssociationPattern(m.PurchaseOrder.PurchaseOrderItems),
+                m.PurchaseOrderItem.RolePattern(v => v.PurchaseOrderItemState),
+                m.PurchaseOrderItem.RolePattern(v => v.AssignedVatRegime),
+                m.PurchaseOrder.RolePattern(v => v.DerivedVatRegime, v => v.PurchaseOrderItems),
+                m.PurchaseOrder.RolePattern(v => v.OrderDate, v => v.PurchaseOrderItems),
+                m.PurchaseOrderItem.AssociationPattern(v => v.PurchaseOrderWherePurchaseOrderItem),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -33,7 +34,8 @@ namespace Allors.Database.Domain
             {
                 var order = @this.PurchaseOrderWherePurchaseOrderItem;
 
-                @this.DerivedDeliveryDate = @this.AssignedDeliveryDate ?? order?.DeliveryDate;
+                @this.DerivedVatRegime = @this.AssignedVatRegime ?? order?.DerivedVatRegime;
+                @this.VatRate = @this.DerivedVatRegime?.VatRates.First(v => v.FromDate <= order.OrderDate && (!v.ExistThroughDate || v.ThroughDate >= order.OrderDate));
             }
         }
     }

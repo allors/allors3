@@ -11,13 +11,13 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Meta;
 
-    public class QuoteDeriveQuoteItemsRule : Rule
+    public class QuoteQuoteItemsRule : Rule
     {
-        public QuoteDeriveQuoteItemsRule(MetaPopulation m) : base(m, new Guid("00728229-8ff0-4f2b-b34b-f62010706a95")) =>
+        public QuoteQuoteItemsRule(MetaPopulation m) : base(m, new Guid("00728229-8ff0-4f2b-b34b-f62010706a95")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.ProductQuote, m.ProductQuote.QuoteItems),
-                new RolePattern(m.QuoteItem, m.QuoteItem.QuoteItemState) { Steps =  new IPropertyType[] {m.QuoteItem.QuoteWhereQuoteItem} },
+                m.ProductQuote.RolePattern(v => v.QuoteItems),
+                m.QuoteItem.RolePattern(v => v.QuoteItemState, v => v.QuoteWhereQuoteItem),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

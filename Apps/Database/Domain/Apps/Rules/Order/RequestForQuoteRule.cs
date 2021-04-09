@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public RequestForQuoteRule(MetaPopulation m) : base(m, new Guid("BD181210-419E-4F87-8B3C-3AEF43711514")) =>
             this.Patterns = new[]
             {
-                new RolePattern(m.RequestForQuote, m.RequestForQuote.Recipient),
+                m.RequestForQuote.RolePattern(v => v.Recipient),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

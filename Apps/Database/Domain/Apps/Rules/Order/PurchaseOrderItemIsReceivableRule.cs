@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public PurchaseOrderItemIsReceivableRule(MetaPopulation m) : base(m, new Guid("525c9efa-5ba0-41bf-9118-a7b79441a9d9")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.InvoiceItemType),
-                new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.Part),
+                m.PurchaseOrderItem.RolePattern(v => v.InvoiceItemType),
+                m.PurchaseOrderItem.RolePattern(v => v.Part)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

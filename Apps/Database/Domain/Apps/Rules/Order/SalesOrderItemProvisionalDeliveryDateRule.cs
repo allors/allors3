@@ -11,15 +11,15 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class SalesOrderItemProvisionalDeriveDeliveryDateRule : Rule
+    public class SalesOrderItemProvisionalDeliveryDateRule : Rule
     {
-        public SalesOrderItemProvisionalDeriveDeliveryDateRule(MetaPopulation m) : base(m, new Guid("bb7a16f3-ae6c-49e3-adb4-a978e93f106d")) =>
+        public SalesOrderItemProvisionalDeliveryDateRule(MetaPopulation m) : base(m, new Guid("bb7a16f3-ae6c-49e3-adb4-a978e93f106d")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.SalesOrder.SalesOrderItems),
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.SalesOrderItemState),
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.AssignedDeliveryDate),
-                new RolePattern(m.SalesOrder, m.SalesOrder.DeliveryDate) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems} },
+                m.SalesOrderItem.AssociationPattern(v => v.SalesOrderWhereSalesOrderItem),
+                m.SalesOrderItem.RolePattern(v => v.SalesOrderItemState),
+                m.SalesOrderItem.RolePattern(v => v.AssignedDeliveryDate),
+                m.SalesOrder.RolePattern(v => v.DeliveryDate, v => v.SalesOrderItems),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

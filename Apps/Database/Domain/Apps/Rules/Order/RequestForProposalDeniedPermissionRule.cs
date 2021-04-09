@@ -16,9 +16,9 @@ namespace Allors.Database.Domain
         public RequestForProposalDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("1eb65d1c-7164-4c98-aef5-47c3e96f26d7")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.RequestForProposal, m.RequestForProposal.TransitionalDeniedPermissions),
-            new RolePattern(m.RequestItem, m.RequestItem.RequestItemState) { Steps =  new IPropertyType[] { m.RequestItem.RequestWhereRequestItem}, OfType = m.RequestForProposal },
-            new AssociationPattern(m.Quote.Request) { OfType = m.RequestForProposal },
+            m.RequestForProposal.RolePattern(v => v.TransitionalDeniedPermissions),
+            m.RequestItem.RolePattern(v => v.RequestItemState, v => v.RequestWhereRequestItem, m.RequestForProposal),
+            m.Request.AssociationPattern(v => v.QuoteWhereRequest,m.RequestForProposal),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

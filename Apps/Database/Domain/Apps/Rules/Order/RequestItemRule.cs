@@ -18,10 +18,10 @@ namespace Allors.Database.Domain
         public RequestItemRule(MetaPopulation m) : base(m, new Guid("764C2996-50E5-4C53-A6DA-A527BCECF221")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.RequestItem, m.RequestItem.RequestItemState),
-                new RolePattern(m.RequestItem, m.RequestItem.UnitOfMeasure),
-                new RolePattern(m.Request, m.Request.RequestState) { Steps = new IPropertyType[] { m.Request.RequestItems } },
-                new AssociationPattern(m.Request.RequestItems),
+                m.RequestItem.RolePattern(v => v.RequestItemState),
+                m.RequestItem.RolePattern(v => v.UnitOfMeasure),
+                m.Request.RolePattern(v => v.RequestState, v => v.RequestItems),
+                m.RequestItem.AssociationPattern(v => v.RequestWhereRequestItem),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

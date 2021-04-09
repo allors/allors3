@@ -16,10 +16,10 @@ namespace Allors.Database.Domain
         public ProductQuoteDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("5629cded-4afb-4ca7-9c78-24c998b8698c")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.ProductQuote, m.ProductQuote.TransitionalDeniedPermissions),
-            new RolePattern(m.ProductQuote, m.ProductQuote.ValidQuoteItems),
-            new RolePattern(m.ProductQuote, m.ProductQuote.Request),
-            new AssociationPattern(m.SalesOrder.Quote) { OfType = m.ProductQuote},
+            m.ProductQuote.RolePattern(v => v.TransitionalDeniedPermissions),
+            m.ProductQuote.RolePattern(v => v.ValidQuoteItems),
+            m.ProductQuote.RolePattern(v => v.Request),
+            m.ProductQuote.AssociationPattern(v => v.SalesOrderWhereQuote, m.ProductQuote),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

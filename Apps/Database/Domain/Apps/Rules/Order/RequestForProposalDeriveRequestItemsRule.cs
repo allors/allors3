@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public RequestForProposalDeriveRequestItemsRule(MetaPopulation m) : base(m, new Guid("2eb48653-bed2-4f58-8120-fa1f021b7c0b")) =>
             this.Patterns = new[]
             {
-                new RolePattern(m.RequestForProposal, m.RequestForProposal.RequestItems)
+                m.RequestForProposal.RolePattern(v => v.RequestItems)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

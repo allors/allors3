@@ -11,17 +11,17 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Meta;
 
-    public class QuoteCreatedDeriveCurrencyRule : Rule
+    public class QuoteCreatedCurrencyRule : Rule
     {
-        public QuoteCreatedDeriveCurrencyRule(MetaPopulation m) : base(m, new Guid("383cdf87-ac0e-4ab6-998d-9f8cef6fcd83")) =>
+        public QuoteCreatedCurrencyRule(MetaPopulation m) : base(m, new Guid("383cdf87-ac0e-4ab6-998d-9f8cef6fcd83")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.Quote, m.Quote.QuoteState),
-                new RolePattern(m.Quote, m.Quote.Issuer),
-                new RolePattern(m.Quote, m.Quote.Receiver),
-                new RolePattern(m.Quote, m.Quote.AssignedCurrency),
-                new RolePattern(m.Party, m.Party.PreferredCurrency) { Steps = new IPropertyType[] { m.Party.QuotesWhereReceiver }},
-                new RolePattern(m.Organisation, m.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { m.Organisation.QuotesWhereReceiver }},
+                m.Quote.RolePattern(v => v.QuoteState),
+                m.Quote.RolePattern(v => v.Issuer),
+                m.Quote.RolePattern(v => v.Receiver),
+                m.Quote.RolePattern(v => v.AssignedCurrency),
+                m.Party.RolePattern(v => v.PreferredCurrency, v => v.QuotesWhereReceiver),
+                m.Organisation.RolePattern(v => v.PreferredCurrency, v => v.QuotesWhereReceiver),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

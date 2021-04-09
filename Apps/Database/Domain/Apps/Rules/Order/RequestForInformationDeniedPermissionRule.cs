@@ -16,9 +16,10 @@ namespace Allors.Database.Domain
         public RequestForInformationDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("3227f658-588b-42eb-bf4f-f76d1d4b85c4")) =>
             this.Patterns = new Pattern[]
         {
-            new RolePattern(m.RequestForInformation, m.RequestForInformation.TransitionalDeniedPermissions),
-            new RolePattern(m.RequestItem, m.RequestItem.RequestItemState) { Steps =  new IPropertyType[] { m.RequestItem.RequestWhereRequestItem}, OfType = m.RequestForInformation },
-            new AssociationPattern(m.Quote.Request) { OfType = m.RequestForInformation },
+            m.RequestForInformation.RolePattern(v => v.TransitionalDeniedPermissions),
+            m.RequestItem.RolePattern(v => v.RequestItemState, v => v.RequestWhereRequestItem, m.RequestForInformation),
+            m.RequestItem.RolePattern(v => v.RequestItemState, v => v.RequestWhereRequestItem, m.RequestForInformation),
+            m.Request.AssociationPattern(v => v.QuoteWhereRequest, m.RequestForInformation),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

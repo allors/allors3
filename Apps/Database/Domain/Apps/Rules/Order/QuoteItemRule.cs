@@ -18,15 +18,15 @@ namespace Allors.Database.Domain
         public QuoteItemRule(MetaPopulation m) : base(m, new Guid("17010D27-1BE9-4A8C-8AF5-8A9F9589AAF6")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.QuoteItem, m.QuoteItem.InvoiceItemType),
-                new RolePattern(m.QuoteItem, m.QuoteItem.Product),
-                new RolePattern(m.QuoteItem, m.QuoteItem.ProductFeature),
-                new RolePattern(m.QuoteItem, m.QuoteItem.Deliverable),
-                new RolePattern(m.QuoteItem, m.QuoteItem.WorkEffort),
-                new RolePattern(m.QuoteItem, m.QuoteItem.SerialisedItem),
-                new RolePattern(m.QuoteItem, m.QuoteItem.Quantity),
-                new RolePattern(m.QuoteItem, m.QuoteItem.RequestItem),
-                new RolePattern(m.QuoteItem, m.QuoteItem.UnitOfMeasure),
+                m.QuoteItem.RolePattern(v => v.InvoiceItemType),
+                m.QuoteItem.RolePattern(v => v.Product),
+                m.QuoteItem.RolePattern(v => v.ProductFeature),
+                m.QuoteItem.RolePattern(v => v.Deliverable),
+                m.QuoteItem.RolePattern(v => v.WorkEffort),
+                m.QuoteItem.RolePattern(v => v.SerialisedItem),
+                m.QuoteItem.RolePattern(v => v.Quantity),
+                m.QuoteItem.RolePattern(v => v.RequestItem),
+                m.QuoteItem.RolePattern(v => v.UnitOfMeasure),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

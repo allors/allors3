@@ -13,15 +13,15 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Resources;
 
-    public class PurchaseOrderCreatedDeriveLocaleRule : Rule
+    public class PurchaseOrderCreatedCurrencyRule : Rule
     {
-        public PurchaseOrderCreatedDeriveLocaleRule(MetaPopulation m) : base(m, new Guid("d121d029-74ca-4980-8862-0e66a3418227")) =>
+        public PurchaseOrderCreatedCurrencyRule(MetaPopulation m) : base(m, new Guid("99e76e43-51ec-4a57-b8c6-438ad3dc9f57")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PurchaseOrder, m.PurchaseOrder.PurchaseOrderState),
-                new RolePattern(m.PurchaseOrder, m.PurchaseOrder.Locale),
-                new RolePattern(m.PurchaseOrder, m.PurchaseOrder.OrderedBy),
-                new RolePattern(m.Organisation, m.Organisation.Locale) { Steps = new IPropertyType[] { m.Organisation.PurchaseOrdersWhereOrderedBy }},
+                m.PurchaseOrder.RolePattern(v => v.PurchaseOrderState),
+                m.PurchaseOrder.RolePattern(v => v.AssignedCurrency),
+                m.PurchaseOrder.RolePattern(v => v.OrderedBy),
+                m.Organisation.RolePattern(v => v.PreferredCurrency, v => v.PurchaseOrdersWhereOrderedBy),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<PurchaseOrder>().Where(v => v.PurchaseOrderState.IsCreated))
             {
-                @this.DerivedLocale = @this.Locale ?? @this.OrderedBy?.Locale;
+                @this.DerivedCurrency = @this.AssignedCurrency ?? @this.OrderedBy?.PreferredCurrency;
             }
         }
     }

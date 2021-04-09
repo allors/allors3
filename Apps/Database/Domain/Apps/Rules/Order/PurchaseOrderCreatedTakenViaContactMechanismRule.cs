@@ -13,15 +13,15 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Resources;
 
-    public class PurchaseOrderCreatedDeriveShipToAddressRule : Rule
+    public class PurchaseOrderCreatedTakenViaContactMechanismRule : Rule
     {
-        public PurchaseOrderCreatedDeriveShipToAddressRule(MetaPopulation m) : base(m, new Guid("1b414d7b-ad1f-412c-8856-03642c105bec")) =>
+        public PurchaseOrderCreatedTakenViaContactMechanismRule(MetaPopulation m) : base(m, new Guid("f4a7358e-8f6a-4178-bccb-d27aa3a35918")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PurchaseOrder, m.PurchaseOrder.PurchaseOrderState),
-                new RolePattern(m.PurchaseOrder, m.PurchaseOrder.AssignedShipToAddress),
-                new RolePattern(m.PurchaseOrder, m.PurchaseOrder.OrderedBy),
-                new RolePattern(m.Organisation, m.Organisation.ShippingAddress) { Steps = new IPropertyType[] { m.Organisation.PurchaseOrdersWhereOrderedBy }},
+                m.PurchaseOrder.RolePattern(v => v.PurchaseOrderState),
+                m.PurchaseOrder.RolePattern(v => v.AssignedTakenViaContactMechanism),
+                m.PurchaseOrder.RolePattern(v => v.TakenViaSupplier),
+                m.Organisation.RolePattern(v => v.OrderAddress, v => v.PurchaseOrdersWhereTakenViaSupplier),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<PurchaseOrder>().Where(v => v.PurchaseOrderState.IsCreated))
             {
-                @this.DerivedShipToAddress = @this.AssignedShipToAddress ?? @this.OrderedBy?.ShippingAddress;
+                @this.DerivedTakenViaContactMechanism = @this.AssignedTakenViaContactMechanism ?? @this.TakenViaSupplier?.OrderAddress;
             }
         }
     }

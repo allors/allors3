@@ -11,16 +11,16 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Meta;
 
-    public class QuoteCreatedDeriveVatRegimeRule : Rule
+    public class QuoteCreatedVatRegimeRule : Rule
     {
-        public QuoteCreatedDeriveVatRegimeRule(MetaPopulation m) : base(m, new Guid("7dfea429-5232-4b78-9674-0d84e83340b2")) =>
+        public QuoteCreatedVatRegimeRule(MetaPopulation m) : base(m, new Guid("7dfea429-5232-4b78-9674-0d84e83340b2")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.Quote, m.Quote.QuoteState),
-                new RolePattern(m.Quote, m.Quote.Issuer),
-                new RolePattern(m.Quote, m.Quote.Receiver),
-                new RolePattern(m.Quote, m.Quote.AssignedVatRegime),
-                new RolePattern(m.Quote, m.Quote.IssueDate),
+                m.Quote.RolePattern(v => v.QuoteState),
+                m.Quote.RolePattern(v => v.Issuer),
+                m.Quote.RolePattern(v => v.Receiver),
+                m.Quote.RolePattern(v => v.AssignedVatRegime),
+                m.Quote.RolePattern(v => v.IssueDate),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

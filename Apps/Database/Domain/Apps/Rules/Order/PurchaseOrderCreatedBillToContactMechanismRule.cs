@@ -13,15 +13,16 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Resources;
 
-    public class PurchaseOrderCreatedDeriveTakenViaContactMechanismRule : Rule
+    public class PurchaseOrderCreatedBillToContactMechanismRule : Rule
     {
-        public PurchaseOrderCreatedDeriveTakenViaContactMechanismRule(MetaPopulation m) : base(m, new Guid("f4a7358e-8f6a-4178-bccb-d27aa3a35918")) =>
+        public PurchaseOrderCreatedBillToContactMechanismRule(MetaPopulation m) : base(m, new Guid("afdc6169-7cd1-44ca-a257-84e4d2d3371d")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PurchaseOrder, m.PurchaseOrder.PurchaseOrderState),
-                new RolePattern(m.PurchaseOrder, m.PurchaseOrder.AssignedTakenViaContactMechanism),
-                new RolePattern(m.PurchaseOrder, m.PurchaseOrder.TakenViaSupplier),
-                new RolePattern(m.Organisation, m.Organisation.OrderAddress) { Steps = new IPropertyType[] { m.Organisation.PurchaseOrdersWhereTakenViaSupplier }},
+                m.PurchaseOrder.RolePattern(v => v.AssignedBillToContactMechanism),
+                m.PurchaseOrder.RolePattern(v => v.OrderedBy),
+                m.Organisation.RolePattern(v => v.GeneralCorrespondence, v => v.PurchaseOrdersWhereOrderedBy),
+                m.Organisation.RolePattern(v => v.BillingAddress, v => v.PurchaseOrdersWhereOrderedBy),
+
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -30,7 +31,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<PurchaseOrder>().Where(v => v.PurchaseOrderState.IsCreated))
             {
-                @this.DerivedTakenViaContactMechanism = @this.AssignedTakenViaContactMechanism ?? @this.TakenViaSupplier?.OrderAddress;
+                @this.DerivedBillToContactMechanism = @this.AssignedBillToContactMechanism ?? @this.OrderedBy?.BillingAddress ?? @this.OrderedBy?.GeneralCorrespondence;
             }
         }
     }

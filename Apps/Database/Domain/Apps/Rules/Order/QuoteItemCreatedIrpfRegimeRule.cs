@@ -11,15 +11,15 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Meta;
 
-    public class QuoteItemCreatedDeriveIrpfRegimeRule : Rule
+    public class QuoteItemCreatedIrpfRegimeRule : Rule
     {
-        public QuoteItemCreatedDeriveIrpfRegimeRule(MetaPopulation m) : base(m, new Guid("b66c0721-4aa5-4ca7-91a0-534f6cfc6718")) =>
+        public QuoteItemCreatedIrpfRegimeRule(MetaPopulation m) : base(m, new Guid("b66c0721-4aa5-4ca7-91a0-534f6cfc6718")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.QuoteItem, m.QuoteItem.AssignedIrpfRegime),
-                new AssociationPattern(m.Quote.QuoteItems),
-                new RolePattern(m.Quote, m.Quote.IssueDate) { Steps = new IPropertyType[] { m.Quote.QuoteItems }},
-                new RolePattern(m.Quote, m.Quote.DerivedIrpfRegime) { Steps = new IPropertyType[] { m.Quote.QuoteItems }},
+                m.QuoteItem.RolePattern(v => v.AssignedIrpfRegime),
+                m.QuoteItem.AssociationPattern(v => v.QuoteWhereQuoteItem),
+                m.Quote.RolePattern(v => v.IssueDate, v => v.QuoteItems),
+                m.Quote.RolePattern(v => v.DerivedIrpfRegime, v => v.QuoteItems),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

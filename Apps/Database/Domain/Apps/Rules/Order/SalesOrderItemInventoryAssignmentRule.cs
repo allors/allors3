@@ -16,9 +16,9 @@ namespace Allors.Database.Domain
         public SalesOrderItemInventoryAssignmentRule(MetaPopulation m) : base(m, new Guid("2B36132A-5557-4FBD-8611-F80302E8550C")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SalesOrderItemInventoryAssignment, m.SalesOrderItemInventoryAssignment.InventoryItemTransactions),
-                new RolePattern(m.SalesOrderItemInventoryAssignment, m.SalesOrderItemInventoryAssignment.Quantity),
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.SalesOrderItemState) { Steps = new IPropertyType[] {m.SalesOrderItem.SalesOrderItemInventoryAssignments} },
+                m.SalesOrderItemInventoryAssignment.RolePattern(v => v.InventoryItemTransactions),
+                m.SalesOrderItemInventoryAssignment.RolePattern(v => v.Quantity),
+                m.SalesOrderItem.RolePattern(v => v.SalesOrderItemState, v => v.SalesOrderItemInventoryAssignments),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

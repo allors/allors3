@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public RequestForInformationRule(MetaPopulation m) : base(m, new Guid("5BCE8864-6EC2-4672-A29D-CA49A6C49718")) =>
             this.Patterns = new[]
             {
-                new RolePattern(m.RequestForInformation, m.RequestForInformation.Recipient),
+                m.RequestForInformation.RolePattern(v => v.Recipient),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

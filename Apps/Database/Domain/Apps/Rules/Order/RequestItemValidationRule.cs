@@ -18,14 +18,14 @@ namespace Allors.Database.Domain
         public RequestItemValidationRule(MetaPopulation m) : base(m, new Guid("b619cde6-b636-46e6-a7e6-e3355867aa53")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.RequestItem, m.RequestItem.Product),
-                new RolePattern(m.RequestItem, m.RequestItem.ProductFeature),
-                new RolePattern(m.RequestItem, m.RequestItem.Description),
-                new RolePattern(m.RequestItem, m.RequestItem.NeededSkill),
-                new RolePattern(m.RequestItem, m.RequestItem.Deliverable),
-                new RolePattern(m.RequestItem, m.RequestItem.SerialisedItem),
-                new RolePattern(m.RequestItem, m.RequestItem.Quantity),
-                new AssociationPattern(m.Request.RequestItems),
+                m.RequestItem.RolePattern(v => v.Product),
+                m.RequestItem.RolePattern(v => v.ProductFeature),
+                m.RequestItem.RolePattern(v => v.Description),
+                m.RequestItem.RolePattern(v => v.NeededSkill),
+                m.RequestItem.RolePattern(v => v.Deliverable),
+                m.RequestItem.RolePattern(v => v.SerialisedItem),
+                m.RequestItem.RolePattern(v => v.Quantity),
+                m.RequestItem.AssociationPattern(v => v.RequestWhereRequestItem),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

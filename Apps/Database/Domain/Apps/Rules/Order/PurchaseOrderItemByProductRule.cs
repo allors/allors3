@@ -16,10 +16,10 @@ namespace Allors.Database.Domain
         public PurchaseOrderItemByProductRule(MetaPopulation m) : base(m, new Guid("dbd7f09a-aa32-44a6-a671-e7269d47ae81")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.PurchaseOrderItemVersion, m.PurchaseOrderItemVersion.Part) { Steps = new IPropertyType[] {m.PurchaseOrderItemVersion.PurchaseOrderItemWhereCurrentVersion, m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem, m.PurchaseOrder.PurchaseOrderItemsByProduct } },
-                new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.Part) { Steps = new IPropertyType[] {m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem, m.PurchaseOrder.PurchaseOrderItemsByProduct } },
-                new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.QuantityOrdered) { Steps = new IPropertyType[] {m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem, m.PurchaseOrder.PurchaseOrderItemsByProduct } },
-                new RolePattern(m.PurchaseOrderItem, m.PurchaseOrderItem.TotalBasePrice) { Steps = new IPropertyType[] {m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem, m.PurchaseOrder.PurchaseOrderItemsByProduct } },
+                m.PurchaseOrderItemVersion.RolePattern(v => v.Part, v => v.PurchaseOrderItemWhereCurrentVersion.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem.PurchaseOrder.PurchaseOrderItemsByProduct),
+                m.PurchaseOrderItem.RolePattern(v => v.Part, v => v.PurchaseOrderWherePurchaseOrderItem.PurchaseOrder.PurchaseOrderItemsByProduct),
+                m.PurchaseOrderItem.RolePattern(v => v.QuantityOrdered, v => v.PurchaseOrderWherePurchaseOrderItem.PurchaseOrder.PurchaseOrderItemsByProduct),
+                m.PurchaseOrderItem.RolePattern(v => v.TotalBasePrice, v => v.PurchaseOrderWherePurchaseOrderItem.PurchaseOrder.PurchaseOrderItemsByProduct),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

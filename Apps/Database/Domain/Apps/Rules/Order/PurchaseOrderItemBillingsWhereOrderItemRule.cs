@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
         public PurchaseOrderItemBillingsWhereOrderItemRule(MetaPopulation m) : base(m, new Guid("2dd5538a-1b0b-4ffb-8049-78ee3032b38a")) =>
             this.Patterns = new Pattern[]
             {
-                new AssociationPattern(m.OrderItemBilling.OrderItem) { OfType = m.PurchaseOrderItem },
+                m.OrderItem.AssociationPattern(v => v.OrderItemBillingsWhereOrderItem, m.PurchaseOrderItem),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

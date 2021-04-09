@@ -18,12 +18,12 @@ namespace Allors.Database.Domain
         public SalesOrderItemInventoryItemRule(MetaPopulation m) : base(m, new Guid("FEF4E104-A0F0-4D83-A248-A1A606D93E41")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.SerialisedItem),
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.ReservedFromNonSerialisedInventoryItem),
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.ReservedFromSerialisedInventoryItem),
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.SalesOrderItemState),
-                new RolePattern(m.SerialisedInventoryItem, m.SerialisedInventoryItem.Quantity) { Steps = new IPropertyType[] { m.SerialisedInventoryItem.SerialisedItem, m.SerialisedItem.SalesOrderItemsWhereSerialisedItem }},
-                new AssociationPattern(m.InventoryItemTransaction.Part) { Steps = new IPropertyType[] { m.UnifiedGood.SalesOrderItemsWhereProduct }},
+                m.SalesOrderItem.RolePattern(v => v.SerialisedItem),
+                m.SalesOrderItem.RolePattern(v => v.ReservedFromNonSerialisedInventoryItem),
+                m.SalesOrderItem.RolePattern(v => v.ReservedFromSerialisedInventoryItem),
+                m.SalesOrderItem.RolePattern(v => v.SalesOrderItemState),
+                m.SerialisedInventoryItem.RolePattern(v => v.Quantity, v => v.SerialisedItem.SerialisedItem.SalesOrderItemsWhereSerialisedItem),
+                m.Part.AssociationPattern(v => v.InventoryItemTransactionsWherePart, v => v.AsUnifiedGood.SalesOrderItemsWhereProduct),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public ProposalRule(MetaPopulation m) : base(m, new Guid("F51A25BD-3FB7-4539-A541-5F19F124AA9F")) =>
             this.Patterns = new[]
             {
-                new RolePattern(m.Proposal, m.Proposal.Issuer)
+                m.Proposal.RolePattern(v => v.Issuer)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
