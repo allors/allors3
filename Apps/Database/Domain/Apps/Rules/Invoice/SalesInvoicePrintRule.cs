@@ -85,7 +85,7 @@ namespace Allors.Database.Domain
             m.Party.RolePattern(v => v.GeneralCorrespondence, v => v.SalesInvoicesWhereShipToCustomer),
             m.Party.RolePattern(v => v.GeneralCorrespondence, v => v.SalesInvoicesWhereBillToCustomer),
             m.Party.RolePattern(v => v.GeneralCorrespondence, v => v.SalesInvoicesWhereBillToCustomer),
-            m.PostalAddress.AssociationPattern(v => v.SalesInvoicesWhereDerivedBillToContactMechanism),
+            m.PostalAddress.AssociationPattern(v => v.SalesInvoicesWhereDerivedBillToContactMechanism, v => v.SalesInvoicesWhereDerivedBillToContactMechanism.SalesInvoice),
             m.PostalAddress.RolePattern(v => v.Address1, v => v.SalesInvoicesWhereDerivedShipToAddress),
             m.PostalAddress.RolePattern(v => v.Address1, v => v.PartiesWhereShippingAddress.Party.SalesInvoicesWhereShipToCustomer),
             m.PostalAddress.RolePattern(v => v.Address1, v => v.PartiesWhereGeneralCorrespondence.Party.SalesInvoicesWhereShipToCustomer),
