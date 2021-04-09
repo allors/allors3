@@ -361,6 +361,7 @@ namespace Allors.Database.Domain
                 new PurchaseOrderApprovalLevel2Rule(m),
                 new PurchaseOrderStateRule(m),
                 new PurchaseOrderPriceRule(m),
+                new PurchaseOrderPrintRule(m),
                 new ShipmentItemRule(m),
                 new ShipmentItemStateRule(m),
                 new CustomerShipmentExistShipmentNumberRule(m),
