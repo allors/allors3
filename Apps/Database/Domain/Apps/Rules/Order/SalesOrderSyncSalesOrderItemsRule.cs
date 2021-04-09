@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
         public SalesOrderSyncSalesOrderItemsRule(MetaPopulation m) : base(m, new Guid("abf19c62-816f-4c15-8c73-297b1f835173")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SalesOrder, m.SalesOrder.SalesOrderItems),
+                m.SalesOrder.RolePattern(v => v.SalesOrderItems),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

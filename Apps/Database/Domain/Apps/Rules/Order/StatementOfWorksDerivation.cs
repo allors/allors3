@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public StatementOfWorkRule(MetaPopulation m) : base(m, new Guid("8307B027-0A59-409F-B47C-B2B2C98267C8")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.StatementOfWork, m.StatementOfWork.Issuer),
+                m.StatementOfWork.RolePattern(v => v.Issuer),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

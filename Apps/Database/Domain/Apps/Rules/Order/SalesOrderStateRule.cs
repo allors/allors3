@@ -16,13 +16,13 @@ namespace Allors.Database.Domain
         public SalesOrderStateRule(MetaPopulation m) : base(m, new Guid("1a17a901-7547-4c7f-bcf9-9c1d248efb4c")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SalesOrder, m.SalesOrder.SalesOrderState),
-                new RolePattern(m.SalesOrder, m.SalesOrder.SalesOrderItems),
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.DerivationTrigger) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.SalesOrderItemState) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.SalesOrderItemShipmentState) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.SalesOrderItemPaymentState) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
-                new RolePattern(m.SalesOrderItem, m.SalesOrderItem.SalesOrderItemInvoiceState) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
+                m.SalesOrder.RolePattern(v => v.SalesOrderState),
+                m.SalesOrder.RolePattern(v => v.SalesOrderItems),
+                m.SalesOrderItem.RolePattern(v => v.DerivationTrigger, v => v.SalesOrderWhereSalesOrderItem),
+                m.SalesOrderItem.RolePattern(v => v.SalesOrderItemState, v => v.SalesOrderWhereSalesOrderItem),
+                m.SalesOrderItem.RolePattern(v => v.SalesOrderItemShipmentState, v => v.SalesOrderWhereSalesOrderItem),
+                m.SalesOrderItem.RolePattern(v => v.SalesOrderItemPaymentState, v => v.SalesOrderWhereSalesOrderItem),
+                m.SalesOrderItem.RolePattern(v => v.SalesOrderItemInvoiceState, v => v.SalesOrderWhereSalesOrderItem),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

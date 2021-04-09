@@ -11,17 +11,17 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class SalesOrderProvisionalDeriveCurrencyRule : Rule
+    public class SalesOrderProvisionalCurrencyRule : Rule
     {
-        public SalesOrderProvisionalDeriveCurrencyRule(MetaPopulation m) : base(m, new Guid("d61da60f-f6aa-4103-a8cc-eefe74c0a27e")) =>
+        public SalesOrderProvisionalCurrencyRule(MetaPopulation m) : base(m, new Guid("d61da60f-f6aa-4103-a8cc-eefe74c0a27e")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SalesOrder, m.SalesOrder.SalesOrderState),
-                new RolePattern(m.SalesOrder, m.SalesOrder.AssignedCurrency),
-                new RolePattern(m.SalesOrder, m.SalesOrder.BillToCustomer),
-                new RolePattern(m.SalesOrder, m.SalesOrder.TakenBy),
-                new RolePattern(m.Party, m.Party.PreferredCurrency) { Steps = new IPropertyType[] { this.M.Party.SalesOrdersWhereBillToCustomer }},
-                new RolePattern(m.Organisation, m.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { this.M.Organisation.SalesOrdersWhereTakenBy }},
+                m.SalesOrder.RolePattern(v => v.SalesOrderState),
+                m.SalesOrder.RolePattern(v => v.AssignedCurrency),
+                m.SalesOrder.RolePattern(v => v.BillToCustomer),
+                m.SalesOrder.RolePattern(v => v.TakenBy),
+                m.Party.RolePattern(v => v.PreferredCurrency, v => v.SalesOrdersWhereBillToCustomer),
+                m.Organisation.RolePattern(v => v.PreferredCurrency, v => v.SalesOrdersWhereTakenBy),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

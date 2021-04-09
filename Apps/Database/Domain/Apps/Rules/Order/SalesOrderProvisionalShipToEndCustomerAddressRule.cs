@@ -11,16 +11,16 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class SalesOrderProvisionalDeriveShipToEndCustomerAddressRule : Rule
+    public class SalesOrderProvisionalShipToEndCustomerAddressRule : Rule
     {
-        public SalesOrderProvisionalDeriveShipToEndCustomerAddressRule(MetaPopulation m) : base(m, new Guid("fbac008b-2068-4d36-b034-748fb7336d17")) =>
+        public SalesOrderProvisionalShipToEndCustomerAddressRule(MetaPopulation m) : base(m, new Guid("fbac008b-2068-4d36-b034-748fb7336d17")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SalesOrder, m.SalesOrder.SalesOrderState),
-                new RolePattern(m.SalesOrder, m.SalesOrder.AssignedShipToEndCustomerAddress),
-                new RolePattern(m.SalesOrder, m.SalesOrder.ShipToEndCustomer),
-                new RolePattern(m.Party, m.Party.ShippingAddress) { Steps = new IPropertyType[] { this.M.Party.SalesOrdersWhereShipToEndCustomer }},
-                new RolePattern(m.Party, m.Party.GeneralCorrespondence) { Steps = new IPropertyType[] { this.M.Party.SalesOrdersWhereShipToEndCustomer }},
+                m.SalesOrder.RolePattern(v => v.SalesOrderState),
+                m.SalesOrder.RolePattern(v => v.AssignedShipToEndCustomerAddress),
+                m.SalesOrder.RolePattern(v => v.ShipToEndCustomer),
+                m.Party.RolePattern(v => v.ShippingAddress, v => v.SalesOrdersWhereShipToEndCustomer),
+                m.Party.RolePattern(v => v.GeneralCorrespondence, v => v.SalesOrdersWhereShipToEndCustomer),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

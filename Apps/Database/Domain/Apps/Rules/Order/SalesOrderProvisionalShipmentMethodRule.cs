@@ -11,17 +11,17 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class SalesOrderProvisionalDeriveShipmentMethodRule : Rule
+    public class SalesOrderProvisionalShipmentMethodRule : Rule
     {
-        public SalesOrderProvisionalDeriveShipmentMethodRule(MetaPopulation m) : base(m, new Guid("c22988df-9bf2-44a8-8974-bc798b7c318c")) =>
+        public SalesOrderProvisionalShipmentMethodRule(MetaPopulation m) : base(m, new Guid("c22988df-9bf2-44a8-8974-bc798b7c318c")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SalesOrder, m.SalesOrder.SalesOrderState),
-                new RolePattern(m.SalesOrder, m.SalesOrder.AssignedShipmentMethod),
-                new RolePattern(m.SalesOrder, m.SalesOrder.ShipToCustomer),
-                new RolePattern(m.SalesOrder, m.SalesOrder.Store),
-                new RolePattern(m.Party, m.Party.DefaultShipmentMethod) { Steps = new IPropertyType[] { this.M.Party.SalesOrdersWhereShipToCustomer }},
-                new RolePattern(m.Store, m.Store.DefaultShipmentMethod) { Steps = new IPropertyType[] { this.M.Store.SalesOrdersWhereStore }},
+                m.SalesOrder.RolePattern(v => v.SalesOrderState),
+                m.SalesOrder.RolePattern(v => v.AssignedShipmentMethod),
+                m.SalesOrder.RolePattern(v => v.ShipToCustomer),
+                m.SalesOrder.RolePattern(v => v.Store),
+                m.Party.RolePattern(v => v.DefaultShipmentMethod, v => v.SalesOrdersWhereShipToCustomer),
+                m.Store.RolePattern(v => v.DefaultShipmentMethod, v => v.SalesOrdersWhereStore),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
