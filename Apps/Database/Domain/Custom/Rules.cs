@@ -74,6 +74,7 @@ namespace Allors.Database.Domain
                 new SalesOrderTransferRule(m),
                 new SalesOrderCanInvoiceRule(m),
                 new SalesOrderCanShipRule(m),
+                new SalesOrderPrintRule(m),
                 new SalesOrderRule(m),
                 new SalesOrderCustomerRule(m),
                 new SalesOrderOrderNumberRule(m),
