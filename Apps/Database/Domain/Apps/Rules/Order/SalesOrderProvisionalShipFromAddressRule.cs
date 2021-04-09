@@ -11,15 +11,15 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class SalesOrderProvisionalDeriveShipFromAddressRule : Rule
+    public class SalesOrderProvisionalShipFromAddressRule : Rule
     {
-        public SalesOrderProvisionalDeriveShipFromAddressRule(MetaPopulation m) : base(m, new Guid("69682dd0-7700-4a16-976a-66d9e0c34641")) =>
+        public SalesOrderProvisionalShipFromAddressRule(MetaPopulation m) : base(m, new Guid("69682dd0-7700-4a16-976a-66d9e0c34641")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SalesOrder, m.SalesOrder.SalesOrderState),
-                new RolePattern(m.SalesOrder, m.SalesOrder.AssignedShipFromAddress),
-                new RolePattern(m.SalesOrder, m.SalesOrder.TakenBy),
-                                new RolePattern(m.Organisation, m.Organisation.ShippingAddress) { Steps = new IPropertyType[] { this.M.Organisation.SalesOrdersWhereTakenBy }},
+                m.SalesOrder.RolePattern(v => v.SalesOrderState),
+                m.SalesOrder.RolePattern(v => v.AssignedShipFromAddress),
+                m.SalesOrder.RolePattern(v => v.TakenBy),
+                new RolePattern(m.Organisation, m.Organisation.ShippingAddress) { Steps = new IPropertyType[] { this.M.Organisation.SalesOrdersWhereTakenBy }},
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -11,15 +11,17 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class SalesOrderProvisionalDeriveShipToAddressRule : Rule
+    public class SalesOrderProvisionalLocaleRule : Rule
     {
-        public SalesOrderProvisionalDeriveShipToAddressRule(MetaPopulation m) : base(m, new Guid("13d04aec-53c6-4863-bb28-e2992990a2b6")) =>
+        public SalesOrderProvisionalLocaleRule
+            (MetaPopulation m) : base(m, new Guid("bed2536f-3dd4-4376-8fe4-6736c4dcc24b")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SalesOrder, m.SalesOrder.SalesOrderState),
-                new RolePattern(m.SalesOrder, m.SalesOrder.AssignedShipToAddress),
-                new RolePattern(m.SalesOrder, m.SalesOrder.ShipToCustomer),
-                 new RolePattern(m.Party, m.Party.ShippingAddress) { Steps = new IPropertyType[] { this.M.Party.SalesOrdersWhereBillToCustomer }},
+                m.SalesOrder.RolePattern(v => v.SalesOrderState),
+                m.SalesOrder.RolePattern(v => v.Locale),
+                m.SalesOrder.RolePattern(v => v.BillToCustomer),
+                m.Party.RolePattern(v => v.Locale, v => v.SalesOrdersWhereBillToCustomer),
+                m.Organisation.RolePattern(v => v.Locale, v => v.SalesOrdersWhereTakenBy),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -29,7 +31,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<SalesOrder>().Where(v => v.SalesOrderState.IsProvisional))
             {
-                @this.DerivedShipToAddress = @this.AssignedShipToAddress ?? @this.ShipToCustomer?.ShippingAddress;
+                @this.DerivedLocale = @this.Locale ?? @this.BillToCustomer?.Locale ?? @this.TakenBy?.Locale;
             }
         }
     }

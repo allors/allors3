@@ -11,14 +11,15 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class SalesOrderProvisionalDeriveIrpfRegimeRule : Rule
+    public class SalesOrderProvisionalShipToAddressRule : Rule
     {
-        public SalesOrderProvisionalDeriveIrpfRegimeRule(MetaPopulation m) : base(m, new Guid("f4017b40-d052-4760-a414-0a20b83ec9cc")) =>
+        public SalesOrderProvisionalShipToAddressRule(MetaPopulation m) : base(m, new Guid("13d04aec-53c6-4863-bb28-e2992990a2b6")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SalesOrder, m.SalesOrder.SalesOrderState),
-                new RolePattern(m.SalesOrder, m.SalesOrder.AssignedIrpfRegime),
-                new RolePattern(m.SalesOrder, m.SalesOrder.OrderDate),
+                m.SalesOrder.RolePattern(v => v.SalesOrderState),
+                m.SalesOrder.RolePattern(v => v.AssignedShipToAddress),
+                m.SalesOrder.RolePattern(v => v.ShipToCustomer),
+                m.Party.RolePattern(v => v.ShippingAddress, v => v.SalesOrdersWhereBillToCustomer),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -28,12 +29,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<SalesOrder>().Where(v => v.SalesOrderState.IsProvisional))
             {
-                @this.DerivedIrpfRegime = @this.AssignedIrpfRegime;
-                
-                if (@this.ExistOrderDate)
-                {
-                    @this.DerivedIrpfRate = @this.DerivedIrpfRegime?.IrpfRates.First(v => v.FromDate <= @this.OrderDate && (!v.ExistThroughDate || v.ThroughDate >= @this.OrderDate));
-                }
+                @this.DerivedShipToAddress = @this.AssignedShipToAddress ?? @this.ShipToCustomer?.ShippingAddress;
             }
         }
     }

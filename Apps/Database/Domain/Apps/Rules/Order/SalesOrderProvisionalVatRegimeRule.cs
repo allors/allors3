@@ -11,16 +11,14 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class SalesOrderProvisionalDeriveLocaleRule : Rule
+    public class SalesOrderProvisionalVatRegimeRule : Rule
     {
-        public SalesOrderProvisionalDeriveLocaleRule(MetaPopulation m) : base(m, new Guid("bed2536f-3dd4-4376-8fe4-6736c4dcc24b")) =>
+        public SalesOrderProvisionalVatRegimeRule(MetaPopulation m) : base(m, new Guid("221d0439-b040-48f0-a5b8-07af9e78dd70")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SalesOrder, m.SalesOrder.SalesOrderState),
-                new RolePattern(m.SalesOrder, m.SalesOrder.Locale),
-                new RolePattern(m.SalesOrder, m.SalesOrder.BillToCustomer),
-                m.Party.RolePattern(v => v.Locale, v => v.SalesOrdersWhereBillToCustomer),
-                new RolePattern(m.Organisation, m.Organisation.Locale) { Steps = new IPropertyType[] { this.M.Organisation.SalesOrdersWhereTakenBy }},
+                m.SalesOrder.RolePattern(v => v.SalesOrderState),
+                m.SalesOrder.RolePattern(v => v.AssignedVatRegime),
+                m.SalesOrder.RolePattern(v => v.OrderDate),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -30,7 +28,12 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<SalesOrder>().Where(v => v.SalesOrderState.IsProvisional))
             {
-                @this.DerivedLocale = @this.Locale ?? @this.BillToCustomer?.Locale ?? @this.TakenBy?.Locale;
+                @this.DerivedVatRegime = @this.AssignedVatRegime;
+
+                if (@this.ExistOrderDate)
+                {
+                    @this.DerivedVatRate = @this.DerivedVatRegime?.VatRates.First(v => v.FromDate <= @this.OrderDate && (!v.ExistThroughDate || v.ThroughDate >= @this.OrderDate));
+                }
             }
         }
     }

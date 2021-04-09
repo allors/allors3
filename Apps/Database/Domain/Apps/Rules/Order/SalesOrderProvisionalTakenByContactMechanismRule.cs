@@ -11,17 +11,17 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class SalesOrderProvisionalDeriveTakenByContactMechanismRule : Rule
+    public class SalesOrderProvisionalTakenByContactMechanismRule : Rule
     {
-        public SalesOrderProvisionalDeriveTakenByContactMechanismRule(MetaPopulation m) : base(m, new Guid("2fe58115-5005-4012-850f-2a13743076c8")) =>
+        public SalesOrderProvisionalTakenByContactMechanismRule(MetaPopulation m) : base(m, new Guid("2fe58115-5005-4012-850f-2a13743076c8")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SalesOrder, m.SalesOrder.SalesOrderState),
-                new RolePattern(m.SalesOrder, m.SalesOrder.TakenBy),
-                new RolePattern(m.SalesOrder, m.SalesOrder.AssignedTakenByContactMechanism),
-                new RolePattern(m.Organisation, m.Organisation.OrderAddress) { Steps = new IPropertyType[] { this.M.Organisation.SalesOrdersWhereTakenBy }},
-                new RolePattern(m.Organisation, m.Organisation.BillingAddress) { Steps = new IPropertyType[] { this.M.Organisation.SalesOrdersWhereTakenBy }},
-                new RolePattern(m.Organisation, m.Organisation.GeneralCorrespondence) { Steps = new IPropertyType[] { this.M.Organisation.SalesOrdersWhereTakenBy }},
+                m.SalesOrder.RolePattern(v => v.SalesOrderState),
+                m.SalesOrder.RolePattern(v => v.TakenBy),
+                m.SalesOrder.RolePattern(v => v.AssignedTakenByContactMechanism),
+                m.Organisation.RolePattern(v => v.OrderAddress, v => v.SalesOrdersWhereTakenBy),
+                m.Organisation.RolePattern(v => v.BillingAddress, v => v.SalesOrdersWhereTakenBy),
+                m.Organisation.RolePattern(v => v.GeneralCorrespondence, v => v.SalesOrdersWhereTakenBy),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

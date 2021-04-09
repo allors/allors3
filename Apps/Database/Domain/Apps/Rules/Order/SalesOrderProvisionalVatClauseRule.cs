@@ -16,9 +16,9 @@ namespace Allors.Database.Domain
         public SalesOrderProvisionalVatClauseRule(MetaPopulation m) : base(m, new Guid("6a9c10dc-dcc4-4ac3-9f02-e0dafd6215cb")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.SalesOrder, m.SalesOrder.SalesOrderState),
-                new RolePattern(m.SalesOrder, m.SalesOrder.AssignedVatClause),
-                new RolePattern(m.SalesOrder, m.SalesOrder.DerivedVatRegime),
+                m.SalesOrder.RolePattern(v => v.SalesOrderState),
+                m.SalesOrder.RolePattern(v => v.AssignedVatClause),
+                m.SalesOrder.RolePattern(v => v.DerivedVatRegime),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
