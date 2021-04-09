@@ -13,11 +13,11 @@ namespace Allors.Database.Domain.Print.PurchaseInvoiceModel
             var contactPerson = invoice.BilledFromContactPerson;
             var contactMechanisam = invoice.DerivedBilledFromContactMechanism;
 
-            var billTo = supplier;
-            var billToOrganisation = billTo as Organisation;
-            if (billTo != null)
+            var billedFrom = supplier;
+            var billToOrganisation = billedFrom as Organisation;
+            if (billedFrom != null)
             {
-                this.Name = billTo.PartyName;
+                this.Name = billedFrom.PartyName;
                 this.TaxId = billToOrganisation?.TaxNumber;
             }
 
