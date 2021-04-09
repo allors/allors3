@@ -35,8 +35,6 @@ namespace Allors.Database.Domain
                 }
 
                 @this.WorkItemDescription = $"ProductQuote: {@this.QuoteNumber} [{@this.Issuer?.PartyName}]";
-
-                @this.ResetPrintDocument();
             }
         }
     }

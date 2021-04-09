@@ -171,6 +171,7 @@ namespace Allors.Database.Domain
                 new ProductQuoteApprovalRule(m),
                 new ProductQuoteApprovalParticipantsRule(m),
                 new ProductQuoteRule(m),
+                new ProductQuotePrintRule(m),
                 new ProductQuoteAwaitingApprovalRule(m),
                 new ProductQuoteItemByProductRule(m),
                 new EngagementBillToPartyRule(m),
