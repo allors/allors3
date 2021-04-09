@@ -31,8 +31,6 @@ namespace Allors.Database.Domain
                 {
                     invoiceItem.Sync(@this);
                 }
-
-                @this.ResetPrintDocument();
             }
         }
     }
