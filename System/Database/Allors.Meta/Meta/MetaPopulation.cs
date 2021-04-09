@@ -281,7 +281,7 @@ namespace Allors.Database.Meta
             return log;
         }
 
-        public void Bind(Type[] types, MethodInfo[] extensionMethods)
+        public void Bind(Type[] types, Dictionary<Type, MethodInfo[]> extensionMethodsByInterface)
         {
             if (!this.IsBound)
             {
@@ -322,7 +322,7 @@ namespace Allors.Database.Meta
                     @class.Bind(typeByName);
                 }
 
-                this.MethodCompiler = new MethodCompiler(this, extensionMethods);
+                this.MethodCompiler = new MethodCompiler(this, extensionMethodsByInterface);
             }
         }
 

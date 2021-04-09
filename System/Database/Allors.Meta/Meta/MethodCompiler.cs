@@ -6,6 +6,7 @@
 namespace Allors.Database.Meta
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
@@ -13,17 +14,17 @@ namespace Allors.Database.Meta
 
     public partial class MethodCompiler
     {
-        private readonly MethodInfo[] extensionMethods;
+        private readonly Dictionary<Type, MethodInfo[]> extensionMethodsByInterface;
         private readonly List<IDomainBase> sortedDomains;
-        private readonly Dictionary<Type, Dictionary<MethodInfo, Action<object, object>>> actionByMethodInfoByType;
+        private readonly ConcurrentDictionary<Type, Dictionary<MethodInfo, Action<object, object>>> actionByMethodInfoByType;
 
-        public MethodCompiler(IMetaPopulationBase metaPopulation, MethodInfo[] extensionMethods)
+        public MethodCompiler(IMetaPopulationBase metaPopulation, Dictionary<Type, MethodInfo[]> extensionMethodsByInterface)
         {
-            this.extensionMethods = extensionMethods;
+            this.extensionMethodsByInterface = extensionMethodsByInterface;
             this.sortedDomains = new List<IDomainBase>(metaPopulation.Domains);
             this.sortedDomains.Sort((a, b) => a.Superdomains.Contains(b) ? -1 : 1);
 
-            this.actionByMethodInfoByType = new Dictionary<Type, Dictionary<MethodInfo, Action<object, object>>>();
+            this.actionByMethodInfoByType = new ConcurrentDictionary<Type, Dictionary<MethodInfo, Action<object, object>>>();
         }
 
         public Action<object, object>[] Compile(IClass @class, IMethodType methodType)
@@ -51,10 +52,10 @@ namespace Allors.Database.Meta
             // Interface
             foreach (var @interface in interfaces)
             {
-                foreach (var domain in sortedDomains)
+                foreach (var domain in this.sortedDomains)
                 {
                     var methodName = domain.Name + methodType.Name;
-                    var extensionMethodInfos = GetExtensionMethods(this.extensionMethods, @interface.ClrType, methodName);
+                    var extensionMethodInfos = this.GetExtensionMethods(@interface.ClrType, methodName);
                     if (extensionMethodInfos.Length > 1)
                     {
                         throw new Exception("Interface " + @interface + " has 2 extension methods for " + methodName);
@@ -91,7 +92,7 @@ namespace Allors.Database.Meta
 
             // Class
             {
-                foreach (var domain in sortedDomains)
+                foreach (var domain in this.sortedDomains)
                 {
                     var methodName = domain.Name + methodType.Name;
 
@@ -115,14 +116,8 @@ namespace Allors.Database.Meta
             return actions.ToArray();
         }
 
-        private static MethodInfo[] GetExtensionMethods(MethodInfo[] extensionMethods, Type @interface, string methodName)
-        {
-            var query = from method in extensionMethods
-                        where method.Name.Equals(methodName)
-                        where method.GetParameters()[0].ParameterType == @interface
-                        select method;
-            return query.ToArray();
-        }
-
+        private MethodInfo[] GetExtensionMethods(Type @interface, string methodName) => !this.extensionMethodsByInterface.TryGetValue(@interface, out var extensionMethods) ?
+            Array.Empty<MethodInfo>() :
+            extensionMethods.Where(method => method.Name.Equals(methodName)).ToArray();
     }
 }

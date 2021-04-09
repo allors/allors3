@@ -27,50 +27,50 @@ namespace Allors.Database.Configuration
         {
             this.Database = database;
 
-            this.MetaCache = new MetaCache(this);
-            this.ClassById = new ClassById();
-            this.VersionedIdByStrategy = new VersionedIdByStrategy();
+            this.MetaCache ??= new MetaCache(this);
+            this.ClassById ??= new ClassById();
+            this.VersionedIdByStrategy ??= new VersionedIdByStrategy();
 
-            this.PrefetchPolicyCache = new PrefetchPolicyCache(this);
-            this.PreparedSelects = new PreparedSelects(this.M);
-            this.PreparedExtents = new PreparedExtents(this.M);
-            this.TreeCache = new TreeCache();
+            this.PrefetchPolicyCache ??= new PrefetchPolicyCache(this);
+            this.PreparedSelects ??= new PreparedSelects(this.M);
+            this.PreparedExtents ??= new PreparedExtents(this.M);
+            this.TreeCache ??= new TreeCache();
 
-            this.PermissionsCache = new PermissionsCache(this);
-            this.AccessControlCache = new AccessControlCache();
+            this.PermissionsCache ??= new PermissionsCache(this);
+            this.AccessControlCache ??= new AccessControlCache();
 
-            this.Time = new Time();
-            this.Caches = new Caches();
-            this.PasswordHasher = new PasswordHasher();
+            this.Time ??= new Time();
+            this.Caches ??= new Caches();
+            this.PasswordHasher ??= new PasswordHasher();
         }
 
         public IDatabase Database { get; private set; }
 
         public MetaPopulation M => (MetaPopulation)this.Database.MetaPopulation;
 
-        public IMetaCache MetaCache { get; private set; }
+        public IMetaCache MetaCache { get; protected set; }
 
-        public IClassById ClassById { get; private set; }
+        public IClassById ClassById { get; protected set; }
 
-        public IVersionedIdByStrategy VersionedIdByStrategy { get; private set; }
+        public IVersionedIdByStrategy VersionedIdByStrategy { get; protected set; }
 
         public IPrefetchPolicyCache PrefetchPolicyCache { get; set; }
 
-        public IPreparedSelects PreparedSelects { get; private set; }
+        public IPreparedSelects PreparedSelects { get; protected set; }
 
-        public IPreparedExtents PreparedExtents { get; private set; }
+        public IPreparedExtents PreparedExtents { get; protected set; }
 
-        public ITreeCache TreeCache { get; private set; }
+        public ITreeCache TreeCache { get; protected set; }
 
         public IPermissionsCache PermissionsCache { get; set; }
 
-        public IAccessControlCache AccessControlCache { get; private set; }
+        public IAccessControlCache AccessControlCache { get; protected set; }
 
-        public ITime Time { get; private set; }
+        public ITime Time { get; protected set; }
 
-        public ICaches Caches { get; private set; }
+        public ICaches Caches { get; protected set; }
 
-        public IPasswordHasher PasswordHasher { get; private set; }
+        public IPasswordHasher PasswordHasher { get; protected set; }
 
         public IDerivationFactory DerivationFactory { get; protected set; }
 

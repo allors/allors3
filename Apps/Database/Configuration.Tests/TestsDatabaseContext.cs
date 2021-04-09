@@ -8,20 +8,30 @@ namespace Allors.Database.Configuration
 {
     using Bogus;
     using Database;
+    using Domain;
     using Domain.Derivations.Default;
     using Microsoft.AspNetCore.Http;
 
-    public class FakerDatabaseContext : DefaultDatabaseContext
+    public class TestsDatabaseContext : DefaultDatabaseContext
     {
-        public FakerDatabaseContext(Engine engine, IHttpContextAccessor httpContextAccessor = null) : base(engine, httpContextAccessor) { }
+        public TestsDatabaseContext(Engine engine, IHttpContextAccessor httpContextAccessor = null) : base(engine, httpContextAccessor) { }
 
         public override void OnInit(IDatabase database)
         {
+            this.PasswordHasher = new TestPasswordHasher();
+
             base.OnInit(database);
 
             this.Faker = new Faker();
         }
 
         public Faker Faker { get; set; }
+
+        private class TestPasswordHasher : IPasswordHasher
+        {
+            public string HashPassword(string user, string password) => password;
+
+            public bool VerifyHashedPassword(string user, string hashedPassword, string providedPassword) => hashedPassword == providedPassword;
+        }
     }
 }

@@ -51,41 +51,41 @@ namespace Allors.Database.Configuration
 
         public IDatabase Database { get; private set; }
 
-        public MetaPopulation M { get; private set; }
+        public MetaPopulation M { get; protected set; }
 
         public Engine Engine { get; }
 
-        public IMetaCache MetaCache { get; private set; }
+        public IMetaCache MetaCache { get; protected set; }
 
-        public IClassById ClassById { get; private set; }
+        public IClassById ClassById { get; protected set; }
 
-        public IVersionedIdByStrategy VersionedIdByStrategy { get; private set; }
+        public IVersionedIdByStrategy VersionedIdByStrategy { get; protected set; }
 
         public IPrefetchPolicyCache PrefetchPolicyCache { get; set; }
 
-        public IPreparedSelects PreparedSelects { get; private set; }
+        public IPreparedSelects PreparedSelects { get; protected set; }
 
-        public IPreparedExtents PreparedExtents { get; private set; }
+        public IPreparedExtents PreparedExtents { get; protected set; }
 
-        public ITreeCache TreeCache { get; private set; }
+        public ITreeCache TreeCache { get; protected set; }
 
         public IPermissionsCache PermissionsCache { get; set; }
 
-        public IAccessControlCache AccessControlCache { get; private set; }
+        public IAccessControlCache AccessControlCache { get; protected set; }
 
-        public ITime Time { get; private set; }
+        public ITime Time { get; protected set; }
 
-        public ICaches Caches { get; private set; }
+        public ICaches Caches { get; protected set; }
 
-        public ISingletonId SingletonId { get; private set; }
+        public ISingletonId SingletonId { get; protected set; }
 
-        public IPasswordHasher PasswordHasher { get; private set; }
+        public IPasswordHasher PasswordHasher { get; protected set; }
 
-        public IMailer Mailer { get; private set; }
+        public IMailer Mailer { get; protected set; }
 
-        public IBarcodeGenerator BarcodeGenerator { get; private set; }
+        public IBarcodeGenerator BarcodeGenerator { get; protected set; }
 
-        public ITemplateObjectCache TemplateObjectCache { get; private set; }
+        public ITemplateObjectCache TemplateObjectCache { get; protected set; }
 
         public IDerivationFactory DerivationFactory { get; protected set; }
 

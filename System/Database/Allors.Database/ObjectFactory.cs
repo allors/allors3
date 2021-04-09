@@ -60,12 +60,6 @@ namespace Allors.Database
                                type.GetTypeInfo().ImplementedInterfaces.Contains(typeof(IObject)))
                 .ToArray();
 
-            var extensionMethods = (from type in this.Assembly.ExportedTypes
-                                    where type.GetTypeInfo().IsSealed && !type.GetTypeInfo().IsGenericType && !type.IsNested
-                                    from method in type.GetTypeInfo().DeclaredMethods
-                                    where method.IsStatic && method.IsDefined(typeof(ExtensionAttribute), false)
-                                    select method).ToArray();
-
             this.MetaPopulation = metaPopulation;
             this.Namespace = instance.Namespace;
 
@@ -75,7 +69,18 @@ namespace Allors.Database
                 throw new Exception(validationLog.ToString());
             }
 
-            metaPopulation.Bind(types, extensionMethods);
+            var extensionMethodsByInterface = (from type in this.Assembly.ExportedTypes
+                                               where type.GetTypeInfo().IsSealed && !type.GetTypeInfo().IsGenericType && !type.IsNested
+                                               from method in type.GetTypeInfo().DeclaredMethods
+                                               let parameterType = method.GetParameters()[0].ParameterType
+                                               where method.IsStatic &&
+                                                     method.IsDefined(typeof(ExtensionAttribute), false) &&
+                                                     parameterType.IsInterface
+                                               select new KeyValuePair<Type, MethodInfo>(parameterType, method))
+                .GroupBy(kvp => kvp.Key, kvp => kvp.Value)
+                .ToDictionary(v => v.Key, v => v.ToArray());
+
+            metaPopulation.Bind(types, extensionMethodsByInterface);
 
             this.typeByObjectType = new Dictionary<IObjectType, Type>();
             this.objectTypeByType = new Dictionary<Type, IObjectType>();
