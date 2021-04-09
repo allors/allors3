@@ -5,8 +5,10 @@
 
 namespace Allors.Database.Meta
 {
+    using System.Collections.Generic;
 
     public partial interface IDomainBase : IMetaIdentifiableObjectBase, IDomain
     {
+        IEnumerable<IDomainBase> Superdomains { get; }
     }
 }

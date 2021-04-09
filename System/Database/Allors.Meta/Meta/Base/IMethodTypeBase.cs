@@ -11,10 +11,6 @@ namespace Allors.Database.Meta
 
         void Validate(ValidationLog log);
 
-        void DeriveMethodClasses();
-
-        new IMethodClassBase MethodClassBy(IClass @class);
-
         void DeriveWorkspaceNames();
     }
 }

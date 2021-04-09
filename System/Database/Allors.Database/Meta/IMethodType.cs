@@ -15,7 +15,5 @@ namespace Allors.Database.Meta
         string FullName { get; }
 
         string[] WorkspaceNames { get; }
-
-        IMethodClass MethodClassBy(IClass @class);
     }
 }

@@ -61,6 +61,8 @@ namespace Allors.Database.Meta
 
         public MetaPopulationProps _ => this.props ??= new MetaPopulationProps(this);
 
+        public MethodCompiler MethodCompiler { get; private set; }
+
         public IEnumerable<string> WorkspaceNames
         {
             get
@@ -79,6 +81,7 @@ namespace Allors.Database.Meta
         public IEnumerable<IClassBase> Classes => this.classes;
 
         IEnumerable<IInheritanceBase> IMetaPopulationBase.Inheritances => this.Inheritances;
+
         IEnumerable<IInheritance> IMetaPopulation.Inheritances => this.Inheritances;
         public IEnumerable<Inheritance> Inheritances => this.inheritances;
 
@@ -278,7 +281,7 @@ namespace Allors.Database.Meta
             return log;
         }
 
-        public void Bind(Type[] types, MethodInfo[] methods)
+        public void Bind(Type[] types, MethodInfo[] extensionMethods)
         {
             if (!this.IsBound)
             {
@@ -319,18 +322,7 @@ namespace Allors.Database.Meta
                     @class.Bind(typeByName);
                 }
 
-                var sortedDomains = new List<Domain>(this.domains);
-                sortedDomains.Sort((a, b) => a.Superdomains.Contains(b) ? -1 : 1);
-
-                var actionByMethodInfoByType = new Dictionary<Type, Dictionary<MethodInfo, Action<object, object>>>();
-
-                foreach (var @class in this.DatabaseClasses)
-                {
-                    foreach (MethodClass concreteMethodType in @class.MethodTypes)
-                    {
-                        concreteMethodType.Bind(sortedDomains, methods, actionByMethodInfoByType);
-                    }
-                }
+                this.MethodCompiler = new MethodCompiler(this, extensionMethods);
             }
         }
 
@@ -454,12 +446,6 @@ namespace Allors.Database.Meta
 
                     var sharedMethodTypeList = new HashSet<IMethodTypeBase>();
 
-                    // MethodClasses
-                    foreach (var methodType in this.MethodTypes)
-                    {
-                        methodType.DeriveMethodClasses();
-                    }
-
                     // MethodTypes
                     var methodTypeByClass = this.MethodTypes
                         .GroupBy(v => v.ObjectType)
@@ -556,21 +542,10 @@ namespace Allors.Database.Meta
 
         void IMetaPopulationBase.OnRoleTypeCreated(RoleType roleType) => this.Stale();
 
-        void IMetaPopulationBase.OnMethodInterfaceCreated(MethodInterface methodInterface)
+        void IMetaPopulationBase.OnMethodTypeCreated(MethodType methodType)
         {
-            this.methodTypes.Add(methodInterface);
-            this.metaObjectById.Add(methodInterface.Id, methodInterface);
-
-            this.Stale();
-        }
-
-        void IMetaPopulationBase.OnMethodClassCreated(MethodClass methodClass)
-        {
-            if (methodClass.MethodInterface == null)
-            {
-                this.methodTypes.Add(methodClass);
-                this.metaObjectById.Add(methodClass.Id, methodClass);
-            }
+            this.methodTypes.Add(methodType);
+            this.metaObjectById.Add(methodType.Id, methodType);
 
             this.Stale();
         }

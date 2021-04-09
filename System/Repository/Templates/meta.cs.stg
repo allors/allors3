@@ -82,9 +82,9 @@ $interface.Subtypes:{subtype|        public $subtype.SingularName$ As$subtype.Si
 
         $interface.InheritedReverseProperties:{property|$define_inheritedreversepropertyType(property)$}; separator="\n"$
 
-        $interface.DefinedMethods:{method|$define_methodType(interface, method)$}; separator="\n"$
+        $interface.DefinedMethods:{method|$define_methodType(method)$}; separator="\n"$
 
-        $interface.InheritedMethods:{method|$define_inheritedmethodType(interface, method)$}; separator="\n"$
+        $interface.InheritedMethods:{method|$define_methodType(method)$}; separator="\n"$
     }
 >>
 
@@ -109,9 +109,9 @@ define_class(class) ::= <<
 
         $class.InheritedReverseProperties:{property|$define_inheritedreversepropertyType(property)$}; separator="\n"$
 
-        $class.DefinedMethods:{method|$define_methodType(class, method)$}; separator="\n"$
+        $class.DefinedMethods:{method|$define_methodType(method)$}; separator="\n"$
 
-        $class.InheritedMethods:{method|$define_inheritedmethodType(class, method)$}; separator="\n"$
+        $class.InheritedMethods:{method|$define_methodType(method)$}; separator="\n"$
     }
 >>
 
@@ -180,16 +180,8 @@ define_inheritedreversepropertyType(property) ::= <<
         public $property.AssociationName$ $property.AssociationName$;
 >>
 
-define_methodType(composite, method) ::= <<
-        public $if(composite.IsClass)$IMethodClass$else$IMethodInterface$endif$ $method.Name$;
->>
-
-define_inheritedmethodType(composite, method) ::= <<
- $if(method.DefiningMethod)$
-        public $if(composite.IsClass)$IMethodClass$else$IMethodInterface$endif$ $method.DefiningMethod.Name$;
- $else$
-        public $if(composite.IsClass)$IMethodClass$else$IMethodInterface$endif$ $method.Name$;
- $endif$
+define_methodType(method) ::= <<
+        public IMethodType $method.Name$;
 >>
 
 builder(repository) ::= <<
@@ -306,7 +298,7 @@ $class.ImplementedProperties:{property|                 this.$class.SingularName
 >>
 
 define_methods(composite) ::= <<
-$composite.DefinedMethods:{method|          public $if(composite.IsClass)$IMethodClass$else$IMethodInterface$endif$ $method.DefiningType.SingularName$$method.Name$;}; separator="\n"$
+$composite.DefinedMethods:{method|          public IMethodType $method.DefiningType.SingularName$$method.Name$;}; separator="\n"$
 >>
 
 build_domain(assembly) ::= <<
@@ -417,23 +409,17 @@ $endif$
 
 assign_methods(composite) ::= <<
 $composite.DefinedMethods:{method|$assign_methodType(method)$}; separator="\n"$
-$composite.InheritedMethods:{method|$assign_inheritedmethodType(composite, method)$}; separator="\n"$
+$composite.InheritedMethods:{method|$assign_inheritedmethodType(method)$}; separator="\n"$
 >>
 
 assign_methodType(method) ::= <<
                 meta.$composite.SingularName$.$method.Name$ = methodTypes.$method.DefiningType.SingularName$$method.Name$;
 >>
 
-assign_inheritedmethodType(composite, method) ::= <<
-$if(composite.IsInterface)$                meta.$composite.SingularName$.$method.Name$ = methodTypes.$method.DefiningType.SingularName$$method.Name$;
-$else$
-$if(method.DefiningMethod)$
-    meta.$composite.SingularName$.$method.DefiningMethod.Name$ = methodTypes.$method.DefiningMethod.DefiningType.SingularName$$method.DefiningMethod.Name$.MethodClassBy(meta.$composite.SingularName$);
-$else$
-    meta.$composite.SingularName$.$method.Name$ = methodTypes.$method.DefiningType.SingularName$$method.Name$.MethodClassBy(meta.$composite.SingularName$);
-$endif$
-$endif$
+assign_inheritedmethodType(method) ::= <<
+                meta.$composite.SingularName$.$method.Name$ = methodTypes.$method.DefiningMethod.DefiningType.SingularName$$method.Name$;
 >>
+
 
 build_methods(composite) ::= <<
 $composite.DefinedMethods:{method|     this.Build$method.DefiningType.SingularName$$method.Name$(meta, domains, methodTypes);}; separator="\n"$
@@ -443,7 +429,7 @@ methods(composite) ::= <<$composite.DefinedMethods:{method|$method(method)$}; se
 method(method) ::= <<
         private void Build$method.DefiningType.SingularName$$method.Name$(MetaPopulation meta, Domains domains, MethodTypes methodTypes)
         {
-            methodTypes.$method.DefiningType.SingularName$$method.Name$ = new $if(composite.IsClass)$MethodClass$else$MethodInterface$endif$(meta.$method.DefiningType.SingularName$, new System.Guid("$method.AttributeByName.Id.Value$"))
+            methodTypes.$method.DefiningType.SingularName$$method.Name$ = new MethodType(meta.$method.DefiningType.SingularName$, new System.Guid("$method.AttributeByName.Id.Value$"))
             {
                 Name = "$method.Name$",
 $if(method.WorkspaceNames)$		        AssignedWorkspaceNames = new[] {$method.WorkspaceNames:{name|"$name$"}; separator=", "$},$endif$

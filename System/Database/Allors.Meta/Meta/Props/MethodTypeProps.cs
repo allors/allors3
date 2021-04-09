@@ -8,22 +8,28 @@ namespace Allors.Database.Meta
 {
     using System;
 
-    public abstract partial class MethodTypeProps : OperandTypeProps, IMetaIdentifiableObjectProps
+    public sealed partial class MethodTypeProps : OperandTypeProps, IMetaIdentifiableObjectProps
     {
-        public IComposite ObjectType => ((IMethodType)this.AsMethodType).ObjectType;
+        private readonly IMethodTypeBase methodType;
 
-        public Guid Id => this.AsMethodType.Id;
+        internal MethodTypeProps(IMethodTypeBase methodType) => this.methodType = methodType;
 
-        public string IdAsString => this.AsMethodType.IdAsString;
+        public IComposite ObjectType => ((IMethodType)this.methodType).ObjectType;
 
-        public string Name => this.AsMethodType.Name;
+        public Guid Id => this.methodType.Id;
 
-        public string FullName => this.AsMethodType.FullName;
+        public string IdAsString => this.methodType.IdAsString;
 
-        public string[] WorkspaceNames => this.AsMethodType.WorkspaceNames;
+        public string Name => this.methodType.Name;
+
+        public string FullName => this.methodType.FullName;
+
+        public string[] WorkspaceNames => this.methodType.WorkspaceNames;
 
         #region As
-        protected abstract IMethodTypeBase AsMethodType { get; }
+        protected override IMetaObjectBase AsMetaObject => this.methodType;
+
+        protected override IOperandTypeBase AsOperandType => this.methodType;
         #endregion
     }
 }

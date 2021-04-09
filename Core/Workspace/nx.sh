@@ -8,8 +8,8 @@ npm install -D @nrwl/gatsby
 npm install -D jest-chain
 npm install -D jest-extended
 
-npx nx g @nrwl/angular:application angular/app --e2eTestRunner=none
-npx nx g @nrwl/angular:application angular/material/app --e2eTestRunner=none
+npx nx g @nrwl/angular:application angular/app --routing=true --style=scss --e2eTestRunner=none
+npx nx g @nrwl/angular:application angular/material/app --routing=true --style=scss --e2eTestRunner=none
 npx nx g @nrwl/gatsby:app gatsby --e2eTestRunner=none
 
 npx nx g @nrwl/workspace:library client/fetch
@@ -31,4 +31,7 @@ npx nx g @nrwl/workspace:library workspace/core
 npx nx g @nrwl/workspace:library workspace/memory
 npx nx g @nrwl/workspace:library workspace/tests
 
+npx nx g @nrwl/angular:library angular/core
+npx nx g @nrwl/angular:library angular/custom
+npx nx g @nrwl/angular:library angular/services/core
 

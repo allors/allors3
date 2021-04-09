@@ -9,9 +9,15 @@ namespace Allors.Database.Meta
 
     public partial class MethodInvocation
     {
-        public MethodInvocation(IMethodClass methodClass) => this.MethodClass = methodClass;
+        public MethodInvocation(IClass @class, IMethodType methodType)
+        {
+            this.Class = @class;
+            this.MethodType = methodType;
+        }
 
-        public IMethodClass MethodClass { get; }
+        public IClass Class { get; }
+
+        public IMethodType MethodType { get; }
 
         //[DebuggerStepThrough]
         public void Execute(Method method)
@@ -23,7 +29,9 @@ namespace Allors.Database.Meta
 
             method.Executed = true;
 
-            foreach (var action in this.MethodClass.Actions)
+            var actions = this.Class.Actions(this.MethodType);
+
+            foreach (var action in actions)
             {
                 // TODO: Add test for deletion
                 if (!method.Object.Strategy.IsDeleted && !method.StopPropagation)

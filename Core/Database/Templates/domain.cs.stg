@@ -507,7 +507,7 @@ $if(methodType._.ObjectType._.IsClass)$
 			get
 			{
 			    var m = this.Object.Strategy.Transaction.Database.Context().M;
-				return new Allors.Database.Meta.MethodInvocation(m.$methodType._.ObjectType._.SingularName$.$methodType._.Name$);
+				return new Allors.Database.Meta.MethodInvocation(m.$methodType._.ObjectType._.SingularName$, m.$methodType._.ObjectType._.SingularName$.$methodType._.Name$);
 			}
 		}
 	}
@@ -536,7 +536,7 @@ methodTypeLeafClass() ::= <<
 			get
 			{
 			    var m = this.Object.Strategy.Transaction.Database.Context().M;
-				return new Allors.Database.Meta.MethodInvocation(m.$class.SingularName$.$methodType._.Name$);
+				return new Allors.Database.Meta.MethodInvocation(m.$class.SingularName$, m.$class.SingularName$.$methodType._.Name$);
 			}
 		}
 	}

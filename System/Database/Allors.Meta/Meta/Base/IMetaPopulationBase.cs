@@ -25,6 +25,8 @@ namespace Allors.Database.Meta
 
         new IEnumerable<IInheritanceBase> Inheritances { get; }
 
+        MethodCompiler MethodCompiler { get; }
+
         void OnDomainCreated(Domain domain);
 
         void OnInheritanceCreated(Inheritance inheritance);
@@ -33,15 +35,13 @@ namespace Allors.Database.Meta
 
         void OnClassCreated(Class @class);
 
-        void OnMethodInterfaceCreated(MethodInterface methodInterface);
+        void OnMethodTypeCreated(MethodType methodType);
 
         void OnRelationTypeCreated(RelationType relationType);
 
         void OnAssociationTypeCreated(AssociationType associationType);
 
         void OnRoleTypeCreated(RoleType roleType);
-
-        void OnMethodClassCreated(MethodClass methodClass);
 
         void Stale();
 

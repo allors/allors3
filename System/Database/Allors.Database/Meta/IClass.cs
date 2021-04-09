@@ -6,7 +6,11 @@
 
 namespace Allors.Database.Meta
 {
+    using System;
+    using System.Collections;
+
     public interface IClass : IComposite
     {
+        Action<object, object>[] Actions(IMethodType methodType);
     }
 }

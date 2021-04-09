@@ -7,6 +7,7 @@
 namespace Allors.Database.Meta
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
 
     public abstract partial class Class : Composite, IClassBase
@@ -18,6 +19,7 @@ namespace Allors.Database.Meta
         private Type clrType;
 
         private ClassProps props;
+        private ConcurrentDictionary<IMethodType, Action<object, object>[]> actionsByMethodType;
 
         internal Class(IMetaPopulationBase metaPopulation, Guid id) : base(metaPopulation, id)
         {
@@ -74,5 +76,17 @@ namespace Allors.Database.Meta
         public override bool IsAssignableFrom(IComposite objectType) => this.Equals(objectType);
 
         public override void Bind(Dictionary<string, Type> typeByTypeName) => this.clrType = typeByTypeName[this.Name];
+
+        public Action<object, object>[] Actions(IMethodType methodType)
+        {
+            this.actionsByMethodType ??= new ConcurrentDictionary<IMethodType, Action<object, object>[]>();
+            if (!this.actionsByMethodType.TryGetValue(methodType, out var actions))
+            {
+                actions = this.MetaPopulation.MethodCompiler.Compile(this, methodType);
+                this.actionsByMethodType[methodType] = actions;
+            }
+
+            return actions;
+        }
     }
 }

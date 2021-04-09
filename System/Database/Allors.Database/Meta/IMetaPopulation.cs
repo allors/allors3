@@ -46,6 +46,6 @@ namespace Allors.Database.Meta
 
         IValidationLog Validate();
 
-        void Bind(Type[] types, MethodInfo[] methods);
+        void Bind(Type[] types, MethodInfo[] extensionMethods);
     }
 }

@@ -52,8 +52,8 @@ namespace Allors.Database.Meta
 
         IEnumerable<IDomain> IDomain.DirectSuperdomains => this.directSuperdomains;
         public IEnumerable<Domain> DirectSuperdomains => this.directSuperdomains;
-
-        public IEnumerable<Domain> Superdomains
+        
+        public IEnumerable<IDomainBase> Superdomains
         {
             get
             {

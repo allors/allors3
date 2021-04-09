@@ -65,7 +65,7 @@ namespace Allors.Database.Meta
         }
 
         public abstract bool ExistClass { get; }
-        
+
         /// <summary>
         /// Gets the exclusive concrete subclass.
         /// </summary>
@@ -354,15 +354,7 @@ namespace Allors.Database.Meta
             {
                 if (methodTypeByClass.TryGetValue(superType, out var inheritedMethodTypes))
                 {
-                    if (this.IsInterface)
-                    {
-                        methodTypes.UnionWith(inheritedMethodTypes);
-                    }
-                    else
-                    {
-                        var methodClasses = inheritedMethodTypes.Select(v => v.MethodClassBy((Class)this));
-                        methodTypes.UnionWith(methodClasses);
-                    }
+                    methodTypes.UnionWith(inheritedMethodTypes);
                 }
             }
 
