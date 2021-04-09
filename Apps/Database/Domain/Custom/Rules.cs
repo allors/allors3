@@ -307,6 +307,7 @@ namespace Allors.Database.Domain
                 new SalesInvoiceItemSubTotalItemRule(m),
                 new RepeatingPurchaseInvoiceRule(m),
                 new RepeatingSalesInvoiceRule(m),
+                new SalesInvoicePrintRule(m),
                 new SalesInvoiceRule(m),
                 new SalesInvoiceDueDateRule(m),
                 new SalesInvoiceStoreRule(m),
