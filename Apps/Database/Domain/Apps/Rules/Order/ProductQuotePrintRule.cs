@@ -33,7 +33,7 @@ namespace Allors.Database.Domain
 
                 m.Request.RolePattern(v => v.RequestNumber, v => v.QuoteWhereRequest.Quote.AsProductQuote),
 
-                m.ProductQuote.RolePattern(v => v.Issuer, v => v.Issuer.InternalOrganisation.AsOrganisation),
+                m.ProductQuote.RolePattern(v => v.Issuer, v => v.Issuer.InternalOrganisation.AsOrganisation.QuotesWhereIssuer.Quote.AsProductQuote),
                 m.Organisation.RolePattern(v => v.PartyName, v => v.QuotesWhereIssuer.Quote.AsProductQuote),
                 m.Organisation.RolePattern(v => v.GeneralEmail, v => v.QuotesWhereIssuer.Quote.AsProductQuote),
                 m.Organisation.RolePattern(v => v.InternetAddress, v => v.QuotesWhereIssuer.Quote.AsProductQuote),
@@ -61,7 +61,7 @@ namespace Allors.Database.Domain
                 m.PostalAddress.RolePattern(v => v.Region, v => v.QuotesWhereFullfillContactMechanism.Quote.AsProductQuote),
                 m.PostalAddress.RolePattern(v => v.PostalCode, v => v.QuotesWhereFullfillContactMechanism.Quote.AsProductQuote),
                 m.Country.RolePattern(v => v.Name, v => v.PostalAddressesWhereCountry.PostalAddress.QuotesWhereFullfillContactMechanism.Quote.AsProductQuote),
-                m.ElectronicAddress.RolePattern(v => v.ElectronicAddressString, v => v.QuotesWhereFullfillContactMechanism),
+                m.ElectronicAddress.RolePattern(v => v.ElectronicAddressString, v => v.QuotesWhereFullfillContactMechanism.Quote.AsProductQuote),
 
                 m.ProductQuote.RolePattern(v => v.Receiver),
                 m.Party.RolePattern(v => v.PartyName, v => v.QuotesWhereReceiver.Quote.AsProductQuote),

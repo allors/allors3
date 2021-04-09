@@ -22,9 +22,6 @@ namespace Allors.Database.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            var transaction = cycle.Transaction;
-            var validation = cycle.Validation;
-
             foreach (var @this in matches.Cast<WorkEffortInventoryAssignment>())
             {
                 if (@this.ExistAssignment)
