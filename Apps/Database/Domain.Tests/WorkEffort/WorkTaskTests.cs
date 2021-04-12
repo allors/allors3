@@ -1387,6 +1387,85 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
+    public class WorkEffortTotalOtherRevenueDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public WorkEffortTotalOtherRevenueDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedWorkEffortSalesInvoiceItemAssignmentAssignmentDeriveTotalOtherRevenue()
+        {
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var salesInvoiceItem = new SalesInvoiceItemBuilder(this.Transaction)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).Time)
+                .WithQuantity(1)
+                .WithDescription("desc")
+                .WithAssignedUnitPrice(1)
+                .Build();
+
+            var workEffortSalesInvoiceItemAssignment = new WorkEffortSalesInvoiceItemAssignmentBuilder(this.Transaction)
+                .WithSalesInvoiceItem(salesInvoiceItem)
+                .Build();
+            this.Transaction.Derive(false);
+
+            workEffortSalesInvoiceItemAssignment.Assignment = workEffort;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(1, workEffort.TotalOtherRevenue);
+        }
+
+        [Fact]
+        public void ChangedWorkEffortSalesInvoiceItemAssignmentSalesInvoiceItemQuantityDeriveTotalOtherRevenue()
+        {
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var salesInvoiceItem = new SalesInvoiceItemBuilder(this.Transaction)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).Time)
+                .WithQuantity(1)
+                .WithDescription("desc")
+                .WithAssignedUnitPrice(1)
+                .Build();
+
+            new WorkEffortSalesInvoiceItemAssignmentBuilder(this.Transaction)
+                .WithSalesInvoiceItem(salesInvoiceItem)
+                .WithAssignment(workEffort)
+                .Build();
+            this.Transaction.Derive(false);
+
+            salesInvoiceItem.Quantity = 2;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(2, workEffort.TotalOtherRevenue);
+        }
+
+        [Fact]
+        public void ChangedWorkEffortSalesInvoiceItemAssignmentSalesInvoiceItemAssignedUnitPriceDeriveTotalOtherRevenue()
+        {
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var salesInvoiceItem = new SalesInvoiceItemBuilder(this.Transaction)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).Time)
+                .WithQuantity(1)
+                .WithDescription("desc")
+                .WithAssignedUnitPrice(1)
+                .Build();
+
+            new WorkEffortSalesInvoiceItemAssignmentBuilder(this.Transaction)
+                .WithSalesInvoiceItem(salesInvoiceItem)
+                .WithAssignment(workEffort)
+                .Build();
+            this.Transaction.Derive(false);
+
+            salesInvoiceItem.AssignedUnitPrice = 3;
+            this.Transaction.Derive(false);
+
+            Assert.Equal(3, workEffort.TotalOtherRevenue);
+        }
+    }
+
     public class WorkEffortTotalSubContractedRevenueDerivationTests : DomainTest, IClassFixture<Fixture>
     {
         public WorkEffortTotalSubContractedRevenueDerivationTests(Fixture fixture) : base(fixture) { }

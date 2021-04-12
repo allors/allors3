@@ -389,6 +389,7 @@ namespace Allors.Database.Domain
                 new WorkEffortTotalLabourRevenueRule(m),
                 new WorkEffortTotalMaterialRevenueRule(m),
                 new WorkEffortTotalSubContractedRevenueRule(m),
+                new WorkEffortTotalOtherRevenueRule(m),
                 new WorkEffortGrandTotalRule(m),
                 new WorkEffortTotalRevenueRule(m),
                 new WorkEffortTypeRule(m),
