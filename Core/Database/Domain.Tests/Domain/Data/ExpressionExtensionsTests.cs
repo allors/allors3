@@ -6,10 +6,11 @@
 //   Defines the ApplicationTests type.
 // </summary>
 
-namespace Allors.Database.Domain.Tests
+namespace Allors.Database.Data.Tests
 {
     using System;
     using System.Collections;
+    using System.Linq;
     using System.Linq.Expressions;
     using Derivations;
     using Meta;
@@ -33,7 +34,7 @@ namespace Allors.Database.Domain.Tests
             var path = expression.ToPath(this.M);
 
             Assert.Equal(this.M.User.Logins, path.PropertyType);
-            Assert.Null(path.Next);
+            Assert.Empty(path.Nodes);
         }
 
         [Fact]
@@ -44,7 +45,7 @@ namespace Allors.Database.Domain.Tests
             var path = expression.ToPath(this.M);
 
             Assert.Equal(this.M.Person.OrganisationWhereEmployee, path.PropertyType);
-            Assert.Null(path.Next);
+            Assert.Empty(path.Nodes);
         }
 
         [Fact]
@@ -56,10 +57,10 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(this.M.Person.OrganisationWhereEmployee, path.PropertyType);
 
-            var next = path.Next;
+            var next = path.Nodes.First();
 
             Assert.Equal(this.M.Organisation.Information, next.PropertyType);
-            Assert.Null(next.Next);
+            Assert.Empty(next.Nodes);
         }
 
         [Fact]
@@ -70,7 +71,7 @@ namespace Allors.Database.Domain.Tests
             var path = expression.ToPath(this.M);
 
             Assert.Equal(this.M.Organisation.Name, path.PropertyType);
-            Assert.Null(path.Next);
+            Assert.Empty(path.Nodes);
         }
 
         [Fact]
@@ -82,7 +83,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(this.M.UserGroup.Members, path.PropertyType);
             Assert.Equal(this.M.Person, path.OfType);
-            Assert.Null(path.Next);
+            Assert.Empty(path.Nodes);
         }
 
         [Fact]
@@ -94,10 +95,10 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(this.M.Organisation.Employees, path.PropertyType);
 
-            var next = path.Next;
+            var next = path.Nodes.First();
 
             Assert.Equal(this.M.Person.FirstName, next.PropertyType);
-            Assert.Null(next.Next);
+            Assert.Empty(next.Nodes);
         }
 
 
@@ -110,10 +111,10 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(this.M.UserGroup.Members, path.PropertyType);
 
-            var next = path.Next;
+            var next = path.Nodes.First();
 
             Assert.Equal(this.M.Person.FirstName, next.PropertyType);
-            Assert.Null(next.Next);
+            Assert.Empty(next.Nodes);
         }
     }
 }

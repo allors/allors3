@@ -7,6 +7,7 @@
 namespace Allors.Database.Derivations
 {
     using System;
+    using System.Collections.Generic;
     using Data;
     using Meta;
 
@@ -16,10 +17,15 @@ namespace Allors.Database.Derivations
         {
             private get => throw new NotSupportedException();
 
-            set => this.Path = new Path(value);
+            set
+            {
+                var node = value.ToPath();
+                this.Path = value != null ? new Node[] { node } : Array.Empty<Node>();
+            }
         }
 
-        public Path Path { get; set; }
+        IEnumerable<Node> IPattern.Path => this.Path;
+        public IEnumerable<Node> Path { get; set; }
 
         public IComposite OfType { get; set; }
 

@@ -98,7 +98,7 @@ namespace Allors.Database.Domain.Derivations.Default
 
                                     if (pattern.Path != null)
                                     {
-                                        source = source.SelectMany(v => pattern.Path.Get(v));
+                                        source = source.SelectMany(v => pattern.Path.SelectMany(w => w.Resolve(v)));
                                     }
 
                                     if (pattern.OfType != null)
@@ -140,7 +140,7 @@ namespace Allors.Database.Domain.Derivations.Default
 
                                     if (pattern.Path != null)
                                     {
-                                        source = source.SelectMany(v => pattern.Path.Get(v));
+                                        source = source.SelectMany(v => pattern.Path.SelectMany(w => w.Resolve(v)));
                                     }
 
                                     if (pattern.OfType != null)

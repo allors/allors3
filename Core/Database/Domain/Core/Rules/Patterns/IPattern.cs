@@ -6,12 +6,13 @@
 
 namespace Allors.Database.Derivations
 {
+    using System.Collections.Generic;
     using Data;
     using Meta;
 
     public interface IPattern
     {
-        Path Path { get; }
+        IEnumerable<Node> Path { get; }
 
         IComposite OfType { get; }
 

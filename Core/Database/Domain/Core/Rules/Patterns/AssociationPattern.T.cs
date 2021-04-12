@@ -8,22 +8,21 @@ namespace Allors.Database.Derivations
 {
     using System;
     using System.Linq.Expressions;
+    using Data;
     using Meta;
 
     public class AssociationPattern<T> : AssociationPattern where T : IComposite
     {
-        public AssociationPattern(T objectType, Func<T, IAssociationType> associationType, IComposite ofType) : base(objectType, associationType(objectType)) => this.OfType = ofType;
-
-        public AssociationPattern(T objectType, Func<T, IAssociationType> associationType, Expression<Func<T, IComposite>> step = null, IComposite ofType = null) : base(objectType, associationType(objectType))
+        public AssociationPattern(T objectType, IAssociationType associationType) : base(objectType, associationType)
         {
-            this.Path = step?.ToPath(objectType.MetaPopulation);
-            this.OfType = ofType;
         }
 
-        public AssociationPattern(T objectType, Func<T, IAssociationType> associationType, Expression<Func<T, IPropertyType>> step = null, IComposite ofType = null) : base(objectType, associationType(objectType))
+        public AssociationPattern(T objectType, Func<T, IAssociationType> associationType) : base(objectType, associationType(objectType))
         {
-            this.Path = step?.ToPath(objectType.MetaPopulation);
-            this.OfType = ofType;
         }
+
+        public AssociationPattern(T objectType, Func<T, IAssociationType> associationType, Expression<Func<T, IComposite>> step) : base(objectType, associationType(objectType)) => this.Path = new[] { step.ToPath(objectType.MetaPopulation) };
+
+        public AssociationPattern(T objectType, Func<T, IAssociationType> associationType, Expression<Func<T, IPropertyType>> step) : base(objectType, associationType(objectType)) => this.Path = new[] { step.ToPath(objectType.MetaPopulation) };
     }
 }

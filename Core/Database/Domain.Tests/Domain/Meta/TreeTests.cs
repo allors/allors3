@@ -145,7 +145,7 @@ namespace Allors.Database.Domain.Tests
         {
             var treeNode = new Node(this.M.C1.C1AllorsString);
 
-            Assert.Null(treeNode.Nodes);
+            Assert.Empty(treeNode.Nodes);
         }
 
         [Fact]

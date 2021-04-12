@@ -9,22 +9,17 @@ namespace Allors.Database.Derivations
     using System;
     using System.Linq;
     using System.Linq.Expressions;
+    using Data;
     using Meta;
 
     public class RolePattern<T> : RolePattern where T : IComposite
     {
-        public RolePattern(T objectType, Func<T, IRoleType> role, IComposite ofType) : base(objectType, role(objectType)) => this.OfType = ofType;
+        public RolePattern(T objectType, IRoleType role) : base(objectType, role) { }
 
-        public RolePattern(T objectType, Func<T, IRoleType> role, Expression<Func<T, IPropertyType>> step =null, IComposite ofType = null) : base(objectType, role(objectType))
-        {
-            this.Path = step?.ToPath(objectType.MetaPopulation);
-            this.OfType = ofType;
-        }
+        public RolePattern(T objectType, Func<T, IRoleType> role) : base(objectType, role(objectType)) { }
 
-        public RolePattern(T objectType, Func<T, IRoleType> role, Expression<Func<T, IComposite>> step, IComposite ofType = null) : base(objectType, role(objectType))
-        {
-            this.Path = step?.ToPath(objectType.MetaPopulation);
-            this.OfType = ofType;
-        }
+        public RolePattern(T objectType, Func<T, IRoleType> role, Expression<Func<T, IPropertyType>> step) : base(objectType, role(objectType)) => this.Path = new[] { step?.ToPath(objectType.MetaPopulation) };
+
+        public RolePattern(T objectType, Func<T, IRoleType> role, Expression<Func<T, IComposite>> step) : base(objectType, role(objectType)) => this.Path = new[] { step?.ToPath(objectType.MetaPopulation) };
     }
 }

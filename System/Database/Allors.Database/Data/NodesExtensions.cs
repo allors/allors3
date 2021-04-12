@@ -9,7 +9,7 @@ namespace Allors.Database.Data
     using System.Linq;
     using Security;
 
-    public static class NodeExtensions
+    public static class NodesExtensions
     {
         public static void Resolve(this Node[] treeNodes, IObject @object, IAccessControlLists acls, ISet<IObject> objects)
         {
