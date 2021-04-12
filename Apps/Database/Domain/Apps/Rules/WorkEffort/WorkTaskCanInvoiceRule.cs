@@ -42,9 +42,11 @@ namespace Allors.Database.Domain
                     foreach (WorkEffortBilling workEffortBilling in @this.WorkEffortBillingsWhereWorkEffort)
                     {
                         if (workEffortBilling.InvoiceItem is SalesInvoiceItem invoiceItem
+                            && invoiceItem.ExistSalesInvoiceWhereSalesInvoiceItem
                             && invoiceItem.SalesInvoiceWhereSalesInvoiceItem.SalesInvoiceType.IsSalesInvoice
                             && !invoiceItem.SalesInvoiceWhereSalesInvoiceItem.ExistSalesInvoiceWhereCreditedFromInvoice)
                         {
+                            // Sales invoice already exists and this sales invoice is not credited.
                             @this.CanInvoice = false;
                         }
                     }
@@ -62,6 +64,7 @@ namespace Allors.Database.Domain
                             foreach (TimeEntryBilling timeEntryBilling in timeEntry.TimeEntryBillingsWhereTimeEntry)
                             {
                                 if (timeEntryBilling.InvoiceItem is SalesInvoiceItem invoiceItem
+                                    && invoiceItem.ExistSalesInvoiceWhereSalesInvoiceItem
                                     && invoiceItem.SalesInvoiceWhereSalesInvoiceItem.SalesInvoiceType.IsSalesInvoice
                                     && !invoiceItem.SalesInvoiceWhereSalesInvoiceItem.ExistSalesInvoiceWhereCreditedFromInvoice)
                                 {

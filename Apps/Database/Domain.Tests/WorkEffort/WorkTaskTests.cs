@@ -657,6 +657,63 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(30, workOrder.WorkEffortBillingsWhereWorkEffort.First.InvoiceItem.TotalExVat);
         }
 
+        [Fact]
+        public void GivenWorkEffortWithInvoiceItems_WhenInvoiced_ThenInvoiceItemsAreInvoiced()
+        {
+            var organisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
+
+            var customerEmail = new PartyContactMechanismBuilder(this.Transaction)
+                .WithContactMechanism(new EmailAddressBuilder(this.Transaction).WithElectronicAddressString($"customer@acme.com").Build())
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
+                .WithUseAsDefault(true)
+                .Build();
+
+            var customer = new PersonBuilder(this.Transaction).WithLastName("Customer").WithPartyContactMechanism(customerEmail).Build();
+            new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(organisation).Build();
+
+            var employee = new PersonBuilder(this.Transaction).WithFirstName("Good").WithLastName("Worker").Build();
+            new EmploymentBuilder(this.Transaction).WithEmployee(employee).WithEmployer(organisation).Build();
+
+            var yesterday = DateTimeFactory.CreateDateTime(this.Transaction.Now().AddDays(-1));
+
+            var today = DateTimeFactory.CreateDateTime(this.Transaction.Now());
+            var laterToday = DateTimeFactory.CreateDateTime(today.AddHours(4));
+
+            var tomorrow = DateTimeFactory.CreateDateTime(this.Transaction.Now().AddDays(1));
+
+            this.Transaction.Derive(true);
+
+            var workOrder = new WorkTaskBuilder(this.Transaction).WithName("Task").WithCustomer(customer).Build();
+
+            this.Transaction.Derive(true);
+
+            var salesInvoiceItem = new SalesInvoiceItemBuilder(this.Transaction)
+                                        .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).Time)
+                                        .WithQuantity(1)
+                                        .WithDescription("desc")
+                                        .WithAssignedUnitPrice(1)
+                                        .Build();
+
+            new WorkEffortSalesInvoiceItemAssignmentBuilder(this.Transaction)
+                .WithAssignment(workOrder)
+                .WithSalesInvoiceItem(salesInvoiceItem)
+                .Build();
+
+            this.Transaction.Derive(true);
+
+            workOrder.Complete();
+            this.Transaction.Derive(true);
+
+            workOrder.Invoice();
+            this.Transaction.Derive(true);
+
+            var salesInvoice = customer.SalesInvoicesWhereBillToCustomer.First;
+
+            Assert.Single(salesInvoice.InvoiceItems);
+            Assert.NotEqual(salesInvoiceItem, salesInvoice.SalesInvoiceItems.First);
+            Assert.Equal(1, salesInvoice.GrandTotal);
+        }
+
         private Part CreatePart(string id) =>
             new NonUnifiedPartBuilder(this.Transaction)
             .WithProductIdentification(new PartNumberBuilder(this.Transaction)
