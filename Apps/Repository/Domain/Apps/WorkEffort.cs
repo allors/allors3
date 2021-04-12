@@ -270,6 +270,16 @@ namespace Allors.Repository
         decimal TotalSubContractedRevenue { get; set; }
 
         #region Allors
+        [Id("f44ecd29-4529-4d98-bded-1ca9549639e1")]
+        #endregion
+        [Derived]
+        [Required]
+        [Precision(19)]
+        [Scale(2)]
+        [Workspace]
+        decimal TotalOtherRevenue { get; set; }
+
+        #region Allors
         [Id("1c16f9d0-9d2e-47cc-b097-e63d4de43ea6")]
         #endregion
         [Derived]

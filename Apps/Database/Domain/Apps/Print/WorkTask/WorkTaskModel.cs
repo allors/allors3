@@ -27,7 +27,9 @@ namespace Allors.Database.Domain.Print.WorkTaskModel
 
             this.TotalParts = workTask.TotalMaterialRevenue.ToString("N2", new CultureInfo("nl-BE"));
 
-            this.TotalOther = workTask.TotalSubContractedRevenue.ToString("N2", new CultureInfo("nl-BE"));
+            this.TotalSubContractor = workTask.TotalSubContractedRevenue.ToString("N2", new CultureInfo("nl-BE"));
+
+            this.TotalOther = workTask.TotalOtherRevenue.ToString("N2", new CultureInfo("nl-BE"));
 
             this.Total = workTask.GrandTotal.ToString("N2", new CultureInfo("nl-BE"));
         }
@@ -57,6 +59,8 @@ namespace Allors.Database.Domain.Print.WorkTaskModel
         public string TotalLabour { get; }
 
         public string TotalParts { get; }
+
+        public string TotalSubContractor { get; }
 
         public string TotalOther { get; }
 

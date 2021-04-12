@@ -90,30 +90,25 @@ namespace Allors.Database.Domain
             if (@this.CanInvoice)
             {
                 @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Transaction).Finished;
-                @this.InvoiceThis();
+
+                var salesInvoice = new SalesInvoiceBuilder(@this.Strategy.Transaction)
+                    .WithBilledFrom(@this.TakenBy)
+                    .WithBillToCustomer(@this.Customer)
+                    .WithBillToContactPerson(@this.ContactPerson)
+                    .WithInvoiceDate(@this.Strategy.Transaction.Now())
+                    .WithSalesInvoiceType(new SalesInvoiceTypes(@this.Strategy.Transaction).SalesInvoice)
+                    .Build();
+
+                CreateInvoiceItems(@this, salesInvoice);
+                foreach (WorkEffort childWorkEffort in @this.Children)
+                {
+                    CreateInvoiceItems(childWorkEffort, salesInvoice);
+                }
+
                 @this.CanInvoice = false;
             }
 
             method.StopPropagation = true;
-        }
-
-        private static SalesInvoice InvoiceThis(this WorkEffort @this)
-        {
-            var salesInvoice = new SalesInvoiceBuilder(@this.Strategy.Transaction)
-                .WithBilledFrom(@this.TakenBy)
-                .WithBillToCustomer(@this.Customer)
-                .WithBillToContactPerson(@this.ContactPerson)
-                .WithInvoiceDate(@this.Strategy.Transaction.Now())
-                .WithSalesInvoiceType(new SalesInvoiceTypes(@this.Strategy.Transaction).SalesInvoice)
-                .Build();
-
-            CreateInvoiceItems(@this, salesInvoice);
-            foreach (WorkEffort childWorkEffort in @this.Children)
-            {
-                CreateInvoiceItems(childWorkEffort, salesInvoice);
-            }
-
-            return salesInvoice;
         }
 
         private static void CreateInvoiceItems(this WorkEffort @this, SalesInvoice salesInvoice)
@@ -166,6 +161,18 @@ namespace Allors.Database.Domain
                 new WorkEffortBillingBuilder(transaction)
                     .WithWorkEffort(@this)
                     .WithInvoiceItem(invoiceItem)
+                    .Build();
+            }
+
+            foreach (WorkEffortSalesInvoiceItemAssignment workEffortSalesInvoiceItemAssignment in @this.WorkEffortSalesInvoiceItemAssignmentsWhereAssignment)
+            {
+                var clone = workEffortSalesInvoiceItemAssignment.SalesInvoiceItem.Clone();
+
+                salesInvoice.AddSalesInvoiceItem(clone);
+
+                new WorkEffortBillingBuilder(transaction)
+                    .WithWorkEffort(@this)
+                    .WithInvoiceItem(clone)
                     .Build();
             }
         }

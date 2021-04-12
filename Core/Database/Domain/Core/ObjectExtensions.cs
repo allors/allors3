@@ -64,11 +64,8 @@ namespace Allors.Database.Domain
 
             foreach (var roleType in @class.DatabaseRoleTypes.Where(v => !(v.RelationType.IsDerived || v.RelationType.IsSynced) && !deepClone.Contains(v) && (v.ObjectType.IsUnit || v.AssociationType.IsMany)))
             {
-                if (!clone.Strategy.ExistRole(roleType))
-                {
-                    var role = @this.Strategy.GetRole(roleType);
-                    clone.Strategy.SetRole(roleType, role);
-                }
+                var role = @this.Strategy.GetRole(roleType);
+                clone.Strategy.SetRole(roleType, role);
             }
 
             foreach (var roleType in deepClone)

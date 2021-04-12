@@ -67,6 +67,8 @@ namespace Allors.Repository
 
         public decimal TotalSubContractedRevenue { get; set; }
 
+        public decimal TotalOtherRevenue { get; set; }
+
         public decimal TotalRevenue { get; set; }
 
         public decimal GrandTotal { get; set; }
