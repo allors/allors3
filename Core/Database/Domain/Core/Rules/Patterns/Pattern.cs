@@ -13,6 +13,7 @@ namespace Allors.Database.Derivations
 
     public abstract class Pattern : IPattern
     {
+        // TODO: Remove
         public IPropertyType[] Steps
         {
             private get => throw new NotSupportedException();
@@ -20,12 +21,12 @@ namespace Allors.Database.Derivations
             set
             {
                 var node = value.ToPath();
-                this.Path = value != null ? new Node[] { node } : Array.Empty<Node>();
+                this.Tree = value != null ? new Node[] { node } : Array.Empty<Node>();
             }
         }
 
-        IEnumerable<Node> IPattern.Path => this.Path;
-        public IEnumerable<Node> Path { get; set; }
+        IEnumerable<Node> IPattern.Tree => this.Tree;
+        public IEnumerable<Node> Tree { get; set; }
 
         public IComposite OfType { get; set; }
 

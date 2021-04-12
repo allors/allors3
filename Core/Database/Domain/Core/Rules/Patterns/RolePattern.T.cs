@@ -7,6 +7,7 @@
 namespace Allors.Database.Derivations
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
     using Data;
@@ -14,12 +15,24 @@ namespace Allors.Database.Derivations
 
     public class RolePattern<T> : RolePattern where T : IComposite
     {
-        public RolePattern(T objectType, IRoleType role) : base(objectType, role) { }
+        public RolePattern(T objectType, IRoleType roleType) : base(objectType, roleType) { }
+
+        public RolePattern(T objectType, IRoleType roleType, Func<T, Node> path) : base(objectType, roleType) => this.Tree = new[] { path(objectType) };
+
+        public RolePattern(T objectType, IRoleType roleType, Func<T, IEnumerable<Node>> path) : base(objectType, roleType) => this.Tree = path(objectType).ToArray();
+
+        public RolePattern(T objectType, IRoleType roleType, Expression<Func<T, IPropertyType>> step) : base(objectType, roleType) => this.Tree = new[] { step?.ToPath(objectType.MetaPopulation) };
+
+        public RolePattern(T objectType, IRoleType roleType, Expression<Func<T, IComposite>> step) : base(objectType, roleType) => this.Tree = new[] { step?.ToPath(objectType.MetaPopulation) };
 
         public RolePattern(T objectType, Func<T, IRoleType> role) : base(objectType, role(objectType)) { }
 
-        public RolePattern(T objectType, Func<T, IRoleType> role, Expression<Func<T, IPropertyType>> step) : base(objectType, role(objectType)) => this.Path = new[] { step?.ToPath(objectType.MetaPopulation) };
+        public RolePattern(T objectType, Func<T, IRoleType> role, Func<T, Node> path) : base(objectType, role(objectType)) => this.Tree = new[] { path(objectType) };
 
-        public RolePattern(T objectType, Func<T, IRoleType> role, Expression<Func<T, IComposite>> step) : base(objectType, role(objectType)) => this.Path = new[] { step?.ToPath(objectType.MetaPopulation) };
+        public RolePattern(T objectType, Func<T, IRoleType> role, Func<T, IEnumerable<Node>> path) : base(objectType, role(objectType)) => this.Tree = path(objectType).ToArray();
+
+        public RolePattern(T objectType, Func<T, IRoleType> role, Expression<Func<T, IPropertyType>> step) : base(objectType, role(objectType)) => this.Tree = new[] { step?.ToPath(objectType.MetaPopulation) };
+
+        public RolePattern(T objectType, Func<T, IRoleType> role, Expression<Func<T, IComposite>> step) : base(objectType, role(objectType)) => this.Tree = new[] { step?.ToPath(objectType.MetaPopulation) };
     }
 }

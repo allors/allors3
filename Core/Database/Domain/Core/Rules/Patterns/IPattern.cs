@@ -12,7 +12,7 @@ namespace Allors.Database.Derivations
 
     public interface IPattern
     {
-        IEnumerable<Node> Path { get; }
+        IEnumerable<Node> Tree { get; }
 
         IComposite OfType { get; }
 
