@@ -1,4 +1,4 @@
-// <copyright file="ProposalDeniedPermissionDerivationTests.cs" company="Allors bvba">
+// <copyright file="ProposalDeniedPermissionRuleTests.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -9,9 +9,9 @@ namespace Allors.Database.Domain.Tests
     using Resources;
     using Xunit;
 
-    public class ProposalDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class ProposalRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public ProposalDerivationTests(Fixture fixture) : base(fixture) { }
+        public ProposalRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedIssuerThrowValidationError()
@@ -27,9 +27,9 @@ namespace Allors.Database.Domain.Tests
     }
 
     [Trait("Category", "Security")]
-    public class ProposalDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class ProposalDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public ProposalDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.Proposal, this.M.Proposal.Delete);
+        public ProposalDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.Proposal, this.M.Proposal.Delete);
 
         public override Config Config => new Config { SetupSecurity = true };
 

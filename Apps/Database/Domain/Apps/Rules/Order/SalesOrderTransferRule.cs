@@ -16,38 +16,25 @@ namespace Allors.Database.Domain
         public SalesOrderTransferRule(MetaPopulation m) : base(m, new Guid("7E5895C6-712C-42F9-8B1C-964D8B8CBC1D")) =>
             this.Patterns = new Pattern[]
             {
-                m.SalesOrderTransfer.RolePattern(v => v.InternalOrganisation),
+                m.SalesOrderTransfer.RolePattern(v => v.ToInternalOrganisation),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var @this in matches.Cast<SalesOrderTransfer>())
+            foreach (var @this in matches.Cast<SalesOrderTransfer>().Where(v => v.ExistFrom && v.From.SalesOrderState.IsProvisional && v.ExistToInternalOrganisation && !v.ExistToSalesOrder))
             {
-                if (@this.ExistFrom && @this.ExistInternalOrganisation && !@this.ExistTo)
+                var acl = new DatabaseAccessControlLists(cycle.Transaction.Context().User)[@this.From];
+                if (!acl.CanExecute(this.M.SalesOrder.DoTransfer))
                 {
-                    var acl = new DatabaseAccessControlLists(cycle.Transaction.Context().User)[@this.From];
-                    if (!acl.CanExecute(this.M.SalesOrder.DoTransfer))
-                    {
-                        cycle.Validation.AddError($"{@this} {@this.Meta.To} No rights to transfer salesorder");
-                    }
-                    else
-                    {
-                        @this.To = @this.From.Clone(@this.From.Meta.SalesOrderItems);
-                        @this.To.TakenBy = @this.InternalOrganisation;
+                    cycle.Validation.AddError($"{@this} {@this.Meta.ToInternalOrganisation} No rights to transfer salesorder");
+                }
+                else
+                {
+                    @this.ToSalesOrder = @this.From.Clone(@this.From.Meta.SalesOrderItems);
+                    @this.ToSalesOrder.TakenBy = @this.ToInternalOrganisation;
+                    @this.ToSalesOrder.RemoveOrderNumber();
 
-                        // TODO: Make sure 'from' customer is also a customer in 'to' internal organisation
-                        if (!@this.To.TakenBy.ActiveCustomers.Contains(@this.To.BillToCustomer))
-                        {
-                            new CustomerRelationshipBuilder(@this.Strategy.Transaction)
-                                .WithInternalOrganisation(@this.To.TakenBy)
-                                .WithCustomer(@this.To.BillToCustomer)
-                                .Build();
-                        }
-
-                        //TODO: ShipToCustomer
-
-                        @this.From.SalesOrderState = new SalesOrderStates(@this.Strategy.Transaction).Transferred;
-                    }
+                    @this.From.SalesOrderState = new SalesOrderStates(@this.Strategy.Transaction).Transferred;
                 }
             }
         }

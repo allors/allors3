@@ -273,9 +273,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SupplierOfferingDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SupplierOfferingRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SupplierOfferingDerivationTests(Fixture fixture) : base(fixture) { }
+        public SupplierOfferingRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void GivenSupplierOffering_WhenDeriving_ThenRequiredRelationsMustExist()

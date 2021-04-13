@@ -72,9 +72,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class RequestAnonymousDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class RequestAnonymousRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public RequestAnonymousDerivationTests(Fixture fixture) : base(fixture) { }
+        public RequestAnonymousRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedOriginatorDeriveRequestState()
@@ -119,9 +119,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class RequestDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class RequestRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public RequestDerivationTests(Fixture fixture) : base(fixture) { }
+        public RequestRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedAssignedCurrencyDeriveDerivedCurrency()

@@ -256,9 +256,9 @@ namespace Allors.Database.Domain.Tests
         //}
     }
 
-    public class TimeEntryDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class TimeEntryRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public TimeEntryDerivationTests(Fixture fixture) : base(fixture) { }
+        public TimeEntryRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedTimeSheetWhereTimeEntryDeriveWorker()

@@ -184,9 +184,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PurchaseInvoiceCreatedDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PurchaseInvoiceCreatedRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseInvoiceCreatedDerivationTests(Fixture fixture) : base(fixture) { }
+        public PurchaseInvoiceCreatedRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedPurchaseInvoiceStateDeriveDerivedVatRegime()
@@ -297,9 +297,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PurchaseInvoiceDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PurchaseInvoiceRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseInvoiceDerivationTests(Fixture fixture) : base(fixture) { }
+        public PurchaseInvoiceRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedBilledToDeriveValidationError()
@@ -426,9 +426,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PurchaseInvoiceStateDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PurchaseInvoiceStateRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseInvoiceStateDerivationTests(Fixture fixture) : base(fixture) { }
+        public PurchaseInvoiceStateRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedPurchaseInvoiceItemPurchaseInvoiceItemStateDerivePurchaseInvoiceStateNotPaid()
@@ -521,9 +521,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PurchaseInvoiceAwaitingApprovalDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PurchaseInvoiceAwaitingApprovalRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseInvoiceAwaitingApprovalDerivationTests(Fixture fixture) : base(fixture) { }
+        public PurchaseInvoiceAwaitingApprovalRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedPurchaseInvoiceStateCreateApprovalTask()
@@ -581,9 +581,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PurchaseInvoicePriceDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PurchaseInvoicePriceRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseInvoicePriceDerivationTests(Fixture fixture) : base(fixture) { }
+        public PurchaseInvoicePriceRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedPurchaseInvoiceStateCalculatePrice()
@@ -1228,9 +1228,9 @@ namespace Allors.Database.Domain.Tests
     }
 
     [Trait("Category", "Security")]
-    public class PurchaseInvoiceDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PurchaseInvoiceDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseInvoiceDeniedPermissionDerivationTests(Fixture fixture) : base(fixture)
+        public PurchaseInvoiceDeniedPermissionRuleTests(Fixture fixture) : base(fixture)
         {
             this.deletePermission = new Permissions(this.Transaction).Get(this.M.PurchaseInvoice, this.M.PurchaseInvoice.Delete);
             this.createSalesInvoicePermission = new Permissions(this.Transaction).Get(this.M.PurchaseInvoice, this.M.PurchaseInvoice.CreateSalesInvoice);

@@ -1356,9 +1356,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class CustomerShipmentDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class CustomerShipmentRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public CustomerShipmentDerivationTests(Fixture fixture) : base(fixture) { }
+        public CustomerShipmentRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedStoreDeriveShipmentNumber()
@@ -1468,9 +1468,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class CustomerShipmentStateDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class CustomerShipmentStateRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public CustomerShipmentStateDerivationTests(Fixture fixture) : base(fixture) { }
+        public CustomerShipmentStateRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedShipmentItemsDeriveShipmentStateCancelled()
@@ -1847,9 +1847,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class CustomerShipmentShipmentValueDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class CustomerShipmentShipmentValueRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public CustomerShipmentShipmentValueDerivationTests(Fixture fixture) : base(fixture) { }
+        public CustomerShipmentShipmentValueRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedOrderShipmentShipmentItemDeriveShipmentValue()
@@ -1931,9 +1931,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class CustomerShipmentShipDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class CustomerShipmentShipRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public CustomerShipmentShipDerivationTests(Fixture fixture) : base(fixture) { }
+        public CustomerShipmentShipRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedShipmentStateDeriveShipmentState()

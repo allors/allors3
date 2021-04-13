@@ -1299,9 +1299,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SalesOrderItemProvisionalDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesOrderItemProvisionalRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesOrderItemProvisionalDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesOrderItemProvisionalRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedSalesOrderItemStateDeriveDerivedShipFromAddress()
@@ -1555,9 +1555,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SalesOrderItemDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesOrderItemRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesOrderItemDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesOrderItemRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedProductDeriveInvoiceItemType()
@@ -2128,9 +2128,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SalesOrderItemShipmentDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesOrderItemShipmentRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesOrderItemShipmentDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesOrderItemShipmentRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedOrderShipmentQuantityDeriveQuantityPendingShipment()
@@ -2287,9 +2287,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SalesOrderItemStateDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesOrderItemStateRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesOrderItemStateDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesOrderItemStateRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedSalesOrderSalesOrderStateDeriveSalesOrderItemStateProvisional()
@@ -2903,9 +2903,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SalesOrderItemPriceDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesOrderItemPriceRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesOrderItemPriceDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesOrderItemPriceRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedQuantityOrderedCalculatePrice()
@@ -3349,9 +3349,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SalesOrderItemQuantitiesDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesOrderItemQuantitiesRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesOrderItemQuantitiesDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesOrderItemQuantitiesRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedSalesOrderItemInventoryAssignmentsDeriveQuantityCommittedOut()
@@ -3500,15 +3500,15 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SalesOrderItemInventoryAssignmentDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesOrderItemInventoryAssignmentRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesOrderItemInventoryAssignmentDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesOrderItemInventoryAssignmentRuleTests(Fixture fixture) : base(fixture) { }
     }
 
     [Trait("Category", "Security")]
-    public class SalesOrderItemDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesOrderItemDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesOrderItemDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesOrderItemDeniedPermissionRuleTests(Fixture fixture) : base(fixture) { }
 
         public override Config Config => new Config { SetupSecurity = true };
 

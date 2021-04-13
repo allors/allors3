@@ -45,7 +45,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToOne)]
         [Derived]
         [Workspace(Default)]
-        public SalesOrder To { get; set; }
+        public SalesOrder ToSalesOrder { get; set; }
 
         #region Allors
         [Id("c04ff91c-911e-4923-9fc2-2a6bbd3b7f45")]
@@ -54,7 +54,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
         [Workspace(Default)]
-        public InternalOrganisation InternalOrganisation { get; set; }
+        public InternalOrganisation ToInternalOrganisation { get; set; }
 
         #region inherited methods
 

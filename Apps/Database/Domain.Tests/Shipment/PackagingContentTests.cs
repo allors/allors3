@@ -144,9 +144,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PackagingContentDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PackagingContentRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PackagingContentDerivationTests(Fixture fixture) : base(fixture) { }
+        public PackagingContentRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedPackagingContentShipmentItemThrowValidationError()

@@ -212,9 +212,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class BankAccountDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class BankAccountRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public BankAccountDerivationTests(Fixture fixture) : base(fixture) { }
+        public BankAccountRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedIbanThrowValidationError()

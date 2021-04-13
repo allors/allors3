@@ -158,9 +158,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PersonDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PersonRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PersonDerivationTests(Fixture fixture) : base(fixture) { }
+        public PersonRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedSalutationDeriveGender()
@@ -365,9 +365,9 @@ namespace Allors.Database.Domain.Tests
     }
 
     [Trait("Category", "Security")]
-    public class PersonDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PersonDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PersonDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.Person, this.M.Person.Delete);
+        public PersonDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.Person, this.M.Person.Delete);
 
         public override Config Config => new Config { SetupSecurity = true };
 

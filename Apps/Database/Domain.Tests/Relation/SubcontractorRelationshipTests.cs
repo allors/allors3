@@ -222,9 +222,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SubContractorRelationshipDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SubContractorRelationshipRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SubContractorRelationshipDerivationTests(Fixture fixture) : base(fixture) { }
+        public SubContractorRelationshipRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedSubContractorDeriveParties()

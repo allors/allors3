@@ -190,9 +190,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class OwnCreditCardDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class OwnCreditCardRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public OwnCreditCardDerivationTests(Fixture fixture) : base(fixture) { }
+        public OwnCreditCardRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedInternalOrganisationDerivedCollectionMethodsThrowValidation()

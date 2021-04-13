@@ -11,9 +11,9 @@ namespace Allors.Database.Domain.Tests
     using Resources;
     using Xunit;
 
-    public class RequestItemDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class RequestItemRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public RequestItemDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.RequestItem, this.M.RequestItem.Delete);
+        public RequestItemRuleTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.RequestItem, this.M.RequestItem.Delete);
         public override Config Config => new Config { SetupSecurity = true };
 
         private readonly Permission deletePermission;
@@ -219,9 +219,9 @@ namespace Allors.Database.Domain.Tests
     }
 
     [Trait("Category", "Security")]
-    public class RequestItemDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class RequestItemDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public RequestItemDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.RequestItem, this.M.RequestItem.Delete);
+        public RequestItemDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.RequestItem, this.M.RequestItem.Delete);
         public override Config Config => new Config { SetupSecurity = true };
 
         private readonly Permission deletePermission;

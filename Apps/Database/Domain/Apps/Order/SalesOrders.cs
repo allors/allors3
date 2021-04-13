@@ -49,12 +49,17 @@ namespace Allors.Database.Domain
             config.Deny(this.ObjectType, onHold, setReadyForPosting, reject, approve, hold, ship, invoice, post, accept, revise, transfer);
             config.Deny(this.ObjectType, rejected, reject, ship, invoice, post, accept, hold, @continue, revise, approve, setReadyForPosting, cancel, transfer);
             config.Deny(this.ObjectType, cancelled, cancel, ship, invoice, post, accept, hold, @continue, revise, approve, setReadyForPosting, reject, transfer);
-            //config.Deny(this.ObjectType, tranferred, cancel, ship, invoice, post, accept, hold, @continue, revise, approve, setReadyForPosting, reject, transfer);
             config.Deny(this.ObjectType, completed, complete, reject, cancel, approve, hold, @continue, setReadyForPosting, invoice, post, accept, reopen, revise, transfer);
+            config.Deny(this.ObjectType, tranferred, complete, reject, cancel, approve, hold, @continue, setReadyForPosting, invoice, post, accept, reopen, revise, transfer);
 
             var except = new HashSet<IOperandType>
             {
                 this.Meta.ElectronicDocuments,
+                this.Meta.Print,
+            };
+
+            var transferredExcept = new HashSet<IOperandType>
+            {
                 this.Meta.Print,
             };
 
@@ -65,6 +70,7 @@ namespace Allors.Database.Domain
             config.DenyExcept(this.ObjectType, rejected, except, Operations.Write);
             config.DenyExcept(this.ObjectType, completed, except, Operations.Write);
             config.DenyExcept(this.ObjectType, finished, except, Operations.Execute, Operations.Write);
+            config.DenyExcept(this.ObjectType, tranferred, transferredExcept, Operations.Execute, Operations.Write);
         }
     }
 }

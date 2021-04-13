@@ -8,9 +8,9 @@ namespace Allors.Database.Domain.Tests
 {
     using Xunit;
 
-    public class PurchaseInvoiceItemDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PurchaseInvoiceItemRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseInvoiceItemDerivationTests(Fixture fixture) : base(fixture)
+        public PurchaseInvoiceItemRuleTests(Fixture fixture) : base(fixture)
         {
         }
 
@@ -31,9 +31,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PurchaseInvoiceItemStateDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PurchaseInvoiceItemStateRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseInvoiceItemStateDerivationTests(Fixture fixture) : base(fixture)
+        public PurchaseInvoiceItemStateRuleTests(Fixture fixture) : base(fixture)
         {
         }
 

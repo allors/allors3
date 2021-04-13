@@ -29,9 +29,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class NonUnifiedPartDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class NonUnifiedPartRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public NonUnifiedPartDerivationTests(Fixture fixture) : base(fixture) { }
+        public NonUnifiedPartRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedProductIdentificationsDeriveProductNumber()
@@ -191,9 +191,9 @@ namespace Allors.Database.Domain.Tests
     }
 
     [Trait("Category", "Security")]
-    public class NonUnifiedPartDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class NonUnifiedPartDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public NonUnifiedPartDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.NonUnifiedPart, this.M.NonUnifiedPart.Delete);
+        public NonUnifiedPartDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.NonUnifiedPart, this.M.NonUnifiedPart.Delete);
         public override Config Config => new Config { SetupSecurity = true };
 
         private readonly Permission deletePermission;

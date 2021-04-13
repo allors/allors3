@@ -84,9 +84,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class EmploymentDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class EmploymentRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public EmploymentDerivationTests(Fixture fixture) : base(fixture) { }
+        public EmploymentRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedEmployeeDeriveParties()

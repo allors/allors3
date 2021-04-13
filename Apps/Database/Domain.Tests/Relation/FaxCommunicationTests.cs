@@ -82,9 +82,9 @@ namespace Allors.Database.Domain.Tests
     }
 
 
-    public class FaxCommunicationDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class FaxCommunicationRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public FaxCommunicationDerivationTests(Fixture fixture) : base(fixture) { }
+        public FaxCommunicationRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedSubjectDeriveWorkItemDescription()

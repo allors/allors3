@@ -78,9 +78,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PartyDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PartyRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PartyDerivationTests(Fixture fixture) : base(fixture) { }
+        public PartyRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedPartyContactMechanismsDeriveBillingAddress()

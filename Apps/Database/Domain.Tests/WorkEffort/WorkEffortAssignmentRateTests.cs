@@ -59,9 +59,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class WorkEffortAssignmentRateDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class WorkEffortAssignmentRateRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public WorkEffortAssignmentRateDerivationTests(Fixture fixture) : base(fixture) { }
+        public WorkEffortAssignmentRateRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedWorkEffortPartyAssignmentDeriveWorkEffort()

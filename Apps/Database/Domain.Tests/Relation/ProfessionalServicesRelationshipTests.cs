@@ -12,9 +12,9 @@ namespace Allors.Database.Domain.Tests
     using System.Linq;
     using Xunit;
 
-    public class ProfessionalServicesRelationshipDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class ProfessionalServicesRelationshipRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public ProfessionalServicesRelationshipDerivationTests(Fixture fixture) : base(fixture) { }
+        public ProfessionalServicesRelationshipRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedProfessionalDeriveParties()

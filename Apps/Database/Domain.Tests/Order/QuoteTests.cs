@@ -1,4 +1,4 @@
-// <copyright file="QuoteCreatedDerivationTests.cs" company="Allors bvba">
+// <copyright file="QuoteCreatedRuleTests.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -28,9 +28,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class QuoteCreatedDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class QuoteCreatedRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public QuoteCreatedDerivationTests(Fixture fixture) : base(fixture) { }
+        public QuoteCreatedRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedQuoteStateDeriveDerivedLocaleFromLocale()
@@ -244,9 +244,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class QuoteDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class QuoteRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public QuoteDerivationTests(Fixture fixture) : base(fixture) { }
+        public QuoteRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedStoreDeriveOrderNumber()
@@ -314,9 +314,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class QuotePriceDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class QuotePriceRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public QuotePriceDerivationTests(Fixture fixture) : base(fixture) { }
+        public QuotePriceRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void OnChangedQuoteStateCalculatePrice()

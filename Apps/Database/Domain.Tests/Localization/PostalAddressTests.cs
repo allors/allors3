@@ -48,9 +48,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PostalAddressDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PostalAddressRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PostalAddressDerivationTests(Fixture fixture) : base(fixture) { }
+        public PostalAddressRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedLocalityThrowValidationError()

@@ -8,9 +8,9 @@ namespace Allors.Database.Domain.Tests
 {
     using Xunit;
 
-    public class DropShipmentDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class DropShipmentRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public DropShipmentDerivationTests(Fixture fixture) : base(fixture) { }
+        public DropShipmentRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedStoreDeriveShipmentNumber()

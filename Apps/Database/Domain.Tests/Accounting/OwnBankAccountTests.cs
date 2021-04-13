@@ -182,9 +182,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class OwnBankAccountDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class OwnBankAccountRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public OwnBankAccountDerivationTests(Fixture fixture) : base(fixture) { }
+        public OwnBankAccountRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedInternalOrganisationDerivedCollectionMethodsThrowValidation()

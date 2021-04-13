@@ -81,9 +81,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class LetterCorrespondenceCommunicationDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class LetterCorrespondenceCommunicationRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public LetterCorrespondenceCommunicationDerivationTests(Fixture fixture) : base(fixture) { }
+        public LetterCorrespondenceCommunicationRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedSubjectDeriveWorkItemDescription()

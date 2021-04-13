@@ -51,9 +51,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PartyContactMechanismDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PartyContactMechanismRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PartyContactMechanismDerivationTests(Fixture fixture) : base(fixture) { }
+        public PartyContactMechanismRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedUseAsDefaultThrowValidationError()

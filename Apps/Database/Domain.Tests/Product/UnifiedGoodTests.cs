@@ -10,9 +10,9 @@ namespace Allors.Database.Domain.Tests
     using TestPopulation;
     using Xunit;
 
-    public class UnifiedGoodDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class UnifiedGoodRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public UnifiedGoodDerivationTests(Fixture fixture) : base(fixture) { }
+        public UnifiedGoodRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedProductIdentificationsDeriveSearchString()
@@ -199,9 +199,9 @@ namespace Allors.Database.Domain.Tests
     }
 
     [Trait("Category", "Security")]
-    public class UnifiedGoodDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class UnifiedGoodDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public UnifiedGoodDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.UnifiedGood, this.M.UnifiedGood.Delete);
+        public UnifiedGoodDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.UnifiedGood, this.M.UnifiedGood.Delete);
 
         public override Config Config => new Config { SetupSecurity = true };
 

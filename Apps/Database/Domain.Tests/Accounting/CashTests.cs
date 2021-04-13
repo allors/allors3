@@ -97,9 +97,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class CashDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class CashRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public CashDerivationTests(Fixture fixture) : base(fixture) { }
+        public CashRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedInternalOrganisationDerivedCollectionMethodsThrowValidation()

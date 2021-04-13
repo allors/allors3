@@ -240,9 +240,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SupplierRelationshipDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SupplierRelationshipRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SupplierRelationshipDerivationTests(Fixture fixture) : base(fixture) { }
+        public SupplierRelationshipRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedSupplierDeriveParties()

@@ -10,9 +10,9 @@ namespace Allors.Database.Domain.Tests
     using TestPopulation;
     using Xunit;
 
-    public class PartyFinancialRelationshipAmountDueDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PartyFinancialRelationshipAmountDueRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PartyFinancialRelationshipAmountDueDerivationTests(Fixture fixture) : base(fixture) { }
+        public PartyFinancialRelationshipAmountDueRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedSalesInvoiceTotalIncVatDeriveAmountDue()
@@ -98,9 +98,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PartyFinancialRelationshipOpenOrderAmountDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PartyFinancialRelationshipOpenOrderAmountRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PartyFinancialRelationshipOpenOrderAmountDerivationTests(Fixture fixture) : base(fixture) { }
+        public PartyFinancialRelationshipOpenOrderAmountRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void DeriveOpenOrderAmount()

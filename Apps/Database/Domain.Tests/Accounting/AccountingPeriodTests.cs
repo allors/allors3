@@ -231,9 +231,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class AccountingPeriodDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class AccountingPeriodRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public AccountingPeriodDerivationTests(Fixture fixture) : base(fixture) { }
+        public AccountingPeriodRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedFromDateDeriveDescription()

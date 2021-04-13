@@ -8,9 +8,9 @@ namespace Allors.Database.Domain.Tests
 {
     using Xunit;
 
-    public class TransferDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class TransferRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public TransferDerivationTests(Fixture fixture) : base(fixture) { }
+        public TransferRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedShipToPartyDeriveShipToAddress()

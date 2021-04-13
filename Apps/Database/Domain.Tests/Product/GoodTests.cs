@@ -29,9 +29,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class GoodDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class GoodRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public GoodDerivationTests(Fixture fixture) : base(fixture) { }
+        public GoodRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedProductIdentificationsDeriveProductNumber()

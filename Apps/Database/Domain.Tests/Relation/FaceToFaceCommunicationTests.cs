@@ -82,9 +82,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class FaceToFaceCommunicationDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class FaceToFaceCommunicationRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public FaceToFaceCommunicationDerivationTests(Fixture fixture) : base(fixture) { }
+        public FaceToFaceCommunicationRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedSubjectDeriveWorkItemDescription()

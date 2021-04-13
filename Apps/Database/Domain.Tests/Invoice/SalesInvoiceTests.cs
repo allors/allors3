@@ -1135,9 +1135,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SalesInvoiceReadyForPostingDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesInvoiceReadyForPostingRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesInvoiceReadyForPostingDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesInvoiceReadyForPostingRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedLocaleDeriveDerivedLocaleFromLocale()
@@ -1537,9 +1537,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SalesInvoiceDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesInvoiceRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesInvoiceDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesInvoiceRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedBilledFromValidationError()
@@ -1836,9 +1836,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SalesInvoiceBillingDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesInvoiceBillingRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesInvoiceBillingDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesInvoiceBillingRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedOrderItemBillingInvoiceItemDeriveSalesOrders()
@@ -2033,9 +2033,9 @@ namespace Allors.Database.Domain.Tests
         //}
     }
 
-    public class SalesInvoiceStateDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesInvoiceStateRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesInvoiceStateDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesInvoiceStateRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void OnCreateDeriveSalesInvoiceState()
@@ -2373,9 +2373,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SalesInvoicePriceDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesInvoicePriceRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesInvoicePriceDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesInvoicePriceRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void OnChangedSalesInvoiceStateCalculatePrice()
@@ -3072,9 +3072,9 @@ namespace Allors.Database.Domain.Tests
     }
 
     [Trait("Category", "Security")]
-    public class SalesInvoiceDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesInvoiceDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesInvoiceDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.SalesInvoice, this.M.SalesInvoice.Delete);
+        public SalesInvoiceDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.SalesInvoice, this.M.SalesInvoice.Delete);
 
         public override Config Config => new Config { SetupSecurity = true };
 

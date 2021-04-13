@@ -30,9 +30,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class QuoteItemCreatedDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class QuoteItemCreatedRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public QuoteItemCreatedDerivationTests(Fixture fixture) : base(fixture) { }
+        public QuoteItemCreatedRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedAssignedVatRegimeDeriveDerivedVatRegime()
@@ -153,9 +153,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class QuoteItemDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class QuoteItemRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public QuoteItemDerivationTests(Fixture fixture) : base(fixture) { }
+        public QuoteItemRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedInvoiceItemTypeThrowValidationError()
@@ -348,9 +348,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class QuoteItemDetailsDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class QuoteItemDetailsRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public QuoteItemDetailsDerivationTests(Fixture fixture) : base(fixture) { }
+        public QuoteItemDetailsRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedSerialisedItemDeriveDetails()
@@ -383,9 +383,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class QuoteItemPriceDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class QuoteItemPriceRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public QuoteItemPriceDerivationTests(Fixture fixture) : base(fixture) { }
+        public QuoteItemPriceRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedQuantityOrderedCalculatePrice()
@@ -830,9 +830,9 @@ namespace Allors.Database.Domain.Tests
     }
 
     [Trait("Category", "Security")]
-    public class QuoteItemDeniedPermissonDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class QuoteItemDeniedPermissonRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public QuoteItemDeniedPermissonDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.QuoteItem, this.M.QuoteItem.Delete);
+        public QuoteItemDeniedPermissonRuleTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.QuoteItem, this.M.QuoteItem.Delete);
 
         public override Config Config => new Config { SetupSecurity = true };
 

@@ -245,9 +245,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class ShipmentReceiptDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class ShipmentReceiptRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public ShipmentReceiptDerivationTests(Fixture fixture) : base(fixture) { }
+        public ShipmentReceiptRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedShipmentReceiptShipmentItemCreateOrderShipment()

@@ -49,9 +49,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class EngagementDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class EngagementRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public EngagementDerivationTests(Fixture fixture) : base(fixture) { }
+        public EngagementRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedBillToPartyDeriveBillToContactMechanism()

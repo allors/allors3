@@ -1,4 +1,4 @@
-// <copyright file="StoreDerivationTests.cs" company="Allors bvba">
+// <copyright file="StoreRuleTests.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -14,9 +14,9 @@ namespace Allors.Database.Domain.Tests
     using Allors.Database.Derivations;
     using Xunit;
 
-    public class StoreDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class StoreRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public StoreDerivationTests(Fixture fixture) : base(fixture) { }
+        public StoreRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedDefaultCollectionMethodDeriveCollectionMethod()

@@ -497,9 +497,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class JournalDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class JournalRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public JournalDerivationTests(Fixture fixture) : base(fixture) { }
+        public JournalRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedContraAccountThrowValidationError()

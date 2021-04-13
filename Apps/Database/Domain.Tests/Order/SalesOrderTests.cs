@@ -2473,9 +2473,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SalesOrderProvisionalDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesOrderProvisionalRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesOrderProvisionalDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesOrderProvisionalRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedSalesOrderStateDeriveDerivedLocaleFromBillToCustomerLocale()
@@ -3112,9 +3112,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SalesOrderDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesOrderRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesOrderDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesOrderRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedTakenByFromValidationError()
@@ -3366,9 +3366,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SalesOrderCanInvoiceDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesOrderCanInvoiceRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesOrderCanInvoiceDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesOrderCanInvoiceRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void InvoicableOrderDeriveCanInvoiceFalse()
@@ -3519,9 +3519,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SalesOrderCanShipDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesOrderCanShipRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesOrderCanShipDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesOrderCanShipRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedSalesOrderStateDeriveCanShipFalse()
@@ -3782,9 +3782,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SalesOrderPriceDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesOrderPriceRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesOrderPriceDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesOrderPriceRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedValidOrderItemsCalculatePrice()
@@ -4455,9 +4455,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SalesOrderStateDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesOrderStateRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesOrderStateDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesOrderStateRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedSalesOrderItemSalesOrderItemStateDeriveValidOrderItems()
@@ -4893,13 +4893,68 @@ namespace Allors.Database.Domain.Tests
     }
 
     [Trait("Category", "Security")]
-    public class SalesOrderDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesOrderTransferRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesOrderDeniedPermissionDerivationTests(Fixture fixture) : base(fixture)
+        public SalesOrderTransferRuleTests(Fixture fixture) : base(fixture) { }
+
+        public override Config Config => new Config { SetupSecurity = true };
+
+        [Fact]
+        public void InvoicableOrderDeriveCanInvoiceFalse()
+        {
+            var order = this.InternalOrganisation.CreateB2BSalesOrder(this.Transaction.Faker());
+            this.Transaction.Derive(false);
+
+            var toInternalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
+
+            new CustomerRelationshipBuilder(this.Transaction)
+                .WithCustomer(order.BillToCustomer)
+                .WithInternalOrganisation(toInternalOrganisation)
+                .WithFromDate(order.OrderDate)
+                .Build();
+            this.Transaction.Derive(false);
+
+            var transfer = new SalesOrderTransferBuilder(this.Transaction).WithFrom(order).WithToInternalOrganisation(toInternalOrganisation).Build();
+            this.Transaction.Derive(false);
+
+            Assert.True(transfer.ExistToSalesOrder);
+            Assert.True(order.SalesOrderState.IsTransferred);
+            Assert.NotEqual(order.OrderNumber, transfer.ToSalesOrder.OrderNumber);
+            Assert.NotEmpty(transfer.ToSalesOrder.OrderNumber);
+        }
+    }
+
+    [Trait("Category", "Security")]
+    public class SalesOrderDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesOrderDeniedPermissionRuleTests(Fixture fixture) : base(fixture)
         {
         }
 
         public override Config Config => new Config { SetupSecurity = true };
+
+        [Fact]
+        public void ChangedTransitionalDeniedPermissionsDeriveTransFerAllowed()
+        {
+            var order = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var transferPermission = new Permissions(this.Transaction).Get(this.M.SalesOrder, this.M.SalesOrder.DoTransfer);
+            Assert.DoesNotContain(transferPermission, order.DeniedPermissions);
+        }
+
+        [Fact]
+        public void ChangedTransitionalDeniedPermissionsDeriveTransFerDenied()
+        {
+            var order = new SalesOrderBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            order.SalesOrderState = new SalesOrderStates(this.Transaction).ReadyForPosting;
+            this.Transaction.Derive(false);
+
+            var transferPermission = new Permissions(this.Transaction).Get(this.M.SalesOrder, this.M.SalesOrder.DoTransfer);
+            Assert.Contains(transferPermission, order.DeniedPermissions);
+        }
 
         [Fact]
         public void ChangedTransitionalDeniedPermissionsDeriveShipDenied()

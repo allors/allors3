@@ -10,9 +10,9 @@ namespace Allors.Database.Domain.Tests
     using TestPopulation;
     using Xunit;
 
-    public class PurchaseInvoiceApprovalDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PurchaseInvoiceApprovalRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseInvoiceApprovalDerivationTests(Fixture fixture) : base(fixture) {}
+        public PurchaseInvoiceApprovalRuleTests(Fixture fixture) : base(fixture) {}
 
         [Fact]
         public void OnCreatedPurchaseInvoiceApprovalDeriveTitle()

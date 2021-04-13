@@ -26,5 +26,7 @@ namespace Allors.Database.Domain
         public bool IsInProcess => Equals(this.UniqueId, SalesOrderStates.InProcessId);
 
         public bool IsAwaitingAcceptance => Equals(this.UniqueId, SalesOrderStates.AwaitingAcceptanceId);
+
+        public bool IsTransferred => Equals(this.UniqueId, SalesOrderStates.TransferredId);
     }
 }

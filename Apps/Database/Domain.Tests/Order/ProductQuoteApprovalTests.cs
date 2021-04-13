@@ -10,9 +10,9 @@ namespace Allors.Database.Domain.Tests
     using TestPopulation;
     using Xunit;
 
-    public class ProductQuoteApprovalDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class ProductQuoteApprovalRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public ProductQuoteApprovalDerivationTests(Fixture fixture) : base(fixture)
+        public ProductQuoteApprovalRuleTests(Fixture fixture) : base(fixture)
         {
         }
 
@@ -65,9 +65,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class ProductQuoteApprovalParticipantsDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class ProductQuoteApprovalParticipantsRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public ProductQuoteApprovalParticipantsDerivationTests(Fixture fixture) : base(fixture)
+        public ProductQuoteApprovalParticipantsRuleTests(Fixture fixture) : base(fixture)
         {
         }
 

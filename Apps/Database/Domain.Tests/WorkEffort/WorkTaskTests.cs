@@ -795,9 +795,9 @@ namespace Allors.Database.Domain.Tests
             .Build();
     }
 
-    public class WorkTaskDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class WorkTaskRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public WorkTaskDerivationTests(Fixture fixture) : base(fixture) { }
+        public WorkTaskRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedTakenByDeriveValidationError()
@@ -1140,9 +1140,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class WorkTaskCanInvoiceDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class WorkTaskCanInvoiceRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public WorkTaskCanInvoiceDerivationTests(Fixture fixture) : base(fixture) { }
+        public WorkTaskCanInvoiceRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedWorkEffortStateDeriveCanInvoice()
@@ -1157,9 +1157,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class WorkEffortTotalLabourRevenueDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class WorkEffortTotalLabourRevenueRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public WorkEffortTotalLabourRevenueDerivationTests(Fixture fixture) : base(fixture) { }
+        public WorkEffortTotalLabourRevenueRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedTimeEntryWorkEffortDeriveTotalLabourRevenue()
@@ -1267,9 +1267,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class WorkEffortTotalMaterialRevenueDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class WorkEffortTotalMaterialRevenueRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public WorkEffortTotalMaterialRevenueDerivationTests(Fixture fixture) : base(fixture) { }
+        public WorkEffortTotalMaterialRevenueRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedWorkEffortInventoryAssignmentAssignmentDeriveTotalMaterialRevenue()
@@ -1387,9 +1387,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class WorkEffortTotalOtherRevenueDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class WorkEffortTotalOtherRevenueRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public WorkEffortTotalOtherRevenueDerivationTests(Fixture fixture) : base(fixture) { }
+        public WorkEffortTotalOtherRevenueRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedWorkEffortSalesInvoiceItemAssignmentAssignmentDeriveTotalOtherRevenue()
@@ -1466,9 +1466,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class WorkEffortTotalSubContractedRevenueDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class WorkEffortTotalSubContractedRevenueRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public WorkEffortTotalSubContractedRevenueDerivationTests(Fixture fixture) : base(fixture) { }
+        public WorkEffortTotalSubContractedRevenueRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedWorkEffortPurchaseOrderItemAssignmentAssignmentDeriveTotalSubContractedRevenue()
@@ -1527,9 +1527,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class WorkEffortGrandTotalDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class WorkEffortGrandTotalRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public WorkEffortGrandTotalDerivationTests(Fixture fixture) : base(fixture) { }
+        public WorkEffortGrandTotalRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedTimeEntryWorkEffortDeriveGrandTotal()
@@ -1622,9 +1622,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class WorkEffortTotalRevenueDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class WorkEffortTotalRevenueRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public WorkEffortTotalRevenueDerivationTests(Fixture fixture) : base(fixture) { }
+        public WorkEffortTotalRevenueRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedWorkEffortCustomerDeriveTotalRevenue()
@@ -1670,9 +1670,9 @@ namespace Allors.Database.Domain.Tests
     }
 
     [Trait("Category", "Security")]
-    public class WorkTaskDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class WorkTaskDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public WorkTaskDeniedPermissionDerivationTests(Fixture fixture) : base(fixture)
+        public WorkTaskDeniedPermissionRuleTests(Fixture fixture) : base(fixture)
         {
         }
 

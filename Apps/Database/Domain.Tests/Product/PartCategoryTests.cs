@@ -11,9 +11,9 @@ namespace Allors.Database.Domain.Tests
     using Allors.Database.Derivations;
     using Xunit;
 
-    public class PartCategoryDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PartCategoryRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PartCategoryDerivationTests(Fixture fixture) : base(fixture) { }
+        public PartCategoryRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedLocalisedTextTextDeriveName()

@@ -1,4 +1,4 @@
-// <copyright file="CommunicationTaskDerivationTests.cs" company="Allors bvba">
+// <copyright file="CommunicationTaskRuleTests.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -8,9 +8,9 @@ namespace Allors.Database.Domain.Tests
 {
     using Xunit;
 
-    public class CommunicationTaskDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class CommunicationTaskRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public CommunicationTaskDerivationTests(Fixture fixture) : base(fixture) { }
+        public CommunicationTaskRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void OnChangedCommunicationEventDeriveWorkItem()
@@ -55,9 +55,9 @@ namespace Allors.Database.Domain.Tests
     }
 
 
-    public class CommunicationTaskParticipantsDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class CommunicationTaskParticipantsRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public CommunicationTaskParticipantsDerivationTests(Fixture fixture) : base(fixture) { }
+        public CommunicationTaskParticipantsRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void OnChangedCommunicationEventDeriveParticipants()

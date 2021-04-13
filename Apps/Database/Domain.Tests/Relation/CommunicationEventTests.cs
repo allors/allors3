@@ -193,9 +193,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class CommunicationEventDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class CommunicationEventRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public CommunicationEventDerivationTests(Fixture fixture) : base(fixture) { }
+        public CommunicationEventRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void OnChangedOwnerDeriveSecurityToken()

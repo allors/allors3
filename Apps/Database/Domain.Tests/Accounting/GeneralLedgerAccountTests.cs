@@ -210,9 +210,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class GeneralLedgerAccountDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class GeneralLedgerAccountRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public GeneralLedgerAccountDerivationTests(Fixture fixture) : base(fixture) { }
+        public GeneralLedgerAccountRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedDefaultCostCenterDeriveDerivedCostCentersAllowed()

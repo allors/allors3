@@ -114,9 +114,9 @@ namespace Allors.Database.Domain.Tests
     }
 
 
-    public class EmailCommunicationDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class EmailCommunicationRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public EmailCommunicationDerivationTests(Fixture fixture) : base(fixture) { }
+        public EmailCommunicationRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedSubjectDeriveSubject()

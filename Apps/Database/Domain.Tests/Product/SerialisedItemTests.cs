@@ -126,9 +126,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SerialisedItemDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SerialisedItemRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SerialisedItemDerivationTests(Fixture fixture) : base(fixture) { }
+        public SerialisedItemRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedAcquisitionYearThrowValidation()
@@ -560,9 +560,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SerialisedItemDisplayProductCategoriesDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SerialisedItemDisplayProductCategoriesRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SerialisedItemDisplayProductCategoriesDerivationTests(Fixture fixture) : base(fixture) { }
+        public SerialisedItemDisplayProductCategoriesRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedProductCategoryAllProductsDeriveDisplayProductCategories()
@@ -794,9 +794,9 @@ namespace Allors.Database.Domain.Tests
     }
 
     [Trait("Category", "Security")]
-    public class SerialisedItemDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SerialisedItemDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SerialisedItemDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.SerialisedItem, this.M.SerialisedItem.Delete);
+        public SerialisedItemDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.SerialisedItem, this.M.SerialisedItem.Delete);
 
         public override Config Config => new Config { SetupSecurity = true };
 

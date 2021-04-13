@@ -11,9 +11,9 @@ namespace Allors.Database.Domain.Tests
     using Resources;
     using Xunit;
 
-    public class PickListItemDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PickListItemRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PickListItemDerivationTests(Fixture fixture) : base(fixture) { }
+        public PickListItemRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedQuantityThrowValidationError()
@@ -82,9 +82,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PickListItemQuantityPickedDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PickListItemQuantityPickedRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PickListItemQuantityPickedDerivationTests(Fixture fixture) : base(fixture) { }
+        public PickListItemQuantityPickedRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedPickListPickListStateDeriveQuantityPicked()
@@ -103,9 +103,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PickListStateDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PickListStateRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PickListStateDerivationTests(Fixture fixture) : base(fixture) { }
+        public PickListStateRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedShipmentShipmentStateDerivePickListStateOnHold()

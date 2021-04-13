@@ -197,9 +197,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SerialisedInventoryItemDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SerialisedInventoryItemRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SerialisedInventoryItemDerivationTests(Fixture fixture) : base(fixture) { }
+        public SerialisedInventoryItemRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedPartDeriveName()
@@ -226,9 +226,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SerialisedInventoryItemQuantitiesDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SerialisedInventoryItemQuantitiesRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SerialisedInventoryItemQuantitiesDerivationTests(Fixture fixture) : base(fixture) { }
+        public SerialisedInventoryItemQuantitiesRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedNonSerialisedInventoryItemStateDeriveQuantity()

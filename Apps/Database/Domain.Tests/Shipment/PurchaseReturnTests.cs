@@ -1,4 +1,4 @@
-// <copyright file="PurchaseReturnDerivationTests.cs" company="Allors bvba">
+// <copyright file="PurchaseReturnRuleTests.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -8,9 +8,9 @@ namespace Allors.Database.Domain.Tests
 {
     using Xunit;
 
-    public class PurchaseReturnDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PurchaseReturnRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseReturnDerivationTests(Fixture fixture) : base(fixture) { }
+        public PurchaseReturnRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedStoreDeriveShipmentNumber()

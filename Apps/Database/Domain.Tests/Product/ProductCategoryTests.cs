@@ -964,9 +964,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class ProductCategoryDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class ProductCategoryRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public ProductCategoryDerivationTests(Fixture fixture) : base(fixture) { }
+        public ProductCategoryRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedNameDeriveDisplayName()

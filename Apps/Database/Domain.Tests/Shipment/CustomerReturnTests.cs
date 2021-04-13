@@ -8,9 +8,9 @@ namespace Allors.Database.Domain.Tests
 {
     using Xunit;
 
-    public class CustomerReturnDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class CustomerReturnRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public CustomerReturnDerivationTests(Fixture fixture) : base(fixture) { }
+        public CustomerReturnRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedShipToPartyDeriveShipmentNumber()

@@ -54,9 +54,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PartDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PartRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PartDerivationTests(Fixture fixture) : base(fixture) { }
+        public PartRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedNameDeriveDisplayName()
@@ -134,9 +134,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PartQuantitiesDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PartQuantitiesRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PartQuantitiesDerivationTests(Fixture fixture) : base(fixture) { }
+        public PartQuantitiesRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedNonSerialisedInventoryItemQuantityOnHandDeriveQuantityOnHand()
@@ -248,9 +248,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PartSuppliedByDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PartSuppliedByRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PartSuppliedByDerivationTests(Fixture fixture) : base(fixture) { }
+        public PartSuppliedByRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedSupplierOfferingPartDeriveSuppliedBy()

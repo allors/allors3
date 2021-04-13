@@ -534,9 +534,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class NonSerialisedInventoryItemDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class NonSerialisedInventoryItemRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public NonSerialisedInventoryItemDerivationTests(Fixture fixture) : base(fixture) { }
+        public NonSerialisedInventoryItemRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedPartDeriveName()
@@ -563,9 +563,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class NonSerialisedInventoryItemQuantityOnHandDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class NonSerialisedInventoryItemQuantityOnHandRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public NonSerialisedInventoryItemQuantityOnHandDerivationTests(Fixture fixture) : base(fixture) { }
+        public NonSerialisedInventoryItemQuantityOnHandRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedNonSerialisedInventoryItemStateDeriveQuantityOnHand()
@@ -644,9 +644,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class NonSerialisedInventoryItemQuantityCommittedOutDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class NonSerialisedInventoryItemQuantityCommittedOutRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public NonSerialisedInventoryItemQuantityCommittedOutDerivationTests(Fixture fixture) : base(fixture) { }
+        public NonSerialisedInventoryItemQuantityCommittedOutRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedInventoryItemTransactionInventoryItemDeriveQuantityCommittedOut()
@@ -711,9 +711,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class NonSerialisedInventoryItemAvailableToPromiseDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class NonSerialisedInventoryItemAvailableToPromiseRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public NonSerialisedInventoryItemAvailableToPromiseDerivationTests(Fixture fixture) : base(fixture) { }
+        public NonSerialisedInventoryItemAvailableToPromiseRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedQuantityOnHandDeriveAvailableToPromise()
@@ -761,9 +761,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class NonSerialisedInventoryItemQuantityExpectedInDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class NonSerialisedInventoryItemQuantityExpectedInRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public NonSerialisedInventoryItemQuantityExpectedInDerivationTests(Fixture fixture) : base(fixture) { }
+        public NonSerialisedInventoryItemQuantityExpectedInRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedPurchaseOrderPurchaseOrderItemDeriveQuantityExpectedIn()

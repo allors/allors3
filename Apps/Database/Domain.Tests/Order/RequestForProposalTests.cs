@@ -11,9 +11,9 @@ namespace Allors.Database.Domain.Tests
     using Resources;
     using Xunit;
 
-    public class RequestForProposalDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class RequestForProposalRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public RequestForProposalDerivationTests(Fixture fixture) : base(fixture)
+        public RequestForProposalRuleTests(Fixture fixture) : base(fixture)
         {
         }
 
@@ -45,9 +45,9 @@ namespace Allors.Database.Domain.Tests
     }
 
     [Trait("Category", "Security")]
-    public class RequestForProposalDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class RequestForProposalDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public RequestForProposalDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.RequestForProposal, this.M.RequestForProposal.Delete);
+        public RequestForProposalDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.RequestForProposal, this.M.RequestForProposal.Delete);
 
         public override Config Config => new Config { SetupSecurity = true };
 

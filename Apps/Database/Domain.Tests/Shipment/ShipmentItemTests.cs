@@ -38,9 +38,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class ShipmentItemDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class ShipmentItemRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public ShipmentItemDerivationTests(Fixture fixture) : base(fixture) { }
+        public ShipmentItemRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedNextSerialisedItemAvailabilityThrowValidationError()
@@ -332,9 +332,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class ShipmentItemStateDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class ShipmentItemStateRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public ShipmentItemStateDerivationTests(Fixture fixture) : base(fixture) { }
+        public ShipmentItemStateRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedShipmentShipmentStateDeriveShipmentItemStatePicked()

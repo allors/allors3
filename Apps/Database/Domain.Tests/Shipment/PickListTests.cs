@@ -624,9 +624,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PickListDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PickListRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PickListDerivationTests(Fixture fixture) : base(fixture) { }
+        public PickListRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedStoreDerivePickListState()

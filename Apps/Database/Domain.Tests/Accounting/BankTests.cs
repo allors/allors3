@@ -94,9 +94,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class BankDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class BankRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public BankDerivationTests(Fixture fixture) : base(fixture) { }
+        public BankRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedBicThrowValidationError()

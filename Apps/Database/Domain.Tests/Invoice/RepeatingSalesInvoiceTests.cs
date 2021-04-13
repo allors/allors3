@@ -529,9 +529,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class RepeatingSalesInvoiceDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class RepeatingSalesInvoiceRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public RepeatingSalesInvoiceDerivationTests(Fixture fixture) : base(fixture) { }
+        public RepeatingSalesInvoiceRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedFrequencyThrowValidationError()

@@ -38,9 +38,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class ShipmentPackageDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class ShipmentPackageRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public ShipmentPackageDerivationTests(Fixture fixture) : base(fixture) { }
+        public ShipmentPackageRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedSequenceNumberDeriveDocuments()

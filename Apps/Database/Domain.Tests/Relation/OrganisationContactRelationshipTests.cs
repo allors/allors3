@@ -124,9 +124,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class OrganisationContactRelationshipDateDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class OrganisationContactRelationshipDateRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public OrganisationContactRelationshipDateDerivationTests(Fixture fixture) : base(fixture)
+        public OrganisationContactRelationshipDateRuleTests(Fixture fixture) : base(fixture)
         {
         }
 
@@ -180,9 +180,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class OrganisationContactRelationshipPartyDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class OrganisationContactRelationshipPartyRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public OrganisationContactRelationshipPartyDerivationTests(Fixture fixture) : base(fixture)
+        public OrganisationContactRelationshipPartyRuleTests(Fixture fixture) : base(fixture)
         {
         }
 

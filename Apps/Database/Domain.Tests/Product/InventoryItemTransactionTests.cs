@@ -208,9 +208,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class InventoryItemTransactionDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class InventoryItemTransactionRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public InventoryItemTransactionDerivationTests(Fixture fixture) : base(fixture) { }
+        public InventoryItemTransactionRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedQuantityThrowValidationError()

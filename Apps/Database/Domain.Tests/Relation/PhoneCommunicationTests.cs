@@ -107,9 +107,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PhoneCommunicationDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PhoneCommunicationRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PhoneCommunicationDerivationTests(Fixture fixture) : base(fixture) { }
+        public PhoneCommunicationRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedSubjectDeriveWorkItemDescription()

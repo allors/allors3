@@ -31,9 +31,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class CatalogueDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class CatalogueRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public CatalogueDerivationTests(Fixture fixture) : base(fixture) { }
+        public CatalogueRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedLocalisedNamesDeriveName()

@@ -51,9 +51,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class WorkEffortPurchaseOrderItemAssignmentUnitSellingPriceDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class WorkEffortPurchaseOrderItemAssignmentUnitSellingPriceRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public WorkEffortPurchaseOrderItemAssignmentUnitSellingPriceDerivationTests(Fixture fixture) : base(fixture) { }
+        public WorkEffortPurchaseOrderItemAssignmentUnitSellingPriceRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedAssignedUnitSellingPriceDeriveUnitSellingPrice()

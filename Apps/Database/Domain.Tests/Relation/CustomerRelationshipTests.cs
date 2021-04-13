@@ -296,9 +296,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class CustomerRelationshipDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class CustomerRelationshipRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public CustomerRelationshipDerivationTests(Fixture fixture) : base(fixture) { }
+        public CustomerRelationshipRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedCustomerDeriveParties()

@@ -450,9 +450,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PurchaseOrderItemCreatedDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PurchaseOrderItemCreatedRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseOrderItemCreatedDerivationTests(Fixture fixture) : base(fixture) { }
+        public PurchaseOrderItemCreatedRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedPurchaseOrderItemStateDeriveDerivedDeliveryDate()
@@ -631,9 +631,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PurchaseOrderItemDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PurchaseOrderItemRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseOrderItemDerivationTests(Fixture fixture) : base(fixture) { }
+        public PurchaseOrderItemRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedPurchaseOrderStoredInFacilityDeriveStoredInFacility()
@@ -782,9 +782,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PurchaseOrderItemIsReceivableDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PurchaseOrderItemIsReceivableRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseOrderItemIsReceivableDerivationTests(Fixture fixture) : base(fixture) { }
+        public PurchaseOrderItemIsReceivableRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedInvoiceItemTypeDeriveIsReceivable()
@@ -815,9 +815,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PurchaseOrderItemStateDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PurchaseOrderItemStateRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseOrderItemStateDerivationTests(Fixture fixture) : base(fixture) { }
+        public PurchaseOrderItemStateRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedIsReceivableDerivePurchaseOrderItemShipmentStateNotReceived()
@@ -1521,9 +1521,9 @@ namespace Allors.Database.Domain.Tests
     }
 
     [Trait("Category", "Security")]
-    public class PurchaseOrderItemDeniedPermissonDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PurchaseOrderItemDeniedPermissonRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseOrderItemDeniedPermissonDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrderItem, this.M.PurchaseOrderItem.Delete);
+        public PurchaseOrderItemDeniedPermissonRuleTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrderItem, this.M.PurchaseOrderItem.Delete);
 
         public override Config Config => new Config { SetupSecurity = true };
 

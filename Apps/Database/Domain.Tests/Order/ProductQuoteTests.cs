@@ -180,9 +180,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class ProductQuoteDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class ProductQuoteRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public ProductQuoteDerivationTests(Fixture fixture) : base(fixture) { }
+        public ProductQuoteRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedIssuerThrowValidationError()
@@ -207,9 +207,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class ProductQuoteAwaitingApprovalDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class ProductQuoteAwaitingApprovalRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public ProductQuoteAwaitingApprovalDerivationTests(Fixture fixture) : base(fixture) { }
+        public ProductQuoteAwaitingApprovalRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedQuoteStateCreateApprovalTask()
@@ -225,9 +225,9 @@ namespace Allors.Database.Domain.Tests
     }
 
     [Trait("Category", "Security")]
-    public class ProductQuoteDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class ProductQuoteDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public ProductQuoteDeniedPermissionDerivationTests(Fixture fixture) : base(fixture)
+        public ProductQuoteDeniedPermissionRuleTests(Fixture fixture) : base(fixture)
         {
             this.deletePermission = new Permissions(this.Transaction).Get(this.M.ProductQuote, this.M.ProductQuote.Delete);
             this.setReadyPermission = new Permissions(this.Transaction).Get(this.M.ProductQuote, this.M.ProductQuote.SetReadyForProcessing);

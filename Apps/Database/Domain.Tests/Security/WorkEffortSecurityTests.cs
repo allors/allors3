@@ -163,9 +163,9 @@ namespace Allors.Database.Domain.Tests
 
 
     [Trait("Category", "Security")]
-    public class WorkEffortDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class WorkEffortDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public WorkEffortDeniedPermissionDerivationTests(Fixture fixture) : base(fixture)
+        public WorkEffortDeniedPermissionRuleTests(Fixture fixture) : base(fixture)
         {
             this.invoicePermission = new Permissions(this.Transaction).Get(this.M.WorkTask, this.M.WorkTask.Invoice);
             this.completePermission = new Permissions(this.Transaction).Get(this.M.WorkTask, this.M.WorkTask.Complete);

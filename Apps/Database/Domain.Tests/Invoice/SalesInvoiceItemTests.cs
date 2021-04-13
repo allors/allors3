@@ -1979,9 +1979,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SalesInvoiceItemDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesInvoiceItemRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesInvoiceItemDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesInvoiceItemRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void OnChangedSalesInvoiceSalesInvoiceItemsDeriveVatRegime()
@@ -2360,9 +2360,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SalesInvoiceItemSubTotalItemDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesInvoiceItemSubTotalItemRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesInvoiceItemSubTotalItemDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesInvoiceItemSubTotalItemRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedItemInvoiceItemTypeThrowvalidationError()
@@ -2392,9 +2392,9 @@ namespace Allors.Database.Domain.Tests
     }
 
     [Trait("Category", "Security")]
-    public class SalesInvoiceItemDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesInvoiceItemDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesInvoiceItemDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.SalesInvoiceItem, this.M.SalesInvoiceItem.Delete);
+        public SalesInvoiceItemDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.SalesInvoiceItem, this.M.SalesInvoiceItem.Delete);
 
         public override Config Config => new Config { SetupSecurity = true };
 

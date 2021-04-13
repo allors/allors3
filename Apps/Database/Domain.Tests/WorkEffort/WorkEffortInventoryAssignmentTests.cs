@@ -500,9 +500,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class WorkEffortInventoryAssignmentDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class WorkEffortInventoryAssignmentRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public WorkEffortInventoryAssignmentDerivationTests(Fixture fixture) : base(fixture) { }
+        public WorkEffortInventoryAssignmentRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedInventoryItemCreateInventoryItemTransaction()
@@ -543,9 +543,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class WorkEffortInventoryAssignmentCostOfGoodsSoldDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class WorkEffortInventoryAssignmentCostOfGoodsSoldRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public WorkEffortInventoryAssignmentCostOfGoodsSoldDerivationTests(Fixture fixture) : base(fixture) { }
+        public WorkEffortInventoryAssignmentCostOfGoodsSoldRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedInventoryItemDeriveCostOfGoodsSold()
@@ -605,9 +605,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class WorkEffortInventoryAssignmentDerivedBillableQuantityDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class WorkEffortInventoryAssignmentDerivedBillableQuantityRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public WorkEffortInventoryAssignmentDerivedBillableQuantityDerivationTests(Fixture fixture) : base(fixture) { }
+        public WorkEffortInventoryAssignmentDerivedBillableQuantityRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedAssignedBillableQuantityDeriveDerivedBillableQuantity()
@@ -646,9 +646,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class WorkEffortInventoryAssignmentUnitSellingPriceDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class WorkEffortInventoryAssignmentUnitSellingPriceRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public WorkEffortInventoryAssignmentUnitSellingPriceDerivationTests(Fixture fixture) : base(fixture) { }
+        public WorkEffortInventoryAssignmentUnitSellingPriceRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedAssignedUnitSellingPriceDeriveUnitSellingPrice()

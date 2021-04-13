@@ -35,9 +35,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class CountryDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class CountryRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public CountryDerivationTests(Fixture fixture) : base(fixture) { }
+        public CountryRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedIsoCodeDeriveEuMemberState()
@@ -76,9 +76,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class CountryVatRegimesDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class CountryVatRegimesRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public CountryVatRegimesDerivationTests(Fixture fixture) : base(fixture) { }
+        public CountryVatRegimesRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedVatRegimeCountryDeriveDerivedVatRegimes()

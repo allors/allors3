@@ -1,4 +1,4 @@
-// <copyright file="OrderShipmentDerivationTests.cs" company="Allors bvba">
+// <copyright file="OrderShipmentRuleTests.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -13,9 +13,9 @@ namespace Allors.Database.Domain.Tests
     using Resources;
     using Xunit;
 
-    public class OrderShipmentDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class OrderShipmentRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public OrderShipmentDerivationTests(Fixture fixture) : base(fixture) { }
+        public OrderShipmentRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedQuantityDeriveshipmentItemQuantity()

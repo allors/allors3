@@ -27,9 +27,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class NonUnifiedGoodDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class NonUnifiedGoodRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public NonUnifiedGoodDerivationTests(Fixture fixture) : base(fixture) { }
+        public NonUnifiedGoodRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedProductIdentificationsDeriveSearchString()
@@ -151,9 +151,9 @@ namespace Allors.Database.Domain.Tests
     }
 
     [Trait("Category", "Security")]
-    public class NonUnifiedGoodDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class NonUnifiedGoodDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public NonUnifiedGoodDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.NonUnifiedGood, this.M.NonUnifiedGood.Delete);
+        public NonUnifiedGoodDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.NonUnifiedGood, this.M.NonUnifiedGood.Delete);
         public override Config Config => new Config { SetupSecurity = true };
 
         private readonly Permission deletePermission;

@@ -193,9 +193,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PurchaseShipmentDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PurchaseShipmentRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseShipmentDerivationTests(Fixture fixture) : base(fixture) { }
+        public PurchaseShipmentRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedShipToPartyDeriveShipmentNumber()
@@ -270,9 +270,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PurchaseShipmentStateDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PurchaseShipmentStateRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseShipmentStateDerivationTests(Fixture fixture) : base(fixture) { }
+        public PurchaseShipmentStateRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedShipmentReceiptQuantityAcceptedDeriveShipmentState()

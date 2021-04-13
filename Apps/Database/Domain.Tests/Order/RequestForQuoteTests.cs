@@ -11,9 +11,9 @@ namespace Allors.Database.Domain.Tests
     using Resources;
     using Xunit;
 
-    public class RequestForQuoteDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class RequestForQuoteRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public RequestForQuoteDerivationTests(Fixture fixture) : base(fixture)
+        public RequestForQuoteRuleTests(Fixture fixture) : base(fixture)
         {
         }
 
@@ -45,9 +45,9 @@ namespace Allors.Database.Domain.Tests
     }
 
     [Trait("Category", "Security")]
-    public class RequestForQuoteDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class RequestForQuoteDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public RequestForQuoteDeniedPermissionDerivationTests(Fixture fixture) : base(fixture)
+        public RequestForQuoteDeniedPermissionRuleTests(Fixture fixture) : base(fixture)
         {
             this.deletePermission = new Permissions(this.Transaction).Get(this.M.RequestForQuote, this.M.RequestForQuote.Delete);
             this.submitPermission = new Permissions(this.Transaction).Get(this.M.RequestForQuote, this.M.RequestForQuote.Submit);

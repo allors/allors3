@@ -312,9 +312,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PurchaseOrderCreatedDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PurchaseOrderCreatedRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseOrderCreatedDerivationTests(Fixture fixture) : base(fixture) { }
+        public PurchaseOrderCreatedRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedPurchaseOrderStateDeriveDerivedLocale()
@@ -537,9 +537,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PurchaseOrderAwaitingApprovalLevel1DerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PurchaseOrderAwaitingApprovalLevel1RuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseOrderAwaitingApprovalLevel1DerivationTests(Fixture fixture) : base(fixture) { }
+        public PurchaseOrderAwaitingApprovalLevel1RuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedPurchaseOrderStateCreateApprovalTask()
@@ -563,9 +563,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PurchaseOrderAwaitingApprovalLevel2DerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PurchaseOrderAwaitingApprovalLevel2RuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseOrderAwaitingApprovalLevel2DerivationTests(Fixture fixture) : base(fixture) { }
+        public PurchaseOrderAwaitingApprovalLevel2RuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedPurchaseOrderStateCreateApprovalTask()
@@ -594,9 +594,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PurchaseOrderDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PurchaseOrderRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseOrderDerivationTests(Fixture fixture) : base(fixture) { }
+        public PurchaseOrderRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedOrderedByThrowValidationError()
@@ -794,9 +794,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PurchaseOrderStateDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PurchaseOrderStateRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseOrderStateDerivationTests(Fixture fixture) : base(fixture) { }
+        public PurchaseOrderStateRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedPurchaseOrderItemsDerivePurchaseOrderShipmentStateNa()
@@ -988,9 +988,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PurchaseOrderPriceDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PurchaseOrderPriceRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseOrderPriceDerivationTests(Fixture fixture) : base(fixture) { }
+        public PurchaseOrderPriceRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedValidOrderItemsCalculatePrice()
@@ -1537,9 +1537,9 @@ namespace Allors.Database.Domain.Tests
     }
 
     [Trait("Category", "Security")]
-    public class PurchaseOrderDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PurchaseOrderDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseOrderDeniedPermissionDerivationTests(Fixture fixture) : base(fixture)
+        public PurchaseOrderDeniedPermissionRuleTests(Fixture fixture) : base(fixture)
         {
             this.deletePermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder, this.M.PurchaseOrder.Delete);
             this.setReadyPermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder, this.M.PurchaseOrder.SetReadyForProcessing);

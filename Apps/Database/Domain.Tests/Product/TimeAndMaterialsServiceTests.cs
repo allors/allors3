@@ -13,9 +13,9 @@ namespace Allors.Database.Domain.Tests
     using TestPopulation;
     using Xunit;
 
-    public class TimeAndMaterialsServiceDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class TimeAndMaterialsServiceRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public TimeAndMaterialsServiceDerivationTests(Fixture fixture) : base(fixture) { }
+        public TimeAndMaterialsServiceRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedVariantsDeriveVirtualProductPriceComponents()

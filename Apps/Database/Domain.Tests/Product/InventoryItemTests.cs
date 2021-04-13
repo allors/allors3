@@ -9,9 +9,9 @@ namespace Allors.Database.Domain.Tests
     using System.Linq;
     using Xunit;
 
-    public class InventoryItemDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class InventoryItemRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public InventoryItemDerivationTests(Fixture fixture) : base(fixture) { }
+        public InventoryItemRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedPartDeriveFacility()
@@ -29,9 +29,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class InventoryItemSearchStringDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class InventoryItemSearchStringRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public InventoryItemSearchStringDerivationTests(Fixture fixture) : base(fixture) { }
+        public InventoryItemSearchStringRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedPartDeriveSearchString()
@@ -48,9 +48,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class InventoryItemPartDisplayNameDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class InventoryItemPartDisplayNameRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public InventoryItemPartDisplayNameDerivationTests(Fixture fixture) : base(fixture) { }
+        public InventoryItemPartDisplayNameRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedPartDerivePartDisplayName()

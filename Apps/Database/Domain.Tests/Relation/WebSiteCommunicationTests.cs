@@ -93,9 +93,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class WebSiteCommunicationDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class WebSiteCommunicationRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public WebSiteCommunicationDerivationTests(Fixture fixture) : base(fixture) { }
+        public WebSiteCommunicationRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedSubjectDeriveWorkItemDescription()

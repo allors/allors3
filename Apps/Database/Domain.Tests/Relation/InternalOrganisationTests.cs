@@ -288,9 +288,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class InternalOrganisationDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class InternalOrganisationRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public InternalOrganisationDerivationTests(Fixture fixture) : base(fixture)
+        public InternalOrganisationRuleTests(Fixture fixture) : base(fixture)
         { }
 
         [Fact]
