@@ -6,6 +6,7 @@
 namespace Allors.Database.Data
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
@@ -13,23 +14,17 @@ namespace Allors.Database.Data
 
     public class Node : IVisitable
     {
-        public Node(IPropertyType propertyType, Node[] nodes = null)
+        public Node(IPropertyType propertyType, IEnumerable<Node> nodes = null)
         {
             this.PropertyType = propertyType;
             this.Composite = this.PropertyType.ObjectType.IsComposite ? (IComposite)propertyType.ObjectType : null;
 
             if (propertyType.ObjectType.IsComposite)
             {
-                if (nodes != null)
-                {
-                    foreach (var node in nodes)
-                    {
-                        this.AssertAssignable(node);
-                    }
-                }
-
-                this.Nodes = nodes ?? new Node[0];
+                this.Nodes = nodes?.Select(this.AssertAssignable).ToArray();
             }
+
+            this.Nodes ??= new Node[0];
         }
 
         public IPropertyType PropertyType { get; }
@@ -37,6 +32,60 @@ namespace Allors.Database.Data
         public IComposite Composite { get; }
 
         public Node[] Nodes { get; private set; }
+
+        public IComposite OfType { get; set; }
+
+        public IEnumerable<IObject> Resolve(IObject @object)
+        {
+            if (this.PropertyType.IsOne)
+            {
+                var resolved = this.PropertyType.Get(@object.Strategy, this.OfType);
+                if (resolved != null)
+                {
+                    if (this.Nodes.Length > 0)
+                    {
+                        foreach (var node in this.Nodes)
+                        {
+                            foreach (var next in node.Resolve((IObject)resolved))
+                            {
+                                yield return next;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        yield return (IObject)resolved;
+                    }
+                }
+            }
+            else
+            {
+                var resolved = (IEnumerable)this.PropertyType.Get(@object.Strategy, this.OfType);
+                if (resolved != null)
+                {
+                    if (this.Nodes.Length > 0)
+                    {
+                        foreach (var resolvedItem in resolved)
+                        {
+                            foreach (var node in this.Nodes)
+                            {
+                                foreach (var next in node.Resolve((IObject)resolvedItem))
+                                {
+                                    yield return next;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (IObject child in resolved)
+                        {
+                            yield return child;
+                        }
+                    }
+                }
+            }
+        }
 
         public void Resolve(IObject @object, IAccessControlLists acls, ISet<IObject> objects)
         {
@@ -150,13 +199,9 @@ namespace Allors.Database.Data
             return this;
         }
 
-        public void Add(Node node)
-        {
-            this.AssertAssignable(node);
-            this.Nodes = this.Nodes.Append(node).ToArray();
-        }
+        public void Add(Node node) => this.Nodes = this.Nodes.Append(this.AssertAssignable(node)).ToArray();
 
-        private void AssertAssignable(Node node)
+        private Node AssertAssignable(Node node)
         {
             if (this.Composite != null)
             {
@@ -176,6 +221,8 @@ namespace Allors.Database.Data
                     throw new ArgumentException(node.PropertyType + " is not a valid tree node on " + this.Composite + ".");
                 }
             }
+
+            return node;
         }
 
         public void Accept(IVisitor visitor) => visitor.VisitNode(this);

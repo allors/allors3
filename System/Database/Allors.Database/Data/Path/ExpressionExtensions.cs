@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the IDomainDerivation type.</summary>
 
-namespace Allors.Database.Derivations
+namespace Allors.Database.Data
 {
     using System;
     using System.Collections.Generic;
@@ -30,7 +30,7 @@ namespace Allors.Database.Derivations
 
     public static class ExpressionExtensions
     {
-        public static Path ToPath<T>(this Expression<Func<T, IPropertyType>> @this, IMetaPopulation metaPopulation) where T : IComposite
+        public static Node ToPath<T>(this Expression<Func<T, IPropertyType>> @this, IMetaPopulation metaPopulation) where T : IComposite
         {
             var visitor = new MemberExpressionsVisitor();
             _ = visitor.Visit(@this);
@@ -38,7 +38,7 @@ namespace Allors.Database.Derivations
             return ToPath<T>(metaPopulation, visitor);
         }
 
-        public static Path ToPath<T>(this Expression<Func<T, IComposite>> @this, IMetaPopulation metaPopulation) where T : IComposite
+        public static Node ToPath<T>(this Expression<Func<T, IComposite>> @this, IMetaPopulation metaPopulation) where T : IComposite
         {
             var visitor = new MemberExpressionsVisitor();
             _ = visitor.Visit(@this);
@@ -46,22 +46,24 @@ namespace Allors.Database.Derivations
             return ToPath<T>(metaPopulation, visitor);
         }
 
-        private static Path ToPath<T>(IMetaPopulation metaPopulation, MemberExpressionsVisitor visitor) where T : IComposite
+        private static Node ToPath<T>(IMetaPopulation metaPopulation, MemberExpressionsVisitor visitor) where T : IComposite
         {
-            Path path = null;
-            Path currentPath = null;
+            Node path = null;
+            Node currentPath = null;
 
             void AddPath(IPropertyType propertyType)
             {
+                var newNode = new Node(propertyType);
+
                 if (path == null)
                 {
-                    currentPath = new Path(propertyType);
+                    currentPath = newNode;
                     path = currentPath;
                 }
                 else
                 {
-                    currentPath.Next = new Path(propertyType);
-                    currentPath = currentPath.Next;
+                    currentPath.Add(newNode);
+                    currentPath = newNode;
                 }
             }
 

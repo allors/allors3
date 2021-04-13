@@ -7,19 +7,26 @@
 namespace Allors.Database.Derivations
 {
     using System;
+    using System.Collections.Generic;
     using Data;
     using Meta;
 
     public abstract class Pattern : IPattern
     {
+        // TODO: Remove
         public IPropertyType[] Steps
         {
             private get => throw new NotSupportedException();
 
-            set => this.Path = new Path(value);
+            set
+            {
+                var node = value.ToPath();
+                this.Tree = value != null ? new Node[] { node } : Array.Empty<Node>();
+            }
         }
 
-        public Path Path { get; set; }
+        IEnumerable<Node> IPattern.Tree => this.Tree;
+        public IEnumerable<Node> Tree { get; set; }
 
         public IComposite OfType { get; set; }
 

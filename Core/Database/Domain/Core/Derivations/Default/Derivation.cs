@@ -96,9 +96,9 @@ namespace Allors.Database.Domain.Derivations.Default
 
                                     IEnumerable<IObject> source = new IObject[] { association };
 
-                                    if (pattern.Path != null)
+                                    if (pattern.Tree != null)
                                     {
-                                        source = source.SelectMany(v => pattern.Path.Get(v));
+                                        source = source.SelectMany(v => pattern.Tree.SelectMany(w => w.Resolve(v)));
                                     }
 
                                     if (pattern.OfType != null)
@@ -138,9 +138,9 @@ namespace Allors.Database.Domain.Derivations.Default
 
                                     IEnumerable<IObject> source = new IObject[] { role };
 
-                                    if (pattern.Path != null)
+                                    if (pattern.Tree != null)
                                     {
-                                        source = source.SelectMany(v => pattern.Path.Get(v));
+                                        source = source.SelectMany(v => pattern.Tree.SelectMany(w => w.Resolve(v)));
                                     }
 
                                     if (pattern.OfType != null)
