@@ -23,9 +23,9 @@ namespace Allors.Database.Derivations
 
         public AssociationPattern(T objectType, IAssociationType associationType, Func<T, IEnumerable<Node>> tree) : base(objectType, associationType) => this.Tree = tree(objectType).ToArray();
 
-        public AssociationPattern(T objectType, IAssociationType associationType, Expression<Func<T, IComposite>> path) : base(objectType, associationType) => this.Tree = new[] { path.ToPath(objectType.MetaPopulation) };
+        public AssociationPattern(T objectType, IAssociationType associationType, Expression<Func<T, IComposite>> path) : base(objectType, associationType) => this.Tree = new[] { path.Node(objectType.MetaPopulation) };
 
-        public AssociationPattern(T objectType, IAssociationType associationType, Expression<Func<T, IPropertyType>> path) : base(objectType, associationType) => this.Tree = new[] { path.ToPath(objectType.MetaPopulation) };
+        public AssociationPattern(T objectType, IAssociationType associationType, Expression<Func<T, IPropertyType>> path) : base(objectType, associationType) => this.Tree = new[] { path.Node(objectType.MetaPopulation) };
 
         public AssociationPattern(T objectType, Func<T, IAssociationType> associationType) : base(objectType, associationType(objectType))
         {
@@ -35,8 +35,8 @@ namespace Allors.Database.Derivations
 
         public AssociationPattern(T objectType, Func<T, IAssociationType> associationType, Func<T, IEnumerable<Node>> tree) : base(objectType, associationType(objectType)) => this.Tree = tree(objectType).ToArray();
 
-        public AssociationPattern(T objectType, Func<T, IAssociationType> associationType, Expression<Func<T, IComposite>> path) : base(objectType, associationType(objectType)) => this.Tree = new[] { path.ToPath(objectType.MetaPopulation) };
+        public AssociationPattern(T objectType, Func<T, IAssociationType> associationType, Expression<Func<T, IComposite>> path) : base(objectType, associationType(objectType)) => this.Tree = new[] { path.Node(objectType.MetaPopulation) };
 
-        public AssociationPattern(T objectType, Func<T, IAssociationType> associationType, Expression<Func<T, IPropertyType>> path) : base(objectType, associationType(objectType)) => this.Tree = new[] { path.ToPath(objectType.MetaPopulation) };
+        public AssociationPattern(T objectType, Func<T, IAssociationType> associationType, Expression<Func<T, IPropertyType>> path) : base(objectType, associationType(objectType)) => this.Tree = new[] { path.Node(objectType.MetaPopulation) };
     }
 }

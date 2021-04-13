@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public RoleMany2ManyRule(MetaPopulation m) : base(m, new Guid("4383159F-258D-4FCB-833C-55D2B91109A1")) =>
             this.Patterns = new[]
             {
-                new RolePattern(m.CC, m.CC.Assigned) {Steps = new IPropertyType[]{m.CC.BBsWhereMany2Many, m.BB.AAsWhereMany2Many}},
-                new RolePattern(m.CC, m.CC.Assigned) {Steps = new IPropertyType[]{m.CC.BBsWhereUnusedMany2Many, m.BB.AAsWhereUnusedMany2Many}},
+                m.CC.RolePattern(v=>v.Assigned, v=>v.BBsWhereMany2Many.BB.AAsWhereMany2Many),
+                m.CC.RolePattern(v=>v.Assigned, v=>v.BBsWhereUnusedMany2Many.BB.AAsWhereUnusedMany2Many)
             };
 
 

@@ -19,7 +19,7 @@ namespace Allors.Database.Domain
                 m.SalesOrder.RolePattern(v => v.SalesOrderState),
                 m.SalesOrder.RolePattern(v => v.AssignedShipFromAddress),
                 m.SalesOrder.RolePattern(v => v.TakenBy),
-                new RolePattern(m.Organisation, m.Organisation.ShippingAddress) { Steps = new IPropertyType[] { this.M.Organisation.SalesOrdersWhereTakenBy }},
+                m.Organisation.RolePattern(v=>v.ShippingAddress, v=>v.SalesOrdersWhereTakenBy)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

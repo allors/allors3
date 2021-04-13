@@ -22,7 +22,7 @@ namespace Allors.Database.Derivations
 
         public static AssociationPattern<T> AssociationPattern<T>(this T composite, Func<T, IAssociationType> associationType, Func<T, Node> node, IComposite ofType = null) where T : IComposite => new AssociationPattern<T>(composite, associationType, node) { OfType = ofType };
 
-        public static AssociationPattern<T> AssociationPattern<T>(this T composite, Func<T, IAssociationType> associationType, Func<T, IEnumerable<Node>> tree, IComposite ofType = null) where T : IComposite => new AssociationPattern<T>(composite, associationType, tree) { OfType = ofType };
+        public static AssociationPattern<T> AssociationPattern<T>(this T composite, Func<T, IAssociationType> associationType, Func<T, IEnumerable<Node>> nodes, IComposite ofType = null) where T : IComposite => new AssociationPattern<T>(composite, associationType, nodes) { OfType = ofType };
 
         public static AssociationPattern<T> AssociationPattern<T>(this T composite, Func<T, IAssociationType> associationType, Expression<Func<T, IPropertyType>> path, IComposite ofType = null) where T : IComposite => new AssociationPattern<T>(composite, associationType, path) { OfType = ofType };
 
@@ -35,7 +35,7 @@ namespace Allors.Database.Derivations
 
         public static IEnumerable<AssociationPattern<T>> AssociationPattern<T>(this T composite, Func<T, IEnumerable<IAssociationType>> associationTypes, Func<T, Node> node, IComposite ofType = null) where T : IComposite => associationTypes(composite).Select(v => new AssociationPattern<T>(composite, v, node) { OfType = ofType });
 
-        public static IEnumerable<AssociationPattern<T>> AssociationPattern<T>(this T composite, Func<T, IEnumerable<IAssociationType>> associationTypes, Func<T, IEnumerable<Node>> tree, IComposite ofType = null) where T : IComposite => associationTypes(composite).Select(v => new AssociationPattern<T>(composite, v, tree) { OfType = ofType });
+        public static IEnumerable<AssociationPattern<T>> AssociationPattern<T>(this T composite, Func<T, IEnumerable<IAssociationType>> associationTypes, Func<T, IEnumerable<Node>> nodes, IComposite ofType = null) where T : IComposite => associationTypes(composite).Select(v => new AssociationPattern<T>(composite, v, nodes) { OfType = ofType });
 
         public static IEnumerable<AssociationPattern<T>> AssociationPattern<T>(this T composite, Func<T, IEnumerable<IAssociationType>> associationTypes, Expression<Func<T, IPropertyType>> path, IComposite ofType = null) where T : IComposite => associationTypes(composite).Select(v => new AssociationPattern<T>(composite, v, path) { OfType = ofType });
 
@@ -48,7 +48,7 @@ namespace Allors.Database.Derivations
 
         public static RolePattern<T> RolePattern<T>(this T composite, Func<T, IRoleType> roleType, Func<T, Node> node, IComposite ofType = null) where T : IComposite => new RolePattern<T>(composite, roleType, node) { OfType = ofType };
 
-        public static RolePattern<T> RolePattern<T>(this T composite, Func<T, IRoleType> roleType, Func<T, IEnumerable<Node>> tree, IComposite ofType = null) where T : IComposite => new RolePattern<T>(composite, roleType, tree) { OfType = ofType };
+        public static RolePattern<T> RolePattern<T>(this T composite, Func<T, IRoleType> roleType, Func<T, IEnumerable<Node>> nodes, IComposite ofType = null) where T : IComposite => new RolePattern<T>(composite, roleType, nodes) { OfType = ofType };
 
         public static RolePattern<T> RolePattern<T>(this T composite, Func<T, IRoleType> roleType, Expression<Func<T, IPropertyType>> path, IComposite ofType = null) where T : IComposite => new RolePattern<T>(composite, roleType, path) { OfType = ofType };
 
@@ -61,7 +61,7 @@ namespace Allors.Database.Derivations
 
         public static IEnumerable<RolePattern<T>> RolePattern<T>(this T composite, Func<T, IEnumerable<IRoleType>> roleTypes, Func<T, Node> node, IComposite ofType = null) where T : IComposite => roleTypes(composite).Select(v => new RolePattern<T>(composite, v, node) { OfType = ofType });
 
-        public static IEnumerable<RolePattern<T>> RolePattern<T>(this T composite, Func<T, IEnumerable<IRoleType>> roleTypes, Func<T, IEnumerable<Node>> tree, IComposite ofType = null) where T : IComposite => roleTypes(composite).Select(v => new RolePattern<T>(composite, v, tree) { OfType = ofType });
+        public static IEnumerable<RolePattern<T>> RolePattern<T>(this T composite, Func<T, IEnumerable<IRoleType>> roleTypes, Func<T, IEnumerable<Node>> nodes, IComposite ofType = null) where T : IComposite => roleTypes(composite).Select(v => new RolePattern<T>(composite, v, nodes) { OfType = ofType });
 
         public static IEnumerable<RolePattern<T>> RolePattern<T>(this T composite, Func<T, IEnumerable<IRoleType>> roleTypes, Expression<Func<T, IPropertyType>> path, IComposite ofType = null) where T : IComposite => roleTypes(composite).Select(v => new RolePattern<T>(composite, v, path) { OfType = ofType });
 

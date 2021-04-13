@@ -20,12 +20,6 @@ namespace Allors.Database.Domain
             m.Quote.RolePattern(v => v.TransitionalDeniedPermissions, v => v.QuoteItems),
             m.Quote.RolePattern(v => v.Request, v => v.QuoteItems),
             m.ProductQuote.AssociationPattern(v => v.SalesOrderWhereQuote, v => v.QuoteItems),
-
-            new RolePattern(m.QuoteItem, m.QuoteItem.TransitionalDeniedPermissions),
-            new RolePattern(m.Quote, m.Quote.TransitionalDeniedPermissions) { Steps = new IPropertyType[] { m.Quote.QuoteItems}},
-            new RolePattern(m.Quote, m.Quote.Request) { Steps = new IPropertyType[] { m.Quote.QuoteItems}},
-            new AssociationPattern(m.SalesOrder.Quote) { Steps = new IPropertyType[] { m.Quote.QuoteItems}},
-
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

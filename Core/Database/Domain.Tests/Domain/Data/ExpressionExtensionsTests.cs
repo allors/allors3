@@ -31,7 +31,7 @@ namespace Allors.Database.Data.Tests
         {
             Expression<Func<User, IPropertyType>> expression = v => v.Logins;
 
-            var path = expression.ToPath(this.M);
+            var path = expression.Node(this.M);
 
             Assert.Equal(this.M.User.Logins, path.PropertyType);
             Assert.Empty(path.Nodes);
@@ -42,7 +42,7 @@ namespace Allors.Database.Data.Tests
         {
             Expression<Func<Person, IPropertyType>> expression = v => v.OrganisationWhereEmployee;
 
-            var path = expression.ToPath(this.M);
+            var path = expression.Node(this.M);
 
             Assert.Equal(this.M.Person.OrganisationWhereEmployee, path.PropertyType);
             Assert.Empty(path.Nodes);
@@ -53,7 +53,7 @@ namespace Allors.Database.Data.Tests
         {
             Expression<Func<Person, IPropertyType>> expression = v => v.OrganisationWhereEmployee.Organisation.Information;
 
-            var path = expression.ToPath(this.M);
+            var path = expression.Node(this.M);
 
             Assert.Equal(this.M.Person.OrganisationWhereEmployee, path.PropertyType);
 
@@ -68,7 +68,7 @@ namespace Allors.Database.Data.Tests
         {
             Expression<Func<Organisation, IPropertyType>> expression = v => v.Name;
 
-            var path = expression.ToPath(this.M);
+            var path = expression.Node(this.M);
 
             Assert.Equal(this.M.Organisation.Name, path.PropertyType);
             Assert.Empty(path.Nodes);
@@ -79,7 +79,7 @@ namespace Allors.Database.Data.Tests
         {
             Expression<Func<UserGroup, IComposite>> expression = v => v.Members.User.AsPerson;
 
-            var path = expression.ToPath(this.M);
+            var path = expression.Node(this.M);
 
             Assert.Equal(this.M.UserGroup.Members, path.PropertyType);
             Assert.Equal(this.M.Person, path.OfType);
@@ -91,7 +91,7 @@ namespace Allors.Database.Data.Tests
         {
             Expression<Func<Organisation, IPropertyType>> expression = v => v.Employees.Person.FirstName;
 
-            var path = expression.ToPath(this.M);
+            var path = expression.Node(this.M);
 
             Assert.Equal(this.M.Organisation.Employees, path.PropertyType);
 
@@ -107,7 +107,7 @@ namespace Allors.Database.Data.Tests
         {
             Expression<Func<UserGroup, IPropertyType>> expression = v => v.Members.User.AsPerson.FirstName;
 
-            var path = expression.ToPath(this.M);
+            var path = expression.Node(this.M);
 
             Assert.Equal(this.M.UserGroup.Members, path.PropertyType);
 

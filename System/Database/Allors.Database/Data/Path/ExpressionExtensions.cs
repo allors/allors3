@@ -28,25 +28,25 @@ namespace Allors.Database.Data
         }
     }
 
-    public static class ExpressionExtensions
+    public static partial class ExpressionExtensions
     {
-        public static Node ToPath<T>(this Expression<Func<T, IPropertyType>> @this, IMetaPopulation metaPopulation) where T : IComposite
+        public static Node Node<T>(this Expression<Func<T, IPropertyType>> @this, IMetaPopulation metaPopulation) where T : IComposite
         {
             var visitor = new MemberExpressionsVisitor();
             _ = visitor.Visit(@this);
 
-            return ToPath<T>(metaPopulation, visitor);
+            return Node<T>(metaPopulation, visitor);
         }
 
-        public static Node ToPath<T>(this Expression<Func<T, IComposite>> @this, IMetaPopulation metaPopulation) where T : IComposite
+        public static Node Node<T>(this Expression<Func<T, IComposite>> @this, IMetaPopulation metaPopulation) where T : IComposite
         {
             var visitor = new MemberExpressionsVisitor();
             _ = visitor.Visit(@this);
 
-            return ToPath<T>(metaPopulation, visitor);
+            return Node<T>(metaPopulation, visitor);
         }
 
-        private static Node ToPath<T>(IMetaPopulation metaPopulation, MemberExpressionsVisitor visitor) where T : IComposite
+        private static Node Node<T>(IMetaPopulation metaPopulation, MemberExpressionsVisitor visitor) where T : IComposite
         {
             Node path = null;
             Node currentPath = null;
