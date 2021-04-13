@@ -18,6 +18,7 @@ namespace Allors.Database.Domain
                 m.WorkEffort.RolePattern(v => v.TotalLabourRevenue),
                 m.WorkEffort.RolePattern(v => v.TotalMaterialRevenue),
                 m.WorkEffort.RolePattern(v => v.TotalSubContractedRevenue),
+                m.WorkEffort.RolePattern(v => v.TotalOtherRevenue),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
