@@ -5,84 +5,66 @@
 
 namespace Allors.Database.Domain
 {
-    using System;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Linq;
     using Domain;
     using Meta;
     using Database;
+    using Database.Data;
 
     public static partial class ObjectExtensions
     {
-        public static void CoreOnPostBuild(this Object @this, ObjectOnPostBuild method)
+        public static bool IsCloneable(this IRoleType roleType) => !(roleType.RelationType.IsDerived || roleType.RelationType.IsSynced) && (roleType.ObjectType.IsUnit || roleType.AssociationType.IsMany);
+
+        public static T Clone<T>(this T @this) where T : IObject
         {
-            // TODO: Optimize
-            foreach (var roleType in ((Class)@this.Strategy.Class).RoleTypes)
-            {
-                if (roleType.IsRequired)
-                {
-                    if (roleType.ObjectType is IUnit unit && !@this.Strategy.ExistRole(roleType))
-                    {
-                        switch (unit.UnitTag)
-                        {
-                            case UnitTags.Boolean:
-                                @this.Strategy.SetUnitRole(roleType, false);
-                                break;
+            var clone = (T)DefaultObjectBuilder.Build(@this.Strategy.Transaction, @this.Strategy.Class);
 
-                            case UnitTags.Decimal:
-                                @this.Strategy.SetUnitRole(roleType, 0m);
-                                break;
-
-                            case UnitTags.Float:
-                                @this.Strategy.SetUnitRole(roleType, 0d);
-                                break;
-
-                            case UnitTags.Integer:
-                                @this.Strategy.SetUnitRole(roleType, 0);
-                                break;
-
-                            case UnitTags.Unique:
-                                @this.Strategy.SetUnitRole(roleType, Guid.NewGuid());
-                                break;
-
-                            case UnitTags.DateTime:
-                                @this.Strategy.SetUnitRole(roleType, @this.Strategy.Transaction.Now());
-                                break;
-                        }
-                    }
-                }
-            }
-        }
-
-
-        public static T Clone<T>(this T @this, params IRoleType[] deepClone) where T : IObject
-        {
-            var strategy = @this.Strategy;
-            var transaction = strategy.Transaction;
-            var @class = strategy.Class;
-
-            var clone = (T)DefaultObjectBuilder.Build(transaction, @class);
-
-            foreach (var roleType in @class.DatabaseRoleTypes.Where(v => !(v.RelationType.IsDerived || v.RelationType.IsSynced) && !deepClone.Contains(v) && (v.ObjectType.IsUnit || v.AssociationType.IsMany)))
+            foreach (var roleType in @this.Strategy.Class.DatabaseRoleTypes.Where(v => v.IsCloneable()))
             {
                 var role = @this.Strategy.GetRole(roleType);
                 clone.Strategy.SetRole(roleType, role);
             }
 
-            foreach (var roleType in deepClone)
+            return clone;
+        }
+
+        public static T Clone<T>(this T @this, IEnumerable<Node> deepClone) where T : IObject => @this.Clone(deepClone?.ToArray());
+
+        public static T Clone<T>(this T @this, params Node[] deepClone) where T : IObject
+        {
+            if (deepClone == null || deepClone.Length == 0)
             {
+                return @this.Clone();
+            }
+
+            var strategy = @this.Strategy;
+
+            var clone = (T)DefaultObjectBuilder.Build(strategy.Transaction, strategy.Class);
+
+            foreach (var roleType in strategy.Class.DatabaseRoleTypes.Where(v => v.IsCloneable() && !deepClone.Any(w => w.PropertyType.Equals(v))))
+            {
+                var role = strategy.GetRole(roleType);
+                clone.Strategy.SetRole(roleType, role);
+            }
+
+            foreach (var node in deepClone)
+            {
+                var roleType = (IRoleType)node.PropertyType;
                 if (roleType.IsOne)
                 {
                     var role = strategy.GetCompositeRole(roleType);
                     if (role != null)
                     {
-                        clone.Strategy.SetCompositeRole(roleType, role.Clone());
+                        clone.Strategy.SetCompositeRole(roleType, role.Clone(node.Nodes));
                     }
                 }
                 else
                 {
                     foreach (IObject role in strategy.GetCompositeRoles(roleType))
                     {
-                        clone.Strategy.AddCompositeRole(roleType, role.Clone());
+                        clone.Strategy.AddCompositeRole(roleType, role.Clone(node.Nodes));
                     }
                 }
             }
