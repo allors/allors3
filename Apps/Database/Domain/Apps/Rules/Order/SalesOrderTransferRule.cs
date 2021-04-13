@@ -8,6 +8,7 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Data;
     using Meta;
     using Database.Derivations;
 
@@ -32,7 +33,7 @@ namespace Allors.Database.Domain
                     }
                     else
                     {
-                        @this.To = @this.From.Clone(@this.From.Meta.SalesOrderItems);
+                        @this.To = @this.From.Clone(@this.From.Meta.SalesOrderItems.Node());
                         @this.To.TakenBy = @this.InternalOrganisation;
 
                         // TODO: Make sure 'from' customer is also a customer in 'to' internal organisation

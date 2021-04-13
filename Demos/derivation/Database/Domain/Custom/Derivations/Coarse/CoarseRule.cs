@@ -16,8 +16,8 @@ namespace Allors.Database.Domain
         public CoarseRule(MetaPopulation m) : base(m, new Guid("2D54CAE9-D3A0-4D66-BBF5-BF988B7983D6")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.Scoreboard.Games) { Steps = new IPropertyType[]{m.Scoreboard.Games} },
-                new RolePattern(m.Scoreboard.Players) { Steps = new IPropertyType[]{m.Scoreboard.Games} },
+                m.Scoreboard.RolePattern(v=>v.Games, v=>v.Games),
+                m.Scoreboard.RolePattern(v=>v.Players, v => v.Games),
                 new RolePattern(m.Scoreboard.Players),
                 new RolePattern(m.Game.Declarers),
                 new RolePattern(m.Game.StartDate),
@@ -25,11 +25,7 @@ namespace Allors.Database.Domain
                 new RolePattern(m.Game.GameMode),
                 new RolePattern(m.Game.Winners),
                 new RolePattern(m.Scoreboard.AccumulatedScores),
-                new RolePattern(m.Score.Value) {Steps = new IPropertyType[]
-                {
-                    m.Score.GameWhereScore,
-                    m.Game.ScoreboardWhereGame,
-                }},
+                m.Score.RolePattern(v=>v.Value, v=>v.GameWhereScore.Game.ScoreboardWhereGame)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
