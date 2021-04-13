@@ -18,8 +18,8 @@ namespace Allors.Database.Domain
             {
                 new RolePattern(m.Game.GameMode),
                 new RolePattern(m.Game.StartDate),
-                new RolePattern(m.Scoreboard.Games) { Steps = new IPropertyType[]{m.Scoreboard.Games} },
-                new RolePattern(m.Scoreboard.Players) { Steps = new IPropertyType[]{m.Scoreboard.Games} },
+                m.Scoreboard.RolePattern(v=>v.Games, v => v.Games),
+                m.Scoreboard.RolePattern(v=>v.Players, v=>v.Games)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

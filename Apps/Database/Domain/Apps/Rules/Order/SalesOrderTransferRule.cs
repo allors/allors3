@@ -10,6 +10,7 @@ namespace Allors.Database.Domain
     using System.Linq;
     using Meta;
     using Database.Derivations;
+    using Allors.Database.Data;
 
     public class SalesOrderTransferRule : Rule
     {
@@ -30,7 +31,7 @@ namespace Allors.Database.Domain
                 }
                 else
                 {
-                    @this.ToSalesOrder = @this.From.Clone(@this.From.Meta.SalesOrderItems);
+                    @this.ToSalesOrder = @this.From.Clone(@this.From.Meta.SalesOrderItems.Node());
                     @this.ToSalesOrder.TakenBy = @this.ToInternalOrganisation;
                     @this.ToSalesOrder.RemoveOrderNumber();
 

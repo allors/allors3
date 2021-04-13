@@ -8,7 +8,6 @@ namespace Allors.Database.Domain
     using System;
     using Meta;
     using Database;
-    
 
     public static class DefaultObjectBuilder
     {
