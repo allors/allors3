@@ -4900,10 +4900,25 @@ namespace Allors.Database.Domain.Tests
         public override Config Config => new Config { SetupSecurity = true };
 
         [Fact]
-        public void InvoicableOrderDeriveCanInvoiceFalse()
+        public void SalesOrderTransfer()
         {
             var order = this.InternalOrganisation.CreateB2BSalesOrder(this.Transaction.Faker());
             this.Transaction.Derive(false);
+
+            var firstItem = order.SalesOrderItems.First;
+            firstItem.AddDiscountAdjustment(new DiscountAdjustmentBuilder(this.Transaction).WithAmount(1).Build());
+            firstItem.AddSurchargeAdjustment(new SurchargeAdjustmentBuilder(this.Transaction).WithPercentage(1).Build());
+            firstItem.AddSalesTerm(new OrderTermBuilder(this.Transaction).WithDefaults().Build());
+            this.Transaction.Derive(false);
+
+            var salesOrderItemsBefore = order.SalesOrderItems.Count;
+            var salesTermsBefore = order.SalesTerms.Count;
+            var localisedCommentsBefore = order.LocalisedComments.Count;
+            var orderAdjustmentsBefore = order.OrderAdjustments.Count;
+            var electronicDocumentsBefore = order.ElectronicDocuments.Count;
+            var itemDiscountsBefore = firstItem.DiscountAdjustments.Count;
+            var itemSurchargesBefore = firstItem.SurchargeAdjustments.Count;
+            var itemSalesTermsBefore = firstItem.SalesTerms.Count;
 
             var toInternalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
 
@@ -4917,10 +4932,29 @@ namespace Allors.Database.Domain.Tests
             var transfer = new SalesOrderTransferBuilder(this.Transaction).WithFrom(order).WithToInternalOrganisation(toInternalOrganisation).Build();
             this.Transaction.Derive(false);
 
+            var newOrder = transfer.ToSalesOrder;
+
             Assert.True(transfer.ExistToSalesOrder);
             Assert.True(order.SalesOrderState.IsTransferred);
-            Assert.NotEqual(order.OrderNumber, transfer.ToSalesOrder.OrderNumber);
-            Assert.NotEmpty(transfer.ToSalesOrder.OrderNumber);
+            Assert.Equal(salesOrderItemsBefore, order.SalesOrderItems.Count);
+            Assert.Equal(salesTermsBefore, order.SalesTerms.Count);
+            Assert.Equal(localisedCommentsBefore, order.LocalisedComments.Count);
+            Assert.Equal(orderAdjustmentsBefore, order.OrderAdjustments.Count);
+            Assert.Equal(electronicDocumentsBefore, order.ElectronicDocuments.Count);
+            Assert.Equal(itemDiscountsBefore, firstItem.DiscountAdjustments.Count);
+            Assert.Equal(itemSurchargesBefore, firstItem.SurchargeAdjustments.Count);
+            Assert.Equal(itemSalesTermsBefore, firstItem.SalesTerms.Count);
+
+            Assert.NotEqual(order.OrderNumber, newOrder.OrderNumber);
+            Assert.NotEmpty(newOrder.OrderNumber);
+            Assert.Equal(salesOrderItemsBefore, newOrder.SalesOrderItems.Count);
+            Assert.Equal(salesTermsBefore, newOrder.SalesTerms.Count);
+            Assert.Equal(localisedCommentsBefore, newOrder.LocalisedComments.Count);
+            Assert.Equal(orderAdjustmentsBefore, newOrder.OrderAdjustments.Count);
+            Assert.Equal(electronicDocumentsBefore, newOrder.ElectronicDocuments.Count);
+            Assert.Equal(itemDiscountsBefore, newOrder.SalesOrderItems.First.DiscountAdjustments.Count);
+            Assert.Equal(itemSurchargesBefore, newOrder.SalesOrderItems.First.SurchargeAdjustments.Count);
+            Assert.Equal(itemSalesTermsBefore, newOrder.SalesOrderItems.First.SalesTerms.Count);
         }
     }
 

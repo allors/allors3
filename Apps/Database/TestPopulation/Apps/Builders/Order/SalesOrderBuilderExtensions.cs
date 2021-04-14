@@ -41,6 +41,7 @@ namespace Allors.Database.Domain.TestPopulation
             @this.WithTakenByContactPerson(sellerOrganisation.CurrentContacts.FirstOrDefault());
             @this.WithDescription(faker.Lorem.Sentence());
             @this.WithComment(faker.Lorem.Sentence());
+            @this.WithElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
             @this.WithInternalComment(faker.Lorem.Sentence());
             @this.WithBillToCustomer(billToCustomer);
             @this.WithAssignedBillToContactMechanism(billToCustomer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
@@ -59,6 +60,12 @@ namespace Allors.Database.Domain.TestPopulation
             @this.WithSalesTerm(new IncoTermBuilder(@this.Transaction).WithDefaults().Build());
             @this.WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaults().Build());
             @this.WithSalesTerm(new OrderTermBuilder(@this.Transaction).WithDefaults().Build());
+            @this.WithOrderAdjustment(new ShippingAndHandlingChargeBuilder(@this.Transaction).WithAmount(faker.Random.Decimal(1, 10)).Build());
+
+            foreach (Locale additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
+            {
+                @this.WithLocalisedComment(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
+            }
 
             return @this;
         }
@@ -85,6 +92,7 @@ namespace Allors.Database.Domain.TestPopulation
             @this.WithTakenByContactPerson(sellerOrganisation.CurrentContacts.FirstOrDefault());
             @this.WithDescription(faker.Lorem.Sentence());
             @this.WithComment(faker.Lorem.Sentence());
+            @this.WithElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
             @this.WithInternalComment(faker.Lorem.Sentence());
             @this.WithBillToCustomer(billToCustomer);
             @this.WithAssignedBillToContactMechanism(billToCustomer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
@@ -97,6 +105,12 @@ namespace Allors.Database.Domain.TestPopulation
             @this.WithSalesTerm(new IncoTermBuilder(@this.Transaction).WithDefaults().Build());
             @this.WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaults().Build());
             @this.WithSalesTerm(new OrderTermBuilder(@this.Transaction).WithDefaults().Build());
+            @this.WithOrderAdjustment(new ShippingAndHandlingChargeBuilder(@this.Transaction).WithAmount(faker.Random.Decimal(1, 10)).Build());
+
+            foreach (Locale additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
+            {
+                @this.WithLocalisedComment(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
+            }
 
             return @this;
         }
@@ -122,6 +136,7 @@ namespace Allors.Database.Domain.TestPopulation
             @this.WithTakenByContactPerson(sellerOrganisation.CurrentContacts.FirstOrDefault());
             @this.WithDescription(faker.Lorem.Sentence());
             @this.WithComment(faker.Lorem.Sentence());
+            @this.WithElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
             @this.WithInternalComment(faker.Lorem.Sentence());
             @this.WithBillToCustomer(billToCustomer);
             @this.WithAssignedBillToContactMechanism(billToCustomer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
@@ -132,6 +147,12 @@ namespace Allors.Database.Domain.TestPopulation
             @this.WithSalesTerm(new IncoTermBuilder(@this.Transaction).WithDefaults().Build());
             @this.WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaults().Build());
             @this.WithSalesTerm(new OrderTermBuilder(@this.Transaction).WithDefaults().Build());
+            @this.WithOrderAdjustment(new ShippingAndHandlingChargeBuilder(@this.Transaction).WithAmount(faker.Random.Decimal(1, 10)).Build());
+
+            foreach (Locale additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
+            {
+                @this.WithLocalisedComment(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
+            }
 
             return @this;
         }
