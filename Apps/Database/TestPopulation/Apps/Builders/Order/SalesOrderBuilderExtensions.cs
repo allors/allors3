@@ -60,7 +60,6 @@ namespace Allors.Database.Domain.TestPopulation
             @this.WithSalesTerm(new IncoTermBuilder(@this.Transaction).WithDefaults().Build());
             @this.WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaults().Build());
             @this.WithSalesTerm(new OrderTermBuilder(@this.Transaction).WithDefaults().Build());
-            @this.WithOrderAdjustment(new ShippingAndHandlingChargeBuilder(@this.Transaction).WithAmount(faker.Random.Decimal(1, 10)).Build());
 
             foreach (Locale additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
             {
@@ -105,7 +104,6 @@ namespace Allors.Database.Domain.TestPopulation
             @this.WithSalesTerm(new IncoTermBuilder(@this.Transaction).WithDefaults().Build());
             @this.WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaults().Build());
             @this.WithSalesTerm(new OrderTermBuilder(@this.Transaction).WithDefaults().Build());
-            @this.WithOrderAdjustment(new ShippingAndHandlingChargeBuilder(@this.Transaction).WithAmount(faker.Random.Decimal(1, 10)).Build());
 
             foreach (Locale additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
             {
@@ -147,7 +145,6 @@ namespace Allors.Database.Domain.TestPopulation
             @this.WithSalesTerm(new IncoTermBuilder(@this.Transaction).WithDefaults().Build());
             @this.WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaults().Build());
             @this.WithSalesTerm(new OrderTermBuilder(@this.Transaction).WithDefaults().Build());
-            @this.WithOrderAdjustment(new ShippingAndHandlingChargeBuilder(@this.Transaction).WithAmount(faker.Random.Decimal(1, 10)).Build());
 
             foreach (Locale additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
             {
