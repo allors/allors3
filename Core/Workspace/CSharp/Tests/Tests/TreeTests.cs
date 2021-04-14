@@ -32,7 +32,7 @@ namespace Tests.Workspace
                     {
                         Select = new Select
                         {
-                            Include = this.M.C1.Nodes(v=>v.C1C2One2One),
+                            Include = this.M.C1.Nodes(v=>v.C1C2One2One.Node()),
                         },
                     },
                 },

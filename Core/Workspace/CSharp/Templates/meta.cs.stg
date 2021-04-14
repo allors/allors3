@@ -280,13 +280,6 @@ namespace Allors.Workspace.Meta
 {
 	public partial class MetaBuilder
 	{
-	    #region Domains
-        internal class Domains
-        {
-$meta._.Domains:{domain|              public Domain $domain._.Name$;}; separator="\n"$
-        }
-        #endregion
-
 	    #region RelationTypes
 	    internal class RelationTypes
         {
@@ -303,20 +296,17 @@ $meta._.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|        
 
         public MetaPopulation Build() {
             var meta =  new MetaPopulation();
-            var domains = new Domains();
             var relationTypes = new RelationTypes();
             var methodTypes = new MethodTypes();
 
-            this.BuildDomains(meta, domains);
-            this.BuildDomainInheritances(meta, domains);
-            this.BuildUnits(meta, domains);
-            this.BuildInterfaces(meta, domains);
-            this.BuildClasses(meta, domains);
-            this.BuildInheritances(meta, domains);
-            this.BuildRelationTypes(meta, domains, relationTypes);
-            this.BuildMethodTypes(meta, domains, methodTypes);
+            this.BuildUnits(meta);
+            this.BuildInterfaces(meta);
+            this.BuildClasses(meta);
+            this.BuildInheritances(meta);
+            this.BuildRelationTypes(meta, relationTypes);
+            this.BuildMethodTypes(meta, methodTypes);
 
-$meta._.Domains:{domain|            this.Build$domain._.Name$(meta, domains, relationTypes, methodTypes);}; separator="\n"$
+$meta._.Domains:{domain|            this.Build$domain._.Name$(meta, relationTypes, methodTypes);}; separator="\n"$
 
             this.AssignPropertyTypes(meta, relationTypes);
             this.AssignMethodTypes(meta, methodTypes);
@@ -324,44 +314,35 @@ $meta._.Domains:{domain|            this.Build$domain._.Name$(meta, domains, rel
             return meta;
         }
 
-        private void BuildDomains(MetaPopulation meta, Domains domains)
-        {
-$meta._.Domains:{domain|$build_domain(domain)$}; separator="\n"$
-        }
-
-        private void BuildDomainInheritances(MetaPopulation meta, Domains domains)
-        {$meta._.Domains:{domain|$build_domain_inheritance(domain)$}$
-        }
-
-		private void BuildUnits(MetaPopulation meta, Domains domains)
+		private void BuildUnits(MetaPopulation meta)
 		{
 $meta._.Units:{unit|$build_unit(unit)$}; separator="\n"$
 		}
 
-        private void BuildInterfaces(MetaPopulation meta, Domains domains)
+        private void BuildInterfaces(MetaPopulation meta)
         {
 $meta._.WorkspaceInterfacesByWorkspaceName.(workspaceName):{interface|$build_interface(interface)$}; separator="\n"$
         }
 
-        private void BuildClasses(MetaPopulation meta, Domains domains)
+        private void BuildClasses(MetaPopulation meta)
         {
 $meta._.WorkspaceClassesByWorkspaceName.(workspaceName):{class|$build_class(class)$}; separator="\n"$
         }
 
-        private void BuildInheritances(MetaPopulation meta, Domains domains)
+        private void BuildInheritances(MetaPopulation meta)
         {$meta._.Composites:{composite|$inheritance(composite)$}$
         }
 
-        private void BuildRelationTypes(MetaPopulation meta, Domains domains, RelationTypes relationTypes)
+        private void BuildRelationTypes(MetaPopulation meta, RelationTypes relationTypes)
         {
-$meta._.WorkspaceRelationTypesByWorkspaceName.(workspaceName):{relationType|            this.Build$relationType._.Name$(meta, domains, relationTypes);}; separator="\n"$
+$meta._.WorkspaceRelationTypesByWorkspaceName.(workspaceName):{relationType|            this.Build$relationType._.Name$(meta, relationTypes);}; separator="\n"$
         }
 
 $meta._.WorkspaceRelationTypesByWorkspaceName.(workspaceName):{relationType|$build_relationType(relationType)$}; separator="\n"$
 
-        private void BuildMethodTypes(MetaPopulation meta, Domains domains, MethodTypes methodTypes)
+        private void BuildMethodTypes(MetaPopulation meta, MethodTypes methodTypes)
 		{
-$meta._.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|            this.Build$methodType._.FullName$(meta, domains, methodTypes);}; separator="\n"$
+$meta._.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|            this.Build$methodType._.FullName$(meta, methodTypes);}; separator="\n"$
 		}
 
         private void AssignPropertyTypes(MetaPopulation meta, RelationTypes relationTypes)
@@ -429,7 +410,7 @@ inheritance(composite) ::= <<$composite._.WorkspaceDirectSupertypesByWorkspaceNa
 build_inheritance(composite, superType) ::= <<$\n$            new Inheritance(meta){ Subtype = meta.$composite._.SingularName$, Supertype = meta.$superType.SingularName$};>>
 
 build_relationType(relationType) ::= <<
-        private void Build$relationType._.Name$(MetaPopulation meta, Domains domains, RelationTypes relationTypes)
+        private void Build$relationType._.Name$(MetaPopulation meta, RelationTypes relationTypes)
         {
             relationTypes.$relationType._.Name$ = new RelationType(meta.$relationType._.AssociationType._.ObjectType.SingularName$, new System.Guid("$relationType._.IdAsString$"), v => new $relationType._.AssociationType._.Name$(v), v => new $relationType._.RoleType._.FullName$(v))
             {
@@ -455,7 +436,7 @@ $if(relationType.RoleType.MediaType)$		        MediaType = "$relationType._.Role
 >>
 
 build_methodType(methodType) ::= <<
-        private void Build$methodType._.FullName$(MetaPopulation meta, Domains domains, MethodTypes methodTypes)
+        private void Build$methodType._.FullName$(MetaPopulation meta, MethodTypes methodTypes)
         {
             methodTypes.$methodType._.FullName$ = new MethodType(meta.$methodType._.ObjectType.Name$, new System.Guid("$methodType._.IdAsString$"))
             {

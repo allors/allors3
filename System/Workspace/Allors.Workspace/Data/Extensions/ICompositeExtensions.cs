@@ -10,7 +10,6 @@ namespace Allors.Workspace.Data
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Linq.Expressions;
 
     public static partial class ICompositeExtensions
     {
@@ -18,14 +17,7 @@ namespace Allors.Workspace.Data
 
         public static IEnumerable<Node> Nodes<T>(this T @this, Func<T, IEnumerable<Node>> children) where T : IComposite => children(@this);
 
-        public static IEnumerable<Node> Nodes<T>(this T @this, params Expression<Func<T, IPropertyType>>[] children) where T : IComposite => children.Select(v => v.Node(@this.MetaPopulation));
-
-        public static IEnumerable<Node> Nodes<T>(this T @this, params Expression<Func<T, IComposite>>[] children) where T : IComposite => children.Select(v => v.Node(@this.MetaPopulation));
-
         public static Node Node<T>(this T @this, Func<T, Node> child) where T : IComposite => child(@this);
-       
-        public static Node Node<T>(this T @this, Expression<Func<T, IPropertyType>> path) where T : IComposite => path.Node(@this.MetaPopulation);
 
-        public static Node Node<T>(this T @this, Expression<Func<T, IComposite>> path) where T : IComposite => path.Node(@this.MetaPopulation);
     }
 }

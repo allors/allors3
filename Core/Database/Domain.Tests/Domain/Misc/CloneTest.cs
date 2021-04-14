@@ -77,7 +77,11 @@ namespace Allors.Database.Domain.Tests
                 .WithC1C2Many2Many(c2D)
                 .Build();
 
-            var cloned = c1A.Clone(this.M.C1.Nodes(v => v.C1C2One2One, v => v.C1C2One2Manies, v => v.C1C2Many2One, v => v.C1C2Many2Manies));
+            var cloned = c1A.Clone(this.M.C1.Nodes(
+                v => v.C1C2One2One.Node(),
+                v => v.C1C2One2Manies.Node(),
+                v => v.C1C2Many2One.Node(),
+                v => v.C1C2Many2Manies.Node()));
 
             Assert.NotEqual(c1A, cloned);
             Assert.Equal("c1A", cloned.C1AllorsString);
