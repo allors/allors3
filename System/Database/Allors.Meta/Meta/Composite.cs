@@ -169,6 +169,7 @@ namespace Allors.Database.Meta
         IEnumerable<IMethodType> IComposite.InheritedMethodTypes => this.InheritedMethodTypes;
         public IEnumerable<IMethodTypeBase> InheritedMethodTypes => this.MethodTypes.Except(this.ExclusiveMethodTypes);
 
+        IEnumerable<IRoleType> IComposite.InheritedRoleTypes => this.InheritedRoleTypes;
         public IEnumerable<IRoleTypeBase> InheritedRoleTypes => this.RoleTypes.Except(this.ExclusiveRoleTypes);
 
         public IEnumerable<IAssociationTypeBase> InheritedAssociationTypes => this.AssociationTypes.Except(this.ExclusiveAssociationTypes);

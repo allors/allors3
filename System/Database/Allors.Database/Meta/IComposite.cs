@@ -21,6 +21,8 @@ namespace Allors.Database.Meta
 
         IEnumerable<IAssociationType> ExclusiveDatabaseAssociationTypes { get; }
 
+        IEnumerable<IRoleType> InheritedRoleTypes { get; }
+
         IEnumerable<IRoleType> DatabaseRoleTypes { get; }
 
         IEnumerable<IRoleType> ExclusiveDatabaseRoleTypes { get; }
