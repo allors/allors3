@@ -4905,6 +4905,9 @@ namespace Allors.Database.Domain.Tests
             var order = this.InternalOrganisation.CreateB2BSalesOrder(this.Transaction.Faker());
             this.Transaction.Derive(false);
 
+            order.AddOrderAdjustment(new ShippingAndHandlingChargeBuilder(this.Transaction).WithAmount(1).Build());
+            this.Transaction.Derive(false);
+
             var firstItem = order.SalesOrderItems.First;
             firstItem.AddDiscountAdjustment(new DiscountAdjustmentBuilder(this.Transaction).WithAmount(1).Build());
             firstItem.AddSurchargeAdjustment(new SurchargeAdjustmentBuilder(this.Transaction).WithPercentage(1).Build());
