@@ -56,6 +56,8 @@ namespace Allors.Database.Meta
 
         public IEnumerable<IMethodType> MethodTypes => this.AsComposite.MethodTypes;
 
+        public IEnumerable<IMethodType> InheritedMethodTypes => this.AsComposite.InheritedMethodTypes;
+
         public IEnumerable<IMethodType> ExclusiveMethodTypes => this.AsComposite.ExclusiveMethodTypes;
 
         public bool ExistDatabaseClass => this.AsComposite.ExistDatabaseClass;
@@ -150,6 +152,26 @@ namespace Allors.Database.Meta
                 return this.WorkspaceNames
                     .ToDictionary(v => v,
                         v => this.ExclusiveRoleTypes.Where(w => w.ObjectType.IsComposite && w.RelationType.WorkspaceNames.Contains(v)));
+            }
+        }
+
+        public IReadOnlyDictionary<string, IEnumerable<IMethodType>> WorkspaceExclusiveMethodTypesByWorkspaceName
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.WorkspaceNames
+                    .ToDictionary(v => v, v => this.ExclusiveMethodTypes.Where(w => w.WorkspaceNames.Contains(v)));
+            }
+        }
+
+        public IReadOnlyDictionary<string, IEnumerable<IMethodType>> WorkspaceInheritedMethodTypesByWorkspaceName
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.WorkspaceNames
+                    .ToDictionary(v => v, v => this.InheritedMethodTypes.Where(w => w.WorkspaceNames.Contains(v)));
             }
         }
 

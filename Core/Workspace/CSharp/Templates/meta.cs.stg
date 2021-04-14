@@ -287,29 +287,21 @@ $meta._.WorkspaceRelationTypesByWorkspaceName.(workspaceName):{relationType|    
         }
         #endregion
 
-	    #region MethodTypes
-        internal class MethodTypes
-        {
-$meta._.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|              public MethodType $methodType._.FullName$;}; separator="\n"$
-        }
-        #endregion
-
         public MetaPopulation Build() {
             var meta =  new MetaPopulation();
             var relationTypes = new RelationTypes();
-            var methodTypes = new MethodTypes();
 
             this.BuildUnits(meta);
             this.BuildInterfaces(meta);
             this.BuildClasses(meta);
             this.BuildInheritances(meta);
             this.BuildRelationTypes(meta, relationTypes);
-            this.BuildMethodTypes(meta, methodTypes);
+            this.BuildMethodTypes(meta);
 
-$meta._.Domains:{domain|            this.Build$domain._.Name$(meta, relationTypes, methodTypes);}; separator="\n"$
+$meta._.Domains:{domain|            this.Build$domain._.Name$(meta, relationTypes);}; separator="\n"$
 
             this.AssignPropertyTypes(meta, relationTypes);
-            this.AssignMethodTypes(meta, methodTypes);
+            this.AssignMethodTypes(meta);
 
             return meta;
         }
@@ -340,9 +332,9 @@ $meta._.WorkspaceRelationTypesByWorkspaceName.(workspaceName):{relationType|    
 
 $meta._.WorkspaceRelationTypesByWorkspaceName.(workspaceName):{relationType|$build_relationType(relationType)$}; separator="\n"$
 
-        private void BuildMethodTypes(MetaPopulation meta, MethodTypes methodTypes)
+        private void BuildMethodTypes(MetaPopulation meta)
 		{
-$meta._.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|            this.Build$methodType._.FullName$(meta, methodTypes);}; separator="\n"$
+$meta._.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|            this.Build$methodType._.FullName$(meta);}; separator="\n"$
 		}
 
         private void AssignPropertyTypes(MetaPopulation meta, RelationTypes relationTypes)
@@ -350,7 +342,7 @@ $meta._.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|        
 $meta._.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|$assign_properties(composite)$}; separator="\n"$
         }
 
-        private void AssignMethodTypes(MetaPopulation meta, MethodTypes methodTypes)
+        private void AssignMethodTypes(MetaPopulation meta)
         {
 $meta._.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|$assign_methods(composite)$}; separator="\n"$
         }
@@ -436,9 +428,9 @@ $if(relationType.RoleType.MediaType)$		        MediaType = "$relationType._.Role
 >>
 
 build_methodType(methodType) ::= <<
-        private void Build$methodType._.FullName$(MetaPopulation meta, MethodTypes methodTypes)
+        private void Build$methodType._.FullName$(MetaPopulation meta)
         {
-            methodTypes.$methodType._.FullName$ = new MethodType(meta.$methodType._.ObjectType.Name$, new System.Guid("$methodType._.IdAsString$"))
+            meta.$methodType._.ObjectType.Name$.$methodType._.Name$ = new MethodType(meta.$methodType._.ObjectType.Name$, new System.Guid("$methodType._.IdAsString$"))
             {
                 Name = "$methodType._.Name$",
             };
@@ -459,9 +451,9 @@ assign_associationType(associationType) ::= <<
 >>
 
 assign_methods(composite) ::= <<
-$composite._.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|$assign_methodType(methodType)$}; separator="\n"$
+$composite._.WorkspaceInheritedMethodTypesByWorkspaceName.(workspaceName):{methodType|$assign_methodType(methodType)$}; separator="\n"$
 >>
 
 assign_methodType(methodType) ::= <<
-                meta.$composite._.SingularName$.$methodType._.Name$ = methodTypes.$methodType._.FullName$;
+                meta.$composite._.SingularName$.$methodType._.Name$ = meta.$methodType._.ObjectType._.SingularName$.$methodType._.Name$;
 >>

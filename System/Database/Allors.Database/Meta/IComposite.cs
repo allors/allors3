@@ -27,6 +27,8 @@ namespace Allors.Database.Meta
 
         IEnumerable<IMethodType> MethodTypes { get; }
 
+        IEnumerable<IMethodType> InheritedMethodTypes { get; }
+
         IEnumerable<IMethodType> ExclusiveMethodTypes { get; }
         
         bool ExistDatabaseClass { get; }
