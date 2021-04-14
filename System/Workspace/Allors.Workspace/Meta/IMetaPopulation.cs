@@ -8,16 +8,25 @@ namespace Allors.Workspace.Meta
 {
     using System;
     using System.Collections.Generic;
-    using System.Reflection;
 
     public interface IMetaPopulation
     {
+        IEnumerable<IUnit> Units { get; }
+
+        IEnumerable<IInterface> Interfaces { get; }
+
+        IEnumerable<IClass> Classes { get; }
+
+        IEnumerable<IRelationType> RelationTypes { get; }
+
+        IEnumerable<IMethodType> MethodTypes { get; }
+
         IEnumerable<IComposite> Composites { get; }
 
         IMetaObject Find(Guid metaObjectId);
 
         IComposite FindByName(string name);
 
-        void Bind(Type[] types, MethodInfo[] methods);
+        void Bind(Type[] types);
     }
 }

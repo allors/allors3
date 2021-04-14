@@ -10,13 +10,21 @@ namespace Allors.Workspace.Meta
 
     public interface IComposite : IObjectType
     {
-        IEnumerable<IAssociationType> DatabaseAssociationTypes { get; }
+        IEnumerable<IInterface> DirectSupertypes { get; }
 
-        IEnumerable<IRoleType> DatabaseRoleTypes { get; }
+        IEnumerable<IInterface> Supertypes { get; }
+
+        IEnumerable<IClass> Classes { get; }
+
+        IEnumerable<IAssociationType> AssociationTypes { get; }
+
+        IEnumerable<IRoleType> RoleTypes { get; }
 
         IEnumerable<IRoleType> WorkspaceRoleTypes { get; }
 
-        IEnumerable<IClass> DatabaseClasses { get; }
+        IEnumerable<IRoleType> DatabaseRoleTypes { get; }
+
+        IEnumerable<IMethodType> MethodTypes { get; }
 
         bool IsAssignableFrom(IComposite objectType);
     }

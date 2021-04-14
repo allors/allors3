@@ -39,7 +39,7 @@ namespace Allors.Workspace.Meta
                 .Union(this.classes)
                 .Union(this.relationTypes)
                 .Union(this.methodTypes)
-                .ToDictionary(v => ((IMetaIdentity)v).Id, v => v);
+                .ToDictionary(v => ((IMetaIdentifiableObject)v).Id, v => v);
 
             this.composites = this.interfaces.Cast<Composite>().Union(this.classes).ToArray();
             this.compositeByLowercaseName = this.Composites.ToDictionary(v => v.Name.ToLowerInvariant());
@@ -103,9 +103,7 @@ namespace Allors.Workspace.Meta
                 }
 
                 @interface.subtypes = new HashSet<Composite>(RecurseDirectSubtypes(@interface));
-                @interface.databaseSubtypes = new HashSet<Composite>(@interface.subtypes.Where(v => v.HasDatabaseOrigin));
                 @interface.classes = new HashSet<Class>(@interface.subtypes.Where(v => v.IsClass).Cast<Class>());
-                @interface.databaseClasses = new HashSet<Class>(@interface.classes.Where(v=>v.HasDatabaseOrigin));
             }
 
             // TODO:
@@ -159,6 +157,12 @@ namespace Allors.Workspace.Meta
             }
         }
 
+        IEnumerable<IUnit> IMetaPopulation.Units => this.units;
+        IEnumerable<IInterface> IMetaPopulation.Interfaces => this.interfaces;
+        IEnumerable<IClass> IMetaPopulation.Classes => this.classes;
+        IEnumerable<IRelationType> IMetaPopulation.RelationTypes => this.relationTypes;
+        IEnumerable<IMethodType> IMetaPopulation.MethodTypes => this.methodTypes;
+
         IEnumerable<IComposite> IMetaPopulation.Composites => this.Composites;
         public IEnumerable<Composite> Composites => this.composites;
 
@@ -170,13 +174,15 @@ namespace Allors.Workspace.Meta
             return metaObject;
         }
 
+        IComposite IMetaPopulation.FindByName(string name) => this.FindByName(name);
         public IComposite FindByName(string name)
         {
             this.compositeByLowercaseName.TryGetValue(name.ToLowerInvariant(), out var composite);
             return composite;
         }
 
-        public void Bind(Type[] types, MethodInfo[] methods)
+        void IMetaPopulation.Bind(Type[] types) => this.Bind(types);
+        public void Bind(Type[] types)
         {
 
             var typeByName = types.ToDictionary(type => type.Name, type => type);

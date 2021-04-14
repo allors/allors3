@@ -1,62 +1,62 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Interface Name="Allors.Workspace.Meta.IAssociationType" Collapsed="true">
-    <Position X="8" Y="4.75" Width="1.5" />
+  <Interface Name="Allors.Workspace.Meta.IAssociationType">
+    <Position X="7" Y="8.75" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAIEAAAAAAAAAAAAAEAAAAAAAAAAAAAAAJAAAAAAAAA=</HashCode>
       <FileName>Meta\IAssociationType.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Allors.Workspace.Meta.IClass" Collapsed="true">
-    <Position X="4.25" Y="6.5" Width="1.5" />
+  <Interface Name="Allors.Workspace.Meta.IClass">
+    <Position X="4.5" Y="12.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Meta\IClass.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Allors.Workspace.Meta.IComposite" Collapsed="true">
-    <Position X="3" Y="5" Width="1.5" />
+  <Interface Name="Allors.Workspace.Meta.IComposite">
+    <Position X="3.5" Y="8.75" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAJAAAAAAAVAAAAAACAIAAAAAQAAAAAAAABAAAAAAAA=</HashCode>
       <FileName>Meta\IComposite.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Allors.Workspace.Meta.IInterface" Collapsed="true">
-    <Position X="2.25" Y="6.5" Width="1.5" />
+  <Interface Name="Allors.Workspace.Meta.IInterface">
+    <Position X="2.75" Y="12.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAIAAAAAAAA=</HashCode>
       <FileName>Meta\IInterface.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Allors.Workspace.Meta.IMetaIdentifiableObject" Collapsed="true">
-    <Position X="3.5" Y="1.75" Width="2" />
+  <Interface Name="Allors.Workspace.Meta.IMetaIdentifiableObject">
+    <Position X="3.5" Y="3" Width="2" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Meta\IMetaIdentifiableObject.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Allors.Workspace.Meta.IMetaObject" Collapsed="true">
-    <Position X="5.75" Y="0.5" Width="1.5" />
+  <Interface Name="Allors.Workspace.Meta.IMetaObject">
+    <Position X="5.75" Y="0.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAIAAAAAAAQAAAAAAAAAAAAAQAAAAAAAAAAhAAAA=</HashCode>
       <FileName>Meta\IMetaObject.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Allors.Workspace.Meta.IMetaPopulation" Collapsed="true">
-    <Position X="12.5" Y="0.5" Width="1.5" />
+  <Interface Name="Allors.Workspace.Meta.IMetaPopulation">
+    <Position X="12.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AABAgAAAAAECAAAAAAAAACgAAAAIAAAAEAAAAAACAAA=</HashCode>
       <FileName>Meta\IMetaPopulation.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Allors.Workspace.Meta.IMethodType" Collapsed="true">
-    <Position X="6.5" Y="3.25" Width="1.5" />
+  <Interface Name="Allors.Workspace.Meta.IMethodType">
+    <Position X="6.5" Y="5.25" Width="1.5" />
     <InheritanceLine Type="Allors.Workspace.Meta.IOperandType" FixedToPoint="true">
       <Path>
-        <Point X="9" Y="2.441" />
-        <Point X="9" Y="2.875" />
-        <Point X="7.5" Y="2.875" />
-        <Point X="7.5" Y="3.25" />
+        <Point X="8.25" Y="4.233" />
+        <Point X="8.25" Y="4.875" />
+        <Point X="7.5" Y="4.875" />
+        <Point X="7.5" Y="5.25" />
       </Path>
     </InheritanceLine>
     <TypeIdentifier>
@@ -65,43 +65,43 @@
       <NewMemberFileName>Meta\IRoleType.cs</NewMemberFileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Allors.Workspace.Meta.IObjectType" Collapsed="true">
-    <Position X="2.25" Y="3.25" Width="1.5" />
+  <Interface Name="Allors.Workspace.Meta.IObjectType">
+    <Position X="2.25" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAIAAAAAAAAIAAAAAAAQAACCAAAACAAAAAUAAAAA=</HashCode>
       <FileName>Meta\IObjectType.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Allors.Workspace.Meta.IOperandType" Collapsed="true">
-    <Position X="8.25" Y="1.75" Width="1.5" />
+  <Interface Name="Allors.Workspace.Meta.IOperandType">
+    <Position X="7.5" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Meta\IOperandType.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Allors.Workspace.Meta.IPropertyType" Collapsed="true">
-    <Position X="9" Y="3.25" Width="1.5" />
+  <Interface Name="Allors.Workspace.Meta.IPropertyType">
+    <Position X="8.5" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAiAAAAAAAAAJAAAAAAAQAAAAAAAACAIAAAAAAAAA=</HashCode>
       <FileName>Meta\IPropertyType.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Allors.Workspace.Meta.IRelationType" Collapsed="true">
-    <Position X="4.25" Y="3.25" Width="1.5" />
+  <Interface Name="Allors.Workspace.Meta.IRelationType">
+    <Position X="4.25" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAIAAAAAAAAAAAAQAAAAAAAAiAAAAAAAEAAAAAAAAAA=</HashCode>
       <FileName>Meta\IRelationType.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Allors.Workspace.Meta.IRoleType" Collapsed="true">
-    <Position X="10" Y="4.75" Width="1.5" />
+  <Interface Name="Allors.Workspace.Meta.IRoleType">
+    <Position X="9.25" Y="8.75" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAEAAAAAAAAgAAAAEIAAAAAgAAAAAAACBAAAAAAEAA=</HashCode>
       <FileName>Meta\IRoleType.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Allors.Workspace.Meta.IUnit" Collapsed="true">
-    <Position X="0.5" Y="5" Width="1.5" />
+  <Interface Name="Allors.Workspace.Meta.IUnit">
+    <Position X="1" Y="8.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAABIgAAAQAABAAAAAAIQAAAAAQAAAAA=</HashCode>
       <FileName>Meta\IUnit.cs</FileName>

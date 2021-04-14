@@ -10,7 +10,7 @@ namespace Allors.Workspace.Meta
     /// <summary>
     /// Base interface for Meta objects.
     /// </summary>
-    public interface IMetaIdentity
+    public interface IMetaIdentifiableObject : IMetaObject
     {
         Guid Id { get; }
 

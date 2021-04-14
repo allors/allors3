@@ -9,6 +9,7 @@
     <ProjectReference Include="..\..\..\..\System\Workspace\Allors.Workspace\Allors.Workspace.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Core\Internals\" />
     <Folder Include="Custom\" />
   </ItemGroup>
 </Project>

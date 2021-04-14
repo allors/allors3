@@ -19,9 +19,7 @@ namespace Allors.Workspace.Meta
         public MetaPopulation M => this.MetaPopulation;
 
         public override IEnumerable<Class> Classes => this.classes;
-
-        public override IEnumerable<IClass> DatabaseClasses => this.Origin == Origin.Database ? this.classes : Array.Empty<Class>();
-
+        
         public override bool ExistClass => true;
 
         public override Type ClrType => this.clrType;

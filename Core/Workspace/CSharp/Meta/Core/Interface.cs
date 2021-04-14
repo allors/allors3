@@ -14,22 +14,24 @@ namespace Allors.Workspace.Meta
     {
         internal HashSet<Composite> directSubtypes;
         internal HashSet<Composite> subtypes;
-        internal HashSet<Composite> databaseSubtypes;
         internal HashSet<Class> classes;
-        internal HashSet<Class> databaseClasses;
 
         private Type clrType;
 
         internal Interface(MetaPopulation metaPopulation, Guid id) : base(metaPopulation, id) { }
         public MetaPopulation M => this.MetaPopulation;
 
+        IEnumerable<IComposite> IInterface.DirectSubtypes => this.DirectSubtypes;
+        public IEnumerable<Composite> DirectSubtypes => this.directSubtypes;
+
+        IEnumerable<IComposite> IInterface.Subtypes => this.Subtypes;
+        public IEnumerable<Composite> Subtypes => this.subtypes;
+
         /// <summary>
         /// Gets the subclasses.
         /// </summary>
         /// <value>The subclasses.</value>
         public override IEnumerable<Class> Classes => this.classes;
-
-        public override IEnumerable<IClass> DatabaseClasses => this.databaseClasses;
 
         public override Type ClrType => this.clrType;
 

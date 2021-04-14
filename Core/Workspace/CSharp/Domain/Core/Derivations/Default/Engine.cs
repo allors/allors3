@@ -39,9 +39,9 @@ namespace Allors.Workspace.Derivations.Default
 
                     var patternClasses = pattern switch
                     {
-                        RolePattern { ObjectType: null } rolePattern => rolePattern.RoleType.AssociationType.ObjectType.DatabaseClasses.ToArray(),
-                        RolePattern { ObjectType: { } } rolePattern => rolePattern.ObjectType.DatabaseClasses.ToArray(),
-                        AssociationPattern associationPattern => associationPattern.AssociationType.RoleType.ObjectType.IsComposite ? ((Composite)associationPattern.AssociationType.RoleType.ObjectType).DatabaseClasses.ToArray() : Array.Empty<IClass>(),
+                        RolePattern { ObjectType: null } rolePattern => rolePattern.RoleType.AssociationType.ObjectType.Classes.ToArray(),
+                        RolePattern { ObjectType: { } } rolePattern => rolePattern.ObjectType.Classes.ToArray(),
+                        AssociationPattern associationPattern => associationPattern.AssociationType.RoleType.ObjectType.IsComposite ? ((Composite)associationPattern.AssociationType.RoleType.ObjectType).Classes.ToArray() : Array.Empty<IClass>(),
                         _ => Array.Empty<IClass>()
                     };
 

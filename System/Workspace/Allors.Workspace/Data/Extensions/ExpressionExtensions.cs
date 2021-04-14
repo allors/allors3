@@ -85,14 +85,14 @@ namespace Allors.Workspace.Data
                 if (memberExpression.Type.GetInterfaces().Contains(typeof(IRoleType)))
                 {
                     var name = memberExpression.Member.Name;
-                    var propertyType = composite.DatabaseRoleTypes.First(v => v.Name.Equals(name));
+                    var propertyType = composite.RoleTypes.First(v => v.Name.Equals(name));
                     AddPath(propertyType);
                 }
 
                 if (memberExpression.Type.GetInterfaces().Contains(typeof(IAssociationType)))
                 {
                     var name = memberExpression.Member.Name;
-                    var propertyType = composite.DatabaseAssociationTypes.First(v => v.Name.Equals(name));
+                    var propertyType = composite.AssociationTypes.First(v => v.Name.Equals(name));
                     AddPath(propertyType);
                 }
             }

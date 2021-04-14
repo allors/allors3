@@ -62,13 +62,7 @@ namespace Allors.Workspace.Adapters
                                type.GetTypeInfo().ImplementedInterfaces.Contains(typeof(IObject)))
                 .ToArray();
 
-            var extensionMethods = (from type in assembly.ExportedTypes
-                                    where type.GetTypeInfo().IsSealed && !type.GetTypeInfo().IsGenericType && !type.IsNested
-                                    from method in type.GetTypeInfo().DeclaredMethods
-                                    where method.IsStatic && method.IsDefined(typeof(ExtensionAttribute), false)
-                                    select method).ToArray();
-
-            metaPopulation.Bind(types, extensionMethods);
+            metaPopulation.Bind(types);
 
             this.typeByObjectType = new Dictionary<IObjectType, Type>();
             this.objectTypeByType = new Dictionary<Type, IObjectType>();

@@ -147,7 +147,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public IEnumerable<T> GetAll<T>(IComposite objectType) where T : IObject
         {
-            foreach (var @class in objectType.DatabaseClasses)
+            foreach (var @class in objectType.Classes)
             {
                 switch (@class.Origin)
                 {
@@ -449,7 +449,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal IEnumerable<RemoteStrategy> Get(IComposite objectType)
         {
-            var classes = new HashSet<IClass>(objectType.DatabaseClasses);
+            var classes = new HashSet<IClass>(objectType.Classes);
             return this.strategyByWorkspaceId.Where(v => classes.Contains(v.Value.Class)).Select(v => v.Value);
         }
 

@@ -6,6 +6,8 @@
 
 namespace Allors.Workspace.Meta
 {
+    using System.Collections.Generic;
+
     public interface IClass : IComposite
     {
     }
