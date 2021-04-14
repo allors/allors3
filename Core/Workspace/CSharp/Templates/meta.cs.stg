@@ -83,13 +83,10 @@ define_interface(interface) ::= <<
 
 $interface._.WorkspaceSubtypesByWorkspaceName.(workspaceName):{subtype|        public $subtype._.SingularName$ As$subtype._.SingularName$ => this.M.$subtype._.SingularName$;}; separator="\n"$
 
-        // Methods
 $interface._.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|        public MethodType $methodType._.Name$;}; separator="\n"$
 
-        // Roles
 $interface._.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|        public RoleType $roleType._.Name$;}; separator="\n"$
 
-        // Associations
 $interface._.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{associationType|        public AssociationType $associationType._.Name$;}; separator="\n"$
     }
 
@@ -108,13 +105,10 @@ define_class(class) ::= <<
         {
         }
 
-        // Methods
 $class._.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|        public MethodType $methodType._.Name$;}; separator="\n"$
 
-        // Roles
 $class._.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|        public RoleType $roleType._.Name$;}; separator="\n"$
 
-        // Associations
 $class._.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{associationType|        public AssociationType $associationType._.Name$;}; separator="\n"$
     }
 
@@ -219,27 +213,21 @@ meta_interface(interface) ::= <<
 	{
 		public override Interface Interface { get; }
 
-        // Methods
-$interface._.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|         public MethodType $methodType._.Name$;}; separator="\n"$
+$interface._.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|        public MethodType $methodType._.Name$;}; separator="\n"$
 
-		// Roles
-$interface._.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|         public RoleType $roleType._.Name$;}; separator="\n"$
+$interface._.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|        public RoleType $roleType._.Name$;}; separator="\n"$
 
-		// Associations
-$interface._.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{associationType|         public AssociationType $associationType._.Name$;}; separator="\n"$
+$interface._.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{associationType|        public AssociationType $associationType._.Name$;}; separator="\n"$
 
 		internal $interface._.SingularName$(MetaPopulation meta)
         {
 			this.Interface = (Interface) meta.Find(new System.Guid("$interface._.Id$"));
 
-            // Methods
-$interface._.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|             this.$methodType._.Name$ = (MethodType)meta.Find(new System.Guid("$methodType._.Id$"));}; separator="\n"$
+$interface._.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|        this.$methodType._.Name$ = (MethodType)meta.Find(new System.Guid("$methodType._.Id$"));}; separator="\n"$
 
-            // Roles
-$interface._.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|             this.$roleType._.Name$ = ((RelationType)meta.Find(new System.Guid("$roleType._.RelationType.Id$"))).RoleType;}; separator="\n"$
+$interface._.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|        this.$roleType._.Name$ = ((RelationType)meta.Find(new System.Guid("$roleType._.RelationType.Id$"))).RoleType;}; separator="\n"$
 
-            // Associations
-$interface._.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{associationType|           this.$associationType._.Name$ = ((RelationType)meta.Find(new System.Guid("$associationType._.RelationType.Id$"))).AssociationType;}; separator="\n"$
+$interface._.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{associationType|        this.$associationType._.Name$ = ((RelationType)meta.Find(new System.Guid("$associationType._.RelationType.Id$"))).AssociationType;}; separator="\n"$
         }
 	}
 >>
@@ -249,27 +237,21 @@ meta_class(class) ::= <<
 	{
 		public override Class Class { get; }
 
-        // Methods
-$class._.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|         public MethodType $methodType._.Name$;}; separator="\n"$
+$class._.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|        public MethodType $methodType._.Name$;}; separator="\n"$
 
-		// Roles
-$class._.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|         public RoleType $roleType._.Name$;}; separator="\n"$
+$class._.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|        public RoleType $roleType._.Name$;}; separator="\n"$
 
-		// Associations
-$class._.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{associationType|         public AssociationType $associationType._.Name$;}; separator="\n"$
+$class._.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{associationType|        public AssociationType $associationType._.Name$;}; separator="\n"$
 
 		internal $class._.SingularName$(MetaPopulation meta)
         {
 			this.Class = (Class) meta.Find(new System.Guid("$class._.Id$"));
 
-            // Methods
-$class._.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|             this.$methodType._.Name$ = meta.$methodType._.ObjectType._.SingularName$.$methodType._.Name$ ;}; separator="\n"$
+$class._.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|        this.$methodType._.Name$ = meta.$methodType._.ObjectType._.SingularName$.$methodType._.Name$ ;}; separator="\n"$
 
-            // Roles
-$class._.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|             this.$roleType._.Name$ = ((RelationType)meta.Find(new System.Guid("$roleType._.RelationType.Id$"))).RoleType;}; separator="\n"$
+$class._.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|        this.$roleType._.Name$ = ((RelationType)meta.Find(new System.Guid("$roleType._.RelationType.Id$"))).RoleType;}; separator="\n"$
 
-            // Associations
-$class._.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{associationType|           this.$associationType._.Name$ = ((RelationType)meta.Find(new System.Guid("$associationType._.RelationType.Id$"))).AssociationType;}; separator="\n"$
+$class._.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{associationType|        this.$associationType._.Name$ = ((RelationType)meta.Find(new System.Guid("$associationType._.RelationType.Id$"))).AssociationType;}; separator="\n"$
         }
 	}
 >>
@@ -280,36 +262,20 @@ namespace Allors.Workspace.Meta
 {
 	public partial class MetaBuilder
 	{
-	    #region RelationTypes
-	    internal class RelationTypes
-        {
-$meta._.WorkspaceRelationTypesByWorkspaceName.(workspaceName):{relationType|              public RelationType $relationType._.Name$;}; separator="\n"$
-        }
-        #endregion
-
-	    #region MethodTypes
-        internal class MethodTypes
-        {
-$meta._.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|              public MethodType $methodType._.FullName$;}; separator="\n"$
-        }
-        #endregion
-
         public MetaPopulation Build() {
             var meta =  new MetaPopulation();
-            var relationTypes = new RelationTypes();
-            var methodTypes = new MethodTypes();
 
             this.BuildUnits(meta);
             this.BuildInterfaces(meta);
             this.BuildClasses(meta);
             this.BuildInheritances(meta);
-            this.BuildRelationTypes(meta, relationTypes);
-            this.BuildMethodTypes(meta, methodTypes);
+            this.BuildRelationTypes(meta);
+            this.BuildMethodTypes(meta);
 
-$meta._.Domains:{domain|            this.Build$domain._.Name$(meta, relationTypes, methodTypes);}; separator="\n"$
+$meta._.Domains:{domain|            this.Build$domain._.Name$(meta);}; separator="\n"$
 
-            this.AssignPropertyTypes(meta, relationTypes);
-            this.AssignMethodTypes(meta, methodTypes);
+            this.AssignPropertyTypes(meta);
+            this.AssignMethodTypes(meta);
 
             return meta;
         }
@@ -333,24 +299,24 @@ $meta._.WorkspaceClassesByWorkspaceName.(workspaceName):{class|$build_class(clas
         {$meta._.Composites:{composite|$inheritance(composite)$}$
         }
 
-        private void BuildRelationTypes(MetaPopulation meta, RelationTypes relationTypes)
+        private void BuildRelationTypes(MetaPopulation meta)
         {
-$meta._.WorkspaceRelationTypesByWorkspaceName.(workspaceName):{relationType|            this.Build$relationType._.Name$(meta, relationTypes);}; separator="\n"$
+$meta._.WorkspaceRelationTypesByWorkspaceName.(workspaceName):{relationType|            this.Build$relationType._.Name$(meta);}; separator="\n"$
         }
 
 $meta._.WorkspaceRelationTypesByWorkspaceName.(workspaceName):{relationType|$build_relationType(relationType)$}; separator="\n"$
 
-        private void BuildMethodTypes(MetaPopulation meta, MethodTypes methodTypes)
+        private void BuildMethodTypes(MetaPopulation meta)
 		{
-$meta._.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|            this.Build$methodType._.FullName$(meta, methodTypes);}; separator="\n"$
+$meta._.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|            this.Build$methodType._.FullName$(meta);}; separator="\n"$
 		}
 
-        private void AssignPropertyTypes(MetaPopulation meta, RelationTypes relationTypes)
+        private void AssignPropertyTypes(MetaPopulation meta)
         {
 $meta._.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|$assign_properties(composite)$}; separator="\n"$
         }
 
-        private void AssignMethodTypes(MetaPopulation meta, MethodTypes methodTypes)
+        private void AssignMethodTypes(MetaPopulation meta)
         {
 $meta._.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|$assign_methods(composite)$}; separator="\n"$
         }
@@ -410,9 +376,9 @@ inheritance(composite) ::= <<$composite._.WorkspaceDirectSupertypesByWorkspaceNa
 build_inheritance(composite, superType) ::= <<$\n$            new Inheritance(meta){ Subtype = meta.$composite._.SingularName$, Supertype = meta.$superType.SingularName$};>>
 
 build_relationType(relationType) ::= <<
-        private void Build$relationType._.Name$(MetaPopulation meta, RelationTypes relationTypes)
+        private void Build$relationType._.Name$(MetaPopulation meta)
         {
-            relationTypes.$relationType._.Name$ = new RelationType(meta.$relationType._.AssociationType._.ObjectType.SingularName$, new System.Guid("$relationType._.IdAsString$"), v => new $relationType._.AssociationType._.Name$(v), v => new $relationType._.RoleType._.FullName$(v))
+            meta.$relationType._.AssociationType._.ObjectType.SingularName$.$relationType.RoleType._.Name$ = new RelationType(meta.$relationType._.AssociationType._.ObjectType.SingularName$, new System.Guid("$relationType._.IdAsString$"), v => new $relationType._.AssociationType._.Name$(v), v => new $relationType._.RoleType._.FullName$(v))
             {
 $if(!relationType._.HasDatabaseOrigin)$                AssignedOrigin = Origin.$relationType._.Origin$,$endif$
 $if(relationType.Multiplicity)$		        AssignedMultiplicity = Allors.Multiplicity.$relationType._.Multiplicity$,$endif$
@@ -431,14 +397,14 @@ $if(relationType.RoleType.Precision)$		        Precision = $relationType._.RoleT
 $if(relationType.RoleType.Scale)$		        Scale = $relationType._.RoleType.Scale$,$endif$
 $if(relationType.RoleType.MediaType)$		        MediaType = "$relationType._.RoleType.MediaType$",$endif$
                 },
-            };
+            }.RoleType;
         }
 >>
 
 build_methodType(methodType) ::= <<
-        private void Build$methodType._.FullName$(MetaPopulation meta, MethodTypes methodTypes)
+        private void Build$methodType._.FullName$(MetaPopulation meta)
         {
-            methodTypes.$methodType._.FullName$ = new MethodType(meta.$methodType._.ObjectType.Name$, new System.Guid("$methodType._.IdAsString$"))
+            meta.$methodType._.ObjectType.Name$.$methodType._.Name$ = new MethodType(meta.$methodType._.ObjectType.Name$, new System.Guid("$methodType._.IdAsString$"))
             {
                 Name = "$methodType._.Name$",
             };
@@ -446,22 +412,22 @@ build_methodType(methodType) ::= <<
 >>
 
 assign_properties(composite) ::= <<
-$composite._.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|$assign_roleType(roleType)$}; separator="\n"$
+$composite._.WorkspaceInheritedRoleTypesByWorkspaceName.(workspaceName):{roleType|$assign_roleType(roleType)$}; separator="\n"$
 $composite._.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{associationType|$assign_associationType(associationType)$}; separator="\n"$
 >>
 
 assign_roleType(roleType) ::= <<
-                meta.$composite._.SingularName$.$roleType._.Name$ = ($roleType._.FullName$) relationTypes.$roleType._.RelationType._.Name$.RoleType;
+                meta.$composite._.SingularName$.$roleType._.Name$ = meta.$roleType._.AssociationType._.ObjectType._.SingularName$.$roleType._.Name$;
 >>
 
 assign_associationType(associationType) ::= <<
-                meta.$composite._.SingularName$.$associationType._.Name$ = ($associationType._.Name$) relationTypes.$associationType._.RelationType._.Name$.AssociationType;
+                meta.$composite._.SingularName$.$associationType._.Name$ = ($associationType._.Name$) meta.$associationType._.ObjectType._.SingularName$.$associationType._.RoleType._.Name$.AssociationType;
 >>
 
 assign_methods(composite) ::= <<
-$composite._.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|$assign_methodType(methodType)$}; separator="\n"$
+$composite._.WorkspaceInheritedMethodTypesByWorkspaceName.(workspaceName):{methodType|$assign_methodType(methodType)$}; separator="\n"$
 >>
 
 assign_methodType(methodType) ::= <<
-                meta.$composite._.SingularName$.$methodType._.Name$ = methodTypes.$methodType._.FullName$;
+                meta.$composite._.SingularName$.$methodType._.Name$ = meta.$methodType._.ObjectType._.SingularName$.$methodType._.Name$;
 >>
