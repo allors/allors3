@@ -8,7 +8,7 @@ namespace Allors.Workspace.Meta
 {
     using System;
 
-    public sealed partial class Unit : ObjectType, IUnit
+    public abstract partial class Unit : ObjectType, IUnit
     {
         private UnitTags unitTag;
 

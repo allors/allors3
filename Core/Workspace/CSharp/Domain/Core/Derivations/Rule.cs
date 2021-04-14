@@ -12,7 +12,7 @@ namespace Allors.Workspace.Derivations
 
     public abstract partial class Rule : IRule
     {
-        protected Rule(M m, Guid id)
+        protected Rule(MetaPopulation m, Guid id)
         {
             this.M = m;
             this.Id = id;
@@ -22,7 +22,7 @@ namespace Allors.Workspace.Derivations
 
         public Pattern[] Patterns { get; protected set; }
 
-        protected M M { get; }
+        protected MetaPopulation M { get; }
 
         public abstract void Derive(ICycle cycle, IEnumerable<IObject> matches);
     }

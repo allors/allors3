@@ -17,7 +17,7 @@ namespace Allors.Workspace.Meta
 
         private string[] derivedWorkspaceNames;
 
-        private Dictionary<string, Class> derivedClassByLowercaseName;
+        private Dictionary<string, Composite> derivedCompositeByLowercaseName;
 
         private IList<Domain> domains;
         private IList<Unit> units;
@@ -240,11 +240,11 @@ namespace Allors.Workspace.Meta
         /// <returns>
         /// The <see cref="IMetaObject"/>.
         /// </returns>
-        public Class FindByName(string name)
+        public IComposite FindByName(string name)
         {
             this.Derive();
 
-            this.derivedClassByLowercaseName.TryGetValue(name.ToLowerInvariant(), out var cls);
+            this.derivedCompositeByLowercaseName.TryGetValue(name.ToLowerInvariant(), out var cls);
 
             return cls;
         }
@@ -366,16 +366,6 @@ namespace Allors.Workspace.Meta
 
                 var sortedDomains = new List<Domain>(this.domains);
                 sortedDomains.Sort((a, b) => a.Superdomains.Contains(b) ? -1 : 1);
-
-                var actionByMethodInfoByType = new Dictionary<Type, Dictionary<MethodInfo, Action<object, object>>>();
-
-                foreach (Class @class in this.DatabaseClasses)
-                {
-                    foreach (MethodClass concreteMethodType in @class.MethodTypes)
-                    {
-                        concreteMethodType.Bind(sortedDomains, methods, actionByMethodInfoByType);
-                    }
-                }
             }
         }
 
@@ -498,12 +488,6 @@ namespace Allors.Workspace.Meta
 
                     var sharedMethodTypeList = new HashSet<MethodType>();
 
-                    // MethodClasses
-                    foreach (var methodType in this.MethodTypes)
-                    {
-                        methodType.DeriveMethodClasses();
-                    }
-
                     // MethodTypes
                     var methodTypeByClass = this.MethodTypes
                         .GroupBy(v => v.Composite)
@@ -539,11 +523,7 @@ namespace Allors.Workspace.Meta
                     }
 
                     // MetaPopulation
-                    this.derivedClassByLowercaseName = new Dictionary<string, Class>();
-                    foreach (var cls in this.classes)
-                    {
-                        this.derivedClassByLowercaseName[cls.Name.ToLowerInvariant()] = cls;
-                    }
+                    this.derivedCompositeByLowercaseName = this.Composites.ToDictionary(v => v.Name.ToLowerInvariant());
                 }
                 finally
                 {
@@ -604,21 +584,10 @@ namespace Allors.Workspace.Meta
 
         internal void OnRoleTypeCreated(RoleType roleType) => this.Stale();
 
-        internal void OnMethodInterfaceCreated(MethodInterface methodInterface)
+        internal void OnMethodTypeCreated(MethodType methodType)
         {
-            this.methodTypes.Add(methodInterface);
-            this.metaObjectById.Add(methodInterface.Id, methodInterface);
-
-            this.Stale();
-        }
-
-        internal void OnMethodClassCreated(MethodClass methodClass)
-        {
-            if (methodClass.MethodInterface == null)
-            {
-                this.methodTypes.Add(methodClass);
-                this.metaObjectById.Add(methodClass.Id, methodClass);
-            }
+            this.methodTypes.Add(methodType);
+            this.metaObjectById.Add(methodType.Id, methodType);
 
             this.Stale();
         }

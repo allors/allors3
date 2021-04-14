@@ -13,6 +13,7 @@ namespace Tests.Workspace.Remote
     using Allors.Workspace.Domain;
     using Allors.Workspace.Meta;
     using Xunit;
+    using User = Allors.Workspace.Domain.User;
 
     public class Profile : IProfile
     {
@@ -27,7 +28,7 @@ namespace Tests.Workspace.Remote
 
         public RemoteDatabase Database => this.Workspace.Database;
 
-        public M M => this.Workspace.Context().M;
+        public MetaPopulation M => this.Workspace.Context().M;
 
         public async Task InitializeAsync()
         {

@@ -6,6 +6,7 @@
 namespace Allors.Workspace.Data
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using Meta;
 
@@ -28,7 +29,7 @@ namespace Allors.Workspace.Data
         {
         }
 
-        public Node[] Include { get; set; }
+        public IEnumerable<Node> Include { get; set; }
 
         public Step Step { get; set; }
 

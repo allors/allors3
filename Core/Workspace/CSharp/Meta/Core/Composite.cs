@@ -308,6 +308,16 @@ namespace Allors.Workspace.Meta
             }
         }
 
+        public IReadOnlyDictionary<string, IEnumerable<AssociationType>> WorkspaceInheritedAssociationTypesByWorkspaceName
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.WorkspaceNames
+                    .ToDictionary(v => v, v => this.InheritedAssociationTypes.Where(w => w.RelationType.WorkspaceNames.Contains(v)));
+            }
+        }
+
         public IReadOnlyDictionary<string, IEnumerable<AssociationType>> WorkspaceExclusiveAssociationTypesByWorkspaceName
         {
             get
@@ -337,6 +347,17 @@ namespace Allors.Workspace.Meta
                 return this.WorkspaceNames
                     .ToDictionary(v => v,
                         v => this.RoleTypes.Where(w => w.ObjectType.IsComposite && w.RelationType.WorkspaceNames.Contains(v)));
+            }
+        }
+
+        public IReadOnlyDictionary<string, IEnumerable<RoleType>> WorkspaceInheritedRoleTypesByWorkspaceName
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.WorkspaceNames
+                    .ToDictionary(v => v,
+                        v => this.InheritedRoleTypes.Where(w => w.RelationType.WorkspaceNames.Contains(v)));
             }
         }
 
@@ -383,6 +404,27 @@ namespace Allors.Workspace.Meta
                         v => this.ExclusiveRoleTypes.Where(w => w.ObjectType.IsComposite && w.RelationType.WorkspaceNames.Contains(v)));
             }
         }
+
+        public IReadOnlyDictionary<string, IEnumerable<MethodType>> WorkspaceInheritedMethodTypesByWorkspaceName
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.WorkspaceNames
+                    .ToDictionary(v => v, v => this.InheritedMethodTypes.Where(w => w.WorkspaceNames.Contains(v)));
+            }
+        }
+
+        public IReadOnlyDictionary<string, IEnumerable<MethodType>> WorkspaceExclusiveMethodTypesByWorkspaceName
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.WorkspaceNames
+                    .ToDictionary(v => v, v => this.ExclusiveMethodTypes.Where(w => w.WorkspaceNames.Contains(v)));
+            }
+        }
+
 
         public IReadOnlyDictionary<string, IEnumerable<MethodType>> WorkspaceMethodTypesByWorkspaceName
         {
@@ -564,15 +606,7 @@ namespace Allors.Workspace.Meta
             {
                 if (methodTypeByClass.TryGetValue(superType, out var inheritedMethodTypes))
                 {
-                    if (this.IsInterface)
-                    {
-                        methodTypes.UnionWith(inheritedMethodTypes);
-                    }
-                    else
-                    {
-                        var methodClasses = inheritedMethodTypes.Select(v => v.MethodClassBy((Class)this));
-                        methodTypes.UnionWith(methodClasses);
-                    }
+                    methodTypes.UnionWith(inheritedMethodTypes);
                 }
             }
 

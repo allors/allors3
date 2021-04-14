@@ -9,7 +9,7 @@ namespace Allors.Workspace.Domain
 
     public partial interface IWorkspaceContext : IWorkspaceLifecycle
     {
-        M M { get; }
+        MetaPopulation M { get; }
 
         IDerivationFactory DerivationFactory { get; }
 

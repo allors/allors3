@@ -78,7 +78,7 @@ namespace Allors.Workspace.Protocol.Direct
 
         private Select Visit(Data.Select ws) => ws != null ? new Select { Include = this.Visit(ws.Include), Step = this.Visit(ws.Step), } : null;
 
-        private Node[] Visit(Data.Node[] ws) => ws?.Select(this.Visit).ToArray();
+        private Node[] Visit(IEnumerable<Data.Node> ws) => ws?.Select(this.Visit).ToArray();
 
         private Node Visit(Data.Node ws) => ws != null ? new Node(this.Visit(ws.PropertyType), ws.Nodes?.Select(this.Visit).ToArray()) : null;
 

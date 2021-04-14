@@ -22,6 +22,8 @@ namespace Allors.Workspace.Meta
 
         IMetaObject Find(Guid metaObjectId);
 
+        IComposite FindByName(string name);
+
         bool IsValid { get; }
 
         IValidationLog Validate();

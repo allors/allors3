@@ -25,7 +25,7 @@ namespace Tests.Workspace
             {
                 new Pull
                 {
-                    Extent = new Extent(this.M.C1.ObjectType)
+                    Extent = new Extent(this.M.C1)
                 },
             };
 

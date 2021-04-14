@@ -25,7 +25,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C1.ObjectType),
+                Extent = new Extent(this.M.C1),
             };
 
             var result = session.Pull(pull).Result;
@@ -48,7 +48,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C1.ObjectType),
+                Extent = new Extent(this.M.C1),
             };
 
             var result = await session.Pull(pull);
@@ -57,12 +57,12 @@ namespace Tests.Workspace
 
             foreach (var c1 in c1s)
             {
-                foreach (var roleType in this.M.C1.ObjectType.DatabaseRoleTypes)
+                foreach (var roleType in this.M.C1.DatabaseRoleTypes)
                 {
                     Assert.False(c1.Strategy.Exist(roleType));
                 }
 
-                foreach (var associationType in this.M.C1.ObjectType.AssociationTypes)
+                foreach (var associationType in this.M.C1.AssociationTypes)
                 {
                     if (associationType.IsOne)
                     {
@@ -87,7 +87,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C1.ObjectType),
+                Extent = new Extent(this.M.C1),
             };
 
             var result = session.Pull(pull).Result;
@@ -96,12 +96,12 @@ namespace Tests.Workspace
 
             foreach (var c1 in c1s)
             {
-                foreach (var roleType in this.M.C1.ObjectType.DatabaseRoleTypes)
+                foreach (var roleType in this.M.C1.DatabaseRoleTypes)
                 {
                     Assert.False(c1.Strategy.Exist(roleType));
                 }
 
-                foreach (var associationType in this.M.C1.ObjectType.AssociationTypes)
+                foreach (var associationType in this.M.C1.AssociationTypes)
                 {
                     if (associationType.IsOne)
                     {

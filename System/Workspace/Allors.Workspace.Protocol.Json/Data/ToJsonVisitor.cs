@@ -217,13 +217,14 @@ namespace Allors.Workspace.Protocol.Json
                 @select.Step = this.steps.Pop();
             }
 
-            if (visited.Include?.Length > 0)
+            if (visited.Include?.Count() > 0)
             {
-                var length = visited.Include.Length;
+                var includes = visited.Include.ToArray();
+                var length = includes.Length;
                 @select.Include = new Node[length];
                 for (var i = 0; i < length; i++)
                 {
-                    var node = visited.Include[i];
+                    var node = includes[i];
                     node.Accept(this);
                     @select.Include[i] = this.nodes.Pop();
                 }

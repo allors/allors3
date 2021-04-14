@@ -13,7 +13,7 @@ namespace Allors.Workspace
 
     public partial class WorkspaceContext : IWorkspaceContext
     {
-        public M M { get; private set; }
+        public MetaPopulation M { get; private set; }
 
         public IDerivationFactory DerivationFactory { get; private set; }
 
@@ -21,9 +21,7 @@ namespace Allors.Workspace
 
         public void OnInit(IWorkspace workspace)
         {
-            var metaPopulation = (MetaPopulation)workspace.MetaPopulation;
-
-            this.M = new M(metaPopulation);
+            this.M = (MetaPopulation)workspace.MetaPopulation;
 
             var engine = new Engine(this.CreateRules());
             this.DerivationFactory = new DerivationFactory(engine);

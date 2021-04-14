@@ -5,20 +5,16 @@
 
 namespace Allors.Workspace.Meta
 {
-    public abstract partial class Method
+    public partial class Method
     {
-        //protected Method(IObject @object)
-        //{
-        //    this.Executed = false;
-        //    this.Object = @object;
-        //}
+        protected Method(IObject @object, MethodType methodType)
+        {
+            this.Object = @object;
+            this.MethodType = methodType;
+        }
 
-        public abstract MethodInvocation MethodInvocation { get; }
+        public IObject Object { get; }
 
-        //public IObject Object { get; private set; }
-
-        public bool Executed { get; set; }
-
-        public virtual void Execute() => this.MethodInvocation.Execute(this);
+        public MethodType MethodType { get; }
     }
 }

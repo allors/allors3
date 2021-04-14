@@ -8,7 +8,6 @@ namespace Tests.Workspace
     using System.Linq;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
-    using Allors.Workspace.Meta;
     using Xunit;
     using Result = Allors.Workspace.Data.Result;
 
@@ -26,14 +25,14 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C1.Class),
+                Extent = new Extent(this.M.C1),
                 Results = new[]
                 {
                     new Result
                     {
                         Select = new Select
                         {
-                            Include = new C1NodeBuilder(this.M,v => v.C1C2One2One()),
+                            Include = this.M.C1.Nodes(v=>v.C1C2One2One),
                         },
                     },
                 },

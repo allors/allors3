@@ -11,8 +11,8 @@ namespace Tests.Workspace.Remote
     using Allors.Workspace.Adapters.Remote;
     using Allors.Workspace.Domain;
     using Allors.Workspace.Meta;
-
     using Xunit;
+    using User = Allors.Workspace.Domain.User;
 
     [Collection("Database")]
     public class Test
@@ -21,7 +21,7 @@ namespace Tests.Workspace.Remote
 
         public RemoteDatabase Database => this.Workspace.Database;
 
-        public M M => this.Workspace.Context().M;
+        public MetaPopulation M => this.Workspace.Context().M;
 
         public Test() =>
             this.Workspace = new RemoteWorkspace(

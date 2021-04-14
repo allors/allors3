@@ -12,30 +12,36 @@ namespace Allors.Workspace.Data
 
     public class Node : IVisitable
     {
-        public Node(IPropertyType propertyType = null, Node[] nodes = null)
+        public Node(IPropertyType propertyType = null, IEnumerable<Node> nodes = null)
         {
             this.PropertyType = propertyType;
-            this.Nodes = nodes ?? new Node[0];
+            this.Nodes = nodes?.ToArray() ?? new Node[0];
         }
 
         public IPropertyType PropertyType { get; }
 
+        public IComposite OfType { get; set; }
+
         public Node[] Nodes { get; private set; }
+
+        public Node Add(Node node)
+        {
+            this.Nodes = this.Nodes.Append(node).ToArray();
+            return this;
+        }
 
         public Node Add(IPropertyType propertyType)
         {
             var node = new Node(propertyType, null);
-            this.Nodes = this.Nodes.Append(node).ToArray();
-            return this;
+            return this.Add(node);
         }
 
         public Node Add(IPropertyType propertyType, Node childNode)
         {
             var node = new Node(propertyType, childNode.Nodes);
-            this.Nodes = this.Nodes.Append(node).ToArray();
-            return this;
+            return this.Add(node);
         }
-        
+
         public override string ToString()
         {
             var toString = new StringBuilder();

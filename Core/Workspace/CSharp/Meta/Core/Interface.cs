@@ -10,7 +10,7 @@ namespace Allors.Workspace.Meta
     using System.Collections.Generic;
     using System.Linq;
 
-    public sealed partial class Interface : Composite, IInterface
+    public abstract partial class Interface : Composite, IInterface
     {
         private string[] derivedWorkspaceNames;
 
@@ -28,6 +28,7 @@ namespace Allors.Workspace.Meta
         private Type clrType;
 
         internal Interface(MetaPopulation metaPopulation, Guid id) : base(metaPopulation, id) => metaPopulation.OnInterfaceCreated(this);
+        public MetaPopulation M => this.MetaPopulation;
 
         public override string[] WorkspaceNames
         {

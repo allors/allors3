@@ -10,7 +10,7 @@ namespace Tests.Workspace.Remote
 
     public class Fixture
     {
-        public static SyncResponse LoadData(M m) =>
+        public static SyncResponse LoadData(MetaPopulation m) =>
             new SyncResponse
             {
                 Objects = new[]
@@ -19,7 +19,7 @@ namespace Tests.Workspace.Remote
                     {
                         Id = "1",
                         Version = "1001",
-                        ObjectTypeOrKey = m.Person.ObjectType.IdAsString,
+                        ObjectTypeOrKey = m.Person.IdAsString,
                         Roles = new[]
                         {
                             new SyncResponseRole {RoleType = m.Person.FirstName.RelationType.IdAsString, Value = "Koen"},
@@ -36,7 +36,7 @@ namespace Tests.Workspace.Remote
                     {
                         Id = "2",
                         Version = "1002",
-                        ObjectTypeOrKey = m.Person.ObjectType.IdAsString,
+                        ObjectTypeOrKey = m.Person.IdAsString,
                         Roles = new[]
                         {
                             new SyncResponseRole {RoleType = m.Person.FirstName.RelationType.IdAsString, Value = "Patrick"},
@@ -50,7 +50,7 @@ namespace Tests.Workspace.Remote
                     {
                         Id = "3",
                         Version = "1003",
-                        ObjectTypeOrKey = m.Person.ObjectType.IdAsString,
+                        ObjectTypeOrKey = m.Person.IdAsString,
                         Roles = new[]
                         {
                             new SyncResponseRole {RoleType = m.Person.FirstName.RelationType.IdAsString, Value = "Martien"},
@@ -62,7 +62,7 @@ namespace Tests.Workspace.Remote
                     {
                         Id = "101",
                         Version = "1101",
-                        ObjectTypeOrKey = m.Organisation.ObjectType.IdAsString,
+                        ObjectTypeOrKey = m.Organisation.IdAsString,
                         Roles = new[]
                         {
                             new SyncResponseRole {RoleType = m.Organisation.Name.RelationType.IdAsString, Value = "Acme"},
@@ -75,7 +75,7 @@ namespace Tests.Workspace.Remote
                     {
                         Id = "102",
                         Version = "1102",
-                        ObjectTypeOrKey = m.Organisation.ObjectType.IdAsString,
+                        ObjectTypeOrKey = m.Organisation.IdAsString,
                         Roles = new[]
                         {
                             new SyncResponseRole {RoleType = m.Organisation.Name.RelationType.IdAsString, Value = "Ocme"},
@@ -87,7 +87,7 @@ namespace Tests.Workspace.Remote
                     {
                         Id = "103",
                         Version = "1103",
-                        ObjectTypeOrKey = m.Organisation.ObjectType.IdAsString,
+                        ObjectTypeOrKey = m.Organisation.IdAsString,
                         Roles = new[]
                         {
                             new SyncResponseRole {RoleType = m.Organisation.Name.RelationType.IdAsString, Value = "icme"},

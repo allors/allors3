@@ -142,7 +142,7 @@ namespace Allors.Workspace.Domain
 
 	public partial class $class._.name$ : IObject $class._.WorkspaceDirectSupertypesByWorkspaceName.(workspaceName):{directSupertype|, $directSupertype._.SingularName$}$
 	{
-        private readonly Allors.Workspace.Meta.M m;
+        private readonly Allors.Workspace.Meta.MetaPopulation m;
 
 		public $class._.name$(IStrategy strategy)
 		{
@@ -164,7 +164,7 @@ $endif$
 			}
 		}
 
-		public Allors.Workspace.Meta.Meta$class._.name$ Meta
+		public Allors.Workspace.Meta.$class._.name$ Meta
 		{
 			get
 			{

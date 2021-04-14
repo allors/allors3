@@ -19,6 +19,8 @@ namespace Allors.Database.Meta
 
         IRelationType RelationType { get; }
 
+        string FullName { get; }
+
         string SingularFullName { get; }
 
         string PluralFullName { get; }

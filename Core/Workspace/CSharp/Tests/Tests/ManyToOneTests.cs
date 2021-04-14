@@ -27,7 +27,7 @@ namespace Tests.Workspace
             {
                         new Pull
                         {
-                            Extent = new Extent(this.M.Person.ObjectType),
+                            Extent = new Extent(this.M.Person),
                         },
                     });
 
@@ -58,7 +58,7 @@ namespace Tests.Workspace
             {
                 new Pull
                 {
-                    Extent = new Extent(this.M.Person.ObjectType),
+                    Extent = new Extent(this.M.Person),
                 },
             });
 

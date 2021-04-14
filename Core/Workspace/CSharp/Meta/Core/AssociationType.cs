@@ -13,7 +13,7 @@ namespace Allors.Workspace.Meta
     /// This is also called the 'active', 'controlling' or 'owning' side.
     /// AssociationTypes can only have composite <see cref="ObjectType"/>s.
     /// </summary>
-    public sealed partial class AssociationType : OperandType, IAssociationType, IComparable
+    public abstract partial class AssociationType : OperandType, IAssociationType, IComparable
     {
         /// <summary>
         /// Used to create property names.
@@ -28,6 +28,7 @@ namespace Allors.Workspace.Meta
             this.RelationType = relationType;
             relationType.MetaPopulation.OnAssociationTypeCreated(this);
         }
+        public MetaPopulation M => this.MetaPopulation;
 
         public override Origin Origin => this.RelationType.Origin;
 

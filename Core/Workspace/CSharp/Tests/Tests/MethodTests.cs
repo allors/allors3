@@ -23,7 +23,7 @@ namespace Tests.Workspace
 
             var session = this.Workspace.CreateSession();
 
-            var pull = new[] { new Pull { Extent = new Extent(this.M.Organisation.ObjectType), }, };
+            var pull = new[] { new Pull { Extent = new Extent(this.M.Organisation), }, };
 
             var organisation = (await session.Pull(pull)).GetCollection<Organisation>().First();
 

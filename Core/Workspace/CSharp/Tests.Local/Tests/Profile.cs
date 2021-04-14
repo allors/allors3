@@ -25,7 +25,7 @@ namespace Tests.Workspace.Local
 
         public LocalWorkspace Workspace { get; private set; }
 
-        public M M => this.Workspace.Context().M;
+        public MetaPopulation M => this.Workspace.Context().M;
 
         public Profile(Fixture fixture)
         {

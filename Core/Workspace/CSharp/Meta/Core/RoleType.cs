@@ -8,7 +8,7 @@ namespace Allors.Workspace.Meta
 {
     using System;
 
-    public partial class RoleType : OperandType, IRoleType, IComparable
+    public abstract partial class RoleType : OperandType, IRoleType, IComparable
     {
         /// <summary>
         /// The maximum size value.
@@ -32,6 +32,8 @@ namespace Allors.Workspace.Meta
             this.RelationType = relationType;
             relationType.MetaPopulation.OnRoleTypeCreated(this);
         }
+
+        public MetaPopulation M => this.MetaPopulation;
 
         IComposite IRoleType.AssociationTypeComposite => this.AssociationTypeComposite;
         public Composite AssociationTypeComposite => this.AssociationType.ObjectType;

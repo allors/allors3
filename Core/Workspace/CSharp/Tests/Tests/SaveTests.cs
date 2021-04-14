@@ -26,12 +26,12 @@ namespace Tests.Workspace
 
             var saved = await session.Push();
 
-            foreach (var roleType in this.M.C1.ObjectType.RoleTypes)
+            foreach (var roleType in this.M.C1.RoleTypes)
             {
                 Assert.False(newObject.Strategy.Exist(roleType));
             }
 
-            foreach (var associationType in this.M.C1.ObjectType.AssociationTypes)
+            foreach (var associationType in this.M.C1.AssociationTypes)
             {
                 if (associationType.IsOne)
                 {

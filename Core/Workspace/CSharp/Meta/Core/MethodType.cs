@@ -7,24 +7,45 @@
 namespace Allors.Workspace.Meta
 {
     using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.Linq;
 
-    public abstract partial class MethodType : OperandType, IMethodType, IComparable
+    public partial class MethodType : OperandType, IMethodType, IComparable
     {
-        private static readonly IReadOnlyDictionary<Class, MethodClass> EmptyMethodClassByAssociationTypeClass = new ReadOnlyDictionary<Class, MethodClass>(new Dictionary<Class, MethodClass>());
-
-        private IReadOnlyDictionary<Class, MethodClass> derivedMethodClassByClass = EmptyMethodClassByAssociationTypeClass;
-
         private string[] assignedWorkspaceNames;
         private string[] derivedWorkspaceNames;
 
-        protected MethodType(MetaPopulation metaPopulation) : base(metaPopulation)
+        private string name;
+
+        public MethodType(Composite objectType, Guid id) : base(objectType.MetaPopulation)
         {
+            this.Composite = objectType;
+            this.Id = id;
+            this.IdAsString = this.Id.ToString("D");
+
+            this.MetaPopulation.OnMethodTypeCreated(this);
         }
 
-        //public Dictionary<string, bool> InternalWorkspace => this.WorkspaceNames.ToDictionary(k => k, v => true);
+        public Guid Id { get; }
+
+        public string IdAsString { get; }
+
+        public Composite Composite { get; }
+
+        public string Name
+        {
+            get => this.name;
+
+            set
+            {
+                this.MetaPopulation.AssertUnlocked();
+                this.name = value;
+                this.MetaPopulation.Stale();
+            }
+        }
+
+        public string FullName => $"{this.Composite.Name}{this.Name}";
+
+        public override Guid OperandId => this.Id;
 
         public string[] AssignedWorkspaceNames
         {
@@ -47,20 +68,11 @@ namespace Allors.Workspace.Meta
             }
         }
 
-        public abstract Guid Id { get; }
-        public abstract string IdAsString { get; }
-
         public override Origin Origin => Origin.Database;
 
         IComposite IMethodType.ObjectType => this.Composite;
 
-        public abstract Composite Composite { get; }
-
-        public abstract string Name { get; set; }
-
         public override string DisplayName => this.Name;
-
-        public abstract string FullName { get; }
 
         /// <summary>
         /// Gets the validation name.
@@ -79,23 +91,6 @@ namespace Allors.Workspace.Meta
             }
         }
 
-        public IReadOnlyDictionary<Class, MethodClass> MethodClassByClass
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedMethodClassByClass;
-            }
-        }
-
-        public MethodClass MethodClassBy(Class @class) =>
-            this switch
-            {
-                MethodClass methodClass => methodClass,
-                MethodInterface methodInterface => this.MethodClassByClass[@class],
-                _ => null,
-            };
-
         /// <summary>
         /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
         /// </summary>
@@ -103,26 +98,6 @@ namespace Allors.Workspace.Meta
         /// A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
         /// </returns>
         public override string ToString() => this.Name;
-
-        internal void DeriveMethodClasses()
-        {
-            if (this.Composite is Interface @interface)
-            {
-                this.derivedMethodClassByClass = @interface.Classes.ToDictionary(v => v, v =>
-                {
-                    if (!this.derivedMethodClassByClass.TryGetValue(v, out var methodClass))
-                    {
-                        methodClass = new MethodClass(v, (MethodInterface)this);
-                    }
-
-                    return methodClass;
-                });
-            }
-            else
-            {
-                this.derivedMethodClassByClass = EmptyMethodClassByAssociationTypeClass;
-            }
-        }
 
         internal void DeriveWorkspaceNames()
         {
@@ -134,11 +109,6 @@ namespace Allors.Workspace.Meta
                     _ => Array.Empty<string>()
                 }).Intersect(this.assignedWorkspaceNames).ToArray()
                 : Array.Empty<string>();
-
-            foreach (var methodClass in this.MethodClassByClass.Values)
-            {
-                methodClass.DeriveWorkspaceNames();
-            }
         }
 
         /// <summary>

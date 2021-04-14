@@ -190,20 +190,26 @@ namespace Allors.Database.Meta
 {
 	public partial class MetaBuilder
 	{
+        #region Domains
         internal class Domains
         {
 $repository.Domains:{assembly|              public Domain $assembly.Name$;}; separator="\n"$
         }
+        #endregion
 
+	    #region RelationTypes
         internal class RelationTypes
         {
 $repository.Composites:{composite|$define_relationTypes(composite)$}; separator="\n"$
         }
+        #endregion
 
+	    #region MethodTypes
         internal class MethodTypes
         {
 $repository.Composites:{composite|$define_methods(composite)$}; separator="\n"$
         }
+        #endregion
 
         public MetaPopulation Build() {
             var meta =  new MetaPopulation();

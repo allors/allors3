@@ -440,12 +440,12 @@ namespace Tests.Workspace.Remote
             mathijs.FirstName = "Mathijs";
             mathijs.LastName = "Verwer";
 
-            var acme2 = session.Create<Organisation>(this.M.Organisation.Class) as Organisation;
+            var acme2 = session.Create<Organisation>(this.M.Organisation) as Organisation;
             acme2.Name = "Acme 2";
             acme2.Manager = mathijs;
             acme2.AddEmployee(mathijs);
 
-            var acme3 = session.Create<Organisation>(this.M.Organisation.Class) as Organisation;
+            var acme3 = session.Create<Organisation>(this.M.Organisation) as Organisation;
             acme3.Name = "Acme 3";
             acme3.Manager = martien;
             acme3.AddEmployee(martien);
@@ -457,7 +457,7 @@ namespace Tests.Workspace.Remote
             {
                 var savedMathijs = save.NewObjects.First(v => v.NewWorkspaceId == mathijs.Strategy.Id.ToString());
 
-                Assert.Equal(this.M.Person.Class.IdAsString, savedMathijs.ObjectType);
+                Assert.Equal(this.M.Person.IdAsString, savedMathijs.ObjectType);
                 Assert.Equal(2, savedMathijs.Roles.Length);
 
                 var savedMathijsFirstName = savedMathijs.Roles.First(v => v.RelationType == this.M.Person.FirstName.RelationType.IdAsString);
@@ -470,7 +470,7 @@ namespace Tests.Workspace.Remote
             {
                 var savedAcme2 = save.NewObjects.First(v => v.NewWorkspaceId == acme2.Strategy.Id.ToString());
 
-                Assert.Equal(this.M.Organisation.Class.IdAsString, savedAcme2.ObjectType);
+                Assert.Equal(this.M.Organisation.IdAsString, savedAcme2.ObjectType);
                 Assert.Equal(3, savedAcme2.Roles.Length);
 
                 var savedAcme2Manager = savedAcme2.Roles.First(v => v.RelationType == this.M.Organisation.Manager.RelationType.IdAsString);
@@ -487,7 +487,7 @@ namespace Tests.Workspace.Remote
             {
                 var savedAcme3 = save.NewObjects.First(v => v.NewWorkspaceId == acme3.Strategy.Id.ToString());
 
-                Assert.Equal(this.M.Organisation.Class.IdAsString, savedAcme3.ObjectType);
+                Assert.Equal(this.M.Organisation.IdAsString, savedAcme3.ObjectType);
                 Assert.Equal(3, savedAcme3.Roles.Length);
 
                 var savedAcme3Manager = savedAcme3.Roles.First(v => v.RelationType == this.M.Organisation.Manager.RelationType.IdAsString);
@@ -511,11 +511,11 @@ namespace Tests.Workspace.Remote
 
             var martien = session.InstantiateDatabaseObject(3).Object as Person;
 
-            var mathijs = session.Create<Person>(this.M.Person.Class) as Person;
+            var mathijs = session.Create<Person>(this.M.Person) as Person;
             mathijs.FirstName = "Mathijs";
             mathijs.LastName = "Verwer";
 
-            var acme2 = session.Create<Organisation>(this.M.Organisation.Class) as Organisation;
+            var acme2 = session.Create<Organisation>(this.M.Organisation) as Organisation;
             acme2.Name = "Acme 2";
             acme2.Owner = martien;
             acme2.Manager = mathijs;
@@ -548,7 +548,7 @@ namespace Tests.Workspace.Remote
 
             session.PushResponse(pushResponse);
 
-            var mathijs = session.Create<Person>(this.M.Person.Class) as Person;
+            var mathijs = session.Create<Person>(this.M.Person) as Person;
             mathijs.FirstName = "Mathijs";
             mathijs.LastName = "Verwer";
 
@@ -598,7 +598,7 @@ namespace Tests.Workspace.Remote
 
             var session = this.CreateSession();
 
-            var acme = (Organisation)session.Create<Organisation>(this.M.Organisation.Class);
+            var acme = (Organisation)session.Create<Organisation>(this.M.Organisation);
 
             var acmeAgain = session.Get<Organisation>(acme.Id);
 

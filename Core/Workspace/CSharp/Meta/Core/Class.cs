@@ -9,7 +9,7 @@ namespace Allors.Workspace.Meta
     using System;
     using System.Collections.Generic;
 
-    public sealed partial class Class : Composite, IClass
+    public abstract partial class Class : Composite, IClass
     {
         private string[] assignedWorkspaceNames;
         private string[] derivedWorkspaceNames;
@@ -22,6 +22,8 @@ namespace Allors.Workspace.Meta
             this.classes = new[] { this };
             metaPopulation.OnClassCreated(this);
         }
+
+        public MetaPopulation M => this.MetaPopulation;
 
         public string[] AssignedWorkspaceNames
         {

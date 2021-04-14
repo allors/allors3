@@ -19,7 +19,7 @@ namespace Tests.Workspace
 
         public IWorkspace Workspace => this.Profile.Workspace;
 
-        public M M => this.Workspace.Context().M;
+        public MetaPopulation M => this.Workspace.Context().M;
 
         protected abstract IProfile Profile { get; }
         
