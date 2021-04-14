@@ -10,23 +10,11 @@ namespace Allors.Workspace.Meta
 
     public abstract partial class Unit : ObjectType, IUnit
     {
-        private UnitTags unitTag;
-
         private Type clrType;
 
-        internal Unit(MetaPopulation metaPopulation, Guid id) : base(metaPopulation, id) => metaPopulation.OnUnitCreated(this);
+        internal Unit(MetaPopulation metaPopulation, Guid id) : base(metaPopulation, id) { }
 
-        public UnitTags UnitTag
-        {
-            get => this.unitTag;
-
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.unitTag = value;
-                this.MetaPopulation.Stale();
-            }
-        }
+        public UnitTags UnitTag { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether this instance is a binary.
@@ -123,8 +111,6 @@ namespace Allors.Workspace.Meta
                     break;
             }
         }
-
-        public override string[] WorkspaceNames => this.MetaPopulation.WorkspaceNames;
 
         public override Origin Origin => Origin.Database;
     }

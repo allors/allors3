@@ -14,19 +14,9 @@ namespace Allors.Workspace.Meta
     {
         IEnumerable<IComposite> Composites { get; }
 
-        IEnumerable<IComposite> DatabaseComposites { get; }
-
-        IEnumerable<IClass> DatabaseClasses { get; }
-
-        IEnumerable<IRelationType> DatabaseRelationTypes { get; }
-
         IMetaObject Find(Guid metaObjectId);
 
         IComposite FindByName(string name);
-
-        bool IsValid { get; }
-
-        IValidationLog Validate();
 
         void Bind(Type[] types, MethodInfo[] methods);
     }

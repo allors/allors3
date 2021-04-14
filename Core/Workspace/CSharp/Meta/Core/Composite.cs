@@ -8,16 +8,14 @@ namespace Allors.Workspace.Meta
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Linq;
 
     public abstract partial class Composite : ObjectType, IComposite
     {
-        private bool assignedIsSynced;
-        private bool isSynced;
-
-        private HashSet<Interface> derivedDirectSupertypes;
-        private HashSet<Interface> derivedSupertypes;
+        internal HashSet<Interface> directSupertypes;
+        internal HashSet<Interface> supertypes;
+        
+        // TODO:
 
         private HashSet<AssociationType> derivedAssociationTypes;
         private HashSet<RoleType> derivedRoleTypes;
@@ -35,89 +33,8 @@ namespace Allors.Workspace.Meta
         public override Origin Origin => this.AssignedOrigin;
 
         public Origin AssignedOrigin { get; set; }
-
-        public bool AssignedIsSynced
-        {
-            get => this.assignedIsSynced;
-
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.assignedIsSynced = value;
-                this.MetaPopulation.Stale();
-            }
-        }
-
-        public bool IsSynced
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.isSynced;
-            }
-        }
-
-        public bool ExistExclusiveClass
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.ExclusiveClass != null;
-            }
-        }
-
+        
         public abstract bool ExistClass { get; }
-
-        public bool ExistDirectSupertypes
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedDirectSupertypes.Count > 0;
-            }
-        }
-
-        public bool ExistSupertypes
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedSupertypes.Count > 0;
-            }
-        }
-
-        public bool ExistAssociationTypes
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedAssociationTypes.Count > 0;
-            }
-        }
-
-        public bool ExistRoleTypes
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedAssociationTypes.Count > 0;
-            }
-        }
-
-        public bool ExistMethodTypes
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedMethodTypes.Count > 0;
-            }
-        }
-
-        /// <summary>
-        /// Gets the exclusive concrete subclass.
-        /// </summary>
-        /// <value>The exclusive concrete subclass.</value>
-        public abstract Class ExclusiveClass { get; }
 
         /// <summary>
         /// Gets the root classes.
@@ -131,27 +48,13 @@ namespace Allors.Workspace.Meta
         /// Gets the direct super types.
         /// </summary>
         /// <value>The super types.</value>
-        public IEnumerable<Interface> DirectSupertypes
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedDirectSupertypes;
-            }
-        }
+        public IEnumerable<Interface> DirectSupertypes => this.directSupertypes;
 
         /// <summary>
         /// Gets the super types.
         /// </summary>
         /// <value>The super types.</value>
-        public IEnumerable<Interface> Supertypes
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedSupertypes;
-            }
-        }
+        public IEnumerable<Interface> Supertypes => this.supertypes;
 
         /// <summary>
         /// Gets the associations.
@@ -161,7 +64,6 @@ namespace Allors.Workspace.Meta
         {
             get
             {
-                this.MetaPopulation.Derive();
                 return this.derivedAssociationTypes;
             }
         }
@@ -174,14 +76,7 @@ namespace Allors.Workspace.Meta
         /// Gets the roles.
         /// </summary>
         /// <value>The roles.</value>
-        public IEnumerable<RoleType> RoleTypes
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedRoleTypes;
-            }
-        }
+        public IEnumerable<RoleType> RoleTypes => this.derivedRoleTypes;
 
         public IEnumerable<RoleType> UnitRoleTypes => this.RoleTypes.Where(roleType => roleType.ObjectType.IsUnit).ToArray();
 
@@ -202,14 +97,7 @@ namespace Allors.Workspace.Meta
         /// Gets the method types.
         /// </summary>
         /// <value>The method types.</value>
-        public IEnumerable<MethodType> MethodTypes
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedMethodTypes;
-            }
-        }
+        public IEnumerable<MethodType> MethodTypes => this.derivedMethodTypes;
 
         public IEnumerable<MethodType> ExclusiveMethodTypes => this.MethodTypes.Where(methodType => this.Equals(methodType.Composite)).ToArray();
 
@@ -222,277 +110,13 @@ namespace Allors.Workspace.Meta
         public IEnumerable<RoleType> InheritedDatabaseRoleTypes => this.InheritedRoleTypes.Where(v => v.Origin == Origin.Database);
 
         public IEnumerable<AssociationType> InheritedDatabaseAssociationTypes => this.InheritedAssociationTypes.Where(v => v.Origin == Origin.Database);
+        
+        public IEnumerable<IAssociationType> DatabaseAssociationTypes => this.derivedDatabaseAssociationTypes;
 
-        #region Workspace
+        public IEnumerable<IRoleType> DatabaseRoleTypes => this.derivedDatabaseRoleTypes;
 
-        public IEnumerable<Composite> RelatedComposites
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this
-                    .Supertypes
-                    .Union(this.RoleTypes.Where(m => m.ObjectType.IsComposite).Select(v => (Composite)v.ObjectType))
-                    .Union(this.AssociationTypes.Select(v => v.ObjectType)).Distinct()
-                    .Except(new[] { this }).ToArray();
-            }
-        }
+        public IEnumerable<IRoleType> WorkspaceRoleTypes => this.derivedWorkspaceRoleTypes;
 
-        public IEnumerable<RoleType> ExclusiveCompositeRoleTypes
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.ExclusiveRoleTypes.Where(roleType => roleType.ObjectType.IsComposite);
-            }
-        }
-
-        public abstract IEnumerable<Composite> Subtypes { get; }
-
-        public abstract IEnumerable<Composite> DatabaseSubtypes { get; }
-
-        public IEnumerable<RoleType> ExclusiveRoleTypesWithDatabaseOrigin => this.ExclusiveRoleTypes.Where(roleType => roleType.RelationType.HasDatabaseOrigin);
-
-        public IEnumerable<RoleType> ExclusiveRoleTypesWithWorkspaceOrigin => this.ExclusiveRoleTypes.Where(roleType => roleType.RelationType.HasWorkspaceOrigin);
-
-        public IEnumerable<RoleType> ExclusiveRoleTypesWithSessionOrigin => this.ExclusiveRoleTypes.Where(roleType => roleType.RelationType.HasSessionOrigin);
-
-        public IEnumerable<AssociationType> ExclusiveAssociationTypesWithDatabaseOrigin => this.ExclusiveAssociationTypes.Where(roleType => roleType.RelationType.HasDatabaseOrigin);
-
-        public IEnumerable<AssociationType> ExclusiveAssociationTypesWithWorkspaceOrigin => this.ExclusiveAssociationTypes.Where(roleType => roleType.RelationType.HasWorkspaceOrigin);
-
-        public IEnumerable<AssociationType> ExclusiveAssociationTypesWithSessionOrigin => this.ExclusiveAssociationTypes.Where(roleType => roleType.RelationType.HasSessionOrigin);
-
-        #endregion Workspace
-
-        public IEnumerable<IAssociationType> DatabaseAssociationTypes
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedDatabaseAssociationTypes;
-            }
-        }
-
-        public IEnumerable<IRoleType> DatabaseRoleTypes
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedDatabaseRoleTypes;
-            }
-        }
-
-        public IEnumerable<IRoleType> WorkspaceRoleTypes
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedWorkspaceRoleTypes;
-            }
-        }
-
-        public bool ExistDatabaseClass => this.DatabaseClasses.Any();
-
-        public bool ExistExclusiveDatabaseClass => this.DatabaseClasses.Count() == 1;
-
-        public IClass ExclusiveDatabaseClass => this.ExistExclusiveDatabaseClass ? this.DatabaseClasses.Single() : null;
-
-        public IReadOnlyDictionary<string, IEnumerable<AssociationType>> WorkspaceAssociationTypesByWorkspaceName
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.WorkspaceNames
-                    .ToDictionary(v => v, v => this.AssociationTypes.Where(w => w.RelationType.WorkspaceNames.Contains(v)));
-            }
-        }
-
-        public IReadOnlyDictionary<string, IEnumerable<AssociationType>> WorkspaceInheritedAssociationTypesByWorkspaceName
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.WorkspaceNames
-                    .ToDictionary(v => v, v => this.InheritedAssociationTypes.Where(w => w.RelationType.WorkspaceNames.Contains(v)));
-            }
-        }
-
-        public IReadOnlyDictionary<string, IEnumerable<AssociationType>> WorkspaceExclusiveAssociationTypesByWorkspaceName
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.WorkspaceNames
-                    .ToDictionary(v => v, v => this.ExclusiveAssociationTypes.Where(w => w.RelationType.WorkspaceNames.Contains(v)));
-            }
-        }
-
-        public IReadOnlyDictionary<string, IEnumerable<RoleType>> WorkspaceRoleTypesByWorkspaceName
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.WorkspaceNames
-                    .ToDictionary(v => v,
-                        v => this.RoleTypes.Where(w => w.RelationType.WorkspaceNames.Contains(v)));
-            }
-        }
-
-        public IReadOnlyDictionary<string, IEnumerable<RoleType>> WorkspaceCompositeRoleTypesByWorkspaceName
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.WorkspaceNames
-                    .ToDictionary(v => v,
-                        v => this.RoleTypes.Where(w => w.ObjectType.IsComposite && w.RelationType.WorkspaceNames.Contains(v)));
-            }
-        }
-
-        public IReadOnlyDictionary<string, IEnumerable<RoleType>> WorkspaceInheritedRoleTypesByWorkspaceName
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.WorkspaceNames
-                    .ToDictionary(v => v,
-                        v => this.InheritedRoleTypes.Where(w => w.RelationType.WorkspaceNames.Contains(v)));
-            }
-        }
-
-        public IReadOnlyDictionary<string, IEnumerable<RoleType>> WorkspaceExclusiveRoleTypesByWorkspaceName
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.WorkspaceNames
-                    .ToDictionary(v => v,
-                        v => this.ExclusiveRoleTypes.Where(w => w.RelationType.WorkspaceNames.Contains(v)));
-            }
-        }
-
-        public IReadOnlyDictionary<string, IEnumerable<RoleType>> WorkspaceExclusiveRoleTypesWithDatabaseOriginByWorkspaceName
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.WorkspaceNames
-                    .ToDictionary(v => v,
-                        v => this.ExclusiveRoleTypes.Where(w => w.Origin == Origin.Database && w.RelationType.WorkspaceNames.Contains(v)));
-            }
-        }
-
-        public IReadOnlyDictionary<string, IEnumerable<RoleType>> WorkspaceExclusiveRoleTypesWithWorkspaceOrSessionOriginByWorkspaceName
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.WorkspaceNames
-                    .ToDictionary(v => v,
-                        v => this.ExclusiveRoleTypes.Where(w => (w.Origin == Origin.Workspace || w.Origin == Origin.Session) && w.RelationType.WorkspaceNames.Contains(v)));
-            }
-        }
-
-        public IReadOnlyDictionary<string, IEnumerable<RoleType>> WorkspaceExclusiveCompositeRoleTypesByWorkspaceName
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.WorkspaceNames
-                    .ToDictionary(v => v,
-                        v => this.ExclusiveRoleTypes.Where(w => w.ObjectType.IsComposite && w.RelationType.WorkspaceNames.Contains(v)));
-            }
-        }
-
-        public IReadOnlyDictionary<string, IEnumerable<MethodType>> WorkspaceInheritedMethodTypesByWorkspaceName
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.WorkspaceNames
-                    .ToDictionary(v => v, v => this.InheritedMethodTypes.Where(w => w.WorkspaceNames.Contains(v)));
-            }
-        }
-
-        public IReadOnlyDictionary<string, IEnumerable<MethodType>> WorkspaceExclusiveMethodTypesByWorkspaceName
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.WorkspaceNames
-                    .ToDictionary(v => v, v => this.ExclusiveMethodTypes.Where(w => w.WorkspaceNames.Contains(v)));
-            }
-        }
-
-
-        public IReadOnlyDictionary<string, IEnumerable<MethodType>> WorkspaceMethodTypesByWorkspaceName
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.WorkspaceNames
-                    .ToDictionary(v => v, v => this.MethodTypes.Where(w => w.WorkspaceNames.Contains(v)));
-            }
-        }
-
-        public IReadOnlyDictionary<string, IEnumerable<Interface>> WorkspaceDirectSupertypesByWorkspaceName
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.WorkspaceNames
-                    .ToDictionary(v => v, v => this.DirectSupertypes.Where(w => w.WorkspaceNames.Contains(v)));
-            }
-        }
-
-        public IReadOnlyDictionary<string, IEnumerable<Interface>> WorkspaceSupertypesByWorkspaceName
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.WorkspaceNames
-                    .ToDictionary(v => v, v => this.Supertypes.Where(w => w.WorkspaceNames.Contains(v)));
-            }
-        }
-
-        public IReadOnlyDictionary<string, IEnumerable<Composite>> WorkspaceSubtypesByWorkspaceName
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.WorkspaceNames
-                    .ToDictionary(v => v, v => this.Subtypes.Where(w => w.WorkspaceNames.Contains(v)));
-            }
-        }
-
-        public IReadOnlyDictionary<string, IEnumerable<Composite>> WorkspaceRelatedCompositesByWorkspaceName
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.WorkspaceNames
-                    .ToDictionary(v => v, v => this.RelatedComposites.Where(w => w.WorkspaceNames.Contains(v)));
-            }
-        }
-
-        public bool ExistSupertype(IInterface @interface)
-        {
-            this.MetaPopulation.Derive();
-            return this.derivedSupertypes.Contains(@interface);
-        }
-
-        public bool ExistAssociationType(IAssociationType associationType)
-        {
-            this.MetaPopulation.Derive();
-            return this.derivedAssociationTypes.Contains(associationType);
-        }
-
-        public bool ExistRoleType(IRoleType roleType)
-        {
-            this.MetaPopulation.Derive();
-            return this.derivedRoleTypes.Contains(roleType);
-        }
 
         /// <summary>
         /// Contains this concrete class.
@@ -504,35 +128,7 @@ namespace Allors.Workspace.Meta
         /// True if this contains the concrete class.
         /// </returns>
         public abstract bool IsAssignableFrom(IComposite objectType);
-
-        /// <summary>
-        /// Derive direct super type derivations.
-        /// </summary>
-        /// <param name="directSupertypes">The direct super types.</param>
-        internal void DeriveDirectSupertypes(HashSet<Interface> directSupertypes)
-        {
-            directSupertypes.Clear();
-            foreach (var inheritance in this.MetaPopulation.Inheritances.Where(inheritance => this.Equals(inheritance.Subtype)))
-            {
-                directSupertypes.Add(inheritance.Supertype);
-            }
-
-            this.derivedDirectSupertypes = new HashSet<Interface>(directSupertypes);
-        }
-
-        /// <summary>
-        /// Derive super types.
-        /// </summary>
-        /// <param name="superTypes">The super types.</param>
-        internal void DeriveSupertypes(HashSet<Interface> superTypes)
-        {
-            superTypes.Clear();
-
-            this.DeriveSupertypesRecursively(this, superTypes);
-
-            this.derivedSupertypes = new HashSet<Interface>(superTypes);
-        }
-
+        
         /// <summary>
         /// Derive role types.
         /// </summary>
@@ -611,25 +207,6 @@ namespace Allors.Workspace.Meta
             }
 
             this.derivedMethodTypes = new HashSet<MethodType>(methodTypes);
-        }
-
-        internal void DeriveIsSynced() => this.isSynced = this.assignedIsSynced || this.derivedSupertypes.Any(v => v.assignedIsSynced);
-
-        /// <summary>
-        /// Derive super types recursively.
-        /// </summary>
-        /// <param name="type">The type .</param>
-        /// <param name="superTypes">The super types.</param>
-        private void DeriveSupertypesRecursively(ObjectType type, HashSet<Interface> superTypes)
-        {
-            foreach (var directSupertype in this.derivedDirectSupertypes)
-            {
-                if (!Equals(directSupertype, type))
-                {
-                    superTypes.Add(directSupertype);
-                    directSupertype.DeriveSupertypesRecursively(type, superTypes);
-                }
-            }
         }
     }
 }

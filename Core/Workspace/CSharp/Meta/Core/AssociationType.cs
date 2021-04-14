@@ -21,14 +21,8 @@ namespace Allors.Workspace.Meta
         /// </summary>
         private const string Where = "Where";
 
-        private Composite objectType;
+        internal AssociationType(RelationType relationType) : base(relationType.MetaPopulation) => this.RelationType = relationType;
 
-        internal AssociationType(RelationType relationType)
-            : base(relationType.MetaPopulation)
-        {
-            this.RelationType = relationType;
-            relationType.MetaPopulation.OnAssociationTypeCreated(this);
-        }
         public MetaPopulation M => this.MetaPopulation;
 
         public override Origin Origin => this.RelationType.Origin;
@@ -45,17 +39,8 @@ namespace Allors.Workspace.Meta
         /// <value>The role .</value>
         public RoleType RoleType => this.RelationType.RoleType;
 
-        public Composite ObjectType
-        {
-            get => this.objectType;
+        public Composite ObjectType { get; set; }
 
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.objectType = value;
-                this.MetaPopulation.Stale();
-            }
-        }
         IObjectType IPropertyType.ObjectType => this.ObjectType;
         IComposite IAssociationType.ObjectType => this.ObjectType;
 
@@ -187,24 +172,5 @@ namespace Allors.Workspace.Meta
         /// A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
         /// </returns>
         public override string ToString() => $"{this.RoleType.ObjectType.Name}.{this.DisplayName}";
-
-        /// <summary>
-        /// Validates this object.
-        /// </summary>
-        /// <param name="validationLog">The validation information.</param>
-        internal void Validate(ValidationLog validationLog)
-        {
-            if (this.ObjectType == null)
-            {
-                var message = this.ValidationName + " has no object type";
-                validationLog.AddError(message, this, ValidationKind.Required, "AssociationType.IObjectType");
-            }
-
-            if (this.RelationType == null)
-            {
-                var message = this.ValidationName + " has no relation type";
-                validationLog.AddError(message, this, ValidationKind.Required, "AssociationType.RelationType");
-            }
-        }
     }
 }

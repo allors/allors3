@@ -54,13 +54,6 @@ namespace Allors.Workspace.Adapters
         /// <exception cref="ArgumentException"></exception>
         public ObjectFactory(IMetaPopulation metaPopulation, Type instance)
         {
-            var validationLog = metaPopulation.Validate();
-            if (validationLog.ContainsErrors)
-            {
-                throw new Exception(validationLog.ToString());
-            }
-
-
             var assembly = instance.GetTypeInfo().Assembly;
 
             var types = assembly.GetTypes()

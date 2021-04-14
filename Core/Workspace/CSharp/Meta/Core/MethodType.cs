@@ -11,18 +11,11 @@ namespace Allors.Workspace.Meta
 
     public partial class MethodType : OperandType, IMethodType, IComparable
     {
-        private string[] assignedWorkspaceNames;
-        private string[] derivedWorkspaceNames;
-
-        private string name;
-
         public MethodType(Composite objectType, Guid id) : base(objectType.MetaPopulation)
         {
             this.Composite = objectType;
             this.Id = id;
             this.IdAsString = this.Id.ToString("D");
-
-            this.MetaPopulation.OnMethodTypeCreated(this);
         }
 
         public Guid Id { get; }
@@ -31,42 +24,11 @@ namespace Allors.Workspace.Meta
 
         public Composite Composite { get; }
 
-        public string Name
-        {
-            get => this.name;
-
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.name = value;
-                this.MetaPopulation.Stale();
-            }
-        }
+        public string Name { get; set; }
 
         public string FullName => $"{this.Composite.Name}{this.Name}";
 
         public override Guid OperandId => this.Id;
-
-        public string[] AssignedWorkspaceNames
-        {
-            get => this.assignedWorkspaceNames;
-
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.assignedWorkspaceNames = value;
-                this.MetaPopulation.Stale();
-            }
-        }
-
-        public string[] WorkspaceNames
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedWorkspaceNames;
-            }
-        }
 
         public override Origin Origin => Origin.Database;
 
@@ -98,31 +60,6 @@ namespace Allors.Workspace.Meta
         /// A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
         /// </returns>
         public override string ToString() => this.Name;
-
-        internal void DeriveWorkspaceNames()
-        {
-            this.derivedWorkspaceNames = this.assignedWorkspaceNames?.Length > 0 ?
-                (this.Composite switch
-                {
-                    Interface @interface => @interface.Classes.SelectMany(v => v.WorkspaceNames).ToArray(),
-                    Class @class => @class.WorkspaceNames,
-                    _ => Array.Empty<string>()
-                }).Intersect(this.assignedWorkspaceNames).ToArray()
-                : Array.Empty<string>();
-        }
-
-        /// <summary>
-        /// Validates the instance.
-        /// </summary>
-        /// <param name="validationLog">The validation.</param>
-        protected internal void Validate(ValidationLog validationLog)
-        {
-            if (string.IsNullOrEmpty(this.Name))
-            {
-                var message = this.ValidationName + " has no name";
-                validationLog.AddError(message, this, ValidationKind.Required, "MethodType.Name");
-            }
-        }
 
         public override bool Equals(object other) => this.Id.Equals((other as MethodType)?.Id);
 

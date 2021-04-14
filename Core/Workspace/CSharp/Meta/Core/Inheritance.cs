@@ -11,35 +11,11 @@ namespace Allors.Workspace.Meta
 
     public sealed partial class Inheritance : MetaObjectBase, IComparable
     {
-        private Composite subtype;
+        internal Inheritance(MetaPopulation metaPopulation) : base(metaPopulation) { }
 
-        private Interface supertype;
+        public Composite Subtype { get; set; }
 
-        internal Inheritance(MetaPopulation metaPopulation) : base(metaPopulation) => metaPopulation.OnInheritanceCreated(this);
-
-        public Composite Subtype
-        {
-            get => this.subtype;
-
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.subtype = value;
-                this.MetaPopulation.Stale();
-            }
-        }
-
-        public Interface Supertype
-        {
-            get => this.supertype;
-
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.supertype = value;
-                this.MetaPopulation.Stale();
-            }
-        }
+        public Interface Supertype { get; set; }
 
         public override Origin Origin => this.Subtype.AssignedOrigin;
 
@@ -85,41 +61,5 @@ namespace Allors.Workspace.Meta
         /// A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
         /// </returns>
         public override string ToString() => (this.Subtype != null ? this.Subtype.Name : string.Empty) + "::" + (this.Supertype != null ? this.Supertype.Name : string.Empty);
-
-        /// <summary>
-        /// Validates this instance.
-        /// </summary>
-        /// <param name="validationLog">The validation.</param>
-        protected internal void Validate(ValidationLog validationLog)
-        {
-            if (this.Subtype != null && this.Supertype != null)
-            {
-                if (this.MetaPopulation.Inheritances.Count(inheritance => this.Subtype.Equals(inheritance.Subtype) && this.Supertype.Equals(inheritance.Supertype)) != 1)
-                {
-                    var message = "name of " + this.ValidationName + " is already in use";
-                    validationLog.AddError(message, this, ValidationKind.Unique, "Inheritance.Supertype");
-                }
-
-                IObjectType tempQualifier = this.Supertype;
-                if (tempQualifier is IClass)
-                {
-                    var message = this.ValidationName + " can not have a concrete superclass";
-                    validationLog.AddError(message, this, ValidationKind.Hierarchy, "Inheritance.Supertype");
-                }
-            }
-            else
-            {
-                if (this.Supertype == null)
-                {
-                    var message = this.ValidationName + " has a missing Supertype";
-                    validationLog.AddError(message, this, ValidationKind.Unique, "Inheritance.Supertype");
-                }
-                else
-                {
-                    var message = this.ValidationName + " has a missing Subtype";
-                    validationLog.AddError(message, this, ValidationKind.Unique, "Inheritance.Supertype");
-                }
-            }
-        }
     }
 }

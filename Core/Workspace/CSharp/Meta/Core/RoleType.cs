@@ -18,21 +18,7 @@ namespace Allors.Workspace.Meta
 
         public const string PluralSuffix = "s";
 
-        private ObjectType objectType;
-        private string singularName;
-        private string pluralName;
-        private int? size;
-        private int? precision;
-        private int? scale;
-        private bool isRequired;
-        private bool isUnique;
-        private string mediaType;
-
-        public RoleType(RelationType relationType) : base(relationType.MetaPopulation)
-        {
-            this.RelationType = relationType;
-            relationType.MetaPopulation.OnRoleTypeCreated(this);
-        }
+        public RoleType(RelationType relationType) : base(relationType.MetaPopulation) => this.RelationType = relationType;
 
         public MetaPopulation M => this.MetaPopulation;
 
@@ -40,104 +26,23 @@ namespace Allors.Workspace.Meta
         public Composite AssociationTypeComposite => this.AssociationType.ObjectType;
 
         IObjectType IPropertyType.ObjectType => this.ObjectType;
-        public ObjectType ObjectType
-        {
-            get => this.objectType;
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.objectType = value;
-                this.MetaPopulation.Stale();
-            }
-        }
+        public ObjectType ObjectType { get; set; }
 
-        public string SingularName
-        {
-            get => this.singularName;
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.singularName = value;
-                this.MetaPopulation.Stale();
-            }
-        }
+        public string SingularName { get; set; }
 
-        public string PluralName
-        {
-            get => this.pluralName;
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.pluralName = value;
-                this.MetaPopulation.Stale();
-            }
-        }
+        public string PluralName { get; set; }
 
-        public int? Size
-        {
-            get => this.size;
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.size = value;
-                this.MetaPopulation.Stale();
-            }
-        }
+        public int? Size { get; set; }
 
-        public int? Precision
-        {
-            get => this.precision;
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.precision = value;
-                this.MetaPopulation.Stale();
-            }
-        }
+        public int? Precision { get; set; }
 
-        public int? Scale
-        {
-            get => this.scale;
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.scale = value;
-                this.MetaPopulation.Stale();
-            }
-        }
+        public int? Scale { get; set; }
 
-        public bool IsRequired
-        {
-            get => this.isRequired;
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.isRequired = value;
-                this.MetaPopulation.Stale();
-            }
-        }
+        public bool IsRequired { get; set; }
 
-        public bool IsUnique
-        {
-            get => this.isUnique;
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.isUnique = value;
-                this.MetaPopulation.Stale();
-            }
-        }
+        public bool IsUnique { get; set; }
 
-        public string MediaType
-        {
-            get => this.mediaType;
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.mediaType = value;
-                this.MetaPopulation.Stale();
-            }
-        }
+        public string MediaType { get; set; }
 
         public override Guid OperandId => this.RelationType.Id;
 
@@ -340,31 +245,6 @@ namespace Allors.Workspace.Meta
                 this.Size = null;
                 this.Scale = null;
                 this.Precision = null;
-            }
-        }
-
-        /// <summary>
-        /// Validates the instance.
-        /// </summary>
-        /// <param name="validationLog">The validation.</param>
-        public void Validate(ValidationLog validationLog)
-        {
-            if (this.ObjectType == null)
-            {
-                var message = this.ValidationName + " has no IObjectType";
-                validationLog.AddError(message, this, ValidationKind.Required, "RoleType.IObjectType");
-            }
-
-            if (!string.IsNullOrEmpty(this.SingularName) && this.SingularName.Length < 2)
-            {
-                var message = this.ValidationName + " should have an assigned singular name with at least 2 characters";
-                validationLog.AddError(message, this, ValidationKind.MinimumLength, "RoleType.SingularName");
-            }
-
-            if (!string.IsNullOrEmpty(this.PluralName) && this.PluralName.Length < 2)
-            {
-                var message = this.ValidationName + " should have an assigned plural role name with at least 2 characters";
-                validationLog.AddError(message, this, ValidationKind.MinimumLength, "RoleType.PluralName");
             }
         }
     }

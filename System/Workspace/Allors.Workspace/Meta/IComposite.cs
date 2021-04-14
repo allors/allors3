@@ -16,22 +16,7 @@ namespace Allors.Workspace.Meta
 
         IEnumerable<IRoleType> WorkspaceRoleTypes { get; }
 
-        bool ExistDatabaseClass { get; }
-
         IEnumerable<IClass> DatabaseClasses { get; }
-
-        bool ExistExclusiveDatabaseClass { get; }
-
-        IClass ExclusiveDatabaseClass { get; }
-
-        bool IsSynced { get; }
-
-        // TODO: change to HasSuperType
-        bool ExistSupertype(IInterface @interface);
-
-        bool ExistAssociationType(IAssociationType association);
-
-        bool ExistRoleType(IRoleType roleType);
 
         bool IsAssignableFrom(IComposite objectType);
     }

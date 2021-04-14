@@ -17,15 +17,7 @@ namespace Allors.Workspace.Meta
     /// </summary>
     public sealed partial class RelationType : MetaObjectBase, IRelationType, IComparable
     {
-        private Multiplicity assignedMultiplicity;
         private Multiplicity multiplicity;
-
-        private bool isDerived;
-        private bool isSynced;
-        private bool isIndexed;
-
-        private string[] assignedWorkspaceNames;
-        private string[] derivedWorkspaceNames;
 
         public RelationType(Composite associationTypeComposite, Guid id, Func<RelationType, AssociationType> associationTypeFactory, Func<RelationType, RoleType> roleTypeFactory)
             : base(associationTypeComposite.MetaPopulation)
@@ -38,108 +30,23 @@ namespace Allors.Workspace.Meta
             this.AssociationType.ObjectType = associationTypeComposite;
 
             this.RoleType = roleTypeFactory(this);
-            this.MetaPopulation.OnRelationTypeCreated(this);
         }
         
         public Guid Id { get; }
 
         public string IdAsString { get; }
-
-        public string[] AssignedWorkspaceNames
-        {
-            get => this.assignedWorkspaceNames;
-
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.assignedWorkspaceNames = value;
-                this.MetaPopulation.Stale();
-            }
-        }
-
-        public string[] WorkspaceNames
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedWorkspaceNames;
-            }
-        }
-
+        
         public override Origin Origin => this.AssignedOrigin;
 
         public Origin AssignedOrigin { get; set; }
 
-        public bool IsDerived
-        {
-            get => this.isDerived;
+        public bool IsDerived { get; set; }
 
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.isDerived = value;
-                this.MetaPopulation.Stale();
-            }
-        }
+        public bool IsSynced { get; set; }
 
-        public bool IsSynced
-        {
-            get => this.isSynced;
+        public Multiplicity AssignedMultiplicity { get; set; }
 
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.isSynced = value;
-                this.MetaPopulation.Stale();
-            }
-        }
-
-        public Multiplicity AssignedMultiplicity
-        {
-            get => this.assignedMultiplicity;
-
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.assignedMultiplicity = value;
-                this.MetaPopulation.Stale();
-            }
-        }
-
-        public Multiplicity Multiplicity
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.multiplicity;
-            }
-        }
-
-        public bool ExistExclusiveDatabaseClasses
-        {
-            get
-            {
-                if (this.AssociationType?.ObjectType != null && this.RoleType?.ObjectType != null)
-                {
-                    return this.AssociationType.ObjectType.ExistExclusiveDatabaseClass && this.RoleType.ObjectType is Composite roleCompositeType && roleCompositeType.ExistExclusiveDatabaseClass;
-                }
-
-                return false;
-            }
-
-        }
-
-        public bool IsIndexed
-        {
-            get => this.isIndexed;
-
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.isIndexed = value;
-                this.MetaPopulation.Stale();
-            }
-        }
+        public Multiplicity Multiplicity => this.multiplicity;
 
         IAssociationType IRelationType.AssociationType => this.AssociationType;
 
@@ -148,57 +55,6 @@ namespace Allors.Workspace.Meta
         IRoleType IRelationType.RoleType => this.RoleType;
 
         public RoleType RoleType { get; set; }
-     
-        /// <summary>
-        /// Gets a value indicating whether there exist exclusive classes.
-        /// </summary>
-        /// <value>
-        ///  <c>true</c> if [exist exclusive classes]; otherwise, <c>false</c>.
-        /// </value>
-        public bool ExistExclusiveClasses
-        {
-            get
-            {
-                if (this.AssociationType?.ObjectType != null && this.RoleType?.ObjectType != null)
-                {
-                    return this.AssociationType.ObjectType.ExistExclusiveClass && this.RoleType.ObjectType is Composite roleCompositeType && roleCompositeType.ExistExclusiveClass;
-                }
-
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is many to many.
-        /// </summary>
-        /// <value>
-        ///  <c>true</c> if this instance is many to many; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsManyToMany => this.AssociationType.IsMany && this.RoleType.IsMany;
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is many to one.
-        /// </summary>
-        /// <value>
-        ///  <c>true</c> if this instance is many to one; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsManyToOne => this.AssociationType.IsMany && !this.RoleType.IsMany;
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is one to many.
-        /// </summary>
-        /// <value>
-        ///  <c>true</c> if this instance is one to many; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsOneToMany => this.AssociationType.IsOne && this.RoleType.IsMany;
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is one to one.
-        /// </summary>
-        /// <value>
-        ///  <c>true</c> if this instance is one to one; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsOneToOne => this.AssociationType.IsOne && !this.RoleType.IsMany;
 
         /// <summary>
         /// Gets the name.
@@ -261,83 +117,6 @@ namespace Allors.Workspace.Meta
             {
                 this.multiplicity = this.AssignedMultiplicity;
             }
-        }
-
-        internal void DeriveWorkspaceNames() =>
-            this.derivedWorkspaceNames = this.assignedWorkspaceNames != null ?
-                this.assignedWorkspaceNames.Intersect(this.AssociationType.ObjectType switch
-                {
-                    Interface @interface => @interface.Classes.SelectMany(v => v.WorkspaceNames),
-                    Class @class => @class.WorkspaceNames,
-                    _ => Array.Empty<string>()
-                }).Intersect(this.RoleType.ObjectType switch
-                {
-                    Unit unit => unit.WorkspaceNames,
-                    Interface @interface => @interface.Classes.SelectMany(v => v.WorkspaceNames),
-                    Class @class => @class.WorkspaceNames,
-                    _ => Array.Empty<string>()
-                }).ToArray() :
-                Array.Empty<string>();
-
-        /// <summary>
-        /// Validates this. instance.
-        /// </summary>
-        /// <param name="validationLog">The validation.</param>
-        internal void Validate(ValidationLog validationLog)
-        {
-            this.ValidateIdentity(validationLog);
-
-            if (this.AssociationType != null && this.RoleType != null)
-            {
-                if (validationLog.ExistRelationName(this.Name))
-                {
-                    var message = "name of " + this.ValidationName + " is already in use";
-                    validationLog.AddError(message, this, ValidationKind.Unique, "RelationType.Name");
-                }
-                else
-                {
-                    validationLog.AddRelationTypeName(this.Name);
-                }
-
-                if (validationLog.ExistRelationName(this.ReverseName))
-                {
-                    var message = "reversed name of " + this.ValidationName + " is already in use";
-                    validationLog.AddError(message, this, ValidationKind.Unique, "RelationType.Name");
-                }
-                else
-                {
-                    validationLog.AddRelationTypeName(this.ReverseName);
-                }
-
-                if (validationLog.ExistObjectTypeName(this.Name))
-                {
-                    var message = "name of " + this.ValidationName + " is in conflict with object type " + this.Name;
-                    validationLog.AddError(message, this, ValidationKind.Unique, "RelationType.Name");
-                }
-
-                if (validationLog.ExistObjectTypeName(this.ReverseName))
-                {
-                    var message = "reversed name of " + this.ValidationName + " is in conflict with object type " + this.Name;
-                    validationLog.AddError(message, this, ValidationKind.Unique, "RelationType.Name");
-                }
-            }
-            else
-            {
-                if (this.AssociationType == null)
-                {
-                    var message = this.ValidationName + " has no association type";
-                    validationLog.AddError(message, this, ValidationKind.Required, "RelationType.AssociationType");
-                }
-                else
-                {
-                    var message = this.ValidationName + " has no role type";
-                    validationLog.AddError(message, this, ValidationKind.Required, "RelationType.RoleType");
-                }
-            }
-
-            this.AssociationType?.Validate(validationLog);
-
-            this.RoleType?.Validate(validationLog);
         }
     }
 }

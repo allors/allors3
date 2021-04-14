@@ -8,4 +8,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\System\Workspace\Allors.Workspace\Allors.Workspace.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Custom\" />
+  </ItemGroup>
 </Project>
