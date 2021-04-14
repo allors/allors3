@@ -31,7 +31,27 @@ namespace Allors.Database.Domain
                 }
                 else
                 {
-                    @this.ToSalesOrder = @this.From.Clone(@this.From.Meta.SalesOrderItems.Node());
+                    var tree = @this.From.Meta.Nodes(
+                                v => v.SalesOrderItems.Node(
+                                        w => w.SalesOrderItem.Nodes(
+                                            x => x.DiscountAdjustments.Node(),
+                                            x => x.SurchargeAdjustments.Node(),
+                                            x => x.SalesTerms.Node(),
+                                            x => x.OrderedWithFeatures.Node(
+                                                y => y.OrderItem.Nodes(
+                                                    z => z.DiscountAdjustments.Node(),
+                                                    z => z.SurchargeAdjustments.Node(),
+                                                    z => z.SalesTerms.Node()
+                                                )
+                                            )
+                                        )
+                                    ),
+                                v => v.OrderAdjustments.Node(),
+                                v => v.SalesTerms.Node(),
+                                v => v.LocalisedComments.Node(),
+                                v => v.ElectronicDocuments.Node());
+
+                    @this.ToSalesOrder = @this.From.Clone(tree);
                     @this.ToSalesOrder.TakenBy = @this.ToInternalOrganisation;
                     @this.ToSalesOrder.RemoveOrderNumber();
 
