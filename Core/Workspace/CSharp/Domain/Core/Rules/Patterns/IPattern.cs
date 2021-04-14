@@ -1,4 +1,4 @@
-// <copyright file="IPattern.cs" company="Allors bvba">
+// <copyright file="IDomainDerivation.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -10,13 +10,12 @@ namespace Allors.Workspace.Derivations
     using Data;
     using Meta;
 
-    public abstract class Pattern : IPattern
+    public interface IPattern
     {
-        IEnumerable<Node> IPattern.Tree => this.Tree;
-        public IEnumerable<Node> Tree { get; set; }
+        IEnumerable<Node> Tree { get; }
 
-        public IComposite OfType { get; set; }
+        IComposite OfType { get; }
 
-        public abstract IComposite ObjectType { get; }
+        IComposite ObjectType { get; }
     }
 }

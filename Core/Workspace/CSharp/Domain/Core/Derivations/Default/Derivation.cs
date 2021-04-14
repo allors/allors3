@@ -14,20 +14,20 @@ namespace Allors.Workspace.Derivations.Default
 
     public class Derivation : IDerivation
     {
-        private readonly ISession session;
-
-        private readonly Engine engine;
-
-        private readonly int maxDomainDerivationCycles;
-
         public Derivation(ISession session, Engine engine, int maxDomainDerivationCycles)
         {
-            this.session = session;
-            this.engine = engine;
-            this.maxDomainDerivationCycles = maxDomainDerivationCycles;
+            this.Session = session;
+            this.Engine = engine;
+            this.MaxCycles = maxDomainDerivationCycles;
 
             this.Validation = new Validation();
         }
+
+        public ISession Session { get; }
+
+        public Engine Engine { get; }
+
+        public int MaxCycles { get; }
 
         public IValidation Validation { get; }
 
@@ -35,11 +35,11 @@ namespace Allors.Workspace.Derivations.Default
         {
             var cycles = 0;
 
-            var changeSet = this.session.Checkpoint();
+            var changeSet = this.Session.Checkpoint();
 
             while (changeSet.RolesByAssociationType?.Count > 0 || changeSet.AssociationsByRoleType?.Count > 0 || changeSet.Created?.Count > 0 || changeSet.Instantiated?.Count > 0)
             {
-                if (++cycles > this.maxDomainDerivationCycles)
+                if (++cycles > this.MaxCycles)
                 {
                     throw new Exception("Maximum amount of domain derivation cycles detected");
                 }
@@ -47,7 +47,7 @@ namespace Allors.Workspace.Derivations.Default
                 var cycle = new Cycle
                 {
                     ChangeSet = changeSet,
-                    Session = this.session,
+                    Session = this.Session,
                     Validation = this.Validation
                 };
 
@@ -58,7 +58,7 @@ namespace Allors.Workspace.Derivations.Default
                     foreach (var instantiated in changeSet?.Instantiated)
                     {
                         var @class = (Class)instantiated.Class;
-                        if (this.engine.RulesByClass.TryGetValue(@class, out var rules))
+                        if (this.Engine.RulesByClass.TryGetValue(@class, out var rules))
                         {
                             foreach (var rule in rules)
                             {
@@ -83,13 +83,13 @@ namespace Allors.Workspace.Derivations.Default
                     {
                         var @class = association.Class;
 
-                        if (this.engine.PatternsByRoleTypeByClass.TryGetValue(@class, out var patternsByRoleType))
+                        if (this.Engine.PatternsByRoleTypeByClass.TryGetValue(@class, out var patternsByRoleType))
                         {
                             if (patternsByRoleType.TryGetValue(roleType, out var patterns))
                             {
                                 foreach (var pattern in patterns)
                                 {
-                                    var rule = this.engine.RuleByPattern[pattern];
+                                    var rule = this.Engine.RuleByPattern[pattern];
                                     if (!matchesByRule.TryGetValue(rule, out var matches))
                                     {
                                         matches = new HashSet<IObject>();
@@ -98,10 +98,9 @@ namespace Allors.Workspace.Derivations.Default
 
                                     IEnumerable<IObject> source = new IObject[] { association.Object };
 
-                                    if (pattern.Steps?.Length > 0)
+                                    if (pattern.Tree != null)
                                     {
-                                        var step = new Step(pattern.Steps);
-                                        source = source.SelectMany(v => step.Get(v));
+                                        source = source.SelectMany(v => pattern.Tree.SelectMany(w => w.Resolve(v)));
                                     }
 
                                     if (pattern.OfType != null)
@@ -125,13 +124,13 @@ namespace Allors.Workspace.Derivations.Default
                     {
                         var @class = role.Class;
 
-                        if (this.engine.PatternsByAssociationTypeByClass.TryGetValue(@class, out var patternsByAssociationType))
+                        if (this.Engine.PatternsByAssociationTypeByClass.TryGetValue(@class, out var patternsByAssociationType))
                         {
                             if (patternsByAssociationType.TryGetValue(associationType, out var patterns))
                             {
                                 foreach (var pattern in patterns)
                                 {
-                                    var rule = this.engine.RuleByPattern[pattern];
+                                    var rule = this.Engine.RuleByPattern[pattern];
                                     if (!matchesByRule.TryGetValue(rule, out var matches))
                                     {
                                         matches = new HashSet<IObject>();
@@ -140,10 +139,9 @@ namespace Allors.Workspace.Derivations.Default
 
                                     IEnumerable<IObject> source = new IObject[] { role.Object };
 
-                                    if (pattern.Steps?.Length > 0)
+                                    if (pattern.Tree != null)
                                     {
-                                        var step = new Step(pattern.Steps);
-                                        source = source.SelectMany(v => step.Get(v));
+                                        source = source.SelectMany(v => pattern.Tree.SelectMany(w => w.Resolve(v)));
                                     }
 
                                     if (pattern.OfType != null)
@@ -165,7 +163,7 @@ namespace Allors.Workspace.Derivations.Default
                     domainDerivation.Derive(cycle, matches);
                 }
 
-                changeSet = this.session.Checkpoint();
+                changeSet = this.Session.Checkpoint();
             }
 
             return this.Validation;

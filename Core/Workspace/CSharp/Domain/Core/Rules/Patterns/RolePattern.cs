@@ -1,10 +1,10 @@
-// <copyright file="RolePattern.cs" company="Allors bvba">
+// <copyright file="ChangedRoles.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
-// <summary>Defines the IDerivation type.</summary>
+// <summary>Defines the IDomainDerivation type.</summary>
 
-namespace Allors.Workspace
+namespace Allors.Workspace.Derivations
 {
     using Meta;
 
@@ -14,16 +14,12 @@ namespace Allors.Workspace
 
         public RolePattern(IComposite objectType, IRoleType roleType)
         {
-            this.ObjectType = objectType;
             this.RoleType = roleType;
+            this.ObjectType = !this.RoleType.AssociationType.ObjectType.Equals(objectType) ? objectType : null;
         }
 
-        public RolePattern(MetaInterface metaInterface, IRoleType roleType) : this(metaInterface.ObjectType, roleType) { }
-
-        public RolePattern(MetaClass metaClass, IRoleType roleType) : this(metaClass.ObjectType, roleType) { }
-
-        public IComposite ObjectType { get; set; }
-
         public IRoleType RoleType { get; }
+
+        public override IComposite ObjectType { get; }
     }
 }

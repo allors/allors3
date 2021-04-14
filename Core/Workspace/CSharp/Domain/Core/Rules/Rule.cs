@@ -4,10 +4,11 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Workspace.Derivations
+namespace Allors.Workspace.Domain
 {
     using System;
     using System.Collections.Generic;
+    using Workspace.Derivations;
     using Meta;
 
     public abstract partial class Rule : IRule
@@ -18,11 +19,12 @@ namespace Allors.Workspace.Derivations
             this.Id = id;
         }
 
+        public MetaPopulation M { get; }
+
         public Guid Id { get; }
 
-        public Pattern[] Patterns { get; protected set; }
-
-        protected MetaPopulation M { get; }
+        IEnumerable<IPattern> IRule.Patterns => this.Patterns;
+        public IEnumerable<Pattern> Patterns { get; protected set; }
 
         public abstract void Derive(ICycle cycle, IEnumerable<IObject> matches);
     }

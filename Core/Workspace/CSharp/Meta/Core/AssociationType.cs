@@ -7,6 +7,7 @@
 namespace Allors.Workspace.Meta
 {
     using System;
+    using System.Linq;
 
     /// <summary>
     /// An <see cref="AssociationType"/> defines the association side of a relation.
@@ -153,7 +154,31 @@ namespace Allors.Workspace.Meta
         ///// <returns>
         ///// The association value.
         ///// </returns>
-        public object Get(IStrategy strategy) => strategy.GetComposite<IObject>(this);
+        public object Get(IStrategy strategy, IComposite ofType = null)
+        {
+            if (this.IsOne)
+            {
+                var association = strategy.GetComposite<IObject>(this);
+
+                if (ofType == null || association == null)
+                {
+                    return association;
+                }
+
+                return !ofType.IsAssignableFrom(((IObject)association).Strategy.Class) ? null : association;
+            }
+            else
+            {
+                var association = strategy.GetComposites<IObject>(this);
+
+                if (ofType == null || association == null)
+                {
+                    return association;
+                }
+
+                return association.Where(v => ofType.IsAssignableFrom(v.Strategy.Class));
+            }
+        }
 
         /// <summary>
         /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.

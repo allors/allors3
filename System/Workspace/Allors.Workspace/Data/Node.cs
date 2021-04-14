@@ -5,6 +5,7 @@
 
 namespace Allors.Workspace.Data
 {
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
@@ -41,6 +42,60 @@ namespace Allors.Workspace.Data
             var node = new Node(propertyType, childNode.Nodes);
             return this.Add(node);
         }
+
+        public IEnumerable<IObject> Resolve(IObject @object)
+        {
+            if (this.PropertyType.IsOne)
+            {
+                var resolved = this.PropertyType.Get(@object.Strategy, this.OfType);
+                if (resolved != null)
+                {
+                    if (this.Nodes.Length > 0)
+                    {
+                        foreach (var node in this.Nodes)
+                        {
+                            foreach (var next in node.Resolve((IObject)resolved))
+                            {
+                                yield return next;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        yield return (IObject)resolved;
+                    }
+                }
+            }
+            else
+            {
+                var resolved = (IEnumerable)this.PropertyType.Get(@object.Strategy, this.OfType);
+                if (resolved != null)
+                {
+                    if (this.Nodes.Length > 0)
+                    {
+                        foreach (var resolvedItem in resolved)
+                        {
+                            foreach (var node in this.Nodes)
+                            {
+                                foreach (var next in node.Resolve((IObject)resolvedItem))
+                                {
+                                    yield return next;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (IObject child in resolved)
+                        {
+                            yield return child;
+                        }
+                    }
+                }
+            }
+        }
+
+
 
         public override string ToString()
         {

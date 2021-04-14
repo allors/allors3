@@ -7,6 +7,7 @@
 namespace Allors.Workspace.Meta
 {
     using System;
+    using System.Linq;
 
     public abstract partial class RoleType : OperandType, IRoleType, IComparable
     {
@@ -220,7 +221,31 @@ namespace Allors.Workspace.Meta
         ///// <returns>
         ///// The role value.
         ///// </returns>
-        public object Get(IStrategy strategy) => strategy.Get(this.RelationType.RoleType);
+        public object Get(IStrategy strategy, IComposite ofType = null)
+        {
+            if (this.IsOne)
+            {
+                var association = strategy.GetComposite<IObject>(this);
+
+                if (ofType == null || association == null)
+                {
+                    return association;
+                }
+
+                return !ofType.IsAssignableFrom(((IObject)association).Strategy.Class) ? null : association;
+            }
+            else
+            {
+                var association = strategy.GetComposites<IObject>(this);
+
+                if (ofType == null || association == null)
+                {
+                    return association;
+                }
+
+                return association.Where(v => ofType.IsAssignableFrom(v.Strategy.Class));
+            }
+        }
 
         ///// <summary>
         ///// Set the value of the role on this object.
