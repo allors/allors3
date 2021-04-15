@@ -8,7 +8,7 @@ namespace Allors.Workspace.Meta
 {
     using System;
 
-    public abstract partial class Unit : ObjectType, IUnit
+    public abstract class Unit : ObjectType, IUnit
     {
         private Type clrType;
 

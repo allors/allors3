@@ -9,7 +9,7 @@ namespace Allors.Workspace.Meta
     using System;
     using System.Linq;
 
-    public abstract partial class RoleType : OperandType, IRoleType, IComparable
+    public abstract class RoleType : OperandType, IRoleType, IComparable
     {
         /// <summary>
         /// The maximum size value.

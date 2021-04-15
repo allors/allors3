@@ -7,7 +7,7 @@ namespace Allors.Workspace.Meta
 {
     public partial class Method
     {
-        protected Method(IObject @object, MethodType methodType)
+        protected Method(IObject @object, IMethodType methodType)
         {
             this.Object = @object;
             this.MethodType = methodType;
@@ -15,6 +15,6 @@ namespace Allors.Workspace.Meta
 
         public IObject Object { get; }
 
-        public MethodType MethodType { get; }
+        public IMethodType MethodType { get; }
     }
 }

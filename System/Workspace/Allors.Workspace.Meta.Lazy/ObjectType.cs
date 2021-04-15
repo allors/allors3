@@ -8,7 +8,7 @@ namespace Allors.Workspace.Meta
 {
     using System;
 
-    public abstract partial class ObjectType : MetaObjectBase, IObjectType, IComparable
+    public abstract class ObjectType : MetaObjectBase, IObjectType, IComparable
     {
 
         private string pluralName;

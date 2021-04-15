@@ -29,6 +29,7 @@ For more information visit http://www.allors.com/legal
 	<generation template="classes" output="classes.g.cs"/>
 	<generation template="associationTypes" output="associationTypes.g.cs"/>
 	<generation template="roleTypes" output="roleTypes.g.cs"/>
+    <generation template="builder" output="builder.g.cs"/>
 </generations>
 >>
 

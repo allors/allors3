@@ -10,7 +10,7 @@ namespace Allors.Workspace.Meta
     using System.Collections.Generic;
     using System.Linq;
 
-    public abstract partial class Composite : ObjectType, IComposite
+    public abstract class Composite : ObjectType, IComposite
     {
         internal HashSet<Interface> directSupertypes;
         internal HashSet<Interface> supertypes;

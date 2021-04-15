@@ -9,7 +9,7 @@ namespace Allors.Workspace.Meta
     using System;
     using System.Linq;
 
-    public partial class MethodType : OperandType, IMethodType, IComparable
+    public sealed class MethodType : OperandType, IMethodType, IComparable
     {
         public MethodType(Composite objectType, Guid id) : base(objectType.MetaPopulation)
         {

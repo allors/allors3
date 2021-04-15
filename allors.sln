@@ -187,6 +187,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Configuration.Tests", "Core
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Workspace.Meta.Lazy", "System\Workspace\Allors.Workspace.Meta.Lazy\Allors.Workspace.Meta.Lazy.csproj", "{45C8C1F7-D141-499E-85B4-652937DFC247}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Workspace.Meta.Lazy", "Core\Workspace\CSharp\Meta.Lazy\Workspace.Meta.Lazy.csproj", "{9146BA6A-CF8A-470F-8270-45C000FAADC9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -481,6 +483,10 @@ Global
 		{45C8C1F7-D141-499E-85B4-652937DFC247}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45C8C1F7-D141-499E-85B4-652937DFC247}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{45C8C1F7-D141-499E-85B4-652937DFC247}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9146BA6A-CF8A-470F-8270-45C000FAADC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9146BA6A-CF8A-470F-8270-45C000FAADC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9146BA6A-CF8A-470F-8270-45C000FAADC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9146BA6A-CF8A-470F-8270-45C000FAADC9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -574,6 +580,7 @@ Global
 		{747D7FD1-C15E-4106-975E-46695E7A8C4C} = {BF224751-0EE7-4C58-ABB9-4072587F1C01}
 		{19342380-03E4-4996-922D-A2D74CB4E8EE} = {583954BC-1E23-4E62-B539-131CF3FBC96E}
 		{45C8C1F7-D141-499E-85B4-652937DFC247} = {F0CFA0DB-205F-4914-8D96-33D1D500A0CC}
+		{9146BA6A-CF8A-470F-8270-45C000FAADC9} = {50A1B7BA-85A8-4AD0-B90C-829A756CC0E5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {00D78C3D-8536-4549-B1EE-C19BD0C50387}

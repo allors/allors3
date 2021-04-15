@@ -10,7 +10,7 @@ namespace Allors.Workspace.Meta
     using System.Collections.Generic;
     using System.Linq;
 
-    public abstract partial class Interface : Composite, IInterface
+    public abstract class Interface : Composite, IInterface
     {
         internal HashSet<Composite> directSubtypes;
         internal HashSet<Composite> subtypes;

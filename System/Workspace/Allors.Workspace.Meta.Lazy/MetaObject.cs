@@ -8,7 +8,7 @@ namespace Allors.Workspace.Meta
     /// <summary>
     /// Base class for Meta objects.
     /// </summary>
-    public abstract partial class MetaObjectBase : IMetaObject
+    public abstract class MetaObjectBase : IMetaObject
     {
         protected MetaObjectBase(MetaPopulation metaPopulation) => this.MetaPopulation = metaPopulation;
 

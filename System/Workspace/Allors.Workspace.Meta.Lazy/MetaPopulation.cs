@@ -11,7 +11,7 @@ namespace Allors.Workspace.Meta
     using System.Linq;
     using System.Reflection;
 
-    public abstract partial class MetaPopulation : IMetaPopulation
+    public abstract class MetaPopulation : IMetaPopulation
     {
         private Unit[] units;
         private Interface[] interfaces;
