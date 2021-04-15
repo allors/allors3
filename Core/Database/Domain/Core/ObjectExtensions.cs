@@ -17,6 +17,32 @@ namespace Allors.Database.Domain
     {
         public static bool IsCloneable(this IRoleType roleType) => !(roleType.RelationType.IsDerived || roleType.RelationType.IsSynced) && (roleType.ObjectType.IsUnit || roleType.AssociationType.IsMany);
 
+        public static bool IsMergeable(this IRoleType roleType) => !(roleType.RelationType.IsDerived || roleType.RelationType.IsSynced);
+
+        public static void Merge<T>(this T @this, IObject inTo) where T : IObject
+        {
+            foreach (var roleType in @this.Strategy.Class.DatabaseRoleTypes.Where(v => v.IsMergeable()))
+            {
+                var fromRole = @this.Strategy.GetRole(roleType);
+
+                if (roleType.IsOne)
+                {
+                    var inToRole = inTo.Strategy.GetRole(roleType);
+                    if (inToRole == null && fromRole != null)
+                    {
+                        inTo.Strategy.SetRole(roleType, fromRole);
+                    }
+                }
+                else
+                {
+                    foreach (IObject role in @this.Strategy.GetCompositeRoles(roleType))
+                    {
+                        inTo.Strategy.AddCompositeRole(roleType, role);
+                    }
+                }
+            }
+        }
+
         public static T Clone<T>(this T @this) where T : IObject
         {
             var clone = (T)DefaultObjectBuilder.Build(@this.Strategy.Transaction, @this.Strategy.Class);
