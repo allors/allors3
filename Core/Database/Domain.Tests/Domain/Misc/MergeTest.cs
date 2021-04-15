@@ -176,5 +176,20 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(2, c1A.C1C2Many2Manies.Count);
         }
+
+        [Fact(Skip = "TODO: Koen")]
+        public void Merge()
+        {
+            var c1A = new C1Builder(this.Transaction).WithC1AllorsString("c1A").Build();
+            var c1B = new C1Builder(this.Transaction).WithC1AllorsString("c1B").Build();
+
+            var c2 = new C2Builder(this.Transaction)
+                .WithC2C1Many2One(c1B)
+                .Build();
+
+            c1B.Merge(c1A);
+
+            Assert.Equal(c1A, c2.C2C1Many2One);
+        }
     }
 }
