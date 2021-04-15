@@ -21,6 +21,28 @@ namespace Allors.Database.Domain
 
         public static void Merge<T>(this T @this, IObject inTo) where T : IObject
         {
+            foreach (var associationType in @this.Strategy.Class.DatabaseAssociationTypes.Where(v => v.RoleType.ObjectType == @this.Strategy.Class))
+            {
+                var roleType = associationType.RoleType;
+                var fromRole = @this.Strategy.GetRole(roleType);
+
+                if (roleType.IsOne)
+                {
+                    var inToRole = inTo.Strategy.GetRole(roleType);
+                    if (inToRole == null && fromRole != null)
+                    {
+                        inTo.Strategy.SetRole(roleType, fromRole);
+                    }
+                }
+                else
+                {
+                    foreach (IObject role in @this.Strategy.GetCompositeRoles(roleType))
+                    {
+                        inTo.Strategy.AddCompositeRole(roleType, role);
+                    }
+                }
+            }
+
             foreach (var roleType in @this.Strategy.Class.DatabaseRoleTypes.Where(v => v.IsMergeable()))
             {
                 var fromRole = @this.Strategy.GetRole(roleType);

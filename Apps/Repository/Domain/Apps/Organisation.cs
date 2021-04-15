@@ -387,5 +387,11 @@ namespace Allors.Repository
         public void CreateSalesInvoice() { }
 
         public void CreateWorkEffortInvoice() { }
+
+        #region Allors
+        [Id("bb91ffdd-7741-4fd5-b059-b5904f9572a0")]
+        #endregion
+        [Workspace(Default)]
+        public void Merge() { }
     }
 }

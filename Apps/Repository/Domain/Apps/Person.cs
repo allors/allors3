@@ -321,5 +321,11 @@ namespace Allors.Repository
         #region inherited methods
         public void Delete() { }
         #endregion
+
+        #region Allors
+        [Id("20c13d80-d8cc-4f44-a0a1-15d364a1574f")]
+        #endregion
+        [Workspace(Default)]
+        public void Merge() { }
     }
 }
