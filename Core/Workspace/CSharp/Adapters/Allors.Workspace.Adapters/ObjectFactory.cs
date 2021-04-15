@@ -75,7 +75,7 @@ namespace Allors.Workspace.Adapters
 
             foreach (var objectType in metaPopulation.Composites)
             {
-                var type = typeByName[objectType.Name];
+                var type = typeByName[objectType.SingularName];
 
                 this.typeByObjectType[objectType] = type;
                 this.objectTypeByType[type] = objectType;
@@ -88,7 +88,7 @@ namespace Allors.Workspace.Adapters
                     var databaseParameterTypes = new[] { typeof(IStrategy) };
                     this.contructorInfoByObjectType[objectType] = type.GetTypeInfo().GetConstructor(parameterTypes)
                                                                   ?? type.GetTypeInfo().GetConstructor(databaseParameterTypes)
-                                                                  ?? throw new ArgumentException($"{objectType.Name} has no Allors constructor.");
+                                                                  ?? throw new ArgumentException($"{objectType.SingularName} has no Allors constructor.");
                 }
 
                 this.emptyArrayByObjectType.Add(objectType, Array.CreateInstance(type, 0));

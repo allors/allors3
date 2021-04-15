@@ -42,7 +42,7 @@ namespace Allors.Workspace.Meta
                 .ToDictionary(v => ((IMetaIdentifiableObject)v).Id, v => v);
 
             this.composites = this.interfaces.Cast<Composite>().Union(this.classes).ToArray();
-            this.compositeByLowercaseName = this.Composites.ToDictionary(v => v.Name.ToLowerInvariant());
+            this.compositeByLowercaseName = this.Composites.ToDictionary(v => v.SingularName.ToLowerInvariant());
 
             // DirectSupertypes
             foreach (var grouping in this.inheritances.GroupBy(v => v.Subtype, v => v.Supertype))

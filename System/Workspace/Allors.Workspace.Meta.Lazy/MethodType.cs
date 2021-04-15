@@ -26,7 +26,7 @@ namespace Allors.Workspace.Meta
 
         public string Name { get; set; }
 
-        public string FullName => $"{this.Composite.Name}{this.Name}";
+        public string FullName => $"{this.Composite.SingularName}{this.Name}";
 
         public override Guid OperandId => this.Id;
 

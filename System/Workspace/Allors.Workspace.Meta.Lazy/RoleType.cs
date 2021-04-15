@@ -184,7 +184,7 @@ namespace Allors.Workspace.Meta
         /// <returns>
         /// A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
         /// </returns>
-        public override string ToString() => $"{this.AssociationType.ObjectType.Name}.{this.Name}";
+        public override string ToString() => $"{this.AssociationType.ObjectType.SingularName}.{this.Name}";
 
         /// <summary>
         /// Derive multiplicity, scale and size.

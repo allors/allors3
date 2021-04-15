@@ -20,8 +20,6 @@ namespace Allors.Workspace.Meta
 
         string SingularName { get; }
 
-        string Name { get; }
-
         string PluralName { get; }
 
         Type ClrType { get; }

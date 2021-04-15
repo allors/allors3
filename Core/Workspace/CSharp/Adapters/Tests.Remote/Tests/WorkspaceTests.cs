@@ -19,7 +19,7 @@ namespace Tests.Workspace.Remote
 
             Assert.Equal(3, martien.Identity);
             Assert.Equal(1003, martien.Version);
-            Assert.Equal("Person", martien.Class.Name);
+            Assert.Equal("Person", martien.Class.SingularName);
             Assert.Equal("Martien", martien.GetRole(this.M.Person.FirstName));
             Assert.Equal("van", martien.GetRole(this.M.Person.MiddleName));
             Assert.Equal("Knippenberg", martien.GetRole(this.M.Person.LastName));

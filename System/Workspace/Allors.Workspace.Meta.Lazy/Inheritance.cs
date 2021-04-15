@@ -60,6 +60,6 @@ namespace Allors.Workspace.Meta
         /// <returns>
         /// A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
         /// </returns>
-        public override string ToString() => (this.Subtype != null ? this.Subtype.Name : string.Empty) + "::" + (this.Supertype != null ? this.Supertype.Name : string.Empty);
+        public override string ToString() => (this.Subtype != null ? this.Subtype.SingularName : string.Empty) + "::" + (this.Supertype != null ? this.Supertype.SingularName : string.Empty);
     }
 }

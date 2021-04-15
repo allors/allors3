@@ -49,6 +49,6 @@ namespace Allors.Workspace.Meta
         /// </returns>
         public override bool IsAssignableFrom(IComposite objectType) => this.Equals(objectType) || this.subtypes.Contains(objectType);
 
-        internal void Bind(Dictionary<string, Type> typeByTypeName) => this.clrType = typeByTypeName[this.Name];
+        internal void Bind(Dictionary<string, Type> typeByTypeName) => this.clrType = typeByTypeName[this.SingularName];
     }
 }

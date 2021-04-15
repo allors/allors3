@@ -41,13 +41,7 @@ namespace Allors.Workspace.Meta
         }
 
         public bool ExistAssignedPluralName => !string.IsNullOrEmpty(this.PluralName) && !this.PluralName.Equals(this.SingularName + "s");
-
-        /// <summary>
-        /// Gets the name.
-        /// </summary>
-        /// <value>The name .</value>
-        public string Name => this.SingularName;
-
+        
         public bool IsUnit => this is IUnit;
 
         public bool IsComposite => this is IComposite;
