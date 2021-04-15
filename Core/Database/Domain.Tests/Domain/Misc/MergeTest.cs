@@ -134,11 +134,13 @@ namespace Allors.Database.Domain.Tests
 
             var c1B = new C1Builder(this.Transaction)
                 .WithC1C2One2Many(new C2Builder(this.Transaction).Build())
+                .WithC1C2One2Many(new C2Builder(this.Transaction).Build())
+                .WithC1C2One2Many(new C2Builder(this.Transaction).Build())
                 .Build();
 
             c1B.Merge(c1A);
 
-            Assert.Equal(3, c1A.C1C2One2Manies.Count);
+            Assert.Equal(5, c1A.C1C2One2Manies.Count);
         }
 
         [Fact]
@@ -162,18 +164,17 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void MergeManyToMany()
         {
-            var c2 = new C2Builder(this.Transaction).Build();
-
             var c1A = new C1Builder(this.Transaction)
                 .Build();
 
             var c1B = new C1Builder(this.Transaction)
-                .WithC1C2Many2Many(c2)
+                .WithC1C2Many2Many(new C2Builder(this.Transaction).Build())
+                .WithC1C2Many2Many(new C2Builder(this.Transaction).Build())
                 .Build();
 
             c1B.Merge(c1A);
 
-            Assert.Single(c1A.C1C2Many2Manies);
+            Assert.Equal(2, c1A.C1C2Many2Manies.Count);
         }
     }
 }
