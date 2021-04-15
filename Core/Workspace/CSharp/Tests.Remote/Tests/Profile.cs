@@ -12,6 +12,7 @@ namespace Tests.Workspace.Remote
     using Allors.Workspace.Adapters.Remote;
     using Allors.Workspace.Domain;
     using Allors.Workspace.Meta;
+    using Allors.Workspace.Meta.Lazy;
     using Xunit;
     using User = Allors.Workspace.Domain.User;
 
@@ -28,7 +29,7 @@ namespace Tests.Workspace.Remote
 
         public RemoteDatabase Database => this.Workspace.Database;
 
-        public MetaPopulation M => this.Workspace.Context().M;
+        public M M => this.Workspace.Context().M;
 
         public async Task InitializeAsync()
         {

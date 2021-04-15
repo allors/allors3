@@ -57,7 +57,7 @@ namespace Allors.Workspace.Derivations.Default
                 {
                     foreach (var instantiated in changeSet?.Instantiated)
                     {
-                        var @class = (Class)instantiated.Class;
+                        var @class = instantiated.Class;
                         if (this.Engine.RulesByClass.TryGetValue(@class, out var rules))
                         {
                             foreach (var rule in rules)

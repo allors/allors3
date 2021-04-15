@@ -13,6 +13,7 @@ namespace Tests.Workspace.Local
     using Allors.Database.Adapters.Memory;
     using Allors.Workspace;
     using Allors.Workspace.Adapters.Local;
+    using Allors.Workspace.Meta.Lazy;
 
     public class Test : IDisposable
     {
@@ -52,7 +53,7 @@ namespace Tests.Workspace.Local
             this.Workspace = new LocalWorkspace(
                 "Default",
                 this.Administrator.Id,
-                new Allors.Workspace.Meta.MetaBuilder().Build(),
+                new MetaBuilder().Build(),
                 typeof(Allors.Workspace.Domain.User),
                 new WorkspaceContext(),
                 this.Database);
