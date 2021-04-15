@@ -9,7 +9,7 @@ namespace Allors.Workspace.Meta
     using System;
     using System.Linq;
 
-    public sealed partial class Inheritance : MetaObjectBase, IComparable
+    public sealed class Inheritance : MetaObjectBase, IComparable
     {
         public Inheritance(MetaPopulation metaPopulation) : base(metaPopulation) { }
 

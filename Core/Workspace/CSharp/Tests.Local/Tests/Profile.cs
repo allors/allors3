@@ -15,6 +15,7 @@ namespace Tests.Workspace.Local
     using Allors.Database.Adapters.Memory;
     using Allors.Workspace.Adapters.Local;
     using Allors.Workspace.Domain;
+    using Allors.Workspace.Meta.Lazy;
     using Person = Allors.Database.Domain.Person;
 
     public class Profile : IProfile
@@ -25,7 +26,7 @@ namespace Tests.Workspace.Local
 
         public LocalWorkspace Workspace { get; private set; }
 
-        public MetaPopulation M => this.Workspace.Context().M;
+        public M M => this.Workspace.Context().M;
 
         public Profile(Fixture fixture)
         {
@@ -71,7 +72,7 @@ namespace Tests.Workspace.Local
             this.Workspace = new LocalWorkspace(
                 "Default",
                 user.Id,
-                new Allors.Workspace.Meta.MetaBuilder().Build(),
+                new MetaBuilder().Build(),
                 typeof(Allors.Workspace.Domain.User),
                 new WorkspaceContext(),
                 this.Database);

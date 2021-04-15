@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Configuration\Workspace.Configuration.csproj" />
-    <ProjectReference Include="..\..\Meta\Workspace.Meta.csproj" />
+    <ProjectReference Include="..\..\Meta.Lazy\Workspace.Meta.Lazy.csproj" />
     <ProjectReference Include="..\Allors.Workspace.Adapters.Remote\Allors.Workspace.Adapters.Remote.csproj" />
   </ItemGroup>
 

@@ -9,7 +9,7 @@ namespace Allors.Workspace.Meta
     using System;
     using System.Collections.Generic;
 
-    public abstract partial class Class : Composite, IClass
+    public abstract class Class : Composite, IClass
     {
         private readonly Class[] classes;
         private Type clrType;

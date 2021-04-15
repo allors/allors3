@@ -15,7 +15,7 @@ namespace Allors.Workspace.Derivations.Default
     {
         public IDictionary<Rule, ISet<IClass>> ClassesByRule { get; }
 
-        public IDictionary<Class, Rule[]> RulesByClass { get; }
+        public IDictionary<IClass, Rule[]> RulesByClass { get; }
 
         public IDictionary<IClass, IDictionary<IRoleType, ISet<RolePattern>>> PatternsByRoleTypeByClass { get; }
 
@@ -41,7 +41,7 @@ namespace Allors.Workspace.Derivations.Default
                     {
                         RolePattern { ObjectType: null } rolePattern => rolePattern.RoleType.AssociationType.ObjectType.Classes.ToArray(),
                         RolePattern { ObjectType: { } } rolePattern => rolePattern.ObjectType.Classes.ToArray(),
-                        AssociationPattern associationPattern => associationPattern.AssociationType.RoleType.ObjectType.IsComposite ? ((Composite)associationPattern.AssociationType.RoleType.ObjectType).Classes.ToArray() : Array.Empty<IClass>(),
+                        AssociationPattern associationPattern => associationPattern.AssociationType.RoleType.ObjectType.IsComposite ? ((IComposite)associationPattern.AssociationType.RoleType.ObjectType).Classes.ToArray() : Array.Empty<IClass>(),
                         _ => Array.Empty<IClass>()
                     };
 
@@ -97,7 +97,7 @@ namespace Allors.Workspace.Derivations.Default
                 this.ClassesByRule.Add(rule, ruleClasses);
             }
 
-            var classes = this.ClassesByRule.SelectMany(v => v.Value).Distinct().Cast<Class>();
+            var classes = this.ClassesByRule.SelectMany(v => v.Value).Distinct();
             this.RulesByClass = classes.ToDictionary(v => v, v => rules.Where(w => this.ClassesByRule[w].Contains(v)).ToArray());
         }
     }

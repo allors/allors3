@@ -13,13 +13,13 @@ namespace Allors.Workspace.Domain
 
     public abstract partial class Rule : IRule
     {
-        protected Rule(MetaPopulation m, Guid id)
+        protected Rule(M m, Guid id)
         {
             this.M = m;
             this.Id = id;
         }
 
-        public MetaPopulation M { get; }
+        public M M { get; }
 
         public Guid Id { get; }
 

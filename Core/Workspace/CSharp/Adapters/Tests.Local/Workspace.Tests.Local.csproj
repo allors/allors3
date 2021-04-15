@@ -18,7 +18,7 @@
     <ProjectReference Include="..\..\..\..\Database\Domain\Domain.csproj" />
     <ProjectReference Include="..\..\..\..\Database\Meta\Meta.csproj" />
     <ProjectReference Include="..\..\Configuration\Workspace.Configuration.csproj" />
-    <ProjectReference Include="..\..\Meta\Workspace.Meta.csproj" />
+    <ProjectReference Include="..\..\Meta.Lazy\Workspace.Meta.Lazy.csproj" />
     <ProjectReference Include="..\Allors.Workspace.Adapters.Local\Allors.Workspace.Adapters.Local.csproj" />
   </ItemGroup>
 

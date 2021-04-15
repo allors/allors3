@@ -15,7 +15,7 @@ namespace Allors.Workspace.Meta
     /// A <see cref="RelationType"/> defines the state and behavior for
     /// a set of <see cref="AssociationType"/>s and <see cref="RoleType"/>s.
     /// </summary>
-    public sealed partial class RelationType : MetaObjectBase, IRelationType, IComparable
+    public sealed class RelationType : MetaObjectBase, IRelationType, IComparable
     {
         private Multiplicity multiplicity;
 

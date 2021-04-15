@@ -7,7 +7,7 @@ namespace Allors.Workspace.Meta
 {
     using System;
 
-    public abstract partial class OperandType : MetaObjectBase, IOperandType
+    public abstract class OperandType : MetaObjectBase, IOperandType
     {
         protected OperandType(MetaPopulation metaPopulation)
             : base(metaPopulation)
