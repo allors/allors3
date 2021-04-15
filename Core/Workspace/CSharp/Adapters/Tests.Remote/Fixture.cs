@@ -10,7 +10,7 @@ namespace Tests.Workspace.Remote
 
     public class Fixture
     {
-        public static SyncResponse LoadData(MetaPopulation m) =>
+        public static SyncResponse LoadData(M m) =>
             new SyncResponse
             {
                 Objects = new[]

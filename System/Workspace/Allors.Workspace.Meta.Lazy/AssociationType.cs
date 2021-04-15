@@ -21,7 +21,7 @@ namespace Allors.Workspace.Meta
         /// </summary>
         private const string Where = "Where";
 
-        internal AssociationType(RelationType relationType) : base(relationType.MetaPopulation) => this.RelationType = relationType;
+        protected AssociationType(RelationType relationType) : base(relationType.MetaPopulation) => this.RelationType = relationType;
 
         public MetaPopulation M => this.MetaPopulation;
 

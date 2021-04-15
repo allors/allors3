@@ -11,7 +11,7 @@ namespace Allors.Workspace.Meta
     using System.Linq;
     using System.Reflection;
 
-    public sealed partial class MetaPopulation : IMetaPopulation
+    public abstract partial class MetaPopulation : IMetaPopulation
     {
         private Unit[] units;
         private Interface[] interfaces;
@@ -25,7 +25,7 @@ namespace Allors.Workspace.Meta
         private Composite[] composites;
         private Dictionary<string, Composite> compositeByLowercaseName;
 
-        internal void Derive(Unit[] builderUnits, Interface[] builderInterfaces, Class[] builderClasses, Inheritance[] builderInheritances, RelationType[] builderRelationTypes, MethodType[] builderMethodTypes)
+        public void Derive(Unit[] builderUnits, Interface[] builderInterfaces, Class[] builderClasses, Inheritance[] builderInheritances, RelationType[] builderRelationTypes, MethodType[] builderMethodTypes)
         {
             this.units = builderUnits;
             this.interfaces = builderInterfaces;

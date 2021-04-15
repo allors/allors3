@@ -18,7 +18,8 @@ namespace Allors.Workspace.Meta
 
         private Type clrType;
 
-        internal Interface(MetaPopulation metaPopulation, Guid id) : base(metaPopulation, id) { }
+        protected Interface(MetaPopulation metaPopulation, Guid id) : base(metaPopulation, id) { }
+
         public MetaPopulation M => this.MetaPopulation;
 
         IEnumerable<IComposite> IInterface.DirectSubtypes => this.DirectSubtypes;

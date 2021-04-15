@@ -11,7 +11,7 @@ namespace Allors.Workspace.Meta
 
     public sealed partial class Inheritance : MetaObjectBase, IComparable
     {
-        internal Inheritance(MetaPopulation metaPopulation) : base(metaPopulation) { }
+        public Inheritance(MetaPopulation metaPopulation) : base(metaPopulation) { }
 
         public Composite Subtype { get; set; }
 

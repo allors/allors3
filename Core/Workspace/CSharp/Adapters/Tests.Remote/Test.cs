@@ -21,7 +21,7 @@ namespace Tests.Workspace.Remote
 
         public RemoteDatabase Database => this.Workspace.Database;
 
-        public MetaPopulation M => this.Workspace.Context().M;
+        public M M => this.Workspace.Context().M;
 
         public Test() =>
             this.Workspace = new RemoteWorkspace(

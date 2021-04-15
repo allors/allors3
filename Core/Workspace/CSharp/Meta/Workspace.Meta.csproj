@@ -6,10 +6,6 @@
     <Compile Include="..\..\..\..\Core\Workspace\CSharp\Allors.Workspace.Meta\Meta*\**\*.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\System\Workspace\Allors.Workspace\Allors.Workspace.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Core\Internals\" />
-    <Folder Include="Custom\" />
+    <ProjectReference Include="..\..\..\..\System\Workspace\Allors.Workspace.Meta.Lazy\Allors.Workspace.Meta.Lazy.csproj" />
   </ItemGroup>
 </Project>

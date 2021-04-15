@@ -18,7 +18,7 @@ namespace Allors.Workspace.Meta
 
         public const string PluralSuffix = "s";
 
-        public RoleType(RelationType relationType) : base(relationType.MetaPopulation) => this.RelationType = relationType;
+        protected RoleType(RelationType relationType) : base(relationType.MetaPopulation) => this.RelationType = relationType;
 
         public MetaPopulation M => this.MetaPopulation;
 

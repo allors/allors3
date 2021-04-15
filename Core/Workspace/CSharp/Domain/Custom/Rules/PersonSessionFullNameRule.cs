@@ -13,7 +13,7 @@ namespace Allors.Workspace.Domain
 
     public class PersonSessionFullNameRule : Rule
     {
-        public PersonSessionFullNameRule(MetaPopulation m) : base(m, new Guid("CCDFC57D-5164-4BE6-9FFA-BA2862ABD006")) =>
+        public PersonSessionFullNameRule(M m) : base(m, new Guid("CCDFC57D-5164-4BE6-9FFA-BA2862ABD006")) =>
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.Person, m.Person.FirstName),

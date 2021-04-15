@@ -14,7 +14,7 @@ namespace Allors.Workspace.Meta
         private readonly Class[] classes;
         private Type clrType;
 
-        internal Class(MetaPopulation metaPopulation, Guid id) : base(metaPopulation, id) => this.classes = new[] { this };
+        protected Class(MetaPopulation metaPopulation, Guid id) : base(metaPopulation, id) => this.classes = new[] { this };
 
         public MetaPopulation M => this.MetaPopulation;
 

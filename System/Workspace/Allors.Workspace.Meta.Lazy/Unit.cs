@@ -12,7 +12,7 @@ namespace Allors.Workspace.Meta
     {
         private Type clrType;
 
-        internal Unit(MetaPopulation metaPopulation, Guid id) : base(metaPopulation, id) { }
+        protected Unit(MetaPopulation metaPopulation, Guid id) : base(metaPopulation, id) { }
 
         public UnitTags UnitTag { get; set; }
 
