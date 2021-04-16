@@ -9,7 +9,7 @@ namespace Allors.Workspace.Meta
     using System;
     using System.Linq;
 
-    public abstract class RoleType : IRoleType
+    public abstract class RoleType : IRoleTypeInternals
     {
         public MetaPopulation MetaPopulation { get; set; }
 
@@ -25,7 +25,10 @@ namespace Allors.Workspace.Meta
         private int? Size { get; set; }
         private int? Precision { get; set; }
         private int? Scale { get; set; }
-
+        private bool IsRequired { get; set; }
+        private bool IsUnique { get; set; }
+        private string MediaType { get; set; }
+        
         #region IComparable
         int IComparable<IPropertyType>.CompareTo(IPropertyType other) => string.Compare(this.Name, other.Name, StringComparison.InvariantCulture);
         #endregion
@@ -85,6 +88,12 @@ namespace Allors.Workspace.Meta
         int? IRoleType.Precision => this.Precision;
 
         int? IRoleType.Scale => this.Scale;
+
+        bool IRoleType.IsRequired => this.IsRequired;
+
+        bool IRoleType.IsUnique => this.IsUnique;
+
+        string IRoleType.MediaType => this.MediaType;
         #endregion
 
         /// <summary>
@@ -140,7 +149,7 @@ namespace Allors.Workspace.Meta
 
         public override string ToString() => $"{this.AssociationType.ObjectType.SingularName}.{this.Name}";
 
-        public void Init(IObjectType objectType, string singularName, string pluralName, int? size = null, int? precision = null, int? scale = null)
+        public void Init(IObjectType objectType, string singularName, string pluralName, int? size = null, int? precision = null, int? scale = null, bool isRequired = false, bool isUnique = false, string mediaType = null)
         {
             this.ObjectType = objectType;
             this.SingularName = singularName;
@@ -169,6 +178,10 @@ namespace Allors.Workspace.Meta
                         break;
                 }
             }
+
+            this.IsRequired = isRequired;
+            this.IsUnique = isUnique;
+            this.MediaType = mediaType;
         }
     }
 }

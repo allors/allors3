@@ -24,5 +24,11 @@ namespace Allors.Workspace.Meta
         int? Precision { get; }
 
         int? Scale { get; }
+
+        bool IsRequired { get; }
+
+        bool IsUnique { get; }
+
+        string MediaType { get; }
     }
 }

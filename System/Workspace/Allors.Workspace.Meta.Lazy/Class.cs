@@ -26,6 +26,7 @@ namespace Allors.Workspace.Meta
         private HashSet<IRoleTypeInternals> LazyDatabaseRoleTypes => this.lazyDatabaseRoleTypes ??= new HashSet<IRoleTypeInternals>(this.LazyWorkspaceRoleTypes.Where(v => v.RelationType.HasDatabaseOrigin));
         private HashSet<IMethodTypeInternals> LazyMethodTypes => this.lazyMethodTypes ??= new HashSet<IMethodTypeInternals>(this.ExclusiveMethodTypes.Union(this.Supertypes.SelectMany(v => v.ExclusiveMethodTypes)));
 
+        private bool IsSynced { get; set; }
         private Origin Origin { get; set; }
         private Guid Id { get; set; }
         private string IdAsString { get; set; }
@@ -77,6 +78,7 @@ namespace Allors.Workspace.Meta
         #endregion
 
         #region IComposite
+        bool IComposite.IsSynced => this.IsSynced;
 
         IEnumerable<IInterface> IComposite.DirectSupertypes => this.DirectSupertypes;
 
@@ -105,9 +107,7 @@ namespace Allors.Workspace.Meta
         IMethodTypeInternals[] ICompositeInternals.ExclusiveMethodTypes { get => this.ExclusiveMethodTypes; set => this.ExclusiveMethodTypes = value; }
         #endregion
 
-        public void Init(Guid id, string singularName, Origin origin = Origin.Database) => this.Init(id, singularName, null, origin);
-
-        public void Init(Guid id, string singularName, string pluralName = null, Origin origin = Origin.Database)
+        public void Init(Guid id, string singularName, string pluralName = null, Origin origin = Origin.Database, bool isSynced = false)
         {
             this.Id = id;
             this.IdAsString = id.ToString("D");
@@ -115,6 +115,7 @@ namespace Allors.Workspace.Meta
             this.PluralName = pluralName ?? Pluralizer.Pluralize(singularName);
             this.Classes = new[] { this };
             this.Origin = origin;
+            this.IsSynced = isSynced;
         }
 
         void ICompositeInternals.Bind(Dictionary<string, Type> typeByTypeName) => this.ClrType = typeByTypeName[this.SingularName];

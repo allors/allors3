@@ -191,21 +191,21 @@ $meta._.Units:{unit|                m.$unit.SingularName$}; separator=",\n"$
             };
 		}
 
-        private Interface[] BuildInterfaces(LazyM m)
+        private IInterfaceInternals[] BuildInterfaces(LazyM m)
         {
 $meta._.WorkspaceInterfacesByWorkspaceName.(workspaceName):{interface|$build_interface(interface)$}; separator="\n"$
 
-            return new Interface[]
+            return new IInterfaceInternals[]
             {
 $meta._.WorkspaceInterfacesByWorkspaceName.(workspaceName):{interface|                m.$interface._.SingularName$}; separator=",\n"$
             };
         }
 
-        private Class[] BuildClasses(LazyM m)
+        private IClassInternals[] BuildClasses(LazyM m)
         {
 $meta._.WorkspaceClassesByWorkspaceName.(workspaceName):{class|$build_class(class)$}; separator="\n"$
 
-            return new Class[]
+            return new IClassInternals[]
             {
 $meta._.WorkspaceClassesByWorkspaceName.(workspaceName):{class|                m.$class._.SingularName$}; separator=",\n"$
             };
@@ -218,10 +218,10 @@ $meta._.WorkspaceClassesByWorkspaceName.(workspaceName):{class|                m
             };
         }
 
-        private RelationType[] BuildRelationTypes(LazyM m)
+        private IRelationTypeInternals[] BuildRelationTypes(LazyM m)
         {
 
-            return new RelationType[]
+            return new IRelationTypeInternals[]
             {
 $meta._.WorkspaceRelationTypesByWorkspaceName.(workspaceName):{relationType|            this.Build$relationType._.Name$(m),}; separator="\n"$
             };
@@ -229,9 +229,9 @@ $meta._.WorkspaceRelationTypesByWorkspaceName.(workspaceName):{relationType|    
 
 $meta._.WorkspaceRelationTypesByWorkspaceName.(workspaceName):{relationType|$build_relationType(relationType)$}; separator="\n"$
 
-        private MethodType[] BuildMethodTypes(LazyM m)
+        private IMethodTypeInternals[] BuildMethodTypes(LazyM m)
 		{
-		    return new []
+		    return new IMethodTypeInternals[]
                 {$meta._.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|            this.Build$methodType._.FullName$(m),}; separator="\n"$
                 };
 		}
@@ -264,58 +264,44 @@ build_unit(unit) ::= <<
 >>
 
 build_interface(interface) ::= <<
-	        m.$interface._.SingularName$ = new Lazy$interface._.SingularName$(m, new System.Guid("$interface._.IdAsString$"))
-            {
-                SingularName = "$interface._.SingularName$",
-                $if(interface.PluralName)$PluralName = "$interface._.PluralName$",$endif$
-                $if(interface.AssignedIsSynced)$AssignedIsSynced = $interface._.AssignedIsSynced$$endif$
-            };
+	        m.$interface._.SingularName$.Init(id: new System.Guid("$interface._.IdAsString$"), singularName: "$interface._.SingularName$"$if(interface.PluralName)$, pluralName: "$interface._.PluralName$"$endif$$if(interface.AssignedIsSynced)$, isSynced: $interface._.AssignedIsSynced$$endif$);
 >>
 
 build_class(class) ::= <<
-	        m.$class._.SingularName$ = new Lazy$class._.SingularName$(m, new System.Guid("$class._.IdAsString$"))
-            {
-$if(!class.HasDatabaseOrigin)$                AssignedOrigin = Allors.Origin.$class._.Origin$,$endif$
-                SingularName = "$class._.SingularName$",
-                PluralName = "$class._.PluralName$",
-                $if(class.AssignedIsSynced)$AssignedIsSynced = $class._.AssignedIsSynced$$endif$
-            };
+	        m.$class._.SingularName$.Init(id: new System.Guid("$class._.IdAsString$"), singularName: "$class._.SingularName$", pluralName: "$class._.PluralName$"$if(!class.HasDatabaseOrigin)$, origin: Allors.Origin.$class._.Origin$$endif$$if(class.AssignedIsSynced)$, isSynced: $class._.AssignedIsSynced$$endif$);
 >>
 
 inheritance(composite) ::= <<$composite._.WorkspaceDirectSupertypesByWorkspaceName.(workspaceName):{superType|$build_inheritance(composite, superType)$}$>>
-build_inheritance(composite, superType) ::= <<$\n$                new Inheritance(m.$composite._.SingularName$, Supertype = m.$superType.SingularName$),>>
+build_inheritance(composite, superType) ::= <<$\n$                new Inheritance(m.$composite._.SingularName$, m.$superType.SingularName$),>>
 
 build_relationType(relationType) ::= <<
-        private RelationType Build$relationType._.Name$(LazyM m)
+        private IRelationTypeInternals Build$relationType._.Name$(LazyM m)
         {
-            var relationType = new RelationType(m.$relationType._.AssociationType._.ObjectType.SingularName$, new System.Guid("$relationType._.IdAsString$"), v => new Lazy$relationType._.AssociationType._.Name$(v), v => new Lazy$relationType._.RoleType._.FullName$(v))
-            {
-$if(!relationType._.HasDatabaseOrigin)$                AssignedOrigin = Origin.$relationType._.Origin$,$endif$
-$if(relationType.Multiplicity)$		        AssignedMultiplicity = Allors.Multiplicity.$relationType._.Multiplicity$,$endif$
-$if(relationType.IsDerived)$		        IsDerived = $relationType._.IsDerived$,$endif$
-$if(relationType.IsSynced)$		    IsSynced = $relationType._.IsSynced$,$endif$
-                RoleType =
-                {
-                    ObjectType = m.$relationType._.RoleType._.ObjectType.Name$,
-                    SingularName = "$relationType._.RoleType.SingularName$",
-                    PluralName = "$relationType._.RoleType.PluralName$",
-$if(relationType.RoleType.IsRequired)$		            IsRequired = $relationType._.RoleType.IsRequired$,$endif$
-$if(relationType.RoleType.IsUnique)$		          IsUnique = $relationType._.RoleType.IsUnique$,$endif$
-$if(relationType.RoleType.Size)$		            Size = $relationType._.RoleType.Size$,$endif$
-$if(relationType.RoleType.Precision)$		        Precision = $relationType._.RoleType.Precision$,$endif$
-$if(relationType.RoleType.Scale)$		        Scale = $relationType._.RoleType.Scale$,$endif$
-$if(relationType.RoleType.MediaType)$		        MediaType = "$relationType._.RoleType.MediaType$",$endif$
-                },
-            };
+            var associationType = (IAssociationTypeInternals)$if(relationType._.RoleType._.ObjectType._.IsUnit)$new AssociationTypeWithUnitRole();$else$m.$relationType._.RoleType._.ObjectType.SingularName$.$relationType._.AssociationType._.Name$;$endif$
+            var roleType = (RoleType)m.$relationType._.AssociationType._.ObjectType.SingularName$.$relationType._.RoleType._.Name$;
 
-            m.$relationType._.AssociationType._.ObjectType.SingularName$.$relationType.RoleType._.Name$ = ($relationType._.RoleType._.FullName$)relationType.RoleType;
+            var relationType = new RelationType(associationType, roleType);
+
+            relationType.Init(new System.Guid("$relationType._.IdAsString$")
+$if(!relationType._.HasDatabaseOrigin)$, origin: Origin.$relationType._.Origin$$endif$
+$if(relationType.Multiplicity)$, multiplicity: Allors.Multiplicity.$relationType._.Multiplicity$$endif$
+$if(relationType.IsDerived)$, isDerived: $relationType._.IsDerived$$endif$
+$if(relationType.IsSynced)$, isSynced: $relationType._.IsSynced$$endif$);
+
+             roleType.Init(objectType: m.$relationType._.RoleType._.ObjectType.Name$, singularName: "$relationType._.RoleType.SingularName$", pluralName: "$relationType._.RoleType.PluralName$"
+$if(relationType.RoleType.Size)$, size: $relationType._.RoleType.Size$$endif$
+$if(relationType.RoleType.Precision)$, precision: $relationType._.RoleType.Precision$$endif$
+$if(relationType.RoleType.Scale)$, scale: $relationType._.RoleType.Scale$$endif$
+$if(relationType.RoleType.IsRequired)$, isRequired: $relationType._.RoleType.IsRequired$$endif$
+$if(relationType.RoleType.IsUnique)$, isUnique: $relationType._.RoleType.IsUnique$$endif$
+$if(relationType.RoleType.MediaType)$, mediaType: "$relationType._.RoleType.MediaType$"$endif$);
 
             return relationType;
         }
 >>
 
 build_methodType(methodType) ::= <<
-        private MethodType Build$methodType._.FullName$(LazyM m)
+        private IMethodTypeInternals Build$methodType._.FullName$(LazyM m)
         {
             var methodType = new MethodType(m.$methodType._.ObjectType.Name$, new System.Guid("$methodType._.IdAsString$"))
             {
@@ -329,7 +315,7 @@ build_methodType(methodType) ::= <<
 
 assign_properties(composite) ::= <<
 $composite._.WorkspaceInheritedRoleTypesByWorkspaceName.(workspaceName):{roleType|$assign_roleType(roleType)$}; separator="\n"$
-$composite._.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{associationType|$assign_associationType(associationType)$}; separator="\n"$
+$composite._.WorkspaceInheritedAssociationTypesByWorkspaceName.(workspaceName):{associationType|$assign_associationType(associationType)$}; separator="\n"$
 >>
 
 assign_roleType(roleType) ::= <<

@@ -15,19 +15,24 @@ namespace Allors.Workspace.Meta
     /// A <see cref="RelationType"/> defines the state and behavior for
     /// a set of <see cref="AssociationType"/>s and <see cref="RoleType"/>s.
     /// </summary>
-    public sealed class RelationType : IRelationType
+    public sealed class RelationType : IRelationTypeInternals
     {
-        internal Origin Origin { get; private set; }
-        internal Guid Id { get; private set; }
-        internal Multiplicity Multiplicity { get; private set; }
+        public RelationType(IAssociationTypeInternals associationType, IRoleTypeInternals roleType)
+        {
+            this.AssociationType = associationType;
+            this.RoleType = roleType;
+        }
 
+        private IAssociationTypeInternals AssociationType { get; }
+        private IRoleTypeInternals RoleType { get; }
+
+        private Guid Id { get; set; }
         private string IdAsString { get; set; }
-        private IAssociationTypeInternals AssociationType { get; set; }
-        private IRoleTypeInternals RoleType { get; set; }
-
+        private Multiplicity Multiplicity { get; set; }
+        private Origin Origin { get; set; }
         private bool IsDerived { get; set; }
         private bool IsSynced { get; set; }
-        
+
         #region IMetaObject
 
         Origin IMetaObject.Origin => this.Origin;
@@ -62,19 +67,22 @@ namespace Allors.Workspace.Meta
 
         #endregion
 
+        #region IRelationTypeInternals
+
+        IAssociationTypeInternals IRelationTypeInternals.AssociationType => this.AssociationType;
+        IRoleTypeInternals IRelationTypeInternals.RoleType => this.RoleType;
+        #endregion
+
         public override string ToString() => $"{this.AssociationType.ObjectType.SingularName}{this.RoleType.Name}";
 
-        public void Init(Guid id, IAssociationTypeInternals associationType, IRoleTypeInternals roleType, Origin origin = Origin.Database) => this.Init(id, associationType, roleType, Multiplicity.ManyToOne, origin);
-
-        public void Init(Guid id, IAssociationTypeInternals associationType, IRoleTypeInternals roleType, Multiplicity multiplicity = Multiplicity.ManyToOne, Origin origin = Origin.Database)
+        public void Init(Guid id, Multiplicity multiplicity = Multiplicity.ManyToOne, Origin origin = Origin.Database, bool isDerived = false, bool isSynced = false)
         {
             this.Id = id;
             this.IdAsString = id.ToString("D");
-            this.AssociationType = associationType;
-            this.RoleType = roleType;
-            this.Origin = origin;
-
             this.Multiplicity = this.RoleType.ObjectType.IsUnit ? Multiplicity.OneToOne : multiplicity;
+            this.Origin = origin;
+            this.IsDerived = isDerived;
+            this.IsSynced = isSynced;
         }
     }
 }
