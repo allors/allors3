@@ -11,7 +11,7 @@ namespace Allors.Workspace.Meta
     /// <summary>
     /// A <see cref="IOperandType"/> can be a <see cref="IAssociationType"/> or a <see cref="IRoleType"/>.
     /// </summary>
-    public interface IOperandType : IMetaObject
+    public interface IOperandType
     {
         Guid OperandId { get; }
     }

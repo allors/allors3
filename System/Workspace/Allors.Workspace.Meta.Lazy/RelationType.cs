@@ -15,108 +15,66 @@ namespace Allors.Workspace.Meta
     /// A <see cref="RelationType"/> defines the state and behavior for
     /// a set of <see cref="AssociationType"/>s and <see cref="RoleType"/>s.
     /// </summary>
-    public sealed class RelationType : MetaObjectBase, IRelationType, IComparable
+    public sealed class RelationType : IRelationType
     {
-        private Multiplicity multiplicity;
+        internal Origin Origin { get; private set; }
+        internal Guid Id { get; private set; }
+        internal Multiplicity Multiplicity { get; private set; }
 
-        public RelationType(Composite associationTypeComposite, Guid id, Func<RelationType, AssociationType> associationTypeFactory, Func<RelationType, RoleType> roleTypeFactory)
-            : base(associationTypeComposite.MetaPopulation)
-        {
-            this.Id = id;
-            this.IdAsString = this.Id.ToString("D");
-            this.AssignedOrigin = Origin.Database;
+        private string IdAsString { get; set; }
+        private IAssociationTypeInternals AssociationType { get; set; }
+        private IRoleTypeInternals RoleType { get; set; }
 
-            this.AssociationType = associationTypeFactory(this);
-            this.AssociationType.ObjectType = associationTypeComposite;
-
-            this.RoleType = roleTypeFactory(this);
-        }
+        private bool IsDerived { get; set; }
+        private bool IsSynced { get; set; }
         
-        public Guid Id { get; }
+        #region IMetaObject
 
-        public string IdAsString { get; }
-        
-        public override Origin Origin => this.AssignedOrigin;
+        Origin IMetaObject.Origin => this.Origin;
 
-        public Origin AssignedOrigin { get; set; }
+        bool IMetaObject.HasDatabaseOrigin => this.Origin == Origin.Database;
 
-        public bool IsDerived { get; set; }
+        bool IMetaObject.HasWorkspaceOrigin => this.Origin == Origin.Workspace;
 
-        public bool IsSynced { get; set; }
+        bool IMetaObject.HasSessionOrigin => this.Origin == Origin.Session;
 
-        public Multiplicity AssignedMultiplicity { get; set; }
+        #endregion
 
-        public Multiplicity Multiplicity => this.multiplicity;
+        #region IMetaIdentifiableObject
+
+        Guid IMetaObject.Id => this.Id;
+
+        string IMetaObject.IdAsString => this.IdAsString;
+
+        #endregion
+
+        #region IRelationType
 
         IAssociationType IRelationType.AssociationType => this.AssociationType;
 
-        public AssociationType AssociationType { get; set; }
-
         IRoleType IRelationType.RoleType => this.RoleType;
 
-        public RoleType RoleType { get; set; }
+        Multiplicity IRelationType.Multiplicity => this.Multiplicity;
 
-        /// <summary>
-        /// Gets the name.
-        /// </summary>
-        /// <value>The name  .</value>
-        public string Name => this.AssociationType.ObjectType + this.RoleType.SingularName;
+        bool IRelationType.IsDerived => this.IsDerived;
 
-        /// <summary>
-        /// Gets the name of the reverse.
-        /// </summary>
-        /// <value>The name of the reverse.</value>
-        public string ReverseName => this.RoleType.SingularName + this.AssociationType.ObjectType;
+        bool IRelationType.IsSynced => this.IsSynced;
 
-        /// <summary>
-        /// Gets the validation name.
-        /// </summary>
-        /// <value>The validation name.</value>
-        public override string ValidationName => "relation type" + this.Name;
+        #endregion
 
-        public override bool Equals(object other) => this.Id.Equals((other as RelationType)?.Id);
+        public override string ToString() => $"{this.AssociationType.ObjectType.SingularName}{this.RoleType.Name}";
 
-        public override int GetHashCode() => this.Id.GetHashCode();
+        public void Init(Guid id, IAssociationTypeInternals associationType, IRoleTypeInternals roleType, Origin origin = Origin.Database) => this.Init(id, associationType, roleType, Multiplicity.ManyToOne, origin);
 
-        /// <summary>
-        /// Compares the current instance with another object of the same type.
-        /// </summary>
-        /// <param name="other">An object to compare with this instance.</param>
-        /// <returns>
-        /// A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has these meanings: Value Meaning Less than zero This instance is less than <paramref name="obj"/>. Zero This instance is equal to <paramref name="obj"/>. Greater than zero This instance is greater than <paramref name="obj"/>.
-        /// </returns>
-        /// <exception cref="T:System.ArgumentException">
-        /// <paramref name="other"/> is not the same type as this instance. </exception>
-        public int CompareTo(object other) => this.Id.CompareTo((other as RelationType)?.Id);
-
-        /// <summary>
-        /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
-        /// </returns>
-        public override string ToString()
+        public void Init(Guid id, IAssociationTypeInternals associationType, IRoleTypeInternals roleType, Multiplicity multiplicity = Multiplicity.ManyToOne, Origin origin = Origin.Database)
         {
-            try
-            {
-                return this.Name;
-            }
-            catch
-            {
-                return this.IdAsString;
-            }
-        }
-        
-        internal void DeriveMultiplicity()
-        {
-            if (this.RoleType?.ObjectType != null && this.RoleType.ObjectType.IsUnit)
-            {
-                this.multiplicity = Multiplicity.OneToOne;
-            }
-            else
-            {
-                this.multiplicity = this.AssignedMultiplicity;
-            }
+            this.Id = id;
+            this.IdAsString = id.ToString("D");
+            this.AssociationType = associationType;
+            this.RoleType = roleType;
+            this.Origin = origin;
+
+            this.Multiplicity = this.RoleType.ObjectType.IsUnit ? Multiplicity.OneToOne : multiplicity;
         }
     }
 }

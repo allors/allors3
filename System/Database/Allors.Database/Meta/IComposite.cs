@@ -17,6 +17,8 @@ namespace Allors.Database.Meta
 
         bool ExistExclusiveClass { get; }
 
+        IEnumerable<IAssociationType> InheritedAssociationTypes { get; }
+
         IEnumerable<IAssociationType> DatabaseAssociationTypes { get; }
 
         IEnumerable<IAssociationType> ExclusiveDatabaseAssociationTypes { get; }

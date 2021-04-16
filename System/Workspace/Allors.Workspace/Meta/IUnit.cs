@@ -14,6 +14,8 @@ namespace Allors.Workspace.Meta
 
         bool IsDecimal { get; }
 
+        bool IsDateTime { get; }
+
         bool IsFloat { get; }
 
         bool IsInteger { get; }

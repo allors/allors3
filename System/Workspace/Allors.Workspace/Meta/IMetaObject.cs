@@ -5,12 +5,17 @@
 
 namespace Allors.Workspace.Meta
 {
+    using System;
+
     /// <summary>
     /// Base interface for Meta objects.
     /// </summary>
     public interface IMetaObject
     {
-        IMetaPopulation MetaPopulation { get; }
+
+        Guid Id { get; }
+
+        string IdAsString { get; }
 
         Origin Origin { get; }
 

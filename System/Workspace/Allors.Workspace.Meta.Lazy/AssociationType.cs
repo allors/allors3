@@ -14,132 +14,43 @@ namespace Allors.Workspace.Meta
     /// This is also called the 'active', 'controlling' or 'owning' side.
     /// AssociationTypes can only have composite <see cref="ObjectType"/>s.
     /// </summary>
-    public abstract class AssociationType : OperandType, IAssociationType, IComparable
+    public abstract class AssociationType : IAssociationTypeInternals
     {
-        /// <summary>
-        /// Used to create property names.
-        /// </summary>
-        private const string Where = "Where";
+        public MetaPopulation MetaPopulation { get; set; }
 
-        protected AssociationType(RelationType relationType) : base(relationType.MetaPopulation) => this.RelationType = relationType;
+        internal IRelationTypeInternals RelationType { get; set; }
+        internal IRoleTypeInternals RoleType { get; set; }
 
-        public MetaPopulation M => this.MetaPopulation;
+        private ICompositeInternals ObjectType { get; set; }
+        private string SingularName { get; set; }
+        private string PluralName { get; set; }
+        private string Name { get; set; }
+        private bool IsMany { get; set; }
+        private bool IsOne { get; set; }
 
-        public override Origin Origin => this.RelationType.Origin;
+        #region IComparable
+        int IComparable<IPropertyType>.CompareTo(IPropertyType other) => string.Compare(this.Name, other.Name, StringComparison.InvariantCulture);
+        #endregion
 
-        public RelationType RelationType { get; }
+        #region IOperandType
+        Guid IOperandType.OperandId => this.RelationType.Id;
+        #endregion
 
-        IRelationType IAssociationType.RelationType => this.RelationType;
+        #region IPropertyType
 
-        IRoleType IAssociationType.RoleType => this.RoleType;
+        string IPropertyType.Name => this.Name;
 
-        /// <summary>
-        /// Gets the role.
-        /// </summary>
-        /// <value>The role .</value>
-        public RoleType RoleType => this.RelationType.RoleType;
+        string IPropertyType.SingularName => this.SingularName;
 
-        public Composite ObjectType { get; set; }
+        string IPropertyType.PluralName => this.PluralName;
 
         IObjectType IPropertyType.ObjectType => this.ObjectType;
-        IComposite IAssociationType.ObjectType => this.ObjectType;
 
-        /// <summary>
-        /// Gets the display name.
-        /// </summary>
-        public override string DisplayName => this.Name;
+        bool IPropertyType.IsOne => this.IsOne;
 
-        public override Guid OperandId => this.RelationType.Id;
+        bool IPropertyType.IsMany => this.IsMany;
 
-        /// <summary>
-        /// Gets the validation name.
-        /// </summary>
-        /// <value>The name of the validation.</value>
-        public override string ValidationName => "association type " + this.Name;
-
-        /// <summary>
-        /// Gets the name.
-        /// </summary>
-        /// <value>The name .</value>
-        public string Name => this.IsMany ? this.PluralName : this.SingularName;
-
-        /// <summary>
-        /// Gets the full name.
-        /// </summary>
-        /// <value>The full name.</value>
-        public string FullName => this.IsMany ? this.PluralName : this.SingularName;
-
-        /// <summary>
-        /// Gets the singular name when using <see cref="Where"/>.
-        /// </summary>
-        /// <value>The singular name when using <see cref="Where"/>.</value>
-        public string SingularName => this.ObjectType.SingularName + Where + this.RoleType.SingularName;
-
-        /// <summary>
-        /// Gets the singular name when using <see cref="Where"/>.
-        /// </summary>
-        /// <value>The singular name when using <see cref="Where"/>.</value>
-        public string SingularFullName => this.SingularName;
-
-        /// <summary>
-        /// Gets the plural name when using <see cref="Where"/>.
-        /// </summary>
-        /// <value>The plural name when using <see cref="Where"/>.</value>
-        public string PluralName => this.ObjectType.PluralName + Where + this.RoleType.SingularName;
-
-        /// <summary>
-        /// Gets the plural name when using <see cref="Where"/>.
-        /// </summary>
-        /// <value>The plural name when using <see cref="Where"/>.</value>
-        public string PluralFullName => this.PluralName;
-
-        public bool IsMany
-        {
-            get
-            {
-                switch (this.RelationType.Multiplicity)
-                {
-                    case Multiplicity.ManyToOne:
-                    case Multiplicity.ManyToMany:
-                        return true;
-
-                    default:
-                        return false;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether this instance has a multiplicity of one.
-        /// </summary>
-        /// <value><c>true</c> if this instance is one; otherwise, <c>false</c>.</value>
-        public bool IsOne => !this.IsMany;
-
-        public override bool Equals(object other) => this.RelationType.Id.Equals((other as AssociationType)?.RelationType.Id);
-
-        public override int GetHashCode() => this.RelationType.Id.GetHashCode();
-
-        /// <summary>
-        /// Compares the current instance with another object of the same type.
-        /// </summary>
-        /// <param name="other">An object to compare with this instance.</param>
-        /// <returns>
-        /// A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has these meanings: Value Meaning Less than zero This instance is less than <paramref name="other"/>. Zero This instance is equal to <paramref name="other"/>. Greater than zero This instance is greater than <paramref name="other"/>.
-        /// </returns>
-        /// <exception cref="T:System.ArgumentException">
-        /// <paramref name="other"/> is not the same type as this instance. </exception>
-        public int CompareTo(object other) => this.RelationType.Id.CompareTo((other as AssociationType)?.RelationType.Id);
-
-        ///// <summary>
-        ///// Instantiate the value of the association on this object.
-        ///// </summary>
-        ///// <param name="strategy">
-        ///// The strategy.
-        ///// </param>
-        ///// <returns>
-        ///// The association value.
-        ///// </returns>
-        public object Get(IStrategy strategy, IComposite ofType = null)
+        object IPropertyType.Get(IStrategy strategy, IComposite ofType)
         {
             if (this.IsOne)
             {
@@ -164,13 +75,30 @@ namespace Allors.Workspace.Meta
                 return association.Where(v => ofType.IsAssignableFrom(v.Strategy.Class));
             }
         }
+        #endregion
 
-        /// <summary>
-        /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
-        /// </returns>
-        public override string ToString() => $"{this.RoleType.ObjectType.SingularName}.{this.DisplayName}";
+        #region IAssociationType
+
+        IRelationType IAssociationType.RelationType => this.RelationType;
+
+        IComposite IAssociationType.ObjectType => this.ObjectType;
+
+        IRoleType IAssociationType.RoleType => this.RoleType;
+        #endregion
+
+        public override string ToString() => $"{this.RoleType.ObjectType.SingularName}.{this.Name}";
+
+        public void Init(ICompositeInternals objectType)
+        {
+            const string Where = "Where";
+
+            this.IsMany = this.RelationType.Multiplicity == Multiplicity.ManyToOne ||
+                          this.RelationType.Multiplicity == Multiplicity.ManyToMany;
+            this.IsOne = !this.IsMany;
+            this.ObjectType = objectType;
+            this.SingularName = this.ObjectType.SingularName + Where + this.RoleType.SingularName;
+            this.PluralName = this.ObjectType.PluralName + Where + this.RoleType.SingularName;
+            this.Name = this.IsMany ? this.PluralName : this.SingularName;
+        }
     }
 }

@@ -6,6 +6,8 @@
 
 namespace Allors.Workspace.Meta
 {
+    using System;
+
     /// <summary>
     /// An association type defines the association side of a relation.
     /// This is also called the 'active', 'controlling' or 'owning' side.
@@ -13,10 +15,6 @@ namespace Allors.Workspace.Meta
     /// </summary>
     public interface IAssociationType : IPropertyType
     {
-        string SingularFullName { get; }
-
-        string PluralFullName { get; }
-
         IRelationType RelationType { get; }
 
         new IComposite ObjectType { get; }

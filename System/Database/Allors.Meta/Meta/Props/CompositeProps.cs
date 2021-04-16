@@ -42,6 +42,8 @@ namespace Allors.Database.Meta
 
         public IEnumerable<IAssociationType> ExclusiveAssociationTypes => this.AsComposite.ExclusiveAssociationTypes;
 
+        public IEnumerable<IAssociationType> InheritedAssociationTypes => this.AsComposite.InheritedAssociationTypes;
+
         public IEnumerable<IRoleType> RoleTypes => this.AsComposite.RoleTypes;
 
         public IEnumerable<IRoleType> ExclusiveRoleTypes => this.AsComposite.ExclusiveRoleTypes;
@@ -87,6 +89,16 @@ namespace Allors.Database.Meta
                 this.MetaPopulation.Derive();
                 return this.WorkspaceNames
                     .ToDictionary(v => v, v => this.ExclusiveAssociationTypes.Where(w => w.RelationType.WorkspaceNames.Contains(v)));
+            }
+        }
+
+        public IReadOnlyDictionary<string, IEnumerable<IAssociationType>> WorkspaceInheritedAssociationTypesByWorkspaceName
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.WorkspaceNames
+                    .ToDictionary(v => v, v => this.InheritedAssociationTypes.Where(w => w.RelationType.WorkspaceNames.Contains(v)));
             }
         }
 

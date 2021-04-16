@@ -8,7 +8,7 @@ namespace Allors.Workspace.Meta
 {
     using System;
 
-    public interface IObjectType : IMetaIdentifiableObject, IComparable
+    public interface IObjectType : IMetaObject, IComparable<IObjectType>
     {
         bool IsUnit { get; }
 
