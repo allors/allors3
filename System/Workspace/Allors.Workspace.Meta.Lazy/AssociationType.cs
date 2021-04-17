@@ -37,6 +37,7 @@ namespace Allors.Workspace.Meta
         #endregion
 
         #region IPropertyType
+        Origin IPropertyType.Origin => this.RelationType.Origin;
 
         string IPropertyType.Name => this.Name;
 
@@ -84,6 +85,7 @@ namespace Allors.Workspace.Meta
         IComposite IAssociationType.ObjectType => this.ObjectType;
 
         IRoleType IAssociationType.RoleType => this.RoleType;
+
         #endregion
 
         public override string ToString() => $"{this.RoleType.ObjectType.SingularName}.{this.Name}";

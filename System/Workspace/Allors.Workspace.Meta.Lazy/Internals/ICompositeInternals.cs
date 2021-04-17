@@ -11,7 +11,7 @@ namespace Allors.Workspace.Meta
 
     public interface ICompositeInternals : IComposite
     {
-        MetaPopulation MetaPopulation { get; set; }
+        new MetaPopulation MetaPopulation { get; set; }
 
         new ISet<IInterfaceInternals> DirectSupertypes { get; set; }
 

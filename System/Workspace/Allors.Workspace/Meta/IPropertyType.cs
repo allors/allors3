@@ -13,6 +13,8 @@ namespace Allors.Workspace.Meta
     /// </summary>
     public interface IPropertyType : IOperandType, IComparable<IPropertyType>
     {
+        Origin Origin { get; }
+
         string Name { get; }
 
         string SingularName { get; }

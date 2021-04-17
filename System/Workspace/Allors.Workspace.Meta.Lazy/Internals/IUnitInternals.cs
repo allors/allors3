@@ -8,6 +8,8 @@ namespace Allors.Workspace.Meta
 {
     public interface IUnitInternals : IUnit
     {
+        new MetaPopulation MetaPopulation { get; set; }
+
         void Bind();
     }
 }

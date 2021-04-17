@@ -28,7 +28,7 @@ namespace Allors.Workspace.Meta
         private bool IsRequired { get; set; }
         private bool IsUnique { get; set; }
         private string MediaType { get; set; }
-        
+
         #region IComparable
         int IComparable<IPropertyType>.CompareTo(IPropertyType other) => string.Compare(this.Name, other.Name, StringComparison.InvariantCulture);
         #endregion
@@ -38,6 +38,8 @@ namespace Allors.Workspace.Meta
         #endregion
 
         #region IPropertyType
+
+        Origin IPropertyType.Origin => this.RelationType.Origin;
 
         string IPropertyType.Name => this.Name;
 

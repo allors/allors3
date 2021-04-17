@@ -303,13 +303,7 @@ $if(relationType.RoleType.MediaType)$, mediaType: "$relationType._.RoleType.Medi
 build_methodType(methodType) ::= <<
         private IMethodTypeInternals Build$methodType._.FullName$(LazyM m)
         {
-            var methodType = new MethodType(m.$methodType._.ObjectType.Name$, new System.Guid("$methodType._.IdAsString$"))
-            {
-                Name = "$methodType._.Name$",
-            };
-
-            m.$methodType._.ObjectType.Name$.$methodType._.Name$ = methodType;
-            return methodType;
+            return ((MethodType)m.$methodType._.ObjectType.Name$.$methodType._.Name$).Init(new System.Guid("$methodType._.IdAsString$"), m.$methodType._.ObjectType.Name$, "$methodType._.Name$");
         }
 >>
 

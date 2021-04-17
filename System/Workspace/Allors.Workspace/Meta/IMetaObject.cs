@@ -12,6 +12,7 @@ namespace Allors.Workspace.Meta
     /// </summary>
     public interface IMetaObject
     {
+        IMetaPopulation MetaPopulation { get; }
 
         Guid Id { get; }
 

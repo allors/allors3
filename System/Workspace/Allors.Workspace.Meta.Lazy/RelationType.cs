@@ -35,6 +35,8 @@ namespace Allors.Workspace.Meta
 
         #region IMetaObject
 
+        public IMetaPopulation MetaPopulation { get; }
+
         Origin IMetaObject.Origin => this.Origin;
 
         bool IMetaObject.HasDatabaseOrigin => this.Origin == Origin.Database;

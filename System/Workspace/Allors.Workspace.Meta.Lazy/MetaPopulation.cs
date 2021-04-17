@@ -85,6 +85,16 @@ namespace Allors.Workspace.Meta
                 composite.MetaPopulation = this;
             }
 
+            foreach (var unit in this.Units)
+            {
+                unit.MetaPopulation = this;
+            }
+
+            foreach (var methodType in this.MethodTypes)
+            {
+                methodType.MetaPopulation = this;
+            }
+
             // DirectSupertypes
             foreach (var grouping in inheritances.GroupBy(v => v.Subtype, v => v.Supertype))
             {
