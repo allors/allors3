@@ -157,10 +157,10 @@ namespace Allors.Workspace.Meta
 
         public override string ToString() => $"{this.AssociationType.ObjectType.SingularName}.{this.Name}";
 
-        public void Init(string singularName, string pluralName, int? size = null, int? precision = null, int? scale = null, bool isRequired = false, bool isUnique = false, string mediaType = null)
+        public void Init(string singularName = null, string pluralName = null, int? size = null, int? precision = null, int? scale = null, bool isRequired = false, bool isUnique = false, string mediaType = null)
         {
-            this.SingularName = singularName;
-            this.PluralName = pluralName ?? Pluralizer.Pluralize(singularName);
+            this.SingularName = singularName ?? this.ObjectType.SingularName;
+            this.PluralName = pluralName ?? Pluralizer.Pluralize(this.SingularName);
 
             this.IsMany = this.RelationType.Multiplicity == Multiplicity.OneToMany ||
                           this.RelationType.Multiplicity == Multiplicity.ManyToMany;

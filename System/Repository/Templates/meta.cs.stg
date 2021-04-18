@@ -373,7 +373,7 @@ $if(property.AttributeByName.Indexed)$		        IsIndexed = $property.AttributeB
                 RoleType =
                 {
                     ObjectType = meta.$property.Type.SingularName$,
-                    SingularName = "$property.RoleSingularName$",
+$if(property.AssignedRoleSingularName)$		            SingularName = "$property.RoleSingularName$",$endif$
 $if(property.AssignedRolePluralName)$		            PluralName = "$property.RolePluralName$",$endif$
 $if(property.AttributeByName.Required)$		            IsRequired = $property.AttributeByName.Required.Value$,$endif$
 $if(property.AttributeByName.Unique)$		          IsUnique = $property.AttributeByName.Unique.Value$,$endif$

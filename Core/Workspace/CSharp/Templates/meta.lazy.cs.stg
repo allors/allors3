@@ -264,11 +264,11 @@ build_unit(unit) ::= <<
 >>
 
 build_interface(interface) ::= <<
-	        m.$interface._.SingularName$.Init(id: new System.Guid("$interface._.IdAsString$"), singularName: "$interface._.SingularName$"$if(interface.PluralName)$, pluralName: "$interface._.PluralName$"$endif$$if(interface.AssignedIsSynced)$, isSynced: $interface._.AssignedIsSynced$$endif$);
+	        m.$interface._.SingularName$.Init(id: new System.Guid("$interface._.IdAsString$"), singularName: "$interface._.SingularName$"$if(interface.ExistAssignedPluralName)$, pluralName: "$interface._.PluralName$"$endif$$if(interface.AssignedIsSynced)$, isSynced: $interface._.AssignedIsSynced$$endif$);
 >>
 
 build_class(class) ::= <<
-	        m.$class._.SingularName$.Init(id: new System.Guid("$class._.IdAsString$"), singularName: "$class._.SingularName$", pluralName: "$class._.PluralName$"$if(!class.HasDatabaseOrigin)$, origin: Allors.Origin.$class._.Origin$$endif$$if(class.AssignedIsSynced)$, isSynced: $class._.AssignedIsSynced$$endif$);
+	        m.$class._.SingularName$.Init(id: new System.Guid("$class._.IdAsString$"), singularName: "$class._.SingularName$"$if(class.ExistAssignedPluralName)$, pluralName: "$class._.PluralName$"$endif$$if(!class.HasDatabaseOrigin)$, origin: Allors.Origin.$class._.Origin$$endif$$if(class.AssignedIsSynced)$, isSynced: $class._.AssignedIsSynced$$endif$);
 >>
 
 inheritance(composite) ::= <<$composite._.WorkspaceDirectSupertypesByWorkspaceName.(workspaceName):{superType|$build_inheritance(composite, superType)$}$>>
@@ -295,16 +295,17 @@ isDerived(relationType) ::= <<$if(relationType.IsDerived)$isDerived: $relationTy
 isSynced(relationType) ::= <<$if(relationType.IsSynced)$isSynced: $relationType._.IsSynced$$endif$>>
 
 initRoleType(roleType) ::= <<
-            roleType.Init("$relationType._.RoleType.SingularName$"$Separated([pluralName(roleType), size(roleType), precision(roleType), scale(roleType), isRequired(roleType), isUnique(roleType), mediaType(roleType)], " ")$);
+            roleType.Init($Separated([singularName(roleType), pluralName(roleType), size(roleType), precision(roleType), scale(roleType), isRequired(roleType), isUnique(roleType), mediaType(roleType)], ",")$);
 >>
 
-pluralName(roleType) ::= <<$if(roleType.PluralName)$, pluralName: "$roleType._.PluralName$"$endif$>>
-size(roleType) ::= <<$if(relationType.RoleType.Size)$, size: $relationType._.RoleType.Size$ $endif$>>
-precision(roleType) ::= <<$if(relationType.RoleType.Precision)$, precision: $relationType._.RoleType.Precision$$endif$>>
-scale(roleType) ::= <<$if(relationType.RoleType.Scale)$, scale: $relationType._.RoleType.Scale$$endif$>>
-isRequired(roleType) ::= <<$if(relationType.RoleType.IsRequired)$, isRequired: $relationType._.RoleType.IsRequired$$endif$>>
-isUnique(roleType) ::= <<$if(relationType.RoleType.IsUnique)$, isUnique: $relationType._.RoleType.IsUnique$$endif$>>
-mediaType(roleType) ::= <<$if(relationType.RoleType.MediaType)$, mediaType: "$relationType._.RoleType.MediaType$"$endif$>>
+singularName(roleType) ::= <<$if(roleType.ExistAssignedSingularName)$singularName: "$roleType.SingularName$"$endif$>>
+pluralName(roleType) ::= <<$if(roleType.ExistAssignedPluralName)$pluralName: "$roleType.PluralName$"$endif$>>
+size(roleType) ::= <<$if(relationType.RoleType.Size)$size: $relationType._.RoleType.Size$ $endif$>>
+precision(roleType) ::= <<$if(relationType.RoleType.Precision)$precision: $relationType._.RoleType.Precision$$endif$>>
+scale(roleType) ::= <<$if(relationType.RoleType.Scale)$scale: $relationType._.RoleType.Scale$$endif$>>
+isRequired(roleType) ::= <<$if(relationType.RoleType.IsRequired)$isRequired: $relationType._.RoleType.IsRequired$$endif$>>
+isUnique(roleType) ::= <<$if(relationType.RoleType.IsUnique)$isUnique: $relationType._.RoleType.IsUnique$$endif$>>
+mediaType(roleType) ::= <<$if(relationType.RoleType.MediaType)$mediaType: "$relationType._.RoleType.MediaType$"$endif$>>
 
 build_methodType(methodType) ::= <<
         private IMethodTypeInternals Build$methodType._.FullName$(LazyM m)

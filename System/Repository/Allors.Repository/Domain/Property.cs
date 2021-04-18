@@ -123,6 +123,8 @@ namespace Allors.Repository.Domain
             }
         }
 
+        public string AssignedRoleSingularName => !this.RoleSingularName.Equals(this.Type.SingularName) ? this.RoleSingularName : null;
+
         public string RolePluralName
         {
             get

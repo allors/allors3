@@ -94,7 +94,7 @@ namespace Allors.Database.Meta
 
         public string SingularName
         {
-            get => this.singularName;
+            get => !string.IsNullOrEmpty(this.singularName) ? this.singularName : this.ObjectType.SingularName;
 
             set
             {
@@ -104,6 +104,8 @@ namespace Allors.Database.Meta
             }
         }
 
+        public bool ExistAssignedSingularName => !this.SingularName.Equals(this.ObjectType.SingularName);
+
         /// <summary>
         /// Gets the full singular name.
         /// </summary>
@@ -112,7 +114,20 @@ namespace Allors.Database.Meta
 
         public string PluralName
         {
-            get => !string.IsNullOrEmpty(this.pluralName) ? this.pluralName : Pluralizer.Pluralize(this.SingularName);
+            get
+            {
+                if (!string.IsNullOrEmpty(this.pluralName))
+                {
+                    return this.pluralName;
+                }
+
+                if (!string.IsNullOrEmpty(this.singularName))
+                {
+                    return Pluralizer.Pluralize(this.singularName);
+                }
+
+                return this.ObjectType.PluralName;
+            }
 
             set
             {
@@ -122,7 +137,7 @@ namespace Allors.Database.Meta
             }
         }
 
-        public bool ExistAssignedPluralName => !string.IsNullOrEmpty(this.PluralName) && !this.PluralName.Equals(Pluralizer.Pluralize(this.SingularName));
+        public bool ExistAssignedPluralName => !this.PluralName.Equals(Pluralizer.Pluralize(this.SingularName));
 
         /// <summary>
         /// Gets the full plural name.
