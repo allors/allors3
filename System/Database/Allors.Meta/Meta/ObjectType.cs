@@ -40,15 +40,7 @@ namespace Allors.Database.Meta
 
         public string PluralName
         {
-            get
-            {
-                if (!string.IsNullOrEmpty(this.pluralName))
-                {
-                    return this.pluralName;
-                }
-
-                return this.SingularName + RoleType.PluralSuffix;
-            }
+            get => !string.IsNullOrEmpty(this.pluralName) ? this.pluralName : Pluralizer.Pluralize(this.SingularName);
 
             set
             {
@@ -58,7 +50,7 @@ namespace Allors.Database.Meta
             }
         }
 
-        public bool ExistAssignedPluralName => !string.IsNullOrEmpty(this.PluralName) && !this.PluralName.Equals(this.SingularName + "s");
+        public bool ExistAssignedPluralName => !string.IsNullOrEmpty(this.PluralName) && !this.PluralName.Equals(Pluralizer.Pluralize(this.SingularName));
 
         /// <summary>
         /// Gets the name.

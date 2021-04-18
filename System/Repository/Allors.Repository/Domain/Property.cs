@@ -139,6 +139,8 @@ namespace Allors.Repository.Domain
             }
         }
 
+        public string AssignedRolePluralName => !Pluralizer.Pluralize(this.RoleSingularName).Equals(this.RolePluralName) ? this.RolePluralName : null;
+
         public string AssociationName
         {
             get
