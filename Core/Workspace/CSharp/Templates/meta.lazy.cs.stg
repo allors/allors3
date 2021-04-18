@@ -280,25 +280,31 @@ build_relationType(relationType) ::= <<
             var associationType = (IAssociationTypeInternals)$if(relationType._.RoleType._.ObjectType._.IsUnit)$new AssociationTypeWithUnitRole();$else$m.$relationType._.RoleType._.ObjectType.SingularName$.$relationType._.AssociationType._.Name$;$endif$
             var roleType = (RoleType)m.$relationType._.AssociationType._.ObjectType.SingularName$.$relationType._.RoleType._.Name$;
 
-            var relationType = new RelationType(associationType, roleType);
+            var relationType = new RelationType(new System.Guid("$relationType._.IdAsString$"), associationType, m.$relationType._.AssociationType._.ObjectType.Name$, roleType, m.$relationType._.RoleType._.ObjectType.Name$$if(relationType.Multiplicity)$, Allors.Multiplicity.$relationType._.Multiplicity$$endif$);
 
-            relationType.Init(new System.Guid("$relationType._.IdAsString$")
-$if(!relationType._.HasDatabaseOrigin)$, origin: Origin.$relationType._.Origin$$endif$
-$if(relationType.Multiplicity)$, multiplicity: Allors.Multiplicity.$relationType._.Multiplicity$$endif$
-$if(relationType.IsDerived)$, isDerived: $relationType._.IsDerived$$endif$
-$if(relationType.IsSynced)$, isSynced: $relationType._.IsSynced$$endif$);
+            relationType.Init($Separated([origin(relationType), isDerived(relationType), isSynced(relationType)], ",")$);
 
-             roleType.Init(objectType: m.$relationType._.RoleType._.ObjectType.Name$, singularName: "$relationType._.RoleType.SingularName$", pluralName: "$relationType._.RoleType.PluralName$"
-$if(relationType.RoleType.Size)$, size: $relationType._.RoleType.Size$$endif$
-$if(relationType.RoleType.Precision)$, precision: $relationType._.RoleType.Precision$$endif$
-$if(relationType.RoleType.Scale)$, scale: $relationType._.RoleType.Scale$$endif$
-$if(relationType.RoleType.IsRequired)$, isRequired: $relationType._.RoleType.IsRequired$$endif$
-$if(relationType.RoleType.IsUnique)$, isUnique: $relationType._.RoleType.IsUnique$$endif$
-$if(relationType.RoleType.MediaType)$, mediaType: "$relationType._.RoleType.MediaType$"$endif$);
+$initRoleType(roleType=relationType.RoleType)$
 
             return relationType;
         }
 >>
+
+origin(relationType) ::= <<$if(!relationType._.HasDatabaseOrigin)$origin: Origin.$relationType._.Origin$$endif$>>
+isDerived(relationType) ::= <<$if(relationType.IsDerived)$isDerived: $relationType._.IsDerived$$endif$>>
+isSynced(relationType) ::= <<$if(relationType.IsSynced)$isSynced: $relationType._.IsSynced$$endif$>>
+
+initRoleType(roleType) ::= <<
+            roleType.Init("$relationType._.RoleType.SingularName$"$Separated([pluralName(roleType), size(roleType), precision(roleType), scale(roleType), isRequired(roleType), isUnique(roleType), mediaType(roleType)], " ")$);
+>>
+
+pluralName(roleType) ::= <<$if(roleType.PluralName)$, pluralName: "$roleType._.PluralName$"$endif$>>
+size(roleType) ::= <<$if(relationType.RoleType.Size)$, size: $relationType._.RoleType.Size$ $endif$>>
+precision(roleType) ::= <<$if(relationType.RoleType.Precision)$, precision: $relationType._.RoleType.Precision$$endif$>>
+scale(roleType) ::= <<$if(relationType.RoleType.Scale)$, scale: $relationType._.RoleType.Scale$$endif$>>
+isRequired(roleType) ::= <<$if(relationType.RoleType.IsRequired)$, isRequired: $relationType._.RoleType.IsRequired$$endif$>>
+isUnique(roleType) ::= <<$if(relationType.RoleType.IsUnique)$, isUnique: $relationType._.RoleType.IsUnique$$endif$>>
+mediaType(roleType) ::= <<$if(relationType.RoleType.MediaType)$, mediaType: "$relationType._.RoleType.MediaType$"$endif$>>
 
 build_methodType(methodType) ::= <<
         private IMethodTypeInternals Build$methodType._.FullName$(LazyM m)
@@ -327,3 +333,7 @@ $composite._.WorkspaceInheritedMethodTypesByWorkspaceName.(workspaceName):{metho
 assign_methodType(methodType) ::= <<
                 m.$composite._.SingularName$.$methodType._.Name$ = m.$methodType._.ObjectType._.SingularName$.$methodType._.Name$;
 >>
+
+DropEmpty ::= ["": false, default: key]
+
+Separated(l, s, w=false) ::= "$if (DropEmpty.(first(l)))$$if (w)$$s$$endif$$first(l)$$Separated(rest(l), s, true)$$else$$if (rest(l))$$Separated(rest(l), s, w)$$endif$$endif$"
