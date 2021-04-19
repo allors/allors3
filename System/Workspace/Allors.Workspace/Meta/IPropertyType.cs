@@ -6,11 +6,15 @@
 
 namespace Allors.Workspace.Meta
 {
+    using System;
+
     /// <summary>
     /// A <see cref="IPropertyType"/> can be a <see cref="IAssociationType"/> or a <see cref="IRoleType"/>.
     /// </summary>
-    public interface IPropertyType : IOperandType
+    public interface IPropertyType : IOperandType, IComparable<IPropertyType>
     {
+        Origin Origin { get; }
+
         string Name { get; }
 
         string SingularName { get; }

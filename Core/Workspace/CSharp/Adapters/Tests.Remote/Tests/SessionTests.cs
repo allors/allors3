@@ -563,7 +563,7 @@ namespace Tests.Workspace.Remote
 
             Assert.NotNull(mathijs.Strategy.Id);
             Assert.Equal(10000, mathijs.Id);
-            Assert.Equal("Person", mathijs.Strategy.Class.Name);
+            Assert.Equal("Person", mathijs.Strategy.Class.SingularName);
 
             var mathijs2 = session.Get<Person>(10000);
 

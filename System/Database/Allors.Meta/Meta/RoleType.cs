@@ -16,15 +16,13 @@ namespace Allors.Database.Meta
         /// </summary>
         public const int MaximumSize = -1;
 
-        public const string PluralSuffix = "s";
-
         private readonly IMetaPopulationBase metaPopulation;
         private IObjectTypeBase objectType;
 
+        private string singularName;
         private string pluralName;
         private int? precision;
         private int? scale;
-        private string singularName;
         private int? size;
         private bool? isRequired;
         private bool? isUnique;
@@ -96,7 +94,7 @@ namespace Allors.Database.Meta
 
         public string SingularName
         {
-            get => this.singularName;
+            get => !string.IsNullOrEmpty(this.singularName) ? this.singularName : this.ObjectType.SingularName;
 
             set
             {
@@ -106,6 +104,8 @@ namespace Allors.Database.Meta
             }
         }
 
+        public bool ExistAssignedSingularName => !this.SingularName.Equals(this.ObjectType.SingularName);
+
         /// <summary>
         /// Gets the full singular name.
         /// </summary>
@@ -114,7 +114,20 @@ namespace Allors.Database.Meta
 
         public string PluralName
         {
-            get => this.pluralName;
+            get
+            {
+                if (!string.IsNullOrEmpty(this.pluralName))
+                {
+                    return this.pluralName;
+                }
+
+                if (!string.IsNullOrEmpty(this.singularName))
+                {
+                    return Pluralizer.Pluralize(this.singularName);
+                }
+
+                return this.ObjectType.PluralName;
+            }
 
             set
             {
@@ -123,6 +136,8 @@ namespace Allors.Database.Meta
                 this.metaPopulation.Stale();
             }
         }
+
+        public bool ExistAssignedPluralName => !this.PluralName.Equals(Pluralizer.Pluralize(this.SingularName));
 
         /// <summary>
         /// Gets the full plural name.

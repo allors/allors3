@@ -10,6 +10,8 @@ namespace Allors.Workspace.Meta
 
     public interface IComposite : IObjectType
     {
+        bool IsSynced { get; }
+
         IEnumerable<IInterface> DirectSupertypes { get; }
 
         IEnumerable<IInterface> Supertypes { get; }

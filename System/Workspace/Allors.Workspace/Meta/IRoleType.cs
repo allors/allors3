@@ -13,15 +13,9 @@ namespace Allors.Workspace.Meta
     /// This is also called the 'passive' side.
     /// RoleTypes can have composite and unit <see cref="ObjectType"/>s.
     /// </summary>
-    public interface IRoleType : IPropertyType, IComparable
+    public interface IRoleType : IPropertyType
     {
-        string SingularFullName { get; }
-
-        string PluralFullName { get; }
-
         IAssociationType AssociationType { get; }
-
-        IComposite AssociationTypeComposite { get; }
 
         IRelationType RelationType { get; }
 
@@ -30,5 +24,11 @@ namespace Allors.Workspace.Meta
         int? Precision { get; }
 
         int? Scale { get; }
+
+        bool IsRequired { get; }
+
+        bool IsUnique { get; }
+
+        string MediaType { get; }
     }
 }

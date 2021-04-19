@@ -9,63 +9,114 @@ namespace Allors.Workspace.Meta
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Reflection;
 
     public abstract class MetaPopulation : IMetaPopulation
     {
-        private Unit[] units;
-        private Interface[] interfaces;
-        private Class[] classes;
-        private Inheritance[] inheritances;
-        private RelationType[] relationTypes;
-        private MethodType[] methodTypes;
+        private IUnitInternals[] Units { get; set; }
+        private IInterfaceInternals[] Interfaces { get; set; }
+        private IClassInternals[] Classes { get; set; }
+        private IRelationTypeInternals[] RelationTypes { get; set; }
+        private IMethodTypeInternals[] MethodTypes { get; set; }
 
-        private Dictionary<Guid, MetaObjectBase> metaObjectById;
+        private Dictionary<Guid, IMetaObject> MetaObjectById { get; set; }
+        private ICompositeInternals[] Composites { get; set; }
+        private Dictionary<string, ICompositeInternals> CompositeByLowercaseName { get; set; }
 
-        private Composite[] composites;
-        private Dictionary<string, Composite> compositeByLowercaseName;
-
-        public void Derive(Unit[] builderUnits, Interface[] builderInterfaces, Class[] builderClasses, Inheritance[] builderInheritances, RelationType[] builderRelationTypes, MethodType[] builderMethodTypes)
+        #region IMetaPopulation
+        IEnumerable<IUnit> IMetaPopulation.Units => this.Units;
+        IEnumerable<IInterface> IMetaPopulation.Interfaces => this.Interfaces;
+        IEnumerable<IClass> IMetaPopulation.Classes => this.Classes;
+        IEnumerable<IRelationType> IMetaPopulation.RelationTypes => this.RelationTypes;
+        IEnumerable<IMethodType> IMetaPopulation.MethodTypes => this.MethodTypes;
+        IEnumerable<IComposite> IMetaPopulation.Composites => this.Composites;
+        IMetaObject IMetaPopulation.Find(Guid id)
         {
-            this.units = builderUnits;
-            this.interfaces = builderInterfaces;
-            this.classes = builderClasses;
-            this.inheritances = builderInheritances;
-            this.relationTypes = builderRelationTypes;
-            this.methodTypes = builderMethodTypes;
+            this.MetaObjectById.TryGetValue(id, out var metaObject);
 
-            this.metaObjectById =
-                this.units.Cast<MetaObjectBase>()
-                .Union(this.classes)
-                .Union(this.relationTypes)
-                .Union(this.methodTypes)
-                .ToDictionary(v => ((IMetaIdentifiableObject)v).Id, v => v);
+            return metaObject;
+        }
+        IComposite IMetaPopulation.FindByName(string name)
+        {
+            this.CompositeByLowercaseName.TryGetValue(name.ToLowerInvariant(), out var composite);
+            return composite;
+        }
+        void IMetaPopulation.Bind(Type[] types)
+        {
+            var typeByName = types.ToDictionary(type => type.Name, type => type);
 
-            this.composites = this.interfaces.Cast<Composite>().Union(this.classes).ToArray();
-            this.compositeByLowercaseName = this.Composites.ToDictionary(v => v.Name.ToLowerInvariant());
+            foreach (var unit in this.Units)
+            {
+                unit.Bind();
+            }
+
+            foreach (var @interface in this.Interfaces)
+            {
+                @interface.Bind(typeByName);
+            }
+
+            foreach (var @class in this.Classes)
+            {
+                @class.Bind(typeByName);
+            }
+        }
+
+        #endregion
+
+        public void Init(IUnitInternals[] units, IInterfaceInternals[] interfaces, IClassInternals[] classes, Inheritance[] inheritances, IRelationTypeInternals[] relationTypes, IMethodTypeInternals[] methodTypes)
+        {
+            this.Units = units;
+            this.Interfaces = interfaces;
+            this.Classes = classes;
+            this.RelationTypes = relationTypes;
+            this.MethodTypes = methodTypes;
+
+            this.MetaObjectById =
+                this.Units.Cast<IMetaObject>()
+                .Union(this.Classes)
+                .Union(this.RelationTypes)
+                .Union(this.MethodTypes)
+                .ToDictionary(v => ((IMetaObject)v).Id, v => v);
+
+            this.Composites = this.Interfaces.Cast<ICompositeInternals>().Union(this.Classes).ToArray();
+            this.CompositeByLowercaseName = this.Composites.ToDictionary(v => v.SingularName.ToLowerInvariant());
+
+            foreach (var composite in this.Composites)
+            {
+                composite.MetaPopulation = this;
+            }
+
+            foreach (var unit in this.Units)
+            {
+                unit.MetaPopulation = this;
+            }
+
+            foreach (var methodType in this.MethodTypes)
+            {
+                methodType.MetaPopulation = this;
+            }
 
             // DirectSupertypes
-            foreach (var grouping in this.inheritances.GroupBy(v => v.Subtype, v => v.Supertype))
+            foreach (var grouping in inheritances.GroupBy(v => v.Subtype, v => v.Supertype))
             {
                 var composite = grouping.Key;
-                composite.directSupertypes = new HashSet<Interface>(grouping);
+                composite.DirectSupertypes = new HashSet<IInterfaceInternals>(grouping);
             }
 
             // DirectSubtypes
-            foreach (var grouping in this.inheritances.GroupBy(v => v.Supertype, v => v.Subtype))
+            foreach (var grouping in inheritances.GroupBy(v => v.Supertype, v => v.Subtype))
             {
                 var @interface = grouping.Key;
-                @interface.directSubtypes = new HashSet<Composite>(grouping);
+                @interface.DirectSubtypes = new HashSet<ICompositeInternals>(grouping);
             }
 
             // Supertypes
-            foreach (var composite in this.composites)
+            foreach (var composite in this.Composites)
             {
-                static IEnumerable<Interface> RecurseDirectSupertypes(Composite composite)
+                static IEnumerable<IInterfaceInternals> RecurseDirectSupertypes(ICompositeInternals composite)
                 {
-                    if (composite.directSupertypes != null)
+                    if (composite.DirectSupertypes != null)
                     {
-                        foreach (var directSupertype in composite.directSupertypes)
+                        foreach (var directSupertype in composite.DirectSupertypes)
                         {
                             yield return directSupertype;
 
@@ -77,17 +128,17 @@ namespace Allors.Workspace.Meta
                     }
                 }
 
-                composite.supertypes = new HashSet<Interface>(RecurseDirectSupertypes(composite));
+                composite.Supertypes = new HashSet<IInterfaceInternals>(RecurseDirectSupertypes(composite));
             }
 
             // Subtypes
-            foreach (var @interface in this.interfaces)
+            foreach (var @interface in this.Interfaces)
             {
-                static IEnumerable<Composite> RecurseDirectSubtypes(Interface @interface)
+                static IEnumerable<ICompositeInternals> RecurseDirectSubtypes(IInterfaceInternals @interface)
                 {
-                    if (@interface.directSubtypes != null)
+                    if (@interface.DirectSubtypes != null)
                     {
-                        foreach (var directSubtype in @interface.directSubtypes)
+                        foreach (var directSubtype in @interface.DirectSubtypes)
                         {
                             yield return directSubtype;
 
@@ -102,104 +153,47 @@ namespace Allors.Workspace.Meta
                     }
                 }
 
-                @interface.subtypes = new HashSet<Composite>(RecurseDirectSubtypes(@interface));
-                @interface.classes = new HashSet<Class>(@interface.subtypes.Where(v => v.IsClass).Cast<Class>());
+                @interface.Subtypes = new HashSet<ICompositeInternals>(RecurseDirectSubtypes(@interface));
+                @interface.Classes = new HashSet<IClassInternals>(@interface.Subtypes.Where(v => v.IsClass).Cast<Class>());
             }
 
-            // TODO:
-
-            // RoleTypes & AssociationTypes
-            var roleTypesByAssociationTypeObjectType = this.relationTypes
-                .GroupBy(v => v.AssociationType.ObjectType)
-                .ToDictionary(g => g.Key, g => new HashSet<RoleType>(g.Select(v => v.RoleType)));
-
-
-            var associationTypesByRoleTypeObjectType = this.relationTypes
-                .GroupBy(v => v.RoleType.ObjectType)
-                .ToDictionary(g => g.Key, g => new HashSet<AssociationType>(g.Select(v => v.AssociationType)));
-
             // RoleTypes
-            var sharedRoleTypes = new HashSet<RoleType>();
-            foreach (var composite in this.composites)
             {
-                composite.DeriveRoleTypes(sharedRoleTypes, roleTypesByAssociationTypeObjectType);
+                var exclusiveRoleTypesObjectType = this.RelationTypes
+                    .GroupBy(v => v.AssociationType.ObjectType)
+                    .ToDictionary(g => g.Key, g => g.Select(v => v.RoleType).ToArray());
+
+                foreach (var objectType in this.Composites)
+                {
+                    exclusiveRoleTypesObjectType.TryGetValue(objectType, out var exclusiveRoleTypes);
+                    objectType.ExclusiveRoleTypes = exclusiveRoleTypes ?? Array.Empty<IRoleTypeInternals>();
+                }
             }
 
             // AssociationTypes
-            var sharedAssociationTypes = new HashSet<AssociationType>();
-            foreach (var composite in this.composites)
             {
-                composite.DeriveAssociationTypes(sharedAssociationTypes, associationTypesByRoleTypeObjectType);
-            }
+                var exclusiveAssociationTypesByObjectType = this.RelationTypes
+                   .GroupBy(v => v.RoleType.ObjectType)
+                   .ToDictionary(g => g.Key, g => g.Select(v => v.AssociationType).ToArray());
 
-            // RoleType
-            foreach (var relationType in this.relationTypes)
-            {
-                relationType.RoleType.DeriveScaleAndSize();
+                foreach (var objectType in this.Composites)
+                {
+                    exclusiveAssociationTypesByObjectType.TryGetValue(objectType, out var exclusiveAssociationTypes);
+                    objectType.ExclusiveAssociationTypes = exclusiveAssociationTypes ?? Array.Empty<IAssociationTypeInternals>();
+                }
             }
-
-            // RelationType Multiplicity
-            foreach (var relationType in this.relationTypes)
-            {
-                relationType.DeriveMultiplicity();
-            }
-
-            var sharedMethodTypeList = new HashSet<MethodType>();
 
             // MethodTypes
-            var methodTypeByClass = this.methodTypes
-                .GroupBy(v => v.Composite)
-                .ToDictionary(g => g.Key, g => new HashSet<MethodType>(g));
-
-            foreach (var type in this.composites)
             {
-                type.DeriveMethodTypes(sharedMethodTypeList, methodTypeByClass);
-            }
-        }
+                var exclusiveMethodTypeByObjectType = this.MethodTypes
+                    .GroupBy(v => v.ObjectType)
+                    .ToDictionary(g => g.Key, g => g.ToArray());
 
-        IEnumerable<IUnit> IMetaPopulation.Units => this.units;
-        IEnumerable<IInterface> IMetaPopulation.Interfaces => this.interfaces;
-        IEnumerable<IClass> IMetaPopulation.Classes => this.classes;
-        IEnumerable<IRelationType> IMetaPopulation.RelationTypes => this.relationTypes;
-        IEnumerable<IMethodType> IMetaPopulation.MethodTypes => this.methodTypes;
-
-        IEnumerable<IComposite> IMetaPopulation.Composites => this.Composites;
-        public IEnumerable<Composite> Composites => this.composites;
-
-        IMetaObject IMetaPopulation.Find(Guid id) => this.Find(id);
-        public MetaObjectBase Find(Guid id)
-        {
-            this.metaObjectById.TryGetValue(id, out var metaObject);
-
-            return metaObject;
-        }
-
-        IComposite IMetaPopulation.FindByName(string name) => this.FindByName(name);
-        public IComposite FindByName(string name)
-        {
-            this.compositeByLowercaseName.TryGetValue(name.ToLowerInvariant(), out var composite);
-            return composite;
-        }
-
-        void IMetaPopulation.Bind(Type[] types) => this.Bind(types);
-        public void Bind(Type[] types)
-        {
-
-            var typeByName = types.ToDictionary(type => type.Name, type => type);
-
-            foreach (var unit in this.units)
-            {
-                unit.Bind();
-            }
-
-            foreach (var @interface in this.interfaces)
-            {
-                @interface.Bind(typeByName);
-            }
-
-            foreach (var @class in this.classes)
-            {
-                @class.Bind(typeByName);
+                foreach (var objectType in this.Composites)
+                {
+                    exclusiveMethodTypeByObjectType.TryGetValue(objectType, out var exclusiveMethodTypes);
+                    objectType.ExclusiveMethodTypes = exclusiveMethodTypes ?? Array.Empty<IMethodTypeInternals>();
+                }
             }
         }
     }

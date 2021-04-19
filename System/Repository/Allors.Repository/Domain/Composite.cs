@@ -38,6 +38,8 @@ namespace Allors.Repository.Domain
             }
         }
 
+        public string AssignedPluralName => !Pluralizer.Pluralize(this.SingularName).Equals(this.PluralName) ? this.PluralName : null;
+
         public abstract Interface[] Interfaces { get; }
 
         public Dictionary<string, Attribute> AttributeByName { get; }

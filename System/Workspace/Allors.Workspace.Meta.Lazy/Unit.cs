@@ -7,111 +7,130 @@
 namespace Allors.Workspace.Meta
 {
     using System;
+    using System.Runtime.CompilerServices;
 
-    public abstract class Unit : ObjectType, IUnit
+    public abstract class Unit : IUnitInternals
     {
-        private Type clrType;
+        public MetaPopulation MetaPopulation { get; set; }
 
-        protected Unit(MetaPopulation metaPopulation, Guid id) : base(metaPopulation, id) { }
+        private Guid Id { get; set; }
 
-        public UnitTags UnitTag { get; set; }
+        private string IdAsString { get; set; }
 
-        /// <summary>
-        /// Gets a value indicating whether this instance is a binary.
-        /// </summary>
-        /// <value><c>true</c> if this instance is a binary; otherwise, <c>false</c>.</value>
-        public bool IsBinary => this.Id.Equals(UnitIds.Binary);
+        private UnitTags UnitTag { get; set; }
 
-        /// <summary>
-        /// Gets a value indicating whether this instance is a boolean.
-        /// </summary>
-        /// <value>
-        /// <c>true</c> if this instance is a boolean; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsBoolean => this.Id.Equals(UnitIds.Boolean);
+        private string SingularName { get; set; }
 
-        /// <summary>
-        /// Gets a value indicating whether this instance is a date time.
-        /// </summary>
-        /// <value>
-        /// <c>true</c> if this instance is a date time; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsDateTime => this.Id.Equals(UnitIds.DateTime);
+        private string PluralName { get; set; }
 
-        /// <summary>
-        /// Gets a value indicating whether this instance is a decimal.
-        /// </summary>
-        /// <value>
-        ///  <c>true</c> if this instance is a decimal; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsDecimal => this.Id.Equals(UnitIds.Decimal);
+        private Type ClrType { get; set; }
 
-        /// <summary>
-        /// Gets a value indicating whether this instance is a float.
-        /// </summary>
-        /// <value><c>true</c> if this instance is a float; otherwise, <c>false</c>.</value>
-        public bool IsFloat => this.Id.Equals(UnitIds.Float);
+        #region IComparable
+        int IComparable<IObjectType>.CompareTo(IObjectType other) => string.Compare(this.SingularName, other.SingularName, StringComparison.InvariantCulture);
+        #endregion
 
-        /// <summary>
-        /// Gets a value indicating whether this instance is an integer.
-        /// </summary>
-        /// <value>
-        ///  <c>true</c> if this instance is an integer; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsInteger => this.Id.Equals(UnitIds.Integer);
+        #region IMetaObject
 
-        /// <summary>
-        /// Gets a value indicating whether this instance is a string.
-        /// </summary>
-        /// <value><c>true</c> if this instance is a string; otherwise, <c>false</c>.</value>
-        public bool IsString => this.Id.Equals(UnitIds.String);
+        IMetaPopulation IMetaObject.MetaPopulation => this.MetaPopulation;
 
-        /// <summary>
-        /// Gets a value indicating whether this instance is a unique.
-        /// </summary>
-        /// <value><c>true</c> if this instance is a unique; otherwise, <c>false</c>.</value>
-        public bool IsUnique => this.Id.Equals(UnitIds.Unique);
+        Origin IMetaObject.Origin => Origin.Database;
 
-        public override Type ClrType => this.clrType;
+        bool IMetaObject.HasDatabaseOrigin => true;
 
-        internal void Bind()
+        bool IMetaObject.HasWorkspaceOrigin => false;
+
+        bool IMetaObject.HasSessionOrigin => false;
+        #endregion
+
+        #region IMetaIdentifiableObject
+        Guid IMetaObject.Id => this.Id;
+
+        string IMetaObject.IdAsString => this.IdAsString;
+        #endregion
+
+        #region IObjectType
+        bool IObjectType.IsUnit => true;
+
+        bool IObjectType.IsComposite => false;
+
+        bool IObjectType.IsInterface => false;
+
+        bool IObjectType.IsClass => false;
+
+        string IObjectType.SingularName => this.SingularName;
+
+        string IObjectType.PluralName => this.PluralName;
+
+        Type IObjectType.ClrType => this.ClrType;
+        #endregion
+
+        #region IUnit
+        UnitTags IUnit.UnitTag => this.UnitTag;
+
+        bool IUnit.IsBinary => this.UnitTag == UnitTags.Binary;
+
+        bool IUnit.IsBoolean => this.UnitTag == UnitTags.Boolean;
+
+        bool IUnit.IsDateTime => this.UnitTag == UnitTags.DateTime;
+
+        bool IUnit.IsDecimal => this.UnitTag == UnitTags.Decimal;
+
+        bool IUnit.IsFloat => this.UnitTag == UnitTags.Float;
+
+        bool IUnit.IsInteger => this.UnitTag == UnitTags.Integer;
+
+        bool IUnit.IsString => this.UnitTag == UnitTags.String;
+
+        bool IUnit.IsUnique => this.UnitTag == UnitTags.Unique;
+        #endregion
+
+        public Unit Init(Guid id, UnitTags tag, string singularName)
+        {
+            this.Id = id;
+            this.IdAsString = id.ToString("D");
+            this.UnitTag = tag;
+            this.SingularName = singularName;
+            this.PluralName = Pluralizer.Pluralize(singularName);
+
+            return this;
+        }
+
+        void IUnitInternals.Bind()
         {
             switch (this.UnitTag)
             {
                 case UnitTags.Binary:
-                    this.clrType = typeof(byte[]);
+                    this.ClrType = typeof(byte[]);
                     break;
 
                 case UnitTags.Boolean:
-                    this.clrType = typeof(bool);
+                    this.ClrType = typeof(bool);
                     break;
 
                 case UnitTags.DateTime:
-                    this.clrType = typeof(DateTime);
+                    this.ClrType = typeof(DateTime);
                     break;
 
                 case UnitTags.Decimal:
-                    this.clrType = typeof(decimal);
+                    this.ClrType = typeof(decimal);
                     break;
 
                 case UnitTags.Float:
-                    this.clrType = typeof(double);
+                    this.ClrType = typeof(double);
                     break;
 
                 case UnitTags.Integer:
-                    this.clrType = typeof(int);
+                    this.ClrType = typeof(int);
                     break;
 
                 case UnitTags.String:
-                    this.clrType = typeof(string);
+                    this.ClrType = typeof(string);
                     break;
 
                 case UnitTags.Unique:
-                    this.clrType = typeof(Guid);
+                    this.ClrType = typeof(Guid);
                     break;
             }
         }
-
-        public override Origin Origin => Origin.Database;
     }
 }
