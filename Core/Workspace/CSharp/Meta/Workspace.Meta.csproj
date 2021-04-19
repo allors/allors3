@@ -6,7 +6,7 @@
     <Compile Include="..\..\..\..\Core\Workspace\CSharp\Allors.Workspace.Meta\Meta*\**\*.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\System\Workspace\Allors.Workspace\Allors.Workspace.csproj" />
+    <ProjectReference Include="..\..\..\..\System\Workspace\CSharp\Allors.Workspace\Allors.Workspace.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="generated\" />
