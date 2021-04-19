@@ -15,7 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@allors/meta/system": ["libs/meta/system/src/index.ts"],
+      "@allors/workspace": ["libs/workspace/src/index.ts"],
       "@allors/meta/lazy": ["libs/meta/lazy/src/index.ts"],
       "@allors/meta/lazy/tests": ["libs/meta/lazy/tests/src/index.ts"]
     }

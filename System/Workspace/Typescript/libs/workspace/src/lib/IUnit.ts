@@ -1,4 +1,4 @@
-import { IObjectType } from "./IObjectType";
+import { IObjectType } from './IObjectType';
 
 export interface IUnit extends IObjectType {
   IsBinary: boolean;

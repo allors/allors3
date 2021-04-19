@@ -1,6 +1,6 @@
-import { IAssociationType } from "./IAssociationType";
-import { IPropertyType } from "./IPropertyType";
-import { IRelationType } from "./IRelationType";
+import { IAssociationType } from './IAssociationType';
+import { IPropertyType } from './IPropertyType';
+import { IRelationType } from './IRelationType';
 
 export interface IRoleType extends IPropertyType {
   AssociationType: IAssociationType;

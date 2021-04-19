@@ -1,4 +1,4 @@
-import { IMetaPopulation } from "./IMetaPopulation";
+import { IMetaPopulation } from './IMetaPopulation';
 
 export interface IMetaObject {
   MetaPopulation: IMetaPopulation;
