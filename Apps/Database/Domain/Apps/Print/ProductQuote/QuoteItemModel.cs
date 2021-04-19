@@ -7,6 +7,7 @@
 
 namespace Allors.Database.Domain.Print.ProductQuoteModel
 {
+    using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
@@ -28,10 +29,9 @@ namespace Allors.Database.Domain.Print.ProductQuoteModel
             this.Quantity = item.Quantity.ToString("0");
             // TODO: Where does the currency come from?
             var currency = "€";
-            this.Price = item.UnitPrice.ToString("N2", new CultureInfo("nl-BE")) + " " + currency;
-
-            this.UnitAmount = item.UnitPrice.ToString("N2", new CultureInfo("nl-BE")) + " " + currency;
-            this.TotalAmount = item.TotalExVat.ToString("N2", new CultureInfo("nl-BE")) + " " + currency;
+            this.Price = Rounder.RoundDecimal(item.UnitPrice, 2).ToString("N2", new CultureInfo("nl-BE")) + " " + currency;
+            this.UnitAmount = Rounder.RoundDecimal(item.UnitPrice, 2).ToString("N2", new CultureInfo("nl-BE")) + " " + currency;
+            this.TotalAmount = Rounder.RoundDecimal(item.TotalExVat, 2).ToString("N2", new CultureInfo("nl-BE")) + " " + currency;
 
             this.Comment = item.Comment;
 

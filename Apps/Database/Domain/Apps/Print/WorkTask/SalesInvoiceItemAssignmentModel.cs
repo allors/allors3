@@ -15,7 +15,7 @@ namespace Allors.Database.Domain.Print.WorkTaskModel
             this.Description = salesInvoiceItemAssignment.SalesInvoiceItem.Description;
             this.Quantity = salesInvoiceItemAssignment.SalesInvoiceItem.Quantity;
             this.UnitSellingPrice = salesInvoiceItemAssignment.SalesInvoiceItem.AssignedUnitPrice.Value.ToString("N2", new CultureInfo("nl-BE"));
-            this.SellingPrice = Math.Round(this.Quantity * salesInvoiceItemAssignment.SalesInvoiceItem.AssignedUnitPrice.Value, 2).ToString("N2", new CultureInfo("nl-BE"));
+            this.SellingPrice = Rounder.RoundDecimal(this.Quantity * salesInvoiceItemAssignment.SalesInvoiceItem.AssignedUnitPrice.Value, 2).ToString("N2", new CultureInfo("nl-BE"));
         }
 
         public string Description { get; }

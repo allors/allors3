@@ -21,7 +21,7 @@ namespace Allors.Database.Domain.Print.WorkTaskModel
                                  purchaseOrderItem.Part?.UnitOfMeasure?.Name?.ToUpperInvariant() ??
                                  "EA";
             this.UnitSellingPrice = assignment.UnitSellingPrice.ToString("N2", new CultureInfo("nl-BE"));
-            this.SellingPrice = Math.Round(assignment.Quantity * assignment.UnitSellingPrice, 2).ToString("N2", new CultureInfo("nl-BE"));
+            this.SellingPrice = Rounder.RoundDecimal(assignment.Quantity * assignment.UnitSellingPrice, 2).ToString("N2", new CultureInfo("nl-BE"));
         }
 
         public string Name { get; }
