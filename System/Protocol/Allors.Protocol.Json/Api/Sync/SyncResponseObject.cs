@@ -12,14 +12,8 @@ namespace Allors.Protocol.Json.Api.Sync
         [JsonPropertyName("i")]
         public string Id { get; set; }
 
-        /// <summary>
-        /// Gets or sets the object type.
-        /// Format is a mapping ":{key}:{value}" or a key "{key}".
-        /// The key will be generated on first occurrence of the ObjectType
-        /// and is local to this Sync.
-        /// </summary>
         [JsonPropertyName("t")]
-        public string ObjectTypeOrKey { get; set; }
+        public int ObjectType { get; set; }
 
         [JsonPropertyName("v")]
         public string Version { get; set; }
@@ -33,6 +27,6 @@ namespace Allors.Protocol.Json.Api.Sync
         [JsonPropertyName("r")]
         public SyncResponseRole[] Roles { get; set; }
 
-        public override string ToString() => $"{this.ObjectTypeOrKey} [{this.Id}:{this.Version}]";
+        public override string ToString() => $"{this.ObjectType} [{this.Id}:{this.Version}]";
     }
 }

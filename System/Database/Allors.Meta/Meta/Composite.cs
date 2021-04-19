@@ -26,7 +26,7 @@ namespace Allors.Database.Meta
         private HashSet<IAssociationTypeBase> derivedDatabaseAssociationTypes;
         private HashSet<IRoleTypeBase> derivedDatabaseRoleTypes;
 
-        protected Composite(IMetaPopulationBase metaPopulation, Guid id) : base(metaPopulation, id) => this.AssignedOrigin = Origin.Database;
+        protected Composite(IMetaPopulationBase metaPopulation, Guid id, int tag) : base(metaPopulation, id, tag) => this.AssignedOrigin = Origin.Database;
 
         //public Dictionary<string, bool> Workspace => this.WorkspaceNames.ToDictionary(k => k, v => true);
 

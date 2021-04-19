@@ -39,7 +39,7 @@ namespace Allors.Workspace.Meta
         #endregion
 
         #region IOperandType
-        Guid IOperandType.OperandId => this.RelationType.Id;
+        int IOperandType.OperandTag => this.RelationType.Tag;
         #endregion
 
         #region IPropertyType
@@ -169,7 +169,7 @@ namespace Allors.Workspace.Meta
 
             if (this.ObjectType is IUnit unitType)
             {
-                switch (unitType.UnitTag)
+                switch (unitType.Tag)
                 {
                     case UnitTags.String:
                         this.Size = size ?? 256;

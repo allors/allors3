@@ -29,7 +29,7 @@ namespace Allors.Database.Data
 
         void IPredicate.Build(ITransaction transaction, IDictionary<string, string> parameters, Database.ICompositePredicate compositePredicate)
         {
-            var value = this.Parameter != null ? UnitConvert.FromString(this.RoleType.ObjectType.Id, parameters[this.Parameter]).ToString() : this.Value;
+            var value = this.Parameter != null ? UnitConvert.FromString(this.RoleType.ObjectType.Tag, parameters[this.Parameter]).ToString() : this.Value;
 
             compositePredicate.AddLike(this.RoleType, value);
         }

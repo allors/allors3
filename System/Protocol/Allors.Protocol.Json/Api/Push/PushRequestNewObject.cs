@@ -17,7 +17,7 @@ namespace Allors.Protocol.Json.Api.Push
         public string NewWorkspaceId { get; set; }
 
         [JsonPropertyName("t")]
-        public string ObjectType { get; set; }
+        public int ObjectType { get; set; }
 
         [JsonPropertyName("roles")]
         public PushRequestRole[] Roles { get; set; }

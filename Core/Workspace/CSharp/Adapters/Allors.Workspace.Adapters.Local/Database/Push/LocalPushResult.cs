@@ -196,7 +196,7 @@ namespace Allors.Workspace.Adapters.Local
                     x => x.Id,
                     x =>
                     {
-                        var cls = (IClass)metaPopulation.Find(x.Class.Id);
+                        var cls = (IClass)metaPopulation.FindByTag(x.Class.Tag);
                         if (this.AllowedClasses?.Contains(cls) == true)
                         {
                             return (Database.IObject)this.Build(cls);
@@ -269,7 +269,7 @@ namespace Allors.Workspace.Adapters.Local
             foreach (var keyValuePair in local.DatabaseState.ChangedRoleByRelationType)
             {
                 var relationType = keyValuePair.Key;
-                var roleType = ((IRelationType)this.M.Find(keyValuePair.Key.Id)).RoleType;
+                var roleType = ((IRelationType)this.M.FindByTag(keyValuePair.Key.Tag)).RoleType;
 
                 if (acl.CanWrite(roleType))
                 {

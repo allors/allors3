@@ -7,7 +7,6 @@ namespace Allors.Database.Data
 {
     using System.Collections.Generic;
     using Meta;
-    
 
     public class Equals : IPropertyPredicate
     {
@@ -45,7 +44,7 @@ namespace Allors.Database.Data
                 {
                     if (roleType.ObjectType.IsUnit)
                     {
-                        var equals = this.Parameter != null ? UnitConvert.FromString(roleType.ObjectType.Id, parameters[this.Parameter]) : this.Value;
+                        var equals = this.Parameter != null ? UnitConvert.FromString(roleType.ObjectType.Tag, parameters[this.Parameter]) : this.Value;
                         if (equals != null)
                         {
                             compositePredicate.AddEquals(roleType, equals);
@@ -63,7 +62,7 @@ namespace Allors.Database.Data
                 else
                 {
                     var associationType = (IAssociationType)this.PropertyType;
-                    var equals = (IObject)(this.Parameter != null ? transaction.GetObject(parameters[this.Parameter]) : this.Object);
+                    var equals = this.Parameter != null ? transaction.GetObject(parameters[this.Parameter]) : this.Object;
                     if (equals != null)
                     {
                         compositePredicate.AddEquals(associationType, equals);

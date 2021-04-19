@@ -13,11 +13,7 @@ namespace Allors.Workspace.Meta
     {
         public MetaPopulation MetaPopulation { get; set; }
 
-        private Guid Id { get; set; }
-
-        private string IdAsString { get; set; }
-
-        private UnitTags UnitTag { get; set; }
+        private int Tag { get; set; }
 
         private string SingularName { get; set; }
 
@@ -43,9 +39,8 @@ namespace Allors.Workspace.Meta
         #endregion
 
         #region IMetaIdentifiableObject
-        Guid IMetaObject.Id => this.Id;
+        int IMetaObject.Tag => this.Tag;
 
-        string IMetaObject.IdAsString => this.IdAsString;
         #endregion
 
         #region IObjectType
@@ -65,30 +60,27 @@ namespace Allors.Workspace.Meta
         #endregion
 
         #region IUnit
-        UnitTags IUnit.UnitTag => this.UnitTag;
 
-        bool IUnit.IsBinary => this.UnitTag == UnitTags.Binary;
+        bool IUnit.IsBinary => this.Tag == UnitTags.Binary;
 
-        bool IUnit.IsBoolean => this.UnitTag == UnitTags.Boolean;
+        bool IUnit.IsBoolean => this.Tag == UnitTags.Boolean;
 
-        bool IUnit.IsDateTime => this.UnitTag == UnitTags.DateTime;
+        bool IUnit.IsDateTime => this.Tag == UnitTags.DateTime;
 
-        bool IUnit.IsDecimal => this.UnitTag == UnitTags.Decimal;
+        bool IUnit.IsDecimal => this.Tag == UnitTags.Decimal;
 
-        bool IUnit.IsFloat => this.UnitTag == UnitTags.Float;
+        bool IUnit.IsFloat => this.Tag == UnitTags.Float;
 
-        bool IUnit.IsInteger => this.UnitTag == UnitTags.Integer;
+        bool IUnit.IsInteger => this.Tag == UnitTags.Integer;
 
-        bool IUnit.IsString => this.UnitTag == UnitTags.String;
+        bool IUnit.IsString => this.Tag == UnitTags.String;
 
-        bool IUnit.IsUnique => this.UnitTag == UnitTags.Unique;
+        bool IUnit.IsUnique => this.Tag == UnitTags.Unique;
         #endregion
 
-        public Unit Init(Guid id, UnitTags tag, string singularName)
+        public Unit Init(int tag, string singularName)
         {
-            this.Id = id;
-            this.IdAsString = id.ToString("D");
-            this.UnitTag = tag;
+            this.Tag = tag;
             this.SingularName = singularName;
             this.PluralName = Pluralizer.Pluralize(singularName);
 
@@ -97,7 +89,7 @@ namespace Allors.Workspace.Meta
 
         void IUnitInternals.Bind()
         {
-            switch (this.UnitTag)
+            switch (this.Tag)
             {
                 case UnitTags.Binary:
                     this.ClrType = typeof(byte[]);

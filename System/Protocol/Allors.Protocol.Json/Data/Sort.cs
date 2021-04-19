@@ -11,7 +11,7 @@ namespace Allors.Protocol.Json.Data
     public class Sort : IVisitable
     {
         [JsonPropertyName("roleType")]
-        public Guid? RoleType { get; set; }
+        public int? RoleType { get; set; }
 
         [JsonPropertyName("descending")]
         public bool Descending { get; set; }

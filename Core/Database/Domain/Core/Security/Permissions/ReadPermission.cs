@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         IClass IPermission.Class => this.Class;
         public Class Class
         {
-            get => (Class)this.Strategy.Transaction.Database.MetaPopulation.Find(this.ClassPointer);
+            get => (Class)this.Strategy.Transaction.Database.MetaPopulation.FindById(this.ClassPointer);
 
             set
             {
@@ -42,7 +42,7 @@ namespace Allors.Database.Domain
         IRelationType IReadPermission.RelationType => this.RelationType;
         public RelationType RelationType
         {
-            get => (RelationType)this.Strategy.Transaction.Database.MetaPopulation.Find(this.RelationTypePointer);
+            get => (RelationType)this.Strategy.Transaction.Database.MetaPopulation.FindById(this.RelationTypePointer);
 
             set
             {

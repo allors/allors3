@@ -47,7 +47,7 @@ namespace Tests
                     {
                         Id = $"{this.x1.Id}",
                         Version = $"{this.x1.Strategy.ObjectVersion}",
-                        Method = $"{this.M.WorkspaceXObject1.DoX.IdAsString}"
+                        Method = this.M.WorkspaceXObject1.DoX.Tag
                     },
                 },
             };
@@ -71,7 +71,7 @@ namespace Tests
                     {
                         Id = $"{this.x1.Id}",
                         Version = $"{this.x1.Strategy.ObjectVersion}",
-                        Method = $"{this.M.WorkspaceXObject1.DoX.IdAsString}"
+                        Method = this.M.WorkspaceXObject1.DoX.Tag
                     },
                 },
             };
@@ -101,7 +101,7 @@ namespace Tests
                     {
                         Id = $"{this.x1.Id}",
                         Version = $"{this.x1.Strategy.ObjectVersion}",
-                        Method = $"{this.M.WorkspaceXObject1.DoX.IdAsString}"
+                        Method = this.M.WorkspaceXObject1.DoX.Tag
                     },
                 },
             };

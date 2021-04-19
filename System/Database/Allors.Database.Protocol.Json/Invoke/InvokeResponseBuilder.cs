@@ -114,7 +114,7 @@ namespace Allors.Database.Protocol.Json
 
             // TODO: Cache and filter for workspace
             var methodTypes = composite.MethodTypes.Where(v => v.WorkspaceNames.Length > 0);
-            var methodType = methodTypes.FirstOrDefault(x => x.Id.Equals(Guid.Parse(invocation.Method)));
+            var methodType = methodTypes.FirstOrDefault(x => x.Tag.Equals(invocation.Method));
 
             if (methodType == null)
             {

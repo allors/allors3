@@ -256,7 +256,7 @@ namespace Allors.Database.Adapters.Memory
                                 }
 
                                 var relationTypeId = new Guid(relationTypeIdString);
-                                var relationType = (IRelationType)this.transaction.Database.MetaPopulation.Find(relationTypeId);
+                                var relationType = (IRelationType)this.transaction.Database.MetaPopulation.FindById(relationTypeId);
 
                                 if (this.reader.Name.Equals(Serialization.RelationTypeUnit))
                                 {
@@ -341,7 +341,7 @@ namespace Allors.Database.Adapters.Memory
                                     if (this.reader.IsEmptyElement)
                                     {
                                         var unitType = (IUnit)relationType.RoleType.ObjectType;
-                                        switch (unitType.UnitTag)
+                                        switch (unitType.Tag)
                                         {
                                             case UnitTags.String:
                                                 strategy.SetUnitRole(relationType.RoleType, string.Empty);
@@ -355,7 +355,7 @@ namespace Allors.Database.Adapters.Memory
                                     else
                                     {
                                         var unitType = (IUnit)relationType.RoleType.ObjectType;
-                                        var unitTypeTag = unitType.UnitTag;
+                                        var unitTypeTag = unitType.Tag;
 
                                         var unit = Serialization.ReadString(value, unitTypeTag);
                                         strategy.SetUnitRole(relationType.RoleType, unit);

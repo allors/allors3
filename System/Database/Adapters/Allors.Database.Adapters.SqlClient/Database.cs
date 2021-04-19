@@ -335,7 +335,7 @@ namespace Allors.Database.Adapters.SqlClient
         internal SqlMetaData GetSqlMetaData(string name, IRoleType roleType)
         {
             var unit = (IUnit)roleType.ObjectType;
-            switch (unit.UnitTag)
+            switch (unit.Tag)
             {
                 case UnitTags.String:
                     if (roleType.Size == -1 || roleType.Size > 4000)

@@ -17,7 +17,7 @@ namespace Allors.Protocol.Json.Data
         public Extent[] Operands { get; set; }
 
         [JsonPropertyName("objectType")]
-        public Guid? ObjectType { get; set; }
+        public int? ObjectType { get; set; }
 
         [JsonPropertyName("predicate")]
         public Predicate Predicate { get; set; }

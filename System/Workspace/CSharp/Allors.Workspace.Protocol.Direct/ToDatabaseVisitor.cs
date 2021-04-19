@@ -62,7 +62,7 @@ namespace Allors.Workspace.Protocol.Direct
 
         private Database.Data.Union Visit(Data.Union ws) => new Database.Data.Union();
 
-        private Database.Meta.IObjectType Visit(Meta.IObjectType ws) => ws != null ? (IObjectType)this.metaPopulation.Find(ws.Id) : null;
+        private Database.Meta.IObjectType Visit(Meta.IObjectType ws) => ws != null ? (IObjectType)this.metaPopulation.FindByTag(ws.Tag) : null;
 
         private Database.IObject Visit(Workspace.IObject ws) => ws != null ? this.transaction.Instantiate(ws.Id) : null;
 
@@ -101,10 +101,10 @@ namespace Allors.Workspace.Protocol.Direct
             switch (ws)
             {
                 case Meta.IAssociationType associationType:
-                    return ((IRelationType)this.metaPopulation.Find(associationType.OperandId)).AssociationType;
+                    return ((IRelationType)this.metaPopulation.FindByTag(associationType.OperandTag)).AssociationType;
 
                 case Meta.IRoleType roleType:
-                    return ((IRelationType)this.metaPopulation.Find(roleType.OperandId)).RoleType;
+                    return ((IRelationType)this.metaPopulation.FindByTag(roleType.OperandTag)).RoleType;
 
                 default:
                     throw new ArgumentException("Invalid property type");

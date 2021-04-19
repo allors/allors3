@@ -11,10 +11,10 @@ namespace Allors.Protocol.Json.Data
     public class Step : IVisitable
     {
         [JsonPropertyName("associationType")]
-        public Guid? AssociationType { get; set; }
+        public int? AssociationType { get; set; }
 
         [JsonPropertyName("roleType")]
-        public Guid? RoleType { get; set; }
+        public int? RoleType { get; set; }
 
         [JsonPropertyName("next")]
         public Step Next { get; set; }

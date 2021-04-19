@@ -182,8 +182,8 @@ partial class Build
         .DependsOn(this.CoreWorkspaceTypescriptClient);
 
     private Target CoreWorkspaceTest => _ => _
-        .DependsOn(this.CoreWorkspaceCSharpTest)
-        .DependsOn(this.CoreWorkspaceTypescriptTest);
+        .DependsOn(this.CoreWorkspaceCSharpTest);
+        //.DependsOn(this.CoreWorkspaceTypescriptTest);
 
     private Target CoreTest => _ => _
         .DependsOn(this.CoreDatabaseTest)

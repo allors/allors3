@@ -123,7 +123,7 @@ namespace Allors.Database.Adapters.SqlClient
                         object unit = null;
                         if (!reader.IsDBNull(index))
                         {
-                            var unitTypeTag = ((IUnit)roleType.ObjectType).UnitTag;
+                            var unitTypeTag = ((IUnit)roleType.ObjectType).Tag;
                             switch (unitTypeTag)
                             {
                                 case UnitTags.String:

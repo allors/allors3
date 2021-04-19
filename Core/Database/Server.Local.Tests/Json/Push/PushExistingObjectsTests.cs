@@ -52,7 +52,7 @@ namespace Tests
                         {
                             new PushRequestRole
                             {
-                                RelationType = this.M.WorkspaceXObject1.WorkspaceXString.RelationType.IdAsString,
+                                RelationType = this.M.WorkspaceXObject1.WorkspaceXString.RelationType.Tag,
                                 SetRole = "x string"
                             },
                         }
@@ -87,7 +87,7 @@ namespace Tests
                         {
                             new PushRequestRole
                             {
-                                RelationType = this.M.WorkspaceXObject1.WorkspaceXString.RelationType.IdAsString,
+                                RelationType = this.M.WorkspaceXObject1.WorkspaceXString.RelationType.Tag,
                                 SetRole = "x string"
                             },
                         }

@@ -347,7 +347,7 @@ namespace Allors.Database.Adapters.Npgsql
         internal string GetSqlType(IRoleType roleType)
         {
             var unit = (IUnit)roleType.ObjectType;
-            switch (unit.UnitTag)
+            switch (unit.Tag)
             {
                 case UnitTags.String:
                     if (roleType.Size == -1 || roleType.Size > 4000)
@@ -386,7 +386,7 @@ namespace Allors.Database.Adapters.Npgsql
         internal NpgsqlDbType GetNpgsqlDbType(IRoleType roleType)
         {
             var unit = (IUnit)roleType.ObjectType;
-            switch (unit.UnitTag)
+            switch (unit.Tag)
             {
                 case UnitTags.String:
                     return NpgsqlDbType.Varchar;
@@ -781,7 +781,7 @@ $$;";
             }
 
             var relationType = roleType.RelationType;
-            var unitTypeTag = ((IUnit)relationType.RoleType.ObjectType).UnitTag;
+            var unitTypeTag = ((IUnit)relationType.RoleType.ObjectType).Tag;
             var table = this.TableNameForObjectByClass[@class];
             var objects = this.ObjectArrayParam;
             var objectsType = objects.TypeName;

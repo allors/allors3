@@ -43,7 +43,7 @@ namespace Allors.Database.Protocol.Json
                     x => x.NewWorkspaceId,
                     x =>
                         {
-                            var cls = (IClass)this.metaPopulation.Find(Guid.Parse(x.ObjectType));
+                            var cls = (IClass)this.metaPopulation.FindByTag(x.ObjectType);
                             if (this.allowedClasses?.Contains(cls) == true)
                             {
                                 return (IObject)this.build(cls);
@@ -186,7 +186,7 @@ namespace Allors.Database.Protocol.Json
                 var roleTypes = composite.DatabaseRoleTypes.Where(v => v.RelationType.WorkspaceNames.Length > 0);
                 var acl = this.AccessControlLists[obj];
 
-                var roleType = ((IRelationType)this.metaPopulation.Find(Guid.Parse(pushRequestRole.RelationType))).RoleType;
+                var roleType = ((IRelationType)this.metaPopulation.FindByTag(pushRequestRole.RelationType)).RoleType;
                 if (roleType != null)
                 {
                     if (acl.CanWrite(roleType))
@@ -194,7 +194,7 @@ namespace Allors.Database.Protocol.Json
                         if (roleType.ObjectType.IsUnit)
                         {
                             var unitType = (IUnit)roleType.ObjectType;
-                            var role = UnitConvert.FromString(unitType.Id, pushRequestRole.SetRole);
+                            var role = UnitConvert.FromString(unitType.Tag, pushRequestRole.SetRole);
                             obj.Strategy.SetUnitRole(roleType, role);
                         }
                         else

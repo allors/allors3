@@ -132,7 +132,7 @@ namespace Allors.Database.Adapters.SqlClient
                 if (xmlRelationType is RelationTypeUnit xmlRelationTypeUnit)
                 {
                     var relationTypeId = xmlRelationTypeUnit.Id;
-                    var relationType = (IRelationType)this.database.MetaPopulation.Find(relationTypeId);
+                    var relationType = (IRelationType)this.database.MetaPopulation.FindById(relationTypeId);
 
                     if (relationType == null || relationType.RoleType.ObjectType.IsComposite)
                     {
@@ -151,7 +151,7 @@ namespace Allors.Database.Adapters.SqlClient
                 {
                     var xmlRelationTypeComposite = (RelationTypeComposite)xmlRelationType;
                     var relationTypeId = xmlRelationTypeComposite.Id;
-                    var relationType = (IRelationType)this.database.MetaPopulation.Find(relationTypeId);
+                    var relationType = (IRelationType)this.database.MetaPopulation.FindById(relationTypeId);
 
                     if (relationType == null || relationType.RoleType.ObjectType.IsUnit)
                     {
@@ -192,7 +192,7 @@ namespace Allors.Database.Adapters.SqlClient
                     }
                     else
                     {
-                        switch (((IUnit)relationType.RoleType.ObjectType).UnitTag)
+                        switch (((IUnit)relationType.RoleType.ObjectType).Tag)
                         {
                             case UnitTags.String:
                             {
@@ -225,7 +225,7 @@ namespace Allors.Database.Adapters.SqlClient
                     {
                         try
                         {
-                            var unitTypeTag = ((IUnit)relationType.RoleType.ObjectType).UnitTag;
+                            var unitTypeTag = ((IUnit)relationType.RoleType.ObjectType).Tag;
                             var unit = Serialization.ReadString(value, unitTypeTag);
 
                             roleByObjectId.Add(associationId, unit);

@@ -15,16 +15,16 @@ namespace Allors.Database.Meta
 
         private string pluralName;
 
-        protected ObjectType(IMetaPopulationBase metaPopulation, Guid id)
+        protected ObjectType(IMetaPopulationBase metaPopulation, Guid id, int tag)
         {
             this.MetaPopulation = metaPopulation;
             this.Id = id;
-            this.IdAsString = this.Id.ToString("D");
+            this.Tag = tag;
         }
 
         public Guid Id { get; }
 
-        public string IdAsString { get; }
+        public int Tag { get; }
 
         public string SingularName
         {
@@ -117,7 +117,7 @@ namespace Allors.Database.Meta
                 return this.SingularName;
             }
 
-            return this.IdAsString;
+            return this.Tag.ToString();
         }
 
         /// <summary>

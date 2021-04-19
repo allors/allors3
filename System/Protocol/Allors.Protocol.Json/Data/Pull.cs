@@ -18,7 +18,7 @@ namespace Allors.Protocol.Json.Data
         public Extent Extent { get; set; }
 
         [JsonPropertyName("objectType")]
-        public Guid? ObjectType { get; set; }
+        public int? ObjectType { get; set; }
 
         [JsonPropertyName("object")]
         public string Object { get; set; }

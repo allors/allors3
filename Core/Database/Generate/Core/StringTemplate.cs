@@ -113,25 +113,25 @@ namespace Allors.Development.Repository.Generation
                     if (generation.HasAttribute(InputKey))
                     {
                         var input = new Guid(generation.GetAttribute(InputKey));
-                        if (metaPopulation.Find(input) is IObjectType objectType)
+                        if (metaPopulation.FindById(input) is IObjectType objectType)
                         {
                             template.Add(ObjectTypeKey, objectType);
                         }
                         else
                         {
-                            if (metaPopulation.Find(input) is IRelationType relationType)
+                            if (metaPopulation.FindById(input) is IRelationType relationType)
                             {
                                 template.Add(RelationTypeKey, relationType);
                             }
                             else
                             {
-                                if (metaPopulation.Find(input) is IInheritance inheritance)
+                                if (metaPopulation.FindById(input) is IInheritance inheritance)
                                 {
                                     template.Add(InheritanceKey, inheritance);
                                 }
                                 else
                                 {
-                                    if (metaPopulation.Find(input) is IMethodType methodType)
+                                    if (metaPopulation.FindById(input) is IMethodType methodType)
                                     {
                                         template.Add(MethodTypeKey, methodType);
                                     }

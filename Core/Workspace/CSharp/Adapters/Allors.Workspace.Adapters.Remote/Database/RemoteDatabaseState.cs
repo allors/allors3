@@ -280,7 +280,7 @@ namespace Allors.Workspace.Adapters.Remote
         internal PushRequestNewObject PushNew() => new PushRequestNewObject
         {
             NewWorkspaceId = this.Identity.ToString(),
-            ObjectType = this.Class.IdAsString,
+            ObjectType = this.Class.Tag,
             Roles = this.PushRoles(),
         };
 
@@ -302,7 +302,7 @@ namespace Allors.Workspace.Adapters.Remote
                     var relationType = keyValuePair.Key;
                     var roleValue = keyValuePair.Value;
 
-                    var pushRequestRole = new PushRequestRole { RelationType = relationType.IdAsString };
+                    var pushRequestRole = new PushRequestRole { RelationType = relationType.Tag };
 
                     if (relationType.RoleType.ObjectType.IsUnit)
                     {

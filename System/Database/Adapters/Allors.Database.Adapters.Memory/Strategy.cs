@@ -827,7 +827,7 @@ namespace Allors.Database.Adapters.Memory
         internal void SaveUnit(XmlWriter writer, IRoleType roleType)
         {
             var unitType = (IUnit)roleType.ObjectType;
-            var value = Serialization.WriteString(unitType.UnitTag, this.unitRoleByRoleType[roleType]);
+            var value = Serialization.WriteString(unitType.Tag, this.unitRoleByRoleType[roleType]);
 
             writer.WriteStartElement(Serialization.Relation);
             writer.WriteAttributeString(Serialization.Association, this.ObjectId.ToString());

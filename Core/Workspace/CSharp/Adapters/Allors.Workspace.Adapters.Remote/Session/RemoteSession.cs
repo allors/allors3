@@ -68,7 +68,7 @@ namespace Allors.Workspace.Adapters.Remote
                 {
                     Id = v.Object.Id.ToString(),
                     Version = ((RemoteStrategy)v.Object.Strategy).DatabaseVersion.ToString(),
-                    Method = v.MethodType.IdAsString,
+                    Method = v.MethodType.Tag,
                 }).ToArray(),
                 InvokeOptions = options != null ? new Allors.Protocol.Json.Api.Invoke.InvokeOptions
                 {

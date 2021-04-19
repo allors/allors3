@@ -20,10 +20,10 @@ namespace Allors.Database.Data
                     return metaObject;
 
                 case Guid idAsGuid:
-                    return @this.Database.MetaPopulation.Find(idAsGuid);
+                    return @this.Database.MetaPopulation.FindById(idAsGuid);
 
                 case string idAsString:
-                    return @this.Database.MetaPopulation.Find(new Guid(idAsString));
+                    return @this.Database.MetaPopulation.FindById(new Guid(idAsString));
 
                 default:
                     throw new ArgumentException();

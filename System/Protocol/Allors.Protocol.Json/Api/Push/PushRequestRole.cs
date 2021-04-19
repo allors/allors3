@@ -10,7 +10,7 @@ namespace Allors.Protocol.Json.Api.Push
     public class PushRequestRole
     {
         [JsonPropertyName("t")]
-        public string RelationType { get; set; }
+        public int RelationType { get; set; }
 
         [JsonPropertyName("s")]
         public string SetRole { get; set; }

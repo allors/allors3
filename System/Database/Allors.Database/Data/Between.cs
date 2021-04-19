@@ -28,7 +28,7 @@ namespace Allors.Database.Data
 
         void IPredicate.Build(ITransaction transaction, IDictionary<string, string> parameters, Database.ICompositePredicate compositePredicate)
         {
-            var parameter = this.Parameter != null ? parameters[this.Parameter]?.Split('|').Select(v => UnitConvert.FromString(this.RoleType.ObjectType.Id, v)) : null;
+            var parameter = this.Parameter != null ? parameters[this.Parameter]?.Split('|').Select(v => UnitConvert.FromString(this.RoleType.ObjectType.Tag, v)) : null;
             var values = parameter != null ? parameter.ToArray() : this.Values.ToArray();
             compositePredicate.AddBetween(this.RoleType, values[0], values[1]);
         }

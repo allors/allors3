@@ -260,15 +260,15 @@ $class._.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|$\n$       
 >>
 
 build_unit(unit) ::= <<
-	        m.$unit._.SingularName$.Init(UnitIds.$unit._.SingularName$, UnitTags.$unit._.SingularName$, UnitNames.$unit._.SingularName$);
+	        m.$unit._.SingularName$.Init(UnitTags.$unit._.SingularName$, UnitNames.$unit._.SingularName$);
 >>
 
 build_interface(interface) ::= <<
-	        m.$interface._.SingularName$.Init(id: new System.Guid("$interface._.IdAsString$"), singularName: "$interface._.SingularName$"$if(interface.ExistAssignedPluralName)$, pluralName: "$interface._.PluralName$"$endif$$if(interface.AssignedIsSynced)$, isSynced: $interface._.AssignedIsSynced$$endif$);
+	        m.$interface._.SingularName$.Init(tag: $interface._.Tag$, singularName: "$interface._.SingularName$"$if(interface.ExistAssignedPluralName)$, pluralName: "$interface._.PluralName$"$endif$$if(interface.AssignedIsSynced)$, isSynced: $interface._.AssignedIsSynced$$endif$);
 >>
 
 build_class(class) ::= <<
-	        m.$class._.SingularName$.Init(id: new System.Guid("$class._.IdAsString$"), singularName: "$class._.SingularName$"$if(class.ExistAssignedPluralName)$, pluralName: "$class._.PluralName$"$endif$$if(!class.HasDatabaseOrigin)$, origin: Allors.Origin.$class._.Origin$$endif$$if(class.AssignedIsSynced)$, isSynced: $class._.AssignedIsSynced$$endif$);
+	        m.$class._.SingularName$.Init(tag: $class._.Tag$, singularName: "$class._.SingularName$"$if(class.ExistAssignedPluralName)$, pluralName: "$class._.PluralName$"$endif$$if(!class.HasDatabaseOrigin)$, origin: Allors.Origin.$class._.Origin$$endif$$if(class.AssignedIsSynced)$, isSynced: $class._.AssignedIsSynced$$endif$);
 >>
 
 inheritance(composite) ::= <<$composite._.WorkspaceDirectSupertypesByWorkspaceName.(workspaceName):{superType|$build_inheritance(composite, superType)$}$>>
@@ -280,7 +280,7 @@ build_relationType(relationType) ::= <<
             var associationType = (IAssociationTypeInternals)$if(relationType._.RoleType._.ObjectType._.IsUnit)$new AssociationTypeWithUnitRole();$else$m.$relationType._.RoleType._.ObjectType.SingularName$.$relationType._.AssociationType._.Name$;$endif$
             var roleType = (RoleType)m.$relationType._.AssociationType._.ObjectType.SingularName$.$relationType._.RoleType._.Name$;
 
-            var relationType = new RelationType(new System.Guid("$relationType._.IdAsString$"), associationType, m.$relationType._.AssociationType._.ObjectType.Name$, roleType, m.$relationType._.RoleType._.ObjectType.Name$$if(relationType.Multiplicity)$, Allors.Multiplicity.$relationType._.Multiplicity$$endif$);
+            var relationType = new RelationType($relationType._.Tag$, associationType, m.$relationType._.AssociationType._.ObjectType.Name$, roleType, m.$relationType._.RoleType._.ObjectType.Name$$if(relationType.Multiplicity)$, Allors.Multiplicity.$relationType._.Multiplicity$$endif$);
 
             relationType.Init($Separated([origin(relationType), isDerived(relationType), isSynced(relationType)], ",")$);
 
@@ -310,7 +310,7 @@ mediaType(roleType) ::= <<$if(relationType.RoleType.MediaType)$mediaType: "$rela
 build_methodType(methodType) ::= <<
         private IMethodTypeInternals Build$methodType._.FullName$(LazyM m)
         {
-            return ((MethodType)m.$methodType._.ObjectType.Name$.$methodType._.Name$).Init(new System.Guid("$methodType._.IdAsString$"), m.$methodType._.ObjectType.Name$, "$methodType._.Name$");
+            return ((MethodType)m.$methodType._.ObjectType.Name$.$methodType._.Name$).Init($methodType._.Tag$, m.$methodType._.ObjectType.Name$, "$methodType._.Name$");
         }
 >>
 

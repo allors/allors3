@@ -14,41 +14,41 @@ namespace Allors
         /// <summary>
         /// The name of the binary type.
         /// </summary>
-        public static readonly string Binary = "Binary";
+        public const string Binary = "Binary";
 
         /// <summary>
         /// The name of the boolean type.
         /// </summary>
-        public static readonly string Boolean = "Boolean";
+        public const string Boolean = "Boolean";
 
         /// <summary>
         /// The name of the date time type.
         /// </summary>
-        public static readonly string DateTime = "DateTime";
+        public const string DateTime = "DateTime";
 
         /// <summary>
         /// The name of the decimal type.
         /// </summary>
-        public static readonly string Decimal = "Decimal";
+        public const string Decimal = "Decimal";
 
         /// <summary>
         /// The name of the float type.
         /// </summary>
-        public static readonly string Float = "Float";
+        public const string Float = "Float";
 
         /// <summary>
         /// The name of the integer type.
         /// </summary>
-        public static readonly string Integer = "Integer";
+        public const string Integer = "Integer";
 
         /// <summary>
         /// The name of the string type.
         /// </summary>
-        public static readonly string String = "String";
+        public const string String = "String";
 
         /// <summary>
         /// The name of the unique type.
         /// </summary>
-        public static readonly string Unique = "Unique";
+        public const string Unique = "Unique";
     }
 }
