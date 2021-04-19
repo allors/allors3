@@ -1,71 +1,65 @@
 {
   "version": 2,
   "projects": {
-    "workspace": {
-      "root": "libs/workspace",
-      "sourceRoot": "libs/workspace/src",
+    "workspace-system": {
+      "root": "libs/workspace/system",
+      "sourceRoot": "libs/workspace/system/src",
       "projectType": "library",
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/workspace/**/*.ts"]
-          }
+          "options": { "lintFilePatterns": ["libs/workspace/system/**/*.ts"] }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/workspace"],
+          "outputs": ["coverage/libs/workspace/system"],
           "options": {
-            "jestConfig": "libs/workspace/jest.config.js",
+            "jestConfig": "libs/workspace/system/jest.config.js",
             "passWithNoTests": true
           }
         }
       }
     },
-    "meta-lazy": {
-      "root": "libs/meta/lazy",
-      "sourceRoot": "libs/meta/lazy/src",
+    "workspace-lazy": {
+      "root": "libs/workspace/lazy",
+      "sourceRoot": "libs/workspace/lazy/src",
       "projectType": "library",
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/meta/lazy/**/*.ts"]
-          }
+          "options": { "lintFilePatterns": ["libs/workspace/lazy/**/*.ts"] }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/meta/lazy"],
+          "outputs": ["coverage/libs/workspace/lazy"],
           "options": {
-            "jestConfig": "libs/meta/lazy/jest.config.js",
+            "jestConfig": "libs/workspace/lazy/jest.config.js",
             "passWithNoTests": true
           }
         }
       }
     },
-    "meta-lazy-tests": {
-      "root": "libs/meta/lazy/tests",
-      "sourceRoot": "libs/meta/lazy/tests/src",
+    "tests-workspace-lazy": {
+      "root": "libs/tests/workspace/lazy",
+      "sourceRoot": "libs/tests/workspace/lazy/src",
       "projectType": "library",
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/meta/lazy/tests/**/*.ts"]
+            "lintFilePatterns": ["libs/tests/workspace/lazy/**/*.ts"]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/meta/lazy/tests"],
+          "outputs": ["coverage/libs/tests/workspace/lazy"],
           "options": {
-            "jestConfig": "libs/meta/lazy/tests/jest.config.js",
+            "jestConfig": "libs/tests/workspace/lazy/jest.config.js",
             "passWithNoTests": true
           }
         }
       }
     }
   },
-  "cli": {
-    "defaultCollection": "@nrwl/workspace"
-  }
+  "cli": { "defaultCollection": "@nrwl/workspace" }
 }

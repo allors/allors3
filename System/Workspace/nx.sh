@@ -5,7 +5,7 @@ cd allors
 npm install -D jest-chain
 npm install -D jest-extended
 
-npx nx g @nrwl/workspace:library meta/system
+npx nx g @nrwl/workspace:library workspace/system
 
-npx nx g @nrwl/workspace:library meta/lazy
-npx nx g @nrwl/workspace:library meta/lazy/tests
+npx nx g @nrwl/workspace:library workspace/lazy
+npx nx g @nrwl/workspace:library tests/workspace/lazy
