@@ -1,7 +1,5 @@
 @echo off
 
 cd workspace\typescript
-call code .
+start "" code.cmd .
 exit
-
-
