@@ -17,23 +17,32 @@ namespace Allors.Workspace.Meta
     /// </summary>
     public sealed class RelationType : IRelationTypeInternals
     {
-        public RelationType(IAssociationTypeInternals associationType, IRoleTypeInternals roleType)
+        public RelationType(Guid id, IAssociationTypeInternals associationType, ICompositeInternals associationObjectType, IRoleTypeInternals roleType, IObjectType roleObjectType, Multiplicity multiplicity = Multiplicity.ManyToOne)
         {
+            this.Id = id;
+            this.IdAsString = id.ToString("D");
             this.AssociationType = associationType;
+            this.AssociationType.RelationType = this;
+            this.AssociationType.ObjectType = associationObjectType;
             this.RoleType = roleType;
+            this.RoleType.RelationType = this;
+            this.RoleType.ObjectType = roleObjectType;
+            this.Multiplicity = this.RoleType.ObjectType.IsUnit ? Multiplicity.OneToOne : multiplicity;
         }
 
         private IAssociationTypeInternals AssociationType { get; }
         private IRoleTypeInternals RoleType { get; }
 
-        private Guid Id { get; set; }
-        private string IdAsString { get; set; }
-        private Multiplicity Multiplicity { get; set; }
+        private Guid Id { get; }
+        private string IdAsString { get; }
+        private Multiplicity Multiplicity { get; }
         private Origin Origin { get; set; }
         private bool IsDerived { get; set; }
         private bool IsSynced { get; set; }
 
         #region IMetaObject
+
+        public IMetaPopulation MetaPopulation { get; }
 
         Origin IMetaObject.Origin => this.Origin;
 
@@ -75,11 +84,8 @@ namespace Allors.Workspace.Meta
 
         public override string ToString() => $"{this.AssociationType.ObjectType.SingularName}{this.RoleType.Name}";
 
-        public void Init(Guid id, Multiplicity multiplicity = Multiplicity.ManyToOne, Origin origin = Origin.Database, bool isDerived = false, bool isSynced = false)
+        public void Init(Origin origin = Origin.Database, bool isDerived = false, bool isSynced = false)
         {
-            this.Id = id;
-            this.IdAsString = id.ToString("D");
-            this.Multiplicity = this.RoleType.ObjectType.IsUnit ? Multiplicity.OneToOne : multiplicity;
             this.Origin = origin;
             this.IsDerived = isDerived;
             this.IsSynced = isSynced;

@@ -332,7 +332,7 @@ build_interface(interface) ::= <<
 	        meta.$interface.SingularName$ = new $interface.SingularName$(meta, new System.Guid("$interface.AttributeByName.Id.Value$"))
             {
                 SingularName = "$interface.SingularName$",
-                $if(interface.AttributeByName.Plural)$PluralName = "$interface.AttributeByName.Plural.Value$",$endif$
+                $if(interface.AssignedPluralName)$PluralName = "$interface.AssignedPluralName$",$endif$
                 $if(interface.AttributeByName.Synced)$AssignedIsSynced = $interface.AttributeByName.Synced.Value$$endif$
             };
 >>
@@ -342,7 +342,7 @@ build_class(class) ::= <<
             {
 $if(!class.HasDatabaseOrigin)$                AssignedOrigin = Allors.Origin.$class.Origin$,$endif$
                 SingularName = "$class.SingularName$",
-                PluralName = "$class.PluralName$",
+                $if(class.AssignedPluralName)$PluralName = "$class.AssignedPluralName$",$endif$
                 $if(class.WorkspaceNames)$AssignedWorkspaceNames = new[] {$class.WorkspaceNames:{name|"$name$"}; separator=", "$},$endif$
                 $if(class.AttributeByName.Synced)$AssignedIsSynced = $class.AttributeByName.Synced.Value$$endif$
             };
@@ -373,8 +373,8 @@ $if(property.AttributeByName.Indexed)$		        IsIndexed = $property.AttributeB
                 RoleType =
                 {
                     ObjectType = meta.$property.Type.SingularName$,
-                    SingularName = "$property.RoleSingularName$",
-                    PluralName = "$property.RolePluralName$",
+$if(property.AssignedRoleSingularName)$		            SingularName = "$property.RoleSingularName$",$endif$
+$if(property.AssignedRolePluralName)$		            PluralName = "$property.RolePluralName$",$endif$
 $if(property.AttributeByName.Required)$		            IsRequired = $property.AttributeByName.Required.Value$,$endif$
 $if(property.AttributeByName.Unique)$		          IsUnique = $property.AttributeByName.Unique.Value$,$endif$
 $if(property.AttributeByName.Size)$		            Size = $property.AttributeByName.Size.Value$,$endif$

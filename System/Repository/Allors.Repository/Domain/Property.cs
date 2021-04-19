@@ -123,6 +123,8 @@ namespace Allors.Repository.Domain
             }
         }
 
+        public string AssignedRoleSingularName => !this.RoleSingularName.Equals(this.Type.SingularName) ? this.RoleSingularName : null;
+
         public string RolePluralName
         {
             get
@@ -138,6 +140,8 @@ namespace Allors.Repository.Domain
                 }
             }
         }
+
+        public string AssignedRolePluralName => !Pluralizer.Pluralize(this.RoleSingularName).Equals(this.RolePluralName) ? this.RolePluralName : null;
 
         public string AssociationName
         {

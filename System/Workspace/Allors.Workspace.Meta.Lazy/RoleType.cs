@@ -11,10 +11,15 @@ namespace Allors.Workspace.Meta
 
     public abstract class RoleType : IRoleTypeInternals
     {
+        /// <summary>
+        /// The maximum size value.
+        /// </summary>
+        public const int MaximumSize = -1;
+
         public MetaPopulation MetaPopulation { get; set; }
 
-        internal IRelationTypeInternals RelationType { get; set; }
-        internal IAssociationTypeInternals AssociationType { get; set; }
+        private IRelationTypeInternals RelationType { get; set; }
+        private IAssociationTypeInternals AssociationType => this.RelationType.AssociationType;
 
         private IObjectType ObjectType { get; set; }
         private string SingularName { get; set; }
@@ -28,7 +33,7 @@ namespace Allors.Workspace.Meta
         private bool IsRequired { get; set; }
         private bool IsUnique { get; set; }
         private string MediaType { get; set; }
-        
+
         #region IComparable
         int IComparable<IPropertyType>.CompareTo(IPropertyType other) => string.Compare(this.Name, other.Name, StringComparison.InvariantCulture);
         #endregion
@@ -38,6 +43,8 @@ namespace Allors.Workspace.Meta
         #endregion
 
         #region IPropertyType
+
+        Origin IPropertyType.Origin => this.RelationType.Origin;
 
         string IPropertyType.Name => this.Name;
 
@@ -96,10 +103,11 @@ namespace Allors.Workspace.Meta
         string IRoleType.MediaType => this.MediaType;
         #endregion
 
-        /// <summary>
-        /// The maximum size value.
-        /// </summary>
-        public const int MaximumSize = -1;
+        #region IRoleTypeInternals
+        IObjectType IRoleTypeInternals.ObjectType { get => this.ObjectType; set => this.ObjectType = value; }
+
+        IRelationTypeInternals IRoleTypeInternals.RelationType { get => this.RelationType; set => this.RelationType = value; }
+        #endregion
 
         ///// <summary>
         ///// Instantiate the value of the role on this object.
@@ -149,11 +157,10 @@ namespace Allors.Workspace.Meta
 
         public override string ToString() => $"{this.AssociationType.ObjectType.SingularName}.{this.Name}";
 
-        public void Init(IObjectType objectType, string singularName, string pluralName, int? size = null, int? precision = null, int? scale = null, bool isRequired = false, bool isUnique = false, string mediaType = null)
+        public void Init(string singularName = null, string pluralName = null, int? size = null, int? precision = null, int? scale = null, bool isRequired = false, bool isUnique = false, string mediaType = null)
         {
-            this.ObjectType = objectType;
-            this.SingularName = singularName;
-            this.PluralName = pluralName ?? Pluralizer.Pluralize(singularName);
+            this.SingularName = singularName ?? this.ObjectType.SingularName;
+            this.PluralName = pluralName ?? Pluralizer.Pluralize(this.SingularName);
 
             this.IsMany = this.RelationType.Multiplicity == Multiplicity.OneToMany ||
                           this.RelationType.Multiplicity == Multiplicity.ManyToMany;

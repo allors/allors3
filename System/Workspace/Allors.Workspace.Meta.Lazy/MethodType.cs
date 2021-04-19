@@ -9,14 +9,18 @@ namespace Allors.Workspace.Meta
     using System;
     using System.Linq;
 
-    public sealed class MethodType : IMethodType
+    public sealed class MethodType : IMethodTypeInternals
     {
+        public MetaPopulation MetaPopulation { get; set; }
+
         private Guid Id { get; set; }
         private string IdAsString { get; set; }
         private ICompositeInternals ObjectType { get; set; }
         private string Name { get; set; }
 
         #region IMetaObject
+        IMetaPopulation IMetaObject.MetaPopulation => this.MetaPopulation;
+
         Guid IMetaObject.Id => this.Id;
 
         string IMetaObject.IdAsString => this.IdAsString;
@@ -40,12 +44,14 @@ namespace Allors.Workspace.Meta
 
         public override string ToString() => this.Name;
 
-        public void Init(Guid id, ICompositeInternals objectType, string name)
+        public MethodType Init(Guid id, ICompositeInternals objectType, string name)
         {
             this.Id = id;
             this.IdAsString = id.ToString("D");
             this.ObjectType = objectType;
             this.Name = name;
+
+            return this;
         }
     }
 }

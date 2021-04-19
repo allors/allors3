@@ -11,6 +11,8 @@ namespace Allors.Workspace.Meta
 
     public abstract class Unit : IUnitInternals
     {
+        public MetaPopulation MetaPopulation { get; set; }
+
         private Guid Id { get; set; }
 
         private string IdAsString { get; set; }
@@ -28,6 +30,9 @@ namespace Allors.Workspace.Meta
         #endregion
 
         #region IMetaObject
+
+        IMetaPopulation IMetaObject.MetaPopulation => this.MetaPopulation;
+
         Origin IMetaObject.Origin => Origin.Database;
 
         bool IMetaObject.HasDatabaseOrigin => true;

@@ -19,7 +19,7 @@ namespace Allors.Workspace.Meta
         public MetaPopulation MetaPopulation { get; set; }
 
         internal IRelationTypeInternals RelationType { get; set; }
-        internal IRoleTypeInternals RoleType { get; set; }
+        internal IRoleTypeInternals RoleType => this.RelationType.RoleType;
 
         private ICompositeInternals ObjectType { get; set; }
         private string SingularName { get; set; }
@@ -37,6 +37,7 @@ namespace Allors.Workspace.Meta
         #endregion
 
         #region IPropertyType
+        Origin IPropertyType.Origin => this.RelationType.Origin;
 
         string IPropertyType.Name => this.Name;
 
@@ -84,6 +85,13 @@ namespace Allors.Workspace.Meta
         IComposite IAssociationType.ObjectType => this.ObjectType;
 
         IRoleType IAssociationType.RoleType => this.RoleType;
+
+        #endregion
+
+        #region IAssociationTypeInternals
+        ICompositeInternals IAssociationTypeInternals.ObjectType { get => this.ObjectType; set => this.ObjectType = value; }
+
+        IRelationTypeInternals IAssociationTypeInternals.RelationType { get => this.RelationType; set => this.RelationType = value; }
         #endregion
 
         public override string ToString() => $"{this.RoleType.ObjectType.SingularName}.{this.Name}";

@@ -33,11 +33,6 @@ namespace Allors
                 return singular + "es";
             }
 
-            if (EndsWith(singular, "s"))
-            {
-                return singular;
-            }
-
             if (EndsWith(singular, "x") ||
                 EndsWith(singular, "ch") ||
                 EndsWith(singular, "sh"))

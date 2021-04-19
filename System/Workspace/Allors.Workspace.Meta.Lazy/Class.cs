@@ -22,8 +22,8 @@ namespace Allors.Workspace.Meta
 
         private HashSet<IAssociationTypeInternals> LazyAssociationTypes => this.lazyAssociationTypes ??= new HashSet<IAssociationTypeInternals>(this.ExclusiveAssociationTypes.Union(this.Supertypes.SelectMany(v => v.ExclusiveAssociationTypes)));
         private HashSet<IRoleTypeInternals> LazyRoleTypes => this.lazyRoleTypes ??= new HashSet<IRoleTypeInternals>(this.ExclusiveRoleTypes.Union(this.Supertypes.SelectMany(v => v.ExclusiveRoleTypes)));
-        private HashSet<IRoleTypeInternals> LazyWorkspaceRoleTypes => this.lazyWorkspaceRoleTypes ??= new HashSet<IRoleTypeInternals>(this.LazyWorkspaceRoleTypes.Where(v => v.RelationType.HasWorkspaceOrigin));
-        private HashSet<IRoleTypeInternals> LazyDatabaseRoleTypes => this.lazyDatabaseRoleTypes ??= new HashSet<IRoleTypeInternals>(this.LazyWorkspaceRoleTypes.Where(v => v.RelationType.HasDatabaseOrigin));
+        private HashSet<IRoleTypeInternals> LazyWorkspaceRoleTypes => this.lazyWorkspaceRoleTypes ??= new HashSet<IRoleTypeInternals>(this.LazyRoleTypes.Where(v => v.RelationType.HasWorkspaceOrigin));
+        private HashSet<IRoleTypeInternals> LazyDatabaseRoleTypes => this.lazyDatabaseRoleTypes ??= new HashSet<IRoleTypeInternals>(this.LazyRoleTypes.Where(v => v.RelationType.HasDatabaseOrigin));
         private HashSet<IMethodTypeInternals> LazyMethodTypes => this.lazyMethodTypes ??= new HashSet<IMethodTypeInternals>(this.ExclusiveMethodTypes.Union(this.Supertypes.SelectMany(v => v.ExclusiveMethodTypes)));
 
         private bool IsSynced { get; set; }
@@ -46,6 +46,8 @@ namespace Allors.Workspace.Meta
         #endregion
 
         #region IMetaObject
+        IMetaPopulation IMetaObject.MetaPopulation => this.MetaPopulation;
+
         Origin IMetaObject.Origin => this.Origin;
 
         bool IMetaObject.HasDatabaseOrigin => this.Origin == Origin.Database;
@@ -62,13 +64,13 @@ namespace Allors.Workspace.Meta
         #endregion
 
         #region IObjectType
-        bool IObjectType.IsUnit => true;
+        bool IObjectType.IsUnit => false;
 
-        bool IObjectType.IsComposite => false;
+        bool IObjectType.IsComposite => true;
 
         bool IObjectType.IsInterface => false;
 
-        bool IObjectType.IsClass => false;
+        bool IObjectType.IsClass => true;
 
         string IObjectType.SingularName => this.SingularName;
 
