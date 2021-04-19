@@ -117,7 +117,7 @@ namespace Allors.Repository
         [Derived]
         [Required]
         [Precision(19)]
-        [Scale(2)]
+        [Scale(4)]
         [Workspace(Default)]
         decimal TotalBasePrice { get; set; }
 
@@ -127,7 +127,7 @@ namespace Allors.Repository
         [Derived]
         [Required]
         [Precision(19)]
-        [Scale(2)]
+        [Scale(5)]
         [Workspace(Default)]
         decimal TotalExVat { get; set; }
 
@@ -137,7 +137,7 @@ namespace Allors.Repository
         [Derived]
         [Required]
         [Precision(19)]
-        [Scale(2)]
+        [Scale(5)]
         [Workspace(Default)]
         decimal TotalVat { get; set; }
 
@@ -147,7 +147,7 @@ namespace Allors.Repository
         [Derived]
         [Required]
         [Precision(19)]
-        [Scale(2)]
+        [Scale(5)]
         [Workspace(Default)]
         decimal TotalIncVat { get; set; }
 
@@ -157,7 +157,7 @@ namespace Allors.Repository
         [Derived]
         [Required]
         [Precision(19)]
-        [Scale(2)]
+        [Scale(5)]
         [Workspace(Default)]
         decimal GrandTotal { get; set; }
 
@@ -167,7 +167,7 @@ namespace Allors.Repository
         [Derived]
         [Required]
         [Precision(19)]
-        [Scale(2)]
+        [Scale(5)]
         [Workspace(Default)]
         decimal TotalDiscount { get; set; }
 
@@ -186,7 +186,7 @@ namespace Allors.Repository
         [Derived]
         [Required]
         [Precision(19)]
-        [Scale(2)]
+        [Scale(5)]
         [Workspace(Default)]
         decimal TotalSurcharge { get; set; }
 
