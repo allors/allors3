@@ -24,7 +24,7 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<WorkEffort>())
             {
-                @this.TotalOtherRevenue = Math.Round(@this.WorkEffortSalesInvoiceItemAssignmentsWhereAssignment.Where(v => v.SalesInvoiceItem.AssignedUnitPrice.HasValue).Sum(v => v.SalesInvoiceItem.Quantity * v.SalesInvoiceItem.AssignedUnitPrice.Value), 2);
+                @this.TotalOtherRevenue = Rounder.RoundDecimal(@this.WorkEffortSalesInvoiceItemAssignmentsWhereAssignment.Where(v => v.SalesInvoiceItem.AssignedUnitPrice.HasValue).Sum(v => v.SalesInvoiceItem.Quantity * v.SalesInvoiceItem.AssignedUnitPrice.Value), 2);
             }
         }
     }

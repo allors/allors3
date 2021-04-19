@@ -25,7 +25,7 @@ namespace Allors.Database.Domain
                 else
                 {
                     var percentage = surchargeComponent.Percentage ?? 0;
-                    surcharge = Math.Round(@this.UnitBasePrice * percentage / 100, 2);
+                    surcharge = @this.UnitBasePrice * percentage / 100;
                     @this.UnitSurcharge += surcharge;
                 }
             }
@@ -49,7 +49,7 @@ namespace Allors.Database.Domain
                 else
                 {
                     var percentage = discountComponent.Percentage ?? 0;
-                    discount = Math.Round(@this.UnitBasePrice * percentage / 100, 2);
+                    discount = @this.UnitBasePrice * percentage / 100;
                     @this.UnitDiscount += discount;
                 }
             }
