@@ -23,6 +23,9 @@ GNU General Public License for more details.
 For more information visit http://www.allors.com/legal
 !$
 <generations>
+    <generation template="m" output="m.ts"/>
+
+
     <generation template="index" output="index.ts"/>
     <generation template="domain" output="domain.g.ts"/>
     <generation template="tree" output="tree.g.ts"/>
@@ -32,6 +35,25 @@ For more information visit http://www.allors.com/legal
     <generation template="data" output="data.json"/>
 </generations>
 >>
+
+m(meta, workspaceName) ::= <<
+export interface M : IMetaPopulation
+{
+    // Units
+$meta._.Units:{unit|        public $unit._.SingularName$ $unit._.SingularName$ { get; \}}; separator="\n"$
+
+    // Interfaces
+$meta._.WorkspaceInterfacesByWorkspaceName.(workspaceName):{interface|        public $interface._.SingularName$ $interface._.SingularName$ { get; \}}; separator="\n"$
+
+    // Classes
+$meta._.WorkspaceClassesByWorkspaceName.(workspaceName):{class|        public $class._.SingularName$ $class._.SingularName$ { get; \}}; separator="\n"$
+}
+>>
+
+
+
+
+
 
 index(meta, workspaceName) ::= <<
 // Allors generated file.
