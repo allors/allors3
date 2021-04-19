@@ -130,7 +130,7 @@ namespace Allors.Workspace.Adapters.Local
 
             // TODO: Cache and filter for workspace
             var methodTypes = composite.MethodTypes.Where(v => v.WorkspaceNames.Length > 0);
-            var methodType = methodTypes.FirstOrDefault(x => x.Id.Equals(invocation.MethodType.Tag));
+            var methodType = methodTypes.FirstOrDefault(x => x.Tag.Equals(invocation.MethodType.Tag));
 
             if (methodType == null)
             {
