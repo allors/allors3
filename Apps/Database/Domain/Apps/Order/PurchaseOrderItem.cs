@@ -88,6 +88,16 @@ namespace Allors.Database.Domain
             this.DerivationTrigger = Guid.NewGuid();
         }
 
+        public void BaseOnInit(ObjectOnInit method)
+        {
+            if (!this.ExistStoredInFacility
+                && (this.InvoiceItemType.IsPartItem || this.InvoiceItemType.IsProductItem)
+                && this.PurchaseOrderWherePurchaseOrderItem.OrderedBy?.StoresWhereInternalOrganisation.Count == 1)
+            {
+                this.StoredInFacility = this.PurchaseOrderWherePurchaseOrderItem.OrderedBy.StoresWhereInternalOrganisation.Single().DefaultFacility;
+            }
+        }
+
         public void AppsDelete(PurchaseOrderItemDelete method)
         {
             if (this.ExistSerialisedItem)
