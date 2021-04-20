@@ -6,6 +6,7 @@
 namespace Allors.Database.Domain
 {
     using System;
+    using System.Linq;
 
     public partial class PurchaseOrderItem
     {
@@ -86,6 +87,17 @@ namespace Allors.Database.Domain
             }
 
             this.DerivationTrigger = Guid.NewGuid();
+        }
+
+        public void BaseOnInit(ObjectOnInit method)
+        {
+            if (!this.ExistStoredInFacility
+                && this.ExistInvoiceItemType
+                && (this.InvoiceItemType.IsPartItem || this.InvoiceItemType.IsProductItem)
+                && this.PurchaseOrderWherePurchaseOrderItem?.OrderedBy?.StoresWhereInternalOrganisation.Count == 1)
+            {
+                this.StoredInFacility = this.PurchaseOrderWherePurchaseOrderItem.OrderedBy.StoresWhereInternalOrganisation.Single().DefaultFacility;
+            }
         }
 
         public void AppsDelete(PurchaseOrderItemDelete method)
