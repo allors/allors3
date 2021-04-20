@@ -32,6 +32,12 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<PurchaseOrderItem>())
             {
+                if (@this.InvoiceItemType.IsPartItem || @this.InvoiceItemType.IsProductItem)
+                {
+                    validation.AssertExists(@this, @this.Meta.Part);
+                    validation.AssertExists(@this, @this.Meta.StoredInFacility);
+                }
+
                 if (@this.ExistPart && @this.Part.InventoryItemKind.IsSerialised)
                 {
                     validation.AssertAtLeastOne(@this, this.M.PurchaseOrderItem.SerialisedItem, this.M.PurchaseOrderItem.SerialNumber);
