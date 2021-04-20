@@ -9,7 +9,7 @@ namespace Allors.Protocol.Json.Api.Sync
 
     public class SyncRequest
     {
-        [JsonPropertyName("objects")]
-        public string[] Objects { get; set; }
+        [JsonPropertyName("o")]
+        public long[] Objects { get; set; }
     }
 }

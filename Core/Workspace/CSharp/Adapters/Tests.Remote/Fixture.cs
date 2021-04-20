@@ -17,8 +17,8 @@ namespace Tests.Workspace.Remote
                 {
                     new SyncResponseObject
                     {
-                        Id = "1",
-                        Version = "1001",
+                        Id = 1,
+                        Version = 1001,
                         ObjectType = m.Person.Tag,
                         Roles = new[]
                         {
@@ -30,12 +30,12 @@ namespace Tests.Workspace.Remote
                             },
                             new SyncResponseRole {RoleType = m.Person.IsStudent.RelationType.Tag, Value = "1"},
                         },
-                        AccessControls = "101",
+                        AccessControls = new long[]{101},
                     },
                     new SyncResponseObject
                     {
-                        Id = "2",
-                        Version = "1002",
+                        Id = 2,
+                        Version = 1002,
                         ObjectType = m.Person.Tag,
                         Roles = new[]
                         {
@@ -43,13 +43,13 @@ namespace Tests.Workspace.Remote
                             new SyncResponseRole {RoleType = m.Person.LastName.RelationType.Tag, Value = "De Boeck"},
                             new SyncResponseRole {RoleType = m.Person.IsStudent.RelationType.Tag, Value = "0"},
                         },
-                        AccessControls = "102",
-                        DeniedPermissions = "103",
+                        AccessControls = new long[]{102},
+                        DeniedPermissions = new long[]{103},
                     },
                     new SyncResponseObject
                     {
-                        Id = "3",
-                        Version = "1003",
+                        Id = 3,
+                        Version = 1003,
                         ObjectType = m.Person.Tag,
                         Roles = new[]
                         {
@@ -60,38 +60,38 @@ namespace Tests.Workspace.Remote
                     },
                     new SyncResponseObject
                     {
-                        Id = "101",
-                        Version = "1101",
+                        Id = 101,
+                        Version = 1101,
                         ObjectType = m.Organisation.Tag,
                         Roles = new[]
                         {
                             new SyncResponseRole {RoleType = m.Organisation.Name.RelationType.Tag, Value = "Acme"},
-                            new SyncResponseRole {RoleType = m.Organisation.Owner.RelationType.Tag, Value = "1"},
-                            new SyncResponseRole {RoleType = m.Organisation.Employees.RelationType.Tag, Value = "1|2|3"},
+                            new SyncResponseRole {RoleType = m.Organisation.Owner.RelationType.Tag, Object = 1},
+                            new SyncResponseRole {RoleType = m.Organisation.Employees.RelationType.Tag, Collection = new long[]{1,2,3}},
                             new SyncResponseRole {RoleType = m.Organisation.Manager.RelationType.Tag},
                         },
                     },
                     new SyncResponseObject
                     {
-                        Id = "102",
-                        Version = "1102",
+                        Id = 102,
+                        Version = 1102,
                         ObjectType = m.Organisation.Tag,
                         Roles = new[]
                         {
                             new SyncResponseRole {RoleType = m.Organisation.Name.RelationType.Tag, Value = "Ocme"},
                             new SyncResponseRole {RoleType = m.Organisation.Owner.RelationType.Tag, Value = "2"},
-                            new SyncResponseRole {RoleType = m.Organisation.Employees.RelationType.Tag, Value = "1"},
+                            new SyncResponseRole {RoleType = m.Organisation.Employees.RelationType.Tag, Collection = new long[]{1}},
                         },
                     },
                     new SyncResponseObject
                     {
-                        Id = "103",
-                        Version = "1103",
+                        Id = 103,
+                        Version = 1103,
                         ObjectType = m.Organisation.Tag,
                         Roles = new[]
                         {
                             new SyncResponseRole {RoleType = m.Organisation.Name.RelationType.Tag, Value = "icme"},
-                            new SyncResponseRole {RoleType = m.Organisation.Owner.RelationType.Tag, Value = "3"},
+                            new SyncResponseRole {RoleType = m.Organisation.Owner.RelationType.Tag, Object = 3},
                         },
                     },
                 },

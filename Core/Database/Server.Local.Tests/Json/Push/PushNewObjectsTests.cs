@@ -5,7 +5,7 @@
 
 namespace Tests
 {
-    
+
     using Allors.Database.Domain;
     using Allors.Protocol.Json.Api.Push;
     using Allors.Database.Protocol.Json;
@@ -22,7 +22,7 @@ namespace Tests
 
             var pushRequest = new PushRequest
             {
-                NewObjects = new[] { new PushRequestNewObject { ObjectType = this.M.WorkspaceXObject1.Tag, NewWorkspaceId = "-1" }, },
+                NewObjects = new[] { new PushRequestNewObject { ObjectType = this.M.WorkspaceXObject1.Tag, WorkspaceId = -1 }, },
             };
 
             var api = new Api(this.Transaction, "X");
@@ -42,7 +42,7 @@ namespace Tests
 
             var pushRequest = new PushRequest
             {
-                NewObjects = new[] { new PushRequestNewObject { ObjectType = this.M.WorkspaceXObject1.Tag, NewWorkspaceId = "-1" }, },
+                NewObjects = new[] { new PushRequestNewObject { ObjectType = this.M.WorkspaceXObject1.Tag, WorkspaceId = -1 }, },
             };
 
             var api = new Api(this.Transaction, "Y");
@@ -62,7 +62,7 @@ namespace Tests
 
             var pushRequest = new PushRequest
             {
-                NewObjects = new[] { new PushRequestNewObject { ObjectType = this.M.WorkspaceXObject1.Tag, NewWorkspaceId = "-1" }, },
+                NewObjects = new[] { new PushRequestNewObject { ObjectType = this.M.WorkspaceXObject1.Tag, WorkspaceId = -1 }, },
             };
 
             var api = new Api(this.Transaction, "None");
@@ -81,7 +81,7 @@ namespace Tests
 
             var pushRequest = new PushRequest
             {
-                NewObjects = new[] { new PushRequestNewObject { ObjectType = this.M.WorkspaceYObject1.Tag, NewWorkspaceId = "-1" }, },
+                NewObjects = new[] { new PushRequestNewObject { ObjectType = this.M.WorkspaceYObject1.Tag, WorkspaceId = -1 }, },
             };
 
             var api = new Api(this.Transaction, "None");
@@ -101,7 +101,7 @@ namespace Tests
 
             var pushRequest = new PushRequest
             {
-                NewObjects = new[] { new PushRequestNewObject { ObjectType = this.M.WorkspaceNoneObject1.Tag, NewWorkspaceId = "-1" }, },
+                NewObjects = new[] { new PushRequestNewObject { ObjectType = this.M.WorkspaceNoneObject1.Tag, WorkspaceId = -1 }, },
             };
 
             var api = new Api(this.Transaction, "X");
@@ -121,7 +121,7 @@ namespace Tests
 
             var pushRequest = new PushRequest
             {
-                NewObjects = new[] { new PushRequestNewObject { ObjectType = this.M.WorkspaceNoneObject1.Tag, NewWorkspaceId = "-1" }, },
+                NewObjects = new[] { new PushRequestNewObject { ObjectType = this.M.WorkspaceNoneObject1.Tag, WorkspaceId = -1 }, },
             };
 
             var api = new Api(this.Transaction, "Y");
@@ -141,7 +141,7 @@ namespace Tests
 
             var pushRequest = new PushRequest
             {
-                NewObjects = new[] { new PushRequestNewObject { ObjectType = this.M.WorkspaceNoneObject1.Tag, NewWorkspaceId = "-1" }, },
+                NewObjects = new[] { new PushRequestNewObject { ObjectType = this.M.WorkspaceNoneObject1.Tag, WorkspaceId = -1 }, },
             };
 
             var api = new Api(this.Transaction, "None");

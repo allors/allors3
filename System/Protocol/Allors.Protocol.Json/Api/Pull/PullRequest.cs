@@ -11,10 +11,10 @@ namespace Allors.Protocol.Json.Api.Pull
 
     public class PullRequest
     {
-        [JsonPropertyName("p")]
-        public Pull[] Pulls { get; set; }
+        [JsonPropertyName("l")]
+        public Pull[] List { get; set; }
 
-        [JsonPropertyName("s")]
+        [JsonPropertyName("p")]
         public Procedure Procedure { get; set; }
     }
 }

@@ -40,13 +40,13 @@ namespace Allors.Database.Protocol.Json
                     {
                         var response = new SecurityResponseAccessControl
                         {
-                            Id = v.Strategy.ObjectId.ToString(),
-                            Version = v.Strategy.ObjectVersion.ToString(),
+                            Id = v.Strategy.ObjectId,
+                            Version = v.Strategy.ObjectVersion,
                         };
 
                         if (this.AccessControlLists.EffectivePermissionIdsByAccessControl.TryGetValue(v, out var x))
                         {
-                            response.PermissionIds = string.Join(",", x);
+                            response.PermissionIds = x.ToArray();
                         }
 
                         return response;
@@ -63,26 +63,26 @@ namespace Allors.Database.Protocol.Json
                 securityResponse.Permissions = permissions.Select(v =>
                     v switch
                     {
-                        IReadPermission permission => new[]
+                        IReadPermission permission => new long[]
                         {
-                            permission.Strategy.ObjectId.ToString(),
-                            permission.Class.Id.ToString("D"),
-                            permission.RelationType.Id.ToString("D"),
-                            ((int)Operations.Read).ToString(),
+                            permission.Strategy.ObjectId,
+                            permission.Class.Tag,
+                            permission.RelationType.Tag,
+                            ((long)Operations.Read),
                         },
-                        IWritePermission permission => new[]
+                        IWritePermission permission => new long[]
                         {
-                            permission.Strategy.ObjectId.ToString(),
-                            permission.Class.Id.ToString("D"),
-                            permission.RelationType.Id.ToString("D"),
-                            ((int)Operations.Write).ToString(),
+                            permission.Strategy.ObjectId,
+                            permission.Class.Tag,
+                            permission.RelationType.Tag,
+                            ((long)Operations.Write),
                         },
-                        IExecutePermission permission => new[]
+                        IExecutePermission permission => new long[]
                         {
-                            permission.Strategy.ObjectId.ToString(),
-                            permission.Class.Id.ToString("D"),
-                            permission.MethodType.Id.ToString("D"),
-                            ((int)Operations.Execute).ToString(),
+                            permission.Strategy.ObjectId,
+                            permission.Class.Tag,
+                            permission.MethodType.Tag,
+                            ((long)Operations.Execute),
                         },
                         _ => throw new Exception(),
                     }).ToArray();

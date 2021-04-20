@@ -12,13 +12,16 @@ namespace Allors.Protocol.Json.Api.Push
         [JsonPropertyName("t")]
         public int RelationType { get; set; }
 
-        [JsonPropertyName("s")]
-        public string SetRole { get; set; }
+        [JsonPropertyName("u")]
+        public string SetUnitRole { get; set; }
+
+        [JsonPropertyName("c")]
+        public long? SetCompositeRole { get; set; }
 
         [JsonPropertyName("a")]
-        public string[] AddRole { get; set; }
+        public long[] AddCompositesRole { get; set; }
 
         [JsonPropertyName("r")]
-        public string[] RemoveRole { get; set; }
+        public long[] RemoveCompositesRole { get; set; }
     }
 }

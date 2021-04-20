@@ -35,10 +35,10 @@ namespace Allors.Protocol.Json.Data
         public Predicate[] Operands { get; set; }
 
         [JsonPropertyName("object")]
-        public string Object { get; set; }
+        public long? Object { get; set; }
 
         [JsonPropertyName("objects")]
-        public string[] Objects { get; set; }
+        public long[] Objects { get; set; }
 
         [JsonPropertyName("value")]
         public string Value { get; set; }

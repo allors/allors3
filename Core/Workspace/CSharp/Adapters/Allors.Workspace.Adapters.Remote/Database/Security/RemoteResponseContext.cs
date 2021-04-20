@@ -27,17 +27,14 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal HashSet<long> MissingPermissionIds { get; }
 
-        internal string ReadSortedAccessControlIds(string value)
+        internal long[] CheckForMissingAccessControls(long[] value)
         {
             if (value == null)
             {
                 return null;
             }
 
-            foreach (var accessControlId in value
-                .Split(Encoding.SeparatorChar)
-                .Select(long.Parse)
-                .Where(v => !this.accessControlById.ContainsKey(v)))
+            foreach (var accessControlId in value.Where(v => !this.accessControlById.ContainsKey(v)))
             {
                 this.MissingAccessControlIds.Add(accessControlId);
             }
@@ -45,17 +42,14 @@ namespace Allors.Workspace.Adapters.Remote
             return value;
         }
 
-        internal string ReadSortedDeniedPermissionIds(string value)
+        internal long[] CheckForMissingPermissions(long[] value)
         {
             if (value == null)
             {
                 return null;
             }
 
-            foreach (var permissionId in value
-                .Split(Encoding.SeparatorChar)
-                .Select(long.Parse)
-                .Where(v => !this.permissionById.ContainsKey(v)))
+            foreach (var permissionId in value.Where(v => !this.permissionById.ContainsKey(v)))
             {
                 this.MissingPermissionIds.Add(permissionId);
             }

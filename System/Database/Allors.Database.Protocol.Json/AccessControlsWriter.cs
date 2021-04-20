@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Protocol.Json
 {
+    using System.Collections.Generic;
     using System.Linq;
     using Allors.Protocol.Json.Api;
     using Security;
@@ -15,11 +16,6 @@ namespace Allors.Database.Protocol.Json
 
         internal AccessControlsWriter(IAccessControlLists acls) => this.acls = acls;
 
-        public string Write(IObject @object)
-        {
-            var accessControls = this.acls[@object].AccessControls?.Select(v => v.Strategy.ObjectId).OrderBy(v => v);
-            var joinedAccessControls = accessControls != null ? string.Join(Encoding.Separator, accessControls) : null;
-            return !string.IsNullOrWhiteSpace(joinedAccessControls) ? joinedAccessControls : null;
-        }
+        public IEnumerable<long> Write(IObject @object) => this.acls[@object].AccessControls?.Select(v => v.Strategy.ObjectId).Distinct();
     }
 }

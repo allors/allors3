@@ -10,19 +10,19 @@ namespace Allors.Protocol.Json.Api.Pull
 
     public class PullResponse : Response
     {
-        [JsonPropertyName("accessControls")]
-        public string[][] AccessControls { get; set; }
+        [JsonPropertyName("c")]
+        public Dictionary<string, long[]> Collections { get; set; }
 
-        [JsonPropertyName("namedCollections")]
-        public Dictionary<string, string[]> NamedCollections { get; set; }
+        [JsonPropertyName("o")]
+        public Dictionary<string, long> Objects { get; set; }
 
-        [JsonPropertyName("namedObjects")]
-        public Dictionary<string, string> NamedObjects { get; set; }
+        [JsonPropertyName("v")]
+        public Dictionary<string, object> Values { get; set; }
 
-        [JsonPropertyName("namedValues")]
-        public Dictionary<string, object> NamedValues { get; set; }
+        [JsonPropertyName("p")]
+        public PullResponseObject[] Pool { get; set; }
 
-        [JsonPropertyName("objects")]
-        public string[][] Objects { get; set; }
+        [JsonPropertyName("a")]
+        public long[][] AccessControls { get; set; }
     }
 }

@@ -31,20 +31,20 @@ namespace Tests
             var extent = new Extent(m.WorkspaceXObject1);
             var pullRequest = new PullRequest
             {
-                Pulls = new[]
+                List = new[]
                 {
                     new Pull
                     {
-                        Object = x1.Id.ToString(),
+                        Object = x1.Id,
                     },
                 },
             };
 
             var api = new Api(this.Transaction, "X");
             var pullResponse = api.Pull(pullRequest);
-            var wx1 = pullResponse.NamedObjects["WorkspaceXObject1"];
+            var wx1 = pullResponse.Objects["WorkspaceXObject1"];
 
-            Assert.Equal(x1.Id.ToString(), wx1);
+            Assert.Equal(x1.Id, wx1);
         }
 
         [Fact]
@@ -60,18 +60,18 @@ namespace Tests
             var extent = new Extent(m.WorkspaceXObject1);
             var pullRequest = new PullRequest
             {
-                Pulls = new[]
+                List = new[]
                 {
                     new Pull
                     {
-                        Object = x1.Id.ToString(),
+                        Object = x1.Id,
                     },
                 },
             };
 
             var api = new Api(this.Transaction, "Y");
             var pullResponse = api.Pull(pullRequest);
-            Assert.Empty(pullResponse.NamedObjects);
+            Assert.Empty(pullResponse.Objects);
         }
 
         [Fact]
@@ -87,11 +87,11 @@ namespace Tests
             var extent = new Extent(m.WorkspaceXObject1);
             var pullRequest = new PullRequest
             {
-                Pulls = new[]
+                List = new[]
                 {
                     new Pull
                     {
-                        Object = x1.Id.ToString(),
+                        Object = x1.Id,
                     },
                 },
             };
@@ -99,7 +99,7 @@ namespace Tests
             var api = new Api(this.Transaction, "None");
             var pullResponse = api.Pull(pullRequest);
 
-            Assert.Empty(pullResponse.NamedObjects);
+            Assert.Empty(pullResponse.Objects);
         }
     }
 }

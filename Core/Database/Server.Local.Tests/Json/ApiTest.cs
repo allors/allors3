@@ -74,20 +74,6 @@ namespace Tests
 
         protected User SetUser(string userName) => this.Transaction.Context().User = new Users(this.Transaction).FindBy(this.M.User.UserName, userName);
 
-        protected Func<IAccessControlList, string> PrintAccessControls =>
-            acl =>
-            {
-                var orderedAcls = acl.AccessControls.OrderBy(v => v).Select(v => v.Strategy.ObjectId.ToString()).ToArray();
-                return orderedAcls.Any() ? string.Join(Encoding.Separator, orderedAcls) : null;
-            };
-
-        protected Func<IAccessControlList, string> PrintDeniedPermissions =>
-            acl =>
-            {
-                var orderedDeniedPermissions = acl.DeniedPermissionIds.OrderBy(v => v).Select(v => v.ToString()).ToArray();
-                return orderedDeniedPermissions.Any() ? string.Join(Encoding.Separator, orderedDeniedPermissions) : null;
-            };
-
         protected Stream GetResource(string name)
         {
             var assembly = this.GetType().GetTypeInfo().Assembly;

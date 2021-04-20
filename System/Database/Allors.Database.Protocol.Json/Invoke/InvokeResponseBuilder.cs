@@ -30,9 +30,9 @@ namespace Allors.Database.Protocol.Json
 
         public InvokeResponse Build(InvokeRequest invokeRequest)
         {
-            var invocations = invokeRequest.Invocations;
-            var isolated = invokeRequest.InvokeOptions?.Isolated ?? false;
-            var continueOnError = invokeRequest.InvokeOptions?.ContinueOnError ?? false;
+            var invocations = invokeRequest.List;
+            var isolated = invokeRequest.Options?.Isolated ?? false;
+            var continueOnError = invokeRequest.Options?.ContinueOnError ?? false;
 
             var invokeResponse = new InvokeResponse();
             if (isolated)
@@ -92,7 +92,7 @@ namespace Allors.Database.Protocol.Json
         private bool Invoke(Invocation invocation, InvokeResponse invokeResponse)
         {
             // TODO: M should be a methodTypeId instead of the methodName
-            if (invocation.Method == null || invocation.Id == null || invocation.Version == null)
+            if (invocation.Method == 0 || invocation.Id == 0 || invocation.Version == 0)
             {
                 throw new ArgumentException();
             }
@@ -121,7 +121,7 @@ namespace Allors.Database.Protocol.Json
                 throw new Exception("Method " + invocation.Method + " not found.");
             }
 
-            if (!invocation.Version.Equals(obj.Strategy.ObjectVersion.ToString()))
+            if (!invocation.Version.Equals(obj.Strategy.ObjectVersion))
             {
                 invokeResponse.AddVersionError(obj);
                 return true;
@@ -138,7 +138,7 @@ namespace Allors.Database.Protocol.Json
 
             try
             {
-                method.Invoke(obj, null);
+                _ = method.Invoke(obj, null);
             }
             catch (Exception e)
             {

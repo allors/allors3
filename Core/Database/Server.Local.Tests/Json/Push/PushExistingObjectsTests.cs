@@ -46,14 +46,14 @@ namespace Tests
                 {
                     new PushRequestObject
                     {
-                        DatabaseId = $"{this.x1.Id}",
-                        Version = $"{this.x1.Strategy.ObjectVersion}",
+                        DatabaseId = this.x1.Id,
+                        Version = this.x1.Strategy.ObjectVersion,
                         Roles = new []
                         {
                             new PushRequestRole
                             {
                                 RelationType = this.M.WorkspaceXObject1.WorkspaceXString.RelationType.Tag,
-                                SetRole = "x string"
+                                SetUnitRole = "x string"
                             },
                         }
                     },
@@ -81,14 +81,14 @@ namespace Tests
                 {
                     new PushRequestObject
                     {
-                        DatabaseId = $"{this.x1.Id}",
-                        Version = $"{this.x1.Strategy.ObjectVersion}",
+                        DatabaseId = this.x1.Id,
+                        Version = this.x1.Strategy.ObjectVersion,
                         Roles = new []
                         {
                             new PushRequestRole
                             {
                                 RelationType = this.M.WorkspaceXObject1.WorkspaceXString.RelationType.Tag,
-                                SetRole = "x string"
+                                SetUnitRole = "x string"
                             },
                         }
                     },

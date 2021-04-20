@@ -9,10 +9,10 @@ namespace Allors.Protocol.Json.Api.Invoke
 
     public class InvokeRequest
     {
-        [JsonPropertyName("i")]
-        public Invocation[] Invocations { get; set; }
+        [JsonPropertyName("l")]
+        public Invocation[] List { get; set; }
 
         [JsonPropertyName("o")]
-        public InvokeOptions InvokeOptions { get; set; }
+        public InvokeOptions Options { get; set; }
     }
 }

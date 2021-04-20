@@ -30,7 +30,7 @@ namespace Tests
             var pull = new Pull { Extent = new Extent(m.WorkspaceXObject1) };
             var pullRequest = new PullRequest
             {
-                Pulls = new[]
+                List = new[]
                 {
                     pull.ToJson()
                 },
@@ -38,13 +38,13 @@ namespace Tests
 
             var api = new Api(this.Transaction, "X");
             var pullResponse = api.Pull(pullRequest);
-            var wx1s = pullResponse.NamedCollections["WorkspaceXObject1s"];
+            var wx1s = pullResponse.Collections["WorkspaceXObject1s"];
 
             Assert.Single(wx1s);
 
             var wx1 = wx1s.First();
 
-            Assert.Equal(x1.Id.ToString(), wx1);
+            Assert.Equal(x1.Id, wx1);
         }
 
         [Fact]
@@ -64,7 +64,7 @@ namespace Tests
 
             var pullRequest = new PullRequest
             {
-                Pulls = new[]
+                List = new[]
                 {
                    pull.ToJson()
                 }
@@ -72,7 +72,7 @@ namespace Tests
 
             var api = new Api(this.Transaction, "Y");
             var pullResponse = api.Pull(pullRequest);
-            var wx1s = pullResponse.NamedCollections["WorkspaceXObject1s"];
+            var wx1s = pullResponse.Collections["WorkspaceXObject1s"];
 
             Assert.Empty(wx1s);
         }
@@ -93,7 +93,7 @@ namespace Tests
             };
             var pullRequest = new PullRequest
             {
-                Pulls = new[]
+                List = new[]
                 {
                     pull.ToJson()
                 },
@@ -102,7 +102,7 @@ namespace Tests
             var api = new Api(this.Transaction, "None");
             var pullResponse = api.Pull(pullRequest);
 
-            var wx1s = pullResponse.NamedCollections["WorkspaceXObject1s"];
+            var wx1s = pullResponse.Collections["WorkspaceXObject1s"];
 
             Assert.Empty(wx1s);
         }

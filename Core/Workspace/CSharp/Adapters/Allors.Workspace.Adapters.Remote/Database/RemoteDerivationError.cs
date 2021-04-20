@@ -25,7 +25,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public IEnumerable<Role> Roles =>
             from r in this.responseDerivationError.R
-            let association = this.session.Get<IObject>(long.Parse((string)r[0]))
+            let association = this.session.Get<IObject>(r[0])
             let relationType = (IRelationType)this.session.Workspace.MetaPopulation.FindByTag((int)r[1])
             select new Role(association, relationType);
     }

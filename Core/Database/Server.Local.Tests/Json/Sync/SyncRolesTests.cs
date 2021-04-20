@@ -33,7 +33,7 @@ namespace Tests
 
             var syncRequest = new SyncRequest
             {
-                Objects = new[] { x1.Id.ToString() },
+                Objects = new[] { x1.Id },
             };
             var api = new Api(this.Transaction, "X");
             var syncResponse = api.Sync(syncRequest);
@@ -69,7 +69,7 @@ namespace Tests
 
             var syncRequest = new SyncRequest
             {
-                Objects = new[] { x1.Id.ToString() },
+                Objects = new[] { x1.Id},
             };
             var api = new Api(this.Transaction, "None");
             var syncResponse = api.Sync(syncRequest);

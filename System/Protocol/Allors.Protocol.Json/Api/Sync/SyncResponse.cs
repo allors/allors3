@@ -9,10 +9,10 @@ namespace Allors.Protocol.Json.Api.Sync
 
     public class SyncResponse
     {
-        [JsonPropertyName("accessControls")]
-        public string[][] AccessControls { get; set; }
-
-        [JsonPropertyName("objects")]
+        [JsonPropertyName("o")]
         public SyncResponseObject[] Objects { get; set; }
+
+        [JsonPropertyName("a")]
+        public long[][] AccessControls { get; set; }
     }
 }

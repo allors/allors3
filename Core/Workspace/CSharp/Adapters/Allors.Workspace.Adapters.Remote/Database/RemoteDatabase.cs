@@ -104,8 +104,8 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 return new SecurityRequest
                 {
-                    AccessControls = ctx.MissingAccessControlIds.Select(v => v.ToString()).ToArray(),
-                    Permissions = ctx.MissingPermissionIds.Select(v => v.ToString()).ToArray(),
+                    AccessControls = ctx.MissingAccessControlIds.Select(v => v).ToArray(),
+                    Permissions = ctx.MissingPermissionIds.Select(v => v).ToArray(),
                 };
             }
 
@@ -118,44 +118,56 @@ namespace Allors.Workspace.Adapters.Remote
 
             return new SyncRequest
             {
-                Objects = response.Objects
+                Objects = response.Pool
                     .Where(v =>
                     {
-                        var identity = long.Parse(v[0]);
-                        this.objectsById.TryGetValue(identity, out var databaseObject);
-                        if (databaseObject == null)
+                        if (!this.objectsById.TryGetValue(v.Id, out var databaseObject))
                         {
                             return true;
                         }
 
-                        var sortedAccessControlIds = v.Length > 2 ? ctx.ReadSortedAccessControlIds(v[2]) : null;
-                        var sortedDeniedPermissionIds = v.Length > 3 ? ctx.ReadSortedDeniedPermissionIds(v[3]) : null;
-
-                        var version = long.Parse(v[1]);
-                        if (!databaseObject.Version.Equals(version))
+                        if (!databaseObject.Version.Equals(v.Version))
                         {
                             return true;
                         }
 
-                        if (v.Length == 2)
+                        if (v.AccessControls == null)
                         {
-                            return false;
+                            if (databaseObject.AccessControlIds.Count > 0)
+                            {
+                                return true;
+                            }
+                        }
+                        else if (!databaseObject.AccessControlIds.SetEquals(v.AccessControls))
+                        {
+                            return true;
                         }
 
-                        if (v.Length == 3)
+                        if (v.DeniedPermissions == null)
                         {
-                            if (databaseObject.SortedDeniedPermissionIds != null)
+                            if (databaseObject.DeniedPermissionIds.Count > 0)
+                            {
+                                return true;
+                            }
+                        }
+                        else
+                        {
+                            if (databaseObject.DeniedPermissionIds.SetEquals(v.DeniedPermissions))
+                            {
+                                return false;
+                            }
+
+                            if (!databaseObject.DeniedPermissionIds.IsProperSubsetOf(v.DeniedPermissions))
                             {
                                 return true;
                             }
 
-                            return !Equals(databaseObject.SortedAccessControlIds, sortedAccessControlIds);
+                            databaseObject.UpdateDeniedPermissions(v.DeniedPermissions);
                         }
 
-                        return !Equals(databaseObject.SortedAccessControlIds, sortedAccessControlIds) ||
-                               !Equals(databaseObject.SortedDeniedPermissionIds, sortedDeniedPermissionIds);
+                        return false;
                     })
-                    .Select(v => v[0]).ToArray(),
+                    .Select(v => v.Id).ToArray(),
             };
         }
 
@@ -171,14 +183,12 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 foreach (var syncResponsePermission in securityResponse.Permissions)
                 {
-                    var id = long.Parse((string)syncResponsePermission[0]);
+                    var id = syncResponsePermission[0];
                     var @class = (IClass)this.MetaPopulation.FindByTag((int)syncResponsePermission[1]);
                     var metaObject = this.MetaPopulation.FindByTag((int)syncResponsePermission[2]);
                     IOperandType operandType = (metaObject as IRelationType)?.RoleType;
                     operandType ??= metaObject as IMethodType;
-
-                    Enum.TryParse((string)syncResponsePermission[3], out Operations operation);
-
+                    var operation = (Operations)syncResponsePermission[3];
                     var permission = new RemotePermission(id, @class, operandType, operation);
                     this.PermissionById[id] = permission;
 
@@ -228,20 +238,20 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 foreach (var syncResponseAccessControl in securityResponse.AccessControls)
                 {
-                    var id = long.Parse(syncResponseAccessControl.Id);
-                    var version = long.Parse(syncResponseAccessControl.Version);
+                    var id = syncResponseAccessControl.Id;
+                    var version = syncResponseAccessControl.Version;
                     var permissionsIds = syncResponseAccessControl.PermissionIds
-                        ?.Split(',')
-                        .Select(v =>
+                        ?.Select(v =>
                         {
-                            var permissionId = long.Parse(v);
-                            if (!this.PermissionById.ContainsKey(permissionId))
+                            if (this.PermissionById.ContainsKey(v))
                             {
-                                missingPermissionIds ??= new HashSet<long>();
-                                missingPermissionIds.Add(permissionId);
+                                return v;
                             }
 
-                            return permissionId;
+                            missingPermissionIds ??= new HashSet<long>();
+                            missingPermissionIds.Add(v);
+
+                            return v;
                         });
 
                     this.AccessControlById[id] = new RemoteAccessControl(id, version, new HashSet<long>(permissionsIds));
@@ -252,7 +262,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 return new SecurityRequest
                 {
-                    Permissions = missingPermissionIds.Select(v => v.ToString()).ToArray(),
+                    Permissions = missingPermissionIds.ToArray(),
                 };
             }
 
@@ -314,9 +324,9 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var pullArgs = new PullArgs
             {
-                NamedValues = values?.ToDictionary(v => v.Key, v => v.Value),
-                NamedObjects = objects?.ToDictionary(v => v.Key, v => v.Value?.Id.ToString()),
-                NamedCollections = collections?.ToDictionary(v => v.Key, v => v.Value.Select(v=>v.Id.ToString()).ToArray()),
+                Values = values?.ToDictionary(v => v.Key, v => v.Value),
+                Objects = objects?.ToDictionary(v => v.Key, v => v.Value.Id),
+                Collections = collections?.ToDictionary(v => v.Key, v => v.Value.Select(v => v.Id).ToArray()),
             };
 
             var uri = new Uri(name + "/pull", UriKind.Relative);

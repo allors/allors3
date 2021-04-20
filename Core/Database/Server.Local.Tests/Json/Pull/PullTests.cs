@@ -38,7 +38,7 @@ namespace Tests
             var pull = new Pull { Extent = new Extent(m.Data) };
             var pullRequest = new PullRequest
             {
-                Pulls = new[]
+                List = new[]
                 {
                     pull.ToJson()
                 },
@@ -47,15 +47,15 @@ namespace Tests
             var api = new Api(this.Transaction, "Default");
             var pullResponse = api.Pull(pullRequest);
 
-            var namedCollection = pullResponse.NamedCollections["Datas"];
+            var namedCollection = pullResponse.Collections["Datas"];
 
             Assert.Single(namedCollection);
 
             var namedObject = namedCollection.First();
 
-            Assert.Equal(data.Id.ToString(), namedObject);
+            Assert.Equal(data.Id, namedObject);
 
-            var objects = pullResponse.Objects;
+            var objects = pullResponse.Pool;
 
             Assert.Single(objects);
 
@@ -64,12 +64,12 @@ namespace Tests
             var acls = new DatabaseAccessControlLists(user);
             var acl = acls[data];
 
-            Assert.Equal(4, @object.Length);
+            Assert.NotNull(@object);
 
-            Assert.Equal(data.Strategy.ObjectId.ToString(), @object[0]);
-            Assert.Equal(data.Strategy.ObjectVersion.ToString(), @object[1]);
-            Assert.Equal(this.PrintAccessControls(acl), @object[2]);
-            Assert.Equal(this.PrintDeniedPermissions(acl), @object[3]);
+            Assert.Equal(data.Strategy.ObjectId, @object.Id);
+            Assert.Equal(data.Strategy.ObjectVersion, @object.Version);
+            Assert.Equal(acl.AccessControls.Select(v=>v.Strategy.ObjectId), @object.AccessControls);
+            Assert.Equal(acl.DeniedPermissionIds, @object.DeniedPermissions);
         }
 
         [Fact]
@@ -79,7 +79,7 @@ namespace Tests
 
             var pullRequest = new PullRequest
             {
-                Pulls = new[]
+                List = new[]
                   {
                       new Allors.Protocol.Json.Data.Pull
                           {
@@ -92,7 +92,7 @@ namespace Tests
             var api = new Api(this.Transaction, "Default");
             var pullResponse = api.Pull(pullRequest);
 
-            var organisations = pullResponse.NamedCollections["Organisations"];
+            var organisations = pullResponse.Collections["Organisations"];
 
             Assert.Single(organisations);
         }
@@ -104,7 +104,7 @@ namespace Tests
 
             var pullRequest = new PullRequest
             {
-                Pulls = new[]
+                List = new[]
                   {
                       new Allors.Protocol.Json.Data.Pull
                           {
@@ -117,7 +117,7 @@ namespace Tests
             var api = new Api(this.Transaction, "Default");
             var pullResponse = api.Pull(pullRequest);
 
-            var organisations = pullResponse.NamedCollections["Organisations"];
+            var organisations = pullResponse.Collections["Organisations"];
 
             Assert.Single(organisations);
         }
@@ -138,7 +138,7 @@ namespace Tests
 
             var pullRequest = new PullRequest
             {
-                Pulls = new[]
+                List = new[]
                       {
                           pull.ToJson()
                       },
@@ -147,15 +147,15 @@ namespace Tests
             var api = new Api(this.Transaction, "Default");
             var pullResponse = api.Pull(pullRequest);
 
-            var namedCollection = pullResponse.NamedCollections["Datas"];
+            var namedCollection = pullResponse.Collections["Datas"];
 
             Assert.Single(namedCollection);
 
             var namedObject = namedCollection.First();
 
-            Assert.Equal(data.Id.ToString(), namedObject);
+            Assert.Equal(data.Id, namedObject);
 
-            var objects = pullResponse.Objects;
+            var objects = pullResponse.Pool;
 
             Assert.Single(objects);
 
@@ -164,11 +164,11 @@ namespace Tests
             var acls = new DatabaseAccessControlLists(user);
             var acl = acls[data];
 
-            Assert.Equal(3, @object.Length);
+            Assert.NotNull(@object);
 
-            Assert.Equal(data.Strategy.ObjectId.ToString(), @object[0]);
-            Assert.Equal(data.Strategy.ObjectVersion.ToString(), @object[1]);
-            Assert.Equal(this.PrintAccessControls(acl), @object[2]);
+            Assert.Equal(data.Strategy.ObjectId, @object.Id);
+            Assert.Equal(data.Strategy.ObjectVersion, @object.Version);
+            Assert.Equal(acl.AccessControls.Select(v=>v.Strategy.ObjectId), @object.AccessControls);
         }
 
         [Fact]
@@ -192,7 +192,7 @@ namespace Tests
 
             var pullRequest = new PullRequest
             {
-                Pulls = new[]
+                List = new[]
                 {
                     pull.ToJson()
                 },
@@ -201,15 +201,15 @@ namespace Tests
             var api = new Api(this.Transaction, "Default");
             var pullResponse = api.Pull(pullRequest);
 
-            var namedCollection = pullResponse.NamedCollections["Datas"];
+            var namedCollection = pullResponse.Collections["Datas"];
 
             Assert.Single(namedCollection);
 
             var namedObject = namedCollection.First();
 
-            Assert.Equal(data.Id.ToString(), namedObject);
+            Assert.Equal(data.Id, namedObject);
 
-            var objects = pullResponse.Objects;
+            var objects = pullResponse.Pool;
 
             Assert.Single(objects);
 
@@ -218,11 +218,11 @@ namespace Tests
             var acls = new DatabaseAccessControlLists(user);
             var acl = acls[data];
 
-            Assert.Equal(3, @object.Length);
+            Assert.NotNull(@object);
 
-            Assert.Equal(data.Strategy.ObjectId.ToString(), @object[0]);
-            Assert.Equal(data.Strategy.ObjectVersion.ToString(), @object[1]);
-            Assert.Equal(this.PrintAccessControls(acl), @object[2]);
+            Assert.Equal(data.Strategy.ObjectId, @object.Id);
+            Assert.Equal(data.Strategy.ObjectVersion, @object.Version);
+            Assert.Equal(acl.AccessControls.Select(v=>v.Strategy.ObjectId), @object.AccessControls);
         }
     }
 }

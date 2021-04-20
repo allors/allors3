@@ -9,10 +9,10 @@ namespace Allors.Protocol.Json.Api.Push
 
     public class PushResponseNewObject
     {
-        [JsonPropertyName("wi")]
-        public string WorkspaceId { get; set; }
+        [JsonPropertyName("w")]
+        public long WorkspaceId { get; set; }
 
-        [JsonPropertyName("i")]
-        public string DatabaseId { get; set; }
+        [JsonPropertyName("d")]
+        public long DatabaseId { get; set; }
     }
 }

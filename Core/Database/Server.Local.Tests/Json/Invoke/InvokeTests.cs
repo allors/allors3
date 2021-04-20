@@ -41,12 +41,12 @@ namespace Tests
 
             var invokeRequest = new InvokeRequest
             {
-                Invocations = new Invocation[]
+                List = new Invocation[]
                 {
                     new Invocation
                     {
-                        Id = $"{this.x1.Id}",
-                        Version = $"{this.x1.Strategy.ObjectVersion}",
+                        Id = this.x1.Id,
+                        Version = this.x1.Strategy.ObjectVersion,
                         Method = this.M.WorkspaceXObject1.DoX.Tag
                     },
                 },
@@ -65,12 +65,12 @@ namespace Tests
 
             var invokeRequest = new InvokeRequest
             {
-                Invocations = new Invocation[]
+                List = new Invocation[]
                 {
                     new Invocation
                     {
-                        Id = $"{this.x1.Id}",
-                        Version = $"{this.x1.Strategy.ObjectVersion}",
+                        Id = this.x1.Id,
+                        Version = this.x1.Strategy.ObjectVersion,
                         Method = this.M.WorkspaceXObject1.DoX.Tag
                     },
                 },
@@ -85,7 +85,7 @@ namespace Tests
 
             var accessError = invokeResponse.AccessErrors[0];
 
-            Assert.Equal($"{this.x1.Id}", accessError);
+            Assert.Equal(this.x1.Id, accessError);
         }
 
         [Fact]
@@ -95,12 +95,12 @@ namespace Tests
 
             var invokeRequest = new InvokeRequest
             {
-                Invocations = new Invocation[]
+                List = new Invocation[]
                 {
                     new Invocation
                     {
-                        Id = $"{this.x1.Id}",
-                        Version = $"{this.x1.Strategy.ObjectVersion}",
+                        Id = this.x1.Id,
+                        Version = this.x1.Strategy.ObjectVersion,
                         Method = this.M.WorkspaceXObject1.DoX.Tag
                     },
                 },
@@ -115,7 +115,7 @@ namespace Tests
 
             var accessError = invokeResponse.AccessErrors[0];
 
-            Assert.Equal($"{this.x1.Id}", accessError);
+            Assert.Equal(this.x1.Id, accessError);
         }
     }
 }

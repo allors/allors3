@@ -9,10 +9,10 @@ namespace Allors.Protocol.Json.Api.Push
 
     public class PushRequest
     {
-        [JsonPropertyName("newObjects")]
+        [JsonPropertyName("n")]
         public PushRequestNewObject[] NewObjects { get; set; }
 
-        [JsonPropertyName("objects")]
+        [JsonPropertyName("o")]
         public PushRequestObject[] Objects { get; set; }
     }
 }

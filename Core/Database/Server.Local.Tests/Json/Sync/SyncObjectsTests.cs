@@ -29,7 +29,7 @@ namespace Tests
 
             var syncRequest = new SyncRequest
             {
-                Objects = new[] { organisation.Id.ToString() },
+                Objects = new[] { organisation.Id },
             };
 
             var api = new Api(this.Transaction, "Default");
@@ -48,7 +48,7 @@ namespace Tests
 
             var syncRequest = new SyncRequest
             {
-                Objects = new[] { person.Id.ToString() },
+                Objects = new[] { person.Id },
             };
 
             var api = new Api(this.Transaction, "Default");
@@ -57,9 +57,9 @@ namespace Tests
             Assert.Single(syncResponse.Objects);
             var syncObject = syncResponse.Objects[0];
 
-            Assert.Equal(person.Id.ToString(), syncObject.Id);
+            Assert.Equal(person.Id, syncObject.Id);
             Assert.Equal(this.M.Person.Tag, syncObject.ObjectType);
-            Assert.Equal(person.Strategy.ObjectVersion.ToString(), syncObject.Version);
+            Assert.Equal(person.Strategy.ObjectVersion, syncObject.Version);
         }
 
 
@@ -77,16 +77,16 @@ namespace Tests
 
             var syncRequest = new SyncRequest
             {
-                Objects = new[] { person.Id.ToString() },
+                Objects = new[] { person.Id },
             };
 
             var api = new Api(this.Transaction, "Default");
             var syncResponse = api.Sync(syncRequest);
-            
+
             Assert.Single(syncResponse.Objects);
             var syncObject = syncResponse.Objects[0];
 
-            Assert.Null(syncObject.AccessControls);
+            Assert.Empty(syncObject.AccessControls);
             Assert.Null(syncObject.DeniedPermissions);
         }
     }

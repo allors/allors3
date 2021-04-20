@@ -20,7 +20,7 @@ namespace Allors.Workspace.Data
 
         public IObject Object { get; set; }
 
-        public string ObjectId { get; set; }
+        public long? ObjectId { get; set; }
 
         public IDictionary<string, string> Parameters { get; set; }
 

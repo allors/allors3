@@ -279,15 +279,15 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal PushRequestNewObject PushNew() => new PushRequestNewObject
         {
-            NewWorkspaceId = this.Identity.ToString(),
+            WorkspaceId = this.Identity,
             ObjectType = this.Class.Tag,
             Roles = this.PushRoles(),
         };
 
         internal PushRequestObject PushExisting() => new PushRequestObject
         {
-            DatabaseId = this.Identity.ToString(),
-            Version = this.Version.ToString(),
+            DatabaseId = this.Identity,
+            Version = this.Version,
             Roles = this.PushRoles(),
         };
 
@@ -306,35 +306,32 @@ namespace Allors.Workspace.Adapters.Remote
 
                     if (relationType.RoleType.ObjectType.IsUnit)
                     {
-                        pushRequestRole.SetRole = UnitConvert.ToString(roleValue);
+                        pushRequestRole.SetUnitRole = UnitConvert.ToString(roleValue);
                     }
                     else
                     {
                         if (relationType.RoleType.IsOne)
                         {
-                            pushRequestRole.SetRole = ((RemoteStrategy)roleValue)?.Id.ToString();
+                            pushRequestRole.SetCompositeRole = ((RemoteStrategy)roleValue)?.Id;
                         }
                         else
                         {
-                            var roleIds = ((RemoteStrategy[])roleValue).Select(v => v.Id.ToString()).ToArray();
+                            var roleIds = ((RemoteStrategy[])roleValue).Select(v => v.Id).ToArray();
                             if (!this.ExistDatabaseObjects)
                             {
-                                pushRequestRole.AddRole = roleIds;
+                                pushRequestRole.AddCompositesRole = roleIds;
                             }
                             else
                             {
                                 var databaseRole = (long[])this.databaseObject.GetRole(relationType.RoleType);
                                 if (databaseRole == null)
                                 {
-                                    pushRequestRole.AddRole = roleIds;
+                                    pushRequestRole.AddCompositesRole = roleIds;
                                 }
                                 else
                                 {
-                                    var originalRoleIds = databaseRole
-                                        .Select(v => v.ToString())
-                                        .ToArray();
-                                    pushRequestRole.AddRole = roleIds.Except(originalRoleIds).ToArray();
-                                    pushRequestRole.RemoveRole = originalRoleIds.Except(roleIds).ToArray();
+                                    pushRequestRole.AddCompositesRole = roleIds.Except(databaseRole).ToArray();
+                                    pushRequestRole.RemoveCompositesRole = databaseRole.Except(roleIds).ToArray();
                                 }
                             }
                         }

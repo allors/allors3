@@ -132,35 +132,35 @@ namespace Tests.Workspace.Remote
 
             Assert.Equal(2, save.Objects.Length);
 
-            var savedKoen = save.Objects.First(v => v.DatabaseId == "1");
+            var savedKoen = save.Objects.First(v => v.DatabaseId == 1);
 
-            Assert.Equal("1001", savedKoen.Version);
+            Assert.Equal(1001, savedKoen.Version);
             Assert.Equal(2, savedKoen.Roles.Length);
 
             var savedKoenFirstName = savedKoen.Roles.First(v => v.RelationType == this.M.Person.FirstName.RelationType.Tag);
             var savedKoenLastName = savedKoen.Roles.First(v => v.RelationType == this.M.Person.LastName.RelationType.Tag);
 
-            Assert.Equal("K", savedKoenFirstName.SetRole);
-            Assert.Null(savedKoenFirstName.AddRole);
-            Assert.Null(savedKoenFirstName.RemoveRole);
-            Assert.Equal("VE", savedKoenLastName.SetRole);
-            Assert.Null(savedKoenLastName.AddRole);
-            Assert.Null(savedKoenLastName.RemoveRole);
+            Assert.Equal("K", savedKoenFirstName.SetUnitRole);
+            Assert.Null(savedKoenFirstName.AddCompositesRole);
+            Assert.Null(savedKoenFirstName.RemoveCompositesRole);
+            Assert.Equal("VE", savedKoenLastName.SetUnitRole);
+            Assert.Null(savedKoenLastName.AddCompositesRole);
+            Assert.Null(savedKoenLastName.RemoveCompositesRole);
 
-            var savedMartien = save.Objects.First(v => v.DatabaseId == "3");
+            var savedMartien = save.Objects.First(v => v.DatabaseId == 3);
 
-            Assert.Equal("1003", savedMartien.Version);
+            Assert.Equal(1003, savedMartien.Version);
             Assert.Equal(2, savedMartien.Roles.Length);
 
             var savedMartienFirstName = savedMartien.Roles.First(v => v.RelationType == this.M.Person.FirstName.RelationType.Tag);
             var savedMartienMiddleName = savedMartien.Roles.First(v => v.RelationType == this.M.Person.MiddleName.RelationType.Tag);
 
-            Assert.Equal("Martinus", savedMartienFirstName.SetRole);
-            Assert.Null(savedMartienFirstName.AddRole);
-            Assert.Null(savedMartienFirstName.RemoveRole);
-            Assert.Equal("X", savedMartienMiddleName.SetRole);
-            Assert.Null(savedMartienMiddleName.AddRole);
-            Assert.Null(savedMartienMiddleName.RemoveRole);
+            Assert.Equal("Martinus", savedMartienFirstName.SetUnitRole);
+            Assert.Null(savedMartienFirstName.AddCompositesRole);
+            Assert.Null(savedMartienFirstName.RemoveCompositesRole);
+            Assert.Equal("X", savedMartienMiddleName.SetUnitRole);
+            Assert.Null(savedMartienMiddleName.AddCompositesRole);
+            Assert.Null(savedMartienMiddleName.RemoveCompositesRole);
         }
 
         [Fact]
@@ -255,31 +255,31 @@ namespace Tests.Workspace.Remote
 
             Assert.Equal(2, save.Objects.Length);
 
-            var savedAcme = save.Objects.First(v => v.DatabaseId == "101");
+            var savedAcme = save.Objects.First(v => v.DatabaseId == 101);
 
-            Assert.Equal("1101", savedAcme.Version);
+            Assert.Equal(1101, savedAcme.Version);
             Assert.Equal(2, savedAcme.Roles.Length);
 
             var savedAcmeOwner = savedAcme.Roles.First(v => v.RelationType == this.M.Organisation.Owner.RelationType.Tag);
             var savedAcmeManager = savedAcme.Roles.First(v => v.RelationType == this.M.Organisation.Manager.RelationType.Tag);
 
-            Assert.Equal("3", savedAcmeOwner.SetRole);
-            Assert.Null(savedAcmeOwner.AddRole);
-            Assert.Null(savedAcmeOwner.RemoveRole);
-            Assert.Equal("2", savedAcmeManager.SetRole);
-            Assert.Null(savedAcmeManager.AddRole);
-            Assert.Null(savedAcmeManager.RemoveRole);
+            Assert.Equal(3, savedAcmeOwner.SetCompositeRole);
+            Assert.Null(savedAcmeOwner.AddCompositesRole);
+            Assert.Null(savedAcmeOwner.RemoveCompositesRole);
+            Assert.Equal(2, savedAcmeManager.SetCompositeRole);
+            Assert.Null(savedAcmeManager.AddCompositesRole);
+            Assert.Null(savedAcmeManager.RemoveCompositesRole);
 
-            var savedOcme = save.Objects.First(v => v.DatabaseId == "102");
+            var savedOcme = save.Objects.First(v => v.DatabaseId == 102);
 
-            Assert.Equal("1102", savedOcme.Version);
+            Assert.Equal(1102, savedOcme.Version);
             Assert.Single(savedOcme.Roles);
 
             var savedOcmeOwner = savedOcme.Roles.First(v => v.RelationType == this.M.Organisation.Owner.RelationType.Tag);
 
-            Assert.Null(savedOcmeOwner.SetRole);
-            Assert.Null(savedOcmeOwner.AddRole);
-            Assert.Null(savedOcmeOwner.RemoveRole);
+            Assert.Null(savedOcmeOwner.SetCompositeRole);
+            Assert.Null(savedOcmeOwner.AddCompositesRole);
+            Assert.Null(savedOcmeOwner.RemoveCompositesRole);
         }
 
         [Fact]
@@ -384,47 +384,50 @@ namespace Tests.Workspace.Remote
             Assert.Null(save.NewObjects);
             Assert.Equal(3, save.Objects.Length);
 
-            var savedAcme = save.Objects.First(v => v.DatabaseId == "101");
+            var savedAcme = save.Objects.First(v => v.DatabaseId == 101);
 
-            Assert.Equal("1101", savedAcme.Version);
+            Assert.Equal(1101, savedAcme.Version);
             Assert.Single(savedAcme.Roles);
 
             var savedAcmeEmployees = savedAcme.Roles.First(v => v.RelationType == this.M.Organisation.Employees.RelationType.Tag);
 
-            Assert.Null(savedAcmeEmployees.SetRole);
-            Assert.Empty(savedAcmeEmployees.AddRole);
-            Assert.Contains("1", savedAcmeEmployees.RemoveRole);
-            Assert.Contains("2", savedAcmeEmployees.RemoveRole);
-            Assert.Contains("3", savedAcmeEmployees.RemoveRole);
+            Assert.Null(savedAcmeEmployees.SetUnitRole);
+            Assert.Null(savedAcmeEmployees.SetCompositeRole);
+            Assert.Empty(savedAcmeEmployees.AddCompositesRole);
+            Assert.Contains(1, savedAcmeEmployees.RemoveCompositesRole);
+            Assert.Contains(2, savedAcmeEmployees.RemoveCompositesRole);
+            Assert.Contains(3, savedAcmeEmployees.RemoveCompositesRole);
 
-            var savedOcme = save.Objects.First(v => v.DatabaseId == "102");
+            var savedOcme = save.Objects.First(v => v.DatabaseId == 102);
 
-            Assert.Equal("1102", savedOcme.Version);
+            Assert.Equal(1102, savedOcme.Version);
             Assert.Single(savedOcme.Roles);
 
             var savedOcmeEmployees = savedOcme.Roles.First(v => v.RelationType == this.M.Organisation.Employees.RelationType.Tag);
 
-            Assert.Null(savedOcmeEmployees.SetRole);
-            Assert.Equal(2, savedOcmeEmployees.AddRole.Length);
-            Assert.Contains("2", savedOcmeEmployees.AddRole);
-            Assert.Contains("3", savedOcmeEmployees.AddRole);
+            Assert.Null(savedAcmeEmployees.SetUnitRole);
+            Assert.Null(savedAcmeEmployees.SetCompositeRole);
+            Assert.Equal(2, savedOcmeEmployees.AddCompositesRole.Length);
+            Assert.Contains(2, savedOcmeEmployees.AddCompositesRole);
+            Assert.Contains(3, savedOcmeEmployees.AddCompositesRole);
 
-            Assert.Single(savedOcmeEmployees.RemoveRole);
-            Assert.Contains("1", savedOcmeEmployees.RemoveRole);
+            Assert.Single(savedOcmeEmployees.RemoveCompositesRole);
+            Assert.Contains(1, savedOcmeEmployees.RemoveCompositesRole);
 
-            var savedIcme = save.Objects.First(v => v.DatabaseId == "103");
+            var savedIcme = save.Objects.First(v => v.DatabaseId == 103);
 
-            Assert.Equal("1103", savedIcme.Version);
+            Assert.Equal(1103, savedIcme.Version);
             Assert.Single(savedIcme.Roles);
 
             var savedIcmeEmployees = savedIcme.Roles.First(v => v.RelationType == this.M.Organisation.Employees.RelationType.Tag);
 
-            Assert.Null(savedIcmeEmployees.SetRole);
-            Assert.Equal(3, savedIcmeEmployees.AddRole.Length);
-            Assert.Contains("1", savedIcmeEmployees.AddRole);
-            Assert.Contains("2", savedIcmeEmployees.AddRole);
-            Assert.Contains("3", savedIcmeEmployees.AddRole);
-            Assert.Null(savedIcmeEmployees.RemoveRole);
+            Assert.Null(savedAcmeEmployees.SetUnitRole);
+            Assert.Null(savedAcmeEmployees.SetCompositeRole);
+            Assert.Equal(3, savedIcmeEmployees.AddCompositesRole.Length);
+            Assert.Contains(1, savedIcmeEmployees.AddCompositesRole);
+            Assert.Contains(2, savedIcmeEmployees.AddCompositesRole);
+            Assert.Contains(3, savedIcmeEmployees.AddCompositesRole);
+            Assert.Null(savedIcmeEmployees.RemoveCompositesRole);
         }
 
         [Fact]
@@ -455,50 +458,52 @@ namespace Tests.Workspace.Remote
             Assert.Equal(3, save.NewObjects.Length);
             Assert.Empty(save.Objects);
             {
-                var savedMathijs = save.NewObjects.First(v => v.NewWorkspaceId == mathijs.Strategy.Id.ToString());
+                var savedMathijs = save.NewObjects.First(v => v.WorkspaceId == mathijs.Strategy.Id);
 
                 Assert.Equal(this.M.Person.Tag, savedMathijs.ObjectType);
                 Assert.Equal(2, savedMathijs.Roles.Length);
 
                 var savedMathijsFirstName = savedMathijs.Roles.First(v => v.RelationType == this.M.Person.FirstName.RelationType.Tag);
-                Assert.Equal("Mathijs", savedMathijsFirstName.SetRole);
+                Assert.Equal("Mathijs", savedMathijsFirstName.SetUnitRole);
 
                 var savedMathijsLastName = savedMathijs.Roles.First(v => v.RelationType == this.M.Person.LastName.RelationType.Tag);
-                Assert.Equal("Verwer", savedMathijsLastName.SetRole);
+                Assert.Equal("Verwer", savedMathijsLastName.SetUnitRole);
             }
 
             {
-                var savedAcme2 = save.NewObjects.First(v => v.NewWorkspaceId == acme2.Strategy.Id.ToString());
+                var savedAcme2 = save.NewObjects.First(v => v.WorkspaceId == acme2.Strategy.Id);
 
                 Assert.Equal(this.M.Organisation.Tag, savedAcme2.ObjectType);
                 Assert.Equal(3, savedAcme2.Roles.Length);
 
                 var savedAcme2Manager = savedAcme2.Roles.First(v => v.RelationType == this.M.Organisation.Manager.RelationType.Tag);
 
-                Assert.Equal(mathijs.Strategy.Id.ToString(), savedAcme2Manager.SetRole);
+                Assert.Equal(mathijs.Strategy.Id, savedAcme2Manager.SetCompositeRole);
 
                 var savedAcme2Employees = savedAcme2.Roles.First(v => v.RelationType == this.M.Organisation.Employees.RelationType.Tag);
 
-                Assert.Null(savedAcme2Employees.SetRole);
-                Assert.Contains(mathijs.Strategy.Id.ToString(), savedAcme2Employees.AddRole);
-                Assert.Null(savedAcme2Employees.RemoveRole);
+                Assert.Null(savedAcme2Employees.SetUnitRole);
+                Assert.Null(savedAcme2Employees.SetCompositeRole);
+                Assert.Contains(mathijs.Strategy.Id, savedAcme2Employees.AddCompositesRole);
+                Assert.Null(savedAcme2Employees.RemoveCompositesRole);
             }
 
             {
-                var savedAcme3 = save.NewObjects.First(v => v.NewWorkspaceId == acme3.Strategy.Id.ToString());
+                var savedAcme3 = save.NewObjects.First(v => v.WorkspaceId == acme3.Strategy.Id);
 
                 Assert.Equal(this.M.Organisation.Tag, savedAcme3.ObjectType);
                 Assert.Equal(3, savedAcme3.Roles.Length);
 
                 var savedAcme3Manager = savedAcme3.Roles.First(v => v.RelationType == this.M.Organisation.Manager.RelationType.Tag);
 
-                Assert.Equal("3", savedAcme3Manager.SetRole);
+                Assert.Equal(3, savedAcme3Manager.SetCompositeRole);
 
                 var savedAcme3Employees = savedAcme3.Roles.First(v => v.RelationType == this.M.Organisation.Employees.RelationType.Tag);
 
-                Assert.Null(savedAcme3Employees.SetRole);
-                Assert.Contains("3", savedAcme3Employees.AddRole);
-                Assert.Null(savedAcme3Employees.RemoveRole);
+                Assert.Null(savedAcme3Employees.SetUnitRole);
+                Assert.Null(savedAcme3Employees.SetCompositeRole);
+                Assert.Contains(3, savedAcme3Employees.AddCompositesRole);
+                Assert.Null(savedAcme3Employees.RemoveCompositesRole);
             }
         }
 
@@ -556,7 +561,7 @@ namespace Tests.Workspace.Remote
 
             pushResponse = new PushResponse
             {
-                NewObjects = new[] { new PushResponseNewObject { DatabaseId = "10000", WorkspaceId = workspaceId.ToString() } },
+                NewObjects = new[] { new PushResponseNewObject { DatabaseId = 10000, WorkspaceId = workspaceId } },
             };
 
             session.PushResponse(pushResponse);

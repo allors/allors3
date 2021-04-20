@@ -10,10 +10,10 @@ namespace Allors.Protocol.Json.Api.Security
 
     public class SecurityResponse
     {
-        [JsonPropertyName("accessControls")]
+        [JsonPropertyName("a")]
         public SecurityResponseAccessControl[] AccessControls { get; set; }
 
-        [JsonPropertyName("permissions")]
-        public object[][] Permissions { get; set; }
+        [JsonPropertyName("p")]
+        public long[][] Permissions { get; set; }
     }
 }

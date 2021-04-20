@@ -116,7 +116,7 @@ namespace Allors.Database.Protocol.Json
                 Dependencies = visited.Dependencies,
                 AssociationType = (visited.PropertyType as IAssociationType)?.RelationType.Tag,
                 RoleType = (visited.PropertyType as IRoleType)?.RelationType.Tag,
-                Object = visited.Object?.Id.ToString(),
+                Object = visited.Object?.Id,
                 Parameter = visited.Parameter,
             };
 
@@ -131,7 +131,7 @@ namespace Allors.Database.Protocol.Json
                 Dependencies = visited.Dependencies,
                 AssociationType = (visited.PropertyType as IAssociationType)?.RelationType.Tag,
                 RoleType = (visited.PropertyType as IRoleType)?.RelationType.Tag,
-                Object = visited.Object?.Id.ToString(),
+                Object = visited.Object?.Id,
                 Value = UnitConvert.ToString(visited.Value),
                 Parameter = visited.Parameter,
             };
@@ -388,7 +388,7 @@ namespace Allors.Database.Protocol.Json
             {
                 ExtentRef = visited.ExtentRef,
                 ObjectType = visited.ObjectType?.Tag,
-                Object = visited.Object?.Id.ToString(),
+                Object = visited.Object?.Id,
             };
 
             if (visited.Extent != null)

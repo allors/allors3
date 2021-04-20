@@ -54,16 +54,14 @@ namespace Allors.Database.Protocol.Json
                 }
                 else if (roleType.IsOne)
                 {
-                    syncResponseRole.Value = @object.Strategy.GetCompositeRole(roleType)?.Id.ToString();
+                    syncResponseRole.Object = @object.Strategy.GetCompositeRole(roleType)?.Id;
                 }
                 else
                 {
                     var roles = @object.Strategy.GetCompositeRoles(roleType);
                     if (roles.Count > 0)
                     {
-                        syncResponseRole.Value = string.Join(
-                            separator: Encoding.Separator,
-                            values: roles.Select(roleObject => roleObject.Id.ToString()));
+                        syncResponseRole.Collection = roles.Select(roleObject => roleObject.Id).ToArray();
                     }
                 }
 
@@ -79,20 +77,20 @@ namespace Allors.Database.Protocol.Json
 
                     return new SyncResponseObject
                     {
-                        Id = v.Id.ToString(),
-                        Version = v.Strategy.ObjectVersion.ToString(),
+                        Id = v.Id,
+                        Version = v.Strategy.ObjectVersion,
                         ObjectType = v.Strategy.Class.Tag,
                         // TODO: Cache
-                        Roles = @class.DatabaseRoleTypes.Where(v => v.RelationType.WorkspaceNames.Length > 0)
+                        Roles = @class.DatabaseRoleTypes?.Where(v => v.RelationType.WorkspaceNames.Length > 0)
                             .Where(w => acl.CanRead(w) && v.Strategy.ExistRole(w))
                             .Select(w => CreateSyncResponseRole(v, w))
                             .ToArray(),
-                        AccessControls = this.accessControlsWriter.Write(v),
-                        DeniedPermissions = this.permissionsWriter.Write(v),
+                        AccessControls = this.accessControlsWriter.Write(v)?.ToArray(),
+                        DeniedPermissions = this.permissionsWriter.Write(v)?.ToArray(),
                     };
                 }).ToArray(),
                 AccessControls = this.AccessControlLists.EffectivePermissionIdsByAccessControl.Keys
-                    .Select(v => new[] { v.Strategy.ObjectId.ToString(), v.Strategy.ObjectVersion.ToString(), })
+                    .Select(v => new[] { v.Strategy.ObjectId, v.Strategy.ObjectVersion })
                     .ToArray(),
             };
         }

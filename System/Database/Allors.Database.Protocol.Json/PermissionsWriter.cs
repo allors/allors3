@@ -5,8 +5,8 @@
 
 namespace Allors.Database.Protocol.Json
 {
+    using System.Collections.Generic;
     using System.Linq;
-    using Allors.Protocol.Json.Api;
     using Security;
 
     internal class PermissionsWriter
@@ -15,11 +15,6 @@ namespace Allors.Database.Protocol.Json
 
         internal PermissionsWriter(IAccessControlLists acls) => this.acls = acls;
 
-        public string Write(IObject @object)
-        {
-            var deniedPermissionIds = this.acls[@object].DeniedPermissionIds?.OrderBy(v => v);
-            var joinedDeniedPermissions = deniedPermissionIds == null ? null : string.Join(Encoding.Separator, deniedPermissionIds);
-            return !string.IsNullOrWhiteSpace(joinedDeniedPermissions) ? joinedDeniedPermissions : null;
-        }
+        public IEnumerable<long> Write(IObject @object) => this.acls[@object].DeniedPermissionIds?.Distinct();
     }
 }

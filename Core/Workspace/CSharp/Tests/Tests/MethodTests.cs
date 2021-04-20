@@ -33,7 +33,7 @@ namespace Tests.Workspace
 
             Assert.False(result.HasErrors);
 
-            pull = new[] { new Pull { Object = organisation, }, };
+            pull = new[] { new Pull { Object = organisation }, };
 
             organisation = (await session.Pull(pull)).GetObject<Organisation>();
 

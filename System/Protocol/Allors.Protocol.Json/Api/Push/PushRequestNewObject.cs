@@ -13,13 +13,13 @@ namespace Allors.Protocol.Json.Api.Push
     /// </summary>
     public class PushRequestNewObject
     {
-        [JsonPropertyName("ni")]
-        public string NewWorkspaceId { get; set; }
+        [JsonPropertyName("w")]
+        public long WorkspaceId { get; set; }
 
         [JsonPropertyName("t")]
         public int ObjectType { get; set; }
 
-        [JsonPropertyName("roles")]
+        [JsonPropertyName("r")]
         public PushRequestRole[] Roles { get; set; }
     }
 }

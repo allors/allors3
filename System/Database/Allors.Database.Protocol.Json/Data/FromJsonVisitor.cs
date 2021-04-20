@@ -275,7 +275,7 @@ namespace Allors.Database.Protocol.Json
                                 Dependencies = visited.Dependencies,
                                 PropertyType = propertyType,
                                 Parameter = visited.Parameter,
-                                Object = this.transaction.Instantiate(visited.Object),
+                                Object = visited.Object.HasValue ? this.transaction.Instantiate(visited.Object.Value) : null,
                             };
 
                             this.predicates.Push(contains);
@@ -315,7 +315,9 @@ namespace Allors.Database.Protocol.Json
 
                             if (visited.Object != null)
                             {
-                                equals.Object = this.transaction.Instantiate(visited.Object);
+                                equals.Object = visited.Object.HasValue
+                                    ? this.transaction.Instantiate(visited.Object.Value)
+                                    : null;
                             }
                             else if (visited.Value != null)
                             {
@@ -391,7 +393,7 @@ namespace Allors.Database.Protocol.Json
             {
                 ExtentRef = visited.ExtentRef,
                 ObjectType = visited.ObjectType.HasValue ? (IObjectType)this.transaction.Database.MetaPopulation.FindByTag(visited.ObjectType.Value) : null,
-                Object = visited.Object != null ? this.transaction.Instantiate(visited.Object) : null,
+                Object = visited.Object != null ? this.transaction.Instantiate(visited.Object.Value) : null,
                 Parameters = visited.Parameters,
             };
 

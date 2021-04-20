@@ -10,10 +10,10 @@ namespace Allors.Protocol.Json.Api.Invoke
     public class Invocation
     {
         [JsonPropertyName("i")]
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         [JsonPropertyName("v")]
-        public string Version { get; set; }
+        public long Version { get; set; }
 
         [JsonPropertyName("m")]
         public int Method { get; set; }

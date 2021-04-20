@@ -10,19 +10,19 @@ namespace Allors.Protocol.Json.Api.Sync
     public class SyncResponseObject
     {
         [JsonPropertyName("i")]
-        public string Id { get; set; }
+        public long Id { get; set; }
+
+        [JsonPropertyName("v")]
+        public long Version { get; set; }
 
         [JsonPropertyName("t")]
         public int ObjectType { get; set; }
 
-        [JsonPropertyName("v")]
-        public string Version { get; set; }
-
         [JsonPropertyName("a")]
-        public string AccessControls { get; set; }
+        public long[] AccessControls { get; set; }
 
         [JsonPropertyName("d")]
-        public string DeniedPermissions { get; set; }
+        public long[] DeniedPermissions { get; set; }
 
         [JsonPropertyName("r")]
         public SyncResponseRole[] Roles { get; set; }

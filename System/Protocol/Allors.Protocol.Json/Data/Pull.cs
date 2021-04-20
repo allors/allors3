@@ -21,7 +21,7 @@ namespace Allors.Protocol.Json.Data
         public int? ObjectType { get; set; }
 
         [JsonPropertyName("object")]
-        public string Object { get; set; }
+        public long? Object { get; set; }
 
         [JsonPropertyName("results")]
         public Result[] Results { get; set; }

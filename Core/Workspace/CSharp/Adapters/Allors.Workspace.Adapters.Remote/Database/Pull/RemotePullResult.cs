@@ -18,15 +18,15 @@ namespace Allors.Workspace.Adapters.Remote
 
             var identities = session.Database.Identities;
 
-            this.Objects = response.NamedObjects.ToDictionary(
+            this.Objects = response.Objects.ToDictionary(
                 pair => pair.Key,
-                pair => session.Get<IObject>(long.Parse(pair.Value)),
+                pair => session.Get<IObject>(pair.Value),
                 StringComparer.OrdinalIgnoreCase);
-            this.Collections = response.NamedCollections.ToDictionary(
+            this.Collections = response.Collections.ToDictionary(
                 pair => pair.Key,
-                pair => pair.Value.Select(v => session.Get<IObject>(long.Parse(v))).ToArray(),
+                pair => pair.Value.Select(session.Get<IObject>).ToArray(),
                 StringComparer.OrdinalIgnoreCase);
-            this.Values = response.NamedValues.ToDictionary(
+            this.Values = response.Values.ToDictionary(
                 pair => pair.Key,
                 pair => pair.Value,
                 StringComparer.OrdinalIgnoreCase);

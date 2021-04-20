@@ -26,7 +26,7 @@ namespace Tests
 
             var securityRequest = new SecurityRequest
             {
-                AccessControls = new[] { $"{accessControl.Id}" },
+                AccessControls = new[] { accessControl.Id },
             };
 
             var api = new Api(this.Transaction, workspaceName);
@@ -36,10 +36,10 @@ namespace Tests
 
             var securityResponseAccessControl = securityResponse.AccessControls.First();
 
-            Assert.Equal($"{accessControl.Id}", securityResponseAccessControl.Id);
-            Assert.Equal($"{accessControl.Strategy.ObjectVersion}", securityResponseAccessControl.Version);
+            Assert.Equal(accessControl.Id, securityResponseAccessControl.Id);
+            Assert.Equal(accessControl.Strategy.ObjectVersion, securityResponseAccessControl.Version);
 
-            var permissions = securityResponseAccessControl.PermissionIds.Split(",")
+            var permissions = securityResponseAccessControl.PermissionIds
                 .Select(v => this.Transaction.Instantiate(v))
                 .Cast<Permission>()
                 .Where(v => v != null)
@@ -68,7 +68,7 @@ namespace Tests
 
             var securityRequest = new SecurityRequest
             {
-                AccessControls = new[] { $"{accessControl.Id}" },
+                AccessControls = new[] { accessControl.Id },
             };
 
             var api = new Api(this.Transaction, workspaceName);
@@ -78,10 +78,10 @@ namespace Tests
 
             var securityResponseAccessControl = securityResponse.AccessControls.First();
 
-            Assert.Equal($"{accessControl.Id}", securityResponseAccessControl.Id);
-            Assert.Equal($"{accessControl.Strategy.ObjectVersion}", securityResponseAccessControl.Version);
+            Assert.Equal(accessControl.Id, securityResponseAccessControl.Id);
+            Assert.Equal(accessControl.Strategy.ObjectVersion, securityResponseAccessControl.Version);
 
-            var permissions = securityResponseAccessControl.PermissionIds.Split(",")
+            var permissions = securityResponseAccessControl.PermissionIds
                 .Select(v => this.Transaction.Instantiate(v))
                 .Cast<Permission>()
                 .Where(v => v != null)
@@ -98,6 +98,5 @@ namespace Tests
                 Assert.Contains(effectivePermission, permissions);
             }
         }
-
     }
 }

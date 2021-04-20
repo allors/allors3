@@ -36,17 +36,17 @@ namespace Allors.Database.Protocol.Json
         public PushResponse Build(PushRequest pushRequest)
         {
             var pushResponse = new PushResponse();
-            Dictionary<string, IObject> objectByNewId = null;
+            Dictionary<long, IObject> objectByNewId = null;
             if (pushRequest.NewObjects != null && pushRequest.NewObjects.Length > 0)
             {
                 objectByNewId = pushRequest.NewObjects.ToDictionary(
-                    x => x.NewWorkspaceId,
+                    x => x.WorkspaceId,
                     x =>
                         {
                             var cls = (IClass)this.metaPopulation.FindByTag(x.ObjectType);
                             if (this.allowedClasses?.Contains(cls) == true)
                             {
-                                return (IObject)this.build(cls);
+                                return this.build(cls);
                             }
 
                             // TODO: Add access error
@@ -64,7 +64,7 @@ namespace Allors.Database.Protocol.Json
 
                 if (objectIds.Length != objects.Length)
                 {
-                    var existingIds = objects.Select(v => v.Id.ToString());
+                    var existingIds = objects.Select(v => v.Id);
                     var missingIds = objectIds.Where(v => !existingIds.Contains(v));
                     foreach (var missingId in missingIds)
                     {
@@ -78,7 +78,7 @@ namespace Allors.Database.Protocol.Json
                     {
                         var obj = this.transaction.Instantiate(pushRequestObject.DatabaseId);
 
-                        if (!pushRequestObject.Version.Equals(obj.Strategy.ObjectVersion.ToString()))
+                        if (!pushRequestObject.Version.Equals(obj.Strategy.ObjectVersion))
                         {
                             pushResponse.AddVersionError(obj);
                         }
@@ -104,9 +104,9 @@ namespace Allors.Database.Protocol.Json
                     previousCountOutstandingRoles = countOutstandingRoles;
                     countOutstandingRoles = 0;
 
-                    foreach (var pushRequestNewObject in pushRequest.NewObjects.OrderByDescending(v => int.Parse(v.NewWorkspaceId)))
+                    foreach (var pushRequestNewObject in pushRequest.NewObjects.OrderByDescending(v => v.WorkspaceId))
                     {
-                        var obj = objectByNewId[pushRequestNewObject.NewWorkspaceId];
+                        var obj = objectByNewId[pushRequestNewObject.WorkspaceId];
                         var pushRequestRoles = pushRequestNewObject.Roles;
                         if (pushRequestRoles != null)
                         {
@@ -120,7 +120,7 @@ namespace Allors.Database.Protocol.Json
                 {
                     foreach (var pushRequestNewObject in pushRequest.NewObjects)
                     {
-                        var obj = objectByNewId[pushRequestNewObject.NewWorkspaceId];
+                        var obj = objectByNewId[pushRequestNewObject.WorkspaceId];
                         var pushRequestRoles = pushRequestNewObject.Roles;
                         if (pushRequestRoles != null)
                         {
@@ -150,14 +150,11 @@ namespace Allors.Database.Protocol.Json
 
             if (!pushResponse.HasErrors)
             {
-                if (objectByNewId != null)
+                pushResponse.NewObjects = objectByNewId?.Select(kvp => new PushResponseNewObject
                 {
-                    pushResponse.NewObjects = objectByNewId.Select(kvp => new PushResponseNewObject
-                    {
-                        DatabaseId = kvp.Value != null ? kvp.Value.Id.ToString() : kvp.Key,
-                        WorkspaceId = kvp.Key,
-                    }).ToArray();
-                }
+                    DatabaseId = kvp.Value?.Id ?? 0,
+                    WorkspaceId = kvp.Key,
+                }).ToArray();
 
                 this.transaction.Commit();
             }
@@ -165,9 +162,9 @@ namespace Allors.Database.Protocol.Json
             return pushResponse;
         }
 
-        private static void AddMissingRoles(IObject[] actualRoles, string[] requestedRoleIds, PushResponse pushResponse)
+        private static void AddMissingRoles(IObject[] actualRoles, long[] requestedRoleIds, PushResponse pushResponse)
         {
-            var actualRoleIds = actualRoles.Select(x => x.Id.ToString());
+            var actualRoleIds = actualRoles.Select(x => x.Id);
             var missingRoleIds = requestedRoleIds.Except(actualRoleIds);
             foreach (var missingRoleId in missingRoleIds)
             {
@@ -175,7 +172,7 @@ namespace Allors.Database.Protocol.Json
             }
         }
 
-        private int PushRequestRoles(IList<PushRequestRole> pushRequestRoles, IObject obj, PushResponse pushResponse, Dictionary<string, IObject> objectByNewId, bool ignore = false)
+        private int PushRequestRoles(IList<PushRequestRole> pushRequestRoles, IObject obj, PushResponse pushResponse, Dictionary<long, IObject> objectByNewId, bool ignore = false)
         {
             var countOutstandingRoles = 0;
             foreach (var pushRequestRole in pushRequestRoles)
@@ -194,24 +191,23 @@ namespace Allors.Database.Protocol.Json
                         if (roleType.ObjectType.IsUnit)
                         {
                             var unitType = (IUnit)roleType.ObjectType;
-                            var role = UnitConvert.FromString(unitType.Tag, pushRequestRole.SetRole);
+                            var role = UnitConvert.FromString(unitType.Tag, pushRequestRole.SetUnitRole);
                             obj.Strategy.SetUnitRole(roleType, role);
                         }
                         else
                         {
                             if (roleType.IsOne)
                             {
-                                var roleId = (string)pushRequestRole.SetRole;
-                                if (string.IsNullOrEmpty(roleId))
+                                if (!pushRequestRole.SetCompositeRole.HasValue)
                                 {
                                     obj.Strategy.RemoveCompositeRole(roleType);
                                 }
                                 else
                                 {
-                                    var role = this.GetRole(roleId, objectByNewId);
+                                    var role = this.GetRole(pushRequestRole.SetCompositeRole.Value, objectByNewId);
                                     if (role == null)
                                     {
-                                        pushResponse.AddMissingError(roleId);
+                                        pushResponse.AddMissingError(pushRequestRole.SetCompositeRole.Value);
                                     }
                                     else
                                     {
@@ -222,9 +218,9 @@ namespace Allors.Database.Protocol.Json
                             else
                             {
                                 // Add
-                                if (pushRequestRole.AddRole != null)
+                                if (pushRequestRole.AddCompositesRole != null)
                                 {
-                                    var roleIds = pushRequestRole.AddRole;
+                                    var roleIds = pushRequestRole.AddCompositesRole;
                                     if (roleIds.Length != 0)
                                     {
                                         var roles = this.GetRoles(roleIds, objectByNewId);
@@ -243,9 +239,9 @@ namespace Allors.Database.Protocol.Json
                                 }
 
                                 // Remove
-                                if (pushRequestRole.RemoveRole != null)
+                                if (pushRequestRole.RemoveCompositesRole != null)
                                 {
-                                    var roleIds = pushRequestRole.RemoveRole;
+                                    var roleIds = pushRequestRole.RemoveCompositesRole;
                                     if (roleIds.Length != 0)
                                     {
                                         var roles = this.GetRoles(roleIds, objectByNewId);
@@ -282,7 +278,7 @@ namespace Allors.Database.Protocol.Json
             return countOutstandingRoles;
         }
 
-        private IObject GetRole(string roleId, Dictionary<string, IObject> objectByNewId)
+        private IObject GetRole(long roleId, Dictionary<long, IObject> objectByNewId)
         {
             if (objectByNewId == null || !objectByNewId.TryGetValue(roleId, out var role))
             {
@@ -292,7 +288,7 @@ namespace Allors.Database.Protocol.Json
             return role;
         }
 
-        private IObject[] GetRoles(string[] roleIds, Dictionary<string, IObject> objectByNewId)
+        private IObject[] GetRoles(long[] roleIds, Dictionary<long, IObject> objectByNewId)
         {
             if (objectByNewId == null)
             {
@@ -300,7 +296,7 @@ namespace Allors.Database.Protocol.Json
             }
 
             var roles = new List<IObject>();
-            List<string> existingRoleIds = null;
+            List<long> existingRoleIds = null;
             foreach (var roleId in roleIds)
             {
                 if (objectByNewId.TryGetValue(roleId, out var role))
@@ -309,11 +305,7 @@ namespace Allors.Database.Protocol.Json
                 }
                 else
                 {
-                    if (existingRoleIds == null)
-                    {
-                        existingRoleIds = new List<string>();
-                    }
-
+                    existingRoleIds ??= new List<long>();
                     existingRoleIds.Add(roleId);
                 }
             }

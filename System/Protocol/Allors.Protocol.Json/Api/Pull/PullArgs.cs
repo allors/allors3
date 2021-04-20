@@ -10,16 +10,16 @@ namespace Allors.Protocol.Json.Api.Pull
 
     public class PullArgs
     {
-        [JsonPropertyName("namedCollections")]
-        public Dictionary<string, string[]> NamedCollections { get; set; }
+        [JsonPropertyName("c")]
+        public Dictionary<string, long[]> Collections { get; set; }
 
-        [JsonPropertyName("namedObjects")]
-        public Dictionary<string, string> NamedObjects { get; set; }
+        [JsonPropertyName("o")]
+        public Dictionary<string, long> Objects { get; set; }
 
-        [JsonPropertyName("namedValues")]
-        public Dictionary<string, object> NamedValues { get; set; }
+        [JsonPropertyName("v")]
+        public Dictionary<string, object> Values { get; set; }
 
-        [JsonPropertyName("objects")]
-        public string[][] Objects { get; set; }
+        [JsonPropertyName("p")]
+        public long[][] Pool { get; set; }
     }
 }

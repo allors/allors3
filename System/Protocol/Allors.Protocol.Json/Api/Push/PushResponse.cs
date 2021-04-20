@@ -9,7 +9,7 @@ namespace Allors.Protocol.Json.Api.Push
 
     public class PushResponse : Response
     {
-        [JsonPropertyName("newObjects")]
+        [JsonPropertyName("n")]
         public PushResponseNewObject[] NewObjects { get; set; }
     }
 }

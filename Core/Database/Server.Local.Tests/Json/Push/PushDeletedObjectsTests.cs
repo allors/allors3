@@ -24,8 +24,8 @@ namespace Tests
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Commit();
 
-            var organisationId = organisation.Id.ToString();
-            var organisationVersion = organisation.Strategy.ObjectVersion.ToString();
+            var organisationId = organisation.Id;
+            var organisationVersion = organisation.Strategy.ObjectVersion;
 
             organisation.Delete();
             this.Transaction.Commit();
@@ -45,7 +45,7 @@ namespace Tests
                             new PushRequestRole
                             {
                               RelationType = this.M.Organisation.Name.RelationType.Tag,
-                              SetRole = "Acme"
+                              SetUnitRole = "Acme"
                             },
                         },
                     },

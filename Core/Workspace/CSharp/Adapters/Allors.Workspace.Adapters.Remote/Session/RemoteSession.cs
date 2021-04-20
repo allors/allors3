@@ -64,13 +64,13 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var invokeRequest = new InvokeRequest
             {
-                Invocations = methods.Select(v => new Invocation
+                List = methods.Select(v => new Invocation
                 {
-                    Id = v.Object.Id.ToString(),
-                    Version = ((RemoteStrategy)v.Object.Strategy).DatabaseVersion.ToString(),
+                    Id = v.Object.Id,
+                    Version = ((RemoteStrategy)v.Object.Strategy).DatabaseVersion,
                     Method = v.MethodType.Tag,
                 }).ToArray(),
-                InvokeOptions = options != null ? new Allors.Protocol.Json.Api.Invoke.InvokeOptions
+                Options = options != null ? new Allors.Protocol.Json.Api.Invoke.InvokeOptions
                 {
                     ContinueOnError = options.ContinueOnError,
                     Isolated = options.Isolated
@@ -187,7 +187,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var pullRequest = new PullRequest
             {
-                Pulls = pulls.Select(v => v.ToJson()).ToArray()
+                List = pulls.Select(v => v.ToJson()).ToArray()
             };
 
             var pullResponse = await this.Database.Pull(pullRequest);
@@ -199,7 +199,7 @@ namespace Allors.Workspace.Adapters.Remote
             var pullRequest = new PullRequest
             {
                 Procedure = procedure.ToJson(),
-                Pulls = pulls.Select(v => v.ToJson()).ToArray()
+                List = pulls.Select(v => v.ToJson()).ToArray()
             };
 
             var pullResponse = await this.Database.Pull(pullRequest);
@@ -340,8 +340,8 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 foreach (var pushResponseNewObject in pushResponse.NewObjects)
                 {
-                    var workspaceId = long.Parse(pushResponseNewObject.WorkspaceId);
-                    var databaseId = long.Parse(pushResponseNewObject.DatabaseId);
+                    var workspaceId = pushResponseNewObject.WorkspaceId;
+                    var databaseId = pushResponseNewObject.DatabaseId;
 
                     var strategy = this.strategyByWorkspaceId[workspaceId];
 
@@ -411,12 +411,11 @@ namespace Allors.Workspace.Adapters.Remote
                 await this.Sync(syncRequest);
             }
 
-            foreach (var v in pullResponse.Objects)
+            foreach (var v in pullResponse.Pool)
             {
-                var identity = long.Parse(v[0]);
-                if (!this.strategyByWorkspaceId.ContainsKey(identity))
+                if (!this.strategyByWorkspaceId.ContainsKey(v.Id))
                 {
-                    this.InstantiateDatabaseObject(identity);
+                    this.InstantiateDatabaseObject(v.Id);
                 }
             }
 

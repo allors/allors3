@@ -14,6 +14,12 @@ namespace Allors.Protocol.Json.Api.Sync
         [JsonPropertyName("t")]
         public int RoleType { get; set; }
 
+        [JsonPropertyName("c")]
+        public long[] Collection { get; set; }
+
+        [JsonPropertyName("o")]
+        public long? Object { get; set; }
+
         [JsonPropertyName("v")]
         public string Value { get; set; }
     }

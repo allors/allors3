@@ -33,12 +33,12 @@ namespace Tests.Workspace.Remote
             this.Database.SyncResponse(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
-                Objects =
+                Pool =
                        new[]
                            {
-                                new[] { "1", "1001", "101" },
-                                new[] { "2", "1002", "102", "103" },
-                                new[] { "3", "1003" },
+                                new PullResponseObject { Id = 1,Version = 1001, AccessControls = new long[]{101} },
+                                new PullResponseObject { Id = 2, Version = 1002, AccessControls = new long[]{102}, DeniedPermissions = new long[]{103}},
+                                new PullResponseObject { Id = 3, Version = 1003 },
                            },
             };
 
@@ -53,12 +53,12 @@ namespace Tests.Workspace.Remote
             this.Database.SyncResponse(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
-                Objects =
+                Pool =
                     new[]
                     {
-                        new[] { "1", "1001", "101" },
-                        new[] { "2", "1002", "102", "103" },
-                        new[] { "3", "1004" },
+                        new PullResponseObject { Id = 1,Version = 1001, AccessControls = new long[]{101} },
+                        new PullResponseObject { Id = 2, Version = 1002, AccessControls = new long[]{102}, DeniedPermissions = new long[]{103}},
+                        new PullResponseObject { Id = 3, Version = 1004 },
                     },
             };
 
@@ -66,7 +66,7 @@ namespace Tests.Workspace.Remote
 
             Assert.Single(requireLoad.Objects);
 
-            Assert.Equal("3", requireLoad.Objects[0]);
+            Assert.Equal(3, requireLoad.Objects[0]);
         }
 
         [Fact]
@@ -75,12 +75,12 @@ namespace Tests.Workspace.Remote
             this.Database.SyncResponse(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
-                Objects =
+                Pool =
                     new[]
                     {
-                        new[] { "1", "1001", "201" },
-                        new[] { "2", "1002", "102", "103" },
-                        new[] { "3", "1003" },
+                        new PullResponseObject { Id = 1,Version = 1001, AccessControls = new long[]{201} },
+                        new PullResponseObject { Id = 2, Version = 1002, AccessControls = new long[]{102}, DeniedPermissions = new long[]{103}},
+                        new PullResponseObject { Id = 3, Version = 1003 },
                     },
             };
 
@@ -88,7 +88,7 @@ namespace Tests.Workspace.Remote
 
             Assert.Single(requireLoad.Objects);
 
-            Assert.Equal("1", requireLoad.Objects[0]);
+            Assert.Equal(1, requireLoad.Objects[0]);
         }
 
         [Fact]
@@ -97,12 +97,12 @@ namespace Tests.Workspace.Remote
             this.Database.SyncResponse(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
-                Objects =
+                Pool =
                     new[]
                     {
-                        new[] { "1", "1001", "101" },
-                        new[] { "2", "1002", "102", "104" },
-                        new[] { "3", "1003" },
+                        new PullResponseObject { Id = 1,Version = 1001, AccessControls = new long[]{101} },
+                        new PullResponseObject { Id = 2, Version = 1002, AccessControls = new long[]{102}, DeniedPermissions = new long[]{104}},
+                        new PullResponseObject { Id = 3, Version = 1003 },
                     },
             };
 
@@ -110,7 +110,7 @@ namespace Tests.Workspace.Remote
 
             Assert.Single(requireLoad.Objects);
 
-            Assert.Equal("2", requireLoad.Objects[0]);
+            Assert.Equal(2, requireLoad.Objects[0]);
         }
 
         [Fact]
@@ -119,12 +119,12 @@ namespace Tests.Workspace.Remote
             this.Database.SyncResponse(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
-                Objects =
+                Pool =
                     new[]
                     {
-                        new[] { "1", "1001", "101", "104" },
-                        new[] { "2", "1002", "102", "103" },
-                        new[] { "3", "1003" },
+                        new PullResponseObject { Id = 1,Version = 1001, AccessControls = new long[]{101}, DeniedPermissions = new long[]{104}},
+                        new PullResponseObject { Id = 2, Version = 1002, AccessControls = new long[]{102}, DeniedPermissions = new long[]{103}},
+                        new PullResponseObject { Id = 3, Version = 1003 },
                     },
             };
 
@@ -132,7 +132,7 @@ namespace Tests.Workspace.Remote
 
             Assert.Single(requireLoad.Objects);
 
-            Assert.Equal("1", requireLoad.Objects[0]);
+            Assert.Equal(1, requireLoad.Objects[0]);
         }
 
         [Fact]
@@ -141,12 +141,12 @@ namespace Tests.Workspace.Remote
             this.Database.SyncResponse(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
-                Objects =
-                    new[]
+                Pool =
+                    new PullResponseObject[]
                     {
-                        //new[] { "1", "1001", "101" },
-                        new[] { "2", "1002", "102" },
-                        //new[] { "3", "1003" },
+                        //new PullResponseObject { Id = 1,Version = 1001, AccessControls = new long[]{101} },
+                        new PullResponseObject { Id = 2, Version = 1002, AccessControls = new long[]{102},},
+                        //new PullResponseObject { Id = 3, Version = 1003 },
                     },
             };
 
@@ -154,7 +154,7 @@ namespace Tests.Workspace.Remote
 
             Assert.Single(requireLoad.Objects);
 
-            Assert.Equal("2", requireLoad.Objects[0]);
+            Assert.Equal(2, requireLoad.Objects[0]);
         }
     }
 }

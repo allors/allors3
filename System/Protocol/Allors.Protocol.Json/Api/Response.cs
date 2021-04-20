@@ -11,11 +11,11 @@ namespace Allors.Protocol.Json.Api
 
         public string ErrorMessage { get; set; }
 
-        public string[] VersionErrors { get; set; }
+        public long[] VersionErrors { get; set; }
 
-        public string[] AccessErrors { get; set; }
+        public long[] AccessErrors { get; set; }
 
-        public string[] MissingErrors { get; set; }
+        public long[] MissingErrors { get; set; }
 
         public ResponseDerivationError[] DerivationErrors { get; set; }
     }

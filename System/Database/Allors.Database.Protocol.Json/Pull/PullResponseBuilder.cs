@@ -224,9 +224,9 @@ namespace Allors.Database.Protocol.Json
                 }
             }
 
-            if (pullRequest?.Pulls != null)
+            if (pullRequest?.List != null)
             {
-                foreach (var p in pullRequest.Pulls)
+                foreach (var p in pullRequest.List)
                 {
                     var pull = p.FromJson(this.Transaction);
 
@@ -245,24 +245,18 @@ namespace Allors.Database.Protocol.Json
 
             return new PullResponse
             {
-                Objects = this.objects.Select(v =>
+                Pool = this.objects.Select(v => new PullResponseObject
                 {
-                    var strategy = v.Strategy;
-                    var id = strategy.ObjectId.ToString();
-                    var version = strategy.ObjectVersion.ToString();
-                    var accessControls = this.accessControlsWriter.Write(v);
-                    var deniedPermissions = this.permissionsWriter.Write(v);
-                    return deniedPermissions != null
-                        ? new[] { id, version, accessControls, deniedPermissions }
-                        : new[] { id, version, accessControls };
+                    Id = v.Strategy.ObjectId,
+                    Version = v.Strategy.ObjectVersion,
+                    AccessControls = this.accessControlsWriter.Write(v)?.OrderBy(w => w).ToArray(),
+                    DeniedPermissions = this.permissionsWriter.Write(v)?.OrderBy(w => w).ToArray()
                 }).ToArray(),
-                NamedObjects = this.objectByName.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Id.ToString()),
-                NamedCollections =
-                    this.collectionsByName.ToDictionary(kvp => kvp.Key,
-                        kvp => kvp.Value.Select(obj => obj.Id.ToString()).ToArray()),
-                NamedValues = this.valueByName,
+                Objects = this.objectByName.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Id),
+                Collections = this.collectionsByName.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Select(obj => obj.Id).ToArray()),
+                Values = this.valueByName,
                 AccessControls = this.AccessControlLists.EffectivePermissionIdsByAccessControl.Keys
-                    .Select(v => new[] { v.Strategy.ObjectId.ToString(), v.Strategy.ObjectVersion.ToString(), })
+                    .Select(v => new[] { v.Strategy.ObjectId, v.Strategy.ObjectVersion })
                     .ToArray(),
             };
         }

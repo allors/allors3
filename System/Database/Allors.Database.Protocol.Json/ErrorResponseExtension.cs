@@ -19,7 +19,7 @@ namespace Allors.Database.Protocol.Json
                 var derivationErrorResponse = new ResponseDerivationError
                 {
                     M = derivationError.Message,
-                    R = derivationError.Relations.Select(x => new object[] { x.Association.Id.ToString(), x.RelationType.Tag }).ToArray(),
+                    R = derivationError.Relations.Select(x => new[] { x.Association.Id, x.RelationType.Tag }).ToArray(),
                 };
 
                 @this.DerivationErrors = @this.DerivationErrors != null ?
@@ -30,17 +30,17 @@ namespace Allors.Database.Protocol.Json
 
         public static void AddVersionError(this Response @this, IObject obj) =>
             @this.VersionErrors = @this.VersionErrors != null ?
-                new List<string>(@this.VersionErrors) { obj.Id.ToString() }.ToArray() :
-                new List<string> { obj.Id.ToString() }.ToArray();
+                new List<long>(@this.VersionErrors) { obj.Id }.ToArray() :
+                new List<long> { obj.Id }.ToArray();
 
         public static void AddAccessError(this Response @this, IObject obj) =>
             @this.AccessErrors = @this.AccessErrors != null ?
-                new List<string>(@this.AccessErrors) { obj.Id.ToString() }.ToArray() :
-                new List<string> { obj.Id.ToString() }.ToArray();
+                new List<long>(@this.AccessErrors) { obj.Id }.ToArray() :
+                new List<long> { obj.Id }.ToArray();
 
-        public static void AddMissingError(this Response @this, string id) =>
+        public static void AddMissingError(this Response @this, long id) =>
             @this.MissingErrors = @this.MissingErrors != null ?
-                new List<string>(@this.MissingErrors) { id }.ToArray() :
-                new List<string> { id }.ToArray();
+                new List<long>(@this.MissingErrors) { id }.ToArray() :
+                new List<long> { id }.ToArray();
     }
 }

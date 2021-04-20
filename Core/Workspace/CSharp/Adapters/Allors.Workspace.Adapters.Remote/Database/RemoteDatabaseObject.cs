@@ -14,6 +14,8 @@ namespace Allors.Workspace.Adapters.Remote
 
     internal class RemoteDatabaseObject
     {
+        private static readonly HashSet<long> EmptySet = new HashSet<long>();
+
         private RemotePermission[] deniedPermissions;
         private RemoteAccessControl[] accessControls;
 
@@ -31,12 +33,12 @@ namespace Allors.Workspace.Adapters.Remote
         internal RemoteDatabaseObject(RemoteDatabase database, RemoteResponseContext ctx, SyncResponseObject syncResponseObject)
         {
             this.Database = database;
-            this.Identity = long.Parse(syncResponseObject.Id);
+            this.Identity = syncResponseObject.Id;
             this.Class = (IClass)this.Database.MetaPopulation.FindByTag(syncResponseObject.ObjectType);
-            this.Version = !string.IsNullOrEmpty(syncResponseObject.Version) ? long.Parse(syncResponseObject.Version) : 0;
+            this.Version = syncResponseObject.Version;
             this.syncResponseRoles = syncResponseObject.Roles;
-            this.SortedAccessControlIds = ctx.ReadSortedAccessControlIds(syncResponseObject.AccessControls);
-            this.SortedDeniedPermissionIds = ctx.ReadSortedDeniedPermissionIds(syncResponseObject.DeniedPermissions);
+            this.AccessControlIds = syncResponseObject.AccessControls != null ? new HashSet<long>(ctx.CheckForMissingAccessControls(syncResponseObject.AccessControls)) : EmptySet;
+            this.DeniedPermissionIds = syncResponseObject.DeniedPermissions != null ? new HashSet<long>(ctx.CheckForMissingPermissions(syncResponseObject.DeniedPermissions)): EmptySet;
         }
 
         internal RemoteDatabase Database { get; }
@@ -47,9 +49,9 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal long Version { get; private set; }
 
-        internal string SortedAccessControlIds { get; }
+        internal HashSet<long> AccessControlIds { get; }
 
-        internal string SortedDeniedPermissionIds { get; }
+        internal HashSet<long> DeniedPermissionIds { get; private set; }
 
         private Dictionary<IRelationType, object> RoleByRelationType
         {
@@ -58,34 +60,26 @@ namespace Allors.Workspace.Adapters.Remote
                 if (this.syncResponseRoles != null)
                 {
                     var meta = this.Database.MetaPopulation;
-                    var identities = this.Database.Identities;
 
                     var metaPopulation = this.Database.MetaPopulation;
                     this.roleByRelationType = this.syncResponseRoles.ToDictionary(
                         v => (IRelationType)meta.FindByTag(v.RoleType),
                         v =>
                         {
-                            var value = v.Value;
                             var roleType = ((IRelationType)metaPopulation.FindByTag(v.RoleType)).RoleType;
 
                             var objectType = roleType.ObjectType;
                             if (objectType.IsUnit)
                             {
-                                return UnitConvert.FromString(roleType.ObjectType.Tag, value);
+                                return UnitConvert.FromString(roleType.ObjectType.Tag, v.Value);
                             }
-                            else
+
+                            if (roleType.IsOne)
                             {
-                                if (roleType.IsOne)
-                                {
-                                    return value != null ? long.Parse(value) : (long?)null;
-                                }
-                                else
-                                {
-                                    return value != null
-                                        ? value.Split(Encoding.SeparatorChar).Select(long.Parse).ToArray()
-                                        : Array.Empty<long>();
-                                }
+                                return v.Object;
                             }
+
+                            return v.Collection;
                         });
 
                     this.syncResponseRoles = null;
@@ -98,9 +92,9 @@ namespace Allors.Workspace.Adapters.Remote
         private RemoteAccessControl[] AccessControls =>
             this.accessControls = this.accessControls switch
             {
-                null when this.SortedAccessControlIds == null => Array.Empty<RemoteAccessControl>(),
-                null => this.SortedAccessControlIds.Split(Encoding.SeparatorChar)
-                    .Select(v => this.Database.AccessControlById[long.Parse(v)])
+                null when this.AccessControlIds == null => Array.Empty<RemoteAccessControl>(),
+                null => this.AccessControlIds
+                    .Select(v => this.Database.AccessControlById[v])
                     .ToArray(),
                 _ => this.accessControls
             };
@@ -108,9 +102,9 @@ namespace Allors.Workspace.Adapters.Remote
         private RemotePermission[] DeniedPermissions =>
             this.deniedPermissions = this.deniedPermissions switch
             {
-                null when this.SortedDeniedPermissionIds == null => Array.Empty<RemotePermission>(),
-                null => this.SortedDeniedPermissionIds.Split(Encoding.SeparatorChar)
-                    .Select(v => this.Database.PermissionById[long.Parse(v)])
+                null when this.DeniedPermissionIds == null => Array.Empty<RemotePermission>(),
+                null => this.DeniedPermissionIds
+                    .Select(v => this.Database.PermissionById[v])
                     .ToArray(),
                 _ => this.deniedPermissions
             };
@@ -126,5 +120,20 @@ namespace Allors.Workspace.Adapters.Remote
             permission != null &&
             !this.DeniedPermissions.Contains(permission) &&
             this.AccessControls.Any(v => v.PermissionIds.Any(w => w == permission.Id));
+
+        internal void UpdateDeniedPermissions(long[] deniedPermissions)
+        {
+            if (this.deniedPermissions == null)
+            {
+                this.DeniedPermissionIds = EmptySet;
+            }
+            else
+            {
+                if (!this.DeniedPermissionIds.SetEquals(deniedPermissions))
+                {
+                    this.DeniedPermissionIds = new HashSet<long>(deniedPermissions);
+                }
+            }
+        }
     }
 }
