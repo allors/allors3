@@ -130,9 +130,7 @@ namespace Tests.Workspace.Remote
 
             var requireLoad = this.Database.Diff(pullResponse);
 
-            Assert.Single(requireLoad.Objects);
-
-            Assert.Equal(1, requireLoad.Objects[0]);
+            Assert.Empty(requireLoad.Objects);
         }
 
         [Fact]

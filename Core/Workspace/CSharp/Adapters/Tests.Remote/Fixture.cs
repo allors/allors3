@@ -79,7 +79,7 @@ namespace Tests.Workspace.Remote
                         Roles = new[]
                         {
                             new SyncResponseRole {RoleType = m.Organisation.Name.RelationType.Tag, Value = "Ocme"},
-                            new SyncResponseRole {RoleType = m.Organisation.Owner.RelationType.Tag, Value = "2"},
+                            new SyncResponseRole {RoleType = m.Organisation.Owner.RelationType.Tag, Object = 2},
                             new SyncResponseRole {RoleType = m.Organisation.Employees.RelationType.Tag, Collection = new long[]{1}},
                         },
                     },

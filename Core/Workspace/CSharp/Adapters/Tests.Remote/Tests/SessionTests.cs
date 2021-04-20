@@ -9,7 +9,6 @@ namespace Tests.Workspace.Remote
     using Allors;
     using Allors.Protocol.Json.Api.Push;
     using Allors.Workspace.Adapters.Remote;
-    using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
     using Xunit;
 
