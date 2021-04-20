@@ -6,6 +6,7 @@
 namespace Allors.Database.Domain
 {
     using System;
+    using System.Linq;
 
     public partial class PurchaseOrderItem
     {
