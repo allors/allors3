@@ -636,25 +636,6 @@ namespace Allors.Database.Domain.Tests
         public PurchaseOrderItemRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void ChangedPurchaseOrderStoredInFacilityDeriveStoredInFacility()
-        {
-            var storedInFacility = this.InternalOrganisation.FacilitiesWhereOwner.First;
-            var order = new PurchaseOrderBuilder(this.Transaction)
-                .WithOrderedBy(new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build())
-                .Build();
-            this.Transaction.Derive(false);
-
-            var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
-            order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
-
-            order.StoredInFacility = storedInFacility;
-            this.Transaction.Derive(false);
-
-            Assert.Equal(storedInFacility, orderItem.StoredInFacility);
-        }
-
-        [Fact]
         public void ChangedPartThrowValidationError()
         {
             var serialisedPart = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).Build();

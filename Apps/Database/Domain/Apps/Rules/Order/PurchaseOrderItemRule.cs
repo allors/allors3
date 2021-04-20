@@ -23,7 +23,6 @@ namespace Allors.Database.Domain
                 m.PurchaseOrderItem.RolePattern(v => v.SerialNumber),
                 m.PurchaseOrderItem.RolePattern(v => v.QuantityOrdered),
                 m.PurchaseOrderItem.RolePattern(v => v.DerivationTrigger),
-                m.PurchaseOrder.RolePattern(v => v.StoredInFacility, v => v.PurchaseOrderItems),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -33,13 +32,6 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<PurchaseOrderItem>())
             {
-                if (!@this.ExistStoredInFacility
-                    && @this.ExistPurchaseOrderWherePurchaseOrderItem
-                    && @this.PurchaseOrderWherePurchaseOrderItem.ExistStoredInFacility)
-                {
-                    @this.StoredInFacility = @this.PurchaseOrderWherePurchaseOrderItem.StoredInFacility;
-                }
-
                 if (@this.ExistPart && @this.Part.InventoryItemKind.IsSerialised)
                 {
                     validation.AssertAtLeastOne(@this, this.M.PurchaseOrderItem.SerialisedItem, this.M.PurchaseOrderItem.SerialNumber);

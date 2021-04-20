@@ -92,8 +92,9 @@ namespace Allors.Database.Domain
         public void BaseOnInit(ObjectOnInit method)
         {
             if (!this.ExistStoredInFacility
+                && this.ExistInvoiceItemType
                 && (this.InvoiceItemType.IsPartItem || this.InvoiceItemType.IsProductItem)
-                && this.PurchaseOrderWherePurchaseOrderItem.OrderedBy?.StoresWhereInternalOrganisation.Count == 1)
+                && this.PurchaseOrderWherePurchaseOrderItem?.OrderedBy?.StoresWhereInternalOrganisation.Count == 1)
             {
                 this.StoredInFacility = this.PurchaseOrderWherePurchaseOrderItem.OrderedBy.StoresWhereInternalOrganisation.Single().DefaultFacility;
             }
