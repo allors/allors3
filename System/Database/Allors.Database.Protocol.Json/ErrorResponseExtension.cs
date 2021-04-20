@@ -19,7 +19,7 @@ namespace Allors.Database.Protocol.Json
                 var derivationErrorResponse = new ResponseDerivationError
                 {
                     M = derivationError.Message,
-                    R = derivationError.Relations.Select(x => new[] { x.Association.Id.ToString(), x.RelationType.IdAsString }).ToArray(),
+                    R = derivationError.Relations.Select(x => new object[] { x.Association.Id.ToString(), x.RelationType.Tag }).ToArray(),
                 };
 
                 @this.DerivationErrors = @this.DerivationErrors != null ?

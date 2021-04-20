@@ -13,7 +13,8 @@ namespace Allors.Database.Meta
 
     public sealed partial class MetaPopulation : IMetaPopulationBase
     {
-        private readonly Dictionary<Guid, IMetaObjectBase> metaObjectById;
+        private readonly Dictionary<Guid, IMetaIdentifiableObjectBase> metaObjectById;
+        private readonly Dictionary<int, IMetaIdentifiableObjectBase> metaObjectByTag;
 
         private string[] derivedWorkspaceNames;
 
@@ -56,7 +57,8 @@ namespace Allors.Database.Meta
             this.roleTypes = new List<IRoleTypeBase>();
             this.methodTypes = new List<IMethodTypeBase>();
 
-            this.metaObjectById = new Dictionary<Guid, IMetaObjectBase>();
+            this.metaObjectById = new Dictionary<Guid, IMetaIdentifiableObjectBase>();
+            this.metaObjectByTag = new Dictionary<int, IMetaIdentifiableObjectBase>();
         }
 
         public MetaPopulationProps _ => this.props ??= new MetaPopulationProps(this);
@@ -170,7 +172,9 @@ namespace Allors.Database.Meta
         IEnumerable<IMethodType> IMetaPopulation.MethodTypes => this.MethodTypes;
         public IEnumerable<IMethodTypeBase> MethodTypes => this.methodTypes;
 
-        IMetaObject IMetaPopulation.Find(Guid id) => this.Find(id);
+        IMetaIdentifiableObject IMetaPopulation.FindById(Guid id) => this.FindById(id);
+
+        IMetaIdentifiableObject IMetaPopulation.FindByTag(int tag) => this.FindByTag(tag);
 
         /// <summary>
         /// Find a meta object by meta object id.
@@ -181,9 +185,25 @@ namespace Allors.Database.Meta
         /// <returns>
         /// The <see cref="IMetaObject"/>.
         /// </returns>
-        public IMetaObjectBase Find(Guid id)
+        public IMetaIdentifiableObjectBase FindById(Guid id)
         {
             this.metaObjectById.TryGetValue(id, out var metaObject);
+
+            return metaObject;
+        }
+
+        /// <summary>
+        /// Find a meta object by meta object id.
+        /// </summary>
+        /// <param name="id">
+        /// The meta object id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IMetaObject"/>.
+        /// </returns>
+        public IMetaIdentifiableObjectBase FindByTag(int tag)
+        {
+            this.metaObjectByTag.TryGetValue(tag, out var metaObject);
 
             return metaObject;
         }
@@ -496,6 +516,7 @@ namespace Allors.Database.Meta
         {
             this.domains.Add(domain);
             this.metaObjectById.Add(domain.Id, domain);
+            this.metaObjectByTag.Add(domain.Tag, domain);
 
             this.Stale();
         }
@@ -504,6 +525,7 @@ namespace Allors.Database.Meta
         {
             this.units.Add(unit);
             this.metaObjectById.Add(unit.Id, unit);
+            this.metaObjectByTag.Add(unit.Tag, unit);
 
             this.Stale();
         }
@@ -512,6 +534,7 @@ namespace Allors.Database.Meta
         {
             this.interfaces.Add(@interface);
             this.metaObjectById.Add(@interface.Id, @interface);
+            this.metaObjectByTag.Add(@interface.Tag, @interface);
 
             this.Stale();
         }
@@ -520,6 +543,7 @@ namespace Allors.Database.Meta
         {
             this.classes.Add(@class);
             this.metaObjectById.Add(@class.Id, @class);
+            this.metaObjectByTag.Add(@class.Tag, @class);
 
             this.Stale();
         }
@@ -534,6 +558,7 @@ namespace Allors.Database.Meta
         {
             this.relationTypes.Add(relationType);
             this.metaObjectById.Add(relationType.Id, relationType);
+            this.metaObjectByTag.Add(relationType.Tag, relationType);
 
             this.Stale();
         }
@@ -546,6 +571,7 @@ namespace Allors.Database.Meta
         {
             this.methodTypes.Add(methodType);
             this.metaObjectById.Add(methodType.Id, methodType);
+            this.metaObjectByTag.Add(methodType.Tag, methodType);
 
             this.Stale();
         }
@@ -600,9 +626,9 @@ namespace Allors.Database.Meta
             return false;
         }
 
-        public IMethodTypeBase MethodType(string id) => ((IMethodTypeBase)this.Find(new Guid(id)));
+        public IMethodTypeBase MethodType(string id) => ((IMethodTypeBase)this.FindById(new Guid(id)));
 
-        public IRoleTypeBase RoleType(string id) => ((RelationType)this.Find(new Guid(id))).RoleType;
+        public IRoleTypeBase RoleType(string id) => ((RelationType)this.FindById(new Guid(id))).RoleType;
         IObjectType IMetaPopulation.FindDatabaseCompositeByName(string name) => this.FindDatabaseCompositeByName(name);
     }
 }

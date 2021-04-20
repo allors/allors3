@@ -14,13 +14,13 @@ namespace Allors.Protocol.Json.Data
         public PredicateKind Kind { get; set; }
 
         [JsonPropertyName("associationType")]
-        public Guid? AssociationType { get; set; }
+        public int? AssociationType { get; set; }
 
         [JsonPropertyName("roleType")]
-        public Guid? RoleType { get; set; }
+        public int? RoleType { get; set; }
 
         [JsonPropertyName("objectType")]
-        public Guid? ObjectType { get; set; }
+        public int? ObjectType { get; set; }
 
         [JsonPropertyName("parameter")]
         public string Parameter { get; set; }

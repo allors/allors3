@@ -28,8 +28,6 @@ namespace Allors.Database.Meta
 
         public bool IsUnique => this.unit.IsUnique;
 
-        public UnitTags UnitTag => this.unit.UnitTag;
-
         #region As
         protected override IMetaObjectBase AsMetaObject => this.unit;
 

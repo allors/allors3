@@ -16,15 +16,17 @@ namespace Allors.Workspace.Adapters.Local
     using Meta;
     using IMetaPopulation = Meta.IMetaPopulation;
     using IRoleType = Database.Meta.IRoleType;
+    using MetaPopulation = Database.Meta.MetaPopulation;
     using Version = Allors.Version;
 
     internal class LocalDatabase
     {
         private readonly IPermissionsCache permissionCache;
 
-        internal LocalDatabase(IMetaPopulation metaPopulation, Identities identities, IPermissionsCache permissionCache)
+        internal LocalDatabase(IMetaPopulation metaPopulation, Database.Meta.IMetaPopulation databaseMetaPopulation, Identities identities, IPermissionsCache permissionCache)
         {
             this.MetaPopulation = metaPopulation;
+            this.DatabaseMetaPopulation = databaseMetaPopulation;
             this.ObjectsById = new ConcurrentDictionary<long, LocalDatabaseObject>();
             this.Identities = identities;
 
@@ -33,6 +35,7 @@ namespace Allors.Workspace.Adapters.Local
         }
 
         public IMetaPopulation MetaPopulation { get; }
+        public Database.Meta.IMetaPopulation DatabaseMetaPopulation { get; }
 
         public ConcurrentDictionary<long, LocalDatabaseObject> ObjectsById { get; }
 
@@ -65,9 +68,9 @@ namespace Allors.Workspace.Adapters.Local
                 var databaseClass = @object.Strategy.Class;
                 var roleTypes = databaseClass.DatabaseRoleTypes.Where(w => w.RelationType.WorkspaceNames.Length > 0);
 
-                var workspaceClass = (IClass)this.MetaPopulation.Find(databaseClass.Id);
+                var workspaceClass = (IClass)this.MetaPopulation.FindByTag(databaseClass.Tag);
                 var roleByRoleType = roleTypes.ToDictionary(w =>
-                        ((Meta.IRelationType)this.MetaPopulation.Find(w.RelationType.Id)).RoleType,
+                        ((IRelationType)this.MetaPopulation.FindByTag(w.RelationType.Tag)).RoleType,
                     w => GetRole(@object, w));
 
                 var acl = acls[@object];
@@ -89,19 +92,22 @@ namespace Allors.Workspace.Adapters.Local
 
         internal long GetPermission(IClass @class, IOperandType operandType, Operations operation)
         {
+            var classId = this.DatabaseMetaPopulation.FindByTag(@class.Tag).Id;
+            var operandId = this.DatabaseMetaPopulation.FindByTag(operandType.OperandTag).Id;
+
             long permission;
-            var permissionCache = this.permissionCache.Get(@class.Id);
+            var permissionCache = this.permissionCache.Get(classId);
 
             switch (operation)
             {
                 case Operations.Read:
-                    permissionCache.RoleReadPermissionIdByRelationTypeId.TryGetValue(operandType.OperandId, out permission);
+                    permissionCache.RoleReadPermissionIdByRelationTypeId.TryGetValue(operandId, out permission);
                     break;
                 case Operations.Write:
-                    permissionCache.RoleWritePermissionIdByRelationTypeId.TryGetValue(operandType.OperandId, out permission);
+                    permissionCache.RoleWritePermissionIdByRelationTypeId.TryGetValue(operandId, out permission);
                     break;
                 default:
-                    permissionCache.MethodExecutePermissionIdByMethodTypeId.TryGetValue(operandType.OperandId, out permission);
+                    permissionCache.MethodExecutePermissionIdByMethodTypeId.TryGetValue(operandId, out permission);
                     break;
             }
 

@@ -29,7 +29,7 @@ namespace Allors.Database.Meta
 
         private InterfaceProps props;
 
-        internal Interface(IMetaPopulationBase metaPopulation, Guid id) : base(metaPopulation, id) => metaPopulation.OnInterfaceCreated(this);
+        internal Interface(IMetaPopulationBase metaPopulation, Guid id, int tag) : base(metaPopulation, id, tag) => metaPopulation.OnInterfaceCreated(this);
 
         public MetaPopulation M => (MetaPopulation)this.MetaPopulation;
 

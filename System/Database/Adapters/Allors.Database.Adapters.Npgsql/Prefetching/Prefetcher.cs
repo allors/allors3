@@ -124,7 +124,7 @@ namespace Allors.Database.Adapters.Npgsql
                         object unit = null;
                         if (!reader.IsDBNull(index))
                         {
-                            switch (((IUnit)roleType.ObjectType).UnitTag)
+                            switch (((IUnit)roleType.ObjectType).Tag)
                             {
                                 case UnitTags.String:
                                     unit = reader.GetString(index);

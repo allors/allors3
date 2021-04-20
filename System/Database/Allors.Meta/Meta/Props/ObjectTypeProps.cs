@@ -13,7 +13,7 @@ namespace Allors.Database.Meta
     {
         public Guid Id => this.AsObjectType.Id;
 
-        public string IdAsString => this.AsObjectType.IdAsString;
+        public int Tag => this.AsObjectType.Tag;
 
         public bool IsUnit => this.AsObjectType.IsUnit;
 

@@ -13,6 +13,6 @@ namespace Allors.Workspace.Meta
     /// </summary>
     public interface IOperandType
     {
-        Guid OperandId { get; }
+        int OperandTag { get; }
     }
 }

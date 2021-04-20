@@ -199,7 +199,7 @@ where c = '{@class.Id}'";
                                 }
 
                                 var relationTypeId = new Guid(relationTypeIdString);
-                                var relationType = (IRelationType)this.database.MetaPopulation.Find(relationTypeId);
+                                var relationType = (IRelationType)this.database.MetaPopulation.FindById(relationTypeId);
 
                                 if (reader.Name.Equals(Serialization.RelationTypeUnit))
                                 {
@@ -276,7 +276,7 @@ where c = '{@class.Id}'";
                                     if (reader.IsEmptyElement)
                                     {
                                         var unitType = (IUnit)relationType.RoleType.ObjectType;
-                                        switch (unitType.UnitTag)
+                                        switch (unitType.Tag)
                                         {
                                             case UnitTags.String:
                                                 unit = string.Empty;
@@ -290,7 +290,7 @@ where c = '{@class.Id}'";
                                     else
                                     {
                                         var unitType = (IUnit)relationType.RoleType.ObjectType;
-                                        var unitTypeTag = unitType.UnitTag;
+                                        var unitTypeTag = unitType.Tag;
                                         unit = Serialization.ReadString(value, unitTypeTag);
                                     }
 

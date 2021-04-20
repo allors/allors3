@@ -20,12 +20,12 @@ namespace Allors.Database.Meta
         private string name;
         private DomainProps props;
 
-        internal Domain(MetaPopulation metaPopulation, Guid id)
+        internal Domain(MetaPopulation metaPopulation, Guid id, int tag)
         {
             this.metaPopulation = metaPopulation;
 
             this.Id = id;
-            this.IdAsString = this.Id.ToString("D");
+            this.Tag = tag;
 
             this.directSuperdomains = new List<Domain>();
 
@@ -36,7 +36,7 @@ namespace Allors.Database.Meta
 
         public Guid Id { get; }
 
-        public string IdAsString { get; }
+        public int Tag { get; }
 
         public string Name
         {
@@ -121,7 +121,7 @@ namespace Allors.Database.Meta
                 return this.Name;
             }
 
-            return this.IdAsString;
+            return this.Tag.ToString();
         }
 
         internal void Bind() => this.directSuperdomains = this.directSuperdomains.ToArray();

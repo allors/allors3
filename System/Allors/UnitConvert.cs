@@ -40,24 +40,24 @@ namespace Allors
                 _ => throw new ArgumentException()
             };
 
-        public static object FromString(Guid objectTypeId, string value)
+        public static object FromString(int objectTypeTag, string value)
         {
             if (value == null)
             {
                 return null;
             }
 
-            return objectTypeId switch
+            return objectTypeTag switch
             {
-                var u when u == UnitIds.DateTime => XmlConvert.ToDateTime(value, XmlDateTimeSerializationMode.Utc),
-                var u when u == UnitIds.Binary => Convert.FromBase64String(value),
-                var u when u == UnitIds.Boolean => XmlConvert.ToBoolean(value),
-                var u when u == UnitIds.Decimal => XmlConvert.ToDecimal(value),
-                var u when u == UnitIds.Float => XmlConvert.ToDouble(value),
-                var u when u == UnitIds.Integer => XmlConvert.ToInt32(value),
-                var u when u == UnitIds.String => value,
-                var u when u == UnitIds.Unique => XmlConvert.ToGuid(value),
-                _ => throw new Exception($"Unknown unit type with id {objectTypeId}")
+                UnitTags.DateTime => XmlConvert.ToDateTime(value, XmlDateTimeSerializationMode.Utc),
+                UnitTags.Binary => Convert.FromBase64String(value),
+                UnitTags.Boolean => XmlConvert.ToBoolean(value),
+                UnitTags.Decimal => XmlConvert.ToDecimal(value),
+                UnitTags.Float => XmlConvert.ToDouble(value),
+                UnitTags.Integer => XmlConvert.ToInt32(value),
+                UnitTags.String => value,
+                UnitTags.Unique => XmlConvert.ToGuid(value),
+                _ => throw new Exception($"Unknown unit type with id {objectTypeTag}")
             };
         }
 

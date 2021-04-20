@@ -24,11 +24,6 @@ namespace Allors.Workspace.Data
             }
         }
 
-        public Select(IMetaPopulation metaPopulation, params Guid[] propertyTypeIds)
-            : this(propertyTypeIds.Select(v => (IPropertyType)metaPopulation.Find(v)).ToArray())
-        {
-        }
-
         public IEnumerable<Node> Include { get; set; }
 
         public Step Step { get; set; }

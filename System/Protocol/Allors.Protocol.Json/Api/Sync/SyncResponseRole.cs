@@ -12,7 +12,7 @@ namespace Allors.Protocol.Json.Api.Sync
     public class SyncResponseRole
     {
         [JsonPropertyName("t")]
-        public string RoleType { get; set; }
+        public int RoleType { get; set; }
 
         [JsonPropertyName("v")]
         public string Value { get; set; }

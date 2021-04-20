@@ -204,9 +204,9 @@ namespace Allors.Database.Adapters.SqlClient
             }
         }
 
-        internal object GetValue(SqlDataReader reader, UnitTags unitTypeTag, int i)
+        internal object GetValue(SqlDataReader reader, int tag, int i)
         {
-            switch (unitTypeTag)
+            switch (tag)
             {
                 case UnitTags.String:
                     return reader.GetString(i);
@@ -233,7 +233,7 @@ namespace Allors.Database.Adapters.SqlClient
                     return reader.GetValue(i);
 
                 default:
-                    throw new ArgumentException("Unknown Unit ObjectType: " + unitTypeTag);
+                    throw new ArgumentException("Unknown Unit Tag: " + tag);
             }
         }
 

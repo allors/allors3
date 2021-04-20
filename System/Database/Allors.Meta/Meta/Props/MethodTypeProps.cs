@@ -18,7 +18,7 @@ namespace Allors.Database.Meta
 
         public Guid Id => this.methodType.Id;
 
-        public string IdAsString => this.methodType.IdAsString;
+        public int Tag => this.methodType.Tag;
 
         public string Name => this.methodType.Name;
 

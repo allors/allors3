@@ -297,7 +297,7 @@ namespace Allors.Database.Meta
         {
             if (this.ObjectType is IUnit unitType)
             {
-                switch (unitType.UnitTag)
+                switch (unitType.Tag)
                 {
                     case UnitTags.String:
                         if (!this.Size.HasValue)

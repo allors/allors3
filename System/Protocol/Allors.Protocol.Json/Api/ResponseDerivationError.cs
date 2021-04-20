@@ -16,6 +16,6 @@ namespace Allors.Protocol.Json.Api
         /// Gets or sets the roles.
         /// [][AssociationId, RelationTypeId]
         /// </summary>
-        public string[][] R { get; set; }
+        public object[][] R { get; set; }
     }
 }

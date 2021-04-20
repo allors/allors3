@@ -171,13 +171,13 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 foreach (var syncResponsePermission in securityResponse.Permissions)
                 {
-                    var id = long.Parse(syncResponsePermission[0]);
-                    var @class = (IClass)this.MetaPopulation.Find(Guid.Parse(syncResponsePermission[1]));
-                    var metaObject = this.MetaPopulation.Find(Guid.Parse(syncResponsePermission[2]));
+                    var id = long.Parse((string)syncResponsePermission[0]);
+                    var @class = (IClass)this.MetaPopulation.FindByTag((int)syncResponsePermission[1]);
+                    var metaObject = this.MetaPopulation.FindByTag((int)syncResponsePermission[2]);
                     IOperandType operandType = (metaObject as IRelationType)?.RoleType;
                     operandType ??= metaObject as IMethodType;
 
-                    Enum.TryParse(syncResponsePermission[3], out Operations operation);
+                    Enum.TryParse((string)syncResponsePermission[3], out Operations operation);
 
                     var permission = new RemotePermission(id, @class, operandType, operation);
                     this.PermissionById[id] = permission;

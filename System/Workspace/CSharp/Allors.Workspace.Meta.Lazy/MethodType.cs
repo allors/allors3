@@ -13,17 +13,14 @@ namespace Allors.Workspace.Meta
     {
         public MetaPopulation MetaPopulation { get; set; }
 
-        private Guid Id { get; set; }
-        private string IdAsString { get; set; }
+        private int Tag { get; set; }
         private ICompositeInternals ObjectType { get; set; }
         private string Name { get; set; }
 
         #region IMetaObject
         IMetaPopulation IMetaObject.MetaPopulation => this.MetaPopulation;
 
-        Guid IMetaObject.Id => this.Id;
-
-        string IMetaObject.IdAsString => this.IdAsString;
+        int IMetaObject.Tag => this.Tag;
 
         Origin IMetaObject.Origin => Origin.Database;
 
@@ -35,7 +32,7 @@ namespace Allors.Workspace.Meta
         #endregion
 
         #region IOperandType
-        Guid IOperandType.OperandId => this.Id;
+        int IOperandType.OperandTag => this.Tag;
         #endregion
 
         #region IMethodType
@@ -44,10 +41,9 @@ namespace Allors.Workspace.Meta
 
         public override string ToString() => this.Name;
 
-        public MethodType Init(Guid id, ICompositeInternals objectType, string name)
+        public MethodType Init(int tag, ICompositeInternals objectType, string name)
         {
-            this.Id = id;
-            this.IdAsString = id.ToString("D");
+            this.Tag = tag;
             this.ObjectType = objectType;
             this.Name = name;
 

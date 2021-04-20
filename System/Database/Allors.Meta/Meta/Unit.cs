@@ -11,33 +11,19 @@ namespace Allors.Database.Meta
 
     public abstract partial class Unit : ObjectType, IUnitBase
     {
-        private UnitTags unitTag;
-
         private Type clrType;
 
         private UnitProps props;
 
-        internal Unit(MetaPopulation metaPopulation, Guid id) : base(metaPopulation, id) => metaPopulation.OnUnitCreated(this);
+        internal Unit(MetaPopulation metaPopulation, Guid id, int tag) : base(metaPopulation, id, tag) => metaPopulation.OnUnitCreated(this);
 
         public UnitProps _ => this.props ??= new UnitProps(this);
-
-        public UnitTags UnitTag
-        {
-            get => this.unitTag;
-
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.unitTag = value;
-                this.MetaPopulation.Stale();
-            }
-        }
 
         /// <summary>
         /// Gets a value indicating whether this state is a binary.
         /// </summary>
         /// <value><c>true</c> if this state is a binary; otherwise, <c>false</c>.</value>
-        public bool IsBinary => this.Id.Equals(UnitIds.Binary);
+        public bool IsBinary => this.Tag == UnitTags.Binary;
 
         /// <summary>
         /// Gets a value indicating whether this state is a boolean.
@@ -45,7 +31,7 @@ namespace Allors.Database.Meta
         /// <value>
         /// <c>true</c> if this state is a boolean; otherwise, <c>false</c>.
         /// </value>
-        public bool IsBoolean => this.Id.Equals(UnitIds.Boolean);
+        public bool IsBoolean => this.Tag == UnitTags.Boolean;
 
         /// <summary>
         /// Gets a value indicating whether this state is a date time.
@@ -53,7 +39,7 @@ namespace Allors.Database.Meta
         /// <value>
         /// <c>true</c> if this state is a date time; otherwise, <c>false</c>.
         /// </value>
-        public bool IsDateTime => this.Id.Equals(UnitIds.DateTime);
+        public bool IsDateTime => this.Tag == UnitTags.DateTime;
 
         /// <summary>
         /// Gets a value indicating whether this state is a decimal.
@@ -61,13 +47,13 @@ namespace Allors.Database.Meta
         /// <value>
         ///  <c>true</c> if this state is a decimal; otherwise, <c>false</c>.
         /// </value>
-        public bool IsDecimal => this.Id.Equals(UnitIds.Decimal);
+        public bool IsDecimal => this.Tag == UnitTags.Decimal;
 
         /// <summary>
         /// Gets a value indicating whether this state is a float.
         /// </summary>
         /// <value><c>true</c> if this state is a float; otherwise, <c>false</c>.</value>
-        public bool IsFloat => this.Id.Equals(UnitIds.Float);
+        public bool IsFloat => this.Tag == UnitTags.Float;
 
         /// <summary>
         /// Gets a value indicating whether this state is an integer.
@@ -75,13 +61,13 @@ namespace Allors.Database.Meta
         /// <value>
         ///  <c>true</c> if this state is an integer; otherwise, <c>false</c>.
         /// </value>
-        public bool IsInteger => this.Id.Equals(UnitIds.Integer);
+        public bool IsInteger => this.Tag == UnitTags.Integer;
 
         /// <summary>
         /// Gets a value indicating whether this state is a string.
         /// </summary>
         /// <value><c>true</c> if this state is a string; otherwise, <c>false</c>.</value>
-        public bool IsString => this.Id.Equals(UnitIds.String);
+        public bool IsString => this.Tag == UnitTags.String;
 
         /// <summary>
         /// Gets a value indicating whether this state is a unique.
@@ -93,7 +79,7 @@ namespace Allors.Database.Meta
 
         public void Bind()
         {
-            switch (this.UnitTag)
+            switch (this.Tag)
             {
                 case UnitTags.Binary:
                     this.clrType = typeof(byte[]);

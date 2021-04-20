@@ -33,7 +33,7 @@ namespace Allors.Workspace.Meta
         #endregion
 
         #region IOperandType
-        Guid IOperandType.OperandId => this.RelationType.Id;
+        int IOperandType.OperandTag => this.RelationType.Tag;
         #endregion
 
         #region IPropertyType

@@ -31,7 +31,7 @@ namespace Allors.Database.Adapters
             }
 
             var unitType = (IUnit)roleType.ObjectType;
-            var unitTypeTag = unitType.UnitTag;
+            var unitTypeTag = unitType.Tag;
 
             var normalizedUnit = unit;
 

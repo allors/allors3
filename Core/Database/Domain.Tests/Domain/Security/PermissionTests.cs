@@ -79,7 +79,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void WhenSyncingPermissionsThenObsolotePermissionsAreDeleted()
         {
-            var domain = (Domain)this.Transaction.Database.MetaPopulation.Find(new Guid("AB41FD0C-C887-4A1D-BEDA-CED69527E69A"));
+            var domain = (Domain)this.Transaction.Database.MetaPopulation.FindById(new Guid("AB41FD0C-C887-4A1D-BEDA-CED69527E69A"));
 
             var count = new Permissions(this.Transaction).Extent().Count;
 

@@ -44,7 +44,7 @@ namespace Tests
                         {
                             new PushRequestRole
                             {
-                              RelationType = this.M.Organisation.Name.RelationType.IdAsString,
+                              RelationType = this.M.Organisation.Name.RelationType.Tag,
                               SetRole = "Acme"
                             },
                         },

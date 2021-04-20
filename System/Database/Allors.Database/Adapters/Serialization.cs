@@ -154,62 +154,40 @@ namespace Allors.Database.Adapters
         /// <see cref="XmlConvert"/> from the xml unit value.
         /// </summary>
         /// <param name="value">The XML value.</param>
-        /// <param name="unitTypeTag">The unit type tag.</param>
+        /// <param name="tag">The unit type tag.</param>
         /// <returns>The converted value.</returns>
-        public static object ReadString(string value, UnitTags unitTypeTag)
-        {
-            switch (unitTypeTag)
+        public static object ReadString(string value, int tag) =>
+            tag switch
             {
-                case UnitTags.String:
-                    return value;
-                case UnitTags.Integer:
-                    return XmlConvert.ToInt32(value);
-                case UnitTags.Decimal:
-                    return XmlConvert.ToDecimal(value);
-                case UnitTags.Float:
-                    return XmlConvert.ToDouble(value);
-                case UnitTags.Boolean:
-                    return XmlConvert.ToBoolean(value);
-                case UnitTags.DateTime:
-                    return XmlConvert.ToDateTime(value, XmlDateTimeSerializationMode.Utc);
-                case UnitTags.Unique:
-                    return Guid.Parse(value);
-                case UnitTags.Binary:
-                    return Convert.FromBase64String(value);
-                default:
-                    throw new ArgumentException("Unknown Unit ObjectType: " + unitTypeTag);
-            }
-        }
+                UnitTags.String => value,
+                UnitTags.Integer => XmlConvert.ToInt32(value),
+                UnitTags.Decimal => XmlConvert.ToDecimal(value),
+                UnitTags.Float => XmlConvert.ToDouble(value),
+                UnitTags.Boolean => XmlConvert.ToBoolean(value),
+                UnitTags.DateTime => XmlConvert.ToDateTime(value, XmlDateTimeSerializationMode.Utc),
+                UnitTags.Unique => Guid.Parse(value),
+                UnitTags.Binary => Convert.FromBase64String(value),
+                _ => throw new ArgumentException("Unknown Unit tag: " + tag)
+            };
 
         /// <summary>
         /// <see cref="XmlConvert"/> the unit to an XML value..
         /// </summary>
-        /// <param name="unitTypeTag">The unit type tag.</param>
+        /// <param name="tag">The unit type tag.</param>
         /// <param name="unit">The unit .</param>
         /// <returns>The XML Value.</returns>
-        public static string WriteString(UnitTags unitTypeTag, object unit)
-        {
-            switch (unitTypeTag)
+        public static string WriteString(int tag, object unit) =>
+            tag switch
             {
-                case UnitTags.String:
-                    return (string)unit;
-                case UnitTags.Integer:
-                    return XmlConvert.ToString((int)unit);
-                case UnitTags.Decimal:
-                    return XmlConvert.ToString((decimal)unit);
-                case UnitTags.Float:
-                    return XmlConvert.ToString((double)unit);
-                case UnitTags.Boolean:
-                    return XmlConvert.ToString((bool)unit);
-                case UnitTags.DateTime:
-                    return XmlConvert.ToString((DateTime)unit, XmlDateTimeSerializationMode.Utc);
-                case UnitTags.Unique:
-                    return XmlConvert.ToString((Guid)unit);
-                case UnitTags.Binary:
-                    return Convert.ToBase64String((byte[])unit);
-                default:
-                    throw new ArgumentException("Unknown Unit ObjectType: " + unitTypeTag);
-            }
-        }
+                UnitTags.String => (string)unit,
+                UnitTags.Integer => XmlConvert.ToString((int)unit),
+                UnitTags.Decimal => XmlConvert.ToString((decimal)unit),
+                UnitTags.Float => XmlConvert.ToString((double)unit),
+                UnitTags.Boolean => XmlConvert.ToString((bool)unit),
+                UnitTags.DateTime => XmlConvert.ToString((DateTime)unit, XmlDateTimeSerializationMode.Utc),
+                UnitTags.Unique => XmlConvert.ToString((Guid)unit),
+                UnitTags.Binary => Convert.ToBase64String((byte[])unit),
+                _ => throw new ArgumentException("Unknown Unit ObjectType: " + tag)
+            };
     }
 }

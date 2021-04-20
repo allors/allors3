@@ -210,7 +210,7 @@ namespace Allors.Database.Adapters.SqlClient
 
                                         if (roleType.ObjectType.IsUnit)
                                         {
-                                            var unitTypeTag = ((IUnit)roleType.ObjectType).UnitTag;
+                                            var unitTypeTag = ((IUnit)roleType.ObjectType).Tag;
                                             var r = command.GetValue(reader, unitTypeTag, 1);
                                             var content = Serialization.WriteString(unitTypeTag, r);
                                             relationTypeOneXmlWriter.Write(a, content);

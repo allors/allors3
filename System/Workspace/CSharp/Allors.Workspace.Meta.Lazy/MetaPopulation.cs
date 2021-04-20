@@ -18,7 +18,7 @@ namespace Allors.Workspace.Meta
         private IRelationTypeInternals[] RelationTypes { get; set; }
         private IMethodTypeInternals[] MethodTypes { get; set; }
 
-        private Dictionary<Guid, IMetaObject> MetaObjectById { get; set; }
+        private Dictionary<int, IMetaObject> MetaObjectByTag { get; set; }
         private ICompositeInternals[] Composites { get; set; }
         private Dictionary<string, ICompositeInternals> CompositeByLowercaseName { get; set; }
 
@@ -29,15 +29,14 @@ namespace Allors.Workspace.Meta
         IEnumerable<IRelationType> IMetaPopulation.RelationTypes => this.RelationTypes;
         IEnumerable<IMethodType> IMetaPopulation.MethodTypes => this.MethodTypes;
         IEnumerable<IComposite> IMetaPopulation.Composites => this.Composites;
-        IMetaObject IMetaPopulation.Find(Guid id)
+        IMetaObject IMetaPopulation.FindByTag(int tag)
         {
-            this.MetaObjectById.TryGetValue(id, out var metaObject);
-
+            _ = this.MetaObjectByTag.TryGetValue(tag, out var metaObject);
             return metaObject;
         }
         IComposite IMetaPopulation.FindByName(string name)
         {
-            this.CompositeByLowercaseName.TryGetValue(name.ToLowerInvariant(), out var composite);
+            _ = this.CompositeByLowercaseName.TryGetValue(name.ToLowerInvariant(), out var composite);
             return composite;
         }
         void IMetaPopulation.Bind(Type[] types)
@@ -70,12 +69,12 @@ namespace Allors.Workspace.Meta
             this.RelationTypes = relationTypes;
             this.MethodTypes = methodTypes;
 
-            this.MetaObjectById =
+            this.MetaObjectByTag =
                 this.Units.Cast<IMetaObject>()
                 .Union(this.Classes)
                 .Union(this.RelationTypes)
                 .Union(this.MethodTypes)
-                .ToDictionary(v => ((IMetaObject)v).Id, v => v);
+                .ToDictionary(v => ((IMetaObject)v).Tag, v => v);
 
             this.Composites = this.Interfaces.Cast<ICompositeInternals>().Union(this.Classes).ToArray();
             this.CompositeByLowercaseName = this.Composites.ToDictionary(v => v.SingularName.ToLowerInvariant());

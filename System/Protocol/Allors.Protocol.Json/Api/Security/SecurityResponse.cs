@@ -14,6 +14,6 @@ namespace Allors.Protocol.Json.Api.Security
         public SecurityResponseAccessControl[] AccessControls { get; set; }
 
         [JsonPropertyName("permissions")]
-        public string[][] Permissions { get; set; }
+        public object[][] Permissions { get; set; }
     }
 }

@@ -25,7 +25,7 @@ namespace Allors.Database.Data
         }
 
         public Select(IMetaPopulation metaPopulation, params Guid[] propertyTypeIds)
-            : this(propertyTypeIds.Select(v => (IPropertyType)metaPopulation.Find(v)).ToArray())
+            : this(propertyTypeIds.Select(v => (IPropertyType)metaPopulation.FindById(v)).ToArray())
         {
         }
 

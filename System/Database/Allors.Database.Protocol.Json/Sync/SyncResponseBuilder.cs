@@ -46,7 +46,7 @@ namespace Allors.Database.Protocol.Json
 
             static SyncResponseRole CreateSyncResponseRole(IObject @object, IRoleType roleType)
             {
-                var syncResponseRole = new SyncResponseRole { RoleType = roleType.RelationType.IdAsString };
+                var syncResponseRole = new SyncResponseRole { RoleType = roleType.RelationType.Tag };
 
                 if (roleType.ObjectType.IsUnit)
                 {
@@ -81,7 +81,7 @@ namespace Allors.Database.Protocol.Json
                     {
                         Id = v.Id.ToString(),
                         Version = v.Strategy.ObjectVersion.ToString(),
-                        ObjectTypeOrKey = v.Strategy.Class.IdAsString,
+                        ObjectType = v.Strategy.Class.Tag,
                         // TODO: Cache
                         Roles = @class.DatabaseRoleTypes.Where(v => v.RelationType.WorkspaceNames.Length > 0)
                             .Where(w => acl.CanRead(w) && v.Strategy.ExistRole(w))

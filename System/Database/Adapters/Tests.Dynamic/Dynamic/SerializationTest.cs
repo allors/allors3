@@ -98,7 +98,7 @@ namespace Allors.Database.Adapters
                             var roles = concreteClass.DatabaseRoleTypes.Where(v=>v.ObjectType.IsUnit);
                             foreach (var role in roles)
                             {
-                                var unitTypeTag = ((Unit)role.ObjectType).UnitTag;
+                                var unitTypeTag = ((Unit)role.ObjectType).Tag;
                                 switch (unitTypeTag)
                                 {
                                     case UnitTags.String:

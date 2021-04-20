@@ -30,7 +30,7 @@ namespace Allors.Workspace.Adapters.Local
             this.Database = database;
 
             var databaseContext = this.Database.Context();
-            this.LocalDatabase = new LocalDatabase(this.MetaPopulation, new Identities(), databaseContext.PermissionsCache);
+            this.LocalDatabase = new LocalDatabase(this.MetaPopulation, database.MetaPopulation, new Identities(), databaseContext.PermissionsCache);
 
             this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
             this.WorkspaceIdsByWorkspaceClass = new Dictionary<IClass, long[]>();

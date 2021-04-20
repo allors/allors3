@@ -16,6 +16,6 @@ namespace Allors.Protocol.Json.Api.Invoke
         public string Version { get; set; }
 
         [JsonPropertyName("m")]
-        public string Method { get; set; }
+        public int Method { get; set; }
     }
 }

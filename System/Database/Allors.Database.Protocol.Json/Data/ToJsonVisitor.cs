@@ -79,7 +79,7 @@ namespace Allors.Database.Protocol.Json
             {
                 Kind = PredicateKind.Between,
                 Dependencies = visited.Dependencies,
-                RoleType = visited.RoleType?.RelationType.Id,
+                RoleType = visited.RoleType?.RelationType.Tag,
                 Values = visited.Values.Select(UnitConvert.ToString).ToArray(),
                 Parameter = visited.Parameter,
             };
@@ -93,8 +93,8 @@ namespace Allors.Database.Protocol.Json
             {
                 Kind = PredicateKind.ContainedIn,
                 Dependencies = visited.Dependencies,
-                AssociationType = (visited.PropertyType as IAssociationType)?.RelationType.Id,
-                RoleType = (visited.PropertyType as IRoleType)?.RelationType.Id,
+                AssociationType = (visited.PropertyType as IAssociationType)?.RelationType.Tag,
+                RoleType = (visited.PropertyType as IRoleType)?.RelationType.Tag,
                 Values = visited.Objects?.Select(v => v.Id.ToString()).ToArray(),
                 Parameter = visited.Parameter,
             };
@@ -114,8 +114,8 @@ namespace Allors.Database.Protocol.Json
             {
                 Kind = PredicateKind.Contains,
                 Dependencies = visited.Dependencies,
-                AssociationType = (visited.PropertyType as IAssociationType)?.RelationType.Id,
-                RoleType = (visited.PropertyType as IRoleType)?.RelationType.Id,
+                AssociationType = (visited.PropertyType as IAssociationType)?.RelationType.Tag,
+                RoleType = (visited.PropertyType as IRoleType)?.RelationType.Tag,
                 Object = visited.Object?.Id.ToString(),
                 Parameter = visited.Parameter,
             };
@@ -129,8 +129,8 @@ namespace Allors.Database.Protocol.Json
             {
                 Kind = PredicateKind.Equals,
                 Dependencies = visited.Dependencies,
-                AssociationType = (visited.PropertyType as IAssociationType)?.RelationType.Id,
-                RoleType = (visited.PropertyType as IRoleType)?.RelationType.Id,
+                AssociationType = (visited.PropertyType as IAssociationType)?.RelationType.Tag,
+                RoleType = (visited.PropertyType as IRoleType)?.RelationType.Tag,
                 Object = visited.Object?.Id.ToString(),
                 Value = UnitConvert.ToString(visited.Value),
                 Parameter = visited.Parameter,
@@ -179,8 +179,8 @@ namespace Allors.Database.Protocol.Json
             {
                 Kind = PredicateKind.Exists,
                 Dependencies = visited.Dependencies,
-                AssociationType = (visited.PropertyType as IAssociationType)?.RelationType.Id,
-                RoleType = (visited.PropertyType as IRoleType)?.RelationType.Id,
+                AssociationType = (visited.PropertyType as IAssociationType)?.RelationType.Tag,
+                RoleType = (visited.PropertyType as IRoleType)?.RelationType.Tag,
                 Parameter = visited.Parameter,
             };
 
@@ -192,8 +192,8 @@ namespace Allors.Database.Protocol.Json
             var extent = new Extent
             {
                 Kind = ExtentKind.Extent,
-                ObjectType = visited.ObjectType?.Id,
-                Sorting = visited.Sorting?.Select(v => new Sort { Descending = v.Descending, RoleType = v.RoleType?.RelationType.Id }).ToArray(),
+                ObjectType = visited.ObjectType?.Tag,
+                Sorting = visited.Sorting?.Select(v => new Sort { Descending = v.Descending, RoleType = v.RoleType?.RelationType.Tag }).ToArray(),
             };
 
             this.extents.Push(extent);
@@ -236,7 +236,7 @@ namespace Allors.Database.Protocol.Json
             {
                 Kind = PredicateKind.GreaterThan,
                 Dependencies = visited.Dependencies,
-                RoleType = visited.RoleType?.RelationType.Id,
+                RoleType = visited.RoleType?.RelationType.Tag,
                 Value = UnitConvert.ToString(visited.Value),
                 Parameter = visited.Parameter,
             };
@@ -250,9 +250,9 @@ namespace Allors.Database.Protocol.Json
             {
                 Kind = PredicateKind.InstanceOf,
                 Dependencies = visited.Dependencies,
-                ObjectType = visited.ObjectType?.Id,
-                AssociationType = (visited.PropertyType as IAssociationType)?.RelationType.Id,
-                RoleType = (visited.PropertyType as IRoleType)?.RelationType.Id,
+                ObjectType = visited.ObjectType?.Tag,
+                AssociationType = (visited.PropertyType as IAssociationType)?.RelationType.Tag,
+                RoleType = (visited.PropertyType as IRoleType)?.RelationType.Tag,
             };
 
             this.predicates.Push(predicate);
@@ -298,7 +298,7 @@ namespace Allors.Database.Protocol.Json
             {
                 Kind = PredicateKind.LessThan,
                 Dependencies = visited.Dependencies,
-                RoleType = visited.RoleType?.RelationType.Id,
+                RoleType = visited.RoleType?.RelationType.Tag,
                 Value = UnitConvert.ToString(visited.Value),
                 Parameter = visited.Parameter,
             };
@@ -312,7 +312,7 @@ namespace Allors.Database.Protocol.Json
             {
                 Kind = PredicateKind.Like,
                 Dependencies = visited.Dependencies,
-                RoleType = visited.RoleType?.RelationType.Id,
+                RoleType = visited.RoleType?.RelationType.Tag,
                 Value = UnitConvert.ToString(visited.Value),
                 Parameter = visited.Parameter,
             };
@@ -324,8 +324,8 @@ namespace Allors.Database.Protocol.Json
         {
             var node = new Node
             {
-                AssociationType = (visited.PropertyType as IAssociationType)?.RelationType.Id,
-                RoleType = (visited.PropertyType as IRoleType)?.RelationType.Id,
+                AssociationType = (visited.PropertyType as IAssociationType)?.RelationType.Tag,
+                RoleType = (visited.PropertyType as IRoleType)?.RelationType.Tag,
             };
 
             this.nodes.Push(node);
@@ -387,7 +387,7 @@ namespace Allors.Database.Protocol.Json
             var pull = new Pull
             {
                 ExtentRef = visited.ExtentRef,
-                ObjectType = visited.ObjectType?.Id,
+                ObjectType = visited.ObjectType?.Tag,
                 Object = visited.Object?.Id.ToString(),
             };
 
@@ -437,7 +437,7 @@ namespace Allors.Database.Protocol.Json
             var sort = new Sort
             {
                 Descending = visited.Descending,
-                RoleType = visited.RoleType?.RelationType.Id,
+                RoleType = visited.RoleType?.RelationType.Tag,
             };
 
             this.sorts.Push(sort);
@@ -447,8 +447,8 @@ namespace Allors.Database.Protocol.Json
         {
             var step = new Step
             {
-                AssociationType = (visited.PropertyType as IAssociationType)?.RelationType.Id,
-                RoleType = (visited.PropertyType as IRoleType)?.RelationType.Id,
+                AssociationType = (visited.PropertyType as IAssociationType)?.RelationType.Tag,
+                RoleType = (visited.PropertyType as IRoleType)?.RelationType.Tag,
             };
 
             this.steps.Push(step);

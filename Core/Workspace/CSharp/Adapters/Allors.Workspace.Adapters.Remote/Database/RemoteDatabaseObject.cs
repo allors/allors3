@@ -32,7 +32,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             this.Database = database;
             this.Identity = long.Parse(syncResponseObject.Id);
-            this.Class = (IClass)this.Database.MetaPopulation.Find(Guid.Parse(syncResponseObject.ObjectTypeOrKey));
+            this.Class = (IClass)this.Database.MetaPopulation.FindByTag(syncResponseObject.ObjectType);
             this.Version = !string.IsNullOrEmpty(syncResponseObject.Version) ? long.Parse(syncResponseObject.Version) : 0;
             this.syncResponseRoles = syncResponseObject.Roles;
             this.SortedAccessControlIds = ctx.ReadSortedAccessControlIds(syncResponseObject.AccessControls);
@@ -62,16 +62,16 @@ namespace Allors.Workspace.Adapters.Remote
 
                     var metaPopulation = this.Database.MetaPopulation;
                     this.roleByRelationType = this.syncResponseRoles.ToDictionary(
-                        v => (IRelationType)meta.Find(Guid.Parse(v.RoleType)),
+                        v => (IRelationType)meta.FindByTag(v.RoleType),
                         v =>
                         {
                             var value = v.Value;
-                            var roleType = ((IRelationType)metaPopulation.Find(Guid.Parse(v.RoleType))).RoleType;
+                            var roleType = ((IRelationType)metaPopulation.FindByTag(v.RoleType)).RoleType;
 
                             var objectType = roleType.ObjectType;
                             if (objectType.IsUnit)
                             {
-                                return UnitConvert.FromString(roleType.ObjectType.Id, value);
+                                return UnitConvert.FromString(roleType.ObjectType.Tag, value);
                             }
                             else
                             {

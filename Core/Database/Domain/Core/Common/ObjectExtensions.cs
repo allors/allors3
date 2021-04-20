@@ -20,7 +20,7 @@ namespace Allors.Database.Domain
                 {
                     if (roleType.ObjectType is IUnit unit && !@this.Strategy.ExistRole(roleType))
                     {
-                        switch (unit.UnitTag)
+                        switch (unit.Tag)
                         {
                             case UnitTags.Boolean:
                                 @this.Strategy.SetUnitRole(roleType, false);

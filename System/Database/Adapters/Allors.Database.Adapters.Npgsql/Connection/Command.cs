@@ -245,9 +245,9 @@ namespace Allors.Database.Adapters.Npgsql
             }
         }
 
-        internal object GetValue(NpgsqlDataReader reader, UnitTags unitTypeTag, int i)
+        internal object GetValue(NpgsqlDataReader reader, int tag, int i)
         {
-            switch (unitTypeTag)
+            switch (tag)
             {
                 case UnitTags.String:
                     return reader.GetString(i);
@@ -274,7 +274,7 @@ namespace Allors.Database.Adapters.Npgsql
                     return reader.GetValue(i);
 
                 default:
-                    throw new ArgumentException("Unknown Unit ObjectType: " + unitTypeTag);
+                    throw new ArgumentException("Unknown Unit Tag: " + tag);
             }
         }
 

@@ -132,7 +132,7 @@ namespace Allors.Database.Adapters.SqlClient
                         object unit = null;
                         if (!reader.IsDBNull(i))
                         {
-                            var unitTypeTag = ((IUnit)roleType.ObjectType).UnitTag;
+                            var unitTypeTag = ((IUnit)roleType.ObjectType).Tag;
                             switch (unitTypeTag)
                             {
                                 case UnitTags.String:
@@ -610,7 +610,7 @@ namespace Allors.Database.Adapters.SqlClient
                     var classId = reader.GetGuid(0);
                     var version = reader.GetInt64(1);
 
-                    var type = (IClass)this.Database.MetaPopulation.Find(classId);
+                    var type = (IClass)this.Database.MetaPopulation.FindById(classId);
                     return this.transaction.State.GetOrCreateReferenceForExistingObject(type, objectId, version, this.transaction);
                 }
 

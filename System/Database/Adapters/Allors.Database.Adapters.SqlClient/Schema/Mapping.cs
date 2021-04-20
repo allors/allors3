@@ -415,7 +415,7 @@ namespace Allors.Database.Adapters.SqlClient
 
         public string GetTableTypeName(IRoleType roleType)
         {
-            var unitTypeTag = ((IUnit)roleType.ObjectType).UnitTag;
+            var unitTypeTag = ((IUnit)roleType.ObjectType).Tag;
             switch (unitTypeTag)
             {
                 case UnitTags.String:
@@ -461,7 +461,7 @@ namespace Allors.Database.Adapters.SqlClient
         internal string GetSqlType(IRoleType roleType)
         {
             var unit = (IUnit)roleType.ObjectType;
-            switch (unit.UnitTag)
+            switch (unit.Tag)
             {
                 case UnitTags.String:
                     if (roleType.Size == -1 || roleType.Size > 4000)
@@ -505,7 +505,7 @@ namespace Allors.Database.Adapters.SqlClient
         internal SqlDbType GetSqlDbType(IRoleType roleType)
         {
             var unit = (IUnit)roleType.ObjectType;
-            switch (unit.UnitTag)
+            switch (unit.Tag)
             {
                 case UnitTags.String:
                     return SqlDbType.NVarChar;
@@ -850,7 +850,7 @@ END";
             }
 
             var relationType = roleType.RelationType;
-            var unitTypeTag = ((IUnit)relationType.RoleType.ObjectType).UnitTag;
+            var unitTypeTag = ((IUnit)relationType.RoleType.ObjectType).Tag;
             var table = this.TableNameForObjectByClass[@class];
             var name = this.Database.SchemaName + "." + ProcedurePrefixForSetRole + @class.Name.ToLowerInvariant() + "_" + roleType.SingularFullName.ToLowerInvariant();
             procedureNameForSetUnitRoleByRelationType.Add(relationType, name);

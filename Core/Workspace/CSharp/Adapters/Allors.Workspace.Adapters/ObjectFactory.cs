@@ -30,7 +30,7 @@ namespace Allors.Workspace.Adapters
         /// <summary>
         /// <see cref="IObjectType"/> by <see cref="IObjectType"/> id cache.
         /// </summary>
-        private readonly Dictionary<Guid, IObjectType> objectTypeByObjectTypeId;
+        private readonly Dictionary<int, IObjectType> objectTypeByObjectTypeTag;
 
         /// <summary>
         /// <see cref="ConstructorInfo"/> by <see cref="IObjectType"/> cache.
@@ -67,7 +67,7 @@ namespace Allors.Workspace.Adapters
             this.typeByObjectType = new Dictionary<IObjectType, Type>();
             this.objectTypeByType = new Dictionary<Type, IObjectType>();
             this.objectTypeByName = new Dictionary<string, IObjectType>();
-            this.objectTypeByObjectTypeId = new Dictionary<Guid, IObjectType>();
+            this.objectTypeByObjectTypeTag = new Dictionary<int, IObjectType>();
             this.contructorInfoByObjectType = new Dictionary<IObjectType, ConstructorInfo>();
             this.emptyArrayByObjectType = new Dictionary<IObjectType, object>();
 
@@ -80,7 +80,7 @@ namespace Allors.Workspace.Adapters
                 this.typeByObjectType[objectType] = type;
                 this.objectTypeByType[type] = objectType;
                 this.objectTypeByName[type.Name] = objectType;
-                this.objectTypeByObjectTypeId[objectType.Id] = objectType;
+                this.objectTypeByObjectTypeTag[objectType.Tag] = objectType;
 
                 if (objectType is IClass)
                 {

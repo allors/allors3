@@ -132,7 +132,7 @@ namespace Allors.Database.Adapters.Npgsql
                         object unit = null;
                         if (!reader.IsDBNull(i))
                         {
-                            switch (((IUnit)roleType.ObjectType).UnitTag)
+                            switch (((IUnit)roleType.ObjectType).Tag)
                             {
                                 case UnitTags.String:
                                     unit = reader.GetString(i);
@@ -601,7 +601,7 @@ namespace Allors.Database.Adapters.Npgsql
                     var classId = reader.GetGuid(0);
                     var version = reader.GetInt64(1);
 
-                    var type = (IClass)this.Database.MetaPopulation.Find(classId);
+                    var type = (IClass)this.Database.MetaPopulation.FindById(classId);
                     return this.transaction.State.GetOrCreateReferenceForExistingObject(type, objectId, version, this.transaction);
                 }
 

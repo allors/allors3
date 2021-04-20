@@ -40,7 +40,9 @@ namespace Allors.Database.Meta
 
         bool IsValid { get; }
 
-        IMetaObject Find(Guid metaObjectId);
+        IMetaIdentifiableObject FindById(Guid metaObjectId);
+
+        IMetaIdentifiableObject FindByTag(int tag);
 
         IObjectType FindDatabaseCompositeByName(string name);
 

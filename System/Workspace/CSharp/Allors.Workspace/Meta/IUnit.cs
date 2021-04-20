@@ -23,7 +23,5 @@ namespace Allors.Workspace.Meta
         bool IsString { get; }
 
         bool IsUnique { get; }
-
-        UnitTags UnitTag { get; }
     }
 }
