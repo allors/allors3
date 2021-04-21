@@ -2,6 +2,11 @@ import { IUnit, Origin, UnitTags } from '@allors/workspace/system';
 import { IMetaPopulationInternals } from './Internals/IMetaPopulationInternals';
 
 export class Unit implements IUnit {
+  constructor(public metaPopulation: IMetaPopulationInternals, public tag: number, public singularName: string) {
+    this.pluralName = singularName === 'Binary' ? 'Binaries' : singularName + 's';
+    metaPopulation.onObjectType(this);
+  }
+
   pluralName: string;
   origin = Origin.Database;
   isUnit = true;
@@ -16,9 +21,5 @@ export class Unit implements IUnit {
   isInteger = this.tag === UnitTags.Integer;
   isString = this.tag === UnitTags.String;
   isUnique = this.tag === UnitTags.Unique;
-
-  constructor(public metaPopulation: IMetaPopulationInternals, public tag: number, public singularName: string) {
-    this.pluralName = singularName === 'Binary' ? 'Binaries' : singularName + 's';
-    metaPopulation.onObjectType(this);
-  }
+  Ÿ;
 }

@@ -1,16 +1,31 @@
 import { IAssociationType, IClass, IComposite, IInterface, IMetaPopulation, IMethodType, IRoleType, Origin } from '@allors/workspace/system';
 import { ObjectTypeData } from './MetaData';
 import { IMetaPopulationInternals } from './Internals/IMetaPopulationInternals';
+import { ICompositeInternals } from './Internals/ICompositeInternals';
 
-export abstract class Composite implements IComposite {
-  tag: number;
-  singularName: string;
+export abstract class Composite implements ICompositeInternals {
+  #pluralName: string;
+
+  constructor(public metaPopulation: IMetaPopulationInternals, private data: ObjectTypeData) {
+    this.tag = data.t;
+    this.singularName = data.s;
+    metaPopulation.onObjectType(this);
+  }
+
+  readonly tag: number;
+  readonly singularName: string;
+
+  isUnit = false;
+  isComposite = true;
+  abstract isInterface: boolean;
+  abstract isClass: boolean;
+
+  get pluralName() {
+    return (this.#pluralName ??= this.data.p ?? pluralize(this.singularName));
+  }
   origin: Origin;
-  pluralName: string;
-  isUnit: boolean;
-  isComposite: boolean;
-  isInterface: boolean;
-  isClass: boolean;
+  isSynced: boolean;
+
   directSupertypes: IInterface[];
   supertypes: IInterface[];
   classes: IClass[];
@@ -19,13 +34,12 @@ export abstract class Composite implements IComposite {
   workspaceRoleTypes: IRoleType[];
   databaseRoleTypes: IRoleType[];
   methodTypes: IMethodType[];
-  isSynced: boolean;
 
-  constructor(public metaPopulation: IMetaPopulationInternals, data: ObjectTypeData) {
-    this.tag = data.t;
-    this.singularName = data.s;
-    metaPopulation.onObjectType(this);
-  }
+  init() {}
 
   abstract isAssignableFrom(objectType: IComposite): boolean;
 }
+function pluralize(singularName: string): string {
+  throw new Error('Function not implemented.');
+}
+

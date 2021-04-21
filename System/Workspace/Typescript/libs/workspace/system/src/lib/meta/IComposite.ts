@@ -6,7 +6,7 @@ import { IObjectType } from './IObjectType';
 import { IRoleType } from './IRoleType';
 
 export interface IComposite extends IObjectType {
-  directSupertypes: IInterface[];
+  readonly directSupertypes: IInterface[];
 
   supertypes: IInterface[];
 

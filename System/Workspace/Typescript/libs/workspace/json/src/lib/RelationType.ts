@@ -7,9 +7,7 @@ export class RelationType implements IRelationType {
   isDerived: boolean;
   isSynced: boolean;
   metaPopulation: IMetaPopulation;
-  id: string;
+  tag: number;
   origin: Origin;
-  hasDatabaseOrigin: boolean;
-  hasWorkspaceOrigin: boolean;
-  hasSessionOrigin: boolean;
+ 
 }

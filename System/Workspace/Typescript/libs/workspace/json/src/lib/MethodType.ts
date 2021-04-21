@@ -3,10 +3,7 @@ import { IComposite, IMetaPopulation, IMethodType, Origin } from '@allors/worksp
 export class MethodType implements IMethodType {
   objectType: IComposite;
   metaPopulation: IMetaPopulation;
-  id: string;
+  tag: number;
   origin: Origin;
-  hasDatabaseOrigin: boolean;
-  hasWorkspaceOrigin: boolean;
-  hasSessionOrigin: boolean;
   operandId: string;
 }
