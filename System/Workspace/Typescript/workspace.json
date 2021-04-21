@@ -8,7 +8,9 @@
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "options": { "lintFilePatterns": ["libs/workspace/system/**/*.ts"] }
+          "options": {
+            "lintFilePatterns": ["libs/workspace/system/**/*.ts"]
+          }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
@@ -20,46 +22,50 @@
         }
       }
     },
-    "workspace-lazy": {
-      "root": "libs/workspace/lazy",
-      "sourceRoot": "libs/workspace/lazy/src",
+    "workspace-json": {
+      "root": "libs/workspace/json",
+      "sourceRoot": "libs/workspace/json/src",
       "projectType": "library",
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "options": { "lintFilePatterns": ["libs/workspace/lazy/**/*.ts"] }
+          "options": {
+            "lintFilePatterns": ["libs/workspace/json/**/*.ts"]
+          }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/workspace/lazy"],
+          "outputs": ["coverage/libs/workspace/json"],
           "options": {
-            "jestConfig": "libs/workspace/lazy/jest.config.js",
+            "jestConfig": "libs/workspace/json/jest.config.js",
             "passWithNoTests": true
           }
         }
       }
     },
-    "tests-workspace-lazy": {
-      "root": "libs/tests/workspace/lazy",
-      "sourceRoot": "libs/tests/workspace/lazy/src",
+    "tests-workspace-json": {
+      "root": "libs/tests/workspace/json",
+      "sourceRoot": "libs/tests/workspace/json/src",
       "projectType": "library",
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/tests/workspace/lazy/**/*.ts"]
+            "lintFilePatterns": ["libs/tests/workspace/json/**/*.ts"]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/tests/workspace/lazy"],
+          "outputs": ["coverage/libs/tests/workspace/json"],
           "options": {
-            "jestConfig": "libs/tests/workspace/lazy/jest.config.js",
+            "jestConfig": "libs/tests/workspace/json/jest.config.js",
             "passWithNoTests": true
           }
         }
       }
     }
   },
-  "cli": { "defaultCollection": "@nrwl/workspace" }
+  "cli": {
+    "defaultCollection": "@nrwl/workspace"
+  }
 }

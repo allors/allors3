@@ -1,0 +1,12 @@
+import { IComposite, IMetaPopulation, IMethodType, Origin } from '@allors/workspace/system';
+
+export class MethodType implements IMethodType {
+  objectType: IComposite;
+  metaPopulation: IMetaPopulation;
+  id: string;
+  origin: Origin;
+  hasDatabaseOrigin: boolean;
+  hasWorkspaceOrigin: boolean;
+  hasSessionOrigin: boolean;
+  operandId: string;
+}

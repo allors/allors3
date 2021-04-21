@@ -1,4 +1,7 @@
+export * from './lib/MetaData'
+export * from './lib/Multiplicity'
 export * from './lib/Origin'
+export * from './lib/UnitTags'
 
 export * from './lib/meta/IAssociationType';
 export * from './lib/meta/IClass';

@@ -7,10 +7,10 @@ namespace Allors.Database.Domain.Derivations
 {
     public enum RelationKind
     {
-        Regular,
+        Regular = 1,
 
-        Derived,
+        Derived = 2,
 
-        Synced,
+        Synced = 3,
     }
 }

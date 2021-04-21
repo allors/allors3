@@ -11,12 +11,16 @@ partial class Build
     private Target CiAdaptersTestNpgsql => _ => _
         .DependsOn(this.AdaptersTestNpgsql);
 
+    private Target CiSystemWorkspaceTest => _ => _
+        .DependsOn(this.SystemInstall)
+        .DependsOn(this.SystemWorkspaceTest);
+    
     private Target CiCoreDatabaseTest => _ => _
         .DependsOn(this.CoreDatabaseTest);
 
     private Target CiCoreWorkspaceTest => _ => _
-        .DependsOn(this.CoreInstall)
-        .DependsOn(this.CoreWorkspaceTest);
+        .DependsOn(this.CoreInstall);
+    //.DependsOn(this.CoreWorkspaceTest);
 
     private Target CiBaseDatabaseTest => _ => _
         .DependsOn(this.BaseDatabaseTest);

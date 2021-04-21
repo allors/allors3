@@ -4,6 +4,7 @@ cd allors
 
 npm install -D jest-chain
 npm install -D jest-extended
+npm install -D jest-trx-results-processor
 
 npx nx g @nrwl/workspace:library workspace/system
 

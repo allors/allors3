@@ -11,11 +11,6 @@ namespace Allors
     public enum Origin
     {
         /// <summary>
-        /// None.
-        /// </summary>
-        None = 0,
-
-        /// <summary>
         /// Database origin.
         /// </summary>
         Database = 1,

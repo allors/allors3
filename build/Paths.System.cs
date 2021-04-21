@@ -2,7 +2,7 @@ using Nuke.Common.IO;
 
 public partial class Paths
 {
-    public AbsolutePath System => this.Root / "system";
+    public AbsolutePath System => this.Root / "System";
     public AbsolutePath SystemRepositoryTemplates => this.System / "Repository/Templates";
     public AbsolutePath SystemRepositoryTemplatesMetaCs => this.SystemRepositoryTemplates / "meta.cs.stg";
     public AbsolutePath SystemRepositoryGenerate => this.System / "Repository/Generate/Generate.csproj";
@@ -17,4 +17,6 @@ public partial class Paths
     public AbsolutePath SystemAdaptersMetaGenerated => this.SystemAdapters / "Meta/generated";
     public AbsolutePath SystemAdaptersGenerate => this.SystemAdapters / "Generate/Generate.csproj";
     public AbsolutePath SystemAdaptersStaticTests => this.SystemAdapters / "Tests.Static/Tests.Static.csproj";
+
+    public AbsolutePath SystemWorkspaceTypescript => this.System / "Workspace/Typescript";
 }

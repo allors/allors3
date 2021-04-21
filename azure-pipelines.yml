@@ -20,6 +20,8 @@ stages:
           target: 'CiAdaptersTestSqlClient'
         adapters_npgsql:
           target: 'CiAdaptersTestNpgsql'
+        system_workspace:
+          target: 'CiSystemWorkspaceTest'
         core_database:
           target: 'CiCoreDatabaseTest'
         core_workspace:
