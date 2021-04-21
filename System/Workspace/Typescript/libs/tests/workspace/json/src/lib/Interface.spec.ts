@@ -1,9 +1,9 @@
-import { IInterface, IMetaPopulation} from '@allors/workspace/system';
+import { IInterface } from '@allors/workspace/system';
 import { MetaData, MetaPopulation } from '@allors/workspace/json';
 
 type Named = IInterface;
 
-interface M extends IMetaPopulation {
+interface M extends MetaPopulation {
   Named: Named;
 }
 

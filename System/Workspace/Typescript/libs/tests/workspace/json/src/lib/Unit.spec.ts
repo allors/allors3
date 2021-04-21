@@ -1,7 +1,7 @@
-import { IMetaPopulation, IUnit } from '@allors/workspace/system';
+import { IUnit } from '@allors/workspace/system';
 import { MetaPopulation } from '@allors/workspace/json';
 
-interface M extends IMetaPopulation {
+interface M extends MetaPopulation {
   Binary: IUnit;
 
   Boolean: IUnit;

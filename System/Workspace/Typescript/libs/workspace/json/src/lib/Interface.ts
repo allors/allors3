@@ -1,35 +1,17 @@
-import { IAssociationType, IClass, IComposite, IInterface, IMetaPopulation, IMethodType, IRoleType, Origin } from '@allors/workspace/system';
+import { IComposite, IInterface } from '@allors/workspace/system';
+import { IMetaPopulationInternals } from './Internals/IMetaPopulationInternals';
+import { Composite } from './Composite';
 import { ObjectTypeData } from './MetaData';
 
-export class Interface implements IInterface {
-  tag: number;
-  origin: Origin;
-  singularName: string;
-  pluralName: string;
-  isUnit: boolean;
-  isComposite: boolean;
-  isInterface: boolean;
-  isClass: boolean;
-  directSupertypes: IInterface[];
-  supertypes: IInterface[];
+export class Interface extends Composite implements IInterface {
   directSubtypes: IComposite;
   subtypes: IComposite;
-  classes: IClass[];
-  associationTypes: IAssociationType[];
-  roleTypes: IRoleType[];
-  workspaceRoleTypes: IRoleType[];
-  databaseRoleTypes: IRoleType[];
-  methodTypes: IMethodType[];
-  isSynced: boolean;
+
+  constructor(metaPopulation: IMetaPopulationInternals, data: ObjectTypeData) {
+    super(metaPopulation, data);
+  }
 
   isAssignableFrom(objectType: IComposite): boolean {
-    throw new Error("Not Implemented yet");
+    throw new Error('Method not implemented.');
   }
-
-  constructor(public metaPopulation:IMetaPopulation, data: ObjectTypeData){
-    this.tag = data.t;
-    this.singularName = data.s;
-    metaPopulation[this.singularName] = this;
-  }
-
 }

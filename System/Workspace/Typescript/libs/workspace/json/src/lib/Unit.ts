@@ -1,4 +1,5 @@
-import { IMetaPopulation, IUnit, Origin, UnitTags } from '@allors/workspace/system';
+import { IUnit, Origin, UnitTags } from '@allors/workspace/system';
+import { IMetaPopulationInternals } from './Internals/IMetaPopulationInternals';
 
 export class Unit implements IUnit {
   pluralName: string;
@@ -16,8 +17,8 @@ export class Unit implements IUnit {
   isString = this.tag === UnitTags.String;
   isUnique = this.tag === UnitTags.Unique;
 
-  constructor(public metaPopulation: IMetaPopulation, public tag: number, public singularName: string) {
+  constructor(public metaPopulation: IMetaPopulationInternals, public tag: number, public singularName: string) {
     this.pluralName = singularName === 'Binary' ? 'Binaries' : singularName + 's';
-    metaPopulation[this.singularName] = this;
+    metaPopulation.onObjectType(this);
   }
 }
