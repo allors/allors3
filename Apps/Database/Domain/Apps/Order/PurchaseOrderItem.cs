@@ -95,7 +95,7 @@ namespace Allors.Database.Domain
                 && this.ExistInvoiceItemType
                 && (this.InvoiceItemType.IsPartItem || this.InvoiceItemType.IsProductItem))
             {
-                this.StoredInFacility = this.PurchaseOrderWherePurchaseOrderItem.StoredInFacility;
+                this.StoredInFacility = this.PurchaseOrderWherePurchaseOrderItem?.StoredInFacility;
 
                 if (!this.ExistStoredInFacility && this.PurchaseOrderWherePurchaseOrderItem?.OrderedBy?.StoresWhereInternalOrganisation.Count == 1)
                 {
