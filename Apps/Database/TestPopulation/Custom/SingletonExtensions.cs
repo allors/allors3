@@ -457,6 +457,7 @@ line2")
                 var purchaseOrderItem1 = new PurchaseOrderItemBuilder(@this.Transaction())
                     .WithDescription("first purchase order item")
                     .WithPart(nonSerialisedPart1)
+                    .WithStoredInFacility(allors.FacilitiesWhereOwner.First)
                     .WithQuantityOrdered(1)
                     .Build();
 

@@ -57,7 +57,7 @@ namespace Allors.Database.Domain
 
                     foreach (PurchaseOrderItem purchaseOrderItem in @this.Part.PurchaseOrderItemsWherePart)
                     {
-                        var facility = purchaseOrderItem.PurchaseOrderWherePurchaseOrderItem?.StoredInFacility;
+                        var facility = purchaseOrderItem.StoredInFacility;
                         if ((purchaseOrderItem.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(@this.Strategy.Transaction).InProcess)
                              || purchaseOrderItem.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(@this.Strategy.Transaction).Sent))
                             && @this.Facility.Equals(facility))

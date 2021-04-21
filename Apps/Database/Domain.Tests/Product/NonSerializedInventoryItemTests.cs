@@ -781,6 +781,7 @@ namespace Allors.Database.Domain.Tests
             var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Transaction)
                 .WithPurchaseOrderItemState(new PurchaseOrderItemStates(this.Transaction).InProcess)
                 .WithPart(part)
+                .WithStoredInFacility(part.DefaultFacility)
                 .WithQuantityOrdered(1)
                 .Build();
             purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
@@ -832,6 +833,7 @@ namespace Allors.Database.Domain.Tests
             var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Transaction)
                 .WithPurchaseOrderItemState(new PurchaseOrderItemStates(this.Transaction).InProcess)
                 .WithPart(part)
+                .WithStoredInFacility(part.DefaultFacility)
                 .WithQuantityOrdered(1)
                 .Build();
             purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
