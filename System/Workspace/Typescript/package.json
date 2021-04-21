@@ -25,7 +25,7 @@
     "dep-graph": "nx dep-graph",
     "help": "nx help",
     "test:workspace-json": "npx nx test tests-workspace-json --skipNxCache",
-    "test:all": "npm run test:meta-json"
+    "test:all": "npm run test:workspace-json"
   },
   "private": true,
   "dependencies": {

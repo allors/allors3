@@ -6,8 +6,6 @@ import { IObjectType } from './IObjectType';
 import { IRoleType } from './IRoleType';
 
 export interface IComposite extends IObjectType {
-  isSynced: boolean;
-
   directSupertypes: IInterface[];
 
   supertypes: IInterface[];
@@ -23,6 +21,8 @@ export interface IComposite extends IObjectType {
   databaseRoleTypes: IRoleType[];
 
   methodTypes: IMethodType[];
+
+  isSynced: boolean;
 
   isAssignableFrom(objectType: IComposite): boolean;
 }

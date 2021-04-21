@@ -17,7 +17,7 @@ export class Unit implements IUnit {
   isUnique = this.tag === UnitTags.Unique;
 
   constructor(public metaPopulation: IMetaPopulation, public tag: number, public singularName: string) {
-    metaPopulation[singularName] = this;
     this.pluralName = singularName === 'Binary' ? 'Binaries' : singularName + 's';
+    metaPopulation[this.singularName] = this;
   }
 }

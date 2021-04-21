@@ -1,4 +1,6 @@
-import { IClass, IComposite, IInterface, IMetaObject, IMetaPopulation, IMethodType, IRelationType, IUnit, MetaData } from '@allors/workspace/system';
+import { IClass, IComposite, IInterface, IMetaObject, IMetaPopulation, IMethodType, IRelationType, IUnit } from '@allors/workspace/system';
+import { Interface } from './Interface';
+import { MetaData } from './MetaData';
 import { Unit } from './Unit';
 
 export class MetaPopulation implements IMetaPopulation {
@@ -13,5 +15,6 @@ export class MetaPopulation implements IMetaPopulation {
 
   constructor(metaData: MetaData) {
     this.units = ['Binary', 'Boolean', 'DateTime', 'Decimal', 'Float', 'Integer', 'String', 'Unique'].map((name, i) => new Unit(this, i + 1, name));
+    this.interfaces = metaData.i?.map((i) => new Interface(this, i)) ?? [];
   }
 }
