@@ -93,10 +93,14 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistStoredInFacility
                 && this.ExistInvoiceItemType
-                && (this.InvoiceItemType.IsPartItem || this.InvoiceItemType.IsProductItem)
-                && this.PurchaseOrderWherePurchaseOrderItem?.OrderedBy?.StoresWhereInternalOrganisation.Count == 1)
+                && (this.InvoiceItemType.IsPartItem || this.InvoiceItemType.IsProductItem))
             {
-                this.StoredInFacility = this.PurchaseOrderWherePurchaseOrderItem.OrderedBy.StoresWhereInternalOrganisation.Single().DefaultFacility;
+                this.StoredInFacility = this.PurchaseOrderWherePurchaseOrderItem.StoredInFacility;
+
+                if (!this.ExistStoredInFacility && this.PurchaseOrderWherePurchaseOrderItem?.OrderedBy?.StoresWhereInternalOrganisation.Count == 1)
+                {
+                    this.StoredInFacility = this.PurchaseOrderWherePurchaseOrderItem.OrderedBy.StoresWhereInternalOrganisation.Single().DefaultFacility;
+                }
             }
         }
 
