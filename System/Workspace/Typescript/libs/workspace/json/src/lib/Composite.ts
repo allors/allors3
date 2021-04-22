@@ -1,10 +1,9 @@
-import { IAssociationType, IClass, IComposite, IInterface, IMetaPopulation, IMethodType, IRoleType, Origin } from '@allors/workspace/system';
+import { IAssociationType, IClass, IComposite, IInterface, IMethodType, IRoleType, Origin } from '@allors/workspace/system';
 import { ObjectTypeData } from './MetaData';
 import { IMetaPopulationInternals } from './Internals/IMetaPopulationInternals';
-import { ICompositeInternals } from './Internals/ICompositeInternals';
 
-export abstract class Composite implements ICompositeInternals {
-  #pluralName: string;
+export abstract class Composite implements IComposite {
+  private _p: string;
 
   constructor(public metaPopulation: IMetaPopulationInternals, private data: ObjectTypeData) {
     this.tag = data.t;
@@ -21,7 +20,7 @@ export abstract class Composite implements ICompositeInternals {
   abstract isClass: boolean;
 
   get pluralName() {
-    return (this.#pluralName ??= this.data.p ?? pluralize(this.singularName));
+    return (this._p ??= this.data.p ?? pluralize(this.singularName));
   }
   origin: Origin;
   isSynced: boolean;
@@ -35,11 +34,9 @@ export abstract class Composite implements ICompositeInternals {
   databaseRoleTypes: IRoleType[];
   methodTypes: IMethodType[];
 
-  init() {}
-
   abstract isAssignableFrom(objectType: IComposite): boolean;
 }
+
 function pluralize(singularName: string): string {
   throw new Error('Function not implemented.');
 }
-

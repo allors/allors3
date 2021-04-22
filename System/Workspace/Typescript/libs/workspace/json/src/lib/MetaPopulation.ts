@@ -1,8 +1,5 @@
-import { IMetaObject, IMethodType, IObjectType, IRelationType, IUnit } from '@allors/workspace/system';
+import { IClass, IComposite, IInterface, IMetaObject, IMethodType, IObjectType, IRelationType, IUnit } from '@allors/workspace/system';
 import { IMetaPopulationInternals } from './Internals/IMetaPopulationInternals';
-import { ICompositeInternals } from './Internals/ICompositeInternals';
-import { IClassInternals } from './Internals/IClassInternals';
-import { IInterfaceInternals } from './Internals/IInterfaceInternals';
 import { Class } from './Class';
 import { Interface } from './Interface';
 import { MetaData } from './MetaData';
@@ -14,13 +11,12 @@ export class MetaPopulation implements IMetaPopulationInternals {
     this.interfaces = metaData.i?.map((i) => new Interface(this, i)) ?? [];
     this.classes = metaData.i?.map((i) => new Class(this, i)) ?? [];
     this.composites = this.classes.concat(this.interfaces);
-    this.composites.forEach((v) => v.init());
   }
 
   units: IUnit[];
-  interfaces: IInterfaceInternals[];
-  classes: IClassInternals[];
-  composites: ICompositeInternals[];
+  interfaces: IInterface[];
+  classes: IClass[];
+  composites: IComposite[];
   relationTypes: IRelationType[];
   methodTypes: IMethodType[];
   metaObjectByTag: IMetaObject[] = [];
