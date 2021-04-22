@@ -1,5 +1,5 @@
 import { IInterface } from '@allors/workspace/system';
-import { MetaData, MetaPopulation } from '@allors/workspace/json';
+import { MetaData, MetaPopulation } from '@allors/workspace/lazy';
 
 type Named = IInterface;
 

@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'tests-workspace-json',
+  displayName: 'tests-workspace-lazy',
   preset: '../../../../jest.preset.js',
   globals: {
     'ts-jest': {
@@ -10,7 +10,7 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../../coverage/libs/tests/workspace/json',
+  coverageDirectory: '../../../../coverage/libs/tests/workspace/lazy',
   reporters: [
     "default",
     [

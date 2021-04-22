@@ -1,32 +1,19 @@
 {
   "npmScope": "allors",
-  "affected": {
-    "defaultBase": "master"
-  },
+  "affected": { "defaultBase": "master" },
   "implicitDependencies": {
-    "package.json": {
-      "dependencies": "*",
-      "devDependencies": "*"
-    },
+    "package.json": { "dependencies": "*", "devDependencies": "*" },
     ".eslintrc.json": "*"
   },
   "tasksRunnerOptions": {
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
-      "options": {
-        "cacheableOperations": ["build", "lint", "test", "e2e"]
-      }
+      "options": { "cacheableOperations": ["build", "lint", "test", "e2e"] }
     }
   },
   "projects": {
-    "workspace-system": {
-      "tags": []
-    },
-    "workspace-json": {
-      "tags": []
-    },
-    "tests-workspace-json": {
-      "tags": []
-    }
+    "workspace-system": { "tags": [] },
+    "workspace-lazy": { "tags": [] },
+    "tests-workspace-lazy": { "tags": [] }
   }
 }

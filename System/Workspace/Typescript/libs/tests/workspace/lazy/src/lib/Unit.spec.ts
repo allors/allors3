@@ -1,5 +1,5 @@
 import { IUnit } from '@allors/workspace/system';
-import { MetaPopulation } from '@allors/workspace/json';
+import { MetaPopulation } from '@allors/workspace/lazy';
 
 interface M extends MetaPopulation {
   Binary: IUnit;

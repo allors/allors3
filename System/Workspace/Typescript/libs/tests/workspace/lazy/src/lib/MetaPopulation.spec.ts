@@ -1,5 +1,5 @@
 import { IMetaPopulation, IUnit } from '@allors/workspace/system';
-import { MetaPopulation } from '@allors/workspace/json';
+import { MetaPopulation } from '@allors/workspace/lazy';
 
 describe('MetaPopulation', () => {
   describe('default constructor', () => {
