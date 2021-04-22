@@ -5,17 +5,18 @@ import { Interface } from './Interface';
 import { Unit } from './Unit';
 import { RelationType } from './RelationType';
 import { MethodType } from './MethodType';
+import { Composite } from './Composite';
 
 export class MetaPopulation implements IMetaPopulationInternals {
   constructor(data: MetaData) {
     this.units = ['Binary', 'Boolean', 'DateTime', 'Decimal', 'Float', 'Integer', 'String', 'Unique'].map((name, i) => new Unit(this, i + 1, name));
     this.interfaces = data.i?.map((v) => new Interface(this, v)) ?? [];
     this.classes = data.c?.map((v) => new Class(this, v)) ?? [];
-    this.composites = (this.classes as IComposite[]).concat(this.interfaces);
+    this.composites = (this.classes as Composite[]).concat(this.interfaces);
     this.compositeByName = this.composites.reduce((dic, v) => (dic[v.singularName] = v), {});
-    data.i?.forEach((v) => {
-      const supertype = this.metaObjectByTag[v[0]] as IInterface;
-      const directSubtypes = v[2]?.map((w) => this.metaObjectByTag[w] as IComposite) ?? [];
+    data.h?.forEach(([sup, subs]) => {
+      const supertype = this.metaObjectByTag[sup] as IInterface;
+      const directSubtypes = subs?.map((w) => this.metaObjectByTag[w] as IComposite) ?? [];
       supertype.directSubtypes = directSubtypes;
       directSubtypes.forEach((v) => {
         if (v.directSupertypes) {
@@ -25,15 +26,14 @@ export class MetaPopulation implements IMetaPopulationInternals {
         }
       });
     });
-    // data.i?.forEach((v) => (this.metaObjectByTag[v[0]] as Interface).init(v[3], v[4], v[5]));
-    // data.c?.forEach((v) => (this.metaObjectByTag[v[0]] as Class).init(v[2], v[3], v[4]));
+    this.composites.forEach(v=>v.init());
   }
 
   readonly metaObjectByTag: IMetaObject[] = [];
   readonly units: Unit[];
   readonly interfaces: Interface[];
   readonly classes: Class[];
-  readonly composites: IComposite[];
+  readonly composites: Composite[];
   readonly compositeByName: { [name: string]: IComposite } = {};
   readonly relationTypes: RelationType[];
   readonly methodTypes: MethodType[];

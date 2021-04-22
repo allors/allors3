@@ -1,4 +1,4 @@
-import { IAssociationType, IClass, IComposite, IInterface, IMethodType, IRoleType, MethodTypeData, Origin, pluralize, RelationTypeData } from '@allors/workspace/system';
+import { IAssociationType, IClass, IComposite, IInterface, IMethodType, IRoleType, Origin, pluralize, ObjectTypeData, RelationTypeData, MethodTypeData } from '@allors/workspace/system';
 import { IMetaPopulationInternals } from './Internals/IMetaPopulationInternals';
 
 export abstract class Composite implements IComposite {
@@ -11,7 +11,7 @@ export abstract class Composite implements IComposite {
   private _supertypes: IInterface[];
   private _origin: Origin;
 
-  constructor(public metaPopulation: IMetaPopulationInternals, public tag: number, public singularName: string, private _pluralName: string) {
+  constructor(public metaPopulation: IMetaPopulationInternals, public tag: number, public singularName: string, private r: RelationTypeData[], private m: MethodTypeData[], private _pluralName: string) {
     metaPopulation.onMetaObject(this);
   }
 
@@ -29,4 +29,8 @@ export abstract class Composite implements IComposite {
   }
 
   abstract isAssignableFrom(objectType: IComposite): boolean;
+
+  init(): void {
+  }
+ 
 }
