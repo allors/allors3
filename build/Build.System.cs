@@ -61,17 +61,17 @@ partial class Build
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
             .SetProcessWorkingDirectory(this.Paths.SystemWorkspaceTypescript)));
 
-    private Target SystemWorkspaceTypescriptMeta => _ => _
+    private Target SystemWorkspaceTypescript => _ => _
         .After(this.SystemInstall)
         .DependsOn(this.EnsureDirectories)
         .Executes(() => NpmRun(s => s
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
             .SetProcessWorkingDirectory(this.Paths.SystemWorkspaceTypescript)
-            .SetCommand("test:workspace-json")));
+            .SetCommand("test:all")));
 
 
     private Target SystemWorkspaceTest => _ => _
-        .DependsOn(this.SystemWorkspaceTypescriptMeta);
+        .DependsOn(this.SystemWorkspaceTypescript);
 
     private Target Adapters => _ => _
         .DependsOn(this.Clean)
