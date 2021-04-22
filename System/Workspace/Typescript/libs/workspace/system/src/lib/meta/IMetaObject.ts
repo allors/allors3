@@ -4,13 +4,7 @@ import { IMetaPopulation } from './IMetaPopulation';
 export interface IMetaObject {
   metaPopulation: IMetaPopulation;
 
-  id: string;
+  tag: number;
 
   origin: Origin;
-
-  hasDatabaseOrigin: boolean;
-
-  hasWorkspaceOrigin: boolean;
-
-  hasSessionOrigin: boolean;
 }

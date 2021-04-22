@@ -1,4 +1,3 @@
-import { UnitTags } from '../UnitTags';
 import { IObjectType } from './IObjectType';
 
 export interface IUnit extends IObjectType {
@@ -17,6 +16,4 @@ export interface IUnit extends IObjectType {
   isString: boolean;
 
   isUnique: boolean;
-
-  unitTag: UnitTags;
 }

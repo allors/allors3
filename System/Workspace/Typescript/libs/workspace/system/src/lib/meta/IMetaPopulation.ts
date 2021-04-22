@@ -19,7 +19,7 @@ export interface IMetaPopulation {
 
   composites: IComposite[];
 
-  find(metaObjectId: string): IMetaObject;
+  metaObjectByTag: IMetaObject[];
 
-  findByName(name: string): IComposite;
+  metaObjectByName: { [name: string]: IMetaObject; };
 }

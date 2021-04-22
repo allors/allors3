@@ -1,7 +1,9 @@
 using Nuke.Common;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
+using Nuke.Common.Tools.Npm;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
+using static Nuke.Common.Tools.Npm.NpmTasks;
 
 partial class Build
 {
@@ -53,6 +55,23 @@ partial class Build
                     .SetResultsDirectory(this.Paths.ArtifactsTests));
             }
         });
+
+    private Target SystemInstall => _ => _
+        .Executes(() => NpmInstall(s => s
+            .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
+            .SetProcessWorkingDirectory(this.Paths.SystemWorkspaceTypescript)));
+
+    private Target SystemWorkspaceTypescript => _ => _
+        .After(this.SystemInstall)
+        .DependsOn(this.EnsureDirectories)
+        .Executes(() => NpmRun(s => s
+            .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
+            .SetProcessWorkingDirectory(this.Paths.SystemWorkspaceTypescript)
+            .SetCommand("test:all")));
+
+
+    private Target SystemWorkspaceTest => _ => _
+        .DependsOn(this.SystemWorkspaceTypescript);
 
     private Target Adapters => _ => _
         .DependsOn(this.Clean)

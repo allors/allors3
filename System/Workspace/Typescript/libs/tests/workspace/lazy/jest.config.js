@@ -11,4 +11,13 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../../../coverage/libs/tests/workspace/lazy',
+  reporters: [
+    "default",
+    [
+      "jest-trx-results-processor",
+      {
+        outputFile: "../../../artifacts/tests/system.workspace.json.trx",
+      }
+    ]
+  ]
 };
