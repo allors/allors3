@@ -10,7 +10,7 @@ namespace Allors.Repository
 
     [Id("51d4dbfb-98ef-4f38-836a-5948701c4cce")]
     [Synced]
-    public partial class ExchangeRate : Object
+    public partial class ExchangeRate : Object, Deletable
     {
         #region inherited properties
 
@@ -25,7 +25,7 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Workspace]
-        public DateTime FromDate { get; set; }
+        public DateTime ValidFrom { get; set; }
 
         #region Allors
         [Id("c73191fb-5814-4d14-8725-65be2ff90f77")]
@@ -84,6 +84,10 @@ namespace Allors.Repository
         }
 
         public void OnPostDerive()
+        {
+        }
+
+        public void Delete()
         {
         }
 

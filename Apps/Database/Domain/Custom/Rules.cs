@@ -401,6 +401,7 @@ namespace Allors.Database.Domain
                 new ProductCategoryLocalisedDescriptionRule(m),
                 new ProductCategoryLocalisedNameRule(m),
                 new ProductCategoryRule(m),
+                new ExchangeRateRule(m),
             };
     }
 }
