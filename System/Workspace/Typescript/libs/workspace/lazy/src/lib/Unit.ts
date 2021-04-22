@@ -4,7 +4,7 @@ import { IMetaPopulationInternals } from './Internals/IMetaPopulationInternals';
 export class Unit implements IUnit {
   constructor(public metaPopulation: IMetaPopulationInternals, public tag: number, public singularName: string) {
     this.pluralName = singularName === 'Binary' ? 'Binaries' : singularName + 's';
-    metaPopulation.onObjectType(this);
+    metaPopulation.onMetaObject(this);
   }
 
   pluralName: string;

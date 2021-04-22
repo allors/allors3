@@ -1,9 +1,13 @@
-import { IComposite, IMetaPopulation, IMethodType, Origin } from '@allors/workspace/system';
+import { IComposite, IMethodType, Origin, MethodTypeData } from '@allors/workspace/system';
+import { IMetaPopulationInternals } from './Internals/IMetaPopulationInternals';
 
 export class MethodType implements IMethodType {
+  constructor(public metaPopulation: IMetaPopulationInternals, private data: MethodTypeData) {
+    metaPopulation.onMetaObject(this);
+  }
   objectType: IComposite;
-  metaPopulation: IMetaPopulation;
   tag: number;
   origin: Origin;
   operandId: string;
+  name: string;
 }

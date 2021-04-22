@@ -1,15 +1,19 @@
-import { IClass, IComposite } from '@allors/workspace/system';
+import { IClass, IComposite, ClassData } from '@allors/workspace/system';
 import { IMetaPopulationInternals } from './Internals/IMetaPopulationInternals';
 import { Composite } from './Composite';
-import { ObjectTypeData } from './MetaData';
 
 export class Class extends Composite implements IClass {
-  constructor(metaPopulation: IMetaPopulationInternals, data: ObjectTypeData) {
-    super(metaPopulation, data);
+  readonly isInterface = false;
+  readonly isClass = true;
+  readonly classes = [this];
+
+  constructor(metaPopulation: IMetaPopulationInternals, [tag, singularName]) {
+    super(metaPopulation, tag, singularName);
   }
 
-  isInterface = false;
-  isClass = true;
+  init([, , relationTypes, methodTypes, pluralName]: ClassData): void {
+    super.init(relationTypes, methodTypes, pluralName);
+  }
 
   isAssignableFrom(objectType: IComposite): boolean {
     throw new Error('Method not implemented.');

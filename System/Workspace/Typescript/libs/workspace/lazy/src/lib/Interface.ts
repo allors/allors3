@@ -1,18 +1,22 @@
-import { IComposite, IInterface } from '@allors/workspace/system';
+import { IClass, IComposite, IInterface, InterfaceData } from '@allors/workspace/system';
 import { IMetaPopulationInternals } from './Internals/IMetaPopulationInternals';
 import { Composite } from './Composite';
-import { ObjectTypeData } from './MetaData';
 
 export class Interface extends Composite implements IInterface {
-  constructor(metaPopulation: IMetaPopulationInternals, data: ObjectTypeData) {
-    super(metaPopulation, data);
+  directSubtypes: IComposite[];
+  private _classes: IClass[];
+
+  constructor(metaPopulation: IMetaPopulationInternals, [tag, singularName]) {
+    super(metaPopulation, tag, singularName);
   }
 
-  directSubtypes: IComposite;
-  subtypes: IComposite;
+  init([, , , relationTypes, methodTypes, pluralName]: InterfaceData): void {
+    super.init(relationTypes, methodTypes, pluralName);
+  }
 
-  isInterface = true;
-  isClass = false;
+  get classes(): IClass[] {
+    return this._classes ?? this.metaPopulation.classes.filter((v) => v.supertypes.includes(this));
+  }
 
   isAssignableFrom(objectType: IComposite): boolean {
     throw new Error('Method not implemented.');
