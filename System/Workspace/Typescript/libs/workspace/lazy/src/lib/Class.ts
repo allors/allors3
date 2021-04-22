@@ -7,12 +7,8 @@ export class Class extends Composite implements IClass {
   readonly isClass = true;
   readonly classes = [this];
 
-  constructor(metaPopulation: IMetaPopulationInternals, [tag, singularName]) {
-    super(metaPopulation, tag, singularName);
-  }
-
-  init([, , relationTypes, methodTypes, pluralName]: ClassData): void {
-    super.init(relationTypes, methodTypes, pluralName);
+  constructor(metaPopulation: IMetaPopulationInternals, [tag, singularName, , , pluralName]: ClassData) {
+    super(metaPopulation, tag, singularName, pluralName);
   }
 
   isAssignableFrom(objectType: IComposite): boolean {

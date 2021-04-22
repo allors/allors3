@@ -25,8 +25,8 @@ export class MetaPopulation implements IMetaPopulationInternals {
         }
       });
     });
-    data.i?.forEach((v) => (this.metaObjectByTag[v[0]] as Interface).init(v));
-    data.c?.forEach((v) => (this.metaObjectByTag[v[0]] as Class).init(v));
+    // data.i?.forEach((v) => (this.metaObjectByTag[v[0]] as Interface).init(v[3], v[4], v[5]));
+    // data.c?.forEach((v) => (this.metaObjectByTag[v[0]] as Class).init(v[2], v[3], v[4]));
   }
 
   readonly metaObjectByTag: IMetaObject[] = [];

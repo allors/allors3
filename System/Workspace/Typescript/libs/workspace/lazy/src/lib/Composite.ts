@@ -8,11 +8,10 @@ export abstract class Composite implements IComposite {
   methodTypes: IMethodType[];
   abstract classes: IClass[];
 
-  private _pluralName: string;
   private _supertypes: IInterface[];
   private _origin: Origin;
 
-  constructor(public metaPopulation: IMetaPopulationInternals, public tag: number, public singularName: string) {
+  constructor(public metaPopulation: IMetaPopulationInternals, public tag: number, public singularName: string, private _pluralName: string) {
     metaPopulation.onMetaObject(this);
   }
 
@@ -30,8 +29,4 @@ export abstract class Composite implements IComposite {
   }
 
   abstract isAssignableFrom(objectType: IComposite): boolean;
-
-  init(relationTypes: RelationTypeData[], methodTypes: MethodTypeData[], pluralName: string) {
-    this._pluralName = pluralName;
-  }
 }

@@ -6,12 +6,8 @@ export class Interface extends Composite implements IInterface {
   directSubtypes: IComposite[];
   private _classes: IClass[];
 
-  constructor(metaPopulation: IMetaPopulationInternals, [tag, singularName]) {
-    super(metaPopulation, tag, singularName);
-  }
-
-  init([, , , relationTypes, methodTypes, pluralName]: InterfaceData): void {
-    super.init(relationTypes, methodTypes, pluralName);
+  constructor(metaPopulation: IMetaPopulationInternals, [tag, singularName, , , ,pluralName] : InterfaceData) {
+    super(metaPopulation, tag, singularName, pluralName);
   }
 
   get classes(): IClass[] {
