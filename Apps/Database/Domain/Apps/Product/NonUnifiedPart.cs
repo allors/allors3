@@ -7,12 +7,15 @@ namespace Allors.Database.Domain
 {
     public partial class NonUnifiedPart
     {
-        public bool IsDeletable =>
-                               !this.ExistWorkEffortInventoryProducedsWherePart &&
-                               !this.ExistWorkEffortPartStandardsWherePart &&
-                               !this.ExistPartBillOfMaterialsWherePart &&
-                               !this.ExistPartBillOfMaterialsWhereComponentPart &&
-                               !this.ExistInventoryItemTransactionsWherePart;
+        public bool IsDeletable => !this.ExistNonUnifiedGoodsWherePart
+            && !this.ExistWorkEffortInventoryProducedsWherePart
+            && !this.ExistWorkEffortPartStandardsWherePart
+            && !this.ExistPartBillOfMaterialsWherePart
+            && !this.ExistPartBillOfMaterialsWhereComponentPart
+            && !this.ExistPurchaseInvoiceItemsWherePart
+            && !this.ExistPurchaseOrderItemsWherePart
+            && !this.ExistSalesInvoiceItemsWherePart
+            && !this.ExistShipmentItemsWherePart;
 
         public void AppsOnBuild(ObjectOnBuild method)
         {
