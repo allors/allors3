@@ -25,6 +25,7 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<PurchaseOrderItem>())
             {
                 @this.IsReceivable = @this.ExistPart
+                    && @this.ExistInvoiceItemType
                     && (@this.InvoiceItemType.Equals(new InvoiceItemTypes(@this.Transaction()).PartItem)
                         || @this.InvoiceItemType.Equals(new InvoiceItemTypes(@this.Transaction()).ProductItem));
             }

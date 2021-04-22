@@ -267,15 +267,75 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedInventoryItemTransactionPartDeriveDeletePermission()
+        public void OnChangedNonUnifiedGoodPartDeriveDeletePermission()
         {
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            var transaction = new InventoryItemTransactionBuilder(this.Transaction).Build();
+            var good = new NonUnifiedGoodBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
-            transaction.Part = nonUnifiedPart;
+            good.Part = nonUnifiedPart;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, nonUnifiedPart.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseInvoiceItemPartDeriveDeletePermission()
+        {
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var invoice = new PurchaseInvoiceItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            invoice.Part = nonUnifiedPart;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, nonUnifiedPart.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedSalesInvoiceItemPartDeriveDeletePermission()
+        {
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var invoice = new SalesInvoiceItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            invoice.Part = nonUnifiedPart;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, nonUnifiedPart.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseOrderItemPartDeriveDeletePermission()
+        {
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var order = new PurchaseOrderItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            order.Part = nonUnifiedPart;
+            this.Transaction.Derive(false);
+
+            Assert.Contains(this.deletePermission, nonUnifiedPart.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedShipmentItemPartDeriveDeletePermission()
+        {
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
+            this.Transaction.Derive(false);
+
+            shipmentItem.Part = nonUnifiedPart;
             this.Transaction.Derive(false);
 
             Assert.Contains(this.deletePermission, nonUnifiedPart.DeniedPermissions);

@@ -20,7 +20,11 @@ namespace Allors.Database.Domain
             m.Part.AssociationPattern(v => v.WorkEffortPartStandardsWherePart, m.NonUnifiedPart),
             m.Part.AssociationPattern(v => v.PartBillOfMaterialsWherePart, m.NonUnifiedPart),
             m.Part.AssociationPattern(v => v.PartBillOfMaterialsWhereComponentPart, m.NonUnifiedPart),
-            m.Part.AssociationPattern(v => v.InventoryItemTransactionsWherePart, m.NonUnifiedPart),
+            m.Part.AssociationPattern(v => v.NonUnifiedGoodsWherePart, m.NonUnifiedPart),
+            m.Part.AssociationPattern(v => v.PurchaseInvoiceItemsWherePart, m.NonUnifiedPart),
+            m.Part.AssociationPattern(v => v.PurchaseOrderItemsWherePart, m.NonUnifiedPart),
+            m.Part.AssociationPattern(v => v.SalesInvoiceItemsWherePart, m.NonUnifiedPart),
+            m.Part.AssociationPattern(v => v.ShipmentItemsWherePart, m.NonUnifiedPart),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
