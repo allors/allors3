@@ -1,4 +1,4 @@
-import { IMetaPopulation, IUnit } from '@allors/workspace/system';
+import { IMetaPopulation } from '@allors/workspace/system';
 import { MetaPopulation } from '@allors/workspace/lazy';
 
 describe('MetaPopulation', () => {

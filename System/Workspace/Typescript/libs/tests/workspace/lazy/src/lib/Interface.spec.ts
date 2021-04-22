@@ -1,5 +1,5 @@
-import { IInterface } from '@allors/workspace/system';
-import { MetaData, MetaPopulation } from '@allors/workspace/lazy';
+import { IInterface, MetaData } from '@allors/workspace/system';
+import { MetaPopulation } from '@allors/workspace/lazy';
 
 type Named = IInterface;
 
@@ -10,7 +10,7 @@ interface M extends MetaPopulation {
 describe('MetaPopulation', () => {
   describe('constructor with minimal interface metadata', () => {
     const data: MetaData = {
-      i: [{ t: 9, s: 'Named' }],
+      i: [[9, 'Named']],
     };
 
     const metaPopulation = new MetaPopulation(data) as M;

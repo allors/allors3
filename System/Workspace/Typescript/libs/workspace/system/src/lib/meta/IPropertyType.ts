@@ -7,8 +7,6 @@ import { IOperandType } from './IOperandType';
   export interface IPropertyType extends IOperandType {
   origin: Origin;
 
-  name: string;
-
   singularName: string;
 
   pluralName: string;

@@ -7,19 +7,12 @@ import { IUnit } from './IUnit';
 import { IRelationType } from './IRelationType';
 
 export interface IMetaPopulation {
-  units: IUnit[];
-
-  interfaces: IInterface[];
-
-  classes: IClass[];
-
-  relationTypes: IRelationType[];
-
-  methodTypes: IMethodType[];
-
-  composites: IComposite[];
-
   metaObjectByTag: IMetaObject[];
-
-  metaObjectByName: { [name: string]: IMetaObject; };
+  units: IUnit[];
+  interfaces: IInterface[];
+  classes: IClass[];
+  composites: IComposite[];
+  compositeByName: { [name: string]: IMetaObject };
+  relationTypes: IRelationType[];
+  methodTypes: IMethodType[];
 }

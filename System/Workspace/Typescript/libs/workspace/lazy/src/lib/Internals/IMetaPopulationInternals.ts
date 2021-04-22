@@ -1,5 +1,5 @@
-import { IMetaPopulation, IObjectType } from '@allors/workspace/system';
+import { IMetaObject, IMetaPopulation } from '@allors/workspace/system';
 
 export interface IMetaPopulationInternals extends IMetaPopulation {
-  onObjectType(objectType: IObjectType): void;
+  onMetaObject(metaObject: IMetaObject): void;
 }
