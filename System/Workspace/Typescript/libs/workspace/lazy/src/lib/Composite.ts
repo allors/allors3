@@ -19,16 +19,16 @@ export abstract class Composite implements ICompositeInternals {
   directSupertypes: Readonly<Set<IInterfaceInternals>>;
   supertypes: Readonly<Set<IInterfaceInternals>>;
 
-  directAssociationTypes: IAssociationTypeInternals[] = [];
-  directRoleTypes: IRoleTypeInternals[] = [];
-  directMethodTypes: IMethodTypeInternals[];
+  directAssociationTypes: Set<IAssociationTypeInternals> = new Set();
+  directRoleTypes: Set<IRoleTypeInternals> = new Set();
+  directMethodTypes: Readonly<Set<IMethodTypeInternals>> = new Set();
 
   abstract isClass: boolean;
   abstract classes: Readonly<Set<IClassInternals>>;
 
-  private _associationTypes: IAssociationTypeInternals[];
-  private _roleTypes: IRoleTypeInternals[];
-  private _methodTypes: IMethodTypeInternals[];
+  private _associationTypes: Readonly<Set<IAssociationTypeInternals>>;
+  private _roleTypes: Readonly<Set<IRoleTypeInternals>>;
+  private _methodTypes: Readonly<Set<IMethodTypeInternals>>;
   private _pluralName: string;
   private _origin: Origin;
 
@@ -41,16 +41,15 @@ export abstract class Composite implements ICompositeInternals {
     return (this._pluralName ??= pluralize(this.singularName));
   }
 
-  get associationTypes(): IAssociationTypeInternals[] {
-    return (this._associationTypes ??= this.directAssociationTypes.concat(...this.directSupertypes.map((v) => v.associationTypes)));
+  get associationTypes(): Readonly<Set<IAssociationTypeInternals>> {
+    return this._associationTypes ??= new Set(this.associationTypeGenerator());
+  }
+  get roleTypes(): Readonly<Set<IRoleTypeInternals>> {
+    return this._roleTypes ??= new Set(this.roleTypeGenerator());
   }
 
-  get roleTypes(): IRoleTypeInternals[] {
-    return (this._roleTypes ??= this.directRoleTypes.concat(...this.directSupertypes.map((v) => v.roleTypes)));
-  }
-
-  get methodTypes(): IMethodTypeInternals[] {
-    return (this._methodTypes ??= this.directMethodTypes.concat(...this.directSupertypes.map((v) => v.methodTypes)));
+  get methodTypes(): Readonly<Set<IMethodTypeInternals>> {
+    return this._methodTypes ??= new Set(this.methodTypeGenerator());
   }
 
   abstract isAssignableFrom(objectType: ICompositeInternals): boolean;
@@ -58,7 +57,7 @@ export abstract class Composite implements ICompositeInternals {
   constructor(public metaPopulation: IMetaPopulationInternals, public d: ObjectTypeData) {
     this.tag = d[0];
     this.singularName = d[1];
-    metaPopulation.onNewObjectType(this);
+    metaPopulation.onNewComposite(this);
   }
 
   derive(): void {
@@ -68,7 +67,7 @@ export abstract class Composite implements ICompositeInternals {
     this._pluralName = p;
     this.directSupertypes = d?.length > 0 ? new Set(d?.map((v) => this.metaPopulation.metaObjectByTag[v] as IInterfaceInternals)) : (frozenEmptySet as Set<IInterfaceInternals>);
     r?.forEach((v) => new RelationType(this, v));
-    this.directMethodTypes = m?.map((v) => new MethodType(this, v)) ?? [];
+    this.directMethodTypes = m?.length > 1 ? new Set(m?.map((v) => new MethodType(this, v))) : (frozenEmptySet as Set<IMethodTypeInternals>);
   }
 
   deriveSuper(): void {
@@ -76,11 +75,11 @@ export abstract class Composite implements ICompositeInternals {
   }
 
   onNewAssociationType(associationType: IAssociationTypeInternals) {
-    this.directAssociationTypes.push(associationType);
+    this.directAssociationTypes.add(associationType);
   }
 
   onNewRoleType(roleType: IRoleTypeInternals) {
-    this.directRoleTypes.push(roleType);
+    this.directRoleTypes.add(roleType);
   }
 
   *supertypeGenerator(): IterableIterator<IInterfaceInternals> {
@@ -90,6 +89,39 @@ export abstract class Composite implements ICompositeInternals {
       for (const supertype of this.directSupertypes.values()) {
         yield supertype;
         yield* supertype.supertypeGenerator();
+      }
+    }
+  }
+
+  *associationTypeGenerator(): IterableIterator<IAssociationTypeInternals> {
+    if (this._associationTypes) {
+      yield* this._associationTypes.values();
+    } else {
+      yield* this.directAssociationTypes.values();
+      for (const supertype of this.directSupertypes.values()) {
+        yield* supertype.associationTypeGenerator();
+      }
+    }
+  }
+
+  *roleTypeGenerator(): IterableIterator<IRoleTypeInternals> {
+    if (this._roleTypes) {
+      yield* this._roleTypes.values();
+    } else {
+      yield* this.directRoleTypes.values();
+      for (const supertype of this.directSupertypes.values()) {
+        yield* supertype.roleTypeGenerator();
+      }
+    }
+  }
+
+  *methodTypeGenerator(): IterableIterator<IMethodTypeInternals> {
+    if (this._methodTypes) {
+      yield* this._methodTypes.values();
+    } else {
+      yield* this.directMethodTypes.values();
+      for (const supertype of this.directSupertypes.values()) {
+        yield* supertype.methodTypeGenerator();
       }
     }
   }

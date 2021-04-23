@@ -17,10 +17,16 @@ export class Interface extends Composite implements IInterfaceInternals {
   }
 
   deriveSub(): void {
-    const subtypes = (this.metaPopulation.composites as ICompositeInternals[]).filter((v) => v.supertypes.has(this));
-    this.subtypes = subtypes.length > 0 ? new Set(subtypes) : (frozenEmptySet as Readonly<Set<ICompositeInternals>>);
-    const classes = subtypes.filter((v) => v.isClass);
-    this.classes = classes.length > 0 ? new Set(classes) : (frozenEmptySet as Readonly<Set<IClassInternals>>);
+    this.subtypes = new Set();
+    this.classes = new Set();
+    this.metaPopulation.composites.forEach((v) => {
+      if (v.supertypes.has(this)) {
+        this.subtypes.add(v as ICompositeInternals);
+        if(v.isClass){
+          this.classes.add(v as IClassInternals);
+        }
+      }
+    });
   }
 
   isAssignableFrom(objectType: ICompositeInternals): boolean {

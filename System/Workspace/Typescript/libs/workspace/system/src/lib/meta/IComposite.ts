@@ -7,15 +7,15 @@ import { IRoleType } from './IRoleType';
 
 export interface IComposite extends IObjectType {
   directSupertypes: Readonly<Set<IInterface>>;
-  directAssociationTypes: IAssociationType[];
-  directRoleTypes: IRoleType[];
-  directMethodTypes: IMethodType[];
+  directAssociationTypes: Readonly<Set<IAssociationType>>;
+  directRoleTypes: Readonly<Set<IRoleType>>;
+  directMethodTypes: Readonly<Set<IMethodType>>;
 
   supertypes: Readonly<Set<IInterface>>;
   classes: Readonly<Set<IClass>>;
-  associationTypes: IAssociationType[];
-  roleTypes: IRoleType[];
-  methodTypes: IMethodType[];
+  associationTypes: Readonly<Set<IAssociationType>>;
+  roleTypes: Readonly<Set<IRoleType>>;
+  methodTypes: Readonly<Set<IMethodType>>;
 
   isAssignableFrom(objectType: IComposite): boolean;
 }
