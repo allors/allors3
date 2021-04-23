@@ -2,6 +2,7 @@ import { IUnit, Origin, UnitTags } from '@allors/workspace/system';
 import { MetaPopulation } from './MetaPopulation';
 
 export class Unit implements IUnit {
+  isUnit = true;
   pluralName: string;
   origin = Origin.Database;
   isBinary = this.tag === UnitTags.Binary;

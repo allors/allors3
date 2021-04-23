@@ -5,34 +5,26 @@
 
 namespace Allors
 {
-    using System;
-
-    [Flags]
     public enum Multiplicity
     {
         /// <summary>
-        /// None.
-        /// </summary>
-        None = 0,
-
-        /// <summary>
         /// One to one.
         /// </summary>
-        OneToOne = 1,
+        OneToOne = 0, //0b00 
 
         /// <summary>
         /// One to many.
         /// </summary>
-        OneToMany = 2,
+        OneToMany = 1, //0b01
 
         /// <summary>
         /// Many to one.
         /// </summary>
-        ManyToOne = 4,
+        ManyToOne = 2, //0b11
 
         /// <summary>
         /// Many to Many.
         /// </summary>
-        ManyToMany = 8,
+        ManyToMany = 3 //0b11
     }
 }

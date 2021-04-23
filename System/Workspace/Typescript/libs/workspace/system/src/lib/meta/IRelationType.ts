@@ -11,6 +11,4 @@ export interface IRelationType extends IMetaObject {
   multiplicity: Multiplicity;
 
   isDerived: boolean;
-
-  isSynced: boolean;
 }

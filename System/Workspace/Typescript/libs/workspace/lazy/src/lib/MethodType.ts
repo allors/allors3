@@ -13,6 +13,6 @@ export class MethodType implements IMethodType {
   constructor(a: Composite, d: MethodTypeData) {
     this.tag = d[0];
     this.metaPopulation = a.metaPopulation;
-    this.metaPopulation.metaObjectByTag[this.tag] = this;
+    this.metaPopulation.onNew(this);
   }
 }

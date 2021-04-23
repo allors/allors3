@@ -4,6 +4,7 @@ import { MethodType } from './MethodType';
 import { RelationType } from './RelationType';
 
 export abstract class Composite implements IComposite {
+  isUnit = false;
   readonly tag: number;
   singularName: string;
 

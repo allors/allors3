@@ -1,6 +1,26 @@
-export type UnitRelationTypeData = [tag: number, roleObjectType: number, singularName?: string, SizeOrScaleAndPrecision?: number, origin?: number, pluralName?: string, isDerived?: boolean, isRequired?: boolean, mediaType?: string];
+export type UnitRelationTypeData = [
+  tag: number,
+  roleObjectType: number,
+  singularName?: string,
+  SizeOrScaleAndPrecision?: number | string,
+  origin?: number,
+  pluralName?: string,
+  isDerived?: boolean,
+  isRequired?: boolean,
+  isUnique?: boolean,
+  mediaType?: string
+];
 
-export type CompositeRelationTypeData = [tag: number, roleObjectType: number, singularName?: string, multiplicity?: number, origin?: number, pluralName?: string, isDerived?: boolean, isRequired?: boolean];
+export type CompositeRelationTypeData = [
+  tag: number,
+   roleObjectType: number,
+    singularName?: string,
+     multiplicity?: number,
+      origin?: number,
+       pluralName?: string,
+        isDerived?: boolean,
+         isRequired?: boolean,
+          isUnique?: boolean];
 
 export type RelationTypeData = UnitRelationTypeData | CompositeRelationTypeData;
 
