@@ -6,13 +6,12 @@ import { RoleType } from './RoleType';
 
 export class RelationType implements IRelationType {
   readonly metaPopulation: MetaPopulation;
+  readonly tag: number;
+  readonly origin: Origin;
   readonly associationType: AssociationType;
   readonly roleType: RoleType;
   readonly isDerived: boolean;
-
-  multiplicity: Multiplicity;
-  tag: number;
-  origin: Origin;
+  readonly multiplicity: Multiplicity;
 
   constructor(associationObjectType: Composite, [t, r, s, x, o, p, d, q, u, m]: RelationTypeData) {
     this.tag = t;
@@ -29,5 +28,12 @@ export class RelationType implements IRelationType {
 
     this.roleType = new RoleType(this, roleObjectType, toOne, s, q, u, m, p, x);
     this.associationType = new AssociationType(this.roleType, associationObjectType, oneTo);
+    this.roleType.associationType = this.associationType;
+
+    if (this.roleType.objectType.isComposite) {
+      (this.roleType.objectType as Composite).onNewAssociationType(this.associationType);
+    }
+
+    this.associationType.objectType.onNewRoleType(this.roleType);
   }
 }

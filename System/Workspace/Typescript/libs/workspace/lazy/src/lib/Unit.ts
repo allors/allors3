@@ -3,6 +3,7 @@ import { MetaPopulation } from './MetaPopulation';
 
 export class Unit implements IUnit {
   isUnit = true;
+  isComposite = false;
   pluralName: string;
   origin = Origin.Database;
   isBinary = this.tag === UnitTags.Binary;

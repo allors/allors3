@@ -5,7 +5,7 @@ export class RoleType implements IRoleType {
   readonly isMany: boolean;
   readonly origin: Origin;
   readonly name: string;
-  readonly operandId: string;
+  readonly operandTag: number;
   readonly size: number;
   readonly precision: number;
   readonly scale: number;
@@ -24,6 +24,8 @@ export class RoleType implements IRoleType {
     sizeOrScaleAndPrecision: number | string
   ) {
     this.isMany = !this.isOne;
+    this.origin = relationType.origin;
+    this.operandTag = relationType.tag;
 
     if (this.objectType.isUnit && !!sizeOrScaleAndPrecision) {
       const unit = this.objectType as IUnit;
@@ -40,6 +42,8 @@ export class RoleType implements IRoleType {
         }
       }
     }
+
+    this.name = this.isOne ? this.singularName : this.pluralName;
   }
   get pluralName() {
     return (this._pluralName ??= pluralize(this.singularName));

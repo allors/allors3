@@ -1,5 +1,5 @@
 export interface IOperandType {
-  operandId: string;
+  operandTag: number;
 
   name: string;
 }

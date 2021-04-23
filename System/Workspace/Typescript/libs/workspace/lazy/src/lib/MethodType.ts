@@ -7,7 +7,7 @@ export class MethodType implements IMethodType {
   objectType: IComposite;
   tag: number;
   origin: Origin;
-  operandId: string;
+  operandTag: number;
   name: string;
 
   constructor(a: Composite, d: MethodTypeData) {

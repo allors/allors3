@@ -6,4 +6,6 @@ export interface IObjectType extends IMetaObject {
   pluralName: string;
 
   isUnit: boolean;
+
+  isComposite: boolean;
 }

@@ -10,6 +10,6 @@ export class Class extends Composite implements IClass {
   }
 
   isAssignableFrom(objectType: IComposite): boolean {
-    throw new Error('Method not implemented.');
+    return this === objectType;
   }
 }

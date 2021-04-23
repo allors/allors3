@@ -1,9 +1,7 @@
 import { Origin } from '../Origin';
-import { IComposite } from './IComposite';
 import { IObjectType } from './IObjectType';
 import { IOperandType } from './IOperandType';
 
-  // TODO: IComparable
   export interface IPropertyType extends IOperandType {
   origin: Origin;
 
