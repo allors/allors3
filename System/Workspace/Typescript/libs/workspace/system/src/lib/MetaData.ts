@@ -6,9 +6,7 @@ export type RelationTypeData = UnitRelationTypeData | CompositeRelationTypeData;
 
 export type MethodTypeData = [tag: number, name: string];
 
-export type ObjectTypeData = [tag: number, singularName: string, relationTypes?: RelationTypeData[], methodTypes?: MethodTypeData[], pluralName?: string];
-
-export type HierarchyData = [supertype: number, directSubtypes?: number[]];
+export type ObjectTypeData = [tag: number, singularName: string, directSupertypes?: number[], relationTypes?: RelationTypeData[], methodTypes?: MethodTypeData[], pluralName?: string];
 
 export interface MetaData {
   /**
@@ -20,9 +18,4 @@ export interface MetaData {
    * Classes
    */
   c?: ObjectTypeData[];
-
-  /**
-   * Classes
-   */
-  h?: HierarchyData[];
 }

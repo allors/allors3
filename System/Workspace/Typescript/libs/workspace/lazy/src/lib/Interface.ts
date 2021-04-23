@@ -1,13 +1,12 @@
 import { IClass, IComposite, IInterface, ObjectTypeData } from '@allors/workspace/system';
-import { IMetaPopulationInternals } from './Internals/IMetaPopulationInternals';
 import { Composite } from './Composite';
+import { MetaPopulation } from './MetaPopulation';
 
 export class Interface extends Composite implements IInterface {
-  directSubtypes: IComposite[];
   private _classes: IClass[];
 
-  constructor(metaPopulation: IMetaPopulationInternals, [tag, singularName, r, m, pluralName]: ObjectTypeData) {
-    super(metaPopulation, tag, singularName, r, m, pluralName);
+  constructor(metaPopulation: MetaPopulation, data: ObjectTypeData) {
+    super(metaPopulation, data);
   }
 
   get classes(): IClass[] {

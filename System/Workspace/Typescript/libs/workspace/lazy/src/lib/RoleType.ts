@@ -17,5 +17,4 @@ export class RoleType implements IRoleType {
   isOne: boolean;
   isMany: boolean;
   operandId: string;
-
 }

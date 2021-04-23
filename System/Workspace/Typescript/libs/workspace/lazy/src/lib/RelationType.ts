@@ -1,10 +1,8 @@
-import { IAssociationType, IRelationType, IRoleType, Multiplicity, Origin, RelationTypeData } from '@allors/workspace/system';
-import { IMetaPopulationInternals } from './Internals/IMetaPopulationInternals';
+import { IAssociationType, IMetaPopulation, IRelationType, IRoleType, Multiplicity, Origin, RelationTypeData } from '@allors/workspace/system';
+import { Composite } from './Composite';
 
 export class RelationType implements IRelationType {
-  constructor(public metaPopulation: IMetaPopulationInternals, private data: RelationTypeData){
-    metaPopulation.onMetaObject(this);
-  }
+  readonly metaPopulation: IMetaPopulation;
 
   associationType: IAssociationType;
   roleType: IRoleType;
@@ -14,4 +12,9 @@ export class RelationType implements IRelationType {
   tag: number;
   origin: Origin;
 
+  constructor(a: Composite, d: RelationTypeData) {
+    this.tag = d[0];
+    this.metaPopulation = a.metaPopulation;
+    this.metaPopulation.metaObjectByTag[this.tag] = this;
+  }
 }

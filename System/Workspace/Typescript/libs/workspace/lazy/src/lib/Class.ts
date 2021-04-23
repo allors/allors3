@@ -1,14 +1,12 @@
 import { IClass, IComposite, ObjectTypeData } from '@allors/workspace/system';
-import { IMetaPopulationInternals } from './Internals/IMetaPopulationInternals';
 import { Composite } from './Composite';
+import { MetaPopulation } from './MetaPopulation';
 
 export class Class extends Composite implements IClass {
-  readonly isInterface = false;
-  readonly isClass = true;
   readonly classes = [this];
 
-  constructor(metaPopulation: IMetaPopulationInternals, [tag, singularName, r, m, pluralName]: ObjectTypeData) {
-    super(metaPopulation, tag, singularName, r, m, pluralName);
+  constructor(metaPopulation: MetaPopulation, data: ObjectTypeData) {
+    super(metaPopulation, data);
   }
 
   isAssignableFrom(objectType: IComposite): boolean {

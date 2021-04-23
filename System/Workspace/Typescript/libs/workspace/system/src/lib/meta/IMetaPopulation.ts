@@ -1,5 +1,4 @@
 import { IClass } from './IClass';
-import { IComposite } from './IComposite';
 import { IInterface } from './IInterface';
 import { IMetaObject } from './IMetaObject';
 import { IMethodType } from './IMethodType';
@@ -11,8 +10,6 @@ export interface IMetaPopulation {
   units: IUnit[];
   interfaces: IInterface[];
   classes: IClass[];
-  composites: IComposite[];
-  compositeByName: { [name: string]: IMetaObject };
   relationTypes: IRelationType[];
   methodTypes: IMethodType[];
 }
