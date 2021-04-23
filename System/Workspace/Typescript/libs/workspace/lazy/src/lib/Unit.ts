@@ -1,9 +1,11 @@
-import { IUnit, Origin, UnitTags } from '@allors/workspace/system';
-import { MetaPopulation } from './MetaPopulation';
+import { Origin, UnitTags } from '@allors/workspace/system';
+import { IUnitInternals } from './Internals/IUnitInternals';
+import { IMetaPopulationInternals } from './Internals/IMetaPopulationInternals';
 
-export class Unit implements IUnit {
+export class Unit implements IUnitInternals {
   isUnit = true;
   isComposite = false;
+  isClass = false;
   pluralName: string;
   origin = Origin.Database;
   isBinary = this.tag === UnitTags.Binary;
@@ -15,7 +17,7 @@ export class Unit implements IUnit {
   isString = this.tag === UnitTags.String;
   isUnique = this.tag === UnitTags.Unique;
 
-  constructor(public metaPopulation: MetaPopulation, public tag: number, public singularName: string) {
+  constructor(public metaPopulation: IMetaPopulationInternals, public tag: number, public singularName: string) {
     this.pluralName = singularName === 'Binary' ? 'Binaries' : singularName + 's';
     metaPopulation.onNewObjectType(this);
   }

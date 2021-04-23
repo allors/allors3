@@ -1,26 +1,30 @@
-import { IObjectType, IRelationType, Multiplicity, Origin, RelationTypeData } from '@allors/workspace/system';
+import { Multiplicity, Origin, RelationTypeData } from '@allors/workspace/system';
+import { IAssociationTypeInternals } from './Internals/IAssociationTypeInternals';
+import { ICompositeInternals } from './Internals/ICompositeInternals';
+import { IMetaPopulationInternals } from './Internals/IMetaPopulationInternals';
+import { IObjectTypeInternals } from './Internals/IObjectTypeInternals';
+import { IRelationTypeInternals } from './Internals/IRelationTypeInternals';
+import { IRoleTypeInternals } from './Internals/IRoleTypeInternals';
 import { AssociationType } from './AssociationType';
-import { Composite } from './Composite';
-import { MetaPopulation } from './MetaPopulation';
 import { RoleType } from './RoleType';
 
-export class RelationType implements IRelationType {
-  readonly metaPopulation: MetaPopulation;
+export class RelationType implements IRelationTypeInternals {
+  readonly metaPopulation: IMetaPopulationInternals;
   readonly tag: number;
   readonly origin: Origin;
-  readonly associationType: AssociationType;
-  readonly roleType: RoleType;
+  readonly associationType: IAssociationTypeInternals;
+  readonly roleType: IRoleTypeInternals;
   readonly isDerived: boolean;
   readonly multiplicity: Multiplicity;
 
-  constructor(associationObjectType: Composite, [t, r, s, x, o, p, d, q, u, m]: RelationTypeData) {
+  constructor(associationObjectType: ICompositeInternals, [t, r, s, x, o, p, d, q, u, m]: RelationTypeData) {
     this.tag = t;
-    this.metaPopulation = associationObjectType.metaPopulation;
+    this.metaPopulation = associationObjectType.metaPopulation as IMetaPopulationInternals;
     this.metaPopulation.onNew(this);
 
     this.isDerived = d ?? false;
     this.origin = o ?? Origin.Database;
-    const roleObjectType = this.metaPopulation.metaObjectByTag[r] as IObjectType;
+    const roleObjectType = this.metaPopulation.metaObjectByTag[r] as IObjectTypeInternals;
 
     this.multiplicity = roleObjectType.isUnit ? Multiplicity.OneToOne : (x as number) ?? Multiplicity.ManyToOne;
     const oneTo = (this.multiplicity & 2) == 0;
@@ -31,9 +35,9 @@ export class RelationType implements IRelationType {
     this.roleType.associationType = this.associationType;
 
     if (this.roleType.objectType.isComposite) {
-      (this.roleType.objectType as Composite).onNewAssociationType(this.associationType);
+      (this.roleType.objectType as ICompositeInternals).onNewAssociationType(this.associationType);
     }
 
-    this.associationType.objectType.onNewRoleType(this.roleType);
+    (this.associationType.objectType as ICompositeInternals).onNewRoleType(this.roleType);
   }
 }

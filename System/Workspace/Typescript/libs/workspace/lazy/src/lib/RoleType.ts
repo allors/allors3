@@ -1,7 +1,11 @@
-import { IAssociationType, IObjectType, IRoleType, IUnit, Origin, pluralize } from '@allors/workspace/system';
-import { RelationType } from './RelationType';
+import { Origin, pluralize } from '@allors/workspace/system';
+import { IAssociationTypeInternals } from './Internals/IAssociationTypeInternals';
+import { IObjectTypeInternals } from './Internals/IObjectTypeInternals';
+import { IRelationTypeInternals } from './Internals/IRelationTypeInternals';
+import { IRoleTypeInternals } from './Internals/IRoleTypeInternals';
+import { IUnitInternals } from './Internals/IUnitInternals';
 
-export class RoleType implements IRoleType {
+export class RoleType implements IRoleTypeInternals {
   readonly isMany: boolean;
   readonly origin: Origin;
   readonly name: string;
@@ -10,11 +14,11 @@ export class RoleType implements IRoleType {
   readonly precision: number;
   readonly scale: number;
 
-  associationType: IAssociationType;
+  associationType: IAssociationTypeInternals;
 
   constructor(
-    public relationType: RelationType,
-    public objectType: IObjectType,
+    public relationType: IRelationTypeInternals,
+    public objectType: IObjectTypeInternals,
     public isOne: boolean,
     public singularName: string,
     public isRequired: boolean = false,
@@ -28,7 +32,7 @@ export class RoleType implements IRoleType {
     this.operandTag = relationType.tag;
 
     if (this.objectType.isUnit && !!sizeOrScaleAndPrecision) {
-      const unit = this.objectType as IUnit;
+      const unit = this.objectType as IUnitInternals;
       if (unit.isString) {
         this.size = sizeOrScaleAndPrecision as number;
       }

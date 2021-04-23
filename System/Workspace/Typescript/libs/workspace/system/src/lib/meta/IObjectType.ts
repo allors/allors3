@@ -8,4 +8,6 @@ export interface IObjectType extends IMetaObject {
   isUnit: boolean;
 
   isComposite: boolean;
+
+  isClass: boolean;
 }

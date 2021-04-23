@@ -1,10 +1,11 @@
-import { IAssociationType, Origin } from '@allors/workspace/system';
-import { Composite } from './Composite';
-import { RelationType } from './RelationType';
-import { RoleType } from './RoleType';
+import { Origin } from '@allors/workspace/system';
+import { IAssociationTypeInternals } from './Internals/IAssociationTypeInternals';
+import { ICompositeInternals } from './Internals/ICompositeInternals';
+import { IRelationTypeInternals } from './Internals/IRelationTypeInternals';
+import { IRoleTypeInternals } from './Internals/IRoleTypeInternals';
 
-export class AssociationType implements IAssociationType {
-  readonly relationType: RelationType;
+export class AssociationType implements IAssociationTypeInternals {
+  readonly relationType: IRelationTypeInternals;
   readonly operandTag: number;
   readonly origin: Origin;
   readonly isMany: boolean;
@@ -13,7 +14,7 @@ export class AssociationType implements IAssociationType {
 
   private _pluralName: string;
 
-  constructor(public roleType: RoleType, public objectType: Composite, public isOne: boolean) {
+  constructor(public roleType: IRoleTypeInternals, public objectType: ICompositeInternals, public isOne: boolean) {
     this.relationType = roleType.relationType;
     this.operandTag = this.relationType.tag;
     this.origin = this.relationType.origin;

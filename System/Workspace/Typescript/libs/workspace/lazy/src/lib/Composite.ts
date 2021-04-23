@@ -1,35 +1,36 @@
-import { IAssociationType, IClass, IComposite, IInterface, IMethodType, IRoleType, Origin, pluralize, ObjectTypeData } from '@allors/workspace/system';
-import { AssociationType } from './AssociationType';
-import { MetaPopulation } from './MetaPopulation';
-import { MethodType } from './MethodType';
+import { Origin, pluralize, ObjectTypeData } from '@allors/workspace/system';
+import { frozenEmptySet } from './Internals/frozenEmptySet';
+import { ICompositeInternals } from './Internals/ICompositeInternals';
+import { IInterfaceInternals } from './Internals/IInterfaceInternals';
+import { IAssociationTypeInternals } from './Internals/IAssociationTypeInternals';
+import { IRoleTypeInternals } from './Internals/IRoleTypeInternals';
+import { IMethodTypeInternals } from './Internals/IMethodTypeInternals';
+import { IClassInternals } from './Internals/IClassInternals';
+import { IMetaPopulationInternals } from './Internals/IMetaPopulationInternals';
 import { RelationType } from './RelationType';
-import { RoleType } from './RoleType';
+import { MethodType } from './MethodType';
 
-export abstract class Composite implements IComposite {
+export abstract class Composite implements ICompositeInternals {
   isUnit = false;
   isComposite = true;
   readonly tag: number;
   singularName: string;
 
-  directSupertypes: IInterface[];
-  directAssociationTypes: IAssociationType[] = [];
-  directRoleTypes: IRoleType[] = [];
-  directMethodTypes: IMethodType[];
+  directSupertypes: Readonly<Set<IInterfaceInternals>>;
+  supertypes: Readonly<Set<IInterfaceInternals>>;
 
-  abstract classes: IClass[];
+  directAssociationTypes: IAssociationTypeInternals[] = [];
+  directRoleTypes: IRoleTypeInternals[] = [];
+  directMethodTypes: IMethodTypeInternals[];
 
-  private _supertypes: IInterface[];
-  private _associationTypes: IAssociationType[];
-  private _roleTypes: IRoleType[];
-  private _methodTypes: IMethodType[];
+  abstract isClass: boolean;
+  abstract classes: Readonly<Set<IClassInternals>>;
+
+  private _associationTypes: IAssociationTypeInternals[];
+  private _roleTypes: IRoleTypeInternals[];
+  private _methodTypes: IMethodTypeInternals[];
   private _pluralName: string;
   private _origin: Origin;
-
-  constructor(public metaPopulation: MetaPopulation, public d: ObjectTypeData) {
-    this.tag = d[0];
-    this.singularName = d[1];
-    metaPopulation.onNewObjectType(this);
-  }
 
   get origin() {
     // return (this._origin ??= );
@@ -40,39 +41,56 @@ export abstract class Composite implements IComposite {
     return (this._pluralName ??= pluralize(this.singularName));
   }
 
-  get supertypes(): IInterface[] {
-    return this._supertypes ??= this.directSupertypes.concat(...this.directSupertypes.map((v) => v.supertypes));
+  get associationTypes(): IAssociationTypeInternals[] {
+    return (this._associationTypes ??= this.directAssociationTypes.concat(...this.directSupertypes.map((v) => v.associationTypes)));
   }
 
-  get associationTypes(): IAssociationType[] {
-    return this._associationTypes ??= this.directAssociationTypes.concat(...this.directSupertypes.map((v) => v.associationTypes));
+  get roleTypes(): IRoleTypeInternals[] {
+    return (this._roleTypes ??= this.directRoleTypes.concat(...this.directSupertypes.map((v) => v.roleTypes)));
   }
 
-  get roleTypes(): IRoleType[] {
-    return this._roleTypes ??= this.directRoleTypes.concat(...this.directSupertypes.map((v) => v.roleTypes));
+  get methodTypes(): IMethodTypeInternals[] {
+    return (this._methodTypes ??= this.directMethodTypes.concat(...this.directSupertypes.map((v) => v.methodTypes)));
   }
 
-  get methodTypes(): IMethodType[] {
-    return this._methodTypes ??= this.directMethodTypes.concat(...this.directSupertypes.map((v) => v.methodTypes));
+  abstract isAssignableFrom(objectType: ICompositeInternals): boolean;
+
+  constructor(public metaPopulation: IMetaPopulationInternals, public d: ObjectTypeData) {
+    this.tag = d[0];
+    this.singularName = d[1];
+    metaPopulation.onNewObjectType(this);
   }
 
-  abstract isAssignableFrom(objectType: IComposite): boolean;
-
-  init(): void {
+  derive(): void {
     const [, s, d, r, m, p] = this.d;
 
     this.singularName = s;
     this._pluralName = p;
-    this.directSupertypes = d?.map((v) => this.metaPopulation.metaObjectByTag[v] as IInterface) ?? [];
+    this.directSupertypes = d?.length > 0 ? new Set(d?.map((v) => this.metaPopulation.metaObjectByTag[v] as IInterfaceInternals)) : (frozenEmptySet as Set<IInterfaceInternals>);
     r?.forEach((v) => new RelationType(this, v));
     this.directMethodTypes = m?.map((v) => new MethodType(this, v)) ?? [];
   }
 
-  onNewAssociationType(associationType: AssociationType) {
+  deriveSuper(): void {
+    this.supertypes = new Set(this.supertypeGenerator());
+  }
+
+  onNewAssociationType(associationType: IAssociationTypeInternals) {
     this.directAssociationTypes.push(associationType);
   }
 
-  onNewRoleType(roleType: RoleType) {
+  onNewRoleType(roleType: IRoleTypeInternals) {
     this.directRoleTypes.push(roleType);
+  }
+
+  *supertypeGenerator(): IterableIterator<IInterfaceInternals> {
+    if (this.supertypes) {
+      yield* this.supertypes.values();
+    } else {
+      for (const supertype of this.directSupertypes.values()) {
+        yield supertype;
+        yield* supertype.supertypeGenerator();
+      }
+    }
   }
 }

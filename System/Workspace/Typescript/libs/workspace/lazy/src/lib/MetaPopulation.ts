@@ -1,51 +1,42 @@
-import { IMetaObject, IMetaPopulation, IObjectType, MetaData } from '@allors/workspace/system';
-import { Class } from './Class';
-import { Interface } from './Interface';
+import { MetaData } from '@allors/workspace/system';
+import { IMetaPopulationInternals } from './Internals/IMetaPopulationInternals';
+import { IMetaObjectInternals } from './Internals/IMetaObjectInternals';
+import { IUnitInternals } from './Internals/IUnitInternals';
+import { IInterfaceInternals } from './Internals/IInterfaceInternals';
+import { IClassInternals } from './Internals/IClassInternals';
+import { ICompositeInternals } from './Internals/ICompositeInternals';
+import { IRelationTypeInternals } from './Internals/IRelationTypeInternals';
+import { IMethodTypeInternals } from './Internals/IMethodTypeInternals';
+import { IObjectTypeInternals } from './Internals/IObjectTypeInternals';
 import { Unit } from './Unit';
-import { RelationType } from './RelationType';
-import { MethodType } from './MethodType';
-import { Composite } from './Composite';
+import { Interface } from './Interface';
+import { Class } from './Class';
 
-export class MetaPopulation implements IMetaPopulation {
-  readonly units: Unit[];
-  readonly interfaces: Interface[];
-  readonly classes: Class[];
-  readonly composites: Composite[];
-  readonly metaObjectByTag: IMetaObject[] = [];
-  readonly relationTypes: RelationType[];
-  readonly methodTypes: MethodType[];
+export class MetaPopulation implements IMetaPopulationInternals {
+  readonly units: IUnitInternals[];
+  readonly interfaces: IInterfaceInternals[];
+  readonly classes: IClassInternals[];
+  readonly composites: ICompositeInternals[];
+  readonly metaObjectByTag: IMetaObjectInternals[] = [];
+  readonly relationTypes: IRelationTypeInternals[];
+  readonly methodTypes: IMethodTypeInternals[];
 
   constructor(data: MetaData) {
     this.units = ['Binary', 'Boolean', 'DateTime', 'Decimal', 'Float', 'Integer', 'String', 'Unique'].map((name, i) => new Unit(this, i + 1, name));
     this.interfaces = data.i?.map((v) => new Interface(this, v)) ?? [];
     this.classes = data.c?.map((v) => new Class(this, v)) ?? [];
-    this.composites = (this.interfaces as Composite[]).concat(this.classes);
-    this.composites.forEach((v) => v.init());
-    // data.h?.forEach(([sup, subs]) => {
-    //   const supertype = this.metaObjectByTag[sup] as IInterface;
-    //   const directSubtypes = subs?.map((w) => this.metaObjectByTag[w] as IComposite) ?? [];
-    //   supertype.directSubtypes = directSubtypes;
-    //   directSubtypes.forEach((v) => {
-    //     if (v.directSupertypes) {
-    //       v.directSupertypes.push(supertype);
-    //     } else {
-    //       v.directSupertypes = [supertype];
-    //     }
-    //   });
-    // });
-    Object.freeze(this.metaObjectByTag);
-    Object.freeze(this.units);
-    Object.freeze(this.interfaces);
-    Object.freeze(this.classes);
-    Object.freeze(this.relationTypes);
-    Object.freeze(this.methodTypes);
+    this.composites = (this.interfaces as ICompositeInternals[]).concat(this.classes);
+
+    this.composites.forEach((v) => v.derive());
+    this.composites.forEach((v) => v.deriveSuper());
+    this.interfaces.forEach((v) => v.deriveSub());
   }
 
-  onNew(metaObject: IMetaObject) {
+  onNew(metaObject: IMetaObjectInternals) {
     this.metaObjectByTag[metaObject.tag] = metaObject;
   }
 
-  onNewObjectType(objectType: IObjectType) {
+  onNewObjectType(objectType: IObjectTypeInternals) {
     this.onNew(objectType);
     this[objectType.singularName] = objectType;
   }

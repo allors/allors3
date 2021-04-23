@@ -1,24 +1,29 @@
-import { IClass, IComposite, IInterface, ObjectTypeData } from '@allors/workspace/system';
+import { ObjectTypeData } from '@allors/workspace/system';
+import { frozenEmptySet } from './Internals/frozenEmptySet';
+import { IClassInternals } from './Internals/IClassInternals';
+import { ICompositeInternals } from './Internals/ICompositeInternals';
+import { IInterfaceInternals } from './Internals/IInterfaceInternals';
+import { IMetaPopulationInternals } from './Internals/IMetaPopulationInternals';
 import { Composite } from './Composite';
-import { MetaPopulation } from './MetaPopulation';
 
-export class Interface extends Composite implements IInterface {
-  private _classes: IClass[];
+export class Interface extends Composite implements IInterfaceInternals {
+  readonly isClass = false;
 
-  private _subtypes: IComposite[];
+  subtypes: Readonly<Set<ICompositeInternals>>;
+  classes: Readonly<Set<IClassInternals>>;
 
-  constructor(metaPopulation: MetaPopulation, data: ObjectTypeData) {
+  constructor(metaPopulation: IMetaPopulationInternals, data: ObjectTypeData) {
     super(metaPopulation, data);
   }
-  get classes(): IClass[] {
-    return this._classes ??= this.metaPopulation.classes.filter((v) => v.supertypes.includes(this));
+
+  deriveSub(): void {
+    const subtypes = (this.metaPopulation.composites as ICompositeInternals[]).filter((v) => v.supertypes.has(this));
+    this.subtypes = subtypes.length > 0 ? new Set(subtypes) : (frozenEmptySet as Readonly<Set<ICompositeInternals>>);
+    const classes = subtypes.filter((v) => v.isClass);
+    this.classes = classes.length > 0 ? new Set(classes) : (frozenEmptySet as Readonly<Set<IClassInternals>>);
   }
 
-  isAssignableFrom(objectType: IComposite): boolean {
-    return this === objectType || this.subtypes.includes(objectType);
-  }
-
-  get subtypes(): IComposite[] {
-    return this._subtypes ??= this.metaPopulation.composites.filter(v=>v.supertypes.includes(this));
+  isAssignableFrom(objectType: ICompositeInternals): boolean {
+    return this === objectType || this.subtypes.has(objectType);
   }
 }

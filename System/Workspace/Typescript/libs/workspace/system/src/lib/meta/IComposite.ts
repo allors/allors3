@@ -6,13 +6,13 @@ import { IObjectType } from './IObjectType';
 import { IRoleType } from './IRoleType';
 
 export interface IComposite extends IObjectType {
-  directSupertypes: IInterface[];
+  directSupertypes: Readonly<Set<IInterface>>;
   directAssociationTypes: IAssociationType[];
   directRoleTypes: IRoleType[];
   directMethodTypes: IMethodType[];
 
-  supertypes: IInterface[];
-  classes: IClass[];
+  supertypes: Readonly<Set<IInterface>>;
+  classes: Readonly<Set<IClass>>;
   associationTypes: IAssociationType[];
   roleTypes: IRoleType[];
   methodTypes: IMethodType[];
