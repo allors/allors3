@@ -19,29 +19,14 @@ export interface MetaData {
   c?: ObjectTypeData[];
 
   /**
-   * Multiplicity OneToOne
+   * Multiplicity
    */
-  m0?: number[];
+   m?: [][];
 
   /**
-   * Multiplicity OneToMany
+   * Origin
    */
-  m1?: number[];
-
-  /**
-   * Multiplicity ManyToMany
-   */
-  m3?: number[];
-
-  /**
-   * Origin Workspace
-   */
-  o2?: number[];
-
-  /**
-   * Origin Session
-   */
-  o4?: number[];
+   o?: [][];
 
   /**
    * IsDerived
@@ -58,8 +43,8 @@ export interface MetaData {
    */
   u?: number[];
 
-  /**
+   /**
    * MediaType
    */
-  m?: { [name: string]: string };
-}
+    t?: { [name: string]: number[] };
+  }

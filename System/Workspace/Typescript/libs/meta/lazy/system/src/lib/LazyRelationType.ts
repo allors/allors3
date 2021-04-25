@@ -7,27 +7,33 @@ import { InternalRelationType } from './internal/InternalRelationType';
 import { InternalRoleType } from './internal/InternalRoleType';
 import { LazyAssociationType } from './LazyAssociationType';
 import { LazyRoleType } from './LazyRoleType';
+import { Lookup } from './utils/Lookup';
 
 export class LazyRelationType implements InternalRelationType {
   readonly metaPopulation: InternalMetaPopulation;
+
   readonly tag: number;
+  readonly multiplicity: Multiplicity;
   readonly origin: Origin;
+  readonly isDerived: boolean;
+
   readonly associationType: InternalAssociationType;
   readonly roleType: InternalRoleType;
-  readonly isDerived: boolean;
-  readonly multiplicity: Multiplicity;
 
-  constructor(associationObjectType: InternalComposite, [t, r, s, x, o, p, d, q, u, m]: RelationTypeData) {
-    this.tag = t;
+  constructor(associationObjectType: InternalComposite, data: RelationTypeData, lookup: Lookup) {
     this.metaPopulation = associationObjectType.metaPopulation as InternalMetaPopulation;
-    this.metaPopulation.onNew(this);
 
-    this.isDerived = d ?? false;
-    this.origin = o ?? Origin.Database;
+    const [t] = data;
     const roleObjectType = this.metaPopulation.metaObjectByTag.get(r) as InternalObjectType;
 
-    this.multiplicity = roleObjectType.isUnit ? Multiplicity.OneToOne : (x as number) ?? Multiplicity.ManyToOne;
-    this.roleType = new LazyRoleType(this, associationObjectType, roleObjectType, this.multiplicity, s, q, u, m, p, x);
+    this.tag = t;
+    this.multiplicity = roleObjectType.isUnit ? Multiplicity.OneToOne : lookup.m.get(t) ?? Multiplicity.ManyToOne;
+    this.origin = lookup.o.get(t) ?? Origin.Database;
+    this.isDerived = lookup.d.has(t);
+
+    this.metaPopulation.onNew(this);
+
+    this.roleType = new LazyRoleType(this, associationObjectType, roleObjectType, this.multiplicity, data, lookup);
     this.associationType = this.roleType.associationType;
 
     if (this.roleType.objectType.isComposite) {

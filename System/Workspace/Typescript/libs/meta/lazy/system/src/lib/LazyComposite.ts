@@ -1,4 +1,4 @@
-import { Origin, pluralize, ObjectTypeData } from '@allors/workspace/system';
+import { Origin, pluralize, ObjectTypeData, Multiplicity } from '@allors/workspace/system';
 import { frozenEmptySet } from './utils/frozenEmptySet';
 import { InternalComposite } from './internal/InternalComposite';
 import { InternalInterface } from './internal/InternalInterface';
@@ -9,6 +9,7 @@ import { InternalClass } from './internal/InternalClass';
 import { InternalMetaPopulation } from './internal/InternalMetaPopulation';
 import { LazyRelationType } from './LazyRelationType';
 import { LazyMethodType } from './LazyMethodType';
+import { Lookup } from './utils/Lookup';
 
 export abstract class LazyComposite implements InternalComposite {
   isUnit = false;
@@ -62,7 +63,7 @@ export abstract class LazyComposite implements InternalComposite {
     this.directMethodTypes = frozenEmptySet as Set<InternalMethodType>;
   }
 
-  derive(): void {
+  derive(lookup: Lookup): void {
     const [, s, d, r, m, p] = this.d;
 
     this.singularName = s;
@@ -70,7 +71,7 @@ export abstract class LazyComposite implements InternalComposite {
     if (d) {
       this.directSupertypes = new Set(d?.map((v) => this.metaPopulation.metaObjectByTag.get(v) as InternalInterface));
     }
-    r?.forEach((v) => new LazyRelationType(this, v));
+    r?.forEach((v) => new LazyRelationType(this, v, lookup));
     if (m) {
       this.directMethodTypes = new Set(m?.map((v) => new LazyMethodType(this, v)));
     }

@@ -1,4 +1,4 @@
-import { MetaData } from '@allors/workspace/system';
+import { MetaData, Multiplicity, Origin } from '@allors/workspace/system';
 import { InternalMetaPopulation } from './internal/InternalMetaPopulation';
 import { InternalMetaObject } from './internal/InternalMetaObject';
 import { InternalUnit } from './internal/InternalUnit';
@@ -11,6 +11,7 @@ import { InternalObjectType } from './internal/InternalObjectType';
 import { LazyUnit } from './LazyUnit';
 import { LazyInterface } from './LazyInterface';
 import { LazyClass } from './LazyClass';
+import { Lookup } from './utils/Lookup';
 
 export class LazyMetaPopulation implements InternalMetaPopulation {
   readonly metaObjectByTag: Map<number, InternalMetaObject> = new Map();
@@ -25,13 +26,14 @@ export class LazyMetaPopulation implements InternalMetaPopulation {
     this.units = new Set(['Binary', 'Boolean', 'DateTime', 'Decimal', 'Float', 'Integer', 'String', 'Unique'].map((name, i) => new LazyUnit(this, i + 1, name)));
     this.interfaces = new Set(data.i?.map((v) => new LazyInterface(this, v)) ?? []);
     this.classes = new Set(data.c?.map((v) => new LazyClass(this, v)) ?? []);
-
-    this.composites.forEach((v) => v.derive());
-    this.composites.forEach((v) => v.deriveSuper());
-    this.interfaces.forEach((v) => v.deriveSub());
-
     this.relationTypes = new Set();
     this.methodTypes = new Set();
+
+    const lookup = new Lookup(this, data);
+
+    this.composites.forEach((v) => v.derive(lookup));
+    this.composites.forEach((v) => v.deriveSuper());
+    this.interfaces.forEach((v) => v.deriveSub());
   }
 
   onNew(metaObject: InternalMetaObject) {
