@@ -1,6 +1,5 @@
-import { MetaData, MetaPopulation } from '@allors/workspace/system';
-import { LazyMetaPopulation } from '@allors/workspace/lazy';
-
+import { MetaPopulation } from '@allors/workspace/system';
+import { LazyMetaPopulation } from '@allors/meta/lazy';
 
 describe('MetaPopulation', () => {
   describe('default constructor', () => {
@@ -9,6 +8,5 @@ describe('MetaPopulation', () => {
     it('should be newable', () => {
       expect(metaPopulation).not.toBeNull();
     });
-
   });
 });

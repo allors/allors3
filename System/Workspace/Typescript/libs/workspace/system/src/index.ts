@@ -1,7 +1,6 @@
 export * from './lib/MetaData'
 export * from './lib/Multiplicity'
 export * from './lib/Origin'
-export * from './lib/pluralize'
 export * from './lib/UnitTags'
 
 export * from './lib/meta/AssociationType';
@@ -17,3 +16,5 @@ export * from './lib/meta/PropertyType';
 export * from './lib/meta/RelationType';
 export * from './lib/meta/RoleType';
 export * from './lib/meta/Unit';
+
+export * from './lib/utils/pluralize'

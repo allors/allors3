@@ -42,14 +42,14 @@ export abstract class LazyComposite implements InternalComposite {
   }
 
   get associationTypes(): Readonly<Set<InternalAssociationType>> {
-    return this._associationTypes ??= new Set(this.associationTypeGenerator());
+    return (this._associationTypes ??= new Set(this.associationTypeGenerator()));
   }
   get roleTypes(): Readonly<Set<InternalRoleType>> {
-    return this._roleTypes ??= new Set(this.roleTypeGenerator());
+    return (this._roleTypes ??= new Set(this.roleTypeGenerator()));
   }
 
   get methodTypes(): Readonly<Set<InternalMethodType>> {
-    return this._methodTypes ??= new Set(this.methodTypeGenerator());
+    return (this._methodTypes ??= new Set(this.methodTypeGenerator()));
   }
 
   abstract isAssignableFrom(objectType: InternalComposite): boolean;

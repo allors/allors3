@@ -16,8 +16,8 @@
     "baseUrl": ".",
     "paths": {
       "@allors/workspace/system": ["libs/workspace/system/src/index.ts"],
-      "@allors/workspace/lazy": ["libs/workspace/lazy/src/index.ts"],
-      "@allors/tests/workspace/lazy": ["libs/tests/workspace/lazy/src/index.ts"]
+      "@allors/meta/lazy": ["libs/meta/lazy/src/index.ts"],
+      "@allors/tests/meta/lazy": ["libs/tests/meta/lazy/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

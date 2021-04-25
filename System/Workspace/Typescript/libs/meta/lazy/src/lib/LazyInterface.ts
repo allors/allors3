@@ -21,7 +21,7 @@ export class LazyInterface extends LazyComposite implements InternalInterface {
     this.metaPopulation.composites.forEach((v) => {
       if (v.supertypes.has(this)) {
         this.subtypes.add(v as InternalComposite);
-        if(v.isClass){
+        if (v.isClass) {
           this.classes.add(v as InternalClass);
         }
       }
