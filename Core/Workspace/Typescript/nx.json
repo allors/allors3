@@ -20,6 +20,6 @@
     "workspace-tests": { "tags": [] },
     "protocol-json-system": { "tags": [] },
     "workspace-system": { "tags": [] },
-    "adapters-memory": { "tags": [] }
+    "adapters-memory-system": { "tags": [] }
   }
 }

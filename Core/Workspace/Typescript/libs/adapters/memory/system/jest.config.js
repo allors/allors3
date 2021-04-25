@@ -1,6 +1,6 @@
 module.exports = {
-  displayName: 'adapters-memory',
-  preset: '../../../jest.preset.js',
+  displayName: 'adapters-memory-system',
+  preset: '../../../../jest.preset.js',
   globals: {
     'ts-jest': {
       tsConfig: '<rootDir>/tsconfig.spec.json',
@@ -10,5 +10,5 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/adapters/memory',
+  coverageDirectory: '../../../../coverage/libs/adapters/memory/system',
 };

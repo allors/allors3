@@ -14,4 +14,4 @@ function link(src, dst){
 // System
 link ('../../../System/Workspace/Typescript/libs/workspace/system/src', 'libs/workspace/system');
 link ('../../../System/Workspace/Typescript/libs/protocol/json/system/src', 'libs/protocol/json/system');
-link ('../../../System/Workspace/Typescript/libs/adapters/memory/src', 'libs/adapters/system');
+link ('../../../System/Workspace/Typescript/libs/adapters/memory/system/src', 'libs/adapters/memory/system');

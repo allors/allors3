@@ -1,7 +1,7 @@
 import { MetaPopulation } from '@allors/meta/core';
 import { Meta, PullFactory, TreeFactory, SelectFactory, data } from '@allors/meta/generated';
 import { Database } from '@allors/workspace/core';
-import { MemoryDatabase } from '@allors/adapters/memory';
+import { MemoryDatabase } from '@allors/adapters/memory/system';
 
 import { extend as extendDomain } from '@allors/domain/custom';
 

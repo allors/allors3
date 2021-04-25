@@ -222,13 +222,13 @@
         "test": { "executor": "@nrwl/jest:jest", "outputs": ["coverage/libs/workspace/system"], "options": { "jestConfig": "libs/workspace/system/jest.config.js", "passWithNoTests": true } }
       }
     },
-    "adapters-memory": {
-      "root": "libs/adapters/memory",
-      "sourceRoot": "libs/adapters/memory/src",
+    "adapters-memory-system": {
+      "root": "libs/adapters/memory/system",
+      "sourceRoot": "libs/adapters/memory/system/src",
       "projectType": "library",
       "targets": {
-        "lint": { "executor": "@nrwl/linter:eslint", "options": { "lintFilePatterns": ["libs/adapters/memory/**/*.ts"] } },
-        "test": { "executor": "@nrwl/jest:jest", "outputs": ["coverage/libs/adapters/memory"], "options": { "jestConfig": "libs/adapters/memory/jest.config.js", "passWithNoTests": true } }
+        "lint": { "executor": "@nrwl/linter:eslint", "options": { "lintFilePatterns": ["libs/adapters/memory/system/**/*.ts"] } },
+        "test": { "executor": "@nrwl/jest:jest", "outputs": ["coverage/libs/adapters/memory/system"], "options": { "jestConfig": "libs/adapters/memory/system/jest.config.js", "passWithNoTests": true } }
       }
     }
   }
