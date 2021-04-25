@@ -17,8 +17,11 @@ namespace Allors.Database.Meta
         public IRelationType RelationType => this.roleType.RelationType;
 
         public string FullName => this.roleType.FullName;
+        public bool ExistAssignedSingularName => this.roleType.ExistAssignedSingularName;
 
         public string SingularFullName => this.roleType.SingularFullName;
+
+        public bool ExistAssignedPluralName => this.roleType.ExistAssignedPluralName;
 
         public string PluralFullName => this.roleType.PluralFullName;
 

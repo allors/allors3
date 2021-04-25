@@ -13,7 +13,11 @@ namespace Allors.Database.Meta
 
         new IRelationTypeBase RelationType { get; }
 
+        bool ExistAssignedSingularName { get; }
+
         new string SingularName { get; set; }
+
+        bool ExistAssignedPluralName { get; }
 
         new string PluralName { get; set; }
 
