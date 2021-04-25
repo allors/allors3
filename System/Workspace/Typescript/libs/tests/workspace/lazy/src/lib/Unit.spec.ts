@@ -1,27 +1,27 @@
-import { IUnit } from '@allors/workspace/system';
-import { MetaPopulation } from '@allors/workspace/lazy';
+import { Unit } from '@allors/workspace/system';
+import { LazyMetaPopulation } from '@allors/workspace/lazy';
 
-interface M extends MetaPopulation {
-  Binary: IUnit;
+interface M extends LazyMetaPopulation {
+  Binary: Unit;
 
-  Boolean: IUnit;
+  Boolean: Unit;
 
-  DateTime: IUnit;
+  DateTime: Unit;
 
-  Decimal: IUnit;
+  Decimal: Unit;
 
-  Float: IUnit;
+  Float: Unit;
 
-  Integer: IUnit;
+  Integer: Unit;
 
-  String: IUnit;
+  String: Unit;
 
-  Unique: IUnit;
+  Unique: Unit;
 }
 
 describe('MetaPopulation', () => {
   describe('default constructor', () => {
-    const metaPopulation = new MetaPopulation({}) as M;
+    const metaPopulation = new LazyMetaPopulation({}) as M;
 
     it('should have Binary unit', () => {
       expect(metaPopulation.Binary).not.toBeNull();

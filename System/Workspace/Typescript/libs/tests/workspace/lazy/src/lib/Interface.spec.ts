@@ -1,9 +1,9 @@
-import { IInterface, MetaData } from '@allors/workspace/system';
-import { MetaPopulation } from '@allors/workspace/lazy';
+import { Interface, MetaData } from '@allors/workspace/system';
+import { LazyMetaPopulation } from '@allors/workspace/lazy';
 
-type Named = IInterface;
+type Named = Interface;
 
-interface M extends MetaPopulation {
+interface M extends LazyMetaPopulation {
   Named: Named;
 }
 
@@ -13,7 +13,7 @@ describe('MetaPopulation', () => {
       i: [[9, 'Named']],
     };
 
-    const metaPopulation = new MetaPopulation(data) as M;
+    const metaPopulation = new LazyMetaPopulation(data) as M;
 
     it('should have the interface', () => {
       expect(metaPopulation.Named).not.toBeNull();
