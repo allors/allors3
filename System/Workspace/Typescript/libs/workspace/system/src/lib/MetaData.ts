@@ -1,19 +1,7 @@
-export type UnitRelationTypeData = [
-  tag: number,
-  roleObjectType: number,
-  singularName?: string,
-  SizeOrScaleAndPrecision?: number | string,
-  origin?: number,
-  pluralName?: string,
-  isDerived?: boolean,
-  isRequired?: boolean,
-  isUnique?: boolean,
-  mediaType?: string
-];
-
-export type CompositeRelationTypeData = [tag: number, roleObjectType: number, singularName?: string, multiplicity?: number, origin?: number, pluralName?: string, isDerived?: boolean, isRequired?: boolean, isUnique?: boolean];
-
-export type RelationTypeData = UnitRelationTypeData | CompositeRelationTypeData;
+export type RelationTypeData =
+  | [tag: number, roleObjectType: number, sizeOrScale?: number, precision?: number]
+  | [tag: number, roleObjectType: number, singularName?: string, sizeOrScale?: number, precision?: number]
+  | [tag: number, roleObjectType: number, singularName?: string, pluralName?: string, sizeOrScale?: number, precision?: number];
 
 export type MethodTypeData = [tag: number, name: string];
 
@@ -29,4 +17,49 @@ export interface MetaData {
    * Classes
    */
   c?: ObjectTypeData[];
+
+  /**
+   * Multiplicity OneToOne
+   */
+  m0?: number[];
+
+  /**
+   * Multiplicity OneToMany
+   */
+  m1?: number[];
+
+  /**
+   * Multiplicity ManyToMany
+   */
+  m3?: number[];
+
+  /**
+   * Origin Workspace
+   */
+  o2?: number[];
+
+  /**
+   * Origin Session
+   */
+  o4?: number[];
+
+  /**
+   * IsDerived
+   */
+  d?: number[];
+
+  /**
+   * IsRequired
+   */
+  r?: number[];
+
+  /**
+   * IsUniqe
+   */
+  u?: number[];
+
+  /**
+   * MediaType
+   */
+  m?: { [name: string]: string };
 }
