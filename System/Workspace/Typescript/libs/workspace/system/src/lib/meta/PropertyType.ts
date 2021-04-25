@@ -2,7 +2,7 @@ import { Origin } from '../Origin';
 import { ObjectType } from './ObjectType';
 import { OperandType } from './OperandType';
 
-  export interface PropertyType extends OperandType {
+export interface PropertyType extends OperandType {
   origin: Origin;
 
   singularName: string;

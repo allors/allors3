@@ -7,15 +7,15 @@ export interface RoleType extends PropertyType {
 
   relationType: RelationType;
 
-  size: number;
+  size?: number;
 
-  precision: number;
+  precision?: number;
 
-  scale: number;
+  scale?: number;
 
   isRequired: boolean;
 
   isUnique: boolean;
 
-  mediaType: string;
+  mediaType?: string;
 }

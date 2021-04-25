@@ -6,16 +6,16 @@ import { ObjectType } from './ObjectType';
 import { RoleType } from './RoleType';
 
 export interface Composite extends ObjectType {
-  directSupertypes: Readonly<Set<Interface>>;
-  directAssociationTypes: Readonly<Set<AssociationType>>;
-  directRoleTypes: Readonly<Set<RoleType>>;
-  directMethodTypes: Readonly<Set<MethodType>>;
+  directSupertypes: Set<Interface>;
+  directAssociationTypes: Set<AssociationType>;
+  directRoleTypes: Set<RoleType>;
+  directMethodTypes: Set<MethodType>;
 
-  supertypes: Readonly<Set<Interface>>;
-  classes: Readonly<Set<Class>>;
-  associationTypes: Readonly<Set<AssociationType>>;
-  roleTypes: Readonly<Set<RoleType>>;
-  methodTypes: Readonly<Set<MethodType>>;
+  supertypes: Set<Interface>;
+  classes: Set<Class>;
+  associationTypes: Set<AssociationType>;
+  roleTypes: Set<RoleType>;
+  methodTypes: Set<MethodType>;
 
   isAssignableFrom(objectType: Composite): boolean;
 }

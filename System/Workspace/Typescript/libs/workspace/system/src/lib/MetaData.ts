@@ -11,16 +11,7 @@ export type UnitRelationTypeData = [
   mediaType?: string
 ];
 
-export type CompositeRelationTypeData = [
-  tag: number,
-   roleObjectType: number,
-    singularName?: string,
-     multiplicity?: number,
-      origin?: number,
-       pluralName?: string,
-        isDerived?: boolean,
-         isRequired?: boolean,
-          isUnique?: boolean];
+export type CompositeRelationTypeData = [tag: number, roleObjectType: number, singularName?: string, multiplicity?: number, origin?: number, pluralName?: string, isDerived?: boolean, isRequired?: boolean, isUnique?: boolean];
 
 export type RelationTypeData = UnitRelationTypeData | CompositeRelationTypeData;
 
