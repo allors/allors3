@@ -17,7 +17,9 @@
     "paths": {
       "@allors/workspace/system": ["libs/workspace/system/src/index.ts"],
       "@allors/meta/lazy": ["libs/meta/lazy/src/index.ts"],
-      "@allors/tests/meta/lazy": ["libs/tests/meta/lazy/src/index.ts"]
+      "@allors/tests/meta/lazy": ["libs/tests/meta/lazy/src/index.ts"],
+      "@allors/protocol/json/system": ["libs/protocol/json/system/src/index.ts"],
+      "@allors/adapters/memory": ["libs/adapters/memory/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

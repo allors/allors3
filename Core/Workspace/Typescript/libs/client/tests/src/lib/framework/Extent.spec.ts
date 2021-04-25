@@ -1,5 +1,5 @@
 import { Pull, Result, Select, Tree, And, Equals, Extent, Node } from '@allors/data/core';
-import { PullRequest } from '@allors/protocol/core';
+import { PullRequest } from '@allors/protocol/json/system';
 import { Organisation, C1, Person, I1 } from '@allors/domain/generated';
 
 import { Fixture } from '../Fixture';

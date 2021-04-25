@@ -1,6 +1,6 @@
 import { MetaPopulation } from '@allors/meta/core';
 import { Database, Session } from '@allors/workspace/core';
-import { MemoryDatabase } from '@allors/workspace/memory';
+import { MemoryDatabase } from '@allors/adapters/memory';
 import { Person } from '@allors/domain/generated';
 
 import { data, Meta } from '@allors/meta/generated';

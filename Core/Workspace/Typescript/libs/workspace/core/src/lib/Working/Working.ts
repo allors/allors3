@@ -1,5 +1,5 @@
 import { ObjectType } from '@allors/meta/core';
-import { PushRequest, PushResponse } from '@allors/protocol/core';
+import { PushRequest, PushResponse } from '@allors/protocol/json/system';
 
 import { DatabaseObject } from './DatabaseObject';
 import { Database } from '../Remote/Remote';

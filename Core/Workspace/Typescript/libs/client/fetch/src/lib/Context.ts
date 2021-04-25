@@ -1,6 +1,6 @@
 import { Database, Session, Method } from '@allors/workspace/core';
 import { Pull } from '@allors/data/core';
-import { PullRequest, PullResponse, SyncResponse, PushRequest, PushResponse, SyncRequest, PushRequestObject, InvokeResponse } from '@allors/protocol/core';
+import { PullRequest, PullResponse, SyncResponse, PushRequest, PushResponse, SyncRequest, PushRequestObject, InvokeResponse } from '@allors/protocol/json/system';
 
 import { Client } from './Client';
 

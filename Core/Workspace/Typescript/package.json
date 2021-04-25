@@ -28,7 +28,7 @@
     "test:meta": "npx nx test meta-tests --skipNxCache",
     "test:workspace": "npx nx test workspace-tests --skipNxCache",
     "test:client": "npx nx test client-tests --skipNxCache",
-    "test:all": "npm run test:meta && npm run test:workspace && npm run test:client"
+    "test:all": "npm run test:meta && npm run test:workspace && npm run test:client && node ./postinstall.js"
   },
   "private": true,
   "dependencies": {
@@ -103,6 +103,7 @@
     "jest-chain": "^1.1.5",
     "jest-extended": "^0.11.5",
     "jest-preset-angular": "8.3.2",
+    "lnk": "^1.1.0",
     "prettier": "2.2.1",
     "ts-jest": "26.4.0",
     "ts-node": "~9.1.1",

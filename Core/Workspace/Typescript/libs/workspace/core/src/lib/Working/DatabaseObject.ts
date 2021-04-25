@@ -1,5 +1,5 @@
 import { ObjectType, AssociationType, RoleType, MethodType, OperandType } from '@allors/meta/core';
-import { Operations, PushRequestObject, PushRequestNewObject } from '@allors/protocol/core';
+import { Operations, PushRequestObject, PushRequestNewObject } from '@allors/protocol/json/system';
 
 import { Record } from '../Remote/RemoteObject';
 

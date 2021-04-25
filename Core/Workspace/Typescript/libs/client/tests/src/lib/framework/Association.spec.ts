@@ -1,7 +1,7 @@
 import { Equals } from '@allors/data/core';
 
 import { Fixture } from '../Fixture';
-import { PullRequest } from '@allors/protocol/core';
+import { PullRequest } from '@allors/protocol/json/system';
 import { C2 } from '@allors/domain/generated';
 
 describe('Association',

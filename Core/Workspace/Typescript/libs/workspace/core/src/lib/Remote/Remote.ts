@@ -1,5 +1,5 @@
 import { ObjectType, MetaPopulation, OperandType } from '@allors/meta/core';
-import { Operations, PullResponse, SyncRequest, SyncResponse, SecurityRequest, SecurityResponse } from '@allors/protocol/core';
+import { Operations, PullResponse, SyncRequest, SyncResponse, SecurityRequest, SecurityResponse } from '@allors/protocol/json/system';
 
 import { Session } from '../Working/Working';
 import { Permission } from '../Permissions/Permission';

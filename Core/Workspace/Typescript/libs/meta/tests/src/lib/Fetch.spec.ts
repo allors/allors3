@@ -2,7 +2,7 @@ import { MetaPopulation } from '@allors/meta/core';
 import { Database } from '@allors/workspace/core';
 
 import { data, SelectFactory, Meta } from '@allors/meta/generated';
-import { MemoryDatabase } from '@allors/workspace/memory';
+import { MemoryDatabase } from '@allors/adapters/memory';
 
 describe('Select', () => {
   let m: Meta;

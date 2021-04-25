@@ -1,32 +1,7 @@
 {
   "npmScope": "allors",
-  "affected": {
-    "defaultBase": "master"
-  },
-  "implicitDependencies": {
-    "package.json": {
-      "dependencies": "*",
-      "devDependencies": "*"
-    },
-    ".eslintrc.json": "*"
-  },
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "@nrwl/workspace/tasks-runners/default",
-      "options": {
-        "cacheableOperations": ["build", "lint", "test", "e2e"]
-      }
-    }
-  },
-  "projects": {
-    "workspace-system": {
-      "tags": []
-    },
-    "meta-lazy": {
-      "tags": []
-    },
-    "tests-meta-lazy": {
-      "tags": []
-    }
-  }
+  "affected": { "defaultBase": "master" },
+  "implicitDependencies": { "package.json": { "dependencies": "*", "devDependencies": "*" }, ".eslintrc.json": "*" },
+  "tasksRunnerOptions": { "default": { "runner": "@nrwl/workspace/tasks-runners/default", "options": { "cacheableOperations": ["build", "lint", "test", "e2e"] } } },
+  "projects": { "workspace-system": { "tags": [] }, "meta-lazy": { "tags": [] }, "tests-meta-lazy": { "tags": [] }, "protocol-json-system": { "tags": [] }, "adapters-memory": { "tags": [] } }
 }

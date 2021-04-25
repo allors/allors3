@@ -1,5 +1,5 @@
 import { DatabaseObject, Session, WorkspaceObject } from '@allors/workspace/core';
-import { PullResponse } from '@allors/protocol/core';
+import { PullResponse } from '@allors/protocol/json/system';
 import { assert } from '@allors/meta/core';
 
 export class Loaded {

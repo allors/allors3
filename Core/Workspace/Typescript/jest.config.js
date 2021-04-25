@@ -12,10 +12,11 @@ module.exports = {
     '<rootDir>/libs/meta/core',
     '<rootDir>/libs/meta/generated',
     '<rootDir>/libs/meta/tests',
-    '<rootDir>/libs/protocol/core',
     '<rootDir>/libs/workspace/core',
-    '<rootDir>/libs/workspace/memory',
     '<rootDir>/libs/workspace/tests',
+    '<rootDir>/libs/protocol/json/system',
+    '<rootDir>/libs/workspace/system',
+    '<rootDir>/libs/adapters/memory',
   ],
   setupFilesAfterEnv: ['jest-extended', 'jest-chain'],
 };

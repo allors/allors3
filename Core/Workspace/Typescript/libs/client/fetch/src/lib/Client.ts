@@ -11,7 +11,7 @@ import {
   SecurityResponse,
   InvokeResponse,
   InvokeRequest,
-} from '@allors/protocol/core';
+} from '@allors/protocol/json/system';
 import { Pull } from '@allors/data/core';
 import { assert } from '@allors/meta/core';
 

@@ -2,7 +2,7 @@ import { UnitSample } from '@allors/domain/generated';
 
 import { Fixture } from '../Fixture';
 import { Procedure } from '@allors/data/core';
-import { PullRequest } from '@allors/protocol/core';
+import { PullRequest } from '@allors/protocol/json/system';
 
 describe('Unit Samples', () => {
   let fixture: Fixture;

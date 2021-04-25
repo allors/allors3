@@ -1,20 +1,8 @@
 {
-  "implicitDependencies": {
-    "workspace.json": "*",
-    "package.json": { "dependencies": "*", "devDependencies": "*" },
-    "tsconfig.base.json": "*",
-    "tslint.json": "*",
-    ".eslintrc.json": "*",
-    "nx.json": "*"
-  },
+  "implicitDependencies": { "workspace.json": "*", "package.json": { "dependencies": "*", "devDependencies": "*" }, "tsconfig.base.json": "*", "tslint.json": "*", ".eslintrc.json": "*", "nx.json": "*" },
   "affected": { "defaultBase": "master" },
   "npmScope": "allors",
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "@nrwl/workspace/tasks-runners/default",
-      "options": { "cacheableOperations": ["build", "lint", "test", "e2e"] }
-    }
-  },
+  "tasksRunnerOptions": { "default": { "runner": "@nrwl/workspace/tasks-runners/default", "options": { "cacheableOperations": ["build", "lint", "test", "e2e"] } } },
   "projects": {
     "angular-app": { "tags": [] },
     "angular-material-app": { "tags": [] },
@@ -28,9 +16,10 @@
     "meta-core": { "tags": [] },
     "meta-generated": { "tags": [] },
     "meta-tests": { "tags": [] },
-    "protocol-core": { "tags": [] },
     "workspace-core": { "tags": [] },
-    "workspace-memory": { "tags": [] },
-    "workspace-tests": { "tags": [] }
+    "workspace-tests": { "tags": [] },
+    "protocol-json-system": { "tags": [] },
+    "workspace-system": { "tags": [] },
+    "adapters-memory": { "tags": [] }
   }
 }

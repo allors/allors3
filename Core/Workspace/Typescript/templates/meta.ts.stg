@@ -23,9 +23,6 @@ GNU General Public License for more details.
 For more information visit http://www.allors.com/legal
 !$
 <generations>
-    <generation template="m" output="m.ts"/>
-
-
     <generation template="index" output="index.ts"/>
     <generation template="domain" output="domain.g.ts"/>
     <generation template="tree" output="tree.g.ts"/>

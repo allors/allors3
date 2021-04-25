@@ -1,5 +1,5 @@
 import { Pull, Extent } from '@allors/data/core';
-import { PullRequest } from '@allors/protocol/core';
+import { PullRequest } from '@allors/protocol/json/system';
 import { C1 } from '@allors/domain/generated';
 
 import { Fixture } from '../Fixture';
