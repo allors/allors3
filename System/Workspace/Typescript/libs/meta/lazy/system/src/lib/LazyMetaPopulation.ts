@@ -23,17 +23,18 @@ export class LazyMetaPopulation implements InternalMetaPopulation {
   readonly methodTypes: Set<InternalMethodType>;
 
   constructor(data: MetaData) {
+    const lookup = new Lookup(data);
+
     this.units = new Set(['Binary', 'Boolean', 'DateTime', 'Decimal', 'Float', 'Integer', 'String', 'Unique'].map((name, i) => new LazyUnit(this, i + 1, name)));
-    this.interfaces = new Set(data.i?.map((v) => new LazyInterface(this, v)) ?? []);
-    this.classes = new Set(data.c?.map((v) => new LazyClass(this, v)) ?? []);
+    this.interfaces = new Set(data.i?.map((v) => new LazyInterface(this, v, lookup)) ?? []);
+    this.classes = new Set(data.c?.map((v) => new LazyClass(this, v, lookup)) ?? []);
     this.relationTypes = new Set();
     this.methodTypes = new Set();
-
-    const lookup = new Lookup(this, data);
 
     this.composites.forEach((v) => v.derive(lookup));
     this.composites.forEach((v) => v.deriveSuper());
     this.interfaces.forEach((v) => v.deriveSub());
+    this.composites.forEach((v) => v.deriveOperand());
   }
 
   onNew(metaObject: InternalMetaObject) {

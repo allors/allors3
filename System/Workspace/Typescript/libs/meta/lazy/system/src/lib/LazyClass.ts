@@ -1,4 +1,5 @@
 import { ObjectTypeData } from '@allors/workspace/system';
+import { Lookup } from './utils/Lookup';
 import { InternalMetaPopulation } from './internal/InternalMetaPopulation';
 import { InternalClass } from './internal/InternalClass';
 import { InternalComposite } from './internal/InternalComposite';
@@ -8,8 +9,8 @@ export class LazyClass extends LazyComposite implements InternalClass {
   readonly isClass = true;
   readonly classes: Set<InternalClass>;
 
-  constructor(metaPopulation: InternalMetaPopulation, data: ObjectTypeData) {
-    super(metaPopulation, data);
+  constructor(metaPopulation: InternalMetaPopulation, data: ObjectTypeData, lookup: Lookup) {
+    super(metaPopulation, data, lookup);
     this.classes = new Set([this]);
   }
 

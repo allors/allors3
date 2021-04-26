@@ -1,18 +1,14 @@
 import { MetaData, Multiplicity, Origin } from '@allors/workspace/system';
-import { InternalMetaPopulation } from '../internal/InternalMetaPopulation';
-import { InternalRelationType } from '../internal/InternalRelationType';
 
 export class Lookup {
-  m: Map<number, Multiplicity>;
   o: Map<number, Origin>;
+  m: Map<number, Multiplicity>;
   d: Set<number>;
   r: Set<number>;
   u: Set<number>;
   t: Map<number, string>;
 
-  constructor({ metaObjectByTag }: InternalMetaPopulation, data: MetaData) {
-    const r = (tag: number) => metaObjectByTag.get(tag) as InternalRelationType;
-
+  constructor(data: MetaData) {
     this.m = new Map();
     data.m?.forEach((v, i) => {
       const multiplicity = i == 0 ? Multiplicity.OneToOne : i == 1 ? Multiplicity.OneToMany : Multiplicity.ManyToMany;

@@ -1,4 +1,4 @@
-import { Origin, pluralize, ObjectTypeData, Multiplicity } from '@allors/workspace/system';
+import { Origin, pluralize, ObjectTypeData } from '@allors/workspace/system';
 import { frozenEmptySet } from './utils/frozenEmptySet';
 import { InternalComposite } from './internal/InternalComposite';
 import { InternalInterface } from './internal/InternalInterface';
@@ -15,10 +15,15 @@ export abstract class LazyComposite implements InternalComposite {
   isUnit = false;
   isComposite = true;
   readonly tag: number;
-  singularName: string;
+  readonly singularName: string;
+  readonly origin: Origin;
 
-  directSupertypes: Set<InternalInterface>;
-  supertypes: Set<InternalInterface>;
+  associationTypes!: Set<InternalAssociationType>;
+  roleTypes!: Set<InternalRoleType>;
+  methodTypes!: Set<InternalMethodType>;
+
+  directSupertypes!: Set<InternalInterface>;
+  supertypes!: Set<InternalInterface>;
 
   directAssociationTypes: Set<InternalAssociationType> = new Set();
   directRoleTypes: Set<InternalRoleType> = new Set();
@@ -27,70 +32,67 @@ export abstract class LazyComposite implements InternalComposite {
   abstract isClass: boolean;
   abstract classes: Set<InternalClass>;
 
-  private _associationTypes?: Set<InternalAssociationType>;
-  private _roleTypes?: Set<InternalRoleType>;
-  private _methodTypes?: Set<InternalMethodType>;
-  private _origin?: Origin;
   private _pluralName?: string;
-
-  get origin() {
-    return (this._origin ??= Origin.Database);
-  }
 
   get pluralName() {
     return (this._pluralName ??= pluralize(this.singularName));
   }
 
-  get associationTypes(): Set<InternalAssociationType> {
-    return (this._associationTypes ??= new Set(this.associationTypeGenerator()));
-  }
-  get roleTypes(): Set<InternalRoleType> {
-    return (this._roleTypes ??= new Set(this.roleTypeGenerator()));
-  }
-
-  get methodTypes(): Set<InternalMethodType> {
-    return (this._methodTypes ??= new Set(this.methodTypeGenerator()));
-  }
-
   abstract isAssignableFrom(objectType: InternalComposite): boolean;
 
-  constructor(public metaPopulation: InternalMetaPopulation, public d: ObjectTypeData) {
-    this.tag = d[0];
-    this.singularName = d[1];
+  constructor(public metaPopulation: InternalMetaPopulation, public d: ObjectTypeData, lookup: Lookup) {
+    const [t, s] = this.d;
+    this.tag = t;
+    this.singularName = s;
+    this.origin = lookup.o.get(t) ?? Origin.Database;
     metaPopulation.onNewComposite(this);
-    this.directSupertypes = frozenEmptySet as Set<InternalInterface>;
-    this.supertypes = frozenEmptySet as Set<InternalInterface>;
-    this.directMethodTypes = frozenEmptySet as Set<InternalMethodType>;
-  }
 
+    this.origin = Origin.Database;
+  }
   onNewAssociationType(associationType: InternalAssociationType) {
     this.directAssociationTypes.add(associationType);
-    (this as Record<string, unknown>)[associationType.singularName] = associationType;
   }
 
   onNewRoleType(roleType: InternalRoleType) {
     this.directRoleTypes.add(roleType);
-    (this as Record<string, unknown>)[roleType.singularName] = roleType;
   }
 
   derive(lookup: Lookup): void {
-    const [, s, d, r, m, p] = this.d;
+    const [, , d, r, m, p] = this.d;
 
-    this.singularName = s;
     this._pluralName = p;
+
     if (d) {
       this.directSupertypes = new Set(d?.map((v) => this.metaPopulation.metaObjectByTag.get(v) as InternalInterface));
+    } else {
+      this.directSupertypes = frozenEmptySet as Set<InternalInterface>;
     }
+
     r?.forEach((v) => new LazyRelationType(this, v, lookup));
+
     if (m) {
       this.directMethodTypes = new Set(m?.map((v) => new LazyMethodType(this, v)));
+    } else {
+      this.directMethodTypes = frozenEmptySet as Set<InternalMethodType>;
     }
   }
 
   deriveSuper(): void {
     if (this.directSupertypes.size > 0) {
       this.supertypes = new Set(this.supertypeGenerator());
+    } else {
+      this.supertypes = frozenEmptySet as Set<InternalInterface>;
     }
+  }
+
+  deriveOperand() {
+    this.associationTypes = new Set(this.associationTypeGenerator());
+    this.roleTypes = new Set(this.roleTypeGenerator());
+    this.methodTypes = new Set(this.methodTypeGenerator());
+
+    this.associationTypes.forEach((v) => ((this as Record<string, unknown>)[v.name] = v));
+    this.roleTypes.forEach((v) => ((this as Record<string, unknown>)[v.name] = v));
+    this.methodTypes.forEach((v) => ((this as Record<string, unknown>)[v.name] = v));
   }
 
   *supertypeGenerator(): IterableIterator<InternalInterface> {
@@ -105,33 +107,33 @@ export abstract class LazyComposite implements InternalComposite {
   }
 
   *associationTypeGenerator(): IterableIterator<InternalAssociationType> {
-    if (this._associationTypes) {
-      yield* this._associationTypes.values();
+    if (this.associationTypes) {
+      yield* this.associationTypes;
     } else {
-      yield* this.directAssociationTypes.values();
-      for (const supertype of this.directSupertypes.values()) {
+      yield* this.directAssociationTypes;
+      for (const supertype of this.directSupertypes) {
         yield* supertype.associationTypeGenerator();
       }
     }
   }
 
   *roleTypeGenerator(): IterableIterator<InternalRoleType> {
-    if (this._roleTypes) {
-      yield* this._roleTypes.values();
+    if (this.roleTypes) {
+      yield* this.roleTypes;
     } else {
-      yield* this.directRoleTypes.values();
-      for (const supertype of this.directSupertypes.values()) {
+      yield* this.directRoleTypes;
+      for (const supertype of this.directSupertypes) {
         yield* supertype.roleTypeGenerator();
       }
     }
   }
 
   *methodTypeGenerator(): IterableIterator<InternalMethodType> {
-    if (this._methodTypes) {
-      yield* this._methodTypes.values();
+    if (this.methodTypes) {
+      yield* this.methodTypes;
     } else {
-      yield* this.directMethodTypes.values();
-      for (const supertype of this.directSupertypes.values()) {
+      yield* this.directMethodTypes;
+      for (const supertype of this.directSupertypes) {
         yield* supertype.methodTypeGenerator();
       }
     }
