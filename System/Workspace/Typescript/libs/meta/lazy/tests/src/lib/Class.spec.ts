@@ -1,7 +1,7 @@
-import { Class, Interface, Origin } from '@allors/workspace/system';
+import { Class, Origin } from '@allors/workspace/system';
 import { LazyMetaPopulation } from '@allors/meta/lazy/system';
 
-describe('MetaPopulation', () => {
+describe('Class in MetaPopulation', () => {
   describe('with minimal class metadata', () => {
     type Organisation = Class;
 

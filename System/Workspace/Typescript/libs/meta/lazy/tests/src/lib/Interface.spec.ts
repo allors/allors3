@@ -7,7 +7,7 @@ interface M extends LazyMetaPopulation {
   Named: Named;
 }
 
-describe('MetaPopulation', () => {
+describe('Interface in MetaPopulation', () => {
   describe('with minimal interface metadata', () => {
     const data: MetaData = {
       i: [[9, 'Named']],
@@ -26,7 +26,7 @@ describe('MetaPopulation', () => {
       expect(Named.isUnit).toBeFalsy();
       expect(Named.isComposite).toBeTruthy();
       expect(Named.isInterface).toBeTruthy();
-      expect(Named.isInterface).toBeFalsy();
+      expect(Named.isClass).toBeFalsy();
     });
   });
 
