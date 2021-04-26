@@ -1,4 +1,4 @@
-import { ObjectType } from '@allors/meta/core';
+import { ObjectType } from '@allors/workspace/system';
 import { PushRequest, PushResponse } from '@allors/protocol/json/system';
 
 import { DatabaseObject } from './DatabaseObject';

@@ -1,4 +1,4 @@
-import { ObjectType, AssociationType, Origin } from '@allors/meta/core';
+import { ObjectType, AssociationType, Origin } from '@allors/workspace/system';
 import { Operations, PushRequestObject, PushRequest, PushResponse } from '@allors/protocol/json/system';
 import { Record, Session, DatabaseObject, WorkspaceObject } from '@allors/workspace/core';
 

@@ -33,7 +33,7 @@ index(meta, workspaceName) ::= <<
 /* Allors generated file. Do not edit, changes will be overwritten. */
 
 export * from './m.g';
-export { data } from './data.json';
+export { data } from './data.g';
 
 >>
 

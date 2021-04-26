@@ -31,8 +31,7 @@
       "@allors/meta/lazy/system": ["libs/meta/lazy/system/src/index.ts"],
       "@allors/adapters/memory/core": ["libs/adapters/memory/core/src/index.ts"]
     },
-    "preserveSymlinks": true,
-    "resolveJsonModule": true
+    "preserveSymlinks": true
   },
   "exclude": ["node_modules", "tmp"]
 }

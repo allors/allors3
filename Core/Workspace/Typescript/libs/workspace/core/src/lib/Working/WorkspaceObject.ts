@@ -1,4 +1,4 @@
-import { ObjectType, AssociationType, RoleType } from '@allors/meta/core';
+import { ObjectType, AssociationType, RoleType } from '@allors/workspace/system';
 
 import { Session } from './Working';
 

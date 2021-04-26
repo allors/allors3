@@ -1,82 +1,69 @@
-import { MetaPopulation, ObjectType } from '@allors/meta/core';
+import { LazyMetaPopulation } from '@allors/meta/lazy/system';
+import { data, M } from '@allors/meta/generated';
 
-import { data, Meta } from '@allors/meta/generated';
+describe('Meta', () => {
+  const m = (new LazyMetaPopulation(data) as unknown) as M;
 
-describe('Meta',
-  () => {
+  // it('is defined', () => {
+  //   expect(m).toBeDefined();
+  // });
 
-    const metaPopulation = new MetaPopulation(data);
-    const metaDomain = metaPopulation as Meta & { [key: string]: any };
+  // it('metaInterfaces should be defined', () => {
+  //   data.interfaces.forEach((v) => {
+  //     expect(m[v.name]).toBeDefined();
+  //   });
+  // });
 
-    it('is defined',
-      () => {
-        expect(metaDomain).toBeDefined();
-      });
+  // it('metaClasses should be defined', () => {
+  //   data.classes.forEach((v) => {
+  //     expect(m[v.name]).toBeDefined();
+  //   });
+  // });
 
-    it('metaInterfaces should be defined',
-      () => {
-        data.interfaces.forEach((v) => {
-          expect(metaDomain[v.name]).toBeDefined();
-        });
-      });
+  // it('metaObject.objectType should be defined', () => {
+  //   data.classes.concat(data.interfaces).forEach((v) => {
+  //     const metaObjectType: ObjectType = m[v.name];
+  //     expect(metaObjectType).toBeDefined();
+  //   });
+  // });
 
-    it('metaClasses should be defined',
-      () => {
-        data.classes.forEach((v) => {
-          expect(metaDomain[v.name]).toBeDefined();
-        });
-      });
+  // it('metaObject roleTypes should be defined', () => {
+  //   data.classes.concat(data.interfaces).forEach((v) => {
+  //     const metaObjectType: ObjectType & { [key: string]: any } = m[v.name];
+  //     const objectType = metaObjectType;
 
-    it('metaObject.objectType should be defined',
-      () => {
-        data.classes.concat(data.interfaces).forEach((v) => {
-          const metaObjectType: ObjectType = metaDomain[v.name];
-          expect(metaObjectType).toBeDefined();
-        });
-      });
+  //     const roleTypes = Object.keys(objectType.roleTypeByName).map((w) => (objectType.roleTypeByName as { [key: string]: any })[w]);
 
-    it('metaObject roleTypes should be defined',
-      () => {
-        data.classes.concat(data.interfaces).forEach((v) => {
-          const metaObjectType: ObjectType & { [key: string]: any } = metaDomain[v.name];
-          const objectType = metaObjectType;
+  //     roleTypes.forEach((w) => {
+  //       const metaRoleType = metaObjectType[w.name];
+  //       expect(metaRoleType).toBeDefined();
+  //     });
+  //   });
+  // });
 
-          const roleTypes = Object.keys(objectType.roleTypeByName).map((w) => (objectType.roleTypeByName as {[key: string]: any})[w]);
+  // it('metaObject associationTypes should be defined', () => {
+  //   data.classes.concat(data.interfaces).forEach((v) => {
+  //     const metaObjectType: ObjectType & { [key: string]: any } = m[v.name];
+  //     const objectType = metaObjectType;
 
-          roleTypes.forEach((w) => {
-            const metaRoleType = metaObjectType[w.name];
-            expect(metaRoleType).toBeDefined();
-          });
-        });
-      });
+  //     const associationTypes = Object.keys(objectType.associationTypeByName).map((w) => (objectType.associationTypeByName as { [key: string]: any })[w]);
 
-    it('metaObject associationTypes should be defined',
-      () => {
-        data.classes.concat(data.interfaces).forEach((v) => {
-          const metaObjectType: ObjectType & { [key: string]: any } = metaDomain[v.name];
-          const objectType = metaObjectType;
+  //     associationTypes.forEach((w) => {
+  //       const metaAssociationType = metaObjectType[w.name];
+  //       expect(metaAssociationType).toBeDefined();
+  //     });
+  //   });
+  // });
 
-          const associationTypes = Object.keys(objectType.associationTypeByName).map((w) => (objectType.associationTypeByName as & { [key: string]: any })[w]);
+  // it('hierarchy should be defined for roles', () => {
+  //   expect(m.C1.Name).toBeDefined();
+  //   expect(m.I1.Name).toBeDefined();
+  //   expect(m.I12.Name).toBeDefined();
+  // });
 
-          associationTypes.forEach((w) => {
-            const metaAssociationType = metaObjectType[w.name];
-            expect(metaAssociationType).toBeDefined();
-          });
-        });
-      });
-
-    it('hierarchy should be defined for roles',
-      () => {
-        expect(metaDomain.C1.Name).toBeDefined();
-        expect(metaDomain.I1.Name).toBeDefined();
-        expect(metaDomain.I12.Name).toBeDefined();
-      });
-
-    it('hierarchy should be defined for associations',
-      () => {
-        expect(metaDomain.C1.C2WhereS1One2One).toBeDefined();
-        expect(metaDomain.I1.C2WhereS1One2One).toBeDefined();
-        expect(metaDomain.S1.C2WhereS1One2One).toBeDefined();
-      });
-
-  });
+  // it('hierarchy should be defined for associations', () => {
+  //   expect(m.C1.C2WhereS1One2One).toBeDefined();
+  //   expect(m.I1.C2WhereS1One2One).toBeDefined();
+  //   expect(m.S1.C2WhereS1One2One).toBeDefined();
+  // });
+});

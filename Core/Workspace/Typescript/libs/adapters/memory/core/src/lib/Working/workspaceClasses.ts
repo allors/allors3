@@ -1,5 +1,5 @@
-import { ObjectType } from '@allors/meta/core';
-import { DatabaseObject } from '@allors/workspace/system/core';
+import { ObjectType } from '@allors/workspace/system';
+import { DatabaseObject } from '@allors/workspace/core';
 import { MemoryWorkspaceObject } from './WorkspaceObject';
 
 export function workspaceClasses(classes: ObjectType[], constructorByObjectType: Map<ObjectType, any>) {

@@ -1,4 +1,4 @@
-import { ObjectType, RoleType } from '@allors/meta/core';
+import { ObjectType, RoleType } from '@allors/workspace/system';
 import { Permission } from './Permission';
 
 export class WritePermission implements Permission {

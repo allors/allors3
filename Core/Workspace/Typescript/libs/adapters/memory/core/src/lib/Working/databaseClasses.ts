@@ -1,5 +1,5 @@
-import { ObjectType } from '@allors/meta/core';
-import { DatabaseObject } from '@allors/workspace/system/core';
+import { ObjectType } from '@allors/workspace/system';
+import { DatabaseObject } from '@allors/workspace/core';
 import { MemoryDatabaseObject } from './DatabaseObject';
 
 export function databaseClasses(classes: ObjectType[], constructorByObjectType: Map<ObjectType, any>) {

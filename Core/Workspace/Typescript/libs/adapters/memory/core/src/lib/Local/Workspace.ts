@@ -1,4 +1,4 @@
-import { RoleType, AssociationType, MetaPopulation, ObjectType } from '@allors/meta/core';
+import { RoleType, AssociationType, MetaPopulation, ObjectType } from '@allors/workspace/system';
 import { ChangeSet } from './ChangeSet';
 
 import { Composite, Association, Role } from './Types';

@@ -1,4 +1,4 @@
-import { ObjectType } from '@allors/meta/core';
+import { ObjectType } from '@allors/workspace/system';
 
 export interface Permission {
   id: string;

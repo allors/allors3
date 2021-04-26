@@ -1,4 +1,4 @@
-import { MethodType } from '@allors/meta/core';
+import { MethodType } from '@allors/workspace/system';
 import { DatabaseObject } from './Working/DatabaseObject';
 
 export class Method {

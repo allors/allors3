@@ -1,6 +1,6 @@
-import { ObjectType, AssociationType, RoleType, MethodType, OperandType, unitIds } from '@allors/meta/core';
+import { ObjectType, AssociationType, RoleType, MethodType, OperandType, unitIds } from '@allors/workspace/system';
 import { Operations, PushRequestObject, PushRequestNewObject, PushRequestRole } from '@allors/protocol/json/system';
-import { Record, DatabaseObject, UnitTypes, serialize, Method } from '@allors/workspace/system/core';
+import { Record, DatabaseObject, UnitTypes, serialize, Method } from '@allors/workspace/core';
 
 import { MemorySession } from './Session';
 

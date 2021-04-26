@@ -1,5 +1,5 @@
-import { ObjectType, AssociationType, RoleType } from '@allors/meta/core';
-import { DatabaseObject, WorkspaceObject } from '@allors/workspace/system/core';
+import { ObjectType, AssociationType, RoleType } from '@allors/workspace/system';
+import { DatabaseObject, WorkspaceObject } from '@allors/workspace/core';
 import { MemoryWorkspace } from '../Local/Workspace';
 import { MemorySession } from './Session';
 

@@ -1,4 +1,4 @@
-import { ObjectType, MetaPopulation, RelationType } from '@allors/meta/core';
+import { ObjectType, MetaPopulation, RelationType } from '@allors/workspace/system';
 import { Compressor, SyncResponseObject } from '@allors/protocol/json/system';
 import { Record, Permission, AccessControl } from '@allors/workspace/core';
 

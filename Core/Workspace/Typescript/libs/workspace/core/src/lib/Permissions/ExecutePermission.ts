@@ -1,4 +1,4 @@
-import { ObjectType, MethodType } from '@allors/meta/core';
+import { ObjectType, MethodType } from '@allors/workspace/system';
 import { Permission } from '@allors/workspace/core';
 
 export class ExecutePermission implements Permission {

@@ -1,6 +1,6 @@
-import { ObjectType, MetaPopulation, OperandType, Origin, RelationType, MethodType } from '@allors/meta/core';
+import { ObjectType, MetaPopulation, OperandType, Origin, RelationType, MethodType } from '@allors/workspace/system';
 import { Operations, Compressor, PullResponse, SyncRequest, SyncResponse, SecurityRequest, SecurityResponse } from '@allors/protocol/json/system';
-import { Permission, ReadPermission, WritePermission, ExecutePermission, Database, Record, Session, AccessControl } from '@allors/workspace/system/core';
+import { Permission, ReadPermission, WritePermission, ExecutePermission, Database, Record, Session, AccessControl } from '@allors/workspace/core';
 
 import { MemorySession } from '../Working/Session';
 import { MemoryWorkspace } from '../Local/Workspace';
@@ -16,14 +16,14 @@ export class MemoryDatabase implements Database {
   readonly workspace: MemoryWorkspace;
 
   readonly databaseObjectById: Map<string, MemoryRecord>;
-  readonly databaseObjectsByClass: Map<ObjectType, Set<MemoryRecord>;
+  readonly databaseObjectsByClass: Map<ObjectType, Set<MemoryRecord>>;
 
   readonly accessControlById: Map<string, AccessControl>;
   readonly permissionById: Map<string, Permission>;
 
-  private readPermissionByOperandTypeByClass: Map<ObjectType, Map<OperandType, ReadPermission>;
-  private writePermissionByOperandTypeByClass: Map<ObjectType, Map<OperandType, WritePermission>;
-  private executePermissionByOperandTypeByClass: Map<ObjectType, Map<OperandType, ExecutePermission>;
+  private readPermissionByOperandTypeByClass: Map<ObjectType, Map<OperandType, ReadPermission>>;
+  private writePermissionByOperandTypeByClass: Map<ObjectType, Map<OperandType, WritePermission>>;
+  private executePermissionByOperandTypeByClass: Map<ObjectType, Map<OperandType, ExecutePermission>>;
 
   constructor(public metaPopulation: MetaPopulation) {
     this.constructorByObjectType = new Map();

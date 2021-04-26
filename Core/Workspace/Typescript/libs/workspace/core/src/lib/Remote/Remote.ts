@@ -1,4 +1,4 @@
-import { ObjectType, MetaPopulation, OperandType } from '@allors/meta/core';
+import { ObjectType, MetaPopulation, OperandType } from '@allors/workspace/system';
 import { Operations, PullResponse, SyncRequest, SyncResponse, SecurityRequest, SecurityResponse } from '@allors/protocol/json/system';
 
 import { Session } from '../Working/Working';

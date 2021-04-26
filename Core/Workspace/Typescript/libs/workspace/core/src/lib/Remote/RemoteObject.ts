@@ -1,4 +1,4 @@
-import { ObjectType } from '@allors/meta/core';
+import { ObjectType } from '@allors/workspace/system';
 import { Permission } from '../Permissions/Permission';
 import { Database } from './Remote';
 
