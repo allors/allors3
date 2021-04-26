@@ -32,7 +32,7 @@ namespace Allors.Database.Meta
         public IEnumerable<string> WorkspaceNames => this.AsObjectType.WorkspaceNames;
 
         public Type ClrType => this.AsObjectType.ClrType;
-
+        
         #region As
         protected abstract IObjectTypeBase AsObjectType { get; }
         #endregion

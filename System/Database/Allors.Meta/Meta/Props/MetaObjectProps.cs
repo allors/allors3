@@ -8,6 +8,8 @@ namespace Allors.Database.Meta
 {
     public abstract partial class MetaObjectProps
     {
+        public const Origin DefaultOrigin = Origin.Database;
+
         public IMetaPopulationBase MetaPopulation => this.AsMetaObject.MetaPopulation;
 
         public Origin Origin => this.AsMetaObject.Origin;
@@ -21,6 +23,8 @@ namespace Allors.Database.Meta
         public bool HasSessionOrigin => this.Origin == Origin.Session;
 
         public string ValidationName => this.AsMetaObject.ValidationName;
+
+        public bool IsDefaultOrigin => this.Origin == DefaultOrigin;
 
         #region As
         protected abstract IMetaObjectBase AsMetaObject { get; }

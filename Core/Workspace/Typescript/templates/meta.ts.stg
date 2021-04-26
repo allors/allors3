@@ -132,9 +132,27 @@ export const data: MetaData =
 $meta._.WorkspaceInterfacesByWorkspaceName.(workspaceName):{objectType|$data_objectType(objectType)$}; separator=",\n"$
   ],
   c:
- [
+  [
 $meta._.WorkspaceClassesByWorkspaceName.(workspaceName):{objectType|$data_objectType(objectType)$}; separator=",\n"$
- ],
+  ],
+  o:
+  [
+    [$meta._.WorkspaceWorkspaceOriginTagsByWorkspaceName.(workspaceName):{tag|$tag$}; separator=","$],
+    [$meta._.WorkspaceSessionOriginTagsByWorkspaceName.(workspaceName):{tag|$tag$}; separator=","$]
+  ],
+  m:
+  [
+    [$meta._.WorkspaceOneToOneTagsByWorkspaceName.(workspaceName):{tag|$tag$}; separator=","$],
+    [$meta._.WorkspaceOneToManyTagsByWorkspaceName.(workspaceName):{tag|$tag$}; separator=","$],
+    [$meta._.WorkspaceManyToManyTagsByWorkspaceName.(workspaceName):{tag|$tag$}; separator=","$]
+  ],
+  d: [$meta._.WorkspaceDerivedTagsByWorkspaceName.(workspaceName):{tag|$tag$}; separator=","$],
+  r: [$meta._.WorkspaceRequiredTagsByWorkspaceName.(workspaceName):{tag|$tag$}; separator=","$],
+  u: [$meta._.WorkspaceUniqueTagsByWorkspaceName.(workspaceName):{tag|$tag$}; separator=","$],
+  t:
+  {
+    $meta._.WorkspaceMediaTagsByMediaTypeNameByWorkspaceName.(workspaceName):{mediaTypeName|"$mediaTypeName$": [$data_mediaType(mediaTypeName)$]}; separator=",\n"$
+  }
 }
 
 >>
@@ -158,4 +176,12 @@ data_methodTypes() ::= <<[$objectType._.WorkspaceExclusiveMethodTypesByWorkspace
 
 data_methodType(methodType) ::= <<[$methodType._.Tag$, "$methodType._.Name$"]>>
 
+data_origin(metaObject) ::= <<$if(!metaObject.IsDefaultOrigin)$$metaObject.Tag$$endif$>>
+
+data_mediaType(mediaTypeName) ::= <<$meta._.WorkspaceMediaTagsByMediaTypeNameByWorkspaceName.(workspaceName).(mediaTypeName):{tag|$tag$}; separator=","$>>
+
 boolean(value) ::= "$if(value)$true$else$false$endif$"
+
+DropEmpty ::= ["": false, default: key]
+
+Separated(l, s, w=false) ::= "$if (DropEmpty.(first(l)))$$if (w)$$s$$endif$$first(l)$$Separated(rest(l), s, true)$$else$$if (rest(l))$$Separated(rest(l), s, w)$$endif$$endif$"

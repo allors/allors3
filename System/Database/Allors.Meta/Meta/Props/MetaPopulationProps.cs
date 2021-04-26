@@ -42,25 +42,66 @@ namespace Allors.Database.Meta
 
         public IEnumerable<string> WorkspaceNames => this.metaPopulation.WorkspaceNames;
 
-        public IReadOnlyDictionary<string, IEnumerable<IComposite>> WorkspaceCompositesByWorkspaceName =>
+        public IReadOnlyDictionary<string, IOrderedEnumerable<int>> WorkspaceOriginTagsByWorkspaceName(Origin origin) =>
             this.WorkspaceNames
-                .ToDictionary(v => v, v => this.Composites.Where(w => w.WorkspaceNames.Contains(v)));
+                .ToDictionary(v => v, v =>
+                    this.Composites.Where(w => w.Origin == origin && w.WorkspaceNames.Contains(v)).Select(w => w.Tag).Union(
+                    this.RelationTypes.Where(w => w.Origin == origin && w.WorkspaceNames.Contains(v)).Select(w => w.Tag)).Union(
+                    this.MethodTypes.Where(w => w.Origin == origin && w.WorkspaceNames.Contains(v)).Select(w => w.Tag))
+                        .OrderBy(w => w));
 
-        public IReadOnlyDictionary<string, IEnumerable<IInterface>> WorkspaceInterfacesByWorkspaceName =>
-            this.WorkspaceNames
-                .ToDictionary(v => v, v => this.Interfaces.Where(w => w.WorkspaceNames.Contains(v)));
+        public IReadOnlyDictionary<string, IOrderedEnumerable<int>> WorkspaceWorkspaceOriginTagsByWorkspaceName => this.WorkspaceOriginTagsByWorkspaceName(Origin.Workspace);
 
-        public IReadOnlyDictionary<string, IEnumerable<IClass>> WorkspaceClassesByWorkspaceName =>
-            this.WorkspaceNames
-                .ToDictionary(v => v, v => this.Classes.Where(w => w.WorkspaceNames.Contains(v)));
+        public IReadOnlyDictionary<string, IOrderedEnumerable<int>> WorkspaceSessionOriginTagsByWorkspaceName => this.WorkspaceOriginTagsByWorkspaceName(Origin.Session);
 
-        public IReadOnlyDictionary<string, IEnumerable<IRelationType>> WorkspaceRelationTypesByWorkspaceName =>
+        public IReadOnlyDictionary<string, IOrderedEnumerable<int>> WorkspaceMultiplicityTagsByWorkspaceName(Multiplicity multiplicity) =>
             this.WorkspaceNames
-                .ToDictionary(v => v, v => this.RelationTypes.Where(w => w.WorkspaceNames.Contains(v)));
+                .ToDictionary(v => v, v => this.RelationTypes.Where(w => w.RoleType.ObjectType.IsComposite && w.Multiplicity == multiplicity && w.WorkspaceNames.Contains(v)).Select(w => w.Tag).OrderBy(w => w));
 
-        public IReadOnlyDictionary<string, IEnumerable<IMethodType>> WorkspaceMethodTypesByWorkspaceName =>
+        public IReadOnlyDictionary<string, IOrderedEnumerable<int>> WorkspaceOneToOneTagsByWorkspaceName => this.WorkspaceMultiplicityTagsByWorkspaceName(Multiplicity.OneToOne);
+
+        public IReadOnlyDictionary<string, IOrderedEnumerable<int>> WorkspaceOneToManyTagsByWorkspaceName => this.WorkspaceMultiplicityTagsByWorkspaceName(Multiplicity.OneToMany);
+
+        public IReadOnlyDictionary<string, IOrderedEnumerable<int>> WorkspaceManyToManyTagsByWorkspaceName => this.WorkspaceMultiplicityTagsByWorkspaceName(Multiplicity.ManyToMany);
+
+        public IReadOnlyDictionary<string, IOrderedEnumerable<int>> WorkspaceDerivedTagsByWorkspaceName =>
             this.WorkspaceNames
-                .ToDictionary(v => v, v => this.MethodTypes.Where(w => w.WorkspaceNames.Contains(v)));
+                .ToDictionary(v => v, v => this.RelationTypes.Where(w => w.IsDerived && w.WorkspaceNames.Contains(v)).Select(w => w.Tag).OrderBy(w => w));
+
+        public IReadOnlyDictionary<string, IOrderedEnumerable<int>> WorkspaceRequiredTagsByWorkspaceName =>
+            this.WorkspaceNames
+                .ToDictionary(v => v, v => this.RelationTypes.Where(w => w.RoleType.IsRequired && w.WorkspaceNames.Contains(v)).Select(w => w.Tag).OrderBy(w => w));
+
+        public IReadOnlyDictionary<string, IOrderedEnumerable<int>> WorkspaceUniqueTagsByWorkspaceName =>
+            this.WorkspaceNames
+                .ToDictionary(v => v, v => this.RelationTypes.Where(w => w.RoleType.IsUnique && w.WorkspaceNames.Contains(v)).Select(w => w.Tag).OrderBy(w => w));
+
+        public IReadOnlyDictionary<string, Dictionary<string, IOrderedEnumerable<int>>> WorkspaceMediaTagsByMediaTypeNameByWorkspaceName =>
+            this.WorkspaceNames
+                .ToDictionary(v => v, v =>
+                    this.RelationTypes.Where(w => !string.IsNullOrWhiteSpace(w.RoleType.MediaType) && w.WorkspaceNames.Contains(v))
+                        .GroupBy(w => w.RoleType.MediaType, w => w.Tag)
+                            .ToDictionary(w => w.Key, w => w.OrderBy(x => x)));
+
+        public IReadOnlyDictionary<string, IOrderedEnumerable<IComposite>> WorkspaceCompositesByWorkspaceName =>
+            this.WorkspaceNames
+                .ToDictionary(v => v, v => this.Composites.Where(w => w.WorkspaceNames.Contains(v)).OrderBy(w => w.Tag));
+
+        public IReadOnlyDictionary<string, IOrderedEnumerable<IInterface>> WorkspaceInterfacesByWorkspaceName =>
+            this.WorkspaceNames
+                .ToDictionary(v => v, v => this.Interfaces.Where(w => w.WorkspaceNames.Contains(v)).OrderBy(w => w.Tag));
+
+        public IReadOnlyDictionary<string, IOrderedEnumerable<IClass>> WorkspaceClassesByWorkspaceName =>
+            this.WorkspaceNames
+                .ToDictionary(v => v, v => this.Classes.Where(w => w.WorkspaceNames.Contains(v)).OrderBy(w => w.Tag));
+
+        public IReadOnlyDictionary<string, IOrderedEnumerable<IRelationType>> WorkspaceRelationTypesByWorkspaceName =>
+            this.WorkspaceNames
+                .ToDictionary(v => v, v => this.RelationTypes.Where(w => w.WorkspaceNames.Contains(v)).OrderBy(w => w.Tag));
+
+        public IReadOnlyDictionary<string, IOrderedEnumerable<IMethodType>> WorkspaceMethodTypesByWorkspaceName =>
+            this.WorkspaceNames
+                .ToDictionary(v => v, v => this.MethodTypes.Where(w => w.WorkspaceNames.Contains(v)).OrderBy(w => w.Tag));
 
         public bool IsValid => this.metaPopulation.IsValid;
     }
