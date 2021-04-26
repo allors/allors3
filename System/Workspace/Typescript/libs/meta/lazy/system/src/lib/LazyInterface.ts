@@ -1,8 +1,10 @@
 import { ObjectTypeData } from '@allors/workspace/system';
+import { InternalAssociationType } from './internal/InternalAssociationType';
 import { InternalClass } from './internal/InternalClass';
 import { InternalComposite } from './internal/InternalComposite';
 import { InternalInterface } from './internal/InternalInterface';
 import { InternalMetaPopulation } from './internal/InternalMetaPopulation';
+import { InternalRoleType } from './internal/InternalRoleType';
 import { LazyComposite } from './LazyComposite';
 
 export class LazyInterface extends LazyComposite implements InternalInterface {
@@ -26,6 +28,26 @@ export class LazyInterface extends LazyComposite implements InternalInterface {
         }
       }
     });
+  }
+
+  /**
+   * @override
+   */
+  onNewAssociationType(associationType: InternalAssociationType) {
+    super.onNewAssociationType(associationType);
+    for (const subtype of this.subtypes) {
+      ((subtype as unknown) as Record<string, unknown>)[associationType.singularName] = associationType;
+    }
+  }
+
+  /**
+   * @override
+   */
+  onNewRoleType(roleType: InternalRoleType) {
+    super.onNewRoleType(roleType);
+    for (const subtype of this.subtypes) {
+      ((subtype as unknown) as Record<string, unknown>)[roleType.singularName] = roleType;
+    }
   }
 
   isAssignableFrom(objectType: InternalComposite): boolean {

@@ -63,6 +63,16 @@ export abstract class LazyComposite implements InternalComposite {
     this.directMethodTypes = frozenEmptySet as Set<InternalMethodType>;
   }
 
+  onNewAssociationType(associationType: InternalAssociationType) {
+    this.directAssociationTypes.add(associationType);
+    (this as Record<string, unknown>)[associationType.singularName] = associationType;
+  }
+
+  onNewRoleType(roleType: InternalRoleType) {
+    this.directRoleTypes.add(roleType);
+    (this as Record<string, unknown>)[roleType.singularName] = roleType;
+  }
+
   derive(lookup: Lookup): void {
     const [, s, d, r, m, p] = this.d;
 
@@ -81,14 +91,6 @@ export abstract class LazyComposite implements InternalComposite {
     if (this.directSupertypes.size > 0) {
       this.supertypes = new Set(this.supertypeGenerator());
     }
-  }
-
-  onNewAssociationType(associationType: InternalAssociationType) {
-    this.directAssociationTypes.add(associationType);
-  }
-
-  onNewRoleType(roleType: InternalRoleType) {
-    this.directRoleTypes.add(roleType);
   }
 
   *supertypeGenerator(): IterableIterator<InternalInterface> {

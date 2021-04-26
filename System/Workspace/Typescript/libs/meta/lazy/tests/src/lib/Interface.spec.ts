@@ -8,23 +8,18 @@ interface M extends LazyMetaPopulation {
 }
 
 describe('MetaPopulation', () => {
-  describe('constructor with minimal interface metadata', () => {
+  describe('with minimal interface metadata', () => {
     const data: MetaData = {
       i: [[9, 'Named']],
     };
 
     const metaPopulation = new LazyMetaPopulation(data) as M;
+    const { Named } = metaPopulation;
 
-    it('should have the interface', () => {
-      expect(metaPopulation.Named).not.toBeNull();
-    });
-
-    describe('with interface', () => {
-      const named = metaPopulation.Named;
-      it('should have properties ', () => {
-        expect(named.tag).toBe(9);
-        expect(named.singularName).toBe('Named');
-      });
+    it('should have the interface with its defaults', () => {
+      expect(Named).toBeDefined();
+      expect(Named.tag).toBe(9);
+      expect(Named.singularName).toBe('Named');
     });
   });
 });

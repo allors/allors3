@@ -16,7 +16,7 @@ module.exports = {
     [
       'jest-trx-results-processor',
       {
-        outputFile: '../../../artifacts/tests/system.workspace.json.trx',
+        outputFile: '../../../artifacts/tests/system.meta.lazy.json.trx',
       },
     ],
   ],

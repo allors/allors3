@@ -23,7 +23,7 @@ export class LazyRelationType implements InternalRelationType {
   constructor(associationObjectType: InternalComposite, data: RelationTypeData, lookup: Lookup) {
     this.metaPopulation = associationObjectType.metaPopulation as InternalMetaPopulation;
 
-    const [t] = data;
+    const [t,r] = data;
     const roleObjectType = this.metaPopulation.metaObjectByTag.get(r) as InternalObjectType;
 
     this.tag = t;

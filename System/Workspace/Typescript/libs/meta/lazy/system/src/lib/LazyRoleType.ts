@@ -15,7 +15,6 @@ export class LazyRoleType implements InternalRoleType {
   readonly origin: Origin;
   readonly name: string;
   readonly singularName: string;
-  readonly pluralName: string;
   readonly isRequired: boolean;
   readonly isUnique: boolean;
   readonly size?: number;
@@ -24,6 +23,8 @@ export class LazyRoleType implements InternalRoleType {
   readonly operandTag: number;
 
   readonly associationType: InternalAssociationType;
+
+  private _pluralName?: string;
 
   constructor(public relationType: InternalRelationType, associationObjectType: InternalComposite, roleObjectType: InternalObjectType, multiplicity: Multiplicity, data: RelationTypeData, lookup: Lookup) {
     this.isOne = (multiplicity & 2) == 0;
@@ -37,22 +38,22 @@ export class LazyRoleType implements InternalRoleType {
 
     const [, , v0, v1, v2, v3] = data;
 
-    this.singularName = (Number.isNaN(v0) ? (v0 as string) : undefined) ?? this.objectType.singularName;
-    this.pluralName = (Number.isNaN(v1) ? (v1 as string) : undefined) ?? this.objectType.pluralName;
-   
+    this.singularName = (!Number.isInteger(v0) ? (v0 as string) : undefined) ?? this.objectType.singularName;
+    this._pluralName = !Number.isInteger(v1) ? (v1 as string) : undefined;
+
     if (this.objectType.isUnit) {
       const unit = this.objectType as InternalUnit;
       if (unit.isString || unit.isDecimal) {
         let sizeOrScale = undefined;
         let precision = undefined;
-        
-        if(Number.isInteger(v0)){
+
+        if (Number.isInteger(v0)) {
           sizeOrScale = v0 as number;
           precision = v1 as number;
-        } else if(Number.isInteger(v0)){
+        } else if (Number.isInteger(v1)) {
           sizeOrScale = v1 as number;
           precision = v2 as number;
-        } else{
+        } else {
           sizeOrScale = v2 as number;
           precision = v3 as number;
         }
@@ -70,5 +71,9 @@ export class LazyRoleType implements InternalRoleType {
     this.name = this.isOne ? this.singularName : this.pluralName;
 
     this.associationType = new LazyAssociationType(this, associationObjectType, multiplicity);
+  }
+
+  get pluralName() {
+    return (this._pluralName ??= pluralize(this.singularName));
   }
 }

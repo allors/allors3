@@ -6,7 +6,7 @@ describe('MetaPopulation', () => {
     const metaPopulation = new LazyMetaPopulation({}) as MetaPopulation;
 
     it('should be newable', () => {
-      expect(metaPopulation).not.toBeNull();
+      expect(metaPopulation).toBeDefined();
     });
   });
 });
