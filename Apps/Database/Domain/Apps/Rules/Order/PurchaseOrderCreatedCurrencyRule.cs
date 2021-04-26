@@ -21,6 +21,7 @@ namespace Allors.Database.Domain
                 m.PurchaseOrder.RolePattern(v => v.PurchaseOrderState),
                 m.PurchaseOrder.RolePattern(v => v.AssignedCurrency),
                 m.PurchaseOrder.RolePattern(v => v.OrderedBy),
+                m.PurchaseOrder.RolePattern(v => v.OrderDate),
                 m.Organisation.RolePattern(v => v.PreferredCurrency, v => v.PurchaseOrdersWhereOrderedBy),
             };
 
@@ -31,6 +32,23 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<PurchaseOrder>().Where(v => v.PurchaseOrderState.IsCreated))
             {
                 @this.DerivedCurrency = @this.AssignedCurrency ?? @this.OrderedBy?.PreferredCurrency;
+
+                if (@this.ExistOrderDate
+                    && @this.ExistOrderedBy
+                    && @this.DerivedCurrency != @this.OrderedBy.PreferredCurrency)
+                {
+                    var exchangeRate = @this.DerivedCurrency.ExchangeRatesWhereFromCurrency.Where(v => v.ValidFrom <= @this.OrderDate && v.ToCurrency.Equals(@this.OrderedBy.PreferredCurrency)).OrderByDescending(v => v.ValidFrom).FirstOrDefault();
+
+                    if (exchangeRate == null)
+                    {
+                        exchangeRate = @this.OrderedBy.PreferredCurrency.ExchangeRatesWhereFromCurrency.Where(v => v.ValidFrom <= @this.OrderDate && v.ToCurrency.Equals(@this.DerivedCurrency)).OrderByDescending(v => v.ValidFrom).FirstOrDefault();
+                    }
+
+                    if (exchangeRate == null)
+                    {
+                        validation.AddError($"{@this}, {@this.Meta.AssignedCurrency}, {ErrorMessages.CurrencyNotAllowed}");
+                    }
+                }
             }
         }
     }

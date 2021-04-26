@@ -44,18 +44,5 @@ namespace Allors.Database.Domain.Tests
             var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
-
-        [Fact]
-        public void ChangedFactorThrowValidationError()
-        {
-            var exchangeRate = new ExchangeRateBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
-
-            exchangeRate.Factor = 0;
-
-            var expectedMessage = $"{exchangeRate}, {exchangeRate.Factor}, Factor not valid";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
-        }
     }
 }

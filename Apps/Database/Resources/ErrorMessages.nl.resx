@@ -261,4 +261,7 @@
   <data name="InternalOrganisationChanged" xml:space="preserve">
     <value>Wijzigen interne organisatie is niet toegestaan</value>
   </data>
+  <data name="CurrencyNotAllowed" xml:space="preserve">
+    <value>Valuta heeft geen wisselkoers</value>
+  </data>
 </root>
