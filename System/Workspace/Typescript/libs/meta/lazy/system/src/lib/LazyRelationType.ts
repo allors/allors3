@@ -5,7 +5,6 @@ import { InternalMetaPopulation } from './internal/InternalMetaPopulation';
 import { InternalObjectType } from './internal/InternalObjectType';
 import { InternalRelationType } from './internal/InternalRelationType';
 import { InternalRoleType } from './internal/InternalRoleType';
-import { LazyAssociationType } from './LazyAssociationType';
 import { LazyRoleType } from './LazyRoleType';
 import { Lookup } from './utils/Lookup';
 

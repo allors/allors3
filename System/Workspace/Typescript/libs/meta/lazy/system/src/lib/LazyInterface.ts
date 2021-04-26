@@ -28,9 +28,6 @@ export class LazyInterface extends LazyComposite implements InternalInterface {
         }
       }
     });
-
-
-
   }
 
    isAssignableFrom(objectType: InternalComposite): boolean {

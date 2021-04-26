@@ -15,11 +15,13 @@ export class LazyRoleType implements InternalRoleType {
   readonly origin: Origin;
   readonly name: string;
   readonly singularName: string;
+  readonly isDerived: boolean;
   readonly isRequired: boolean;
   readonly isUnique: boolean;
   readonly size?: number;
   readonly precision?: number;
   readonly scale?: number;
+  readonly mediaType?: string;
   readonly operandTag: number;
 
   readonly associationType: InternalAssociationType;
@@ -33,8 +35,10 @@ export class LazyRoleType implements InternalRoleType {
     this.operandTag = relationType.tag;
     this.objectType = roleObjectType;
 
+    this.isDerived = lookup.d.has(this.relationType.tag);
     this.isRequired = lookup.r.has(this.relationType.tag);
     this.isUnique = lookup.u.has(this.relationType.tag);
+    this.mediaType = lookup.t.get(this.relationType.tag);
 
     const [, , v0, v1, v2, v3] = data;
 

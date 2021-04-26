@@ -6,20 +6,8 @@
       "sourceRoot": "libs/workspace/system/src",
       "projectType": "library",
       "targets": {
-        "lint": {
-          "executor": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/workspace/system/**/*.ts"]
-          }
-        },
-        "test": {
-          "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/workspace/system"],
-          "options": {
-            "jestConfig": "libs/workspace/system/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
+        "lint": { "executor": "@nrwl/linter:eslint", "options": { "lintFilePatterns": ["libs/workspace/system/**/*.ts"] } },
+        "test": { "executor": "@nrwl/jest:jest", "outputs": ["coverage/libs/workspace/system"], "options": { "jestConfig": "libs/workspace/system/jest.config.js", "passWithNoTests": true } }
       }
     },
     "protocol-json-system": {
@@ -27,41 +15,8 @@
       "sourceRoot": "libs/protocol/json/system/src",
       "projectType": "library",
       "targets": {
-        "lint": {
-          "executor": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/protocol/json/system/**/*.ts"]
-          }
-        },
-        "test": {
-          "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/protocol/json/system"],
-          "options": {
-            "jestConfig": "libs/protocol/json/system/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
-    "adapters-memory-system": {
-      "root": "libs/adapters/memory/system",
-      "sourceRoot": "libs/adapters/memory/system/src",
-      "projectType": "library",
-      "targets": {
-        "lint": {
-          "executor": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/adapters/memory/system/**/*.ts"]
-          }
-        },
-        "test": {
-          "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/adapters/memory/system"],
-          "options": {
-            "jestConfig": "libs/adapters/memory/system/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
+        "lint": { "executor": "@nrwl/linter:eslint", "options": { "lintFilePatterns": ["libs/protocol/json/system/**/*.ts"] } },
+        "test": { "executor": "@nrwl/jest:jest", "outputs": ["coverage/libs/protocol/json/system"], "options": { "jestConfig": "libs/protocol/json/system/jest.config.js", "passWithNoTests": true } }
       }
     },
     "meta-lazy-system": {
@@ -69,20 +24,8 @@
       "sourceRoot": "libs/meta/lazy/system/src",
       "projectType": "library",
       "targets": {
-        "lint": {
-          "executor": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/meta/lazy/system/**/*.ts"]
-          }
-        },
-        "test": {
-          "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/meta/lazy/system"],
-          "options": {
-            "jestConfig": "libs/meta/lazy/system/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
+        "lint": { "executor": "@nrwl/linter:eslint", "options": { "lintFilePatterns": ["libs/meta/lazy/system/**/*.ts"] } },
+        "test": { "executor": "@nrwl/jest:jest", "outputs": ["coverage/libs/meta/lazy/system"], "options": { "jestConfig": "libs/meta/lazy/system/jest.config.js", "passWithNoTests": true } }
       }
     },
     "meta-lazy-tests": {
@@ -90,24 +33,10 @@
       "sourceRoot": "libs/meta/lazy/tests/src",
       "projectType": "library",
       "targets": {
-        "lint": {
-          "executor": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/meta/lazy/tests/**/*.ts"]
-          }
-        },
-        "test": {
-          "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/meta/lazy/tests"],
-          "options": {
-            "jestConfig": "libs/meta/lazy/tests/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
+        "lint": { "executor": "@nrwl/linter:eslint", "options": { "lintFilePatterns": ["libs/meta/lazy/tests/**/*.ts"] } },
+        "test": { "executor": "@nrwl/jest:jest", "outputs": ["coverage/libs/meta/lazy/tests"], "options": { "jestConfig": "libs/meta/lazy/tests/jest.config.js", "passWithNoTests": true } }
       }
     }
   },
-  "cli": {
-    "defaultCollection": "@nrwl/workspace"
-  }
+  "cli": { "defaultCollection": "@nrwl/workspace" }
 }

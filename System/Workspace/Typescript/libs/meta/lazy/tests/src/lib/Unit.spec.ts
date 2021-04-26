@@ -19,7 +19,7 @@ interface M extends LazyMetaPopulation {
   Unique: Unit;
 }
 
-describe('MetaPopulation', () => {
+describe('Unit in MetaPopulation', () => {
   describe('default constructor', () => {
     const metaPopulation = new LazyMetaPopulation({}) as M;
 

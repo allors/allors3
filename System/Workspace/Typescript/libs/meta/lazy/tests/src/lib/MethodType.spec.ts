@@ -15,7 +15,7 @@ interface M extends LazyMetaPopulation {
   Organisation: Organisation;
 }
 
-describe('MetaPopulation', () => {
+describe('MethodType in MetaPopulation', () => {
   describe('with minimal method metadata', () => {
     const metaPopulation = new LazyMetaPopulation({
       c: [[10, 'Organisation', [], [], [[11, 'Do']]]],

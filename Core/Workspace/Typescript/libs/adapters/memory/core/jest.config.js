@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'adapters-memory-system',
+  displayName: 'adapters-memory-core',
   preset: '../../../../jest.preset.js',
   globals: {
     'ts-jest': {
@@ -10,5 +10,5 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../../coverage/libs/adapters/memory/system',
+  coverageDirectory: '../../../../coverage/libs/adapters/memory/core',
 };

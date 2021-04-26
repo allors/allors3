@@ -1,4 +1,4 @@
-import { UnitTags, Multiplicity, Origin, Interface, Class } from '@allors/workspace/system';
+import { Interface, Class } from '@allors/workspace/system';
 import { LazyMetaPopulation } from '@allors/meta/lazy/system';
 
 type S = Interface;
@@ -13,7 +13,7 @@ interface M extends LazyMetaPopulation {
   C: C;
 }
 
-describe('MetaPopulation', () => {
+describe('Inheritance in MetaPopulation', () => {
   describe('with class, interface and superinterface metadata', () => {
     const metaPopulation = new LazyMetaPopulation({
       i: [
