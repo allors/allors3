@@ -16,8 +16,8 @@ module.exports = {
     '<rootDir>/libs/workspace/tests',
     '<rootDir>/libs/protocol/json/system',
     '<rootDir>/libs/workspace/system',
-    '<rootDir>/libs/adapters/memory/system',
     '<rootDir>/libs/meta/lazy/system',
+    '<rootDir>/libs/adapters/memory/core',
   ],
   setupFilesAfterEnv: ['jest-extended', 'jest-chain'],
 };

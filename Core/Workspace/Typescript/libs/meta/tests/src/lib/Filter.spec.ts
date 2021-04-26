@@ -2,7 +2,7 @@ import { MetaPopulation } from '@allors/meta/core';
 import { Database } from '@allors/workspace/core';
 
 import { data, PullFactory, Meta } from '@allors/meta/generated';
-import { MemoryDatabase } from '@allors/adapters/memory/system';
+import { MemoryDatabase } from '@allors/adapters/memory/core';
 
 describe('Filter',
     () => {

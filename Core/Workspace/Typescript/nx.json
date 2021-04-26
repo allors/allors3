@@ -20,7 +20,7 @@
     "workspace-tests": { "tags": [] },
     "protocol-json-system": { "tags": [] },
     "workspace-system": { "tags": [] },
-    "adapters-memory-system": { "tags": [] },
-    "meta-lazy-system": { "tags": [] }
+    "meta-lazy-system": { "tags": [] },
+    "adapters-memory-core": { "tags": [] }
   }
 }

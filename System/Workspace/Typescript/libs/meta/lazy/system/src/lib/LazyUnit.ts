@@ -5,6 +5,7 @@ import { InternalMetaPopulation } from './internal/InternalMetaPopulation';
 export class LazyUnit implements InternalUnit {
   isUnit = true;
   isComposite = false;
+  isInterface = false;
   isClass = false;
   pluralName: string;
   origin = Origin.Database;
