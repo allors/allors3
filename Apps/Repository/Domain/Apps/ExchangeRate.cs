@@ -46,13 +46,6 @@ namespace Allors.Repository
         public Currency ToCurrency { get; set; }
 
         #region Allors
-        [Id("cbecb76b-7ab2-4c20-be18-b9a7a55db8de")]
-        #endregion
-        [Required]
-        [Workspace]
-        public int Factor{ get; set; }
-
-        #region Allors
         [Id("dad55248-a724-4be0-891a-51aec803f2d8")]
         #endregion
         [Required]

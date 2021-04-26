@@ -18,7 +18,6 @@ namespace Allors.Database.Domain
             {
                 m.ExchangeRate.RolePattern(v => v.FromCurrency),
                 m.ExchangeRate.RolePattern(v => v.ToCurrency),
-                m.ExchangeRate.RolePattern(v => v.Factor),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -30,11 +29,6 @@ namespace Allors.Database.Domain
                 if (@this.ExistFromCurrency && @this.ExistToCurrency && @this.FromCurrency.Equals(@this.ToCurrency))
                 {
                     validation.AddError($"{@this}, {@this.FromCurrency}, Currencies can not be same");
-                }
-
-                if (@this.Factor == 0)
-                {
-                    validation.AddError($"{@this}, {@this.Factor}, Factor not valid");
                 }
             }
         }
