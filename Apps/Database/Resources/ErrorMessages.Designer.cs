@@ -115,7 +115,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Changing contra account is not allowed.
+        ///   Looks up a localized string similar to Changing contra acoount is not allowed.
         /// </summary>
         public static string ContraAccountChanged {
             get {
@@ -138,6 +138,15 @@ namespace Resources {
         public static string CostUnitNotAllowed {
             get {
                 return ResourceManager.GetString("CostUnitNotAllowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Currency is missing exchange rate.
+        /// </summary>
+        public static string CurrencyNotAllowed {
+            get {
+                return ResourceManager.GetString("CurrencyNotAllowed", resourceCulture);
             }
         }
         
