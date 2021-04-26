@@ -19,14 +19,14 @@ export interface MetaData {
   c?: ObjectTypeData[];
 
   /**
-   * Multiplicity
-   */
-   m?: [][];
-
-  /**
    * Origin
    */
-   o?: [][];
+  o?: number[][];
+
+  /**
+   * Multiplicity
+   */
+  m?: number[][];
 
   /**
    * IsDerived
@@ -43,8 +43,8 @@ export interface MetaData {
    */
   u?: number[];
 
-   /**
+  /**
    * MediaType
    */
-    t?: { [name: string]: number[] };
-  }
+  t?: { [name: string]: number[] };
+}

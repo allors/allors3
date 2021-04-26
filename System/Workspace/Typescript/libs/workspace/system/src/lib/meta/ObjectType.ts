@@ -9,5 +9,7 @@ export interface ObjectType extends MetaObject {
 
   isComposite: boolean;
 
+  isInterface: boolean;
+
   isClass: boolean;
 }

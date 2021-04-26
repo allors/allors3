@@ -29,6 +29,7 @@ export abstract class LazyComposite implements InternalComposite {
   directRoleTypes: Set<InternalRoleType> = new Set();
   directMethodTypes: Set<InternalMethodType> = new Set();
 
+  abstract isInterface: boolean;
   abstract isClass: boolean;
   abstract classes: Set<InternalClass>;
 
@@ -46,8 +47,6 @@ export abstract class LazyComposite implements InternalComposite {
     this.singularName = s;
     this.origin = lookup.o.get(t) ?? Origin.Database;
     metaPopulation.onNewComposite(this);
-
-    this.origin = Origin.Database;
   }
   onNewAssociationType(associationType: InternalAssociationType) {
     this.directAssociationTypes.add(associationType);

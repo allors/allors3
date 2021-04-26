@@ -6,6 +6,7 @@ import { InternalComposite } from './internal/InternalComposite';
 import { LazyComposite } from './LazyComposite';
 
 export class LazyClass extends LazyComposite implements InternalClass {
+  readonly isInterface = false;
   readonly isClass = true;
   readonly classes: Set<InternalClass>;
 

@@ -7,6 +7,7 @@ import { InternalMetaPopulation } from './internal/InternalMetaPopulation';
 import { LazyComposite } from './LazyComposite';
 
 export class LazyInterface extends LazyComposite implements InternalInterface {
+  readonly isInterface = true;
   readonly isClass = false;
 
   subtypes: Set<InternalComposite>;
