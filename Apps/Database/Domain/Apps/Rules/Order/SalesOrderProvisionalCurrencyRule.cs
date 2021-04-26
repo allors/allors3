@@ -10,6 +10,7 @@ namespace Allors.Database.Domain
     using System.Linq;
     using Meta;
     using Database.Derivations;
+    using Resources;
 
     public class SalesOrderProvisionalCurrencyRule : Rule
     {
@@ -20,6 +21,7 @@ namespace Allors.Database.Domain
                 m.SalesOrder.RolePattern(v => v.AssignedCurrency),
                 m.SalesOrder.RolePattern(v => v.BillToCustomer),
                 m.SalesOrder.RolePattern(v => v.TakenBy),
+                m.SalesOrder.RolePattern(v => v.OrderDate),
                 m.Party.RolePattern(v => v.PreferredCurrency, v => v.SalesOrdersWhereBillToCustomer),
                 m.Organisation.RolePattern(v => v.PreferredCurrency, v => v.SalesOrdersWhereTakenBy),
             };
@@ -32,6 +34,23 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<SalesOrder>().Where(v => v.SalesOrderState.IsProvisional))
             {
                 @this.DerivedCurrency = @this.AssignedCurrency ?? @this.BillToCustomer?.PreferredCurrency ?? @this.BillToCustomer?.Locale?.Country?.Currency ?? @this.TakenBy?.PreferredCurrency;
+
+                if (@this.ExistOrderDate
+                    && @this.ExistTakenBy
+                    && @this.DerivedCurrency != @this.TakenBy.PreferredCurrency)
+                {
+                    var exchangeRate = @this.DerivedCurrency.ExchangeRatesWhereFromCurrency.Where(v => v.ValidFrom <= @this.OrderDate && v.ToCurrency.Equals(@this.TakenBy.PreferredCurrency)).OrderByDescending(v => v.ValidFrom).FirstOrDefault();
+
+                    if (exchangeRate == null)
+                    {
+                        exchangeRate = @this.TakenBy.PreferredCurrency.ExchangeRatesWhereFromCurrency.Where(v => v.ValidFrom <= @this.OrderDate && v.ToCurrency.Equals(@this.DerivedCurrency)).OrderByDescending(v => v.ValidFrom).FirstOrDefault();
+                    }
+
+                    if (exchangeRate == null)
+                    {
+                        validation.AddError($"{@this}, {@this.Meta.AssignedCurrency}, {ErrorMessages.CurrencyNotAllowed}");
+                    }
+                }
             }
         }
     }
