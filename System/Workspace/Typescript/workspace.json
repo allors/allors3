@@ -6,8 +6,20 @@
       "sourceRoot": "libs/workspace/system/src",
       "projectType": "library",
       "targets": {
-        "lint": { "executor": "@nrwl/linter:eslint", "options": { "lintFilePatterns": ["libs/workspace/system/**/*.ts"] } },
-        "test": { "executor": "@nrwl/jest:jest", "outputs": ["coverage/libs/workspace/system"], "options": { "jestConfig": "libs/workspace/system/jest.config.js", "passWithNoTests": true } }
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/workspace/system/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/workspace/system"],
+          "options": {
+            "jestConfig": "libs/workspace/system/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
       }
     },
     "protocol-json-system": {
@@ -15,28 +27,66 @@
       "sourceRoot": "libs/protocol/json/system/src",
       "projectType": "library",
       "targets": {
-        "lint": { "executor": "@nrwl/linter:eslint", "options": { "lintFilePatterns": ["libs/protocol/json/system/**/*.ts"] } },
-        "test": { "executor": "@nrwl/jest:jest", "outputs": ["coverage/libs/protocol/json/system"], "options": { "jestConfig": "libs/protocol/json/system/jest.config.js", "passWithNoTests": true } }
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/protocol/json/system/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/protocol/json/system"],
+          "options": {
+            "jestConfig": "libs/protocol/json/system/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
       }
     },
-    "meta-lazy-system": {
-      "root": "libs/meta/lazy/system",
-      "sourceRoot": "libs/meta/lazy/system/src",
+    "workspace-meta-lazy-system": {
+      "root": "libs/workspace/meta/lazy/system",
+      "sourceRoot": "libs/workspace/meta/lazy/system/src",
       "projectType": "library",
       "targets": {
-        "lint": { "executor": "@nrwl/linter:eslint", "options": { "lintFilePatterns": ["libs/meta/lazy/system/**/*.ts"] } },
-        "test": { "executor": "@nrwl/jest:jest", "outputs": ["coverage/libs/meta/lazy/system"], "options": { "jestConfig": "libs/meta/lazy/system/jest.config.js", "passWithNoTests": true } }
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/workspace/meta/lazy/system/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/workspace/meta/lazy/system"],
+          "options": {
+            "jestConfig": "libs/workspace/meta/lazy/system/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
       }
     },
-    "meta-lazy-tests": {
-      "root": "libs/meta/lazy/tests",
-      "sourceRoot": "libs/meta/lazy/tests/src",
+    "workspace-meta-lazy-tests": {
+      "root": "libs/workspace/meta/lazy/tests",
+      "sourceRoot": "libs/workspace/meta/lazy/tests/src",
       "projectType": "library",
       "targets": {
-        "lint": { "executor": "@nrwl/linter:eslint", "options": { "lintFilePatterns": ["libs/meta/lazy/tests/**/*.ts"] } },
-        "test": { "executor": "@nrwl/jest:jest", "outputs": ["coverage/libs/meta/lazy/tests"], "options": { "jestConfig": "libs/meta/lazy/tests/jest.config.js", "passWithNoTests": true } }
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/workspace/meta/lazy/tests/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/workspace/meta/lazy/tests"],
+          "options": {
+            "jestConfig": "libs/workspace/meta/lazy/tests/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
       }
     }
   },
-  "cli": { "defaultCollection": "@nrwl/workspace" }
+  "cli": {
+    "defaultCollection": "@nrwl/workspace"
+  }
 }

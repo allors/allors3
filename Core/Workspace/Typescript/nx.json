@@ -1,26 +1,25 @@
 {
-  "implicitDependencies": { "workspace.json": "*", "package.json": { "dependencies": "*", "devDependencies": "*" }, "tsconfig.base.json": "*", "tslint.json": "*", ".eslintrc.json": "*", "nx.json": "*" },
-  "affected": { "defaultBase": "master" },
   "npmScope": "allors",
-  "tasksRunnerOptions": { "default": { "runner": "@nrwl/workspace/tasks-runners/default", "options": { "cacheableOperations": ["build", "lint", "test", "e2e"] } } },
+  "affected": { "defaultBase": "master" },
+  "implicitDependencies": {
+    "package.json": { "dependencies": "*", "devDependencies": "*" },
+    ".eslintrc.json": "*"
+  },
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "@nrwl/workspace/tasks-runners/default",
+      "options": { "cacheableOperations": ["build", "lint", "test", "e2e"] }
+    }
+  },
   "projects": {
-    "angular-app": { "tags": [] },
-    "angular-material-app": { "tags": [] },
-    "gatsby": { "tags": [] },
-    "client-fetch": { "tags": [] },
-    "client-tests": { "tags": [] },
-    "data-core": { "tags": [] },
-    "domain-core": { "tags": [] },
-    "domain-custom": { "tags": [] },
-    "domain-generated": { "tags": [] },
-    "meta-core": { "tags": [] },
-    "meta-generated": { "tags": [] },
-    "meta-tests": { "tags": [] },
-    "workspace-core": { "tags": [] },
-    "workspace-tests": { "tags": [] },
     "protocol-json-system": { "tags": [] },
     "workspace-system": { "tags": [] },
-    "meta-lazy-system": { "tags": [] },
-    "adapters-memory-core": { "tags": [] }
+    "workspace-meta-lazy-system": { "tags": [] },
+    "workspace-meta-core": { "tags": [] },
+    "workspace-meta-generated": { "tags": [] },
+    "workspace-meta-tests": { "tags": [] },
+    "workspace-domain-core": { "tags": [] },
+    "workspace-domain-custom": { "tags": [] },
+    "workspace-domain-generated": { "tags": [] }
   }
 }
