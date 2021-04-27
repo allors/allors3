@@ -1821,17 +1821,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenBillToCustomerWithDifferentCurrency_WhenDerivingPrices_ThenCalculatePricesInPreferredCurrency()
         {
-            var poundSterling = new Currencies(this.Transaction).FindBy(this.M.Currency.IsoCode, "GBP");
+            var euro = new Currencies(this.Transaction).FindBy(M.Currency.IsoCode, "EUR");
+            var poundSterling = new Currencies(this.Transaction).FindBy(M.Currency.IsoCode, "GBP");
 
-            const decimal conversionfactor = 0.8553M;
-            var euroToPoundStirling = new UnitOfMeasureConversionBuilder(this.Transaction)
-                .WithConversionFactor(conversionfactor)
-                .WithToUnitOfMeasure(poundSterling)
-                .WithStartDate(this.Transaction.Now())
+            new ExchangeRateBuilder(this.Transaction)
+                .WithValidFrom(this.Transaction.Now())
+                .WithFromCurrency(euro)
+                .WithToCurrency(poundSterling)
+                .WithRate(0.8553M)
                 .Build();
-
-            var euro = new Currencies(this.Transaction).FindBy(this.M.Currency.IsoCode, "EUR");
-            euro.AddUnitOfMeasureConversion(euroToPoundStirling);
 
             this.Transaction.Derive();
             this.Transaction.Commit();

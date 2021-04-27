@@ -239,8 +239,11 @@ namespace Allors.Database.Domain
                     }
                 }
 
+                if (@this.ExistOrderDate && @this.ExistDerivedCurrency && @this.ExistTakenBy)
+                {
+                    @this.TotalListPriceInPreferredCurrency = Rounder.RoundDecimal(Currencies.ConvertCurrency(@this.TotalListPrice, @this.OrderDate, @this.DerivedCurrency, @this.TakenBy.PreferredCurrency), 2);
+                }
 
-                @this.TotalListPriceInPreferredCurrency = Rounder.RoundDecimal(Currencies.ConvertCurrency(@this.TotalListPrice, @this.OrderDate, @this.DerivedCurrency, @this.TakenBy.PreferredCurrency), 2);
                 @this.TotalListPrice = Rounder.RoundDecimal(@this.TotalListPrice, 2);
             }
         }
