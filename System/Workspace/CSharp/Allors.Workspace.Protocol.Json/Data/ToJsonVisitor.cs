@@ -193,7 +193,7 @@ namespace Allors.Workspace.Protocol.Json
             {
                 Kind = ExtentKind.Extent,
                 ObjectType = visited.ObjectType?.Tag,
-                Sorting = visited.Sorting?.Select(v => new Sort { Descending = v.Descending, RoleType = v.RoleType?.RelationType.Tag }).ToArray(),
+                Sorting = visited.Sorting?.Select(v => new Sort { SortDirection = v.SortDirection, RoleType = v.RoleType?.RelationType.Tag }).ToArray(),
             };
 
             this.extents.Push(extent);
@@ -437,7 +437,7 @@ namespace Allors.Workspace.Protocol.Json
         {
             var sort = new Sort
             {
-                Descending = visited.Descending,
+                SortDirection = visited.SortDirection,
                 RoleType = visited.RoleType?.RelationType.Tag,
             };
 
@@ -510,10 +510,10 @@ namespace Allors.Workspace.Protocol.Json
         public void VisitProcedure(Data.Procedure procedure) => this.Procedure = new Allors.Protocol.Json.Data.Procedure
         {
             Name = procedure.Name,
-            CollectionByName = procedure.CollectionByName.ToJsonForCollectionByName(),
-            ObjectByName = procedure.ObjectByName.ToJsonForObjectByName(),
-            ValueByName = procedure.ValueByName.ToJsonForValueByName(),
-            VersionByObject = procedure.VersionByObject.ToJsonForVersionByObject(),
+            Collections = procedure.Collections?.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Select(v => v.Id).ToArray()),
+            Objects = procedure.Objects?.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Id),
+            Values = procedure.Values,
+            Pool = procedure.Pool?.Select(kvp => new long[] { kvp.Key.Id, kvp.Value }).ToArray(),
         };
     }
 }

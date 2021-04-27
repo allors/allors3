@@ -25,7 +25,7 @@ namespace Allors.Server.Tests
         {
             var args = new AuthenticationTokenRequest
             {
-                UserName = "user",
+                Login = "user",
                 Password = "p@ssw0rd",
             };
 

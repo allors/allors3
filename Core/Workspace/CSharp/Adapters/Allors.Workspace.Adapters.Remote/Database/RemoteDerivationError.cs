@@ -21,10 +21,10 @@ namespace Allors.Workspace.Adapters.Remote
             this.responseDerivationError = responseDerivationError;
         }
 
-        public string Message => this.responseDerivationError.M;
+        public string Message => this.responseDerivationError.ErrorMessage;
 
         public IEnumerable<Role> Roles =>
-            from r in this.responseDerivationError.R
+            from r in this.responseDerivationError.Roles
             let association = this.session.Get<IObject>(r[0])
             let relationType = (IRelationType)this.session.Workspace.MetaPopulation.FindByTag((int)r[1])
             select new Role(association, relationType);

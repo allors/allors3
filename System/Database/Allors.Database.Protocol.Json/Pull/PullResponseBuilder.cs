@@ -183,9 +183,9 @@ namespace Allors.Database.Protocol.Json
             var procedure = pullRequest?.Procedure?.FromJson(this.Transaction);
             if (procedure != null)
             {
-                if (procedure.VersionByObject != null)
+                if (procedure.Pool != null)
                 {
-                    foreach (var kvp in procedure.VersionByObject)
+                    foreach (var kvp in procedure.Pool)
                     {
                         var @object = kvp.Key;
                         var version = kvp.Value;

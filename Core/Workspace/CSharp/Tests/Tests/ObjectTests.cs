@@ -29,7 +29,7 @@ namespace Tests.Workspace
             {
                 var procedure = new Procedure("ThisIsWrong")
                 {
-                    ValueByName = new Dictionary<string, object> { { "step", 0 } }
+                    Values = new Dictionary<string, string> { { "step", "0" } }
                 };
 
                 await session.Pull(procedure);

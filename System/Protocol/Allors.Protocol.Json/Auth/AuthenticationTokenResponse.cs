@@ -9,13 +9,13 @@ namespace Allors.Protocol.Json.Auth
 
     public class AuthenticationTokenResponse
     {
-        [JsonPropertyName("authenticated")]
+        [JsonPropertyName("a")]
         public bool Authenticated { get; set; }
 
-        [JsonPropertyName("userId")]
+        [JsonPropertyName("u")]
         public string UserId { get; set; }
 
-        [JsonPropertyName("token")]
+        [JsonPropertyName("t")]
         public string Token { get; set; }
     }
 }

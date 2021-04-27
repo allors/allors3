@@ -13,9 +13,9 @@ namespace Allors.Database.Data
 
         public IRoleType RoleType { get; set; }
 
-        public bool Descending { get; set; }
+        public SortDirection SortDirection { get; set; }
 
-        public void Build(Database.Extent extent) => extent.AddSort(this.RoleType, this.Descending ? SortDirection.Descending : SortDirection.Ascending);
+        public void Build(Database.Extent extent) => extent.AddSort(this.RoleType, this.SortDirection);
 
         public void Accept(IVisitor visitor) => visitor.VisitSort(this);
     }

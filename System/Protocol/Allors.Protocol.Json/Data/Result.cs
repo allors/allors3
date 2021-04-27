@@ -10,19 +10,19 @@ namespace Allors.Protocol.Json.Data
 
     public class Result : IVisitable
     {
-        [JsonPropertyName("selectRef")]
+        [JsonPropertyName("r")]
         public Guid? SelectRef { get; set; }
 
-        [JsonPropertyName("select")]
+        [JsonPropertyName("s")]
         public Select Select { get; set; }
 
-        [JsonPropertyName("name")]
+        [JsonPropertyName("n")]
         public string Name { get; set; }
 
-        [JsonPropertyName("skip")]
+        [JsonPropertyName("k")]
         public int? Skip { get; set; }
 
-        [JsonPropertyName("take")]
+        [JsonPropertyName("t")]
         public int? Take { get; set; }
 
         public void Accept(IVisitor visitor) => visitor.VisitResult(this);

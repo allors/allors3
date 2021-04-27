@@ -5,6 +5,7 @@
 
 namespace Allors.Database
 {
+    using System;
     using System.Collections.Generic;
 
     public interface IProcedureInput
@@ -13,7 +14,7 @@ namespace Allors.Database
 
         IDictionary<string, IObject> Objects { get; }
 
-        IDictionary<string, object> Values { get; }
+        IDictionary<string, string> Values { get; }
 
         public T[] GetCollection<T>();
 
@@ -23,8 +24,20 @@ namespace Allors.Database
 
         public T GetObject<T>(string key) where T : class, IObject;
 
-        public object GetValue(string key);
+        public string GetValue(string key);
 
-        public T GetValue<T>(string key);
+        public byte[] GetValueAsBinary(string key);
+
+        public bool GetValueAsBoolean(string key);
+
+        public double? GetValueAsFloat(string key);
+
+        public int? GetValueAsInteger(string key);
+
+        public DateTime? GetValueAsDateTime(string key);
+
+        public decimal? GetValueAsDecimal(string key);
+
+        public Guid? GetValueAsUnique(string key);
     }
 }

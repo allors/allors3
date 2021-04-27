@@ -1,7 +1,9 @@
 namespace Allors.Database
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Xml;
     using Data;
 
     public class ProcedureInput : IProcedureInput
@@ -16,11 +18,11 @@ namespace Allors.Database
         }
 
 
-        public IDictionary<string, IObject[]> Collections => this.procedure.CollectionByName;
+        public IDictionary<string, IObject[]> Collections => this.procedure.Collections;
 
-        public IDictionary<string, IObject> Objects => this.procedure.ObjectByName;
+        public IDictionary<string, IObject> Objects => this.procedure.Objects;
 
-        public IDictionary<string, object> Values => this.procedure.ValueByName;
+        public IDictionary<string, string> Values => this.procedure.Values;
 
         public T[] GetCollection<T>()
         {
@@ -39,12 +41,21 @@ namespace Allors.Database
             return this.GetObject<T>(key);
         }
 
-        public T GetObject<T>(string key)
-            where T : class, IObject => this.Objects.TryGetValue(key, out var @object) ? (T)@object : null;
+        public T GetObject<T>(string key) where T : class, IObject => this.Objects.TryGetValue(key, out var @object) ? (T)@object : null;
 
-        public object GetValue(string key) => this.Values[key];
+        public string GetValue(string key) => this.Values[key];
+        public byte[] GetValueAsBinary(string key) => Convert.FromBase64String(this.Values[key]);
 
-        public T GetValue<T>(string key) => (T)this.GetValue(key);
+        public bool GetValueAsBoolean(string key) => XmlConvert.ToBoolean(this.Values[key]);
 
+        public double? GetValueAsFloat(string key) => XmlConvert.ToDouble(this.Values[key]);
+
+        public int? GetValueAsInteger(string key) => XmlConvert.ToInt32(this.Values[key]);
+
+        public DateTime? GetValueAsDateTime(string key) => XmlConvert.ToDateTime(this.Values[key], XmlDateTimeSerializationMode.Utc);
+
+        public decimal? GetValueAsDecimal(string key) => XmlConvert.ToDecimal(this.Values[key]);
+
+        public Guid? GetValueAsUnique(string key) => XmlConvert.ToGuid(this.Values[key]);
     }
 }

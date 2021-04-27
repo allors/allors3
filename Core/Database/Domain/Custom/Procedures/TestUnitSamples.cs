@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
     {
         public void Execute(IProcedureContext context, IProcedureInput input, IProcedureOutput output)
         {
-            var step = input.GetValue<int>("step");
+            var step = input.GetValueAsInteger("step");
 
             var unitSample = new UnitSamples(context.Transaction).Extent().First;
             if (unitSample == null)

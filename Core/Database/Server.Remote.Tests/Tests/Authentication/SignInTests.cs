@@ -28,7 +28,7 @@ namespace Allors.Server.Tests
         {
             var args = new AuthenticationTokenRequest
             {
-                UserName = "Jane",
+                Login = "Jane",
                 Password = "p@ssw0rd",
             };
 
@@ -44,7 +44,7 @@ namespace Allors.Server.Tests
         {
             var args = new AuthenticationTokenRequest
             {
-                UserName = "Jeff",
+                Login = "Jeff",
                 Password = "p@ssw0rd",
             };
 
@@ -60,7 +60,7 @@ namespace Allors.Server.Tests
         {
             var args = new AuthenticationTokenRequest
             {
-                UserName = "John",
+                Login = "John",
                 Password = "",
             };
 
@@ -76,7 +76,7 @@ namespace Allors.Server.Tests
         {
             var args = new AuthenticationTokenRequest
             {
-                UserName = "John",
+                Login = "John",
             };
 
             var uri = new Uri("Authentication/Token", UriKind.Relative);

@@ -5,48 +5,47 @@
 
 namespace Allors.Protocol.Json.Data
 {
-    using System;
     using System.Text.Json.Serialization;
 
     public class Predicate : IVisitable
     {
-        [JsonPropertyName("kind")]
+        [JsonPropertyName("k")]
         public PredicateKind Kind { get; set; }
 
-        [JsonPropertyName("associationType")]
+        [JsonPropertyName("a")]
         public int? AssociationType { get; set; }
 
-        [JsonPropertyName("roleType")]
+        [JsonPropertyName("r")]
         public int? RoleType { get; set; }
 
-        [JsonPropertyName("objectType")]
+        [JsonPropertyName("t")]
         public int? ObjectType { get; set; }
 
-        [JsonPropertyName("parameter")]
+        [JsonPropertyName("p")]
         public string Parameter { get; set; }
 
-        [JsonPropertyName("dependencies")]
+        [JsonPropertyName("d")]
         public string[] Dependencies { get; set; }
 
-        [JsonPropertyName("operand")]
+        [JsonPropertyName("op")]
         public Predicate Operand { get; set; }
 
-        [JsonPropertyName("operands")]
+        [JsonPropertyName("ops")]
         public Predicate[] Operands { get; set; }
 
-        [JsonPropertyName("object")]
+        [JsonPropertyName("ob")]
         public long? Object { get; set; }
 
-        [JsonPropertyName("objects")]
+        [JsonPropertyName("obs")]
         public long[] Objects { get; set; }
 
-        [JsonPropertyName("value")]
+        [JsonPropertyName("v")]
         public string Value { get; set; }
 
-        [JsonPropertyName("values")]
+        [JsonPropertyName("vs")]
         public string[] Values { get; set; }
 
-        [JsonPropertyName("extent")]
+        [JsonPropertyName("e")]
         public Extent Extent { get; set; }
 
         public void Accept(IVisitor visitor) => visitor.VisitPredicate(this);

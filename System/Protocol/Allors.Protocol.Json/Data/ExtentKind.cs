@@ -5,15 +5,14 @@
 
 namespace Allors.Protocol.Json.Data
 {
-    // TODO: Make enumeration lik PredicateKind
-    public static class ExtentKind
+    public enum ExtentKind
     {
-        public const string Extent = "Extent";
+        Extent = 1,
 
-        public const string Union = "Union";
+        Union = 2,
 
-        public const string Intersect = "Intersect";
+        Intersect = 3,
 
-        public const string Except = "Except";
+        Except = 4
     }
 }

@@ -69,7 +69,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public async Task<bool> Login(Uri url, string username, string password)
         {
-            var request = new { UserName = username, Password = password };
+            var request = new AuthenticationTokenRequest { Login = username, Password = password };
             using var response = await this.PostAsJsonAsync(url, request);
             response.EnsureSuccessStatusCode();
             var authResult = await this.ReadAsAsync<AuthenticationTokenResponse>(response);

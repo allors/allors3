@@ -98,7 +98,7 @@ namespace Allors.Server.Tests
         {
             var args = new AuthenticationTokenRequest
             {
-                UserName = user.UserName,
+                Login = user.UserName,
             };
 
             var uri = new Uri(LoginUrl, UriKind.Relative);

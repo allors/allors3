@@ -13,7 +13,7 @@ namespace Allors.Workspace.Data
 
         public IRoleType RoleType { get; set; }
 
-        public bool Descending { get; set; }
+        public SortDirection SortDirection { get; set; }
 
         public void Accept(IVisitor visitor) => visitor.VisitSort(this);
     }

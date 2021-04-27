@@ -12,14 +12,14 @@ namespace Allors.Protocol.Json.Api
         /// <summary>
         /// Gets or sets the error message.
         /// </summary>
-        [JsonPropertyName("m")]
-        public string M { get; set; }
+        [JsonPropertyName("e")]
+        public string ErrorMessage { get; set; }
 
         /// <summary>
         /// Gets or sets the roles.
         /// [][AssociationId, RelationTypeId]
         /// </summary>
         [JsonPropertyName("r")]
-        public long[][] R { get; set; }
+        public long[][] Roles { get; set; }
     }
 }

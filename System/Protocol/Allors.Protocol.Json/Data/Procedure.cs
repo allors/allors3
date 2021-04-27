@@ -10,20 +10,23 @@ namespace Allors.Protocol.Json.Data
 
     public class Procedure : IVisitable
     {
-        [JsonPropertyName("name")]
+        [JsonPropertyName("n")]
         public string Name { get; set; }
 
-        [JsonPropertyName("namedCollections")]
-        public string[][] CollectionByName { get; set; }
+        [JsonPropertyName("c")]
+        public IDictionary<string, long[]> Collections { get; set; }
 
-        [JsonPropertyName("namedObjects")]
-        public string[][] ObjectByName { get; set; }
+        [JsonPropertyName("o")]
+        public IDictionary<string, long> Objects { get; set; }
 
-        [JsonPropertyName("namedValues")]
-        public string[][] ValueByName { get; set; }
+        [JsonPropertyName("v")]
+        public IDictionary<string, string> Values { get; set; }
 
-        [JsonPropertyName("objectVersions")]
-        public string[][] VersionByObject { get; set; }
+        /// <summary>
+        /// [][id,version]
+        /// </summary>
+        [JsonPropertyName("p")]
+        public long[][] Pool { get; set; }
 
         public void Accept(IVisitor visitor) => visitor.VisitProcedure(this);
     }

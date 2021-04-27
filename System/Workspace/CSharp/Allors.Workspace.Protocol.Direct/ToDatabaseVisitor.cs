@@ -37,10 +37,10 @@ namespace Allors.Workspace.Protocol.Direct
         public Database.Data.Procedure Visit(Data.Procedure ws) =>
             new Database.Data.Procedure(ws.Name)
             {
-                CollectionByName = ws.CollectionByName?.ToDictionary(v => v.Key, v => this.transaction.Instantiate(v.Value?.Select(w => w.Id))),
-                ObjectByName = ws.ObjectByName?.ToDictionary(v => v.Key, v => v.Value != null ? this.transaction.Instantiate(v.Value.Id) : null),
-                ValueByName = ws.ValueByName,
-                VersionByObject = ws.VersionByObject?.ToDictionary(v => this.transaction.Instantiate(v.Key.Id), v => v.Value),
+                Collections = ws.Collections?.ToDictionary(v => v.Key, v => this.transaction.Instantiate(v.Value?.Select(w => w.Id))),
+                Objects = ws.Objects?.ToDictionary(v => v.Key, v => v.Value != null ? this.transaction.Instantiate(v.Value.Id) : null),
+                Values = ws.Values,
+                Pool = ws.Pool?.ToDictionary(v => this.transaction.Instantiate(v.Key.Id), v => v.Value),
             };
         
         private Database.Data.IExtent Visit(Data.IExtent ws) =>

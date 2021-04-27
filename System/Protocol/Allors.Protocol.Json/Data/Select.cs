@@ -9,10 +9,10 @@ namespace Allors.Protocol.Json.Data
 
     public class Select : IVisitable
     {
-        [JsonPropertyName("step")]
+        [JsonPropertyName("s")]
         public Step Step { get; set; }
 
-        [JsonPropertyName("include")]
+        [JsonPropertyName("i")]
         public Node[] Include { get; set; }
         
         public void Accept(IVisitor visitor) => visitor.VisitSelect(this);

@@ -11,13 +11,13 @@ namespace Allors.Protocol.Json.Api.Pull
     public class PullResponse : Response
     {
         [JsonPropertyName("c")]
-        public Dictionary<string, long[]> Collections { get; set; }
+        public IDictionary<string, long[]> Collections { get; set; }
 
         [JsonPropertyName("o")]
-        public Dictionary<string, long> Objects { get; set; }
+        public IDictionary<string, long> Objects { get; set; }
 
         [JsonPropertyName("v")]
-        public Dictionary<string, object> Values { get; set; }
+        public IDictionary<string, object> Values { get; set; }
 
         [JsonPropertyName("p")]
         public PullResponseObject[] Pool { get; set; }

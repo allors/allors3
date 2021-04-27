@@ -13,13 +13,13 @@ namespace Allors.Database.Data
 
         public string Name { get; }
 
-        public IDictionary<string, IObject[]> CollectionByName { get; set; }
+        public IDictionary<string, IObject[]> Collections { get; set; }
 
-        public IDictionary<string, IObject> ObjectByName { get; set; }
+        public IDictionary<string, IObject> Objects { get; set; }
 
-        public IDictionary<string, object> ValueByName { get; set; }
+        public IDictionary<string, string> Values { get; set; }
 
-        public IDictionary<IObject, long> VersionByObject { get; set; }
+        public IDictionary<IObject, long> Pool { get; set; }
 
         public void Accept(IVisitor visitor) => visitor.VisitProcedure(this);
     }

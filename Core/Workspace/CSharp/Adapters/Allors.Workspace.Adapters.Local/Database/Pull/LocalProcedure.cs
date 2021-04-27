@@ -38,9 +38,9 @@ namespace Allors.Workspace.Adapters.Local
 
         public void Execute(LocalPullResult pullResponse)
         {
-            if (this.procedure.VersionByObject != null)
+            if (this.procedure.Pool != null)
             {
-                foreach (var kvp in this.procedure.VersionByObject)
+                foreach (var kvp in this.procedure.Pool)
                 {
                     var @object = kvp.Key;
                     var version = kvp.Value;

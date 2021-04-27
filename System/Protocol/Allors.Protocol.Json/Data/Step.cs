@@ -10,16 +10,16 @@ namespace Allors.Protocol.Json.Data
 
     public class Step : IVisitable
     {
-        [JsonPropertyName("associationType")]
+        [JsonPropertyName("a")]
         public int? AssociationType { get; set; }
 
-        [JsonPropertyName("roleType")]
+        [JsonPropertyName("r")]
         public int? RoleType { get; set; }
 
-        [JsonPropertyName("next")]
+        [JsonPropertyName("n")]
         public Step Next { get; set; }
 
-        [JsonPropertyName("include")]
+        [JsonPropertyName("i")]
         public Node[] Include { get; set; }
 
         public void Accept(IVisitor visitor) => visitor.VisitStep(this);

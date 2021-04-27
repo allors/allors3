@@ -5,24 +5,23 @@
 
 namespace Allors.Protocol.Json.Data
 {
-    using System;
     using System.Text.Json.Serialization;
 
     public class Extent : IVisitable
     {
-        [JsonPropertyName("kind")]
-        public string Kind { get; set; }
+        [JsonPropertyName("k")]
+        public ExtentKind Kind { get; set; }
 
-        [JsonPropertyName("operands")]
+        [JsonPropertyName("o")]
         public Extent[] Operands { get; set; }
 
-        [JsonPropertyName("objectType")]
+        [JsonPropertyName("t")]
         public int? ObjectType { get; set; }
 
-        [JsonPropertyName("predicate")]
+        [JsonPropertyName("p")]
         public Predicate Predicate { get; set; }
 
-        [JsonPropertyName("sorting")]
+        [JsonPropertyName("s")]
         public Sort[] Sorting { get; set; }
 
         public void Accept(IVisitor visitor) => visitor.VisitExtent(this);

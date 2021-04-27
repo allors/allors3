@@ -442,7 +442,7 @@ namespace Allors.Database.Protocol.Json
         {
             var sort = new Sort
             {
-                Descending = visited.Descending,
+                SortDirection = visited.SortDirection,
                 RoleType = visited.RoleType != null ? (IRoleType)this.transaction.Database.ObjectFactory.MetaPopulation.FindByTag(visited.RoleType.Value) : null,
             };
 
@@ -480,10 +480,10 @@ namespace Allors.Database.Protocol.Json
         public void VisitProcedure(Allors.Protocol.Json.Data.Procedure procedure) =>
             this.Procedure = new Procedure(procedure.Name)
             {
-                CollectionByName = procedure.CollectionByName?.FromJsonForCollectionByName(this.transaction),
-                ObjectByName = procedure.ObjectByName?.FromJsonForObjectByName(this.transaction),
-                ValueByName = procedure.ValueByName?.FromJsonForValueByName(),
-                VersionByObject = procedure.VersionByObject?.FromJsonForVersionByObject(this.transaction)
+                Collections = procedure.Collections?.ToDictionary(kvp => kvp.Key, kvp => this.transaction.Instantiate(kvp.Value)),
+                Objects = procedure.Objects?.ToDictionary(kvp => kvp.Key, kvp => this.transaction.Instantiate(kvp.Value)),
+                Values = procedure.Values,
+                Pool = procedure.Pool?.ToDictionary(v => this.transaction.Instantiate(v[0]), v => v[1])
             };
     }
 }

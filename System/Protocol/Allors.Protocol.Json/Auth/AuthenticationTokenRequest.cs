@@ -9,10 +9,10 @@ namespace Allors.Protocol.Json.Auth
 
     public class AuthenticationTokenRequest
     {
-        [JsonPropertyName("userName")]
-        public string UserName { get; set; }
+        [JsonPropertyName("l")]
+        public string Login { get; set; }
 
-        [JsonPropertyName("password")]
+        [JsonPropertyName("p")]
         public string Password { get; set; }
     }
 }

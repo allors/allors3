@@ -11,22 +11,22 @@ namespace Allors.Protocol.Json.Data
 
     public class Pull : IVisitable
     {
-        [JsonPropertyName("extentRef")]
+        [JsonPropertyName("er")]
         public Guid? ExtentRef { get; set; }
 
-        [JsonPropertyName("extent")]
+        [JsonPropertyName("e")]
         public Extent Extent { get; set; }
 
-        [JsonPropertyName("objectType")]
+        [JsonPropertyName("t")]
         public int? ObjectType { get; set; }
 
-        [JsonPropertyName("object")]
+        [JsonPropertyName("o")]
         public long? Object { get; set; }
 
-        [JsonPropertyName("results")]
+        [JsonPropertyName("r")]
         public Result[] Results { get; set; }
 
-        [JsonPropertyName("parameters")]
+        [JsonPropertyName("p")]
         public IDictionary<string, string> Parameters { get; set; }
 
         public void Accept(IVisitor visitor) => visitor.VisitPull(this);

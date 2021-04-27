@@ -25,7 +25,7 @@ namespace Tests.Workspace
 
             var procedure = new Procedure("TestUnitSamples")
             {
-                ValueByName = new Dictionary<string, object> { { "step", 0 } }
+                Values = new Dictionary<string, string> { { "step", "0" } }
             };
 
             var result = await session.Pull(procedure);
@@ -50,7 +50,7 @@ namespace Tests.Workspace
 
             var procedure = new Procedure("TestUnitSamples")
             {
-                ValueByName = new Dictionary<string, object> { { "step", 1 } }
+                Values = new Dictionary<string, string> { { "step", "1" } }
             };
 
             var result = await session.Pull(procedure);

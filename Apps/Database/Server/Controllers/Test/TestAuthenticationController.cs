@@ -34,7 +34,7 @@ namespace Allors.Database.Server.Controllers
         {
             if (this.ModelState.IsValid)
             {
-                var user = await this.UserManager.FindByNameAsync(request.UserName);
+                var user = await this.UserManager.FindByNameAsync(request.Login);
 
                 if (user != null)
                 {

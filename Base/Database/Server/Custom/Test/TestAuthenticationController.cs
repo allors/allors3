@@ -33,9 +33,9 @@ namespace Allors.Database.Server.Controllers
         [HttpPost]
         public async Task<IActionResult> Token([FromBody]AuthenticationTokenRequest request)
         {
-            if (this.ModelState.IsValid && !string.IsNullOrWhiteSpace(request.UserName))
+            if (this.ModelState.IsValid && !string.IsNullOrWhiteSpace(request.Login))
             {
-                var user = await this.UserManager.FindByNameAsync(request.UserName);
+                var user = await this.UserManager.FindByNameAsync(request.Login);
 
                 if (user != null)
                 {
