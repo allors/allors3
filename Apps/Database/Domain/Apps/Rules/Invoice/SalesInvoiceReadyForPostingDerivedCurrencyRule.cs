@@ -38,11 +38,11 @@ namespace Allors.Database.Domain
                     && @this.ExistBilledFrom
                     && @this.DerivedCurrency != @this.BilledFrom.PreferredCurrency)
                 {
-                    var exchangeRate = @this.DerivedCurrency.ExchangeRatesWhereFromCurrency.Where(v => v.ValidFrom <= @this.InvoiceDate && v.ToCurrency.Equals(@this.BilledFrom.PreferredCurrency)).OrderByDescending(v => v.ValidFrom).FirstOrDefault();
+                    var exchangeRate = @this.DerivedCurrency.ExchangeRatesWhereFromCurrency.Where(v => v.ValidFrom.Date <= @this.InvoiceDate.Date && v.ToCurrency.Equals(@this.BilledFrom.PreferredCurrency)).OrderByDescending(v => v.ValidFrom).FirstOrDefault();
 
                     if (exchangeRate == null)
                     {
-                        exchangeRate = @this.BilledFrom.PreferredCurrency.ExchangeRatesWhereFromCurrency.Where(v => v.ValidFrom <= @this.InvoiceDate && v.ToCurrency.Equals(@this.DerivedCurrency)).OrderByDescending(v => v.ValidFrom).FirstOrDefault();
+                        exchangeRate = @this.BilledFrom.PreferredCurrency.ExchangeRatesWhereFromCurrency.Where(v => v.ValidFrom.Date <= @this.InvoiceDate.Date && v.ToCurrency.Equals(@this.DerivedCurrency)).OrderByDescending(v => v.ValidFrom).FirstOrDefault();
                     }
 
                     if (exchangeRate == null)

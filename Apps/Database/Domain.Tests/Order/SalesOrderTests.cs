@@ -1513,7 +1513,16 @@ namespace Allors.Database.Domain.Tests
         {
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             var englischLocale = new Locales(this.Transaction).EnglishGreatBritain;
-            var poundSterling = new Currencies(this.Transaction).FindBy(this.M.Currency.IsoCode, "GBP");
+
+            var euro = new Currencies(this.Transaction).FindBy(M.Currency.IsoCode, "EUR");
+            var poundSterling = new Currencies(this.Transaction).FindBy(M.Currency.IsoCode, "GBP");
+
+            new ExchangeRateBuilder(this.Transaction)
+                .WithValidFrom(this.Transaction.Now())
+                .WithFromCurrency(euro)
+                .WithToCurrency(poundSterling)
+                .WithRate(0.8553M)
+                .Build();
 
             var customer = new OrganisationBuilder(this.Transaction).WithName("customer").WithLocale(englischLocale).WithPreferredCurrency(poundSterling).Build();
 
@@ -1531,7 +1540,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(poundSterling, order.DerivedCurrency);
 
-            customer.PreferredCurrency = new Currencies(this.Transaction).FindBy(this.M.Currency.IsoCode, "EUR");
+            customer.PreferredCurrency = euro;
 
             this.Transaction.Derive();
 
