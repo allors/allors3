@@ -12,6 +12,7 @@ namespace Allors.Server.Tests
     using System.Net.Http.Headers;
     using System.Reflection;
     using System.Text;
+    using System.Text.Json;
     using System.Threading.Tasks;
     using Database;
     using Database.Adapters.SqlClient;
@@ -20,7 +21,6 @@ namespace Allors.Server.Tests
     using Database.Domain.Derivations.Default;
     using Database.Meta;
     using Microsoft.Extensions.Configuration;
-    using Newtonsoft.Json;
     using Protocol.Json.Auth;
     using Xunit;
     using C1 = Database.Domain.C1;
@@ -33,8 +33,7 @@ namespace Allors.Server.Tests
         public const string Url = "http://localhost:5000/allors/";
         public const string SetupUrl = "Test/Setup?population=full";
         public const string LoginUrl = "TestAuthentication/Token";
-        public const int RetryCount = 3;
-
+       
         protected ApiTest()
         {
             var configurationBuilder = new ConfigurationBuilder();
@@ -118,15 +117,16 @@ namespace Allors.Server.Tests
 
         protected async Task<HttpResponseMessage> PostAsJsonAsync(Uri uri, object args)
         {
-            var json = JsonConvert.SerializeObject(args);
-            var response = await this.HttpClient.PostAsync(uri, new StringContent(json, Encoding.UTF8, "application/json"));
+            var json = JsonSerializer.Serialize(args);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = await this.HttpClient.PostAsync(uri, content);
             return response;
         }
 
         protected async Task<T> ReadAsAsync<T>(HttpResponseMessage response)
         {
             var json = await response.Content.ReadAsStringAsync();
-            var deserializedObject = JsonConvert.DeserializeObject<T>(json);
+            var deserializedObject = JsonSerializer.Deserialize<T>(json);
             return deserializedObject;
         }
     }

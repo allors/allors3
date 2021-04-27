@@ -7,6 +7,7 @@ namespace Allors.Server
 {
     using System;
     using System.Net;
+    using System.Text.Json;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Diagnostics;
@@ -14,7 +15,6 @@ namespace Allors.Server
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Logging;
     using Microsoft.IdentityModel.Tokens;
-    using Newtonsoft.Json;
 
     public static class ExceptionHandler
     {
@@ -38,7 +38,7 @@ namespace Allors.Server
                     var message = env.IsDevelopment() ?
                         $"{error.Message}\n{error.StackTrace}" :
                         $"{error.Message}";
-                    await context.Response.WriteAsync(JsonConvert.SerializeObject(message));
+                    await context.Response.WriteAsync(JsonSerializer.Serialize(message));
                 }
                 else
                 {
