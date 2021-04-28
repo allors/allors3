@@ -1,4 +1,4 @@
-import { IChangeSet } from '@allors/workspace/system';
+import { IChangeSet } from '@allors/workspace/domain/system';
 
 export class ChangeSet implements IChangeSet
     {
