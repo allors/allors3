@@ -16,9 +16,6 @@ namespace Allors.Database.Adapters.SqlClient
 
     internal sealed class ChangeSet : IChangeSet
     {
-        private static readonly EmptySet<IRoleType> EmptyRoleTypeSet = new EmptySet<IRoleType>();
-        private static readonly EmptySet<IAssociationType> EmptyAssociationTypeSet = new EmptySet<IAssociationType>();
-
         private readonly HashSet<IStrategy> created;
         private readonly HashSet<IStrategy> deleted;
 

@@ -38,7 +38,7 @@ namespace Allors.Workspace.Adapters.Remote
                 foreach (var association in changedRoleByAssociation.Keys.ToArray())
                 {
                     var role = changedRoleByAssociation[association];
-                    roleByAssociation.TryGetValue(association, out var originalRole);
+                    _ = roleByAssociation.TryGetValue(association, out var originalRole);
 
                     var areEqual = ReferenceEquals(originalRole, role) ||
                                    (roleType.IsOne && Equals(originalRole, role)) ||
@@ -46,7 +46,7 @@ namespace Allors.Workspace.Adapters.Remote
 
                     if (areEqual)
                     {
-                        changedRoleByAssociation.Remove(association);
+                        _ = changedRoleByAssociation.Remove(association);
                         continue;
                     }
 
@@ -55,7 +55,7 @@ namespace Allors.Workspace.Adapters.Remote
 
                 if (roleByAssociation.Count == 0)
                 {
-                    this.changedRoleByAssociationByRoleType.Remove(roleType);
+                    _ = this.changedRoleByAssociationByRoleType.Remove(roleType);
                 }
             }
 
@@ -67,7 +67,7 @@ namespace Allors.Workspace.Adapters.Remote
                 foreach (var role in changedAssociationByRole.Keys.ToArray())
                 {
                     var changedAssociation = changedAssociationByRole[role];
-                    associationByRole.TryGetValue(role, out var originalRole);
+                    _ = associationByRole.TryGetValue(role, out var originalRole);
 
                     var areEqual = ReferenceEquals(originalRole, changedAssociation) ||
                                    (associationType.IsOne && Equals(originalRole, changedAssociation)) ||
@@ -75,7 +75,7 @@ namespace Allors.Workspace.Adapters.Remote
 
                     if (areEqual)
                     {
-                        changedAssociationByRole.Remove(role);
+                        _ = changedAssociationByRole.Remove(role);
                         continue;
                     }
 
@@ -84,7 +84,7 @@ namespace Allors.Workspace.Adapters.Remote
 
                 if (associationByRole.Count == 0)
                 {
-                    this.changedAssociationByRoleByAssociationType.Remove(associationType);
+                    _ = this.changedAssociationByRoleByAssociationType.Remove(associationType);
                 }
             }
 
@@ -104,7 +104,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return;
             }
 
-            this.RoleByAssociation(roleType).TryGetValue(association, out role);
+            _ = this.RoleByAssociation(roleType).TryGetValue(association, out role);
         }
 
         public void SetUnitRole(Strategy association, IRoleType roleType, object role)
@@ -280,12 +280,15 @@ namespace Allors.Workspace.Adapters.Remote
                 }
                 else
                 {
-                    var previousRoles = (Strategy[])previousRole ?? Array.Empty<Strategy>();
 
-                    // Use Diff (Remove)
-                    foreach (var removeRole in previousRoles)
+                    var previousRoles = (Strategy[])previousRole;
+                    if (previousRoles != null)
                     {
-                        this.RemoveRole(association, roleType, removeRole);
+                        // Use Diff (Remove)
+                        foreach (var removeRole in previousRoles)
+                        {
+                            this.RemoveRole(association, roleType, removeRole);
+                        }
                     }
                 }
             }
@@ -299,7 +302,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return;
             }
 
-            this.AssociationByRole(associationType).TryGetValue(role, out association);
+            _ = this.AssociationByRole(associationType).TryGetValue(role, out association);
         }
 
         private IDictionary<Strategy, object> AssociationByRole(IAssociationType associationType)

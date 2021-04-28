@@ -9,8 +9,8 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class InvokeResult : Result, IInvokeResult
     {
-        private readonly InvokeResponse invokeResponse;
-
-        public InvokeResult(ISession session, InvokeResponse invokeResponse) : base(session, invokeResponse) => this.invokeResponse = invokeResponse;
+        public InvokeResult(ISession session, InvokeResponse invokeResponse) : base(session, invokeResponse)
+        {
+        }
     }
 }

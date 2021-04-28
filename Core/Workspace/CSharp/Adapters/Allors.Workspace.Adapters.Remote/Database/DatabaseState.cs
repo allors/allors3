@@ -156,7 +156,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal void SetCompositesRole(IRoleType roleType, object value)
         {
-            var previousRole = ((IObject[])this.GetRole(roleType));
+            var previousRole = (IObject[])this.GetRole(roleType);
 
             var role = Array.Empty<IObject>();
             if (value != null)

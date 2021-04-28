@@ -8,7 +8,6 @@ namespace Allors.Workspace.Adapters.Local
     using System;
     using System.Collections.Generic;
     using Database;
-    using Database.Domain;
     using Meta;
     using IObjectFactory = Allors.Workspace.IObjectFactory;
     using ObjectFactory = Adapters.ObjectFactory;
@@ -17,7 +16,7 @@ namespace Allors.Workspace.Adapters.Local
     {
         private readonly Dictionary<long, WorkspaceObject> objectById;
 
-        public Workspace(string name, long userId, IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, Allors.Database.IDatabase database)
+        public Workspace(string name, long userId, IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, IDatabase database)
         {
             this.Name = name;
             this.UserId = userId;
@@ -25,14 +24,10 @@ namespace Allors.Workspace.Adapters.Local
             this.Lifecycle = state;
 
             this.ObjectFactory = new ObjectFactory(this.MetaPopulation, instance);
-            this.Database = database;
-
-            var databaseContext = this.Database.Context();
-            this.DatabaseAdapter = new DatabaseAdapter(this.MetaPopulation, database.MetaPopulation, new Identities(), databaseContext.PermissionsCache);
+            this.DatabaseAdapter = new DatabaseAdapter(this.MetaPopulation, database);
 
             this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
             this.WorkspaceIdsByWorkspaceClass = new Dictionary<IClass, long[]>();
-
             this.objectById = new Dictionary<long, WorkspaceObject>();
 
             this.Lifecycle.OnInit(this);
@@ -48,8 +43,6 @@ namespace Allors.Workspace.Adapters.Local
 
         IObjectFactory IWorkspace.ObjectFactory => this.ObjectFactory;
         internal ObjectFactory ObjectFactory { get; }
-
-        public IDatabase Database { get; }
 
         public ISession CreateSession() => new Session(this, this.Lifecycle.CreateSessionContext());
 

@@ -16,7 +16,7 @@ namespace Allors.Workspace.Adapters.Remote
     using Data;
     using Meta;
     using Protocol.Json;
-    using InvokeOptions = Allors.Workspace.InvokeOptions;
+    using InvokeOptions = InvokeOptions;
 
     public class Session : ISession
     {
@@ -92,13 +92,13 @@ namespace Allors.Workspace.Adapters.Remote
             if (@class.Origin == Origin.Database)
             {
                 this.newDatabaseStrategies ??= new HashSet<Strategy>();
-                this.newDatabaseStrategies.Add(strategy);
+                _ = this.newDatabaseStrategies.Add(strategy);
             }
 
             if (@class.Origin == Origin.Workspace)
             {
                 this.workspaceStrategies ??= new HashSet<Strategy>();
-                this.workspaceStrategies.Add(strategy);
+                _ = this.workspaceStrategies.Add(strategy);
                 // TODO: move to Push
                 this.Workspace.RegisterWorkspaceObject(@class, workspaceId);
             }
@@ -345,7 +345,7 @@ namespace Allors.Workspace.Adapters.Remote
 
                     var strategy = this.strategyByWorkspaceId[workspaceId];
 
-                    this.newDatabaseStrategies.Remove(strategy);
+                    _ = this.newDatabaseStrategies.Remove(strategy);
                     this.RemoveStrategy(strategy);
 
                     var databaseObject = this.Database.PushResponse(databaseId, strategy.Class);
@@ -396,7 +396,7 @@ namespace Allors.Workspace.Adapters.Remote
 
             var strategy = new Strategy(this, @class, identity);
             this.workspaceStrategies ??= new HashSet<Strategy>();
-            this.workspaceStrategies.Add(strategy);
+            _ = this.workspaceStrategies.Add(strategy);
             this.AddStrategy(strategy);
             this.OnInstantiate(strategy);
 
@@ -415,7 +415,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 if (!this.strategyByWorkspaceId.ContainsKey(v.Id))
                 {
-                    this.InstantiateDatabaseObject(v.Id);
+                    _ = this.InstantiateDatabaseObject(v.Id);
                 }
             }
 
@@ -435,7 +435,7 @@ namespace Allors.Workspace.Adapters.Remote
                 if (securityRequest != null)
                 {
                     securityResponse = await this.Database.Security(securityRequest);
-                    this.Database.SecurityResponse(securityResponse);
+                    _ = this.Database.SecurityResponse(securityResponse);
                 }
             }
         }
@@ -471,7 +471,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         private void RemoveStrategy(Strategy strategy)
         {
-            this.strategyByWorkspaceId.Remove(strategy.Id);
+            _ = this.strategyByWorkspaceId.Remove(strategy.Id);
 
             var @class = strategy.Class;
             if (this.strategiesByClass.TryGetValue(@class, out var strategies))

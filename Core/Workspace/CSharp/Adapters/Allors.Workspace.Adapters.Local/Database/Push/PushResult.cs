@@ -8,20 +8,19 @@ namespace Allors.Workspace.Adapters.Local
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Database;
     using Database.Data;
     using Database.Derivations;
     using Database.Domain;
     using Database.Meta;
     using Database.Security;
-    using IClass = Database.Meta.IClass;
-    using Node = Database.Data.Node;
 
     public class PushResult : Result, IPushResult
     {
         internal PushResult(Session session, Workspace workspace) : base(session)
         {
             this.Workspace = workspace;
-            this.Transaction = this.Workspace.Database.CreateTransaction();
+            this.Transaction = this.Workspace.DatabaseAdapter.Database.CreateTransaction();
 
             var sessionContext = this.Transaction.Context();
             var databaseContext = this.Transaction.Database.Context();
@@ -34,23 +33,23 @@ namespace Allors.Workspace.Adapters.Local
             this.PreparedExtents = databaseContext.PreparedExtents;
             this.M = databaseContext.M;
             this.M = databaseContext.M;
-            this.Build = @class => (Database.IObject)DefaultObjectBuilder.Build(this.Transaction, @class);
+            this.Build = @class => (IObject)DefaultObjectBuilder.Build(this.Transaction, @class);
             this.Derive = () => this.Transaction.Derive(false);
 
-            this.Objects = new HashSet<Database.IObject>();
+            this.Objects = new HashSet<IObject>();
         }
 
-        public Dictionary<string, ISet<Database.IObject>> DatabaseCollectionsByName { get; } = new Dictionary<string, ISet<Database.IObject>>();
+        public Dictionary<string, ISet<IObject>> DatabaseCollectionsByName { get; } = new Dictionary<string, ISet<IObject>>();
 
-        public Dictionary<string, Database.IObject> DatabaseObjectByName { get; } = new Dictionary<string, Database.IObject>();
+        public Dictionary<string, IObject> DatabaseObjectByName { get; } = new Dictionary<string, IObject>();
 
         public Dictionary<string, object> DatabaseValueByName { get; } = new Dictionary<string, object>();
 
-        public HashSet<Database.IObject> Objects { get; }
+        public HashSet<IObject> Objects { get; }
 
         public Workspace Workspace { get; }
 
-        public Database.ITransaction Transaction { get; }
+        public ITransaction Transaction { get; }
 
         public ISet<IClass> AllowedClasses { get; }
 
@@ -62,17 +61,17 @@ namespace Allors.Workspace.Adapters.Local
 
         public MetaPopulation M { get; set; }
 
-        public Func<IClass, Database.IObject> Build { get; }
+        public Func<IClass, IObject> Build { get; }
 
         public Func<IDerivationResult> Derive { get; }
 
-        public Dictionary<long, Database.IObject> ObjectByNewId { get; set; }
+        public Dictionary<long, IObject> ObjectByNewId { get; set; }
 
-        public void AddCollection(string name, in IEnumerable<Database.IObject> collection)
+        public void AddCollection(string name, in IEnumerable<IObject> collection)
         {
             switch (collection)
             {
-                case ICollection<Database.IObject> asCollection:
+                case ICollection<IObject> asCollection:
                     this.AddCollectionInternal(name, asCollection, null);
                     break;
                 default:
@@ -81,13 +80,13 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        public void AddCollection(string name, in ICollection<Database.IObject> collection) => this.AddCollectionInternal(name, collection, null);
+        public void AddCollection(string name, in ICollection<IObject> collection) => this.AddCollectionInternal(name, collection, null);
 
-        public void AddCollection(string name, IEnumerable<Database.IObject> collection, Node[] tree)
+        public void AddCollection(string name, IEnumerable<IObject> collection, Node[] tree)
         {
             switch (collection)
             {
-                case ICollection<Database.IObject> list:
+                case ICollection<IObject> list:
                     this.AddCollectionInternal(name, list, tree);
                     break;
                 default:
@@ -98,7 +97,7 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        public void AddObject(string name, Database.IObject @object)
+        public void AddObject(string name, IObject @object)
         {
             if (@object != null)
             {
@@ -106,7 +105,7 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        public void AddObject(string name, Database.IObject @object, Node[] tree)
+        public void AddObject(string name, IObject @object, Node[] tree)
         {
             if (@object != null)
             {
@@ -135,7 +134,7 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        private void AddCollectionInternal(string name, in ICollection<Database.IObject> collection, Node[] tree)
+        private void AddCollectionInternal(string name, in ICollection<IObject> collection, Node[] tree)
         {
             if (collection?.Count > 0)
             {
@@ -147,7 +146,7 @@ namespace Allors.Workspace.Adapters.Local
                 {
                     var prefetchPolicy = tree.BuildPrefetchPolicy();
 
-                    ICollection<Database.IObject> newCollection;
+                    ICollection<IObject> newCollection;
 
                     if (existingCollection != null)
                     {
@@ -157,7 +156,7 @@ namespace Allors.Workspace.Adapters.Local
                     }
                     else
                     {
-                        var newSet = new HashSet<Database.IObject>(filteredCollection);
+                        var newSet = new HashSet<IObject>(filteredCollection);
                         newCollection = newSet;
                         this.Transaction.Prefetch(prefetchPolicy, newCollection);
                         this.DatabaseCollectionsByName.Add(name, newSet);
@@ -178,7 +177,7 @@ namespace Allors.Workspace.Adapters.Local
                     }
                     else
                     {
-                        var newWorkspaceCollection = new HashSet<Database.IObject>(filteredCollection);
+                        var newWorkspaceCollection = new HashSet<IObject>(filteredCollection);
                         this.DatabaseCollectionsByName.Add(name, newWorkspaceCollection);
                         this.Objects.UnionWith(newWorkspaceCollection);
                     }
@@ -188,7 +187,7 @@ namespace Allors.Workspace.Adapters.Local
 
         internal void Execute(Strategy[] newStrategies, Strategy[] changedStrategies)
         {
-            var metaPopulation = this.Workspace.Database.MetaPopulation;
+            var metaPopulation = this.Workspace.DatabaseAdapter.Database.MetaPopulation;
 
             if (newStrategies?.Length > 0)
             {
@@ -199,7 +198,7 @@ namespace Allors.Workspace.Adapters.Local
                         var cls = (IClass)metaPopulation.FindByTag(x.Class.Tag);
                         if (this.AllowedClasses?.Contains(cls) == true)
                         {
-                            return (Database.IObject)this.Build(cls);
+                            return this.Build(cls);
                         }
 
                         this.AddAccessError(x);
@@ -259,7 +258,7 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        private void PushRequestRoles(Strategy local, Database.IObject obj)
+        private void PushRequestRoles(Strategy local, IObject obj)
         {
             // TODO: Cache and filter for workspace
             var composite = (IComposite)obj.Strategy.Class;
@@ -307,7 +306,7 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        private Database.IObject GetRole(Strategy strategy)
+        private IObject GetRole(Strategy strategy)
         {
             if (this.ObjectByNewId == null || !this.ObjectByNewId.TryGetValue(strategy.Id, out var role))
             {
@@ -317,14 +316,14 @@ namespace Allors.Workspace.Adapters.Local
             return role;
         }
 
-        private Database.IObject[] GetRoles(Strategy[] localStrategies)
+        private IObject[] GetRoles(Strategy[] localStrategies)
         {
             if (this.ObjectByNewId == null)
             {
                 return this.Transaction.Instantiate(localStrategies.Select(v => v.Id));
             }
 
-            var roles = new List<Database.IObject>();
+            var roles = new List<IObject>();
             List<long> existingRoleIds = null;
             foreach (var localStrategy in localStrategies)
             {

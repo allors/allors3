@@ -7,8 +7,7 @@
 namespace Allors.Database
 {
     using System.Collections.Generic;
-
-    using Adapters;
+    using Collections;
     using Meta;
 
     public static partial class IChangeSetExtensions

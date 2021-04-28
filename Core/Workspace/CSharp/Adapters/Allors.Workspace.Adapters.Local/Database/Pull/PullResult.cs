@@ -7,13 +7,17 @@ namespace Allors.Workspace.Adapters.Local
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Database;
     using Database.Data;
     using Database.Domain;
+    using Database.Meta;
+    using Database.Security;
     using Protocol.Direct;
-    using IClass = Database.Meta.IClass;
-    using Node = Database.Data.Node;
+    using IObject = Allors.Workspace.IObject;
+    using Pull = Data.Pull;
+    using User = Database.Domain.User;
 
-    public class PullResult : Result, IPullResult, Database.IProcedureOutput
+    public class PullResult : Result, IPullResult, IProcedureOutput
     {
         private IDictionary<string, IObject[]> collections;
         private IDictionary<string, IObject> objects;
@@ -21,7 +25,7 @@ namespace Allors.Workspace.Adapters.Local
         public PullResult(Session session, Workspace workspace) : base(session)
         {
             this.Workspace = workspace;
-            this.Transaction = this.Workspace.Database.CreateTransaction();
+            this.Transaction = this.Workspace.DatabaseAdapter.Database.CreateTransaction();
 
             var databaseContext = this.Transaction.Database.Context();
             var metaCache = databaseContext.MetaCache;
@@ -36,7 +40,7 @@ namespace Allors.Workspace.Adapters.Local
             this.DatabaseObjects = new HashSet<Database.IObject>();
         }
 
-        public Database.Security.IAccessControlLists AccessControlLists { get; }
+        public IAccessControlLists AccessControlLists { get; }
 
         public HashSet<Database.IObject> DatabaseObjects { get; }
 
@@ -48,13 +52,13 @@ namespace Allors.Workspace.Adapters.Local
 
         private Workspace Workspace { get; }
 
-        private Database.ITransaction Transaction { get; }
+        private ITransaction Transaction { get; }
 
         private ISet<IClass> AllowedClasses { get; }
 
-        private Database.Data.IPreparedSelects PreparedSelects { get; }
+        private IPreparedSelects PreparedSelects { get; }
 
-        private Database.Data.IPreparedExtents PreparedExtents { get; }
+        private IPreparedExtents PreparedExtents { get; }
 
         public void Execute(Allors.Workspace.Data.Procedure workspaceProcedure)
         {
@@ -64,7 +68,7 @@ namespace Allors.Workspace.Adapters.Local
             localProcedure.Execute(this);
         }
 
-        public void Execute(IEnumerable<Allors.Workspace.Data.Pull> workspacePulls)
+        public void Execute(IEnumerable<Pull> workspacePulls)
         {
             var visitor = new ToDatabaseVisitor(this.Transaction);
             var pulls = workspacePulls.Select(v => visitor.Visit(v));

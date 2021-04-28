@@ -16,8 +16,6 @@ namespace Allors.Workspace.Adapters.Remote
         {
             this.Workspace = session.Workspace;
 
-            var identities = session.Database.Identities;
-
             this.Objects = response.Objects.ToDictionary(
                 pair => pair.Key,
                 pair => session.Get<IObject>(pair.Value),

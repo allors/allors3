@@ -11,17 +11,18 @@ namespace Allors.Workspace.Adapters.Local
     using System.Linq;
     using Database;
     using Database.Data;
+    using Database.Meta;
     using Database.Security;
-    using IComposite = Database.Meta.IComposite;
+    using Extent = Database.Extent;
 
     public class PullInstantiate
     {
         private readonly ITransaction transaction;
-        private readonly Database.Data.Pull pull;
+        private readonly Pull pull;
         private readonly IAccessControlLists acls;
         private readonly IPreparedSelects preparedSelects;
 
-        public PullInstantiate(ITransaction transaction, Database.Data.Pull pull, IAccessControlLists acls, IPreparedSelects preparedSelects)
+        public PullInstantiate(ITransaction transaction, Pull pull, IAccessControlLists acls, IPreparedSelects preparedSelects)
         {
             this.transaction = transaction;
             this.pull = pull;
@@ -51,33 +52,33 @@ namespace Allors.Workspace.Adapters.Local
                     {
                         var name = result.Name;
 
-                        var @select = result.Select;
-                        if ((@select == null) && result.SelectRef.HasValue)
+                        var select = result.Select;
+                        if ((select == null) && result.SelectRef.HasValue)
                         {
-                            @select = this.preparedSelects.Get(result.SelectRef.Value);
+                            select = this.preparedSelects.Get(result.SelectRef.Value);
                         }
 
-                        if (@select != null)
+                        if (select != null)
                         {
-                            var include = @select.Include ?? @select.Step?.End.Include;
+                            var include = select.Include ?? select.Step?.End.Include;
 
-                            if (@select.Step != null)
+                            if (select.Step != null)
                             {
-                                var propertyType = @select.Step.End.PropertyType;
+                                var propertyType = select.Step.End.PropertyType;
 
-                                if (@select.Step.IsOne)
+                                if (select.Step.IsOne)
                                 {
                                     name ??= propertyType.SingularName;
 
-                                    @object = (IObject)@select.Step.Get(@object, this.acls);
+                                    @object = (IObject)select.Step.Get(@object, this.acls);
                                     response.AddObject(name, @object, include);
                                 }
                                 else
                                 {
                                     name ??= propertyType.PluralName;
 
-                                    var stepResult = @select.Step.Get(@object, this.acls);
-                                    var objects = stepResult is HashSet<object> set ? set.Cast<IObject>().ToArray() : ((Database.Extent)stepResult)?.ToArray() ?? new IObject[0];
+                                    var stepResult = select.Step.Get(@object, this.acls);
+                                    var objects = stepResult is HashSet<object> set ? set.Cast<IObject>().ToArray() : ((Extent)stepResult)?.ToArray() ?? new IObject[0];
 
                                     if (result.Skip.HasValue || result.Take.HasValue)
                                     {

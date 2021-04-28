@@ -21,6 +21,7 @@ namespace Allors.Workspace.Adapters.Remote
     using Allors.Protocol.Json.Api.Security;
     using Allors.Protocol.Json.Api.Sync;
     using Allors.Protocol.Json.Auth;
+    using Collections;
 
     public class Database
     {
@@ -71,7 +72,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var request = new AuthenticationTokenRequest { Login = username, Password = password };
             using var response = await this.PostAsJsonAsync(url, request);
-            response.EnsureSuccessStatusCode();
+            _ = response.EnsureSuccessStatusCode();
             var authResult = await this.ReadAsAsync<AuthenticationTokenResponse>(response);
             if (!authResult.Authenticated)
             {
@@ -112,11 +113,8 @@ namespace Allors.Workspace.Adapters.Remote
             return null;
         }
 
-        internal SyncRequest Diff(PullResponse response)
-        {
-            var ctx = new ResponseContext(this.AccessControlById, this.PermissionById);
-
-            return new SyncRequest
+        internal SyncRequest Diff(PullResponse response) =>
+            new SyncRequest
             {
                 Objects = response.Pool
                     .Where(v =>
@@ -169,11 +167,10 @@ namespace Allors.Workspace.Adapters.Remote
                     })
                     .Select(v => v.Id).ToArray(),
             };
-        }
 
         internal DatabaseObject Get(long identity)
         {
-            this.objectsById.TryGetValue(identity, out var databaseObjects);
+            _ = this.objectsById.TryGetValue(identity, out var databaseObjects);
             return databaseObjects;
         }
 
@@ -186,8 +183,7 @@ namespace Allors.Workspace.Adapters.Remote
                     var id = syncResponsePermission[0];
                     var @class = (IClass)this.MetaPopulation.FindByTag((int)syncResponsePermission[1]);
                     var metaObject = this.MetaPopulation.FindByTag((int)syncResponsePermission[2]);
-                    IOperandType operandType = (metaObject as IRelationType)?.RoleType;
-                    operandType ??= metaObject as IMethodType;
+                    var operandType = (IOperandType)(metaObject as IRelationType)?.RoleType ?? (IMethodType)metaObject;
                     var operation = (Operations)syncResponsePermission[3];
                     var permission = new Permission(id, @class, operandType, operation);
                     this.PermissionById[id] = permission;
@@ -248,13 +244,14 @@ namespace Allors.Workspace.Adapters.Remote
                                 return v;
                             }
 
-                            missingPermissionIds ??= new HashSet<long>();
-                            missingPermissionIds.Add(v);
+                            _ = (missingPermissionIds ??= new HashSet<long>()).Add(v);
 
                             return v;
                         });
 
-                    this.AccessControlById[id] = new AccessControl(id, version, new HashSet<long>(permissionsIds));
+                    var permissionIdSet = permissionsIds != null ? (ISet<long>)new HashSet<long>(permissionsIds) : EmptySet<long>.Instance;
+
+                    this.AccessControlById[id] = new AccessControl(id, version, permissionIdSet);
                 }
             }
 
@@ -312,7 +309,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var uri = new Uri("pull", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, pullRequest);
-            response.EnsureSuccessStatusCode();
+            _ = response.EnsureSuccessStatusCode();
             return await this.ReadAsAsync<PullResponse>(response);
         }
 
@@ -331,7 +328,7 @@ namespace Allors.Workspace.Adapters.Remote
 
             var uri = new Uri(name + "/pull", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, pullArgs);
-            response.EnsureSuccessStatusCode();
+            _ = response.EnsureSuccessStatusCode();
             return await this.ReadAsAsync<PullResponse>(response);
         }
 
@@ -339,7 +336,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var uri = new Uri("sync", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, syncRequest);
-            response.EnsureSuccessStatusCode();
+            _ = response.EnsureSuccessStatusCode();
 
             return await this.ReadAsAsync<SyncResponse>(response);
         }
@@ -348,7 +345,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var uri = new Uri("push", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, pushRequest);
-            response.EnsureSuccessStatusCode();
+            _ = response.EnsureSuccessStatusCode();
 
             return await this.ReadAsAsync<PushResponse>(response);
         }
@@ -357,7 +354,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var uri = new Uri("invoke", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, invokeRequest);
-            response.EnsureSuccessStatusCode();
+            _ = response.EnsureSuccessStatusCode();
 
             return await this.ReadAsAsync<InvokeResponse>(response);
         }
@@ -366,7 +363,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var uri = new Uri("security", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, securityRequest);
-            response.EnsureSuccessStatusCode();
+            _ = response.EnsureSuccessStatusCode();
 
             return await this.ReadAsAsync<SecurityResponse>(response);
         }

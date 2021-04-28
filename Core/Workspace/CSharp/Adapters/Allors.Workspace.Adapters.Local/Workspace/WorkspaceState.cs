@@ -229,7 +229,7 @@ namespace Allors.Workspace.Adapters.Local
                     else
                     {
                         var previousRaw = this.previousWorkspaceObject?.GetRole(roleType);
-                        if (hasCooked && this.changedRoleByRelationType.TryGetValue(relationType, out var cooked) == true)
+                        if (hasCooked && this.changedRoleByRelationType.TryGetValue(relationType, out var cooked))
                         {
                             changeSet.DiffCookedWithRaw(this.strategy, relationType, cooked, previousRaw);
                         }

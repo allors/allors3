@@ -161,7 +161,7 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        public Task<IPullResult> Pull(params Data.Pull[] pulls)
+        public Task<IPullResult> Pull(params Pull[] pulls)
         {
             var pullResult = new PullResult(this, this.Workspace);
 
@@ -170,7 +170,7 @@ namespace Allors.Workspace.Adapters.Local
             return this.OnPull(pullResult);
         }
 
-        public Task<IPullResult> Pull(Data.Procedure procedure, params Data.Pull[] pulls)
+        public Task<IPullResult> Pull(Data.Procedure procedure, params Pull[] pulls)
         {
             var pullResult = new PullResult(this, this.Workspace);
 

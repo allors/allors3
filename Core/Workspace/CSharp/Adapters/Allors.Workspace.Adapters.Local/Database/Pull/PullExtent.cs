@@ -12,16 +12,17 @@ namespace Allors.Workspace.Adapters.Local
     using Database;
     using Database.Data;
     using Database.Security;
+    using Extent = Database.Extent;
 
     public class PullExtent
     {
         private readonly ITransaction transaction;
-        private readonly Database.Data.Pull pull;
+        private readonly Pull pull;
         private readonly IAccessControlLists acls;
         private readonly IPreparedExtents preparedExtents;
         private readonly IPreparedSelects preparedSelects;
 
-        public PullExtent(ITransaction transaction, Database.Data.Pull pull, IAccessControlLists acls, IPreparedSelects preparedSelects,
+        public PullExtent(ITransaction transaction, Pull pull, IAccessControlLists acls, IPreparedSelects preparedSelects,
             IPreparedExtents preparedExtents)
         {
             this.transaction = transaction;
@@ -49,27 +50,27 @@ namespace Allors.Workspace.Adapters.Local
                     {
                         var name = result.Name;
 
-                        var @select = result.Select;
-                        if (@select == null && result.SelectRef.HasValue)
+                        var select = result.Select;
+                        if (select == null && result.SelectRef.HasValue)
                         {
-                            @select = this.preparedSelects.Get(result.SelectRef.Value);
+                            select = this.preparedSelects.Get(result.SelectRef.Value);
                         }
 
-                        if (@select != null)
+                        if (select != null)
                         {
-                            var include = @select.Include ?? @select.Step?.End.Include;
+                            var include = select.Include ?? select.Step?.End.Include;
 
-                            if (@select.Step != null)
+                            if (select.Step != null)
                             {
-                                objects = @select.Step.IsOne ?
-                                              objects.Select(v => @select.Step.Get(v, this.acls)).Where(v => v != null).Cast<IObject>().Distinct().ToArray() :
+                                objects = select.Step.IsOne ?
+                                              objects.Select(v => select.Step.Get(v, this.acls)).Where(v => v != null).Cast<IObject>().Distinct().ToArray() :
                                               objects.SelectMany(v =>
                                               {
-                                                  var stepResult = @select.Step.Get(v, this.acls);
-                                                  return stepResult is HashSet<object> set ? set.Cast<IObject>().ToArray() : ((Database.Extent)stepResult)?.ToArray() ?? Array.Empty<IObject>();
+                                                  var stepResult = select.Step.Get(v, this.acls);
+                                                  return stepResult is HashSet<object> set ? set.Cast<IObject>().ToArray() : ((Extent)stepResult)?.ToArray() ?? Array.Empty<IObject>();
                                               }).Distinct().ToArray();
 
-                                var propertyType = @select.Step.End.PropertyType;
+                                var propertyType = select.Step.End.PropertyType;
                                 name ??= propertyType.PluralName;
                             }
 

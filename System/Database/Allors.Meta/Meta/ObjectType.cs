@@ -8,6 +8,7 @@ namespace Allors.Database.Meta
 {
     using System;
     using System.Collections.Generic;
+    using Text;
 
     public abstract partial class ObjectType : IObjectTypeBase
     {

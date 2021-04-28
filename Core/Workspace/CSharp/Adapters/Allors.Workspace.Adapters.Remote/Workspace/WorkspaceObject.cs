@@ -72,7 +72,7 @@ namespace Allors.Workspace.Adapters.Remote
                             }
                             else
                             {
-                                var roles = ((Strategy[])role);
+                                var roles = (Strategy[])role;
                                 if (roles.Length > 0)
                                 {
                                     yield return new KeyValuePair<IRelationType, object>(relationType, roles.Select(v => v.Id).ToArray());

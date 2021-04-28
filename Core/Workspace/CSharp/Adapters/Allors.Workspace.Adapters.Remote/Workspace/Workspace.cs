@@ -50,7 +50,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal WorkspaceObject Get(long identity)
         {
-            this.objectById.TryGetValue(identity, out var workspaceObject);
+            _ = this.objectById.TryGetValue(identity, out var workspaceObject);
             return workspaceObject;
         }
 

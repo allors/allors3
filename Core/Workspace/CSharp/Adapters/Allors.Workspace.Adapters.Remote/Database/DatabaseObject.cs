@@ -10,11 +10,10 @@ namespace Allors.Workspace.Adapters.Remote
     using Meta;
     using System.Linq;
     using Allors.Protocol.Json.Api.Sync;
+    using Collections;
 
     internal class DatabaseObject
     {
-        private static readonly HashSet<long> EmptySet = new HashSet<long>();
-
         private Permission[] deniedPermissions;
         private AccessControl[] accessControls;
 
@@ -36,8 +35,8 @@ namespace Allors.Workspace.Adapters.Remote
             this.Class = (IClass)this.Database.MetaPopulation.FindByTag(syncResponseObject.ObjectType);
             this.Version = syncResponseObject.Version;
             this.syncResponseRoles = syncResponseObject.Roles;
-            this.AccessControlIds = syncResponseObject.AccessControls != null ? new HashSet<long>(ctx.CheckForMissingAccessControls(syncResponseObject.AccessControls)) : EmptySet;
-            this.DeniedPermissionIds = syncResponseObject.DeniedPermissions != null ? new HashSet<long>(ctx.CheckForMissingPermissions(syncResponseObject.DeniedPermissions)): EmptySet;
+            this.AccessControlIds = syncResponseObject.AccessControls != null ? (ISet<long>)new HashSet<long>(ctx.CheckForMissingAccessControls(syncResponseObject.AccessControls)) : EmptySet<long>.Instance;
+            this.DeniedPermissionIds = syncResponseObject.DeniedPermissions != null ? (ISet<long>)new HashSet<long>(ctx.CheckForMissingPermissions(syncResponseObject.DeniedPermissions)): EmptySet<long>.Instance;
         }
 
         internal Database Database { get; }
@@ -48,9 +47,9 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal long Version { get; private set; }
 
-        internal HashSet<long> AccessControlIds { get; }
+        internal ISet<long> AccessControlIds { get; }
 
-        internal HashSet<long> DeniedPermissionIds { get; private set; }
+        internal ISet<long> DeniedPermissionIds { get; private set; }
 
         private Dictionary<IRelationType, object> RoleByRelationType
         {
@@ -111,7 +110,7 @@ namespace Allors.Workspace.Adapters.Remote
         public object GetRole(IRoleType roleType)
         {
             object @object = null;
-            this.RoleByRelationType?.TryGetValue(roleType.RelationType, out @object);
+            _ = this.RoleByRelationType?.TryGetValue(roleType.RelationType, out @object);
             return @object;
         }
 
@@ -120,17 +119,17 @@ namespace Allors.Workspace.Adapters.Remote
             !this.DeniedPermissions.Contains(permission) &&
             this.AccessControls.Any(v => v.PermissionIds.Any(w => w == permission.Id));
 
-        internal void UpdateDeniedPermissions(long[] deniedPermissions)
+        internal void UpdateDeniedPermissions(long[] updatedDeniedPermissions)
         {
             if (this.deniedPermissions == null)
             {
-                this.DeniedPermissionIds = EmptySet;
+                this.DeniedPermissionIds = EmptySet<long>.Instance;
             }
             else
             {
-                if (!this.DeniedPermissionIds.SetEquals(deniedPermissions))
+                if (!this.DeniedPermissionIds.SetEquals(updatedDeniedPermissions))
                 {
-                    this.DeniedPermissionIds = new HashSet<long>(deniedPermissions);
+                    this.DeniedPermissionIds = new HashSet<long>(updatedDeniedPermissions);
                 }
             }
         }

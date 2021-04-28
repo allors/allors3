@@ -8,6 +8,7 @@ namespace Allors.Database.Meta
 {
     using System;
     using System.Linq;
+    using Text;
 
     public abstract partial class RoleType : IRoleTypeBase, IComparable
     {

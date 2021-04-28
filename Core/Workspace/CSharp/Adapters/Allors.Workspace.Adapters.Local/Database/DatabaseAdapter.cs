@@ -13,26 +13,27 @@ namespace Allors.Workspace.Adapters.Local
     using Database.Domain;
     using Database.Security;
     using Meta;
-    using IMetaPopulation = Meta.IMetaPopulation;
     using IRoleType = Database.Meta.IRoleType;
 
     internal class DatabaseAdapter
     {
         private readonly IPermissionsCache permissionCache;
 
-        internal DatabaseAdapter(IMetaPopulation metaPopulation, Database.Meta.IMetaPopulation databaseMetaPopulation, Identities identities, IPermissionsCache permissionCache)
+        internal DatabaseAdapter(IMetaPopulation metaPopulation, IDatabase database)
         {
             this.MetaPopulation = metaPopulation;
-            this.DatabaseMetaPopulation = databaseMetaPopulation;
+            this.Database = database;
             this.ObjectsById = new ConcurrentDictionary<long, DatabaseObject>();
-            this.Identities = identities;
-
-            this.permissionCache = permissionCache;
+            this.Identities = new Identities();
+            this.permissionCache = this.Database.Context().PermissionsCache;
             this.AccessControlById = new Dictionary<long, AccessControl>();
         }
 
         public IMetaPopulation MetaPopulation { get; }
-        public Database.Meta.IMetaPopulation DatabaseMetaPopulation { get; }
+
+        public Database.Meta.IMetaPopulation DatabaseMetaPopulation => this.Database.MetaPopulation;
+
+        public IDatabase Database { get; }
 
         public ConcurrentDictionary<long, DatabaseObject> ObjectsById { get; }
 

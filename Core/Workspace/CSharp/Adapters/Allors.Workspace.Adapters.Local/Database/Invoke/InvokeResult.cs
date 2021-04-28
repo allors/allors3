@@ -13,7 +13,6 @@ namespace Allors.Workspace.Adapters.Local
     using Database.Domain;
     using Database.Meta;
     using Database.Security;
-    using IClass = Database.Meta.IClass;
     using Method = Allors.Workspace.Method;
 
     public class InvokeResult : Result
@@ -21,7 +20,7 @@ namespace Allors.Workspace.Adapters.Local
         internal InvokeResult(Session session, Workspace workspace) : base(session)
         {
             this.Workspace = workspace;
-            this.Transaction = this.Workspace.Database.CreateTransaction();
+            this.Transaction = this.Workspace.DatabaseAdapter.Database.CreateTransaction();
 
             var sessionContext = this.Transaction.Context();
             var databaseContext = this.Transaction.Database.Context();

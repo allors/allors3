@@ -8,9 +8,7 @@ namespace Allors.Workspace.Adapters.Local
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Workspace;
-    using Local;
-    using Allors.Workspace.Meta;
+    using Meta;
 
     internal sealed class DatabaseState
     {
@@ -263,7 +261,7 @@ namespace Allors.Workspace.Adapters.Local
                     else
                     {
                         var previousRaw = this.previousDatabaseObject?.GetRole(roleType);
-                        if (hasCooked && this.ChangedRoleByRelationType.TryGetValue(relationType, out var cooked) == true)
+                        if (hasCooked && this.ChangedRoleByRelationType.TryGetValue(relationType, out var cooked))
                         {
                             changeSet.DiffCookedWithRaw(this.strategy, relationType, cooked, previousRaw);
                         }

@@ -7,6 +7,7 @@
 namespace Allors.Workspace.Meta
 {
     using System;
+    using Text;
 
     public abstract class Unit : IUnitInternals
     {
