@@ -10,6 +10,6 @@
     <PackageReference Include="StringTemplate4" Version="4.0.8" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Allors\Allors.csproj" />
+    <ProjectReference Include="..\..\Shared\Allors.Shared.csproj" />
   </ItemGroup>
 </Project>

@@ -15,10 +15,12 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@allors/workspace/system": ["libs/workspace/system/src/index.ts"],
       "@allors/protocol/json/system": ["libs/protocol/json/system/src/index.ts"],
       "@allors/workspace/meta/lazy/system": ["libs/workspace/meta/lazy/system/src/index.ts"],
-      "@allors/workspace/meta/lazy/tests": ["libs/workspace/meta/lazy/tests/src/index.ts"]
+      "@allors/workspace/meta/lazy/tests": ["libs/workspace/meta/lazy/tests/src/index.ts"],
+      "@allors/shared/system": ["libs/shared/system/src/index.ts"],
+      "@allors/workspace/meta/system": ["libs/workspace/meta/system/src/index.ts"],
+      "@allors/workspace/domain/system": ["libs/workspace/domain/system/src/index.ts"]
     },
     "strict": true
   },

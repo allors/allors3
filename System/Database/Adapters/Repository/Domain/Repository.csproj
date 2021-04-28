@@ -6,6 +6,6 @@
     <Compile Include="..\..\..\..\Repository\Domain\Attributes*\**\*.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Allors\Allors.csproj" />
+    <ProjectReference Include="..\..\..\..\Shared\Allors.Shared.csproj" />
   </ItemGroup>
 </Project>

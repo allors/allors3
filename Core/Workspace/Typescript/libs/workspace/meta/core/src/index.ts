@@ -1,1 +1,1 @@
-export * from './lib/workspace-meta-core';
+export * from '@allors/workspace/meta/generated';

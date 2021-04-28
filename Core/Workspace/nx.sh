@@ -8,18 +8,22 @@ rem npm install -D @nrwl/gatsby
 npm install -D jest-chain
 npm install -D jest-extended
 
+npx nx g @nrwl/workspace:library shared/system
 npx nx g @nrwl/workspace:library protocol/json/system
-npx nx g @nrwl/workspace:library workspace/system
-npx nx g @nrwl/workspace:library workspace/meta/lazy/system
 
+npx nx g @nrwl/workspace:library workspace/meta/system
+npx nx g @nrwl/workspace:library workspace/meta/lazy/system
 npx nx g @nrwl/workspace:library workspace/meta/core
 npx nx g @nrwl/workspace:library workspace/meta/generated
 npx nx g @nrwl/workspace:library workspace/meta/tests
 
+npx nx g @nrwl/workspace:library workspace/domain/system
 npx nx g @nrwl/workspace:library workspace/domain/core
 npx nx g @nrwl/workspace:library workspace/domain/custom
 npx nx g @nrwl/workspace:library workspace/domain/generated
 
+npx nx g @nrwl/workspace:library workspace/adapters/memory
+npx nx g @nrwl/workspace:library workspace/adapters/tests
 
 
 
@@ -34,16 +38,6 @@ rem npx nx g @nrwl/workspace:library client/fetch
 rem npx nx g @nrwl/workspace:library client/tests
 
 rem npx nx g @nrwl/workspace:library data/core
-
-rem npx nx g @nrwl/workspace:library domain/core
-rem npx nx g @nrwl/workspace:library domain/custom
-rem npx nx g @nrwl/workspace:library domain/generated
-
-rem npx nx g @nrwl/workspace:library protocol/core
-
-rem npx nx g @nrwl/workspace:library workspace/core
-rem npx nx g @nrwl/workspace:library workspace/memory
-rem npx nx g @nrwl/workspace:library workspace/tests
 
 rem npx nx g @nrwl/angular:library angular/core
 rem npx nx g @nrwl/angular:library angular/custom

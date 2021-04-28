@@ -1,4 +1,4 @@
-import { Unit } from '@allors/workspace/system';
+import { Unit } from '@allors/workspace/meta/system';
 import { LazyMetaPopulation } from '@allors/workspace/meta/lazy/system';
 
 interface M extends LazyMetaPopulation {

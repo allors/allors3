@@ -1,4 +1,4 @@
-import { Interface, Class } from '@allors/workspace/system';
+import { Interface, Class } from '@allors/workspace/meta/system';
 import { LazyMetaPopulation } from '@allors/workspace/meta/lazy/system';
 
 type S = Interface;

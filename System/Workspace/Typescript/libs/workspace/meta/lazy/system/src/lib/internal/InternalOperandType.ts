@@ -1,4 +1,3 @@
-import { OperandType } from '@allors/workspace/system';
+import { OperandType } from '@allors/workspace/meta/system';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface InternalOperandType extends OperandType {}
+export type InternalOperandType = OperandType;

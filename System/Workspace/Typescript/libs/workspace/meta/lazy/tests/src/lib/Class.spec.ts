@@ -1,4 +1,5 @@
-import { Class, Origin } from '@allors/workspace/system';
+import { Origin } from '@allors/shared/system';
+import { Class } from '@allors/workspace/meta/system';
 import { LazyMetaPopulation } from '@allors/workspace/meta/lazy/system';
 
 describe('Class in MetaPopulation', () => {

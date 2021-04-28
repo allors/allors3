@@ -37,6 +37,19 @@
       ],
       "@allors/workspace/domain/generated": [
         "libs/workspace/domain/generated/src/index.ts"
+      ],
+      "@allors/workspace/adapters/memory": [
+        "libs/workspace/adapters/memory/src/index.ts"
+      ],
+      "@allors/workspace/adapters/tests": [
+        "libs/workspace/adapters/tests/src/index.ts"
+      ],
+      "@allors/shared/system": ["libs/shared/system/src/index.ts"],
+      "@allors/workspace/meta/system": [
+        "libs/workspace/meta/system/src/index.ts"
+      ],
+      "@allors/workspace/domain/system": [
+        "libs/workspace/domain/system/src/index.ts"
       ]
     }
   },

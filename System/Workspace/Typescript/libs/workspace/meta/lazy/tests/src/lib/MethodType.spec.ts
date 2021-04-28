@@ -1,4 +1,5 @@
-import { Composite, Unit, UnitTags, Multiplicity, Origin, RoleType, Interface, MethodType } from '@allors/workspace/system';
+import { Origin } from '@allors/shared/system';
+import { Composite, Interface, MethodType } from '@allors/workspace/meta/system';
 import { LazyMetaPopulation } from '@allors/workspace/meta/lazy/system';
 
 interface Action extends Interface {

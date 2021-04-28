@@ -1,4 +1,4 @@
-import { UnitTypes } from '@allors/workspace/system';
+import { UnitTypes } from '@allors/workspace/domain/system';
 
 export interface PullArgs {
   /** Collections */

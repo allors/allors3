@@ -1,1 +1,1 @@
-export * from './lib/workspace-domain-core';
+export * from '@allors/workspace/domain/generated';

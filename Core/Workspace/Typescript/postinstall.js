@@ -12,6 +12,10 @@ function link(src, dst){
 }
 
 // System
+link ('../../../System/Workspace/Typescript/libs/shared/system/src', 'libs/shared/system');
 link ('../../../System/Workspace/Typescript/libs/protocol/json/system/src', 'libs/protocol/json/system');
-link ('../../../System/Workspace/Typescript/libs/workspace/system/src', 'libs/workspace/system');
+
+link ('../../../System/Workspace/Typescript/libs/workspace/domain/system/src', 'libs/workspace/domain/system');
+
+link ('../../../System/Workspace/Typescript/libs/workspace/meta/system/src', 'libs/workspace/meta/system');
 link ('../../../System/Workspace/Typescript/libs/workspace/meta/lazy/system/src', 'libs/workspace/meta/lazy/system');

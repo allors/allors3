@@ -1,4 +1,4 @@
-import { MetaPopulation } from '@allors/workspace/system';
+import { MetaPopulation } from '@allors/workspace/meta/system';
 import { InternalMetaObject } from './InternalMetaObject';
 import { InternalObjectType } from './InternalObjectType';
 import { InternalComposite } from './InternalComposite';

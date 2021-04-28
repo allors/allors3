@@ -3,7 +3,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Allors\Allors.csproj" />
+    <ProjectReference Include="..\..\Shared\Allors.Shared.csproj" />
   </ItemGroup>
   
 </Project>

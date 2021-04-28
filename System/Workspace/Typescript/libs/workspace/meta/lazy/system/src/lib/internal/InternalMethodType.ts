@@ -1,4 +1,4 @@
-import { MethodType } from '@allors/workspace/system';
+import { MethodType } from '@allors/workspace/meta/system';
 import { InternalMetaObject } from './InternalMetaObject';
 import { InternalOperandType } from './InternalOperandType';
 

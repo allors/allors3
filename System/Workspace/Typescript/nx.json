@@ -1,35 +1,14 @@
 {
   "npmScope": "allors",
-  "affected": {
-    "defaultBase": "master"
-  },
-  "implicitDependencies": {
-    "package.json": {
-      "dependencies": "*",
-      "devDependencies": "*"
-    },
-    ".eslintrc.json": "*"
-  },
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "@nrwl/workspace/tasks-runners/default",
-      "options": {
-        "cacheableOperations": ["build", "lint", "test", "e2e"]
-      }
-    }
-  },
+  "affected": { "defaultBase": "master" },
+  "implicitDependencies": { "package.json": { "dependencies": "*", "devDependencies": "*" }, ".eslintrc.json": "*" },
+  "tasksRunnerOptions": { "default": { "runner": "@nrwl/workspace/tasks-runners/default", "options": { "cacheableOperations": ["build", "lint", "test", "e2e"] } } },
   "projects": {
-    "workspace-system": {
-      "tags": []
-    },
-    "protocol-json-system": {
-      "tags": []
-    },
-    "workspace-meta-lazy-system": {
-      "tags": []
-    },
-    "workspace-meta-lazy-tests": {
-      "tags": []
-    }
+    "protocol-json-system": { "tags": [] },
+    "workspace-meta-lazy-system": { "tags": [] },
+    "workspace-meta-lazy-tests": { "tags": [] },
+    "shared-system": { "tags": [] },
+    "workspace-meta-system": { "tags": [] },
+    "workspace-domain-system": { "tags": [] }
   }
 }

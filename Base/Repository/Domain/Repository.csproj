@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\System\Allors\Allors.csproj" />
+    <ProjectReference Include="..\..\..\System\Shared\Allors.Shared.csproj" />
   </ItemGroup>
 
 </Project>

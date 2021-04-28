@@ -1,3 +1,7 @@
+import { ExtentKind } from "./ExtentKind";
+import { Predicate } from "./Predicate";
+import { Sort } from "./Sort";
+
 export interface Extent {
   /** Kind */
   k: ExtentKind;

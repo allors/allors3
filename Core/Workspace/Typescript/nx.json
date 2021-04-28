@@ -20,6 +20,11 @@
     "workspace-meta-tests": { "tags": [] },
     "workspace-domain-core": { "tags": [] },
     "workspace-domain-custom": { "tags": [] },
-    "workspace-domain-generated": { "tags": [] }
+    "workspace-domain-generated": { "tags": [] },
+    "workspace-adapters-memory": { "tags": [] },
+    "workspace-adapters-tests": { "tags": [] },
+    "shared-system": { "tags": [] },
+    "workspace-meta-system": { "tags": [] },
+    "workspace-domain-system": { "tags": [] }
   }
 }

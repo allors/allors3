@@ -1,32 +1,37 @@
-export { Invocation } from './lib/invoke/Invocation';
-export { InvokeOptions } from './lib/invoke/InvokeOptions';
-export { InvokeRequest } from './lib/invoke/InvokeRequest';
-export { InvokeResponse } from './lib/invoke/InvokeResponse';
+export * from './lib/api/invoke/Invocation';
+export * from './lib/api/invoke/InvokeOptions';
+export * from './lib/api/invoke/InvokeRequest';
+export * from './lib/api/invoke/InvokeResponse';
+export * from './lib/api/pull/PullRequest';
+export * from './lib/api/pull/PullResponse';
+export * from './lib/api/push/PushRequest';
+export * from './lib/api/push/PushRequestNewObject';
+export * from './lib/api/push/PushRequestObject';
+export * from './lib/api/push/PushRequestRole';
+export * from './lib/api/push/PushResponse';
+export * from './lib/api/push/PushResponseNewObject';
+export * from './lib/api/security/SecurityRequest';
+export * from './lib/api/security/SecurityResponse';
+export * from './lib/api/security/SecurityResponseAccessControl';
+export * from './lib/api/sync/SyncRequest';
+export * from './lib/api/sync/SyncResponse';
+export * from './lib/api/sync/SyncResponseObject';
+export * from './lib/api/sync/SyncResponseRole';
+export * from './lib/api/Response';
+export * from './lib/api/ResponseDerivationError';
 
-export { PullRequest } from './lib/pull/PullRequest';
-export { PullResponse } from './lib/pull/PullResponse';
+export * from './lib/auth/AuthenticationTokenRequest';
+export * from './lib/auth/AuthenticationTokenResponse';
 
-export { PushRequest } from './lib/push/PushRequest';
-export { PushRequestNewObject } from './lib/push/PushRequestNewObject';
-export { PushRequestObject } from './lib/push/PushRequestObject';
-export { PushRequestRole } from './lib/push/PushRequestRole';
-export { PushResponse } from './lib/push/PushResponse';
-export { PushResponseNewObject } from './lib/push/PushResponseNewObject';
-
-export { SecurityRequest } from './lib/security/SecurityRequest';
-export { SecurityResponse } from './lib/security/SecurityResponse';
-export { SecurityResponseAccessControl } from './lib/security/SecurityResponseAccessControl';
-
-export { SyncRequest } from './lib/sync/SyncRequest';
-export { SyncResponse } from './lib/sync/SyncResponse';
-export { SyncResponseObject } from './lib/sync/SyncResponseObject';
-export { SyncResponseRole } from './lib/sync/SyncResponseRole';
-
-export { Operations } from './lib/Operations';
-export { Response } from './lib/Response';
-export { ResponseType } from './lib/ResponseType';
-export { ResponseError } from './lib/ResponseError';
-export { DerivationError } from './lib/DerivationError';
-
-export { Compressor } from './lib/Compressor';
-export { services } from './lib/services';
+export * from './lib/data/Extent';
+export * from './lib/data/ExtentKind';
+export * from './lib/data/Node';
+export * from './lib/data/Predicate';
+export * from './lib/data/PredicateKind';
+export * from './lib/data/Procedure';
+export * from './lib/data/PropertyKind';
+export * from './lib/data/Pull';
+export * from './lib/data/Result';
+export * from './lib/data/Select';
+export * from './lib/data/Sort';
+export * from './lib/data/Step';

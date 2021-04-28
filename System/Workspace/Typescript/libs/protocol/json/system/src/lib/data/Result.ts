@@ -1,3 +1,5 @@
+import { Select } from "./Select";
+
 export interface Result {
   /** SelectRef */
   r: string;

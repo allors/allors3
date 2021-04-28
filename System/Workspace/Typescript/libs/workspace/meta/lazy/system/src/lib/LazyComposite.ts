@@ -1,4 +1,4 @@
-import { Origin, pluralize, ObjectTypeData } from '@allors/workspace/system';
+import { Origin, pluralize, ObjectTypeData } from '@allors/shared/system';
 import { frozenEmptySet } from './utils/frozenEmptySet';
 import { InternalComposite } from './internal/InternalComposite';
 import { InternalInterface } from './internal/InternalInterface';

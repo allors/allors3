@@ -6,7 +6,12 @@ npm install -D jest-chain
 npm install -D jest-extended
 npm install -D jest-trx-results-processor
 
-npx nx g @nrwl/workspace:library workspace/system
+npx nx g @nrwl/workspace:library shared/system
+npx nx g @nrwl/workspace:library protocol/json/system
 
-npx nx g @nrwl/workspace:library workspace/lazy
-npx nx g @nrwl/workspace:library tests/workspace/lazy
+npx nx g @nrwl/workspace:library workspace/meta/system
+npx nx g @nrwl/workspace:library workspace/meta/lazy/system
+npx nx g @nrwl/workspace:library workspace/meta/lazy/tests
+
+npx nx g @nrwl/workspace:library workspace/domain/system
+

@@ -1,4 +1,4 @@
-import { Composite } from '@allors/workspace/system';
+import { Composite } from '@allors/workspace/meta/system';
 import { Lookup } from '../utils/Lookup';
 import { InternalAssociationType } from './InternalAssociationType';
 import { InternalInterface } from './InternalInterface';

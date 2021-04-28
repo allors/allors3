@@ -1,4 +1,4 @@
-import { MetaPopulation } from '@allors/workspace/system';
+import { MetaPopulation } from '@allors/workspace/meta/system';
 import { LazyMetaPopulation } from '@allors/workspace/meta/lazy/system';
 
 describe('MetaPopulation', () => {

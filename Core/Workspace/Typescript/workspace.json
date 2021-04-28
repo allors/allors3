@@ -187,6 +187,109 @@
           }
         }
       }
+    },
+    "workspace-adapters-memory": {
+      "root": "libs/workspace/adapters/memory",
+      "sourceRoot": "libs/workspace/adapters/memory/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/workspace/adapters/memory/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/workspace/adapters/memory"],
+          "options": {
+            "jestConfig": "libs/workspace/adapters/memory/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "workspace-adapters-tests": {
+      "root": "libs/workspace/adapters/tests",
+      "sourceRoot": "libs/workspace/adapters/tests/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/workspace/adapters/tests/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/workspace/adapters/tests"],
+          "options": {
+            "jestConfig": "libs/workspace/adapters/tests/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "shared-system": {
+      "root": "libs/shared/system",
+      "sourceRoot": "libs/shared/system/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": { "lintFilePatterns": ["libs/shared/system/**/*.ts"] }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/shared/system"],
+          "options": {
+            "jestConfig": "libs/shared/system/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "workspace-meta-system": {
+      "root": "libs/workspace/meta/system",
+      "sourceRoot": "libs/workspace/meta/system/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/workspace/meta/system/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/workspace/meta/system"],
+          "options": {
+            "jestConfig": "libs/workspace/meta/system/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "workspace-domain-system": {
+      "root": "libs/workspace/domain/system",
+      "sourceRoot": "libs/workspace/domain/system/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/workspace/domain/system/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/workspace/domain/system"],
+          "options": {
+            "jestConfig": "libs/workspace/domain/system/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": { "defaultCollection": "@nrwl/workspace" }
