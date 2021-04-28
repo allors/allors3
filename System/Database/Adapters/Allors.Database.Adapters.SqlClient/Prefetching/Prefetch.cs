@@ -7,8 +7,6 @@ namespace Allors.Database.Adapters.SqlClient
 {
     using System.Collections.Generic;
     using System.Linq;
-
-    using Allors;
     using Meta;
 
     internal class Prefetch

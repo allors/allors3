@@ -8,7 +8,6 @@ namespace Commands
     using System;
     using System.Data;
     using System.IO;
-    using Allors;
     using Allors.Database;
     using Allors.Database.Adapters;
     using Allors.Database.Configuration;

@@ -5,8 +5,6 @@
 
 namespace Allors.Database.Domain
 {
-    using System.Linq;
-
     public partial class DiscountComponent
     {
         public void AppsOnPostDerive(ObjectOnPostDerive method) => method.Derivation.Validation.AssertAtLeastOne(this, this.M.DiscountComponent.Price, this.M.DiscountComponent.Percentage);

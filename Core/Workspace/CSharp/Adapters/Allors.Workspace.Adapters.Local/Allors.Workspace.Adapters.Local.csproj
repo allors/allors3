@@ -12,7 +12,6 @@
     <ProjectReference Include="..\..\..\..\..\System\Workspace\CSharp\Allors.Workspace.Protocol.Direct\Allors.Workspace.Protocol.Direct.csproj" />
     <ProjectReference Include="..\..\..\..\..\System\Workspace\CSharp\Allors.Workspace\Allors.Workspace.csproj" />
     <ProjectReference Include="..\..\..\..\Database\Domain\Domain.csproj" />
-    <ProjectReference Include="..\Allors.Workspace.Adapters\Allors.Workspace.Adapters.csproj" />
   </ItemGroup>
 
 </Project>

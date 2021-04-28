@@ -5,9 +5,7 @@
 
 namespace Allors.Workspace.Data
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
     using Meta;
 
     public class Select : IVisitable

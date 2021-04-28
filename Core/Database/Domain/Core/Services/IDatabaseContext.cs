@@ -6,7 +6,6 @@
 namespace Allors.Database.Domain
 {
     using Database.Data;
-    using Derivations.Default;
     using Meta;
 
     public partial interface IDatabaseContext : IDatabaseLifecycle

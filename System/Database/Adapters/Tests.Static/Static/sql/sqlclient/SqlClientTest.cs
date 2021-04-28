@@ -6,7 +6,6 @@
 namespace Allors.Database.Adapters.SqlClient
 {
     using System;
-    using Allors;
     using Adapters;
     using Domain;
     using Xunit;

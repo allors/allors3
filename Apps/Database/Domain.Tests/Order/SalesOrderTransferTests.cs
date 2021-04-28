@@ -6,9 +6,6 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using System;
-    using System.Linq;
-    using TestPopulation;
     using Xunit;
 
     public class SalesOrderTransferTests : DomainTest, IClassFixture<Fixture>

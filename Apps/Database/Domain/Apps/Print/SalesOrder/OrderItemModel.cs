@@ -5,7 +5,6 @@
 
 namespace Allors.Database.Domain.Print.SalesOrderModel
 {
-    using System;
     using System.Globalization;
     using Markdig;
 

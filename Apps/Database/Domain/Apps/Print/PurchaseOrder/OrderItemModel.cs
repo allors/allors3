@@ -5,7 +5,6 @@
 
 namespace Allors.Database.Domain.Print.PurchaseOrderModel
 {
-    using System;
     using System.Globalization;
     using System.Linq;
 

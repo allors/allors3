@@ -5,8 +5,6 @@
 
 namespace Allors.Workspace.Meta
 {
-    using System;
-
     /// <summary>
     /// Base interface for Meta objects.
     /// </summary>

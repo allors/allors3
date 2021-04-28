@@ -8,7 +8,6 @@ namespace Allors.Database.Domain.Tests
 {
     using System.Linq;
     using TestPopulation;
-    using Resources;
     using Xunit;
 
     public class PurchaseOrderApprovalLevel1Tests : DomainTest, IClassFixture<Fixture>

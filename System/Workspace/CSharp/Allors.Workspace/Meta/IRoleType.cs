@@ -6,8 +6,6 @@
 
 namespace Allors.Workspace.Meta
 {
-    using System;
-
     /// <summary>
     /// A <see cref="IRoleType"/> defines the role side of a relation.
     /// This is also called the 'passive' side.

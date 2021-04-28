@@ -18,7 +18,6 @@ namespace Allors.Database.Protocol.Json
     using Sort = Data.Sort;
     using Step = Data.Step;
     using Procedure = Data.Procedure;
-    using Allors.Protocol.Json;
 
     public class FromJsonVisitor : Allors.Protocol.Json.Data.IVisitor
     {

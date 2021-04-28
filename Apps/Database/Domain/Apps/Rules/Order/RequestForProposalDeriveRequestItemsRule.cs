@@ -10,7 +10,6 @@ namespace Allors.Database.Domain
     using System.Linq;
     using Database.Derivations;
     using Meta;
-    using Resources;
 
     public class RequestForProposalDeriveRequestItemsRule : Rule
     {

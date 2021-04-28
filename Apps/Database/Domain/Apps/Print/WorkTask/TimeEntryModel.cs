@@ -5,7 +5,6 @@
 
 namespace Allors.Database.Domain.Print.WorkTaskModel
 {
-    using System;
     using System.Globalization;
 
     public class TimeEntryModel

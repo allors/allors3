@@ -7,7 +7,6 @@ namespace Allors.Database.Server.Controllers
 {
     using System;
     using System.Linq;
-    using Allors;
     using Domain;
     using Services;
     using Database;

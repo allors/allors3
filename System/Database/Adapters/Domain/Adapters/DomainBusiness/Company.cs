@@ -5,8 +5,6 @@
 
 namespace Allors.Database.Domain
 {
-    using Allors;
-
     public partial class Company
     {
         public static Company Create(ITransaction transaction, string name)

@@ -5,8 +5,6 @@
 
 namespace Allors.Database.Domain
 {
-    using System;
-
     public partial class BalanceSide
     {
         public bool IsDebit => this.Equals(new BalanceSides(this.Strategy.Transaction).Debit);

@@ -6,7 +6,6 @@
 namespace Allors.Database.Adapters.Npgsql
 {
     using System;
-    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
@@ -14,7 +13,6 @@ namespace Allors.Database.Adapters.Npgsql
     using Allors;
     using Meta;
     using Caching;
-    using Derivations;
     using global::Npgsql;
     using NpgsqlTypes;
 

@@ -7,7 +7,6 @@
 namespace Allors.Database.Meta
 {
     using System;
-    using System.Collections;
 
     public interface IClass : IComposite
     {

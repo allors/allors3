@@ -22,7 +22,6 @@ namespace Allors.Database.Adapters
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Allors;
     using Meta;
     using Xunit;
 

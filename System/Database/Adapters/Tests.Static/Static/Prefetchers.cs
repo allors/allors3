@@ -6,8 +6,6 @@
 namespace Allors.Database.Adapters
 {
     using System.Collections.Generic;
-
-    using Allors;
     using Meta;
 
     public class Prefetchers

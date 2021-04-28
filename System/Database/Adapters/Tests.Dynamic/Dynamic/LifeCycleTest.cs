@@ -20,7 +20,6 @@ namespace Allors.Database.Adapters
     using System.Collections;
     using System.Globalization;
     using System.Linq;
-    using Allors;
     using Meta;
     using Xunit;
     using DateTime = System.DateTime;

@@ -7,8 +7,6 @@ namespace Allors.Database.Domain
 {
     using System.Collections.Generic;
 
-    using Allors;
-
     public partial class C2
     {
         public void CustomOnPreDerive(ObjectOnPreDerive method)

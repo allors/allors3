@@ -6,7 +6,6 @@
 namespace Allors.Database
 {
     using Derivations;
-    using Meta;
     using Security;
 
     public interface IProcedureContext

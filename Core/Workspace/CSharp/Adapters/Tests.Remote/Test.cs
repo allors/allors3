@@ -18,14 +18,14 @@ namespace Tests.Workspace.Remote
     [Collection("Database")]
     public class Test
     {
-        public RemoteWorkspace Workspace { get; }
+        public Workspace Workspace { get; }
 
-        public RemoteDatabase Database => this.Workspace.Database;
+        public Database Database => this.Workspace.Database;
 
         public M M => this.Workspace.Context().M;
 
         public Test() =>
-            this.Workspace = new RemoteWorkspace(
+            this.Workspace = new Workspace(
                 "Default",
 
                 new MetaBuilder().Build(),

@@ -50,7 +50,7 @@ namespace Tests.Workspace.Local
                 this.Transaction.Commit();
             }
 
-            this.Workspace = new LocalWorkspace(
+            this.Workspace = new Workspace(
                 "Default",
                 this.Administrator.Id,
                 new MetaBuilder().Build(),
@@ -65,7 +65,7 @@ namespace Tests.Workspace.Local
 
         public ITransaction Transaction { get; private set; }
 
-        public LocalWorkspace Workspace { get; }
+        public Workspace Workspace { get; }
 
         public void Dispose()
         {

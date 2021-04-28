@@ -7,7 +7,6 @@ namespace Tests.Workspace
 {
     using System;
     using System.Collections.Generic;
-    using System.Net.Http;
     using Allors.Workspace.Data;
     using Xunit;
 

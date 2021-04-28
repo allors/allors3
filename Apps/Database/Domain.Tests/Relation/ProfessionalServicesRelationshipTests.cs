@@ -8,8 +8,6 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using System;
-    using System.Linq;
     using Xunit;
 
     public class ProfessionalServicesRelationshipRuleTests : DomainTest, IClassFixture<Fixture>

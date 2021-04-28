@@ -12,7 +12,6 @@ namespace Allors.Database.Server.Controllers
     using Allors.Server;
     using Services;
     using Configuration;
-    using Database;
     using Domain.Derivations.Default;
     using JSNLog;
     using Meta;

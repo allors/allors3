@@ -7,7 +7,6 @@ namespace Allors.Database.Domain
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
     using Database.Derivations;
     using DataUtils;

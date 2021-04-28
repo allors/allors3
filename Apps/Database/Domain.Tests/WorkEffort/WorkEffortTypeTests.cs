@@ -6,10 +6,6 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using Allors.Database.Derivations;
-    using Resources;
     using Xunit;
 
     public class WorkEffortTypeTests : DomainTest, IClassFixture<Fixture>

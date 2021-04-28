@@ -11,7 +11,6 @@ namespace Allors.Database.Domain
     using System.Text;
     using Meta;
     using Database.Derivations;
-    using Derivations;
 
     public class NonUnifiedGoodProductIdentificationsRule : Rule
     {

@@ -9,7 +9,6 @@ namespace Allors.Database.Domain
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
-    using Derivations;
     using Database.Derivations;
 
     public class PriceComponentDerivePricedByRule : Rule

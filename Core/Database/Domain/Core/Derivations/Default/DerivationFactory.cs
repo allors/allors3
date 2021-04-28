@@ -5,7 +5,6 @@
 
 namespace Allors.Database.Domain.Derivations.Default
 {
-    using Derivations;
     using Domain;
 
     public class DerivationFactory : IDerivationFactory

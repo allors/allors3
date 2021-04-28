@@ -6,7 +6,6 @@
 namespace Allors.Protocol.Json.Api.Security
 {
     using System.Text.Json.Serialization;
-    using Push;
 
     public class SecurityResponse
     {

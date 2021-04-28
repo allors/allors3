@@ -5,7 +5,6 @@
 
 namespace Allors.Protocol.Json.Data
 {
-    using System;
     using System.Text.Json.Serialization;
 
     public class Step : IVisitable

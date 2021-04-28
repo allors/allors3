@@ -6,7 +6,6 @@
 namespace Allors.Database.Adapters.Npgsql
 {
     using Adapters;
-    using Allors;
     using Xunit;
 
     public class LifeCycleTest : Adapters.LifeCycleTest, IClassFixture<Fixture<LifeCycleTest>>

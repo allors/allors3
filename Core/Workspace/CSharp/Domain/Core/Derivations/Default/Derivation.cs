@@ -8,9 +8,6 @@ namespace Allors.Workspace.Derivations.Default
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Data;
-    using Meta;
-    using Domain;
 
     public class Derivation : IDerivation
     {

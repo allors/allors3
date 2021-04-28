@@ -5,11 +5,8 @@
 
 namespace Allors.Workspace.Protocol.Json
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Xml;
-    using System.Xml.Serialization;
     using Procedure = Allors.Protocol.Json.Data.Procedure;
     using Pull = Allors.Protocol.Json.Data.Pull;
 

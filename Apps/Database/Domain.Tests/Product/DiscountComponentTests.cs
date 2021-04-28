@@ -8,7 +8,6 @@ namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
     using Allors.Database.Derivations;
-    using Resources;
     using Xunit;
 
     public class DiscountComponentTests : DomainTest, IClassFixture<Fixture>

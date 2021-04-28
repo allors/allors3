@@ -7,7 +7,6 @@ namespace Allors.Database.Domain.Print.PurchaseInvoiceModel
 {
     using System.Linq;
     using System.Globalization;
-    using System;
 
     public class InvoiceItemModel
     {

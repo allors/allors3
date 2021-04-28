@@ -5,7 +5,6 @@
 
 namespace Allors.Database.Server.Controllers
 {
-    using Allors.Server;
     using Services;
 
     public class ImageController : BaseImageController

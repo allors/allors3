@@ -8,15 +8,12 @@ namespace Tests
 {
     using System;
     using System.IO;
-    using System.Linq;
     using System.Reflection;
     using Allors.Database;
     using Allors.Database.Adapters.Memory;
     using Allors.Database.Configuration;
     using Allors.Database.Domain;
     using Allors.Database.Meta;
-    using Allors.Database.Security;
-    using Allors.Protocol.Json.Api;
     using C1 = Allors.Database.Domain.C1;
     using User = Allors.Database.Domain.User;
 

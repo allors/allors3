@@ -20,8 +20,6 @@
 
 namespace Allors.Database.Adapters
 {
-    using Allors;
-
     public class AllorsTestUtils
     {
         public static void ForceRoleCaching(IObject allorsObject)

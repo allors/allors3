@@ -7,7 +7,6 @@ namespace Allors.Database.Adapters
 {
     using System;
     using System.Collections.Generic;
-    using Allors;
     using Meta;
     using Tracing;
     using Xunit;

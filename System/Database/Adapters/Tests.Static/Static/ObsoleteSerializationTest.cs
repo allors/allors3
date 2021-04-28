@@ -10,10 +10,7 @@ namespace Allors.Database.Adapters
     using System.Globalization;
     using System.IO;
     using System.Linq;
-    using System.Text;
     using System.Xml;
-
-    using Allors;
     using Meta;
     using Xunit;
     using C1 = Domain.C1;

@@ -11,7 +11,6 @@ namespace Allors.Database.Domain
     using System.Linq;
     using Meta;
     using Database.Derivations;
-    using Resources;
 
     public class WorkTaskStateRule : Rule
     {

@@ -9,7 +9,6 @@
 namespace Allors.Database.Adapters.Npgsql
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
 

@@ -11,7 +11,6 @@ namespace Allors.Database.Domain
     using Derivations;
     using Meta;
     using Database.Derivations;
-    using Resources;
 
     public class PaymentApplicationValidationRule : Rule
     {

@@ -10,8 +10,6 @@ namespace Allors.Database.Adapters
 {
     using System;
     using System.Collections.Generic;
-
-    using Allors;
     using Domain;
     using Xunit;
 

@@ -8,7 +8,6 @@ namespace Allors.Database.Configuration
     using System;
     using System.Collections.Concurrent;
     using Data;
-    using Domain;
     using Meta;
 
     public class PreparedSelects : IPreparedSelects

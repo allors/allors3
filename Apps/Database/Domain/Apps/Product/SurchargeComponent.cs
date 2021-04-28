@@ -5,8 +5,6 @@
 
 namespace Allors.Database.Domain
 {
-    using System.Linq;
-
     public partial class SurchargeComponent
     {
         public void AppsOnPostDerive(ObjectOnPostDerive method) => method.Derivation.Validation.AssertAtLeastOne(this, this.M.SurchargeComponent.Price, this.M.SurchargeComponent.Percentage);

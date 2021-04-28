@@ -8,8 +8,6 @@ namespace Allors.Database.Adapters
     using System;
     using System.Collections;
     using System.Collections.Generic;
-
-    using Allors;
     using Meta;
     using Xunit;
     using C1 = Domain.C1;

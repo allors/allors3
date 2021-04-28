@@ -6,8 +6,6 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using System.Collections.Generic;
-    using Allors.Database.Derivations;
     using Xunit;
 
     public class CostCenterCategoryTests : DomainTest, IClassFixture<Fixture>

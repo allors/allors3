@@ -16,7 +16,6 @@
 
 namespace Allors.Database.Adapters
 {
-    using Allors;
     using Meta;
 
     public abstract class ReferenceProxyTest : ReferenceTest

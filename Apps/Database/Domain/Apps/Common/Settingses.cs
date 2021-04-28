@@ -5,8 +5,6 @@
 
 namespace Allors.Database.Domain
 {
-    using System;
-
     public partial class Settingses
     {
         protected override void AppsPrepare(Setup setup)

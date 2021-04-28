@@ -22,7 +22,6 @@ namespace Allors.Server
     using Microsoft.IdentityModel.Tokens;
     using ObjectFactory = Database.ObjectFactory;
     using Database.Adapters;
-    using Database;
     using Database.Configuration;
     using Database.Domain.Derivations.Default;
     using Database.Meta;

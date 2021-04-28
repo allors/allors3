@@ -5,8 +5,6 @@
 
 namespace Allors.Database.Domain
 {
-    using System.Linq;
-
     public partial class BasePrice
     {
         public void AppsOnPostDerive(ObjectOnPostDerive method) => method.Derivation.Validation.AssertAtLeastOne(this, this.M.BasePrice.Part, this.M.BasePrice.Product, this.M.BasePrice.ProductFeature);

@@ -5,11 +5,9 @@
 
 namespace Allors.Database
 {
-    using System.Collections.Generic;
     using System.Xml;
 
     using Meta;
-    using Derivations;
 
     /// <summary>
     /// A database is an online <see cref="IDatabase"/>.

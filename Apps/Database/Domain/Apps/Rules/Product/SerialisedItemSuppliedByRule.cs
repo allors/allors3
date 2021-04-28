@@ -8,11 +8,8 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
-    using Derivations;
     using Meta;
     using Database.Derivations;
-    using Resources;
 
     public class SerialisedItemSuppliedByRule : Rule
     {

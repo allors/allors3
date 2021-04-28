@@ -8,7 +8,6 @@ namespace Allors.Database.Domain.Tests
 {
     using System;
     using System.Globalization;
-    using System.Linq;
     using Adapters.Memory;
     using Domain;
     using Configuration;

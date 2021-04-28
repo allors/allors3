@@ -6,9 +6,6 @@
 
 namespace Allors.Workspace.Meta
 {
-    using System;
-    using System.Collections.Generic;
-
     public interface IClassInternals : ICompositeInternals, IClass
     {
     }

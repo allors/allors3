@@ -6,7 +6,6 @@
 namespace Allors.Database.Adapters.SqlClient
 {
     using System;
-    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Data;
     using Microsoft.Data.SqlClient;
@@ -17,7 +16,6 @@ namespace Allors.Database.Adapters.SqlClient
     using Allors.Database.Adapters.Schema;
     using Caching;
     using Meta;
-    using Derivations;
     using Microsoft.Data.SqlClient.Server;
 
     public class Database : IDatabase

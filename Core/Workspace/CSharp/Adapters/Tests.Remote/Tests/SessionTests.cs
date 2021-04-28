@@ -609,6 +609,6 @@ namespace Tests.Workspace.Remote
             Assert.Equal(acme, acmeAgain);
         }
 
-        private RemoteSession CreateSession() => (RemoteSession)this.Workspace.CreateSession();
+        private Session CreateSession() => (Session)this.Workspace.CreateSession();
     }
 }

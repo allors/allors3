@@ -5,8 +5,6 @@
 
 namespace Allors.Database.Configuration
 {
-    using System.Linq;
-    using System.Security.Claims;
     using Database;
     using Domain;
     using Microsoft.AspNetCore.Http;

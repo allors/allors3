@@ -9,10 +9,8 @@
 namespace Allors.Database.Data.Tests
 {
     using System;
-    using System.Collections;
     using System.Linq;
     using System.Linq.Expressions;
-    using Derivations;
     using Meta;
     using Xunit;
 

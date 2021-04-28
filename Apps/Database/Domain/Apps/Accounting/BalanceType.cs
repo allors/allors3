@@ -5,8 +5,6 @@
 
 namespace Allors.Database.Domain
 {
-    using System;
-
     public partial class BalanceType
     {
         public bool IsBalance => this.Equals(new BalanceTypes(this.Strategy.Transaction).Balance);

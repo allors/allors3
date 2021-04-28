@@ -22,8 +22,6 @@ namespace Allors.Database.Adapters
     using System.IO;
     using System.Linq;
     using System.Xml;
-
-    using Allors;
     using Meta;
 
     public abstract class Test : IDisposable

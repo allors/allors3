@@ -6,9 +6,6 @@
 
 namespace Allors.Workspace.Meta
 {
-    using System;
-    using System.Linq;
-
     public sealed class MethodType : IMethodTypeInternals
     {
         public MetaPopulation MetaPopulation { get; set; }

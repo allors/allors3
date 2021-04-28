@@ -6,7 +6,6 @@
 namespace Allors.Workspace
 {
     using Configuration;
-    using Derivations;
     using Derivations.Default;
     using Domain;
     using Meta;

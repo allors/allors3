@@ -7,7 +7,6 @@ namespace Allors.Workspace.Protocol.Json
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Protocol.Json;
     using Allors.Protocol.Json.Data;
     using Data;
     using Meta;

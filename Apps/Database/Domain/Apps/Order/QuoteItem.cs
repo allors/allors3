@@ -6,7 +6,6 @@
 namespace Allors.Database.Domain
 {
     using System;
-    using System.Text;
 
     public partial class QuoteItem
     {

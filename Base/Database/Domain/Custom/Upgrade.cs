@@ -5,9 +5,7 @@
 
 namespace Allors.Database.Domain
 {
-    using System;
     using System.IO;
-    using System.Linq;
 
     public class Upgrade
     {

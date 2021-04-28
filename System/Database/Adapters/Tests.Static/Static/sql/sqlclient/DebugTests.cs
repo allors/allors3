@@ -9,7 +9,6 @@ namespace Allors.Database.Adapters.SqlClient
     using System.Linq;
     using System.Reflection;
     using System.Text;
-    using Allors;
     using Adapters;
     using Domain;
     using Caching;

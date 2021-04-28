@@ -8,11 +8,8 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using System;
-    using System.Collections.Generic;
     using System.Linq;
     using Database.Data;
-    using Meta;
     using Xunit;
     
     public class NodeTests : DomainTest, IClassFixture<Fixture>

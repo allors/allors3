@@ -5,14 +5,8 @@
 
 namespace Allors.Protocol.Json
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Runtime.CompilerServices;
-    using System.Xml;
-    using System.Xml.Serialization;
-    using Procedure = Allors.Protocol.Json.Data.Procedure;
-    using Pull = Allors.Protocol.Json.Data.Pull;
 
     public static class Extensions
     {

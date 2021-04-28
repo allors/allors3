@@ -6,7 +6,6 @@
 namespace Allors.Database.Domain
 {
     using System;
-    using Domain;
 
     public class TestPopulation
     {

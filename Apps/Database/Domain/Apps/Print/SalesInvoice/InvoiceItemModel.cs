@@ -5,7 +5,6 @@
 
 namespace Allors.Database.Domain.Print.SalesInvoiceModel
 {
-    using System;
     using System.Globalization;
     using Markdig;
 

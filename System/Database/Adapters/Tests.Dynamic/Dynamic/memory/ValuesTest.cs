@@ -21,7 +21,6 @@
 
 namespace Allors.Database.Adapters.Memory
 {
-    using Allors;
     using Meta;
 
 

@@ -24,7 +24,7 @@ namespace Tests.Workspace.Local
 
         IWorkspace IProfile.Workspace => this.Workspace;
 
-        public LocalWorkspace Workspace { get; private set; }
+        public Workspace Workspace { get; private set; }
 
         public M M => this.Workspace.Context().M;
 
@@ -69,7 +69,7 @@ namespace Tests.Workspace.Local
             var user = new Users(transaction).Extent().ToArray().First(v => v.UserName.Equals(userName, StringComparison.InvariantCultureIgnoreCase));
             transaction.Context().User = user;
 
-            this.Workspace = new LocalWorkspace(
+            this.Workspace = new Workspace(
                 "Default",
                 user.Id,
                 new MetaBuilder().Build(),

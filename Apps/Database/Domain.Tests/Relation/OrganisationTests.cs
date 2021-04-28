@@ -8,8 +8,6 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using System;
-    using TestPopulation;
     using Xunit;
 
     public class OrganisationTests : DomainTest, IClassFixture<Fixture>

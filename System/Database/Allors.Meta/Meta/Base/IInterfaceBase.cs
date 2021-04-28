@@ -5,7 +5,6 @@
 
 namespace Allors.Database.Meta
 {
-    using System;
     using System.Collections.Generic;
 
     public partial interface IInterfaceBase : ICompositeBase, IInterface

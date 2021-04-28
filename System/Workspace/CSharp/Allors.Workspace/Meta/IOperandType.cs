@@ -6,8 +6,6 @@
 
 namespace Allors.Workspace.Meta
 {
-    using System;
-
     /// <summary>
     /// A <see cref="IOperandType"/> can be a <see cref="IAssociationType"/> or a <see cref="IRoleType"/>.
     /// </summary>

@@ -7,7 +7,6 @@
 
 namespace Allors.Database.Domain.Print.ProductQuoteModel
 {
-    using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;

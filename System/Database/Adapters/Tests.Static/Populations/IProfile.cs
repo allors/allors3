@@ -5,7 +5,6 @@
 
 namespace Allors.Database.Adapters
 {
-    using Allors;
     using System;
 
     public interface IProfile : IDisposable

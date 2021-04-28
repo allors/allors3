@@ -11,8 +11,6 @@ namespace Allors.Database.Data
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
-    using System.Runtime.InteropServices;
-    using Data;
     using Meta;
 
     internal class MemberExpressionsVisitor : ExpressionVisitor
