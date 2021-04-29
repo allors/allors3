@@ -28,7 +28,7 @@ namespace Allors.Server.Controllers
 
         [HttpGet]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Ready() => this.Ok("Ready");
+        public IActionResult Ready() => this.Ok();
 
         [HttpGet]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
@@ -39,7 +39,7 @@ namespace Allors.Server.Controllers
                 var database = this.Database;
                 database.Init();
 
-                return this.Ok("Init");
+                return this.Ok();
             }
             catch (Exception e)
             {
@@ -73,7 +73,7 @@ namespace Allors.Server.Controllers
                     transaction.Commit();
                 }
 
-                return this.Ok("Setup");
+                return this.Ok();
             }
             catch (Exception e)
             {

@@ -21,6 +21,10 @@ npx nx g @nrwl/workspace:library workspace/domain/system
 npx nx g @nrwl/workspace:library workspace/domain/core
 npx nx g @nrwl/workspace:library workspace/domain/custom
 npx nx g @nrwl/workspace:library workspace/domain/generated
+npx nx g @nrwl/workspace:library workspace/domain/json/system
+npx nx g @nrwl/workspace:library workspace/domain/json/ajax/core
+npx nx g @nrwl/workspace:library workspace/domain/tests
+
 
 npx nx g @nrwl/workspace:library workspace/adapters/memory
 npx nx g @nrwl/workspace:library workspace/adapters/tests

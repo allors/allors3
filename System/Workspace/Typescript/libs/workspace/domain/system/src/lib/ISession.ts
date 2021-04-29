@@ -1,3 +1,4 @@
+import { Observable } from "rxjs";
 import { Composite,  Class} from "@allors/workspace/meta/system";
 import { IObject } from './IObject';
 import { IWorkspace } from './IWorkspace';
@@ -24,11 +25,11 @@ export interface ISession {
 
   getAll<T>(objectType?: Composite): T[];
 
-  invoke(method: Method | Method[], options?: InvokeOptions): Promise<IInvokeResult>;
+  invoke(method: Method | Method[], options?: InvokeOptions): Observable<IInvokeResult>;
 
-  pull(pullsOrProceudre: Pull[] | Procedure, pulls?: Pull[]): Promise<IPullResult>;
+  pull(pullsOrProceudre: Pull[] | Procedure, pulls?: Pull[]): Observable<IPullResult>;
 
-  push(): Promise<IPushResult>;
+  push(): Observable<IPushResult>;
 
   checkpoint(): IChangeSet;
 

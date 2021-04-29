@@ -25,11 +25,13 @@
     "dep-graph": "nx dep-graph",
     "help": "nx help",
     "postinstall": "node ./postinstall.js",
-    "test:meta": "npx nx test meta-tests --skipNxCache",
-    "test:all": "npm run test:meta"
+    "test:meta": "npx nx test workspace-meta-tests --skipNxCache",
+    "test:domain": "npx nx test workspace-domain-tests --skipNxCache",
+    "test:all": "npm run test:meta && npm run test:domain"
   },
   "private": true,
   "dependencies": {
+    "rxjs": "^6.5.3",
     "tslib": "^2.0.0"
   },
   "devDependencies": {

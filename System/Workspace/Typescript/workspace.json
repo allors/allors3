@@ -54,6 +54,15 @@
         "lint": { "executor": "@nrwl/linter:eslint", "options": { "lintFilePatterns": ["libs/workspace/domain/system/**/*.ts"] } },
         "test": { "executor": "@nrwl/jest:jest", "outputs": ["coverage/libs/workspace/domain/system"], "options": { "jestConfig": "libs/workspace/domain/system/jest.config.js", "passWithNoTests": true } }
       }
+    },
+    "workspace-domain-json-system": {
+      "root": "libs/workspace/domain/json/system",
+      "sourceRoot": "libs/workspace/domain/json/system/src",
+      "projectType": "library",
+      "targets": {
+        "lint": { "executor": "@nrwl/linter:eslint", "options": { "lintFilePatterns": ["libs/workspace/domain/json/system/**/*.ts"] } },
+        "test": { "executor": "@nrwl/jest:jest", "outputs": ["coverage/libs/workspace/domain/json/system"], "options": { "jestConfig": "libs/workspace/domain/json/system/jest.config.js", "passWithNoTests": true } }
+      }
     }
   },
   "cli": { "defaultCollection": "@nrwl/workspace" }

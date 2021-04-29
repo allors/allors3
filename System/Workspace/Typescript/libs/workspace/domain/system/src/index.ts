@@ -4,7 +4,6 @@ export * from './lib/IObjectFactory';
 export * from './lib/ISession';
 export * from './lib/IStrategy';
 export * from './lib/IWorkspace';
-export * from './lib/SortDirection';
 export * from './lib/Types';
 
 export * from './lib/data/Node';

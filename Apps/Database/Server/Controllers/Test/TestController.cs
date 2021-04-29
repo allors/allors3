@@ -22,7 +22,7 @@ namespace Allors.Database.Server.Controllers
 
         [HttpGet]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Ready() => this.Ok("Ready");
+        public IActionResult Ready() => this.Ok();
 
         [HttpGet]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
@@ -33,7 +33,7 @@ namespace Allors.Database.Server.Controllers
                 var database = this.Database;
                 database.Init();
 
-                return this.Ok("Init");
+                return this.Ok();
             }
             catch (Exception e)
             {

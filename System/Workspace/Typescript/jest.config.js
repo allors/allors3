@@ -8,5 +8,6 @@ module.exports = {
     '<rootDir>/libs/shared/system',
     '<rootDir>/libs/workspace/meta/system',
     '<rootDir>/libs/workspace/domain/system',
+    '<rootDir>/libs/workspace/domain/json/system',
   ],
 };

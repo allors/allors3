@@ -1,19 +1,10 @@
 {
   "npmScope": "allors",
   "affected": { "defaultBase": "master" },
-  "implicitDependencies": {
-    "package.json": { "dependencies": "*", "devDependencies": "*" },
-    ".eslintrc.json": "*"
-  },
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "@nrwl/workspace/tasks-runners/default",
-      "options": { "cacheableOperations": ["build", "lint", "test", "e2e"] }
-    }
-  },
+  "implicitDependencies": { "package.json": { "dependencies": "*", "devDependencies": "*" }, ".eslintrc.json": "*" },
+  "tasksRunnerOptions": { "default": { "runner": "@nrwl/workspace/tasks-runners/default", "options": { "cacheableOperations": ["build", "lint", "test", "e2e"] } } },
   "projects": {
     "protocol-json-system": { "tags": [] },
-    "workspace-system": { "tags": [] },
     "workspace-meta-lazy-system": { "tags": [] },
     "workspace-meta-core": { "tags": [] },
     "workspace-meta-generated": { "tags": [] },
@@ -21,10 +12,11 @@
     "workspace-domain-core": { "tags": [] },
     "workspace-domain-custom": { "tags": [] },
     "workspace-domain-generated": { "tags": [] },
-    "workspace-adapters-memory": { "tags": [] },
-    "workspace-adapters-tests": { "tags": [] },
     "shared-system": { "tags": [] },
     "workspace-meta-system": { "tags": [] },
-    "workspace-domain-system": { "tags": [] }
+    "workspace-domain-system": { "tags": [] },
+    "workspace-domain-json-system": { "tags": [] },
+    "workspace-domain-json-ajax-core": { "tags": [] },
+    "workspace-domain-tests": { "tags": [] }
   }
 }

@@ -9,6 +9,7 @@
     "workspace-meta-lazy-tests": { "tags": [] },
     "shared-system": { "tags": [] },
     "workspace-meta-system": { "tags": [] },
-    "workspace-domain-system": { "tags": [] }
+    "workspace-domain-system": { "tags": [] },
+    "workspace-domain-json-system": { "tags": [] }
   }
 }

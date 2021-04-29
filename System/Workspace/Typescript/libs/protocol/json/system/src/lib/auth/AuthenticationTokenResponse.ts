@@ -3,8 +3,8 @@ export interface AuthenticationTokenResponse {
   a: boolean;
 
   /** User id */
-  u: boolean;
+  u: number;
 
   /** Token */
-  t: boolean;
+  t: string;
 }

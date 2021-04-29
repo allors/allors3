@@ -14,4 +14,5 @@ npx nx g @nrwl/workspace:library workspace/meta/lazy/system
 npx nx g @nrwl/workspace:library workspace/meta/lazy/tests
 
 npx nx g @nrwl/workspace:library workspace/domain/system
+npx nx g @nrwl/workspace:library workspace/domain/json/system
 
