@@ -1,7 +1,7 @@
 export interface SecurityRequest {
   /** AccessControls */
-  a: number[];
+  a?: number[];
 
   /** Permissions */
-  p: number;
+  p?: number[];
 }

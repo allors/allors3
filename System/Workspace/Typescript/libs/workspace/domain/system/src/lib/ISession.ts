@@ -24,11 +24,11 @@ export interface ISession {
 
   getAll<T>(objectType?: Composite): T[];
 
-  invoke(method: Method | Method[], options?: InvokeOptions): IInvokeResult;
+  invoke(method: Method | Method[], options?: InvokeOptions): Promise<IInvokeResult>;
 
-  pull(pullsOrProceudre: Pull[] | Procedure, pulls?: Pull[]): IPullResult;
+  pull(pullsOrProceudre: Pull[] | Procedure, pulls?: Pull[]): Promise<IPullResult>;
 
-  push(): IPushResult;
+  push(): Promise<IPushResult>;
 
   checkpoint(): IChangeSet;
 

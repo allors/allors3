@@ -2,6 +2,7 @@ export * from './lib/api/invoke/Invocation';
 export * from './lib/api/invoke/InvokeOptions';
 export * from './lib/api/invoke/InvokeRequest';
 export * from './lib/api/invoke/InvokeResponse';
+export * from './lib/api/pull/PullArgs';
 export * from './lib/api/pull/PullRequest';
 export * from './lib/api/pull/PullResponse';
 export * from './lib/api/push/PushRequest';
