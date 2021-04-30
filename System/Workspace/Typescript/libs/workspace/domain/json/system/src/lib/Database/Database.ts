@@ -1,6 +1,9 @@
 import { AuthenticationTokenRequest, PullRequest, PullResponse, PullArgs, SecurityRequest, SyncRequest, SyncResponse, PushRequest, InvokeRequest, InvokeResponse, PushResponse, SecurityResponse } from '@allors/protocol/json/system';
 import { IObject } from '@allors/workspace/domain/system';
 import { Class, MetaPopulation, OperandType } from '@allors/workspace/meta/system';
+import { Observable } from 'rxjs';
+import { Identities } from '../Identities';
+import { Client } from './Client';
 import { DatabaseObject } from './DatabaseObject';
 import { AccessControl } from './Security/AccessControl';
 import { Permission } from './Security/Permission';
@@ -9,56 +12,34 @@ import { ResponseContext } from './Security/ResponseContext';
 export class Database {
   objectsById: Map<number, DatabaseObject>;
 
+  accessControlById: Map<number, AccessControl>;
+  permissionById: Map<number, Permission>;
+
   readPermissionByOperandTypeByClass: Map<Class, Map<OperandType, Permission>>;
   writePermissionByOperandTypeByClass: Map<Class, Map<OperandType, Permission>>;
   executePermissionByOperandTypeByClass: Map<Class, Map<OperandType, Permission>>;
 
-  constructor(public metaPopulation: MetaPopulation, public httpClient: HttpClient, public identities: Identities) {
-    // this.HttpClient.DefaultRequestHeaders.Accept.Clear();
-    // this.HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+  constructor(public metaPopulation: MetaPopulation, public client: Client, public identities: Identities) {
+    this.objectsById = new Map();
 
     this.accessControlById = new Map();
     this.permissionById = new Map();
-
-    this.objectsById = new Map();
 
     this.readPermissionByOperandTypeByClass = new Map();
     this.writePermissionByOperandTypeByClass = new Map();
     this.executePermissionByOperandTypeByClass = new Map();
   }
 
-  userId: number;
-
-  accessControlById: Map<number, AccessControl>;
-
-  permissionById: Map<number, Permission>;
-
-  async login(url: string, username: string, password: string): boolean {
-    var request: AuthenticationTokenRequest = { l = username, p = password };
-    // var response = await this.PostAsJsonAsync(url, request);
-    // _ = response.EnsureSuccessStatusCode();
-    // var authResult = await this.ReadAsAsync<AuthenticationTokenResponse>(response);
-    // if (!authResult.Authenticated)
-    // {
-    //     return false;
-    // }
-
-    // this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authResult.Token);
-    // this.UserId = authResult.UserId;
-
-    // return true;
-  }
-
   pushResponse(identity: number, cls: Class): DatabaseObject {
-    var databaseObject = new DatabaseObject(this, identity, cls);
+    const databaseObject = new DatabaseObject(this, identity, cls);
     this.objectsById[identity] = databaseObject;
     return databaseObject;
   }
 
   syncResponse(syncResponse: SyncResponse): SecurityRequest {
-    var ctx = new ResponseContext(this.AccessControlById, this.PermissionById);
-    for (var syncResponseObject of syncResponse.Objects) {
-      var databaseObjects = new DatabaseObject(this, ctx, syncResponseObject);
+    const ctx = new ResponseContext(this.accessControlById, this.permissionById);
+    for (const syncResponseObject of syncResponse.o) {
+      const databaseObjects = new DatabaseObject(this, ctx, syncResponseObject);
       this.objectsById.set(databaseObjects.Identity, databaseObjects);
     }
 
@@ -119,15 +100,18 @@ export class Database {
     //         })
     //         .Select(v => v.Id).ToArray(),
     //       }
+    // TODO:
+    return undefined;
   }
 
   get(identity: number): DatabaseObject {
     return this.objectsById.get(identity);
   }
 
-  SecurityResponse(securityResponse: SecurityResponse): SecurityRequest {
+  securityResponse(securityResponse: SecurityResponse): SecurityRequest {
     if (securityResponse.p != null) {
       for (const syncResponsePermission of securityResponse.p) {
+        // TODO:
         // var id = syncResponsePermission[0];
         // var @class = (IClass)this.MetaPopulation.FindByTag((int)syncResponsePermission[1]);
         // var metaObject = this.MetaPopulation.FindByTag((int)syncResponsePermission[2]);
@@ -183,15 +167,15 @@ export class Database {
           return v;
         });
 
-        var permissionIdSet = permissionsIds != null ? new Set(permissionsIds) : new Set();
+        const permissionIdSet = permissionsIds != null ? new Set(permissionsIds) : new Set();
 
         this.accessControlById.set(id, new AccessControl(id, version, permissionIdSet));
       }
     }
 
-    if (!!missingPermissionIds) {
+    if (missingPermissionIds) {
       return {
-        p = Array.from(missingPermissionIds),
+        p: Array.from(missingPermissionIds),
       };
     }
 
@@ -229,6 +213,9 @@ export class Database {
     //         }
     //         return null;
     // }
+
+    // TODO:
+    return undefined;
   }
 
   pull(pullRequest: PullRequest): Observable<PullResponse> {
@@ -236,6 +223,9 @@ export class Database {
     // var response = await this.PostAsJsonAsync(uri, pullRequest);
     // _ = response.EnsureSuccessStatusCode();
     // return await this.ReadAsAsync<PullResponse>(response);
+
+    // TODO:
+    return undefined;
   }
 
   pull(name: string, values?: Map<string, object>, objects: Map<string, IObject>, collections: Map<string, IObject[]>): Observable<PullResponse> {
@@ -248,6 +238,9 @@ export class Database {
     // var response = await this.PostAsJsonAsync(uri, pullArgs);
     // _ = response.EnsureSuccessStatusCode();
     // return await this.ReadAsAsync<PullResponse>(response);
+
+    // TODO:
+    return undefined;
   }
 
   sync(syncRequest: SyncRequest): Observable<SyncResponse> {
@@ -255,6 +248,9 @@ export class Database {
     // var response = await this.PostAsJsonAsync(uri, syncRequest);
     // _ = response.EnsureSuccessStatusCode();
     // return await this.ReadAsAsync<SyncResponse>(response);
+
+    // TODO:
+    return undefined;
   }
 
   push(pushRequest: PushRequest): Observable<PushResponse> {
@@ -262,6 +258,9 @@ export class Database {
     // var response = await this.PostAsJsonAsync(uri, pushRequest);
     // _ = response.EnsureSuccessStatusCode();
     // return await this.ReadAsAsync<PushResponse>(response);
+
+    // TODO:
+    return undefined;
   }
 
   invoke(invokeRequest: InvokeRequest): Observable<InvokeResponse> {
@@ -269,6 +268,9 @@ export class Database {
     // var response = await this.PostAsJsonAsync(uri, invokeRequest);
     // _ = response.EnsureSuccessStatusCode();
     // return await this.ReadAsAsync<InvokeResponse>(response);
+
+    // TODO:
+    return undefined;
   }
 
   security(securityRequest: SecurityRequest): Observable<SecurityResponse> {
@@ -276,5 +278,8 @@ export class Database {
     // var response = await this.PostAsJsonAsync(uri, securityRequest);
     // _ = response.EnsureSuccessStatusCode();
     // return await this.ReadAsAsync<SecurityResponse>(response);
+
+    // TODO:
+    return undefined;
   }
 }

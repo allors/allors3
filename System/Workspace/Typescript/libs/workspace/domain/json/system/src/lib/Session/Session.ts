@@ -1,16 +1,13 @@
-import { InvokeRequest, PullResponse, PushRequest, PushResponse, SyncRequest } from '@allors/protocol/json/system';
+import { PullResponse, PushRequest, PushResponse, SyncRequest } from '@allors/protocol/json/system';
 import { Origin } from '@allors/shared/system';
 import { IChangeSet, IInvokeResult, InvokeOptions, IPullResult, IPushResult, ISession, ISessionLifecycle, IStrategy, Method, Procedure, Pull } from '@allors/workspace/domain/system';
 import { AssociationType, Class, Composite, RoleType } from '@allors/workspace/meta/system';
 import { Database } from '../Database/Database';
 import { DatabaseState } from '../Database/DatabaseState';
-import { InvokeResult } from '../Database/Invoke/InvokeResult';
 import { Strategy } from '../Strategy';
 import { Workspace } from '../Workspace/Workspace';
 import { WorkspaceState } from '../Workspace/WorkspaceState';
 import { SessionState } from './SessionState';
-import { IObject } from '../../../../../domain/system/src/lib/IObject';
-import { PushResult } from '../Database/Push/PushResult';
 import { ChangeSet } from '../ChangeSet';
 import { Observable } from 'rxjs';
 
@@ -42,33 +39,36 @@ export class Session implements ISession {
   database: Database;
 
   get hasDatabaseChanges(): boolean {
-    return this.newDatabaseStrategies?.length > 0 || this.existingDatabaseStrategies.filter((v) => v.hasDatabaseChanges).length > 0;
+    return this.newDatabaseStrategies?.size > 0 || this.existingDatabaseStrategies.filter((v) => v.hasDatabaseChanges).length > 0;
   }
 
   sessionState: SessionState;
 
-  async invoke(methods: Method[], options?: InvokeOptions): Observable<IInvokeResult> {
-    var invokeRequest: InvokeRequest = {
-      l = methods.map((v) => {
-        i: v.object.id;
-        v: v.object.strategy.databaseVersion;
-        m = v.methodType.tag;
-      }),
-      o = options != null
-        ? {
-            c = options.continueOnError,
-            i = options.isolated,
-          }
-        : undefined,
-    };
+  invoke(methods: Method[], options?: InvokeOptions): Observable<IInvokeResult> {
+    // var invokeRequest: InvokeRequest = {
+    //   l = methods.map((v) => {
+    //     i: v.object.id;
+    //     v: v.object.strategy.databaseVersion;
+    //     m = v.methodType.tag;
+    //   }),
+    //   o = options != null
+    //     ? {
+    //         c = options.continueOnError,
+    //         i = options.isolated,
+    //       }
+    //     : undefined,
+    // };
 
-    const invokeResponse = await this.database.invoke(invokeRequest);
-    return new InvokeResult(this, invokeResponse);
+    // const invokeResponse = await this.database.invoke(invokeRequest);
+    // return new InvokeResult(this, invokeResponse);
+
+    // TODO:
+    return undefined;
   }
 
   create<T>(cls: Class): T {
-    var workspaceId = this.database.identities.nextId();
-    var strategy = new Strategy(this, cls, workspaceId);
+    const workspaceId = this.database.identities.nextId();
+    const strategy = new Strategy(this, cls, workspaceId);
     this.addStrategy(strategy);
 
     if (cls.origin == Origin.Database) {
@@ -145,52 +145,60 @@ export class Session implements ISession {
 
     // var pullResponse = await this.database.pull(pullRequest);
     // return await this.onPull(pullResponse);
-    var pullRequest = new PullRequest();
-    {
-      (p = procedure.ToJson()), (l = pulls.map((v) => v.ToJson()).ToArray());
-    }
 
-    var pullResponse = await this.database.pull(pullRequest);
-    return await this.onPull(pullResponse);
+
+    // var pullRequest = new PullRequest();
+    // {
+    //   (p = procedure.ToJson()), (l = pulls.map((v) => v.ToJson()).ToArray());
+    // }
+
+    // var pullResponse = await this.database.pull(pullRequest);
+    // return await this.onPull(pullResponse);
+
+     // TODO:
+     return undefined;
   }
 
   reset(): void {
-    for (var value of this.strategyByWorkspaceId.values()) {
+    for (const value of this.strategyByWorkspaceId.values()) {
       value.reset();
     }
   }
 
   push(): Observable<IPushResult> {
-    var pushRequest = this.pushRequest();
-    var pushResponse = await this.database.push(pushRequest);
-    if (!pushResponse.hasErrors) {
-      this.pushResponse(pushResponse);
+    // const pushRequest = this.pushRequest();
+    // const pushResponse = await this.database.push(pushRequest);
+    // if (!pushResponse.hasErrors) {
+    //   this.pushResponse(pushResponse);
 
-      var objects = pushRequest.o.map((v) => v.i);
-      if (pushResponse.n != null) {
-        objects = objects.Union(pushResponse.n.Select((v) => v.DatabaseId)).ToArray();
-      }
+    //   var objects = pushRequest.o.map((v) => v.i);
+    //   if (pushResponse.n != null) {
+    //     objects = objects.Union(pushResponse.n.Select((v) => v.DatabaseId)).ToArray();
+    //   }
 
-      var syncRequests: SyncRequest = {
-        o = objects,
-      };
+    //   var syncRequests: SyncRequest = {
+    //     o = objects,
+    //   };
 
-      await this.sync(syncRequests);
+    //   await this.sync(syncRequests);
 
-      if (this.workspaceStrategies != null) {
-        for (const workspaceStrategy of this.workspaceStrategies) {
-          workspaceStrategy.workspacePush();
-        }
-      }
+    //   if (this.workspaceStrategies != null) {
+    //     for (const workspaceStrategy of this.workspaceStrategies) {
+    //       workspaceStrategy.workspacePush();
+    //     }
+    //   }
 
-      this.reset();
-    }
+    //   this.reset();
+    // }
 
-    return new PushResult(this, pushResponse);
+    // return new PushResult(this, pushResponse);
+
+     // TODO:
+     return undefined;
   }
 
   checkpoint(): IChangeSet {
-    var changeSet = new ChangeSet(this, this.created, this.instantiated, this.sessionState.checkpoint());
+    const changeSet = new ChangeSet(this, this.created, this.instantiated, this.sessionState.checkpoint());
 
     if (this.changedWorkspaceStates != null) {
       for (const changed of this.changedWorkspaceStates) {
@@ -337,11 +345,11 @@ export class Session implements ISession {
 
     if (securityRequest != null) {
       var securityResponse = await this.database.security(securityRequest);
-      securityRequest = this.database.SecurityResponse(securityResponse);
+      securityRequest = this.database.securityResponse(securityResponse);
 
       if (securityRequest != null) {
         securityResponse = await this.database.security(securityRequest);
-        this.database.SecurityResponse(securityResponse);
+        this.database.securityResponse(securityResponse);
       }
     }
   }

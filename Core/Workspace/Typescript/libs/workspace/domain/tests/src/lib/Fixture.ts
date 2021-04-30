@@ -20,7 +20,7 @@ export class Fixture {
     }
   }
 
-  async login(user = 'administrator'): Promise<boolean> {
+  async login(user = 'administrator', client: Client = this.client): Promise<boolean> {
     const request: AuthenticationTokenRequest = {
       l: user,
       p: null,
@@ -34,8 +34,8 @@ export class Fixture {
         }),
         tap((result) => {
           if (result.a) {
-            this.client.userId = result.u;
-            this.client.jwtToken = result.t;
+            client.userId = result.u;
+            client.jwtToken = result.t;
           }
         }),
         map((result) => result.a)

@@ -1,3 +1,3 @@
 export class AccessControl {
-  constructor(id: number, version: number, permissionIds: Set<number>) {}
+  constructor(public id: number, public version: number, public permissionIds: Set<number>) {}
 }

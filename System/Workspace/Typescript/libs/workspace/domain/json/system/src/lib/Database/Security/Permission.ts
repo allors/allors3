@@ -1,3 +1,5 @@
+import { Class, OperandType } from "@allors/workspace/meta/system";
+
 export class Permission {
-  constructor(id: number, cls: Class, operandType: OperandType, operation: Operations) {}
+  constructor(public id: number, public cls: Class, public operandType: OperandType, public operation: Operations) {}
 }

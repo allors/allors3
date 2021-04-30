@@ -42,7 +42,7 @@ export interface IStrategy {
 
   remove<T>(roleType: RoleType, value: T): void;
 
-  remove(roleType: RoleType): void;
+  removeAll(roleType: RoleType): void;
 
   getCompositeAssociation<T>(associationType: AssociationType): T;
 

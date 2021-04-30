@@ -15,7 +15,7 @@ import { IChangeSet } from './IChangeSet';
 export interface ISession {
   workspace: IWorkspace;
 
-  lifecycle: ISessionLifecycle;
+  state: ISessionLifecycle;
 
   create<T>(cls: Class): T;
 

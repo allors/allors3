@@ -1,99 +1,84 @@
-import { RoleType } from '@allors/workspace/meta/system';
+import { SyncResponseObject, SyncResponseRole } from '@allors/protocol/json/system';
+import { Class, RelationType, RoleType } from '@allors/workspace/meta/system';
+import { Database } from './Database';
+import { AccessControl } from './Security/AccessControl';
+import { Permission } from './Security/Permission';
+import { ResponseContext } from './Security/ResponseContext';
 
 export class DatabaseObject {
-  deniedPermissions: Permission[];
-  accessControls: AccessControl[];
+  version: number;
 
-  roleByRelationType: Map<RelationType, unknown>;
-  syncResponseRoles: SyncResponseRole[];
+  private _roleByRelationType: Map<RelationType, unknown>;
+  private _syncResponseRoles: SyncResponseRole[];
+
+  private _accessControls: AccessControl[];
+  private _accessControlIds: number[];
+
+  private _deniedPermissions: Permission[];
+  private _deniedPermissionIds: number[];
 
   constructor(public readonly database: Database, public readonly identity: number, public readonly cls: Class) {
     this.version = 0;
   }
 
-  // internal DatabaseObject(Database database, ResponseContext ctx, SyncResponseObject syncResponseObject)
-  // {
-  //     this.Database = database;
-  //     this.Identity = syncResponseObject.Id;
-  //     this.Class = (IClass)this.Database.MetaPopulation.FindByTag(syncResponseObject.ObjectType);
-  //     this.Version = syncResponseObject.Version;
-  //     this.syncResponseRoles = syncResponseObject.Roles;
-  //     this.AccessControlIds = syncResponseObject.AccessControls != null ? (ISet<long>)new HashSet<long>(ctx.CheckForMissingAccessControls(syncResponseObject.AccessControls)) : EmptySet<long>.Instance;
-  //     this.DeniedPermissionIds = syncResponseObject.DeniedPermissions != null ? (ISet<long>)new HashSet<long>(ctx.CheckForMissingPermissions(syncResponseObject.DeniedPermissions)): EmptySet<long>.Instance;
-  // }
-
-  version: number;
-
-  accessControlIds: Set<number>;
-
-  deniedPermissionIds: Set<number>;
-
-  get roleByRelationType(): Map<RelationType, object> {
-    // if (this.syncResponseRoles != null)
-    // {
-    //     var meta = this.database.metaPopulation;
-    //     var metaPopulation = this.database.MetaPopulation;
-    //     this.roleByRelationType = this.syncResponseRoles.ToDictionary(
-    //         v => (IRelationType)meta.FindByTag(v.RoleType),
-    //         v =>
-    //         {
-    //             var roleType = ((IRelationType)metaPopulation.FindByTag(v.RoleType)).RoleType;
-    //             var objectType = roleType.ObjectType;
-    //             if (objectType.IsUnit)
-    //             {
-    //                 return UnitConvert.FromString(roleType.ObjectType.Tag, v.Value);
-    //             }
-    //             if (roleType.IsOne)
-    //             {
-    //                 return v.Object;
-    //             }
-    //             return v.Collection;
-    //         });
-    //     this.syncResponseRoles = null;
-    // }
-    // return this.roleByRelationType;
+  static fromResponse(database: Database, ctx: ResponseContext, syncResponseObject: SyncResponseObject): DatabaseObject {
+    const obj = new DatabaseObject(database, syncResponseObject.i, database.metaPopulation.metaObjectByTag.get(syncResponseObject.t) as Class);
+    obj.version = syncResponseObject.v;
+    obj._syncResponseRoles = syncResponseObject.r;
+    obj._accessControlIds = ctx.checkForMissingAccessControls(syncResponseObject.a);
+    obj._deniedPermissionIds = ctx.checkForMissingPermissions(syncResponseObject.d);
+    return obj;
   }
 
-  get AccessControls(): AccessControl[] {
-    // return this.accessControls switch
-    // {
-    //     null when this.AccessControlIds == null => Array.Empty<AccessControl>(),
-    //     null => this.AccessControlIds
-    //         .Select(v => this.Database.AccessControlById[v])
-    //         .ToArray(),
-    //     _ => this.accessControls
-    // };
+  get roleByRelationType(): Map<RelationType, unknown> {
+    if (this._syncResponseRoles != null) {
+      const meta = this.database.metaPopulation;
+      this._roleByRelationType = new Map(
+        this._syncResponseRoles.map((v) => {
+          const relationType = meta.metaObjectByTag.get(v.t) as RelationType;
+          const roleType = relationType.roleType;
+          const objectType = roleType.objectType;
+          let role: unknown;
+
+          if (objectType.isUnit) {
+            role = v.v;
+            // TODO:
+            // return UnitConvert.FromString(roleType.ObjectType.Tag, v.Value);
+          } else {
+            if (roleType.isOne) {
+              role = v.o;
+            } else {
+              role = v.c;
+            }
+          }
+
+          return [relationType, role];
+        })
+      );
+
+      this._syncResponseRoles = null;
+    }
+
+    return this._roleByRelationType;
+  }
+
+  get accessControls(): AccessControl[] {
+    return (this._accessControls ??= this._accessControlIds?.map((v) => this.database.accessControlById.get(v)) ?? []);
   }
 
   get deniedPermissions(): Permission[] {
-    // this.deniedPermissions = this.deniedPermissions switch
-    // {
-    //     null when this.DeniedPermissionIds == null => Array.Empty<Permission>(),
-    //     null => this.DeniedPermissionIds
-    //         .Select(v => this.Database.PermissionById[v])
-    //         .ToArray(),
-    //     _ => this.deniedPermissions
-    // };
+    return (this._deniedPermissions ??= this._deniedPermissionIds?.map((v) => this.database.permissionById.get(v)) ?? []);
   }
 
   getRole(roleType: RoleType): unknown {
-    // object @object = null;
-    // _ = this.RoleByRelationType?.TryGetValue(roleType.RelationType, out @object);
-    // return @object;
+    return this.roleByRelationType.get(roleType.relationType);
   }
 
   isPermitted(permission: Permission): boolean {
-    permission != null && !this.DeniedPermissions.Contains(permission) && this.AccessControls.Any((v) => v.PermissionIds.Any((w) => w == permission.Id));
+    return !!permission && !this.deniedPermissions.includes(permission) && !!this.accessControls.filter((v) => v.permissionIds.has(permission.id)).length;
   }
 
   updateDeniedPermissions(updatedDeniedPermissions: number[]) {
-    if (this.deniedPermissions == null) {
-      this.deniedPermissionIds = [];
-    } else {
-      // if (!this.deniedPermissionIds.SetEquals(updatedDeniedPermissions))
-      // {
-      //     this.DeniedPermissionIds = new HashSet<long>(updatedDeniedPermissions);
-      // }
-    }
+    this._deniedPermissionIds = updatedDeniedPermissions;
   }
 }

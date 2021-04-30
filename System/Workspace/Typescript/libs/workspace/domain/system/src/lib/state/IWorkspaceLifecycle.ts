@@ -2,7 +2,7 @@ import { ISessionLifecycle } from "./ISessionLifecycle";
 import { IWorkspace } from "../IWorkspace";
 
 export interface IWorkspaceLifecycle {
-  onInit(internalWorkspace: IWorkspace): void;
+  onInit(workspace: IWorkspace): void;
 
   createSessionContext(): ISessionLifecycle;
 }

@@ -1,5 +1,10 @@
+import { PushRequestNewObject, PushRequestObject } from '@allors/protocol/json/system';
 import { IObject, IStrategy, UnitTypes } from '@allors/workspace/domain/system';
-import { AssociationType, MethodType, RoleType } from '@allors/workspace/meta/system';
+import { AssociationType, Class, MethodType, RelationType, RoleType } from '@allors/workspace/meta/system';
+import { DatabaseObject } from './Database/DatabaseObject';
+import { DatabaseState } from './Database/DatabaseState';
+import { Session } from './Session/Session';
+import { WorkspaceState } from './Workspace/WorkspaceState';
 
 export class Strategy implements IStrategy {
   private _obj: IObject;
@@ -36,23 +41,23 @@ export class Strategy implements IStrategy {
 
   session: Session;
 
-  class: IClass;
+  class: Class;
 
   id: number;
 
   get object(): IObject {
-    return (this._obj ??= this.session.Workspace.ObjectFactory.Create(this));
+    return (this._obj ??= this.session.workspace.objectFactory.create(this));
   }
 
   get hasDatabaseChanges(): boolean {
-    return this.databaseState.HasDatabaseChanges;
+    return this.databaseState.hasDatabaseChanges;
   }
 
   get databaseVersion(): number {
-    return this.databaseState.Version;
+    return this.databaseState.version;
   }
 
-  diff(): IRelationType[] {
+  diff(): RelationType[] {
     // if (this.workspaceState != null)
     // {
     //     foreach (var diff in this.workspaceState.Diff())
@@ -68,6 +73,9 @@ export class Strategy implements IStrategy {
     // {
     //     yield return diff;
     // }
+
+    // TODO:
+    return undefined;
   }
 
   exist(roleType: RoleType): boolean {
@@ -80,6 +88,9 @@ export class Strategy implements IStrategy {
     //     return this.GetComposite<IObject>(roleType) != null;
     // }
     // return this.GetComposites<IObject>(roleType).Any();
+
+    // TODO:
+    return undefined;
   }
 
   get(roleType: RoleType): unknown {
@@ -92,6 +103,9 @@ export class Strategy implements IStrategy {
     //     return this.GetComposite<IObject>(roleType);
     // }
     // return this.GetComposites<IObject>(roleType);
+
+    // TODO:
+    return undefined;
   }
 
   getUnit(roleType: RoleType): UnitTypes {
@@ -102,6 +116,9 @@ export class Strategy implements IStrategy {
     //     Origin.Database => this.databaseState?.GetRole(roleType),
     //     _ => throw new ArgumentException("Unsupported Origin")
     // };
+
+    // TODO:
+    return undefined;
   }
 
   getComposite<T>(roleType: RoleType): T {
@@ -112,6 +129,9 @@ export class Strategy implements IStrategy {
     //     Origin.Database => (T)this.databaseState?.GetRole(roleType),
     //     _ => throw new ArgumentException("Unsupported Origin")
     // };
+
+    // TODO:
+    return undefined;
   }
 
   getComposites<T>(roleType: RoleType): T[] {
@@ -129,6 +149,9 @@ export class Strategy implements IStrategy {
     //         yield return (T)role;
     //     }
     // }
+
+    // TODO:
+    return undefined;
   }
 
   set(roleType: RoleType, value: unknown): void {
@@ -218,7 +241,7 @@ export class Strategy implements IStrategy {
     // this.Set(roleType, roles);
   }
 
-  remove(roleType: RoleType): void {
+  removeAll(roleType: RoleType): void {
     // if (roleType.ObjectType.IsUnit)
     // {
     //     this.SetUnit(roleType, null);
@@ -244,6 +267,9 @@ export class Strategy implements IStrategy {
     // this.Session.SessionState.GetAssociation(this, associationType, out var association);
     // var id = (long?)association;
     // return id != null ? this.Session.Get<T>(id) : default;
+
+    // TODO:
+    return undefined;
   }
 
   getCompositesAssociation<T>(associationType: AssociationType): T[] {
@@ -254,6 +280,9 @@ export class Strategy implements IStrategy {
     // this.Session.SessionState.GetAssociation(this, associationType, out var association);
     // var ids = (IEnumerable<long>)association;
     // return ids?.Select(v => this.Session.Get<T>(v)).ToArray() ?? Array.Empty<T>();
+
+    // TODO:
+    return undefined;
   }
 
   canRead(roleType: RoleType): boolean {
@@ -269,25 +298,25 @@ export class Strategy implements IStrategy {
   }
 
   reset(): void {
-    this.workspaceState?.Reset();
-    this.databaseState?.Reset();
+    this.workspaceState?.reset();
+    this.databaseState?.reset();
   }
 
   databasePushNew(): PushRequestNewObject {
-    return this.databaseState.PushNew();
+    return this.databaseState.pushNew();
   }
 
   databasePushExisting(): PushRequestObject {
-    return this.databaseState.PushExisting();
+    return this.databaseState.pushExisting();
   }
 
   databasePushResponse(databaseObject: DatabaseObject): void {
-    this.id = databaseObject.Identity;
-    this.databaseState.PushResponse(databaseObject);
+    this.id = databaseObject.identity;
+    this.databaseState.pushResponse(databaseObject);
   }
 
   workspacePush(): void {
-    this.workspaceState.Push();
+    this.workspaceState.push();
   }
 
   isAssociationForRole(roleType: RoleType, role: Strategy): boolean {
@@ -298,5 +327,8 @@ export class Strategy implements IStrategy {
     //     Origin.Database => this.databaseState?.IsAssociationForRole(roleType, role) ?? false,
     //     _ => throw new ArgumentException("Unsupported Origin")
     // };
+
+    // TODO:
+    return undefined;
   }
 }
