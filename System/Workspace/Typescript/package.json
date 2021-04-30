@@ -24,8 +24,9 @@
     "workspace-generator": "nx workspace-generator",
     "dep-graph": "nx dep-graph",
     "help": "nx help",
+    "test:shared": "npx nx test shared-tests --skipNxCache",
     "test:meta-lazy": "npx nx test workspace-meta-lazy-tests --skipNxCache",
-    "test:all": "npm run test:meta-lazy"
+    "test:all": "npm run test:shared && npm run test:meta-lazy"
   },
   "private": true,
   "dependencies": {

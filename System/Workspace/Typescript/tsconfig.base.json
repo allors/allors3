@@ -21,7 +21,8 @@
       "@allors/shared/system": ["libs/shared/system/src/index.ts"],
       "@allors/workspace/meta/system": ["libs/workspace/meta/system/src/index.ts"],
       "@allors/workspace/domain/system": ["libs/workspace/domain/system/src/index.ts"],
-      "@allors/workspace/domain/json/system": ["libs/workspace/domain/json/system/src/index.ts"]
+      "@allors/workspace/domain/json/system": ["libs/workspace/domain/json/system/src/index.ts"],
+      "@allors/shared/tests": ["libs/shared/tests/src/index.ts"]
     },
     "strict": true
   },

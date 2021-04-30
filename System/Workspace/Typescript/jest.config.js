@@ -9,5 +9,6 @@ module.exports = {
     '<rootDir>/libs/workspace/meta/system',
     '<rootDir>/libs/workspace/domain/system',
     '<rootDir>/libs/workspace/domain/json/system',
+    '<rootDir>/libs/shared/tests',
   ],
 };

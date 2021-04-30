@@ -63,6 +63,15 @@
         "lint": { "executor": "@nrwl/linter:eslint", "options": { "lintFilePatterns": ["libs/workspace/domain/json/system/**/*.ts"] } },
         "test": { "executor": "@nrwl/jest:jest", "outputs": ["coverage/libs/workspace/domain/json/system"], "options": { "jestConfig": "libs/workspace/domain/json/system/jest.config.js", "passWithNoTests": true } }
       }
+    },
+    "shared-tests": {
+      "root": "libs/shared/tests",
+      "sourceRoot": "libs/shared/tests/src",
+      "projectType": "library",
+      "targets": {
+        "lint": { "executor": "@nrwl/linter:eslint", "options": { "lintFilePatterns": ["libs/shared/tests/**/*.ts"] } },
+        "test": { "executor": "@nrwl/jest:jest", "outputs": ["coverage/libs/shared/tests"], "options": { "jestConfig": "libs/shared/tests/jest.config.js", "passWithNoTests": true } }
+      }
     }
   },
   "cli": { "defaultCollection": "@nrwl/workspace" }

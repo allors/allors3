@@ -7,6 +7,7 @@ npm install -D jest-extended
 npm install -D jest-trx-results-processor
 
 npx nx g @nrwl/workspace:library shared/system
+npx nx g @nrwl/workspace:library shared/tests
 npx nx g @nrwl/workspace:library protocol/json/system
 
 npx nx g @nrwl/workspace:library workspace/meta/system
