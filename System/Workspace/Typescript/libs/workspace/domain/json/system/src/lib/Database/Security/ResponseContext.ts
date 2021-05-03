@@ -1,3 +1,4 @@
+import { Numbers } from '../../collections/Numbers';
 import { AccessControl } from './AccessControl';
 import { Permission } from './Permission';
 
@@ -11,27 +12,11 @@ export class ResponseContext {
 
   missingPermissionIds: Set<number>;
 
-  checkForMissingAccessControls(value: number[]): number[] {
-    if (value == null) {
-      return null;
-    }
-
-    for (const accessControlId of value.filter((v) => !this.accessControlById.has(v))) {
-      _ = this.missingAccessControlIds.add(accessControlId);
-    }
-
-    return value;
+  checkForMissingAccessControls(value: Numbers): Numbers {
+    return value?.filter((v) => !this.accessControlById.has(v));
   }
 
-  checkForMissingPermissions(value: number[]): number[] {
-    if (value == null) {
-      return null;
-    }
-
-    for (const permissionId of value.filter((v) => !this.permissionById.has(v))) {
-      _ = this.missingPermissionIds.add(permissionId);
-    }
-
-    return value;
+  checkForMissingPermissions(value: Numbers): Numbers {
+    return value?.filter((v) => !this.permissionById.has(v));
   }
 }

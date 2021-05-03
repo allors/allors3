@@ -1,4 +1,4 @@
-import { AuthenticationTokenRequest, PullRequest, PullResponse, PullArgs, SecurityRequest, SyncRequest, SyncResponse, PushRequest, InvokeRequest, InvokeResponse, PushResponse, SecurityResponse } from '@allors/protocol/json/system';
+import { PullRequest, PullResponse, SecurityRequest, SyncRequest, SyncResponse, PushRequest, InvokeRequest, InvokeResponse, PushResponse, SecurityResponse } from '@allors/protocol/json/system';
 import { IObject } from '@allors/workspace/domain/system';
 import { Class, MetaPopulation, OperandType } from '@allors/workspace/meta/system';
 import { Observable } from 'rxjs';
@@ -32,18 +32,18 @@ export class Database {
 
   pushResponse(identity: number, cls: Class): DatabaseObject {
     const databaseObject = new DatabaseObject(this, identity, cls);
-    this.objectsById[identity] = databaseObject;
+    this.objectsById.set(identity, databaseObject);
     return databaseObject;
   }
 
-  syncResponse(syncResponse: SyncResponse): SecurityRequest {
+  syncResponse(syncResponse: SyncResponse): SecurityRequest | null {
     const ctx = new ResponseContext(this.accessControlById, this.permissionById);
     for (const syncResponseObject of syncResponse.o) {
-      const databaseObjects = new DatabaseObject(this, ctx, syncResponseObject);
-      this.objectsById.set(databaseObjects.Identity, databaseObjects);
+      const databaseObjects = DatabaseObject.fromResponse(this, ctx, syncResponseObject);
+      this.objectsById.set(databaseObjects.identity, databaseObjects);
     }
 
-    if (ctx.missingAccessControlIds.length > 0 || ctx.missingPermissionIds.length > 0) {
+    if (ctx.missingAccessControlIds.size > 0 || ctx.missingPermissionIds.size > 0) {
       return {
         a: Array.from(ctx.missingAccessControlIds),
         p: Array.from(ctx.missingPermissionIds),
@@ -54,54 +54,44 @@ export class Database {
   }
 
   diff(response: PullResponse): SyncRequest {
-    // return {
-    //     Objects = response.p
-    //         .filter(v =>
-    //         {
-    //             if (!this.objectsById.has(v.i))
-    //             {
-    //                 return true;
-    //             }
-    //             if (!databaseObject.version.Equals(v.v))
-    //             {
-    //                 return true;
-    //             }
-    //             if (v.accessControls === null)
-    //             {
-    //                 if (databaseObject.accessControlIds.length > 0)
-    //                 {
-    //                     return true;
-    //                 }
-    //             }
-    //             else if (!databaseObject.accessControlIds.SetEquals(v.AccessControls))
-    //             {
-    //                 return true;
-    //             }
-    //             if (v.deniedPermissions === null)
-    //             {
-    //                 if (databaseObject.deniedPermissionIds.length > 0)
-    //                 {
-    //                     return true;
-    //                 }
-    //             }
-    //             else
-    //             {
-    //                 if (databaseObject.deniedPermissionIds.setEquals(v.d))
-    //                 {
-    //                     return false;
-    //                 }
-    //                 if (!databaseObject.deniedPermissionIds.isProperSubsetOf(v.d))
-    //                 {
-    //                     return true;
-    //                 }
-    //                 databaseObject.updateDeniedPermissions(v.d);
-    //             }
-    //             return false;
-    //         })
-    //         .Select(v => v.Id).ToArray(),
-    //       }
-    // TODO:
-    return undefined;
+    return {
+      o: response.p
+        .filter((v) => {
+          const obj = this.objectsById.get(v.i);
+
+          if (!obj) {
+            return true;
+          }
+
+          if (obj.version === v.v) {
+            return true;
+          }
+
+          if (!v.a) {
+            if (obj.accessControlIds) {
+              return true;
+            }
+          } else if (!equals(obj.accessControlIds, v.a)) {
+            return true;
+          }
+
+          if (!v.d) {
+            if (obj.deniedPermissionIds.length > 0) {
+              return true;
+            }
+          } else {
+            if (databaseObject.deniedPermissionIds.setEquals(v.d)) {
+              return false;
+            }
+            if (!databaseObject.deniedPermissionIds.isProperSubsetOf(v.d)) {
+              return true;
+            }
+            databaseObject.updateDeniedPermissions(v.d);
+          }
+          return false;
+        })
+        .map((v) => v.i),
+    };
   }
 
   get(identity: number): DatabaseObject {

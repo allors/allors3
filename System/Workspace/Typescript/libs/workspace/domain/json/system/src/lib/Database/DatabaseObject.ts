@@ -1,5 +1,7 @@
 import { SyncResponseObject, SyncResponseRole } from '@allors/protocol/json/system';
 import { Class, RelationType, RoleType } from '@allors/workspace/meta/system';
+import { fromString } from '@allors/workspace/domain/system';
+import { Numbers } from '../collections/Numbers';
 import { Database } from './Database';
 import { AccessControl } from './Security/AccessControl';
 import { Permission } from './Security/Permission';
@@ -7,15 +9,13 @@ import { ResponseContext } from './Security/ResponseContext';
 
 export class DatabaseObject {
   version: number;
+  accessControlIds: Numbers;
+  deniedPermissionIds: Numbers;
 
-  private _roleByRelationType: Map<RelationType, unknown>;
-  private _syncResponseRoles: SyncResponseRole[];
-
-  private _accessControls: AccessControl[];
-  private _accessControlIds: number[];
-
-  private _deniedPermissions: Permission[];
-  private _deniedPermissionIds: number[];
+  private _roleByRelationType?: Map<RelationType, unknown>;
+  private _syncResponseRoles?: SyncResponseRole[];
+  private _accessControls?: AccessControl[];
+  private _deniedPermissions?: Permission[];
 
   constructor(public readonly database: Database, public readonly identity: number, public readonly cls: Class) {
     this.version = 0;
@@ -25,8 +25,8 @@ export class DatabaseObject {
     const obj = new DatabaseObject(database, syncResponseObject.i, database.metaPopulation.metaObjectByTag.get(syncResponseObject.t) as Class);
     obj.version = syncResponseObject.v;
     obj._syncResponseRoles = syncResponseObject.r;
-    obj._accessControlIds = ctx.checkForMissingAccessControls(syncResponseObject.a);
-    obj._deniedPermissionIds = ctx.checkForMissingPermissions(syncResponseObject.d);
+    obj.accessControlIds = ctx.checkForMissingAccessControls(syncResponseObject.a);
+    obj.deniedPermissionIds = ctx.checkForMissingPermissions(syncResponseObject.d);
     return obj;
   }
 
@@ -41,9 +41,7 @@ export class DatabaseObject {
           let role: unknown;
 
           if (objectType.isUnit) {
-            role = v.v;
-            // TODO:
-            // return UnitConvert.FromString(roleType.ObjectType.Tag, v.Value);
+            role = fromString(objectType.tag, v.v);
           } else {
             if (roleType.isOne) {
               role = v.o;
@@ -56,18 +54,18 @@ export class DatabaseObject {
         })
       );
 
-      this._syncResponseRoles = null;
+      delete this._syncResponseRoles;
     }
 
-    return this._roleByRelationType;
+    return this._roleByRelationType ?? new Map();
   }
 
   get accessControls(): AccessControl[] {
-    return (this._accessControls ??= this._accessControlIds?.map((v) => this.database.accessControlById.get(v)) ?? []);
+    return (this._accessControls ??= this.accessControlIds?.map((v) => this.database.accessControlById.get(v) as AccessControl) ?? []);
   }
 
   get deniedPermissions(): Permission[] {
-    return (this._deniedPermissions ??= this._deniedPermissionIds?.map((v) => this.database.permissionById.get(v)) ?? []);
+    return (this._deniedPermissions ??= this.deniedPermissionIds?.map((v) => this.database.permissionById.get(v) as Permission) ?? []);
   }
 
   getRole(roleType: RoleType): unknown {
@@ -79,6 +77,6 @@ export class DatabaseObject {
   }
 
   updateDeniedPermissions(updatedDeniedPermissions: number[]) {
-    this._deniedPermissionIds = updatedDeniedPermissions;
+    this.deniedPermissionIds = updatedDeniedPermissions;
   }
 }

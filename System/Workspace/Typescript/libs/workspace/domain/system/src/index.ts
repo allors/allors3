@@ -1,11 +1,3 @@
-export * from './lib/IChangeSet';
-export * from './lib/IObject';
-export * from './lib/IObjectFactory';
-export * from './lib/ISession';
-export * from './lib/IStrategy';
-export * from './lib/IWorkspace';
-export * from './lib/Types';
-
 export * from './lib/data/Node';
 export * from './lib/data/Select';
 export * from './lib/data/IExtent';
@@ -51,3 +43,11 @@ export * from './lib/operands/Role';
 export * from './lib/state/ISessionLifecycle';
 export * from './lib/state/IWorkspaceLifecycle';
 
+export * from './lib/IChangeSet';
+export * from './lib/IObject';
+export * from './lib/IObjectFactory';
+export * from './lib/ISession';
+export * from './lib/IStrategy';
+export * from './lib/IWorkspace';
+export * from './lib/Types';
+export * from './lib/UnitConvert';

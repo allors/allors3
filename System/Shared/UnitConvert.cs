@@ -26,28 +26,14 @@ namespace Allors
                 _ => throw new ArgumentException()
             };
 
-        public static string ToMnemonic(object value) =>
-            value switch
-            {
-                DateTime _ => "t",
-                byte[] _ => "#",
-                bool _ => "b",
-                decimal _ => "d",
-                double _ => "f",
-                int _ => "i",
-                string _ => "s",
-                Guid _ => "g",
-                _ => throw new ArgumentException()
-            };
-
-        public static object FromString(int objectTypeTag, string value)
+        public static object FromString(int tag, string value)
         {
             if (value == null)
             {
                 return null;
             }
 
-            return objectTypeTag switch
+            return tag switch
             {
                 UnitTags.DateTime => XmlConvert.ToDateTime(value, XmlDateTimeSerializationMode.Utc),
                 UnitTags.Binary => Convert.FromBase64String(value),
@@ -57,22 +43,8 @@ namespace Allors
                 UnitTags.Integer => XmlConvert.ToInt32(value),
                 UnitTags.String => value,
                 UnitTags.Unique => XmlConvert.ToGuid(value),
-                _ => throw new Exception($"Unknown unit type with id {objectTypeTag}")
+                _ => throw new Exception($"Unknown unit type with tag {tag}")
             };
         }
-
-        public static object FromString(string mnemonic, string value) =>
-            mnemonic switch
-            {
-                "t" => XmlConvert.ToDateTime(value, XmlDateTimeSerializationMode.Utc),
-                "#" => Convert.FromBase64String(value),
-                "b" => XmlConvert.ToBoolean(value),
-                "d" => XmlConvert.ToDecimal(value),
-                "f" => XmlConvert.ToDouble(value),
-                "i" => XmlConvert.ToInt32(value),
-                "s" => value,
-                "g" => XmlConvert.ToGuid(value),
-                _ => throw new Exception($"Unknown mnemonic {mnemonic}")
-            };
     }
 }
