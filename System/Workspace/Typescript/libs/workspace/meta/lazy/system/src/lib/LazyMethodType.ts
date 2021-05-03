@@ -1,4 +1,4 @@
-import { Origin, MethodTypeData } from '@allors/shared/system';
+import { Origin, MethodTypeData } from '@allors/workspace/meta/system';
 import { InternalComposite } from './internal/InternalComposite';
 import { InternalMetaPopulation } from './internal/InternalMetaPopulation';
 import { InternalMethodType } from './internal/InternalMethodType';

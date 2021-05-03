@@ -1,5 +1,4 @@
-import { UnitTags, Multiplicity, Origin } from '@allors/shared/system';
-import { Composite, Unit, RoleType, Interface } from '@allors/workspace/meta/system';
+import { Composite, Unit, RoleType, Interface, UnitTags, Multiplicity, Origin } from '@allors/workspace/meta/system';
 import { LazyMetaPopulation } from '@allors/workspace/meta/lazy/system';
 
 describe('Unit Relation in MetaPopulation', () => {

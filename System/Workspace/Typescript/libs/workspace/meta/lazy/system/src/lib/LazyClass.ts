@@ -1,4 +1,4 @@
-import { ObjectTypeData } from '@allors/shared/system';
+import { ObjectTypeData } from '@allors/workspace/meta/system';
 import { Lookup } from './utils/Lookup';
 import { InternalMetaPopulation } from './internal/InternalMetaPopulation';
 import { InternalClass } from './internal/InternalClass';

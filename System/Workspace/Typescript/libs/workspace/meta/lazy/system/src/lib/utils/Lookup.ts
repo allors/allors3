@@ -1,4 +1,4 @@
-import { MetaData, Multiplicity, Origin } from '@allors/shared/system';
+import { MetaData, Multiplicity, Origin } from '@allors/workspace/meta/system';
 
 export class Lookup {
   o: Map<number, Origin>;

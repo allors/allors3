@@ -1,7 +1,6 @@
 import { PullResponse, PushRequest, PushResponse, SyncRequest } from '@allors/protocol/json/system';
-import { Origin } from '@allors/shared/system';
-import { IChangeSet, IInvokeResult, InvokeOptions, IPullResult, IPushResult, ISession, ISessionLifecycle, IStrategy, Method, Procedure, Pull } from '@allors/workspace/domain/system';
-import { AssociationType, Class, Composite, RoleType } from '@allors/workspace/meta/system';
+import { IChangeSet, IInvokeResult, InvokeOptions, IObject, IPullResult, IPushResult, ISession, ISessionLifecycle, IStrategy, Method, Procedure, Pull } from '@allors/workspace/domain/system';
+import { AssociationType, Class, Composite, Origin, RoleType } from '@allors/workspace/meta/system';
 import { Database } from '../Database/Database';
 import { DatabaseState } from '../Database/DatabaseState';
 import { Strategy } from '../Strategy';

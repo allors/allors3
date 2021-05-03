@@ -13,5 +13,8 @@ export class DerivationError implements IDerivationError {
     // let association = this.session.Get<IObject>(r[0])
     // let relationType = (IRelationType)this.session.Workspace.MetaPopulation.FindByTag((int)r[1])
     // select new Role(association, relationType);
+
+    // TODO:
+    return [];
   }
 }

@@ -7,10 +7,9 @@
     "protocol-json-system": { "tags": [] },
     "workspace-meta-lazy-system": { "tags": [] },
     "workspace-meta-lazy-tests": { "tags": [] },
-    "shared-system": { "tags": [] },
     "workspace-meta-system": { "tags": [] },
     "workspace-domain-system": { "tags": [] },
     "workspace-domain-json-system": { "tags": [] },
-    "shared-tests": { "tags": [] }
+    "workspace-domain-json-tests": { "tags": [] }
   }
 }

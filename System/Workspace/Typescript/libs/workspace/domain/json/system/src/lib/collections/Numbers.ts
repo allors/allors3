@@ -59,7 +59,7 @@ export function has(set: Numbers, value: number): boolean {
   return false;
 }
 
-export function init(set: Numbers): Numbers {
+export function Numbers(set?: number[]): Numbers {
   if (Array.isArray(set)) {
     return [...set].sort();
   }
@@ -89,4 +89,13 @@ export function remove(set: Numbers, value: number): Numbers {
   }
 
   return set;
+}
+
+export function difference(self: Numbers, other: Numbers): Numbers {
+  if (self === undefined || other === undefined) {
+    return self;
+  }
+
+  const diff = self.filter((v) => !_has(other, v));
+  return diff.length > 0 ? diff : undefined;
 }

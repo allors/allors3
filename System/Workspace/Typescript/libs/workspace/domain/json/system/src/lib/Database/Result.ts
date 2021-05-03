@@ -1,5 +1,6 @@
 import { Response } from '@allors/protocol/json/system';
 import { IDerivationError, IObject, IResult, ISession } from '@allors/workspace/domain/system';
+import { DerivationError } from './DerivationError';
 
 export abstract class Result implements IResult {
   constructor(public readonly session: ISession, public readonly response: Response) {}

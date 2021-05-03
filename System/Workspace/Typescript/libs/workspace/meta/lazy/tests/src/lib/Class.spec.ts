@@ -1,4 +1,4 @@
-import { Origin } from '@allors/shared/system';
+import { Origin } from '@allors/workspace/meta/system';
 import { Class } from '@allors/workspace/meta/system';
 import { LazyMetaPopulation } from '@allors/workspace/meta/lazy/system';
 

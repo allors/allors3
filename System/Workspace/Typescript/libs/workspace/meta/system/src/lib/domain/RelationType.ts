@@ -1,4 +1,4 @@
-import { Multiplicity } from '@allors/shared/system';
+import { Multiplicity } from '../Multiplicity';
 import { AssociationType } from './AssociationType';
 import { MetaObject } from './MetaObject';
 import { RoleType } from './RoleType';

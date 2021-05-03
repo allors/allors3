@@ -1,4 +1,4 @@
-import { MetaData } from '@allors/shared/system';
+import { MetaData } from '@allors/workspace/meta/system';
 import { InternalMetaPopulation } from './internal/InternalMetaPopulation';
 import { InternalMetaObject } from './internal/InternalMetaObject';
 import { InternalUnit } from './internal/InternalUnit';

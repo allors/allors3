@@ -1,4 +1,4 @@
-import { Multiplicity, Origin, RelationTypeData } from '@allors/shared/system';
+import { Multiplicity, Origin, RelationTypeData } from '@allors/workspace/meta/system';
 import { InternalAssociationType } from './internal/InternalAssociationType';
 import { InternalComposite } from './internal/InternalComposite';
 import { InternalMetaPopulation } from './internal/InternalMetaPopulation';

@@ -1,4 +1,4 @@
-import { Origin, UnitTags } from '@allors/shared/system';
+import { Origin, UnitTags } from '@allors/workspace/meta/system';
 import { InternalUnit } from './internal/InternalUnit';
 import { InternalMetaPopulation } from './internal/InternalMetaPopulation';
 

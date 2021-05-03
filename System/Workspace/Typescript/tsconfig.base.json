@@ -18,11 +18,10 @@
       "@allors/protocol/json/system": ["libs/protocol/json/system/src/index.ts"],
       "@allors/workspace/meta/lazy/system": ["libs/workspace/meta/lazy/system/src/index.ts"],
       "@allors/workspace/meta/lazy/tests": ["libs/workspace/meta/lazy/tests/src/index.ts"],
-      "@allors/shared/system": ["libs/shared/system/src/index.ts"],
       "@allors/workspace/meta/system": ["libs/workspace/meta/system/src/index.ts"],
       "@allors/workspace/domain/system": ["libs/workspace/domain/system/src/index.ts"],
       "@allors/workspace/domain/json/system": ["libs/workspace/domain/json/system/src/index.ts"],
-      "@allors/shared/tests": ["libs/shared/tests/src/index.ts"]
+      "@allors/workspace/domain/json/tests": ["libs/workspace/domain/json/tests/src/index.ts"]
     },
     "strict": true
   },

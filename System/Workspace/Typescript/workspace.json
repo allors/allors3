@@ -28,15 +28,6 @@
         "test": { "executor": "@nrwl/jest:jest", "outputs": ["coverage/libs/workspace/meta/lazy/tests"], "options": { "jestConfig": "libs/workspace/meta/lazy/tests/jest.config.js", "passWithNoTests": true } }
       }
     },
-    "shared-system": {
-      "root": "libs/shared/system",
-      "sourceRoot": "libs/shared/system/src",
-      "projectType": "library",
-      "targets": {
-        "lint": { "executor": "@nrwl/linter:eslint", "options": { "lintFilePatterns": ["libs/shared/system/**/*.ts"] } },
-        "test": { "executor": "@nrwl/jest:jest", "outputs": ["coverage/libs/shared/system"], "options": { "jestConfig": "libs/shared/system/jest.config.js", "passWithNoTests": true } }
-      }
-    },
     "workspace-meta-system": {
       "root": "libs/workspace/meta/system",
       "sourceRoot": "libs/workspace/meta/system/src",
@@ -64,13 +55,13 @@
         "test": { "executor": "@nrwl/jest:jest", "outputs": ["coverage/libs/workspace/domain/json/system"], "options": { "jestConfig": "libs/workspace/domain/json/system/jest.config.js", "passWithNoTests": true } }
       }
     },
-    "shared-tests": {
-      "root": "libs/shared/tests",
-      "sourceRoot": "libs/shared/tests/src",
+    "workspace-domain-json-tests": {
+      "root": "libs/workspace/domain/json/tests",
+      "sourceRoot": "libs/workspace/domain/json/tests/src",
       "projectType": "library",
       "targets": {
-        "lint": { "executor": "@nrwl/linter:eslint", "options": { "lintFilePatterns": ["libs/shared/tests/**/*.ts"] } },
-        "test": { "executor": "@nrwl/jest:jest", "outputs": ["coverage/libs/shared/tests"], "options": { "jestConfig": "libs/shared/tests/jest.config.js", "passWithNoTests": true } }
+        "lint": { "executor": "@nrwl/linter:eslint", "options": { "lintFilePatterns": ["libs/workspace/domain/json/tests/**/*.ts"] } },
+        "test": { "executor": "@nrwl/jest:jest", "outputs": ["coverage/libs/workspace/domain/json/tests"], "options": { "jestConfig": "libs/workspace/domain/json/tests/jest.config.js", "passWithNoTests": true } }
       }
     }
   },

@@ -1,4 +1,4 @@
-import { Origin, pluralize, Multiplicity, RelationTypeData } from '@allors/shared/system';
+import { Origin, pluralize, Multiplicity, RelationTypeData } from '@allors/workspace/meta/system';
 import { InternalAssociationType } from './internal/InternalAssociationType';
 import { InternalObjectType } from './internal/InternalObjectType';
 import { InternalRelationType } from './internal/InternalRelationType';
