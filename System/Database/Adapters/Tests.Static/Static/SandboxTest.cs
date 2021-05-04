@@ -7,10 +7,16 @@ namespace Allors.Database.Adapters
 {
     using System;
     using System.Collections.Generic;
-    using Domain;
     using Data;
+    using Meta;
+    using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers;
+    using Moq;
+    using Security;
     using Xunit;
+    using C1 = Domain.C1;
+    using C2 = Domain.C2;
     using Extent = Data.Extent;
+    using User = Domain.User;
 
     public abstract class SandboxTest : IDisposable
     {
@@ -99,7 +105,10 @@ namespace Allors.Database.Adapters
                     Predicate = new Equals(m.C1.C1AllorsString) { Parameter = "pString" },
                 };
 
-                var objects = this.Transaction.Resolve<C1>(extent, new Dictionary<string, string> { { "pString", "ᴀbra" } });
+                var arguments = new Mock<IArguments>();
+                arguments.Setup(arg => arg.HasArgument("pString")).Returns(true);
+                arguments.Setup(arg => arg.ResolveUnit(UnitTags.String, "pString")).Returns("ᴀbra");
+                var objects = this.Transaction.Resolve<C1>(extent, arguments.Object);
 
                 Assert.Single(objects);
             }

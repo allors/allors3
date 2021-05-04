@@ -306,7 +306,7 @@ namespace Allors.Workspace.Adapters.Remote
 
                     if (relationType.RoleType.ObjectType.IsUnit)
                     {
-                        pushRequestRole.SetUnitRole = UnitConvert.ToString(roleValue);
+                        pushRequestRole.SetUnitRole = UnitConvert.ToJson(roleValue);
                     }
                     else
                     {

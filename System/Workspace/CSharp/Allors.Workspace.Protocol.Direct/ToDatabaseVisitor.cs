@@ -31,7 +31,7 @@ namespace Allors.Workspace.Protocol.Direct
                 ObjectType = this.Visit(ws.ObjectType),
                 Object = this.Visit(ws.Object),
                 Results = this.Visit(ws.Results),
-                Parameters = this.Visit(ws.Parameters)
+                Arguments = this.Visit(ws.Arguments)
             };
 
         public Database.Data.Procedure Visit(Data.Procedure ws) =>
@@ -42,7 +42,7 @@ namespace Allors.Workspace.Protocol.Direct
                 Values = ws.Values,
                 Pool = ws.Pool?.ToDictionary(v => this.transaction.Instantiate(v.Key.Id), v => v.Value),
             };
-        
+
         private Database.Data.IExtent Visit(Data.IExtent ws) =>
             ws switch
             {
@@ -96,29 +96,14 @@ namespace Allors.Workspace.Protocol.Direct
             return null;
         }
 
-        private IPropertyType Visit(Meta.IPropertyType ws)
-        {
-            switch (ws)
+        private IPropertyType Visit(Meta.IPropertyType ws) =>
+            ws switch
             {
-                case Meta.IAssociationType associationType:
-                    return ((IRelationType)this.metaPopulation.FindByTag(associationType.OperandTag)).AssociationType;
+                Meta.IAssociationType associationType => ((IRelationType)this.metaPopulation.FindByTag(associationType.OperandTag)).AssociationType,
+                Meta.IRoleType roleType => ((IRelationType)this.metaPopulation.FindByTag(roleType.OperandTag)).RoleType,
+                _ => throw new ArgumentException("Invalid property type")
+            };
 
-                case Meta.IRoleType roleType:
-                    return ((IRelationType)this.metaPopulation.FindByTag(roleType.OperandTag)).RoleType;
-
-                default:
-                    throw new ArgumentException("Invalid property type");
-            }
-        }
-
-        private IDictionary<string, string> Visit(IDictionary<string, string> ws)
-        {
-            if (ws != null)
-            {
-                throw new System.NotImplementedException();
-            }
-
-            return null;
-        }
+        private IArguments Visit(IDictionary<string, object> ws) => new Arguments(ws);
     }
 }

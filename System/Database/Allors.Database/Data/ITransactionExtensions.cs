@@ -10,6 +10,6 @@ namespace Allors.Database.Data
 
     public static class ITransactionExtensions
     {
-        public static T[] Resolve<T>(this ITransaction transaction, IExtent extent, IDictionary<string, string> parameters = null) where T : IObject => extent.Build(transaction, parameters).Cast<T>().ToArray();
+        public static T[] Resolve<T>(this ITransaction transaction, IExtent extent, IArguments arguments = null) where T : IObject => extent.Build(transaction, arguments).Cast<T>().ToArray();
     }
 }

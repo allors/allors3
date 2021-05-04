@@ -14,5 +14,5 @@ export interface Pull {
 
   results?: Result[];
 
-  parameters?: { [name: string]: ParameterTypes };
+  arguments?: { [name: string]: ParameterTypes };
 }

@@ -11,10 +11,10 @@ namespace Allors.Database.Data
     {
         string[] Dependencies { get; }
 
-        void Build(ITransaction transaction, IDictionary<string, string> parameters, Database.ICompositePredicate compositePredicate);
+        void Build(ITransaction transaction, IArguments arguments, Database.ICompositePredicate compositePredicate);
 
-        bool ShouldTreeShake(IDictionary<string, string> parameters);
+        bool ShouldTreeShake(IArguments arguments);
 
-        bool HasMissingArguments(IDictionary<string, string> parameters);
+        bool HasMissingArguments(IArguments arguments);
     }
 }

@@ -7,7 +7,7 @@ namespace Allors.Database.Data
 {
     using System.Collections.Generic;
     using Meta;
-    
+
 
     public class Instanceof : IPropertyPredicate
     {
@@ -15,19 +15,19 @@ namespace Allors.Database.Data
 
         public Instanceof(IComposite objectType = null) => this.ObjectType = objectType;
 
-        public string Argument { get; set; }
+        public string Parameter { get; set; }
 
         public IComposite ObjectType { get; set; }
 
         public IPropertyType PropertyType { get; set; }
 
-        bool IPredicate.ShouldTreeShake(IDictionary<string, string> parameters) => this.HasMissingDependencies(parameters) || ((IPredicate)this).HasMissingArguments(parameters);
+        bool IPredicate.ShouldTreeShake(IArguments arguments) => this.HasMissingDependencies(arguments) || ((IPredicate)this).HasMissingArguments(arguments);
 
-        bool IPredicate.HasMissingArguments(IDictionary<string, string> parameters) => this.Argument != null && (parameters == null || !parameters.ContainsKey(this.Argument));
+        bool IPredicate.HasMissingArguments(IArguments arguments) => this.Parameter != null && (arguments == null || !arguments.HasArgument(this.Parameter));
 
-        void IPredicate.Build(ITransaction transaction, IDictionary<string, string> parameters, Database.ICompositePredicate compositePredicate)
+        void IPredicate.Build(ITransaction transaction, IArguments arguments, Database.ICompositePredicate compositePredicate)
         {
-            var composite = this.Argument != null ? (IComposite)transaction.GetMetaObject(parameters[this.Argument]) : this.ObjectType;
+            var composite = this.Parameter != null ? (IComposite)transaction.GetMetaObject(arguments.ResolveMetaObject(this.Parameter)) : this.ObjectType;
 
             if (this.PropertyType != null)
             {

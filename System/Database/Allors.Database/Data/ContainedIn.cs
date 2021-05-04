@@ -7,7 +7,7 @@ namespace Allors.Database.Data
 {
     using System.Collections.Generic;
     using Meta;
-    
+
     public class ContainedIn : IPropertyPredicate
     {
         public string[] Dependencies { get; set; }
@@ -22,15 +22,15 @@ namespace Allors.Database.Data
 
         public string Parameter { get; set; }
 
-        bool IPredicate.ShouldTreeShake(IDictionary<string, string> parameters) => this.HasMissingDependencies(parameters) || this.HasMissingArguments(parameters);
+        bool IPredicate.ShouldTreeShake(IArguments arguments) => this.HasMissingDependencies(arguments) || this.HasMissingArguments(arguments);
 
-        bool IPredicate.HasMissingArguments(IDictionary<string, string> parameters) => this.HasMissingArguments(parameters);
+        bool IPredicate.HasMissingArguments(IArguments arguments) => this.HasMissingArguments(arguments);
 
-        void IPredicate.Build(ITransaction transaction, IDictionary<string, string> parameters, Database.ICompositePredicate compositePredicate)
+        void IPredicate.Build(ITransaction transaction, IArguments arguments, Database.ICompositePredicate compositePredicate)
         {
-            if (!this.HasMissingArguments(parameters))
+            if (!this.HasMissingArguments(arguments))
             {
-                var objects = this.Parameter != null ? transaction.GetObjects(parameters[this.Parameter]) : this.Objects;
+                var objects = this.Parameter != null ? transaction.GetObjects(arguments.ResolveObjects(this.Parameter)) : this.Objects;
 
                 if (this.PropertyType is IRoleType roleType)
                 {
@@ -40,7 +40,7 @@ namespace Allors.Database.Data
                     }
                     else
                     {
-                        compositePredicate.AddContainedIn(roleType, this.Extent.Build(transaction, parameters));
+                        compositePredicate.AddContainedIn(roleType, this.Extent.Build(transaction, arguments));
                     }
                 }
                 else
@@ -52,13 +52,13 @@ namespace Allors.Database.Data
                     }
                     else
                     {
-                        compositePredicate.AddContainedIn(associationType, this.Extent.Build(transaction, parameters));
+                        compositePredicate.AddContainedIn(associationType, this.Extent.Build(transaction, arguments));
                     }
                 }
             }
         }
 
-        private bool HasMissingArguments(IDictionary<string, string> parameters) => (this.Parameter != null && (parameters?.ContainsKey(this.Parameter) == false)) || this.Extent?.HasMissingArguments(parameters) == true;
+        private bool HasMissingArguments(IArguments arguments) => (this.Parameter != null && (arguments?.HasArgument(this.Parameter) == false)) || this.Extent?.HasMissingArguments(arguments) == true;
 
         public void Accept(IVisitor visitor) => visitor.VisitContainedIn(this);
     }

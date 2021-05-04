@@ -320,7 +320,7 @@ namespace Allors.Database.Protocol.Json
                             }
                             else if (visited.Value != null)
                             {
-                                var value = UnitConvert.FromString(((IRoleType)propertyType).ObjectType.Tag, visited.Value);
+                                var value = UnitConvert.FromJson(((IRoleType)propertyType).ObjectType.Tag, visited.Value);
                                 equals.Value = value;
                             }
 
@@ -332,7 +332,7 @@ namespace Allors.Database.Protocol.Json
                             {
                                 Dependencies = visited.Dependencies,
                                 Parameter = visited.Parameter,
-                                Values = visited.Values?.Select(v => UnitConvert.FromString(roleType.ObjectType.Tag, v)).ToArray(),
+                                Values = visited.Values?.Select(v => UnitConvert.FromJson(roleType.ObjectType.Tag, v)).ToArray(),
                             };
 
                             this.predicates.Push(between);
@@ -345,7 +345,7 @@ namespace Allors.Database.Protocol.Json
                             {
                                 Dependencies = visited.Dependencies,
                                 Parameter = visited.Parameter,
-                                Value = UnitConvert.FromString(roleType.ObjectType.Tag, visited.Value),
+                                Value = UnitConvert.FromJson(roleType.ObjectType.Tag, visited.Value),
                             };
 
                             this.predicates.Push(greaterThan);
@@ -358,7 +358,7 @@ namespace Allors.Database.Protocol.Json
                             {
                                 Dependencies = visited.Dependencies,
                                 Parameter = visited.Parameter,
-                                Value = UnitConvert.FromString(roleType.ObjectType.Tag, visited.Value),
+                                Value = UnitConvert.FromJson(roleType.ObjectType.Tag, visited.Value),
                             };
 
                             this.predicates.Push(lessThan);
@@ -371,7 +371,7 @@ namespace Allors.Database.Protocol.Json
                             {
                                 Dependencies = visited.Dependencies,
                                 Parameter = visited.Parameter,
-                                Value = UnitConvert.FromString(roleType.ObjectType.Tag, visited.Value)?.ToString(),
+                                Value = UnitConvert.FromJson(roleType.ObjectType.Tag, visited.Value)?.ToString(),
                             };
 
                             this.predicates.Push(like);
@@ -393,7 +393,7 @@ namespace Allors.Database.Protocol.Json
                 ExtentRef = visited.ExtentRef,
                 ObjectType = visited.ObjectType.HasValue ? (IObjectType)this.transaction.Database.MetaPopulation.FindByTag(visited.ObjectType.Value) : null,
                 Object = visited.Object != null ? this.transaction.Instantiate(visited.Object.Value) : null,
-                Parameters = visited.Parameters,
+                Arguments = new Arguments(visited.Arguments),
             };
 
             if (visited.Extent != null)

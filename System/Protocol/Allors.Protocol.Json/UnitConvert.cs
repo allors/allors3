@@ -11,22 +11,22 @@ namespace Allors
 
     public static class UnitConvert
     {
-        public static string ToString(object value) =>
+        public static object ToJson(object value) =>
             value switch
             {
-                DateTime dateTime => dateTime.ToString("o"),
+                DateTime dateTime => dateTime,
                 byte[] binary => Convert.ToBase64String(binary),
-                bool @bool => @bool ? "true" : "false",
+                bool @bool => @bool,
                 decimal @decimal => @decimal.ToString(CultureInfo.InvariantCulture),
-                double @double => @double.ToString(CultureInfo.InvariantCulture),
-                int @int => @int.ToString(CultureInfo.InvariantCulture),
+                double @double => @double,
+                int @int => @int,
                 string @string => @string,
                 Guid @guid => @guid.ToString("D"),
                 null => null,
                 _ => throw new ArgumentException()
             };
 
-        public static object FromString(int tag, string value)
+        public static object FromJson(int tag, object value)
         {
             if (value == null)
             {
@@ -35,14 +35,14 @@ namespace Allors
 
             return tag switch
             {
-                UnitTags.DateTime => XmlConvert.ToDateTime(value, XmlDateTimeSerializationMode.Utc),
-                UnitTags.Binary => Convert.FromBase64String(value),
-                UnitTags.Boolean => XmlConvert.ToBoolean(value),
-                UnitTags.Decimal => XmlConvert.ToDecimal(value),
-                UnitTags.Float => XmlConvert.ToDouble(value),
-                UnitTags.Integer => XmlConvert.ToInt32(value),
+                UnitTags.DateTime => value,
+                UnitTags.Binary => Convert.FromBase64String((string)value),
+                UnitTags.Boolean => value,
+                UnitTags.Decimal => XmlConvert.ToDecimal((string)value),
+                UnitTags.Float => Convert.ToDouble(value),
+                UnitTags.Integer => Convert.ToInt32(value),
                 UnitTags.String => value,
-                UnitTags.Unique => XmlConvert.ToGuid(value),
+                UnitTags.Unique => XmlConvert.ToGuid((string)value),
                 _ => throw new Exception($"Unknown unit type with tag {tag}")
             };
         }

@@ -39,7 +39,7 @@ namespace Allors.Database.Protocol.Json
             }
 
             var extent = this.pull.Extent ?? this.preparedExtents.Get(this.pull.ExtentRef.Value);
-            var objects = extent.Build(this.transaction, this.pull.Parameters).ToArray();
+            var objects = extent.Build(this.transaction, this.pull.Arguments).ToArray();
 
             if (this.pull.Results != null)
             {
@@ -85,7 +85,7 @@ namespace Allors.Database.Protocol.Json
 
                                 paged = paged.ToArray();
 
-                                response.AddValue(name + "_total", extent.Build(this.transaction, this.pull.Parameters).Count.ToString());
+                                response.AddValue(name + "_total", extent.Build(this.transaction, this.pull.Arguments).Count.ToString());
                                 response.AddCollection(name, paged, include);
                             }
                             else
@@ -107,7 +107,7 @@ namespace Allors.Database.Protocol.Json
 
                                 paged = paged.ToArray();
 
-                                response.AddValue(name + "_total", extent.Build(this.transaction, this.pull.Parameters).Count.ToString());
+                                response.AddValue(name + "_total", extent.Build(this.transaction, this.pull.Arguments).Count.ToString());
                                 response.AddCollection(name, paged);
                             }
                             else

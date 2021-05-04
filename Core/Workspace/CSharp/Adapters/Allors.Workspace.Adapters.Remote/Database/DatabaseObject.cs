@@ -69,7 +69,7 @@ namespace Allors.Workspace.Adapters.Remote
                             var objectType = roleType.ObjectType;
                             if (objectType.IsUnit)
                             {
-                                return UnitConvert.FromString(roleType.ObjectType.Tag, v.Value);
+                                return UnitConvert.FromJson(roleType.ObjectType.Tag, v.Value);
                             }
 
                             if (roleType.IsOne)

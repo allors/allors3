@@ -84,7 +84,7 @@ namespace Tests
                       new Allors.Protocol.Json.Data.Pull
                           {
                               ExtentRef = PreparedExtents.OrganisationByName,
-                              Parameters = new Dictionary<string, string> { ["name"] = "Acme" },
+                              Arguments = new Dictionary<string, object> { ["name"] = "Acme" },
                           },
                   },
             };
@@ -109,7 +109,7 @@ namespace Tests
                       new Allors.Protocol.Json.Data.Pull
                           {
                               ExtentRef = PreparedExtents.OrganisationByName,
-                              Parameters = new Dictionary<string, string> { ["name"] = "Acme" },
+                              Arguments = new Dictionary<string, object> { ["name"] = "Acme" },
                           },
                   },
             };

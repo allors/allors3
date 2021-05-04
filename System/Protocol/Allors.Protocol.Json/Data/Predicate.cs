@@ -40,10 +40,10 @@ namespace Allors.Protocol.Json.Data
         public long[] Objects { get; set; }
 
         [JsonPropertyName("v")]
-        public string Value { get; set; }
+        public object Value { get; set; }
 
         [JsonPropertyName("vs")]
-        public string[] Values { get; set; }
+        public object[] Values { get; set; }
 
         [JsonPropertyName("e")]
         public Extent Extent { get; set; }

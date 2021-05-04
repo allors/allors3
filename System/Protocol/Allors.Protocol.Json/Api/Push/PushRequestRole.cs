@@ -13,7 +13,7 @@ namespace Allors.Protocol.Json.Api.Push
         public int RelationType { get; set; }
 
         [JsonPropertyName("u")]
-        public string SetUnitRole { get; set; }
+        public object SetUnitRole { get; set; }
 
         [JsonPropertyName("c")]
         public long? SetCompositeRole { get; set; }

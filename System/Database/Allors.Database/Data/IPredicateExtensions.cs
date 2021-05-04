@@ -5,21 +5,20 @@
 
 namespace Allors.Database.Data
 {
-    using System.Collections.Generic;
     using System.Linq;
 
     public static class IPredicateExtensions
     {
-        public static bool HasMissingDependencies(this IPredicate @this, IDictionary<string, string> parameters)
+        public static bool HasMissingDependencies(this IPredicate @this, IArguments arguments)
         {
             if (@this.Dependencies?.Length > 0)
             {
-                if (parameters == null)
+                if (arguments == null)
                 {
                     return true;
                 }
 
-                return !@this.Dependencies.All(v => parameters.ContainsKey(v));
+                return !@this.Dependencies.All(arguments.HasArgument);
             }
 
             return false;

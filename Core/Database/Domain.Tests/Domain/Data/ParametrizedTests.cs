@@ -17,14 +17,14 @@ namespace Allors.Database.Domain.Tests
         public ParametrizedTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void EqualsWithParameters()
+        public void EqualsWithArguments()
         {
             var filter = new Extent(this.M.Person)
             {
                 Predicate = new Equals { PropertyType = this.M.Person.FirstName, Parameter = "firstName" },
             };
 
-            var arguments = new Dictionary<string, string> { { "firstName", "John" } };
+            var arguments = new Arguments(new Dictionary<string, object> { { "firstName", "John" } });
             var queryExtent = filter.Build(this.Transaction, arguments);
 
             var extent = this.Transaction.Extent(this.M.Person);
@@ -41,14 +41,14 @@ namespace Allors.Database.Domain.Tests
                 Predicate = new Equals { Dependencies = new[] { "useFirstname" }, PropertyType = this.M.Person.FirstName, Value = "John" },
             };
 
-            var arguments = new Dictionary<string, string>();
+            var arguments = new Arguments(new Dictionary<string, object>());
             var queryExtent = filter.Build(this.Transaction, arguments);
 
             var extent = this.Transaction.Extent(this.M.Person);
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
 
-            arguments.Add("useFirstname", "x");
+            arguments = new Arguments(new Dictionary<string, object>() { { "useFirstname", "x" } });
             queryExtent = filter.Build(this.Transaction, arguments);
 
             extent = this.Transaction.Extent(this.M.Person);
@@ -58,7 +58,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void EqualsWithoutParameters()
+        public void EqualsWithoutArguments()
         {
             var filter = new Extent(this.M.Person)
             {
@@ -73,7 +73,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void AndWithParameters()
+        public void AndWithArguments()
         {
             // select from Person where FirstName='John' and LastName='Doe'
             var filter = new Extent(this.M.Person)
@@ -96,11 +96,11 @@ namespace Allors.Database.Domain.Tests
                 },
             };
 
-            var arguments = new Dictionary<string, string>
+            var arguments = new Arguments(new Dictionary<string, object>
                                 {
                                     { "firstName", "John" },
                                     { "lastName", "Doe" },
-                                };
+                                });
             var queryExtent = filter.Build(this.Transaction, arguments);
 
             var extent = this.Transaction.Extent(this.M.Person);
@@ -112,7 +112,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void AndWithoutParameters()
+        public void AndWithoutArguments()
         {
             // select from Person where FirstName='John' and LastName='Doe'
             var filter = new Extent(this.M.Person)
@@ -135,10 +135,10 @@ namespace Allors.Database.Domain.Tests
                 },
             };
             {
-                var arguments = new Dictionary<string, string>
+                var arguments = new Arguments(new Dictionary<string, object>
                                     {
                                         { "firstName", "John" },
-                                    };
+                                    });
                 var queryExtent = filter.Build(this.Transaction, arguments);
 
                 var extent = this.Transaction.Extent(this.M.Person);
@@ -157,7 +157,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void NestedWithParameters()
+        public void NestedWithArguments()
         {
             var filter = new Extent(this.M.C1)
             {
@@ -175,7 +175,7 @@ namespace Allors.Database.Domain.Tests
                 },
             };
 
-            var arguments = new Dictionary<string, string> { { "nested", "c2B" } };
+            var arguments = new Arguments(new Dictionary<string, object> { { "nested", "c2B" } });
             var queryExtent = filter.Build(this.Transaction, arguments);
 
             var c2s = this.Transaction.Extent(this.M.C2);
@@ -187,7 +187,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void NestedWithoutParameters()
+        public void NestedWithoutArguments()
         {
             var filter = new Extent(this.M.C1)
             {
@@ -205,7 +205,7 @@ namespace Allors.Database.Domain.Tests
                 },
             };
 
-            var arguments = new Dictionary<string, string>();
+            var arguments = new Arguments(new Dictionary<string, object>());
             var queryExtent = filter.Build(this.Transaction, arguments);
 
             var extent = this.Transaction.Extent(this.M.C1);
@@ -214,7 +214,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void AndNestedContainedInWithoutParameters()
+        public void AndNestedContainedInWithoutArguments()
         {
             var filter = new Extent(this.M.C1)
             {
@@ -238,7 +238,7 @@ namespace Allors.Database.Domain.Tests
                 },
             };
 
-            var parameters = new Dictionary<string, string>();
+            var parameters = new Arguments(new Dictionary<string, object>());
             var queryExtent = filter.Build(this.Transaction, parameters);
 
             var extent = this.Transaction.Extent(this.M.C1);
@@ -247,7 +247,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void AndNestedContainsWithoutParameters()
+        public void AndNestedContainsWithoutArguments()
         {
             var filter = new Extent(this.M.C1)
             {
@@ -271,7 +271,7 @@ namespace Allors.Database.Domain.Tests
                 },
             };
 
-            var arguments = new Dictionary<string, string>();
+            var arguments = new Arguments(new Dictionary<string, object>());
             var queryExtent = filter.Build(this.Transaction, arguments);
 
             var extent = this.Transaction.Extent(this.M.C1);

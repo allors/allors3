@@ -49,7 +49,7 @@ namespace Allors.Database.Protocol.Json
 
                 if (roleType.ObjectType.IsUnit)
                 {
-                    syncResponseRole.Value = UnitConvert.ToString(@object.Strategy.GetUnitRole(roleType));
+                    syncResponseRole.Value = UnitConvert.ToJson(@object.Strategy.GetUnitRole(roleType));
                 }
                 else if (roleType.IsOne)
                 {

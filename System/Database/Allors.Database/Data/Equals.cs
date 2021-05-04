@@ -23,50 +23,57 @@ namespace Allors.Database.Data
 
         public string Parameter { get; set; }
 
-        bool IPredicate.ShouldTreeShake(IDictionary<string, string> parameters) => this.HasMissingDependencies(parameters) || ((IPredicate)this).HasMissingArguments(parameters);
+        bool IPredicate.ShouldTreeShake(IArguments arguments) => this.HasMissingDependencies(arguments) || ((IPredicate)this).HasMissingArguments(arguments);
 
-        bool IPredicate.HasMissingArguments(IDictionary<string, string> parameters) => this.Parameter != null && (parameters == null || !parameters.ContainsKey(this.Parameter));
+        bool IPredicate.HasMissingArguments(IArguments arguments) => this.Parameter != null && (arguments == null || !arguments.HasArgument(this.Parameter));
 
         /// <inheritdoc/>
-        void IPredicate.Build(ITransaction transaction, IDictionary<string, string> parameters, Database.ICompositePredicate compositePredicate)
+        void IPredicate.Build(ITransaction transaction, IArguments arguments, Database.ICompositePredicate compositePredicate)
         {
-            if (this.PropertyType == null)
+            switch (this.PropertyType)
             {
-                var equals = this.Parameter != null ? transaction.Instantiate(parameters[this.Parameter]) : this.Object;
-                if (equals != null)
+                case null:
                 {
-                    compositePredicate.AddEquals(this.Object);
+                    var equals = this.Parameter != null ? transaction.Instantiate(arguments.ResolveObject(this.Parameter)) : this.Object;
+                    if (@equals != null)
+                    {
+                        compositePredicate.AddEquals(this.Object);
+                    }
+
+                    break;
                 }
-            }
-            else
-            {
-                if (this.PropertyType is IRoleType roleType)
+
+                case IRoleType roleType when roleType.ObjectType.IsUnit:
                 {
-                    if (roleType.ObjectType.IsUnit)
+                    var equals = this.Parameter != null ? arguments.ResolveUnit(roleType.ObjectType.Tag, this.Parameter) : this.Value;
+                    if (@equals != null)
                     {
-                        var equals = this.Parameter != null ? UnitConvert.FromString(roleType.ObjectType.Tag, parameters[this.Parameter]) : this.Value;
-                        if (equals != null)
-                        {
-                            compositePredicate.AddEquals(roleType, equals);
-                        }
+                        compositePredicate.AddEquals(roleType, @equals);
                     }
-                    else
-                    {
-                        var equals = this.Parameter != null ? transaction.GetObject(parameters[this.Parameter]) : this.Object;
-                        if (equals != null)
-                        {
-                            compositePredicate.AddEquals(roleType, equals);
-                        }
-                    }
+
+                    break;
                 }
-                else
+
+                case IRoleType roleType:
+                {
+                    var equals = this.Parameter != null ? transaction.GetObject(arguments.ResolveObject(this.Parameter)) : this.Object;
+                    if (@equals != null)
+                    {
+                        compositePredicate.AddEquals(roleType, @equals);
+                    }
+
+                    break;
+                }
+                default:
                 {
                     var associationType = (IAssociationType)this.PropertyType;
-                    var equals = this.Parameter != null ? transaction.GetObject(parameters[this.Parameter]) : this.Object;
-                    if (equals != null)
+                    var equals = this.Parameter != null ? transaction.GetObject(arguments.ResolveObject(this.Parameter)) : this.Object;
+                    if (@equals != null)
                     {
-                        compositePredicate.AddEquals(associationType, equals);
+                        compositePredicate.AddEquals(associationType, @equals);
                     }
+
+                    break;
                 }
             }
         }

@@ -20,11 +20,11 @@ namespace Allors.Database.Data
 
         public Sort[] Sorting { get; set; }
 
-        bool IExtent.HasMissingArguments(IDictionary<string, string> parameters) => this.Operands.Any(v => v.HasMissingArguments(parameters));
+        bool IExtent.HasMissingArguments(IArguments arguments) => this.Operands.Any(v => v.HasMissingArguments(arguments));
 
-        Database.Extent IExtent.Build(ITransaction transaction, IDictionary<string, string> parameters)
+        Database.Extent IExtent.Build(ITransaction transaction, IArguments arguments)
         {
-            var extent = transaction.Intersect(this.Operands[0].Build(transaction, parameters), this.Operands[1].Build(transaction, parameters));
+            var extent = transaction.Intersect(this.Operands[0].Build(transaction, arguments), this.Operands[1].Build(transaction, arguments));
             foreach (var sort in this.Sorting)
             {
                 sort.Build(extent);

@@ -15,19 +15,19 @@ namespace Allors.Database.Data
 
         public IPredicate Operand { get; set; }
 
-        bool IPredicate.ShouldTreeShake(IDictionary<string, string> parameters) => this.HasMissingDependencies(parameters) || this.Operand == null || this.Operand.ShouldTreeShake(parameters);
+        bool IPredicate.ShouldTreeShake(IArguments arguments) => this.HasMissingDependencies(arguments) || this.Operand == null || this.Operand.ShouldTreeShake(arguments);
 
-        bool IPredicate.HasMissingArguments(IDictionary<string, string> parameters) => this.Operand != null && this.Operand.HasMissingArguments(parameters);
+        bool IPredicate.HasMissingArguments(IArguments arguments) => this.Operand != null && this.Operand.HasMissingArguments(arguments);
 
         void IPredicateContainer.AddPredicate(IPredicate predicate) => this.Operand = predicate;
 
-        void IPredicate.Build(ITransaction transaction, IDictionary<string, string> parameters, Database.ICompositePredicate compositePredicate)
+        void IPredicate.Build(ITransaction transaction, IArguments arguments, Database.ICompositePredicate compositePredicate)
         {
             var not = compositePredicate.AddNot();
 
-            if (this.Operand != null && !this.Operand.ShouldTreeShake(parameters))
+            if (this.Operand != null && !this.Operand.ShouldTreeShake(arguments))
             {
-                this.Operand?.Build(transaction, parameters, not);
+                this.Operand?.Build(transaction, arguments, not);
             }
         }
 

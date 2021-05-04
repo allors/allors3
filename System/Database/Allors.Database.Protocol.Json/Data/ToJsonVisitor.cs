@@ -79,7 +79,7 @@ namespace Allors.Database.Protocol.Json
                 Kind = PredicateKind.Between,
                 Dependencies = visited.Dependencies,
                 RoleType = visited.RoleType?.RelationType.Tag,
-                Values = visited.Values.Select(UnitConvert.ToString).ToArray(),
+                Values = visited.Values.Select(UnitConvert.ToJson).ToArray(),
                 Parameter = visited.Parameter,
             };
 
@@ -131,7 +131,7 @@ namespace Allors.Database.Protocol.Json
                 AssociationType = (visited.PropertyType as IAssociationType)?.RelationType.Tag,
                 RoleType = (visited.PropertyType as IRoleType)?.RelationType.Tag,
                 Object = visited.Object?.Id,
-                Value = UnitConvert.ToString(visited.Value),
+                Value = UnitConvert.ToJson(visited.Value),
                 Parameter = visited.Parameter,
             };
 
@@ -236,7 +236,7 @@ namespace Allors.Database.Protocol.Json
                 Kind = PredicateKind.GreaterThan,
                 Dependencies = visited.Dependencies,
                 RoleType = visited.RoleType?.RelationType.Tag,
-                Value = UnitConvert.ToString(visited.Value),
+                Value = UnitConvert.ToJson(visited.Value),
                 Parameter = visited.Parameter,
             };
 
@@ -298,7 +298,7 @@ namespace Allors.Database.Protocol.Json
                 Kind = PredicateKind.LessThan,
                 Dependencies = visited.Dependencies,
                 RoleType = visited.RoleType?.RelationType.Tag,
-                Value = UnitConvert.ToString(visited.Value),
+                Value = UnitConvert.ToJson(visited.Value),
                 Parameter = visited.Parameter,
             };
 
@@ -312,7 +312,7 @@ namespace Allors.Database.Protocol.Json
                 Kind = PredicateKind.Like,
                 Dependencies = visited.Dependencies,
                 RoleType = visited.RoleType?.RelationType.Tag,
-                Value = UnitConvert.ToString(visited.Value),
+                Value = UnitConvert.ToJson(visited.Value),
                 Parameter = visited.Parameter,
             };
 

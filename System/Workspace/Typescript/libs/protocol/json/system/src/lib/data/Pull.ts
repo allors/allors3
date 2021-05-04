@@ -16,6 +16,6 @@ export interface Pull {
   /** Results */
   r: Result[];
 
-  /** Parameters */
-  p: { [name: string]: string };
+  /** Arguments */
+  a: { [name: string]: string };
 }

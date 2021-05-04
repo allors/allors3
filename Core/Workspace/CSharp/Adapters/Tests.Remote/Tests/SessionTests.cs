@@ -25,7 +25,7 @@ namespace Tests.Workspace.Remote
             Assert.Equal("Koen", koen.FirstName);
             Assert.Null(koen.MiddleName);
             Assert.Equal("Van Exem", koen.LastName);
-            Assert.Equal(UnitConvert.FromString(this.M.Person.BirthDate.ObjectType.Tag, "1973-03-27T18:00:00Z"), koen.BirthDate);
+            Assert.Equal(UnitConvert.FromJson(this.M.Person.BirthDate.ObjectType.Tag, "1973-03-27T18:00:00Z"), koen.BirthDate);
             Assert.True(koen.IsStudent);
 
             var patrick = session.InstantiateDatabaseObject(2).Object as Person;

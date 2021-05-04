@@ -21,7 +21,7 @@ namespace Allors.Database.Data
 
         public Result[] Results { get; set; }
 
-        public IDictionary<string, string> Parameters { get; set; }
+        public IArguments Arguments { get; set; }
 
         public void Accept(IVisitor visitor) => visitor.VisitPull(this);
     }

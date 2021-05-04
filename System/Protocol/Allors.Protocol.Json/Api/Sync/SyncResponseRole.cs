@@ -21,6 +21,6 @@ namespace Allors.Protocol.Json.Api.Sync
         public long? Object { get; set; }
 
         [JsonPropertyName("v")]
-        public string Value { get; set; }
+        public object Value { get; set; }
     }
 }

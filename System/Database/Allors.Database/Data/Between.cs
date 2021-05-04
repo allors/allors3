@@ -8,7 +8,6 @@ namespace Allors.Database.Data
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
-    
 
     public class Between : IRolePredicate
     {
@@ -22,14 +21,13 @@ namespace Allors.Database.Data
 
         public string Parameter { get; set; }
 
-        bool IPredicate.ShouldTreeShake(IDictionary<string, string> parameters) => this.HasMissingDependencies(parameters) || ((IPredicate)this).HasMissingArguments(parameters);
+        bool IPredicate.ShouldTreeShake(IArguments arguments) => this.HasMissingDependencies(arguments) || ((IPredicate)this).HasMissingArguments(arguments);
 
-        bool IPredicate.HasMissingArguments(IDictionary<string, string> parameters) => this.Parameter != null && (parameters == null || !parameters.ContainsKey(this.Parameter));
+        bool IPredicate.HasMissingArguments(IArguments arguments) => this.Parameter != null && (arguments == null || !arguments.HasArgument(this.Parameter));
 
-        void IPredicate.Build(ITransaction transaction, IDictionary<string, string> parameters, Database.ICompositePredicate compositePredicate)
+        void IPredicate.Build(ITransaction transaction, IArguments arguments, Database.ICompositePredicate compositePredicate)
         {
-            var parameter = this.Parameter != null ? parameters[this.Parameter]?.Split('|').Select(v => UnitConvert.FromString(this.RoleType.ObjectType.Tag, v)) : null;
-            var values = parameter != null ? parameter.ToArray() : this.Values.ToArray();
+            var values = this.Parameter != null ? arguments.ResolveUnits(this.RoleType.ObjectType.Tag, this.Parameter) : this.Values.ToArray();
             compositePredicate.AddBetween(this.RoleType, values[0], values[1]);
         }
 

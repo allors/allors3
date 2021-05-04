@@ -14,8 +14,8 @@ namespace Allors.Database.Data
 
         Sort[] Sorting { get; set; }
 
-        Database.Extent Build(ITransaction transaction, IDictionary<string, string> parameters = null);
+        Database.Extent Build(ITransaction transaction, IArguments arguments = null);
 
-        bool HasMissingArguments(IDictionary<string, string> parameters);
+        bool HasMissingArguments(IArguments arguments);
     }
 }

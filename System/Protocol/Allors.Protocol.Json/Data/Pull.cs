@@ -26,8 +26,8 @@ namespace Allors.Protocol.Json.Data
         [JsonPropertyName("r")]
         public Result[] Results { get; set; }
 
-        [JsonPropertyName("p")]
-        public IDictionary<string, string> Parameters { get; set; }
+        [JsonPropertyName("a")]
+        public IDictionary<string, object> Arguments { get; set; }
 
         public void Accept(IVisitor visitor) => visitor.VisitPull(this);
     }

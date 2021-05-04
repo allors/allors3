@@ -12,81 +12,57 @@ namespace Allors.Database.Data
 
     internal static class TransactionExtensions
     {
-        internal static IMetaObject GetMetaObject(this ITransaction @this, object value)
-        {
-            switch (value)
+        internal static IMetaObject GetMetaObject(this ITransaction @this, object value) =>
+            value switch
             {
-                case IComposite metaObject:
-                    return metaObject;
+                IComposite metaObject => metaObject,
+                int tag => @this.Database.MetaPopulation.FindByTag(tag),
+                Guid idAsGuid => @this.Database.MetaPopulation.FindById(idAsGuid),
+                string tagAsString when int.TryParse(tagAsString, out var tagFromString) => @this.Database.MetaPopulation.FindByTag(tagFromString),
+                string idAsString when Guid.TryParse(idAsString, out var idFromString) => @this.Database.MetaPopulation.FindById(idFromString),
+                _ => throw new ArgumentException()
+            };
 
-                case Guid idAsGuid:
-                    return @this.Database.MetaPopulation.FindById(idAsGuid);
-
-                case string idAsString:
-                    return @this.Database.MetaPopulation.FindById(new Guid(idAsString));
-
-                default:
-                    throw new ArgumentException();
-            }
-        }
-
-        internal static IObject GetObject(this ITransaction @this, object value)
-        {
-            if (value == null)
+        internal static IObject GetObject(this ITransaction @this, object value) =>
+            value switch
             {
-                return null;
-            }
-
-            switch (value)
-            {
-                case IObject @object:
-                    return @object;
-
-                case long idAsLong:
-                    return @this.Instantiate(idAsLong);
-
-                case string idAsString:
-                    return @this.Instantiate(idAsString);
-
-                default:
-                    throw new ArgumentException();
-            }
-        }
+                IObject @object => @object,
+                long idAsLong => @this.Instantiate(idAsLong),
+                string idAsString => @this.Instantiate(idAsString),
+                null => null,
+                _ => throw new ArgumentException()
+            };
 
         internal static IObject[] GetObjects(this ITransaction @this, object value)
         {
-            var emptyArray = Array.Empty<IObject>();
-
-            if (value == null)
-            {
-                return emptyArray;
-            }
-
-            if (value is string idAsString)
-            {
-                return @this.GetObjects(idAsString.Split(','));
-            }
-
             switch (value)
             {
-                case IObject[] objects:
-                    return objects;
-
-                case long[] idAsLongs:
-                    return idAsLongs.Select(@this.Instantiate).Where(v => v != null).ToArray();
-
-                case string[] idAsStrings:
-                    return idAsStrings.Select(@this.Instantiate).Where(v => v != null).ToArray();
-
-                case IObject @object:
-                    return new[] { @object };
-
-                case long idAsLong:
-                    var objectFromLong = @this.Instantiate(idAsLong);
-                    return objectFromLong != null ? new[] { objectFromLong } : emptyArray;
-
+                case null:
+                    return Array.Empty<IObject>();
+                case string idAsString:
+                    return @this.GetObjects(idAsString.Split(','));
                 default:
-                    throw new ArgumentException();
+                    switch (value)
+                    {
+                        case IObject[] objects:
+                            return objects;
+
+                        case long[] idAsLongs:
+                            return idAsLongs.Select(@this.Instantiate).Where(v => v != null).ToArray();
+
+                        case string[] idAsStrings:
+                            return idAsStrings.Select(@this.Instantiate).Where(v => v != null).ToArray();
+
+                        case IObject @object:
+                            return new[] { @object };
+
+                        case long idAsLong:
+                            var objectFromLong = @this.Instantiate(idAsLong);
+                            return objectFromLong != null ? new[] { objectFromLong } : Array.Empty<IObject>();
+
+                        default:
+                            throw new ArgumentException();
+                    }
             }
         }
     }

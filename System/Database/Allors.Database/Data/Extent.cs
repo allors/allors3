@@ -18,15 +18,15 @@ namespace Allors.Database.Data
 
         public Sort[] Sorting { get; set; }
 
-        bool IExtent.HasMissingArguments(IDictionary<string, string> parameters) => this.Predicate != null && this.Predicate.HasMissingArguments(parameters);
+        bool IExtent.HasMissingArguments(IArguments arguments) => this.Predicate != null && this.Predicate.HasMissingArguments(arguments);
 
-        public Database.Extent Build(ITransaction transaction, IDictionary<string, string> parameters = null)
+        public Database.Extent Build(ITransaction transaction, IArguments arguments = null)
         {
             var extent = transaction.Extent(this.ObjectType);
 
-            if (this.Predicate != null && !this.Predicate.ShouldTreeShake(parameters))
+            if (this.Predicate != null && !this.Predicate.ShouldTreeShake(arguments))
             {
-                this.Predicate?.Build(transaction, parameters, extent.Filter);
+                this.Predicate?.Build(transaction, arguments, extent.Filter);
             }
 
             if (this.Sorting != null)
