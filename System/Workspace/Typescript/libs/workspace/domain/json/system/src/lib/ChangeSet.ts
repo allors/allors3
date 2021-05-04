@@ -10,14 +10,14 @@ export class ChangeSet implements IChangeSet {
   rolesByAssociationType: Map<AssociationType, Set<IStrategy>>;
 
   constructor(public session: Session, public created: Set<IStrategy>, public instantiated: Set<IStrategy>, sessionStateChangeSet: SessionStateChangeSet) {
-    // TODO:
-    // this.associationsByRoleType = sessionStateChangeSet.RoleByAssociationByRoleType
-    //     .ToDictionary(
-    //         v => v.Key,
-    //         v => (ISet<IStrategy>)new HashSet<IStrategy>(v.Value.Keys));
-    // this.rolesByAssociationType = sessionStateChangeSet.AssociationByRoleByRoleType.ToDictionary(
-    //     v => v.Key,
-    //     v => (ISet<IStrategy>)new HashSet<IStrategy>(v.Value.Keys));
+    TODO:
+    this.associationsByRoleType = sessionStateChangeSet.roleByAssociationByRoleType
+        .ToDictionary(
+            v => v.Key,
+            v => (ISet<IStrategy>)new HashSet<IStrategy>(v.Value.Keys));
+    this.rolesByAssociationType = sessionStateChangeSet.AssociationByRoleByRoleType.ToDictionary(
+        v => v.Key,
+        v => (ISet<IStrategy>)new HashSet<IStrategy>(v.Value.Keys));
   }
 
   addAssociation(relationType: RelationType, association: Strategy) {

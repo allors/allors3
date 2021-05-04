@@ -1,3 +1,4 @@
+import { Operations } from "@allors/workspace/domain/system";
 import { Class, OperandType } from "@allors/workspace/meta/system";
 
 export class Permission {

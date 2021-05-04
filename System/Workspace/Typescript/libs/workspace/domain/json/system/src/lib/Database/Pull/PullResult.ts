@@ -1,55 +1,23 @@
+import { IObject, IPullResult, ISession, IWorkspace, UnitTypes } from '@allors/workspace/domain/system';
+import { PullResponse } from '@allors/protocol/json/system';
+import { Result } from '../Result';
 
-export class PullResult extends Result implements IPullResult
-    {
-      constructor(){
-        super(session, response);
+export class PullResult extends Result implements IPullResult {
+  objects: Map<string, IObject>;
 
-        this.Workspace = session.Workspace;
+  collections: Map<string, IObject[]>;
 
-        this.Objects = response.Objects.ToDictionary(
-            pair => pair.Key,
-            pair => session.Get<IObject>(pair.Value),
-            StringComparer.OrdinalIgnoreCase);
-        this.Collections = response.Collections.ToDictionary(
-            pair => pair.Key,
-            pair => pair.Value.Select(session.Get<IObject>).ToArray(),
-            StringComparer.OrdinalIgnoreCase);
-        this.Values = response.Values.ToDictionary(
-            pair => pair.Key,
-            pair => pair.Value,
-            StringComparer.OrdinalIgnoreCase);
-      }
+  values: Map<string, UnitTypes>;
 
-        Objects: Map<string, IObject>;
+  workspace: IWorkspace;
 
-        Collections: Map<string, IObject[]>;
+  constructor(session: ISession, response: PullResponse) {
+    super(session, response);
 
-        Values: Map<string, UnitTypes>;
+    this.workspace = session.workspace;
 
-        Workspace: IWorkspace;
-
-        public T[] GetCollection<T>()
-        {
-            var objectType = this.Workspace.ObjectFactory.GetObjectType<T>();
-            var key = objectType.PluralName;
-            return this.GetCollection<T>(key);
-        }
-
-        public T[] GetCollection<T>(string key) => this.Collections.TryGetValue(key, out var collection) ? collection?.Cast<T>().ToArray() : null;
-
-        public T GetObject<T>()
-            where T : class, IObject
-        {
-            var objectType = this.Workspace.ObjectFactory.GetObjectType<T>();
-            var key = objectType.SingularName;
-            return this.GetObject<T>(key);
-        }
-
-        public T GetObject<T>(string key)
-            where T : class, IObject => this.Objects.TryGetValue(key, out var @object) ? (T)@object : null;
-
-        public object GetValue(string key) => this.Values[key];
-
-        public T GetValue<T>(string key) => (T)this.GetValue(key);
-    }
+    this.objects = new Map(Object.keys(response.o).map((v) => [v, session.getOne<IObject>(response.o[v])]));
+    this.collections = new Map(Object.keys(response.c).map((v) => [v, response.c[v].map((w) => session.getOne<IObject>(w))]));
+    this.values = new Map(Object.keys(response.v).map((v) => [v, response.v[v]]));
+  }
 }

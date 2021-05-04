@@ -17,18 +17,17 @@ export class SessionState {
     this.changedAssociationByRoleByAssociationType = new Map();
   }
 
-  checkpoint(): SessionStateChangeSet {
-    // foreach (var roleType in this.changedRoleByAssociationByRoleType.Keys.ToArray())
+  checkpoint(): SessionStateChangeSet | undefined {
+    // for (const roleType of this.changedRoleByAssociationByRoleType.keys())
     // {
-    //     var changedRoleByAssociation = this.changedRoleByAssociationByRoleType[roleType];
-    //     var roleByAssociation = this.RoleByAssociation(roleType);
-    //     foreach (var association in changedRoleByAssociation.Keys.ToArray())
+    //     const changedRoleByAssociation = this.changedRoleByAssociationByRoleType.get(roleType) as Map<Strategy, unknown>;
+    //     const roleByAssociation = this.roleByAssociation(roleType);
+    //     for (const association of changedRoleByAssociation.keys())
     //     {
-    //         var role = changedRoleByAssociation[association];
-    //         _ = roleByAssociation.TryGetValue(association, out var originalRole);
-    //         var areEqual = ReferenceEquals(originalRole, role) ||
-    //                        (roleType.IsOne && Equals(originalRole, role)) ||
-    //                        (roleType.IsMany && ((IStructuralEquatable)originalRole)?.Equals((IStructuralEquatable)role) == true);
+    //         const role = changedRoleByAssociation.get(association);
+    //         const originalRole = roleByAssociation.get(association);
+    //         var areEqual = originalRole === role ||
+    //                        (roleType.isMany && ((IStructuralEquatable)originalRole)?.Equals((IStructuralEquatable)role) == true);
     //         if (areEqual)
     //         {
     //             _ = changedRoleByAssociation.Remove(association);
@@ -41,6 +40,7 @@ export class SessionState {
     //         _ = this.changedRoleByAssociationByRoleType.Remove(roleType);
     //     }
     // }
+
     // foreach (var associationType in this.changedAssociationByRoleByAssociationType.Keys.ToArray())
     // {
     //     var changedAssociationByRole = this.changedAssociationByRoleByAssociationType[associationType];
@@ -68,6 +68,8 @@ export class SessionState {
     // this.changedRoleByAssociationByRoleType = new Dictionary<IRoleType, IDictionary<Strategy, object>>();
     // this.changedAssociationByRoleByAssociationType = new Dictionary<IAssociationType, IDictionary<Strategy, object>>();
     // return changeSet;
+
+    return undefined;
   }
 
   getRole(association: Strategy, roleType: RoleType): unknown {
@@ -77,6 +79,8 @@ export class SessionState {
     //     return;
     // }
     // _ = this.RoleByAssociation(roleType).TryGetValue(association, out role);
+
+    return undefined;
   }
 
   setUnitRole(association: Strategy, roleType: RoleType, role: unknown): void {
@@ -90,146 +94,146 @@ export class SessionState {
   }
 
   setCompositeRole(association: Strategy, roleType: RoleType, role: unknown): void {
-    if (role == null) {
-      this.removeRole(association, roleType);
-      return;
-    }
+    // if (role == null) {
+    //   this.removeRole(association, roleType);
+    //   return;
+    // }
 
-    var associationType = roleType.associationType;
-    let role = this.getRole(association, roleType);
-    let roleIdentity = role;
-    let previousAssociation = this.getAssociation(roleIdentity, associationType);
+    // var associationType = roleType.associationType;
+    // let role = this.getRole(association, roleType);
+    // let roleIdentity = role;
+    // let previousAssociation = this.getAssociation(roleIdentity, associationType);
 
-    // Role
-    var changedRoleByAssociation = this.changedRoleByAssociation(roleType);
-    changedRoleByAssociation[association] = roleIdentity;
+    // // Role
+    // var changedRoleByAssociation = this.changedRoleByAssociation(roleType);
+    // changedRoleByAssociation[association] = roleIdentity;
 
-    // Association
-    var changedAssociationByRole = this.changedAssociationByRole(associationType);
-    if (associationType.isOne) {
-      // One to One
-      var previousAssociationObject = previousAssociation;
-      if (previousAssociationObject != null) {
-        changedRoleByAssociation[previousAssociationObject] = null;
-      }
+    // // Association
+    // var changedAssociationByRole = this.changedAssociationByRole(associationType);
+    // if (associationType.isOne) {
+    //   // One to One
+    //   var previousAssociationObject = previousAssociation;
+    //   if (previousAssociationObject != null) {
+    //     changedRoleByAssociation[previousAssociationObject] = null;
+    //   }
 
-      if (previousRole != null) {
-        var previousRoleObject = previousRole;
-        changedAssociationByRole[previousRoleObject] = null;
-      }
+    //   if (previousRole != null) {
+    //     var previousRoleObject = previousRole;
+    //     changedAssociationByRole[previousRoleObject] = null;
+    //   }
 
-      changedAssociationByRole[roleIdentity] = association;
-    } else {
-      changedAssociationByRole[roleIdentity] = NullableSortableArraySet.Remove(previousAssociation, roleIdentity);
-    }
+    //   changedAssociationByRole[roleIdentity] = association;
+    // } else {
+    //   changedAssociationByRole[roleIdentity] = NullableSortableArraySet.Remove(previousAssociation, roleIdentity);
+    // }
   }
 
   public setCompositesRole(association: Strategy, roleType: RoleType, role: unknown) {
-    if (role == null) {
-      this.removeRole(association, roleType);
-      return;
-    }
+    // if (role == null) {
+    //   this.removeRole(association, roleType);
+    //   return;
+    // }
 
-    let previousRole = this.getRole(association, roleType);
-    let compositesRole = role;
-    let previousRoles = previousRole ?? [];
+    // let previousRole = this.getRole(association, roleType);
+    // let compositesRole = role;
+    // let previousRoles = previousRole ?? [];
 
-    // Use Diff (Add/Remove)
-    var addedRoles = compositesRole.Except(previousRoles);
-    var removedRoles = previousRoles.Except(compositesRole);
+    // // Use Diff (Add/Remove)
+    // var addedRoles = compositesRole.Except(previousRoles);
+    // var removedRoles = previousRoles.Except(compositesRole);
 
-    for (const addedRole of addedRoles) {
-      this.addRole(association, roleType, addedRole);
-    }
+    // for (const addedRole of addedRoles) {
+    //   this.addRole(association, roleType, addedRole);
+    // }
 
-    for (const removeRole of removedRoles) {
-      this.removeRole(association, roleType, removeRole);
-    }
+    // for (const removeRole of removedRoles) {
+    //   this.removeRole(association, roleType, removeRole);
+    // }
   }
 
   addRole(association: Strategy, roleType: RoleType, role: Strategy): void {
-    var associationType = roleType.associationType;
-    var previousAssociation = this.getAssociation(role, associationType);
+    // var associationType = roleType.associationType;
+    // var previousAssociation = this.getAssociation(role, associationType);
 
-    // Role
-    var changedRoleByAssociation = this.changedRoleByAssociation(roleType);
-    let previousRole = this.getRole(association, roleType);
-    var roleArray = previousRole;
-    roleArray = NullableSortableArraySet.Add(roleArray, role);
-    changedRoleByAssociation[association] = roleArray;
+    // // Role
+    // var changedRoleByAssociation = this.changedRoleByAssociation(roleType);
+    // let previousRole = this.getRole(association, roleType);
+    // var roleArray = previousRole;
+    // roleArray = NullableSortableArraySet.Add(roleArray, role);
+    // changedRoleByAssociation[association] = roleArray;
 
-    // Association
-    var changedAssociationByRole = this.changedAssociationByRole(associationType);
-    if (associationType.isOne) {
-      // One to Many
-      var previousAssociationObject = previousAssociation;
-      if (previousAssociationObject != null) {
-        let previousAssociationRole = this.getRole(previousAssociationObject, roleType);
-        changedRoleByAssociation[previousAssociationObject] = NullableSortableArraySet.Remove(previousAssociationRole, role);
-      }
+    // // Association
+    // var changedAssociationByRole = this.changedAssociationByRole(associationType);
+    // if (associationType.isOne) {
+    //   // One to Many
+    //   var previousAssociationObject = previousAssociation;
+    //   if (previousAssociationObject != null) {
+    //     let previousAssociationRole = this.getRole(previousAssociationObject, roleType);
+    //     changedRoleByAssociation[previousAssociationObject] = NullableSortableArraySet.Remove(previousAssociationRole, role);
+    //   }
 
-      changedAssociationByRole[role] = association;
-    } else {
-      // Many to Many
-      changedAssociationByRole[role] = NullableSortableArraySet.Add(previousAssociation, association);
-    }
+    //   changedAssociationByRole[role] = association;
+    // } else {
+    //   // Many to Many
+    //   changedAssociationByRole[role] = NullableSortableArraySet.Add(previousAssociation, association);
+    // }
   }
 
-  removeRole(association: Strategy, roleType: RoleType, role: Strategy): void {
-    var associationType = roleType.associationType;
-    let previousAssociation = this.getAssociation(role, associationType);
+  removeRole(association: Strategy, roleType: RoleType, role?: Strategy): void {
+    // var associationType = roleType.associationType;
+    // let previousAssociation = this.getAssociation(role, associationType);
 
-    let previousRole = this.getRole(association, roleType);
-    if (previousRole != null) {
-      // Role
-      var changedRoleByAssociation = this.changedRoleByAssociation(roleType);
-      changedRoleByAssociation.set(association, NullableSortableArraySet.Remove(previousRole, role));
+    // let previousRole = this.getRole(association, roleType);
+    // if (previousRole != null) {
+    //   // Role
+    //   var changedRoleByAssociation = this.changedRoleByAssociation(roleType);
+    //   changedRoleByAssociation.set(association, NullableSortableArraySet.Remove(previousRole, role));
 
-      // Association
-      var changedAssociationByRole = this.changedAssociationByRole(associationType);
-      if (associationType.isOne) {
-        // One to Many
-        changedAssociationByRole[role] = null;
-      } else {
-        // Many to Many
-        changedAssociationByRole[role] = NullableSortableArraySet.Add(previousAssociation, association);
-      }
-    }
+    //   // Association
+    //   var changedAssociationByRole = this.changedAssociationByRole(associationType);
+    //   if (associationType.isOne) {
+    //     // One to Many
+    //     changedAssociationByRole[role] = null;
+    //   } else {
+    //     // Many to Many
+    //     changedAssociationByRole[role] = NullableSortableArraySet.Add(previousAssociation, association);
+    //   }
+    // }
   }
 
-  removeRole(association: Strategy, roleType: RoleType): void {
-    if (roleType.objectType.IsUnit) {
-      // Role
-      this.changedRoleByAssociation(roleType)[association] = null;
-    } else {
-      var associationType = roleType.associationType;
-      let previousRole = this.getRole(association, roleType);
+  // removeRole(association: Strategy, roleType: RoleType): void {
+  //   if (roleType.objectType.IsUnit) {
+  //     // Role
+  //     this.changedRoleByAssociation(roleType)[association] = null;
+  //   } else {
+  //     var associationType = roleType.associationType;
+  //     let previousRole = this.getRole(association, roleType);
 
-      if (roleType.isOne) {
-        // Role
-        var changedRoleByAssociation = this.changedRoleByAssociation(roleType);
-        changedRoleByAssociation[association] = null;
+  //     if (roleType.isOne) {
+  //       // Role
+  //       var changedRoleByAssociation = this.changedRoleByAssociation(roleType);
+  //       changedRoleByAssociation[association] = null;
 
-        // Association
-        var changedAssociationByRole = this.changedAssociationByRole(associationType);
-        if (associationType.isOne) {
-          // One to One
-          if (previousRole != null) {
-            var previousRoleObject = previousRole;
-            changedAssociationByRole[previousRoleObject] = null;
-          }
-        }
-      } else {
-        var previousRoles = previousRole;
-        if (previousRoles != null) {
-          // Use Diff (Remove)
-          for (let removeRole of previousRoles) {
-            this.removeRole(association, roleType, removeRole);
-          }
-        }
-      }
-    }
-  }
+  //       // Association
+  //       var changedAssociationByRole = this.changedAssociationByRole(associationType);
+  //       if (associationType.isOne) {
+  //         // One to One
+  //         if (previousRole != null) {
+  //           var previousRoleObject = previousRole;
+  //           changedAssociationByRole[previousRoleObject] = null;
+  //         }
+  //       }
+  //     } else {
+  //       var previousRoles = previousRole;
+  //       if (previousRoles != null) {
+  //         // Use Diff (Remove)
+  //         for (let removeRole of previousRoles) {
+  //           this.removeRole(association, roleType, removeRole);
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 
   getAssociation(role: Strategy, associationType: AssociationType): unknown {
     return this.changedAssociationByRoleByAssociationType?.get(associationType)?.get(role);
@@ -276,6 +280,7 @@ export class SessionState {
   }
 
   isAssociationForRole(association: Strategy, roleType: RoleType, forRole: Strategy): boolean {
-    return this.getRole(association) === forRole;
+    // return this.getRole(association) === forRole;
+    return false;
   }
 }

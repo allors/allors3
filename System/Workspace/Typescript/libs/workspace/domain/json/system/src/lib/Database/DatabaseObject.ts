@@ -76,7 +76,13 @@ export class DatabaseObject {
     return !!permission && !this.deniedPermissions.includes(permission) && !!this.accessControls.filter((v) => v.permissionIds.has(permission.id)).length;
   }
 
-  updateDeniedPermissions(updatedDeniedPermissions: number[]) {
-    this.deniedPermissionIds = updatedDeniedPermissions;
+  updateAccessControlIds(updatedAccessControlIds: number[]) {
+    this.accessControlIds = updatedAccessControlIds;
+    delete(this._accessControls);
+  }
+
+  updateDeniedPermissionIds(updatedDeniedPermissionIds: number[]) {
+    this.deniedPermissionIds = updatedDeniedPermissionIds;
+    delete(this._deniedPermissions);
   }
 }

@@ -8,5 +8,5 @@ export interface PushRequestObject {
   v: number;
 
   /** Roles */
-  r: PushRequestRole[];
+  r?: PushRequestRole[];
 }

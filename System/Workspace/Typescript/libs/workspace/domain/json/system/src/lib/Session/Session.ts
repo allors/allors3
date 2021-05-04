@@ -8,21 +8,21 @@ import { Workspace } from '../Workspace/Workspace';
 import { WorkspaceState } from '../Workspace/WorkspaceState';
 import { SessionState } from './SessionState';
 import { ChangeSet } from '../ChangeSet';
-import { Observable } from 'rxjs';
+import { EMPTY, Observable } from 'rxjs';
 
 export class Session implements ISession {
   private readonly strategyByWorkspaceId: Map<number, Strategy>;
   private readonly strategiesByClass: Map<Class, Strategy[]>;
 
   private readonly existingDatabaseStrategies: Strategy[];
-  private newDatabaseStrategies: Set<Strategy>;
-  private workspaceStrategies: Set<Strategy>;
+  private newDatabaseStrategies: Set<Strategy> | undefined;
+  private workspaceStrategies: Set<Strategy> | undefined;
 
-  private changedDatabaseStates: Set<DatabaseState>;
-  private changedWorkspaceStates: Set<WorkspaceState>;
+  private changedDatabaseStates: Set<DatabaseState> | undefined;
+  private changedWorkspaceStates: Set<WorkspaceState> | undefined;
 
-  private created: Set<Strategy>;
-  private instantiated: Set<IStrategy>;
+  private created: Set<Strategy> | undefined;
+  private instantiated: Set<IStrategy> | undefined;
 
   constructor(public workspace: Workspace, public state: ISessionLifecycle) {
     this.database = this.workspace.database;
@@ -62,10 +62,10 @@ export class Session implements ISession {
     // return new InvokeResult(this, invokeResponse);
 
     // TODO:
-    return undefined;
+    return EMPTY;
   }
 
-  create<T>(cls: Class): T {
+  create(cls: Class): IObject {
     const workspaceId = this.database.identities.nextId();
     const strategy = new Strategy(this, cls, workspaceId);
     this.addStrategy(strategy);
@@ -87,52 +87,53 @@ export class Session implements ISession {
 
     return strategy.object;
   }
-  getOne<T>(id: number | IObject): T {
+
+  getOne(id: number | IObject): IObject {
     if ((id as IObject).id) {
-      return this.getStrategy((id as IObject).id)?.Object;
+      return this.getStrategy((id as IObject).id)?.object;
     }
 
-    return this.getStrategy(id)?.Object;
+    return this.getStrategy(id as number)?.object;
   }
 
-  getMany<T>(id: (number | IObject)[]): T[] {
+  getMany(id: number[] | IObject[]): IObject[] {
     return id.map((v) => this.getOne(v));
   }
-  getAll<T>(objectType: Composite): T[] {
-    // for (const cls of objectType.classes)
-    // {
-    //     switch (cls.origin)
-    //     {
-    //         case Origin.Workspace:
-    //           const ids = this.workspace.workspaceIdsByWorkspaceClass.get(cls)
-    //             if (ids)
-    //             {
-    //                 for (const id in ids)
-    //                 {
-    //                     const strategy = this.strategyByWorkspaceId.get(id);
-    //                     if (strategy)
-    //                     {
-    //                         yield return (T)strategy.Object;
-    //                     }
-    //                     else
-    //                     {
-    //                         strategy = this.InstantiateWorkspaceObject(id);
-    //                         yield return (T)strategy.Object;
-    //                     }
-    //                 }
-    //             }
-    //             break;
-    //         default:
-    //             if (this.strategiesByClass.TryGetValue(cls, out var strategies))
-    //             {
-    //                 foreach (var strategy in strategies)
-    //                 {
-    //                     yield return (T)strategy.Object;
-    //                 }
-    //             }
-    //             break;
-    //     }
-    // }
+  getAll(objectType: Composite): IObject[] {
+    const result: IObject[] = [];
+
+    for (const cls of objectType.classes) {
+      switch (cls.origin) {
+        case Origin.Workspace:
+          if (this.workspace.workspaceIdsByWorkspaceClass.has(cls)) {
+            const ids = this.workspace.workspaceIdsByWorkspaceClass.get(cls);
+            if (ids !== undefined) {
+              for (const id of ids) {
+                let strategy = this.strategyByWorkspaceId.get(id);
+                if (strategy) {
+                  result.push(strategy.object);
+                } else {
+                  strategy = this.instantiateWorkspaceObject(id);
+                  result.push(strategy.object);
+                }
+              }
+            }
+          }
+          break;
+        default:
+          if (this.strategiesByClass.has(cls)) {
+            const strategies = this.strategiesByClass.get(cls);
+            if (strategies !== undefined) {
+              for (const strategy of strategies) {
+                result.push(strategy.object);
+              }
+            }
+          }
+          break;
+      }
+    }
+
+    return result;
   }
 
   pull(procedureOrPulls: Procedure | Pull[], pulls?: Pull[]): Observable<IPullResult> {
@@ -145,7 +146,6 @@ export class Session implements ISession {
     // var pullResponse = await this.database.pull(pullRequest);
     // return await this.onPull(pullResponse);
 
-
     // var pullRequest = new PullRequest();
     // {
     //   (p = procedure.ToJson()), (l = pulls.map((v) => v.ToJson()).ToArray());
@@ -154,8 +154,8 @@ export class Session implements ISession {
     // var pullResponse = await this.database.pull(pullRequest);
     // return await this.onPull(pullResponse);
 
-     // TODO:
-     return undefined;
+    // TODO:
+    return EMPTY;
   }
 
   reset(): void {
@@ -192,8 +192,8 @@ export class Session implements ISession {
 
     // return new PushResult(this, pushResponse);
 
-     // TODO:
-     return undefined;
+    // TODO:
+    return EMPTY;
   }
 
   checkpoint(): IChangeSet {
@@ -241,7 +241,21 @@ export class Session implements ISession {
     return ids?.map((v) => this.getOne<IObject>(v)) ?? [];
   }
 
-  getAssociation<T>(role: Strategy, associationType: AssociationType): T[] {
+  getCompositeAssociation(role: Strategy, associationType: AssociationType): IObject {
+    const roleType = associationType.roleType;
+
+    for (const association of this.getAll(associationType.objectType)) {
+      if (!association.canRead(roleType)) {
+        continue;
+      }
+
+      if (association.IiAssociationForRole(roleType, role)) {
+        return association.Object;
+      }
+    }
+  }
+
+  getCompositesAssociation<T>(role: Strategy, associationType: AssociationType): IObject[] {
     var roleType = associationType.roleType;
 
     for (const association of this.getMany(associationType.objectType)) {

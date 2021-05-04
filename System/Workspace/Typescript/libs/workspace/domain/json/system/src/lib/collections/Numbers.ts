@@ -99,3 +99,47 @@ export function difference(self: Numbers, other: Numbers): Numbers {
   const diff = self.filter((v) => !_has(other, v));
   return diff.length > 0 ? diff : undefined;
 }
+
+export function equals(self: Numbers, other: Numbers): boolean {
+  if (self === undefined) {
+    return other === undefined;
+  }
+
+  if (other === undefined) {
+    return false;
+  }
+
+  if(self.length != other.length){
+    return false;
+  }
+
+  for(let i=0; i<self.length; i++){
+    if(self[i] !== other[i]){
+      return false;
+    }
+  }
+
+  return true;
+}
+
+export function properSubset(self: Numbers, other: Numbers): boolean {
+  if (other === undefined) {
+    return false;
+  }
+
+  if (self === undefined) {
+    return true;
+  }
+
+  if (self.length >= other.length) {
+    return false;
+  }
+
+  for (const element of self) {
+    if (!_has(other, element)) {
+      return false;
+    }
+  }
+
+  return true;
+}

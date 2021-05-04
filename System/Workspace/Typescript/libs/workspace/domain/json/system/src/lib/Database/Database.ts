@@ -1,13 +1,15 @@
-import { PullRequest, PullResponse, SecurityRequest, SyncRequest, SyncResponse, PushRequest, InvokeRequest, InvokeResponse, PushResponse, SecurityResponse } from '@allors/protocol/json/system';
-import { IObject } from '@allors/workspace/domain/system';
-import { Class, MetaPopulation, OperandType } from '@allors/workspace/meta/system';
+import { PullResponse, SecurityRequest, SyncRequest, SyncResponse, SecurityResponse } from '@allors/protocol/json/system';
+import { IObject, Operations } from '@allors/workspace/domain/system';
+import { Class, MetaPopulation, MethodType, OperandType, RelationType } from '@allors/workspace/meta/system';
 import { Observable } from 'rxjs';
+import { equals, properSubset } from '../collections/Numbers';
 import { Identities } from '../Identities';
 import { Client } from './Client';
 import { DatabaseObject } from './DatabaseObject';
 import { AccessControl } from './Security/AccessControl';
 import { Permission } from './Security/Permission';
 import { ResponseContext } from './Security/ResponseContext';
+import { MapMap } from '../collections/MapMap';
 
 export class Database {
   objectsById: Map<number, DatabaseObject>;
@@ -15,9 +17,9 @@ export class Database {
   accessControlById: Map<number, AccessControl>;
   permissionById: Map<number, Permission>;
 
-  readPermissionByOperandTypeByClass: Map<Class, Map<OperandType, Permission>>;
-  writePermissionByOperandTypeByClass: Map<Class, Map<OperandType, Permission>>;
-  executePermissionByOperandTypeByClass: Map<Class, Map<OperandType, Permission>>;
+  readPermissionByOperandTypeByClass: MapMap<Class, OperandType, Permission>;
+  writePermissionByOperandTypeByClass: MapMap<Class, OperandType, Permission>;
+  executePermissionByOperandTypeByClass: MapMap<Class, OperandType, Permission>;
 
   constructor(public metaPopulation: MetaPopulation, public client: Client, public identities: Identities) {
     this.objectsById = new Map();
@@ -25,9 +27,9 @@ export class Database {
     this.accessControlById = new Map();
     this.permissionById = new Map();
 
-    this.readPermissionByOperandTypeByClass = new Map();
-    this.writePermissionByOperandTypeByClass = new Map();
-    this.executePermissionByOperandTypeByClass = new Map();
+    this.readPermissionByOperandTypeByClass = new MapMap();
+    this.writePermissionByOperandTypeByClass = new MapMap();
+    this.executePermissionByOperandTypeByClass = new MapMap();
   }
 
   pushResponse(identity: number, cls: Class): DatabaseObject {
@@ -67,82 +69,57 @@ export class Database {
             return true;
           }
 
-          if (!v.a) {
-            if (obj.accessControlIds) {
+          if (!equals(v.a, obj.accessControlIds)) {
+            if (properSubset(v.a, obj.accessControlIds)) {
+              obj.updateAccessControlIds(v.a);
+            } else {
               return true;
             }
-          } else if (!equals(obj.accessControlIds, v.a)) {
-            return true;
           }
 
-          if (!v.d) {
-            if (obj.deniedPermissionIds.length > 0) {
+          if (!equals(v.d, obj.deniedPermissionIds)) {
+            if (properSubset(v.d, obj.deniedPermissionIds)) {
+              obj.updateDeniedPermissionIds(v.d);
+            } else {
               return true;
             }
-          } else {
-            if (databaseObject.deniedPermissionIds.setEquals(v.d)) {
-              return false;
-            }
-            if (!databaseObject.deniedPermissionIds.isProperSubsetOf(v.d)) {
-              return true;
-            }
-            databaseObject.updateDeniedPermissions(v.d);
           }
+
           return false;
         })
         .map((v) => v.i),
     };
   }
 
-  get(identity: number): DatabaseObject {
+  get(identity: number): DatabaseObject | undefined {
     return this.objectsById.get(identity);
   }
 
-  securityResponse(securityResponse: SecurityResponse): SecurityRequest {
+  securityResponse(securityResponse: SecurityResponse): SecurityRequest | undefined {
     if (securityResponse.p != null) {
       for (const syncResponsePermission of securityResponse.p) {
-        // TODO:
-        // var id = syncResponsePermission[0];
-        // var @class = (IClass)this.MetaPopulation.FindByTag((int)syncResponsePermission[1]);
-        // var metaObject = this.MetaPopulation.FindByTag((int)syncResponsePermission[2]);
-        // var operandType = (IOperandType)(metaObject as IRelationType)?.RoleType ?? (IMethodType)metaObject;
-        // var operation = (Operations)syncResponsePermission[3];
-        // var permission = new Permission(id, @class, operandType, operation);
-        // this.PermissionById[id] = permission;
-        // switch (operation)
-        // {
-        //     case Operations.Read:
-        //         if (!this.readPermissionByOperandTypeByClass.TryGetValue(@class,
-        //             out var readPermissionByOperandType))
-        //         {
-        //             readPermissionByOperandType = new Dictionary<IOperandType, Permission>();
-        //             this.readPermissionByOperandTypeByClass[@class] = readPermissionByOperandType;
-        //         }
-        //         readPermissionByOperandType[operandType] = permission;
-        //         break;
-        //     case Operations.Write:
-        //         if (!this.writePermissionByOperandTypeByClass.TryGetValue(@class,
-        //             out var writePermissionByOperandType))
-        //         {
-        //             writePermissionByOperandType = new Dictionary<IOperandType, Permission>();
-        //             this.writePermissionByOperandTypeByClass[@class] = writePermissionByOperandType;
-        //         }
-        //         writePermissionByOperandType[operandType] = permission;
-        //         break;
-        //     case Operations.Execute:
-        //         if (!this.executePermissionByOperandTypeByClass.TryGetValue(@class,
-        //             out var executePermissionByOperandType))
-        //         {
-        //             executePermissionByOperandType = new Dictionary<IOperandType, Permission>();
-        //             this.executePermissionByOperandTypeByClass[@class] = executePermissionByOperandType;
-        //         }
-        //         executePermissionByOperandType[operandType] = permission;
-        //         break;
-        // }
+        const id = syncResponsePermission[0];
+        const cls = this.metaPopulation.metaObjectByTag.get(syncResponsePermission[1]) as Class;
+        const metaObject = this.metaPopulation.metaObjectByTag.get(syncResponsePermission[2]);
+        const operandType: OperandType = (metaObject as RelationType)?.roleType ?? (metaObject as MethodType);
+        const operation = syncResponsePermission[3];
+        const permission = new Permission(id, cls, operandType, operation);
+        this.permissionById.set(id, permission);
+        switch (operation) {
+          case Operations.Read:
+            this.readPermissionByOperandTypeByClass.set(cls, operandType, permission);
+            break;
+          case Operations.Write:
+            this.writePermissionByOperandTypeByClass.set(cls, operandType, permission);
+            break;
+          case Operations.Execute:
+            this.executePermissionByOperandTypeByClass.set(cls, operandType, permission);
+            break;
+        }
       }
     }
 
-    let missingPermissionIds: Set<number>;
+    let missingPermissionIds: Set<number> | undefined = undefined;
     if (securityResponse.a != null) {
       for (const syncResponseAccessControl of securityResponse.a) {
         const id = syncResponseAccessControl.i;
@@ -169,43 +146,18 @@ export class Database {
       };
     }
 
-    return null;
+    return undefined;
   }
 
-  getPermission(cls: Class, operandType: OperandType, operation: Operations): Permission {
-    // switch (operation)
-    // {
-    //     case Operations.Read:
-    //         if (this.readPermissionByOperandTypeByClass.TryGetValue(@class, out var readPermissionByOperandType))
-    //         {
-    //             if (readPermissionByOperandType.TryGetValue(operandType, out var readPermission))
-    //             {
-    //                 return readPermission;
-    //             }
-    //         }
-    //         return null;
-    //     case Operations.Write:
-    //         if (this.writePermissionByOperandTypeByClass.TryGetValue(@class, out var writePermissionByOperandType))
-    //         {
-    //             if (writePermissionByOperandType.TryGetValue(operandType, out var writePermission))
-    //             {
-    //                 return writePermission;
-    //             }
-    //         }
-    //         return null;
-    //     default:
-    //         if (this.executePermissionByOperandTypeByClass.TryGetValue(@class, out var executePermissionByOperandType))
-    //         {
-    //             if (executePermissionByOperandType.TryGetValue(operandType, out var executePermission))
-    //             {
-    //                 return executePermission;
-    //             }
-    //         }
-    //         return null;
-    // }
-
-    // TODO:
-    return undefined;
+  getPermission(cls: Class, operandType: OperandType, operation: Operations): Permission | undefined {
+    switch (operation) {
+      case Operations.Read:
+        return this.readPermissionByOperandTypeByClass.get(cls, operandType);
+      case Operations.Write:
+        return this.writePermissionByOperandTypeByClass.get(cls, operandType);
+      default:
+        return this.executePermissionByOperandTypeByClass.get(cls, operandType);
+    }
   }
 
   pull(pullRequest: PullRequest): Observable<PullResponse> {

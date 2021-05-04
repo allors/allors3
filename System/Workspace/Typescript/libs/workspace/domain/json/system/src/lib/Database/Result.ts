@@ -6,26 +6,26 @@ export abstract class Result implements IResult {
   constructor(public readonly session: ISession, public readonly response: Response) {}
 
   get hasErrors(): boolean {
-    return this.response.v?.length > 0 || this.response.a?.length > 0 || this.response.m?.length > 0 || this.response.d?.length > 0 || !!this.response.e;
+    return this.response._v?.length > 0 || this.response._a?.length > 0 || this.response._m?.length > 0 || this.response._d?.length > 0 || !!this.response._e;
   }
 
   get errorMessage(): string {
-    return this.response.e;
+    return this.response._e;
   }
 
   get versionErrors(): IObject[] {
-    return this.session.getMany<IObject>(this.response.v);
+    return this.session.getMany<IObject>(this.response._v);
   }
 
   get accessErrors(): IObject[] {
-    return this.session.getMany<IObject>(this.response.a);
+    return this.session.getMany<IObject>(this.response._a);
   }
 
   get missingErrors(): IObject[] {
-    return this.session.getMany<IObject>(this.response.m);
+    return this.session.getMany<IObject>(this.response._m);
   }
 
   get derivationErrors(): IDerivationError[] {
-    return this.response.d?.map((v) => new DerivationError(this.session, v)) ?? [];
+    return this.response._d?.map((v) => new DerivationError(this.session, v)) ?? [];
   }
 }

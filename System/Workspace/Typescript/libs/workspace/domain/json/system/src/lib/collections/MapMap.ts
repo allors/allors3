@@ -5,6 +5,10 @@ export class MapMap<k1, k2, v> {
     this.mapMap = new Map();
   }
 
+  keys() {
+    return this.mapMap.keys();
+  }
+
   get(key1: k1, key2: k2): v | undefined {
     return this.mapMap.get(key1)?.get(key2);
   }
@@ -15,7 +19,7 @@ export class MapMap<k1, k2, v> {
     if (value === undefined) {
       if (map !== undefined) {
         map.delete(key2);
-        if(map.size === 0){
+        if (map.size === 0) {
           this.mapMap.delete(key1);
         }
       }

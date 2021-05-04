@@ -1,20 +1,20 @@
 import { ResponseDerivationError } from '@allors/protocol/json/system';
-import { IDerivationError, ISession, Role } from '@allors/workspace/domain/system';
+import { IDerivationError, Role } from '@allors/workspace/domain/system';
+import { Session } from '../Session/Session';
 
 export class DerivationError implements IDerivationError {
-  constructor(private session: ISession, private responseDerivationError: ResponseDerivationError) {}
+  constructor(private session: Session, private responseDerivationError: ResponseDerivationError) {}
 
   get message() {
     return this.responseDerivationError.m;
   }
 
   get roles(): Role[] {
-    // from r in this.responseDerivationError.Roles
-    // let association = this.session.Get<IObject>(r[0])
-    // let relationType = (IRelationType)this.session.Workspace.MetaPopulation.FindByTag((int)r[1])
-    // select new Role(association, relationType);
-
-    // TODO:
-    return [];
+    return this.responseDerivationError.r.map((r) => {
+      return {
+        object: this.session.getOne(r[0]),
+        relationType: this.session.workspace.metaPopulation.metaObjectByTag.get(r[1]),
+      } as Role;
+    });
   }
 }

@@ -2,17 +2,17 @@ import { ResponseDerivationError } from './ResponseDerivationError';
 
 export interface Response {
   /** error message */
-  e: string;
+  _e: string;
 
   /** version errors */
-  v: number[];
+  _v: number[];
 
   /** access errors */
-  a: number[];
+  _a: number[];
 
   /** missing errors */
-  m: number[];
+  _m: number[];
 
   /** derivation errors */
-  d: ResponseDerivationError[];
+  _d: ResponseDerivationError[];
 }

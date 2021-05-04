@@ -1,18 +1,25 @@
-import { PushRequestRole } from '@allors/protocol/json/system';
-import { IObject, ISession } from '@allors/workspace/domain/system';
+import { PushRequestNewObject, PushRequestObject, PushRequestRole } from '@allors/protocol/json/system';
+import { IObject, ISession, Operations, UnitTypes } from '@allors/workspace/domain/system';
 import { Class, MethodType, RelationType, RoleType } from '@allors/workspace/meta/system';
+import { Session } from '../session/Session';
 import { ChangeSet } from '../ChangeSet';
 import { Strategy } from '../Strategy';
+import { Database } from './Database';
+import { DatabaseObject } from './DatabaseObject';
+import { Permission } from './Security/Permission';
+import { difference, Numbers } from '../collections/Numbers';
 
 export class DatabaseState {
-  private changedRoleByRelationType: Map<RelationType, any>;
+  databaseObject: DatabaseObject;
+
+  private changedRoleByRelationType: Map<RelationType, any> | undefined;
 
   private previousDatabaseObject: DatabaseObject;
-  private previousChangedRoleByRelationType: Map<RelationType, object>;
+  private previousChangedRoleByRelationType: Map<RelationType, unknown> | undefined;
 
-  constructor(private readonly strategy: Strategy, public databaseObject?: DatabaseObject) {
+  constructor(private readonly strategy: Strategy, databaseObject?: DatabaseObject) {
     this.strategy = strategy;
-    this.databaseObject = databaseObject ?? this.database.Get(this.identity);
+    this.databaseObject = databaseObject ?? (this.database.get(this.identity) as DatabaseObject);
     this.previousDatabaseObject = this.databaseObject;
   }
 
@@ -25,22 +32,22 @@ export class DatabaseState {
   }
 
   get version(): number {
-    return this.databaseObject?.Version ?? 0;
+    return this.databaseObject?.version ?? 0;
   }
 
   get identity(): number {
     return this.strategy.id;
   }
 
-  get Class(): Class {
+  get class(): Class {
     return this.strategy.class;
   }
 
-  get session(): ISession {
+  get session(): Session {
     return this.strategy.session;
   }
 
-  get Database(): Database {
+  get database(): Database {
     return this.session.database;
   }
 
@@ -49,8 +56,8 @@ export class DatabaseState {
       return true;
     }
 
-    let permission = this.session.workspace.database.getPermission(this.class, roleType, Operations.Read);
-    return this.databaseObject.IsPermitted(permission);
+    const permission = this.session.workspace.database.getPermission(this.class, roleType, Operations.Read) as Permission;
+    return this.databaseObject.isPermitted(permission);
   }
 
   canWrite(roleType: RoleType): boolean {
@@ -58,8 +65,8 @@ export class DatabaseState {
       return true;
     }
 
-    let permission = this.session.workspace.database.getPermission(this.Class, roleType, Operations.Write);
-    return this.databaseObject.IsPermitted(permission);
+    const permission = this.session.workspace.database.getPermission(this.class, roleType, Operations.Write) as Permission;
+    return this.databaseObject.isPermitted(permission);
   }
 
   canExecute(methodType: MethodType): boolean {
@@ -67,13 +74,17 @@ export class DatabaseState {
       return true;
     }
 
-    let permission = this.session.workspace.database.getPermission(this.Class, methodType, Operations.Execute);
-    return this.databaseObject.IsPermitted(permission);
+    const permission = this.session.workspace.database.getPermission(this.class, methodType, Operations.Execute) as Permission;
+    return this.databaseObject.isPermitted(permission);
   }
 
   getRole(roleType: RoleType): unknown {
     if (roleType.objectType.isUnit) {
-      return this.changedRoleByRelationType?.get(roleType.relationType);
+      if (this.changedRoleByRelationType?.has(roleType.relationType)) {
+        return this.changedRoleByRelationType?.get(roleType.relationType);
+      }
+
+      return this.databaseObject?.getRole(roleType);
     }
 
     if (roleType.isOne) {
@@ -81,10 +92,8 @@ export class DatabaseState {
         return (this.changedRoleByRelationType?.get(roleType.relationType) as Strategy)?.object;
       }
 
-      let identity = this.databaseObject?.getRole(roleType);
-      workspaceRole = this.session.getStrategy(identity);
-
-      return workspaceRole?.Object;
+      const identity = this.databaseObject?.getRole(roleType) as number;
+      return this.session.getStrategy(identity)?.object;
     }
 
     if (this.changedRoleByRelationType?.has(roleType.relationType)) {
@@ -92,54 +101,54 @@ export class DatabaseState {
       return workspaceRoles != null ? workspaceRoles.map((v) => v.object) : [];
     }
 
-    let identities = this.databaseObject?.getRole(roleType);
-    return !!identities ? identities.map((v) => this.session.getMany<IObject>(v)) : [];
+    const identities = this.databaseObject?.getRole(roleType) as Numbers;
+    return identities !== undefined ? this.session.getMany<IObject>(identities) : [];
   }
 
   setUnitRole(roleType: RoleType, role: unknown): void {
-    let previousRole = this.getRole(roleType);
-    if (Equals(previousRole, role)) {
+    const previousRole = this.getRole(roleType);
+    if (previousRole === role) {
       return;
     }
 
     this.changedRoleByRelationType ??= new Map();
     this.changedRoleByRelationType.set(roleType.relationType, role);
 
-    this.session.onChange(this);
+    this.session.onDatabaseChange(this);
   }
 
   setCompositeRole(roleType: RoleType, value: IObject) {
-    let role = value;
-    let previousRole = this.getRole(roleType);
+    const role = value;
+    const previousRole = this.getRole(roleType) as IObject;
     if (previousRole === role) {
       return;
     }
 
     // OneToOne
     if (previousRole != null) {
-      let associationType = roleType.associationType;
+      const associationType = roleType.associationType;
       if (associationType.isOne) {
-        let previousAssociationObject = this.session.getAssociation<IObject>(previousRole.strategy, associationType);
-        previousAssociationObject?.Strategy.Set(roleType, null);
+        const previousAssociationObject = this.session.getCompositeAssociation<IObject>(previousRole.strategy as Strategy, associationType);
+        previousAssociationObject?.strategy.set(roleType, null);
       }
     }
 
     this.changedRoleByRelationType ??= new Map();
     this.changedRoleByRelationType.set(roleType.relationType, role?.strategy);
 
-    this.session.onChange(this);
+    this.session.onDatabaseChange(this);
   }
 
   setCompositesRole(roleType: RoleType, value: IObject[]): void {
-    let previousRole = this.getRole(roleType) as IObject[];
+    const previousRole = this.getRole(roleType) as IObject[];
 
     let role: IObject[] = [];
     if (value != null) {
       role = value;
     }
 
-    let addedRoles = role.filter((v) => !previousRole.includes(v));
-    let removedRoles = previousRole.filter((v) => !role.includes(v));
+    const addedRoles = role.filter((v) => !previousRole.includes(v));
+    const removedRoles = previousRole.filter((v) => !role.includes(v));
 
     if (addedRoles.length === 0 && removedRoles.length === 0) {
       return;
@@ -147,12 +156,12 @@ export class DatabaseState {
 
     // OneToMany
     if (previousRole.length > 0) {
-      let associationType = roleType.associationType;
+      const associationType = roleType.associationType;
       if (associationType.isOne) {
-        let addedObjects = this.session.getMany<IObject>(addedRoles);
-        for (let addedObject of addedObjects) {
-          let previousAssociationObject = this.session.getAssociation<IObject>(addedObject.strategy, associationType);
-          previousAssociationObject?.Strategy.Remove(roleType, addedObject);
+        const addedObjects = this.session.getMany<IObject>(addedRoles);
+        for (const addedObject of addedObjects) {
+          const previousAssociationObject = this.session.getCompositeAssociation<IObject>(addedObject.strategy as Strategy, associationType);
+          previousAssociationObject?.strategy.remove(roleType, addedObject);
         }
       }
     }
@@ -163,25 +172,24 @@ export class DatabaseState {
       role.map((v) => v.strategy)
     );
 
-    this.session.onChange(this);
+    this.session.onDatabaseChange(this);
   }
 
   reset(): void {
-    this.databaseObject = this.database.get(this.identity);
-    this.changedRoleByRelationType = null;
+    this.databaseObject = this.database.get(this.identity) as DatabaseObject;
+    delete this.changedRoleByRelationType;
   }
 
   checkpoint(changeSet: ChangeSet): void {
     // Same workspace object
-    if (this.databaseObject.Version == this.previousDatabaseObject.Version) {
+    if (this.databaseObject.version === this.previousDatabaseObject.version) {
       // No previous changed roles
       if (this.previousChangedRoleByRelationType == null) {
         if (this.changedRoleByRelationType != null) {
           // Changed roles
           for (const kvp of this.changedRoleByRelationType) {
             const [relationType, cooked] = kvp;
-            var raw = this.databaseObject.GetRole(relationType.RoleType);
-
+            const raw = this.databaseObject.getRole(relationType.roleType);
             changeSet.diffCookedWithRaw(this.strategy, relationType, cooked, raw);
           }
         }
@@ -198,28 +206,28 @@ export class DatabaseState {
     }
     // Different workspace objects
     else {
-      let hasPreviousCooked = this.previousChangedRoleByRelationType != null;
-      let hasCooked = this.changedRoleByRelationType != null;
+      const hasPreviousCooked = this.previousChangedRoleByRelationType != null;
+      const hasCooked = this.changedRoleByRelationType != null;
 
-      for (const roleType in this.class.workspaceRoleTypes) {
-        let relationType = roleType.relationType;
+      for (const roleType of this.class.roleTypes) {
+        const relationType = roleType.relationType;
 
-        if (hasPreviousCooked && this.previousChangedRoleByRelationType.has(relationType)) {
+        if (hasPreviousCooked && this.previousChangedRoleByRelationType?.has(relationType)) {
           const previousCooked = this.previousChangedRoleByRelationType.get(relationType);
-          if (hasCooked && this.changedRoleByRelationType.has(relationType)) {
+          if (hasCooked && this.changedRoleByRelationType?.has(relationType)) {
             const cooked = this.changedRoleByRelationType.get(relationType);
             changeSet.diffCookedWithCooked(this.strategy, relationType, cooked, previousCooked);
           } else {
-            var raw = this.databaseObject.GetRole(roleType);
+            const raw = this.databaseObject.getRole(roleType);
             changeSet.diffRawWithCooked(this.strategy, relationType, raw, previousCooked);
           }
         } else {
-          let previousRaw = this.previousDatabaseObject?.GetRole(roleType);
-          if (hasCooked && this.changedRoleByRelationType.has(relationType)) {
+          const previousRaw = this.previousDatabaseObject?.getRole(roleType);
+          if (hasCooked && this.changedRoleByRelationType?.has(relationType)) {
             const cooked = this.changedRoleByRelationType.get(relationType);
             changeSet.diffCookedWithRaw(this.strategy, relationType, cooked, previousRaw);
           } else {
-            var raw = this.databaseObject.GetRole(roleType);
+            const raw = this.databaseObject.getRole(roleType);
             changeSet.diffRawWithRaw(this.strategy, relationType, raw, previousRaw);
           }
         }
@@ -236,45 +244,45 @@ export class DatabaseState {
 
   pushNew(): PushRequestNewObject {
     return {
-      WorkspaceId = this.Identity,
-      ObjectType = this.Class.Tag,
-      Roles = this.pushRoles(),
+      w: this.identity,
+      t: this.class.tag,
+      r: this.pushRoles(),
     };
   }
 
   pushExisting(): PushRequestObject {
     return {
-      DatabaseId = this.identity,
-      Version = this.bersion,
-      Roles = this.PushRoles(),
+      d: this.identity,
+      v: this.version,
+      r: this.pushRoles(),
     };
   }
 
-  pushRoles(): PushRequestRole[] {
-    if (this.changedRoleByRelationType?.length > 0) {
+  pushRoles(): PushRequestRole[] | undefined {
+    if (this.changedRoleByRelationType && this.changedRoleByRelationType.size > 0) {
       const roles: PushRequestRole[] = [];
 
       for (const kvp of this.changedRoleByRelationType) {
         const [relationType, roleValue] = kvp;
 
-        let pushRequestRole: PushRequestRole = { t: relationType.tag };
+        const pushRequestRole: PushRequestRole = { t: relationType.tag };
 
         if (relationType.roleType.objectType.isUnit) {
-          pushRequestRole.u = UnitConvert.toString(roleValue);
+          pushRequestRole.u = roleValue as UnitTypes;
         } else {
           if (relationType.roleType.isOne) {
-            pushRequestRole.c = roleValue?.Id;
+            pushRequestRole.c = (roleValue as Strategy)?.id;
           } else {
-            let roleIds = roleValue.map((v) => v.id);
+            const roleIds = (roleValue as Strategy[]).map((v) => v.id);
             if (!this.existDatabaseObjects) {
               pushRequestRole.a = roleIds;
             } else {
-              let databaseRole = this.databaseObject.getRole(relationType.roleType);
+              const databaseRole = this.databaseObject.getRole(relationType.roleType) as Numbers;
               if (databaseRole == null) {
                 pushRequestRole.a = roleIds;
               } else {
-                pushRequestRole.a = roleIds.Except(databaseRole).ToArray();
-                pushRequestRole.r = databaseRole.Except(roleIds).ToArray();
+                pushRequestRole.a = difference(roleIds, databaseRole);
+                pushRequestRole.r = difference(databaseRole, roleIds);
               }
             }
           }
@@ -286,7 +294,7 @@ export class DatabaseState {
       return roles;
     }
 
-    return null;
+    return undefined;
   }
 
   isAssociationForRole(roleType: RoleType, forRole: Strategy): boolean {
@@ -304,13 +312,13 @@ export class DatabaseState {
       return identity === forRole.id;
     }
 
-    if (this.changedRoleByRelationType.has(roleType.relationType)) {
+    if (this.changedRoleByRelationType?.has(roleType.relationType)) {
       const workspaceRoles = this.changedRoleByRelationType.get(roleType.relationType);
       return workspaceRoles?.Contains(forRole) == true;
     }
 
-    const identities = this.databaseObject?.GetRole(roleType);
-    return identities?.includes(forRole.id);
+    const identities = this.databaseObject?.getRole(roleType) as Numbers;
+    return identities?.includes(forRole.id) ?? false;
   }
 
   diff(): RelationType[] {
@@ -318,6 +326,6 @@ export class DatabaseState {
       return [];
     }
 
-    return this.changedRoleByRelationType.keys;
+    return Array.from(this.changedRoleByRelationType.keys());
   }
 }

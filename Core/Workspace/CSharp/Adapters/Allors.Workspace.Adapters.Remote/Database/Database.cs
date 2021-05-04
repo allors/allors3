@@ -129,6 +129,7 @@ namespace Allors.Workspace.Adapters.Remote
                             return true;
                         }
 
+                        // TODO: Update AccessControlIds if proper subset
                         if (v.AccessControls == null)
                         {
                             if (databaseObject.AccessControlIds.Count > 0)

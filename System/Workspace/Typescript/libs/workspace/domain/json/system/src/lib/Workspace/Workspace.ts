@@ -8,9 +8,15 @@ import { ObjectFactory } from '../ObjectFactory';
 import { WorkspaceObject } from './WorkspaceObject';
 
 export class Workspace implements IWorkspace {
-  private readonly objectById: Map<number, WorkspaceObject>;
+  database: Database;
 
   objectFactory: ObjectFactory;
+
+  workspaceClassByWorkspaceId: Map<number, Class>;
+
+  workspaceIdsByWorkspaceClass: Map<Class, Set<number>>;
+
+  private readonly objectById: Map<number, WorkspaceObject>;
 
   constructor(public name: string, public metaPopulation: MetaPopulation, public lifecycle: IWorkspaceLifecycle, private client: Client) {
     this.objectFactory = new ObjectFactory(this.metaPopulation);
@@ -28,37 +34,28 @@ export class Workspace implements IWorkspace {
     return new Session(this, this.lifecycle.createSessionContext());
   }
 
-  database: Database;
-
-  workspaceClassByWorkspaceId: Map<number, Class>;
-
-  workspaceIdsByWorkspaceClass: Map<Class, number[]>;
-
-  get(identity: number): WorkspaceObject {
+  get(identity: number): WorkspaceObject | undefined {
     return this.objectById.get(identity);
   }
 
   registerWorkspaceObject(cls: Class, workspaceId: number): void {
-    // TODO:
-    // this.workspaceClassByWorkspaceId.set(workspaceId, cls);
+    this.workspaceClassByWorkspaceId.set(workspaceId, cls);
 
-    // let ids: number[] = this.workspaceIdsByWorkspaceClass.get(cls);
-    // if (!ids) {
-    //   ids = [workspaceId];
-    // } else {
-    //   ids = ids.add(ids, workspaceId);
-    // }
+    let ids = this.workspaceIdsByWorkspaceClass.get(cls);
+    if (ids === undefined) {
+      ids = new Set();
+      this.workspaceIdsByWorkspaceClass.set(cls, ids);
+    }
 
-    // this.workspaceIdsByWorkspaceClass[cls] = ids;
+    ids.add(workspaceId);
   }
 
-  push(identity: number, cls: Class, version: number, changedRoleByRoleType: Map<RelationType, unknown>): void {
-    // TODO:
-    // const originalWorkspaceObject = this.objectById.get(identity);
-    // if (!originalWorkspaceObject) {
-    //   this.objectById[identity] = new WorkspaceObject(this.database, identity, cls, ++version, changedRoleByRoleType);
-    // } else {
-    //   this.objectById[identity] = new WorkspaceObject(originalWorkspaceObject, changedRoleByRoleType);
-    // }
+  push(identity: number, cls: Class, version: number, changedRoleByRoleType: Map<RelationType, unknown> | undefined): void {
+    const originalWorkspaceObject = this.objectById.get(identity);
+    if (!originalWorkspaceObject) {
+      this.objectById.set(identity, new WorkspaceObject(this.database, identity, cls, ++version, changedRoleByRoleType));
+    } else {
+      this.objectById.set(identity, WorkspaceObject.fromOriginal(originalWorkspaceObject, changedRoleByRoleType));
+    }
   }
 }

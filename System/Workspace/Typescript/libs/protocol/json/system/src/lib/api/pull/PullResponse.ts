@@ -1,6 +1,7 @@
+import { Response } from '@allors/protocol/json/system';
 import { PullResponseObject } from "./PullResponseObject";
 
-export interface PullResponse {
+export interface PullResponse extends Response {
   /** Collections */
   c: { [name: string]: number[] };
 

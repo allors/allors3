@@ -17,13 +17,13 @@ export interface ISession {
 
   state: ISessionLifecycle;
 
-  create<T>(cls: Class): T;
+  create(cls: Class): IObject;
 
-  getOne<T>(obj: IObject | T | number | string): T;
+  getOne(obj: IObject |  number | string): IObject;
 
-  getMany<T>(objects: (IObject | T | number | string)[]): T[];
+  getMany(objects: IObject[] | number[] | string[]): IObject[];
 
-  getAll<T>(objectType?: Composite): T[];
+  getAll(objectType?: Composite): IObject[];
 
   invoke(method: Method | Method[], options?: InvokeOptions): Observable<IInvokeResult>;
 
