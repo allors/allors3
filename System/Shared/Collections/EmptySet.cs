@@ -63,8 +63,8 @@ namespace Allors.Collections
 
             public void Reset() { }
 
-            TEmpty IEnumerator<TEmpty>.Current => default;
-            public object Current => null;
+            TEmpty IEnumerator<TEmpty>.Current => throw new NotSupportedException("EmptySet has no elements.");
+            public object Current => throw new NotSupportedException("EmptySet has no elements.");
 
             public void Dispose() { }
         }
