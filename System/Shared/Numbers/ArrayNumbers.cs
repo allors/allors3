@@ -87,7 +87,7 @@ namespace Allors.Numbers
 
         public object? From(long value) => value;
 
-        public object? Union(object? numbers, long other)
+        public object? Add(object? numbers, long other)
         {
             switch (numbers)
             {
@@ -143,7 +143,7 @@ namespace Allors.Numbers
                         null => value,
                         long otherValue when value == otherValue => value,
                         long otherValue => value < otherValue ? new[] { value, otherValue } : new[] { otherValue, value },
-                        _ => this.Union(other, value)
+                        _ => this.Add(other, value)
                     };
 
                 default:
@@ -155,7 +155,7 @@ namespace Allors.Numbers
                         case null:
                             return array;
                         case long otherValue:
-                            return this.Union(array, otherValue);
+                            return this.Add(array, otherValue);
                         default:
                         {
                             var otherArray = (long[])other;
@@ -226,9 +226,9 @@ namespace Allors.Numbers
             }
         }
 
-        public object? Difference(object? numbers, long value) => throw new NotImplementedException();
+        public object? Remove(object? numbers, long value) => throw new NotImplementedException();
 
-        public object? Difference(object? numbers, object? other) => throw new NotImplementedException();
+        public object? Except(object? numbers, object? other) => throw new NotImplementedException();
 
         public IEnumerable<long> Enumerate(object? numbers) =>
             numbers switch

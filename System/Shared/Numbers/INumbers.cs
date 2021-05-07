@@ -15,13 +15,13 @@ namespace Allors.Numbers
 
         public object? From(long value);
 
-        public object? Union(object? numbers, long other);
+        public object? Add(object? numbers, long other);
 
         public object? Union(object? numbers, object? other);
 
-        public object? Difference(object? numbers, long value);
+        public object? Remove(object? numbers, long value);
 
-        public object? Difference(object? numbers, object? other);
+        public object? Except(object? numbers, object? other);
 
         public IEnumerable<long> Enumerate(object? numbers);
     }

@@ -5,12 +5,10 @@
 
 namespace Allors.Numbers
 {
-    using System.Runtime.CompilerServices;
-
-    public class ArrayNumbersUnionWithNumbersTests : NumbersUnionWithNumbersTests
+    public class ArrayNumbersUnionTests : NumbersUnionTests
     {
         public override INumbers Numbers { get; }
 
-        public ArrayNumbersUnionWithNumbersTests() => this.Numbers = new ArrayNumbers();
+        public ArrayNumbersUnionTests() => this.Numbers = new ArrayNumbers();
     }
 }
