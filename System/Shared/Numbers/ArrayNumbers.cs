@@ -20,9 +20,9 @@ namespace Allors.Numbers
             switch (values)
             {
                 case null:
-                case long[] { Length: 0 }:
+                case long[] {Length: 0}:
                     return null;
-                case long[] { Length: 1 } array:
+                case long[] {Length: 1} array:
                     return array[0];
                 case long[] array:
                     return array;
@@ -45,10 +45,10 @@ namespace Allors.Numbers
                         var second = enumerator.Current;
                         if (!enumerator.MoveNext())
                         {
-                            return first < second ? new[] { first, second } : new[] { second, first };
+                            return first < second ? new[] {first, second} : new[] {second, first};
                         }
 
-                        var list = new List<long> { first, second };
+                        var list = new List<long> {first, second};
 
                         while (enumerator.MoveNext())
                         {
@@ -96,7 +96,7 @@ namespace Allors.Numbers
                 case long value when value == other:
                     return value;
                 case long value:
-                    return value < other ? new[] { value, other } : new[] { other, value };
+                    return value < other ? new[] {value, other} : new[] {other, value};
                 default:
                 {
                     var array = (long[])numbers;
@@ -142,7 +142,7 @@ namespace Allors.Numbers
                     {
                         null => value,
                         long otherValue when value == otherValue => value,
-                        long otherValue => value < otherValue ? new[] { value, otherValue } : new[] { otherValue, value },
+                        long otherValue => value < otherValue ? new[] {value, otherValue} : new[] {otherValue, value},
                         _ => this.Add(other, value)
                     };
 
@@ -226,9 +226,121 @@ namespace Allors.Numbers
             }
         }
 
-        public object? Remove(object? numbers, long value) => throw new NotImplementedException();
+        public object? Remove(object? numbers, long other)
+        {
+            switch (numbers)
+            {
+                case null:
+                    return null;
+                case long value when value == other:
+                    return null;
+                case long value:
+                    return value;
+                default:
+                {
+                    var array = (long[])numbers;
+                    var index = Array.BinarySearch(array, other);
 
-        public object? Except(object? numbers, object? other) => throw new NotImplementedException();
+                    if (index < 0)
+                    {
+                        return array;
+                    }
+
+                    var result = new long[array.Length - 1];
+
+                    if (index == 0)
+                    {
+                        Array.Copy(array, 1, result, 0, array.Length - 1);
+                    }
+                    else if (index == array.Length)
+                    {
+                        Array.Copy(array, result, array.Length - 1);
+                    }
+                    else
+                    {
+                        Array.Copy(array, result, index);
+                        Array.Copy(array, index + 1, result, index, array.Length - index - 1);
+                    }
+
+                    return result;
+                }
+            }
+        }
+
+        public object? Except(object? numbers, object? other)
+        {
+            switch (numbers)
+            {
+                case null:
+                    return null;
+                case long value:
+                    return other switch
+                    {
+                        null => value,
+                        long otherValue when value != otherValue => value,
+                        _ => null
+                    };
+
+                default:
+                {
+                    var array = (long[])numbers;
+
+                    switch (other)
+                    {
+                        case null:
+                            return array;
+                        case long otherValue:
+                            return this.Remove(array, otherValue);
+                        default:
+                        {
+                            var otherArray = (long[])other;
+
+                            var arrayLength = array.Length;
+                            var otherArrayLength = otherArray.Length;
+
+                            var result = new long[arrayLength];
+                            var i = 0;
+                            var j = 0;
+                            var k = 0;
+
+                            while (i < arrayLength && j<otherArrayLength)
+                            {
+                                var value = array[i];
+                                var otherValue = otherArray[j];
+
+                                if (value < otherValue)
+                                {
+                                    result[k++] = value;
+                                    i++;
+                                }
+                                else if (value > otherValue)
+                                {
+                                    j++;
+                                }
+                                else
+                                {
+                                    i++;
+                                }
+                            }
+
+                            if (i < arrayLength)
+                            {
+                                var rest = arrayLength - i;
+                                Array.Copy(array, i, result, k, rest);
+                                k += rest;
+                            }
+
+                            if (k < result.Length)
+                            {
+                                Array.Resize(ref result, k);
+                            }
+
+                            return result.Length != 0 ? result : null;
+                        }
+                    }
+                }
+            }
+        }
 
         public IEnumerable<long> Enumerate(object? numbers) =>
             numbers switch
@@ -244,6 +356,7 @@ namespace Allors.Numbers
         }
 
         #region Empty
+
         private class EmptyEnumerable : IEnumerable<long>
         {
             public static readonly IEnumerable<long> Instance = new EmptyEnumerable();
@@ -267,6 +380,7 @@ namespace Allors.Numbers
 
             public void Dispose() { }
         }
+
         #endregion
     }
 }
