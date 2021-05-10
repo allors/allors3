@@ -149,7 +149,7 @@ namespace Allors.Workspace.Adapters.Local
             switch (roleType.Origin)
             {
                 case Origin.Session:
-                    this.Session.SessionState.SetUnitRole(this, roleType, value);
+                    this.Session.SessionState.SetUnitRole(this.Id, roleType, value);
                     break;
 
                 case Origin.Workspace:
@@ -171,7 +171,7 @@ namespace Allors.Workspace.Adapters.Local
             switch (roleType.Origin)
             {
                 case Origin.Session:
-                    this.Session.SessionState.SetCompositeRole(this, roleType, value);
+                    this.Session.SessionState.SetCompositeRole(this.Id, roleType, value.Id);
                     break;
 
                 case Origin.Workspace:
@@ -193,7 +193,7 @@ namespace Allors.Workspace.Adapters.Local
             switch (roleType.Origin)
             {
                 case Origin.Session:
-                    this.Session.SessionState.SetCompositesRole(this, roleType, value);
+                    this.Session.SessionState.SetCompositesRole(this.Id, roleType, value.Select(v => v.Id).ToArray());
                     break;
 
                 case Origin.Workspace:
@@ -256,9 +256,8 @@ namespace Allors.Workspace.Adapters.Local
                 return this.Session.GetAssociation<T>(this, associationType).FirstOrDefault();
             }
 
-            this.Session.SessionState.GetAssociation(this, associationType, out var association);
-            var id = (long?)association;
-            return id != null ? this.Session.Get<T>(id) : default;
+            var association = (long?)this.Session.SessionState.Get(this.Id, associationType);
+            return association != null ? this.Session.Get<T>(association) : default;
         }
 
         public IEnumerable<T> GetComposites<T>(IAssociationType associationType) where T : IObject
@@ -268,9 +267,14 @@ namespace Allors.Workspace.Adapters.Local
                 return this.Session.GetAssociation<T>(this, associationType);
             }
 
-            this.Session.SessionState.GetAssociation(this, associationType, out var association);
-            var ids = (IEnumerable<long>)association;
-            return ids?.Select(v => this.Session.Get<T>(v)).ToArray() ?? Array.Empty<T>();
+            var association = this.Session.SessionState.Get(this.Id, associationType);
+
+            return association switch
+            {
+                long id => new[] {this.Session.Get<T>(id)},
+                long[] ids => ids.Select(v => this.Session.Get<T>(v)).ToArray(),
+                _ => Array.Empty<T>()
+            };
         }
 
         public bool CanRead(IRoleType roleType) => this.DatabaseState?.CanRead(roleType) ?? true;
@@ -305,16 +309,18 @@ namespace Allors.Workspace.Adapters.Local
                 yield return diff;
             }
         }
-        
-        internal bool IsAssociationForRole(IRoleType roleType, Strategy role)
-            =>
-                roleType.Origin switch
-                {
-                    Origin.Session => this.Session.SessionState.IsAssociationForRole(this, roleType, role),
-                    Origin.Workspace => this.workspaceState?.IsAssociationForRole(roleType, role) ?? false,
-                    Origin.Database => this.DatabaseState?.IsAssociationForRole(roleType, role) ?? false,
-                    _ => throw new ArgumentException("Unsupported Origin")
-                };
+
+        internal bool IsAssociationForRole(IRoleType roleType, Strategy forRole)
+        {
+            var role = this.Session.SessionState.Get(this.Id, roleType);
+            return roleType.Origin switch
+            {
+                Origin.Session => Equals(role, forRole),
+                Origin.Workspace => this.workspaceState?.IsAssociationForRole(roleType, forRole) ?? false,
+                Origin.Database => this.DatabaseState?.IsAssociationForRole(roleType, forRole) ?? false,
+                _ => throw new ArgumentException("Unsupported Origin")
+            };
+        }
 
         internal void DatabasePushResponse(DatabaseObject databaseObject)
         {

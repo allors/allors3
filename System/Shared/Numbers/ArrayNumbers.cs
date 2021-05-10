@@ -8,10 +8,7 @@ namespace Allors.Numbers
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Data.SqlTypes;
     using System.Linq;
-    using System.Xml;
 
     public class ArrayNumbers : INumbers
     {
@@ -20,9 +17,9 @@ namespace Allors.Numbers
             switch (values)
             {
                 case null:
-                case long[] {Length: 0}:
+                case long[] { Length: 0 }:
                     return null;
-                case long[] {Length: 1} array:
+                case long[] { Length: 1 } array:
                     return array[0];
                 case long[] array:
                     return array;
@@ -45,10 +42,10 @@ namespace Allors.Numbers
                         var second = enumerator.Current;
                         if (!enumerator.MoveNext())
                         {
-                            return first < second ? new[] {first, second} : new[] {second, first};
+                            return first < second ? new[] { first, second } : new[] { second, first };
                         }
 
-                        var list = new List<long> {first, second};
+                        var list = new List<long> { first, second };
 
                         while (enumerator.MoveNext())
                         {
@@ -87,6 +84,68 @@ namespace Allors.Numbers
 
         public object? From(long value) => value;
 
+        public bool AreEqual(object? numbers, object? otherNumbers)
+        {
+            if (ReferenceEquals(numbers, otherNumbers))
+            {
+                return true;
+            }
+
+            if (numbers == null || otherNumbers == null)
+            {
+                return false;
+            }
+
+            if (numbers is long @long)
+            {
+                if (otherNumbers is long otherLong)
+                {
+                    return @long == otherLong;
+                }
+
+                return false;
+            }
+
+            var array = (long[])numbers;
+            if (!(otherNumbers is long[] otherArray))
+            {
+                return false;
+            }
+
+            var arrayLength = array.Length;
+            if (arrayLength != otherArray.Length)
+            {
+                return false;
+            }
+
+            for (var i = 0; i < arrayLength; i++)
+            {
+                if (array[i] != otherArray[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+
+        }
+
+        public bool Contains(object? numbers, long value)
+        {
+            switch (numbers)
+            {
+                case null:
+                    return false;
+                case long @long:
+                    return @long == value;
+                default:
+                {
+                    var array = (long[])numbers;
+                    return Array.BinarySearch(array, value) >= 0;
+                }
+            }
+        }
+
         public object? Add(object? numbers, long other)
         {
             switch (numbers)
@@ -96,7 +155,7 @@ namespace Allors.Numbers
                 case long value when value == other:
                     return value;
                 case long value:
-                    return value < other ? new[] {value, other} : new[] {other, value};
+                    return value < other ? new[] { value, other } : new[] { other, value };
                 default:
                 {
                     var array = (long[])numbers;
@@ -142,7 +201,7 @@ namespace Allors.Numbers
                     {
                         null => value,
                         long otherValue when value == otherValue => value,
-                        long otherValue => value < otherValue ? new[] {value, otherValue} : new[] {otherValue, value},
+                        long otherValue => value < otherValue ? new[] { value, otherValue } : new[] { otherValue, value },
                         _ => this.Add(other, value)
                     };
 
@@ -303,7 +362,7 @@ namespace Allors.Numbers
                             var j = 0;
                             var k = 0;
 
-                            while (i < arrayLength && j<otherArrayLength)
+                            while (i < arrayLength && j < otherArrayLength)
                             {
                                 var value = array[i];
                                 var otherValue = otherArray[j];

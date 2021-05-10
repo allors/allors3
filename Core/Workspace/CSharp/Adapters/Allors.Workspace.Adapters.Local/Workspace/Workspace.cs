@@ -9,6 +9,7 @@ namespace Allors.Workspace.Adapters.Local
     using System.Collections.Generic;
     using Database;
     using Meta;
+    using Numbers;
     using IObjectFactory = Allors.Workspace.IObjectFactory;
     using ObjectFactory = Adapters.ObjectFactory;
 
@@ -30,8 +31,12 @@ namespace Allors.Workspace.Adapters.Local
             this.WorkspaceIdsByWorkspaceClass = new Dictionary<IClass, long[]>();
             this.objectById = new Dictionary<long, WorkspaceObject>();
 
+            this.Numbers = new ArrayNumbers();
+
             this.Lifecycle.OnInit(this);
         }
+
+        public INumbers Numbers { get; set; }
 
         public string Name { get; }
 

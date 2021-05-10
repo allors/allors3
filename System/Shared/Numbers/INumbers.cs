@@ -15,6 +15,12 @@ namespace Allors.Numbers
 
         public object? From(long value);
 
+        public IEnumerable<long> Enumerate(object? numbers);
+
+        bool AreEqual(object? numbers, object? otherNumbers);
+
+        bool Contains(object numbers, long value);
+
         public object? Add(object? numbers, long other);
 
         public object? Union(object? numbers, object? other);
@@ -22,7 +28,5 @@ namespace Allors.Numbers
         public object? Remove(object? numbers, long value);
 
         public object? Except(object? numbers, object? other);
-
-        public IEnumerable<long> Enumerate(object? numbers);
     }
 }

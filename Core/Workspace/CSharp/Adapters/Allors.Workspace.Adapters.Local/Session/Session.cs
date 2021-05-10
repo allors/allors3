@@ -37,7 +37,7 @@ namespace Allors.Workspace.Adapters.Local
             this.strategiesByClass = new Dictionary<IClass, Strategy[]>();
             this.existingDatabaseStrategies = new List<Strategy>();
 
-            this.SessionState = new SessionState();
+            this.SessionState = new SessionState(workspace.Numbers);
             this.Lifecycle.OnInit(this);
         }
 
@@ -273,7 +273,7 @@ namespace Allors.Workspace.Adapters.Local
 
         internal object GetRole(Strategy association, IRoleType roleType)
         {
-            this.SessionState.GetRole(association, roleType, out var role);
+            var role = this.SessionState.Get(association.Id, roleType);
             if (roleType.ObjectType.IsUnit)
             {
                 return role;

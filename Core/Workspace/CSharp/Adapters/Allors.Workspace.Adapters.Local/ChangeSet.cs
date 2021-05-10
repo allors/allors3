@@ -10,23 +10,35 @@ namespace Allors.Workspace.Adapters.Local
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Database.Domain.Derivations;
     using Meta;
 
     internal sealed class ChangeSet : IChangeSet
     {
-        public ChangeSet(Session session, ISet<IStrategy> created, ISet<IStrategy> instantiated, SessionStateChangeSet sessionStateChangeSet)
+        public ChangeSet(Session session, ISet<IStrategy> created, ISet<IStrategy> instantiated, IDictionary<IPropertyType, IDictionary<long, object>> sessionStateChangeSet)
         {
             this.Session = session;
             this.Created = created;
             this.Instantiated = instantiated;
-            this.AssociationsByRoleType = sessionStateChangeSet.RoleByAssociationByRoleType
-                .ToDictionary(
-                    v => v.Key,
-                    v => (ISet<IStrategy>)new HashSet<IStrategy>(v.Value.Keys));
-            this.RolesByAssociationType = sessionStateChangeSet.AssociationByRoleByRoleType.ToDictionary(
-                v => v.Key,
-                v => (ISet<IStrategy>)new HashSet<IStrategy>(v.Value.Keys));
-            ;
+            this.AssociationsByRoleType = new Dictionary<IRoleType, ISet<IStrategy>>();
+            this.RolesByAssociationType = new Dictionary<IAssociationType, ISet<IStrategy>>();
+
+            foreach (var kvp in sessionStateChangeSet)
+            {
+                var ids = kvp.Value.Keys;
+                var strategies = new HashSet<IStrategy>(ids.Select(v => this.Session.GetStrategy(v)));
+
+                switch (kvp.Key)
+                {
+                    case IAssociationType associationType:
+                        this.RolesByAssociationType.Add(associationType, strategies);
+                        break;
+                    case IRoleType roleType:
+                        this.AssociationsByRoleType.Add(roleType, strategies);
+                        break;
+                }
+            }
+
         }
 
         ISession IChangeSet.Session => this.Session;
