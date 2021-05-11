@@ -17,7 +17,7 @@ namespace Tests.Workspace.Remote
         [Fact]
         public async void UnitGet()
         {
-            this.Database.SyncResponse(Fixture.LoadData(this.M));
+            _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
             var koen = session.InstantiateDatabaseObject(1 ).Object as Person;
@@ -48,7 +48,7 @@ namespace Tests.Workspace.Remote
         [Fact]
         public void UnitSet()
         {
-            this.Database.SyncResponse(Fixture.LoadData(this.M));
+            _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
 
             var session1 = this.CreateSession();
             var martien1 = session1.InstantiateDatabaseObject(3).Object as Person;
@@ -71,7 +71,7 @@ namespace Tests.Workspace.Remote
         [Fact]
         public void HasChanges()
         {
-            this.Database.SyncResponse(Fixture.LoadData(this.M));
+            _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
 
             var session = this.CreateSession();
             var martien = session.InstantiateDatabaseObject(3).Object as Person;
@@ -115,7 +115,7 @@ namespace Tests.Workspace.Remote
         [Fact]
         public void UnitSave()
         {
-            this.Database.SyncResponse(Fixture.LoadData(this.M));
+            _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
             var koen = session.InstantiateDatabaseObject(1).Object as Person;
@@ -165,7 +165,7 @@ namespace Tests.Workspace.Remote
         [Fact]
         public void OneGet()
         {
-            this.Database.SyncResponse(Fixture.LoadData(this.M));
+            _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
             var koen = session.InstantiateDatabaseObject(1).Object as Person;
@@ -188,7 +188,7 @@ namespace Tests.Workspace.Remote
         [Fact]
         public void OneSet()
         {
-            this.Database.SyncResponse(Fixture.LoadData(this.M));
+            _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
 
             var session1 = this.CreateSession();
 
@@ -234,7 +234,7 @@ namespace Tests.Workspace.Remote
         [Fact]
         public void OneSave()
         {
-            this.Database.SyncResponse(Fixture.LoadData(this.M));
+            _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
             var koen = session.InstantiateDatabaseObject(1).Object as Person;
@@ -272,7 +272,7 @@ namespace Tests.Workspace.Remote
             var savedOcme = save.Objects.First(v => v.DatabaseId == 102);
 
             Assert.Equal(1102, savedOcme.Version);
-            Assert.Single(savedOcme.Roles);
+            _ = Assert.Single(savedOcme.Roles);
 
             var savedOcmeOwner = savedOcme.Roles.First(v => v.RelationType == this.M.Organisation.Owner.RelationType.Tag);
 
@@ -284,7 +284,7 @@ namespace Tests.Workspace.Remote
         [Fact]
         public void ManyGet()
         {
-            this.Database.SyncResponse(Fixture.LoadData(this.M));
+            _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
             var koen = session.InstantiateDatabaseObject(1).Object as Person;
@@ -300,7 +300,7 @@ namespace Tests.Workspace.Remote
             Assert.Contains(martien, acme.Employees);
             Assert.Contains(patrick, acme.Employees);
 
-            Assert.Single(ocme.Employees);
+            _ = Assert.Single(ocme.Employees);
             Assert.Contains(koen, ocme.Employees);
 
             Assert.Empty(icme.Employees);
@@ -313,7 +313,7 @@ namespace Tests.Workspace.Remote
         [Fact]
         public void ManySet()
         {
-            this.Database.SyncResponse(Fixture.LoadData(this.M));
+            _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
 
             var session1 = this.CreateSession();
 
@@ -343,14 +343,14 @@ namespace Tests.Workspace.Remote
             Assert.Contains(martien1, acme1.Employees);
             Assert.Contains(patrick1, acme1.Employees);
 
-            Assert.Single(ocme1.Employees);
+            _ = Assert.Single(ocme1.Employees);
             Assert.Contains(koen1, ocme1.Employees);
 
             Assert.Empty(icme1.Employees);
 
             Assert.Empty(acme2.Employees);
 
-            Assert.Single(ocme2.Employees);
+            _ = Assert.Single(ocme2.Employees);
             Assert.Contains(koen2, ocme2.Employees);
 
             Assert.Equal(3, icme2.Employees.Count());
@@ -362,7 +362,7 @@ namespace Tests.Workspace.Remote
         [Fact]
         public void ManySaveWithExistingObjects()
         {
-            this.Database.SyncResponse(Fixture.LoadData(this.M));
+            _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
 
             var session = this.CreateSession();
 
@@ -386,7 +386,7 @@ namespace Tests.Workspace.Remote
             var savedAcme = save.Objects.First(v => v.DatabaseId == 101);
 
             Assert.Equal(1101, savedAcme.Version);
-            Assert.Single(savedAcme.Roles);
+            _ = Assert.Single(savedAcme.Roles);
 
             var savedAcmeEmployees = savedAcme.Roles.First(v => v.RelationType == this.M.Organisation.Employees.RelationType.Tag);
 
@@ -400,7 +400,7 @@ namespace Tests.Workspace.Remote
             var savedOcme = save.Objects.First(v => v.DatabaseId == 102);
 
             Assert.Equal(1102, savedOcme.Version);
-            Assert.Single(savedOcme.Roles);
+            _ = Assert.Single(savedOcme.Roles);
 
             var savedOcmeEmployees = savedOcme.Roles.First(v => v.RelationType == this.M.Organisation.Employees.RelationType.Tag);
 
@@ -410,13 +410,13 @@ namespace Tests.Workspace.Remote
             Assert.Contains(2, savedOcmeEmployees.AddCompositesRole);
             Assert.Contains(3, savedOcmeEmployees.AddCompositesRole);
 
-            Assert.Single(savedOcmeEmployees.RemoveCompositesRole);
+            _ = Assert.Single(savedOcmeEmployees.RemoveCompositesRole);
             Assert.Contains(1, savedOcmeEmployees.RemoveCompositesRole);
 
             var savedIcme = save.Objects.First(v => v.DatabaseId == 103);
 
             Assert.Equal(1103, savedIcme.Version);
-            Assert.Single(savedIcme.Roles);
+            _ = Assert.Single(savedIcme.Roles);
 
             var savedIcmeEmployees = savedIcme.Roles.First(v => v.RelationType == this.M.Organisation.Employees.RelationType.Tag);
 
@@ -432,7 +432,7 @@ namespace Tests.Workspace.Remote
         [Fact]
         public void ManySaveWithNewObjects()
         {
-            this.Database.SyncResponse(Fixture.LoadData(this.M));
+            _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
 
             var session = this.CreateSession();
 
@@ -509,7 +509,7 @@ namespace Tests.Workspace.Remote
         [Fact]
         public void SyncWithNewObjects()
         {
-            this.Database.SyncResponse(Fixture.LoadData(this.M));
+            _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
 
             var session = this.CreateSession();
 
@@ -544,7 +544,7 @@ namespace Tests.Workspace.Remote
         [Fact]
         public void Onsaved()
         {
-            this.Database.SyncResponse(Fixture.LoadData(this.M));
+            _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
 
             var session = this.CreateSession();
 
@@ -598,7 +598,7 @@ namespace Tests.Workspace.Remote
         [Fact]
         public void Get()
         {
-            this.Database.SyncResponse(Fixture.LoadData(this.M));
+            _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
 
             var session = this.CreateSession();
 

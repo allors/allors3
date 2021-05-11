@@ -112,10 +112,10 @@ namespace Allors.Database.Adapters.SqlClient
                 using (var command = connection.CreateCommand())
                 {
                     var sql = new StringBuilder();
-                    sql.Append("DROP PROCEDURE " + procedure);
+                    _ = sql.Append("DROP PROCEDURE " + procedure);
 
                     command.CommandText = sql.ToString();
-                    command.ExecuteNonQuery();
+                    _ = command.ExecuteNonQuery();
                 }
             }
         }
@@ -135,7 +135,7 @@ END
                 {
                     command.Parameters.Add("@tableName", SqlDbType.NVarChar).Value = table;
                     command.Parameters.Add("@tableSchema", SqlDbType.NVarChar).Value = schema;
-                    command.ExecuteNonQuery();
+                    _ = command.ExecuteNonQuery();
                 }
             }
         }

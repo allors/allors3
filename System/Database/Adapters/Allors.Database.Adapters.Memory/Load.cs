@@ -169,7 +169,7 @@ namespace Allors.Database.Adapters.Memory
 
                                     if (objectType is IClass)
                                     {
-                                        this.transaction.InsertStrategy((IClass)objectType, objectId, objectVersion);
+                                        _ = this.transaction.InsertStrategy((IClass)objectType, objectId, objectVersion);
                                     }
                                     else
                                     {
@@ -462,7 +462,7 @@ namespace Allors.Database.Adapters.Memory
                                             }
                                             else
                                             {
-                                                roleStrategies.Add(role);
+                                                _ = roleStrategies.Add(role);
                                             }
                                         }
 

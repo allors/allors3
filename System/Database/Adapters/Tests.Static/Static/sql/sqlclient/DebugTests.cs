@@ -183,7 +183,7 @@ namespace Allors.Database.Adapters.SqlClient
                     var stringBuilder = new StringBuilder();
                     foreach (C1 c1 in extent)
                     {
-                        stringBuilder.Append(c1.C1AllorsString);
+                        _ = stringBuilder.Append(c1.C1AllorsString);
                     }
 
                     Assert.Equal(3, connection.Commands.Count);
@@ -200,7 +200,7 @@ namespace Allors.Database.Adapters.SqlClient
                     var stringBuilder = new StringBuilder();
                     foreach (C1 c1 in extent)
                     {
-                        stringBuilder.Append(c1.C1AllorsString);
+                        _ = stringBuilder.Append(c1.C1AllorsString);
                     }
 
                     Assert.Equal(3, connection.Commands.Count);
@@ -232,7 +232,7 @@ namespace Allors.Database.Adapters.SqlClient
                     var stringBuilder = new StringBuilder();
                     foreach (C1 c1 in extent)
                     {
-                        stringBuilder.Append(c1.C1AllorsString);
+                        _ = stringBuilder.Append(c1.C1AllorsString);
                     }
 
                     Assert.Equal(3, connection.Commands.Count);
@@ -250,7 +250,7 @@ namespace Allors.Database.Adapters.SqlClient
                     var stringBuilder = new StringBuilder();
                     foreach (C1 c1 in extent)
                     {
-                        stringBuilder.Append(c1.C1AllorsString);
+                        _ = stringBuilder.Append(c1.C1AllorsString);
                     }
 
                     Assert.Equal(3, connection.Commands.Count);
@@ -286,10 +286,10 @@ namespace Allors.Database.Adapters.SqlClient
                     var stringBuilder = new StringBuilder();
                     foreach (C1 c1 in extent)
                     {
-                        stringBuilder.Append(c1.C1AllorsString);
+                        _ = stringBuilder.Append(c1.C1AllorsString);
 
                         var c2 = c1.C1C2one2one;
-                        stringBuilder.Append(c2?.C2AllorsString);
+                        _ = stringBuilder.Append(c2?.C2AllorsString);
                     }
 
                     Assert.Equal(5, connection.Commands.Count);
@@ -307,10 +307,10 @@ namespace Allors.Database.Adapters.SqlClient
                     var stringBuilder = new StringBuilder();
                     foreach (C1 c1 in extent)
                     {
-                        stringBuilder.Append(c1.C1AllorsString);
+                        _ = stringBuilder.Append(c1.C1AllorsString);
 
                         var c2 = c1.C1C2one2one;
-                        stringBuilder.Append(c2?.C2AllorsString);
+                        _ = stringBuilder.Append(c2?.C2AllorsString);
                     }
 
                     Assert.Equal(5, connection.Commands.Count);
@@ -347,11 +347,11 @@ namespace Allors.Database.Adapters.SqlClient
                     var stringBuilder = new StringBuilder();
                     foreach (C1 c1 in extent)
                     {
-                        stringBuilder.Append(c1.C1AllorsString);
+                        _ = stringBuilder.Append(c1.C1AllorsString);
 
                         foreach (I12 i12 in c1.C1I12one2manies)
                         {
-                            stringBuilder.Append(i12?.I12AllorsString);
+                            _ = stringBuilder.Append(i12?.I12AllorsString);
                         }
                     }
 
@@ -363,11 +363,11 @@ namespace Allors.Database.Adapters.SqlClient
                     stringBuilder = new StringBuilder();
                     foreach (C1 c1 in extent)
                     {
-                        stringBuilder.Append(c1.C1AllorsString);
+                        _ = stringBuilder.Append(c1.C1AllorsString);
 
                         foreach (I12 i12 in c1.C1I12one2manies)
                         {
-                            stringBuilder.Append(i12?.I12AllorsString);
+                            _ = stringBuilder.Append(i12?.I12AllorsString);
                         }
                     }
 
@@ -386,10 +386,10 @@ namespace Allors.Database.Adapters.SqlClient
                     var stringBuilder = new StringBuilder();
                     foreach (C1 c1 in extent)
                     {
-                        stringBuilder.Append(c1.C1AllorsString);
+                        _ = stringBuilder.Append(c1.C1AllorsString);
                         foreach (I12 i12 in c1.C1I12one2manies)
                         {
-                            stringBuilder.Append(i12?.I12AllorsString);
+                            _ = stringBuilder.Append(i12?.I12AllorsString);
                         }
                     }
 

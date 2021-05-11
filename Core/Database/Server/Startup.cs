@@ -36,7 +36,7 @@ namespace Allors.Server
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton(this.Configuration);
+            _ = services.AddSingleton(this.Configuration);
 
             var workspaceConfig = new WorkspaceConfig(new Dictionary<HostString, string>
             {
@@ -44,26 +44,26 @@ namespace Allors.Server
             });
 
             // Allors
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddSingleton<IPolicyService, PolicyService>();
-            services.AddSingleton<IDatabaseService, DatabaseService>();
-            services.AddSingleton(workspaceConfig);
+            _ = services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            _ = services.AddSingleton<IPolicyService, PolicyService>();
+            _ = services.AddSingleton<IDatabaseService, DatabaseService>();
+            _ = services.AddSingleton(workspaceConfig);
             // Allors Scoped
-            services.AddScoped<ITransactionService, TransactionService>();
-            services.AddScoped<IWorkspaceService, WorkspaceService>();
+            _ = services.AddScoped<ITransactionService, TransactionService>();
+            _ = services.AddScoped<IWorkspaceService, WorkspaceService>();
 
-            services.AddCors(options =>
-                options.AddDefaultPolicy(
-                    builder => builder
-                        .WithOrigins("http://localhost", "http://localhost:4000", "http://localhost:4200", "http://localhost:9876")
-                        .AllowAnyHeader()
-                        .AllowAnyMethod()
-                        .AllowCredentials()));
+            _ = services.AddCors(options =>
+                  options.AddDefaultPolicy(
+                      builder => builder
+                          .WithOrigins("http://localhost", "http://localhost:4000", "http://localhost:4200", "http://localhost:9876")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials()));
 
-            services.AddDefaultIdentity<IdentityUser>()
+            _ = services.AddDefaultIdentity<IdentityUser>()
                 .AddAllorsStores();
 
-            services.AddAuthentication(option => option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme)
+            _ = services.AddAuthentication(option => option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
@@ -73,8 +73,8 @@ namespace Allors.Server
                         ValidateAudience = false,
                     });
 
-            services.AddResponseCaching();
-            services.AddControllersWithViews();
+            _ = services.AddResponseCaching();
+            _ = services.AddControllersWithViews();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -90,14 +90,14 @@ namespace Allors.Server
 
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                _ = app.UseDeveloperExceptionPage();
             }
             else
             {
-                app.UseHsts();
+                _ = app.UseHsts();
             }
 
-            app.UseCors();
+            _ = app.UseCors();
 
             var jsnlogConfiguration = new JsnlogConfiguration
             {
@@ -110,20 +110,20 @@ namespace Allors.Server
             app.UseJSNLog(new LoggingAdapter(loggerFactory), jsnlogConfiguration);
 
             // app.UseHttpsRedirection();
-            app.UseRouting();
-            app.UseAuthentication();
-            app.UseAuthorization();
+            _ = app.UseRouting();
+            _ = app.UseAuthentication();
+            _ = app.UseAuthorization();
 
-            app.ConfigureExceptionHandler(env, loggerFactory);
+            _ = app.ConfigureExceptionHandler(env, loggerFactory);
 
-            app.UseResponseCaching();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "allors/{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapControllers();
-            });
+            _ = app.UseResponseCaching();
+            _ = app.UseEndpoints(endpoints =>
+              {
+                  _ = endpoints.MapControllerRoute(
+                      name: "default",
+                      pattern: "allors/{controller=Home}/{action=Index}/{id?}");
+                  _ = endpoints.MapControllers();
+              });
         }
     }
 }

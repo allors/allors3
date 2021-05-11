@@ -43,29 +43,29 @@ namespace Allors.Database.Domain
                 var roles = new Roles(this.Transaction);
                 var userGroups = new UserGroups(this.Transaction);
 
-                merge(CreatorsId, v =>
-                {
-                    v.Role = roles.Creator;
-                    v.AddSubjectGroup(userGroups.Creators);
-                });
+                _ = merge(CreatorsId, v =>
+                  {
+                      v.Role = roles.Creator;
+                      v.AddSubjectGroup(userGroups.Creators);
+                  });
 
-                merge(GuestCreatorsId, v =>
-                {
-                    v.Role = roles.GuestCreator;
-                    v.AddSubjectGroup(userGroups.Guests);
-                });
+                _ = merge(GuestCreatorsId, v =>
+                  {
+                      v.Role = roles.GuestCreator;
+                      v.AddSubjectGroup(userGroups.Guests);
+                  });
 
-                merge(AdministratorId, v =>
-                {
-                    v.Role = roles.Administrator;
-                    v.AddSubjectGroup(userGroups.Administrators);
-                });
+                _ = merge(AdministratorId, v =>
+                  {
+                      v.Role = roles.Administrator;
+                      v.AddSubjectGroup(userGroups.Administrators);
+                  });
 
-                merge(GuestId, v =>
-                {
-                    v.Role = roles.Guest;
-                    v.AddSubjectGroup(userGroups.Guests);
-                });
+                _ = merge(GuestId, v =>
+                  {
+                      v.Role = roles.Guest;
+                      v.AddSubjectGroup(userGroups.Guests);
+                  });
             }
         }
     }

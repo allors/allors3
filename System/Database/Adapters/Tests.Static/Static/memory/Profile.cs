@@ -26,7 +26,7 @@ namespace Allors.Database.Adapters.Memory
                     markers.Add(
                         () =>
                         {
-                            this.Transaction.Checkpoint();
+                            _ = this.Transaction.Checkpoint();
                         });
                 }
 

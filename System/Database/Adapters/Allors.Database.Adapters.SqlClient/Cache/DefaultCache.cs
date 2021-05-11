@@ -32,7 +32,7 @@ namespace Allors.Database.Adapters.SqlClient.Caching
                 {
                     foreach (var transientClass in transientObjectType.DatabaseClasses)
                     {
-                        this.excludedClasses.Add(transientClass);
+                        _ = this.excludedClasses.Add(transientClass);
                     }
                 }
 
@@ -78,7 +78,7 @@ namespace Allors.Database.Adapters.SqlClient.Caching
 
         public IClass GetObjectType(long objectId)
         {
-            this.objectTypeByObjectId.TryGetValue(objectId, out var objectType);
+            _ = this.objectTypeByObjectId.TryGetValue(objectId, out var objectType);
             return objectType;
         }
 
@@ -90,7 +90,7 @@ namespace Allors.Database.Adapters.SqlClient.Caching
             {
                 foreach (var changedObjectId in changedObjectIds)
                 {
-                    this.cachedObjectByObjectId.TryRemove(changedObjectId, out var removedObject);
+                    _ = this.cachedObjectByObjectId.TryRemove(changedObjectId, out var removedObject);
                 }
             }
         }

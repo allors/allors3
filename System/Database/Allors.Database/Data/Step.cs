@@ -129,7 +129,7 @@ namespace Allors.Database.Data
                             }
                             else
                             {
-                                results.Add(nextValueResult);
+                                _ = results.Add(nextValueResult);
                             }
                         }
 
@@ -153,7 +153,7 @@ namespace Allors.Database.Data
                 {
                     if (this.PropertyType.Get(@object.Strategy) is IObject property)
                     {
-                        this.Next.Set(property, acls, value);
+                        _ = this.Next.Set(property, acls, value);
                         return true;
                     }
                 }
@@ -240,7 +240,7 @@ namespace Allors.Database.Data
         public override string ToString()
         {
             var name = new StringBuilder();
-            name.Append(this.PropertyType.Name);
+            _ = name.Append(this.PropertyType.Name);
             if (this.ExistNext)
             {
                 this.Next.ToStringAppendToName(name);
@@ -251,7 +251,7 @@ namespace Allors.Database.Data
 
         private void ToStringAppendToName(StringBuilder name)
         {
-            name.Append("." + this.PropertyType.Name);
+            _ = name.Append("." + this.PropertyType.Name);
 
             if (this.ExistNext)
             {

@@ -25,7 +25,7 @@ namespace Allors.Database.Adapters.SqlClient
 
         public SchemaTableColumn GetColumn(string columnName)
         {
-            this.ColumnByLowercaseColumnName.TryGetValue(columnName.ToLowerInvariant(), out var tableColumn);
+            _ = this.ColumnByLowercaseColumnName.TryGetValue(columnName.ToLowerInvariant(), out var tableColumn);
             return tableColumn;
         }
 

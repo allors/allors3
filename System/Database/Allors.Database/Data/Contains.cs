@@ -31,12 +31,12 @@ namespace Allors.Database.Data
 
             if (this.PropertyType is IRoleType roleType)
             {
-                compositePredicate.AddContains(roleType, containedObject);
+                _ = compositePredicate.AddContains(roleType, containedObject);
             }
             else
             {
                 var associationType = (IAssociationType)this.PropertyType;
-                compositePredicate.AddContains(associationType, containedObject);
+                _ = compositePredicate.AddContains(associationType, containedObject);
             }
         }
 

@@ -10,19 +10,32 @@ namespace Allors.Workspace.Adapters.Local
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Database.Domain.Derivations;
     using Meta;
 
     internal sealed class ChangeSet : IChangeSet
     {
-        public ChangeSet(Session session, ISet<IStrategy> created, ISet<IStrategy> instantiated, IDictionary<IPropertyType, IDictionary<long, object>> sessionStateChangeSet)
+        public ChangeSet(Session session)
         {
             this.Session = session;
-            this.Created = created;
-            this.Instantiated = instantiated;
+            this.Created = new HashSet<IStrategy>();
+            this.Instantiated = new HashSet<IStrategy>();
             this.AssociationsByRoleType = new Dictionary<IRoleType, ISet<IStrategy>>();
             this.RolesByAssociationType = new Dictionary<IAssociationType, ISet<IStrategy>>();
+        }
 
+        ISession IChangeSet.Session => this.Session;
+        public Session Session { get; }
+
+        public ISet<IStrategy> Created { get; }
+
+        public ISet<IStrategy> Instantiated { get; }
+
+        public IDictionary<IRoleType, ISet<IStrategy>> AssociationsByRoleType { get; }
+
+        public IDictionary<IAssociationType, ISet<IStrategy>> RolesByAssociationType { get; }
+
+        internal void AddSessionStateChanges(IDictionary<IPropertyType, IDictionary<long, object>> sessionStateChangeSet)
+        {
             foreach (var kvp in sessionStateChangeSet)
             {
                 var ids = kvp.Value.Keys;
@@ -38,19 +51,7 @@ namespace Allors.Workspace.Adapters.Local
                         break;
                 }
             }
-
         }
-
-        ISession IChangeSet.Session => this.Session;
-        public Session Session { get; }
-
-        public ISet<IStrategy> Created { get; }
-
-        public ISet<IStrategy> Instantiated { get; }
-
-        public IDictionary<IRoleType, ISet<IStrategy>> AssociationsByRoleType { get; }
-
-        public IDictionary<IAssociationType, ISet<IStrategy>> RolesByAssociationType { get; }
 
         internal void AddAssociation(IRelationType relationType, Strategy association)
         {

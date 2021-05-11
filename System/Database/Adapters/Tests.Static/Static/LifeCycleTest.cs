@@ -72,7 +72,7 @@ namespace Allors.Database.Adapters
                     foreach (C1 allorsObject in allorsObjects)
                     {
                         Assert.Equal(m.C1, allorsObject.Strategy.Class);
-                        ids.Add(allorsObject.Strategy.ObjectId);
+                        _ = ids.Add(allorsObject.Strategy.ObjectId);
                         allorsObject.C1AllorsString = "CreateMany";
                     }
 
@@ -167,7 +167,7 @@ namespace Allors.Database.Adapters
 
                 this.Transaction.Rollback();
 
-                Assert.Single(c1A.C1C2one2manies);
+                _ = Assert.Single(c1A.C1C2one2manies);
                 Assert.Equal(c2A, c1A.C1C2one2manies[0]);
             }
         }
@@ -713,7 +713,7 @@ namespace Allors.Database.Adapters
                 Assert.Equal(2, this.GetExtent(m.C1).Length);
                 thirdObject.Strategy.Delete();
 
-                Assert.Single(this.GetExtent(m.C1));
+                _ = Assert.Single(this.GetExtent(m.C1));
                 Assert.Equal("b", ((C1)this.GetExtent(m.C1)[0]).C1AllorsString);
 
                 secondObject.Strategy.Delete();
@@ -750,7 +750,7 @@ namespace Allors.Database.Adapters
 
                 thirdObject.Strategy.Delete();
 
-                Assert.Single(this.GetExtent(m.C1));
+                _ = Assert.Single(this.GetExtent(m.C1));
                 Assert.Equal("b", ((C1)this.GetExtent(m.C1)[0]).C1AllorsString);
 
                 secondObject.Strategy.Delete();
@@ -783,7 +783,7 @@ namespace Allors.Database.Adapters
 
                 this.Transaction.Commit();
 
-                Assert.Single(this.GetExtent(m.C1));
+                _ = Assert.Single(this.GetExtent(m.C1));
                 Assert.Equal("b", ((C1)this.GetExtent(m.C1)[0]).C1AllorsString);
 
                 secondObject.Strategy.Delete();
@@ -825,7 +825,7 @@ namespace Allors.Database.Adapters
                 thirdObject.Strategy.Delete();
                 this.Transaction.Commit();
 
-                Assert.Single(this.GetExtent(m.C1));
+                _ = Assert.Single(this.GetExtent(m.C1));
                 Assert.Equal("b", ((C1)this.GetExtent(m.C1)[0]).C1AllorsString);
 
                 secondObject.Strategy.Delete();
@@ -841,7 +841,7 @@ namespace Allors.Database.Adapters
 
                 this.Transaction.Rollback();
 
-                Assert.Single(this.GetExtent(m.C1));
+                _ = Assert.Single(this.GetExtent(m.C1));
                 Assert.Equal("a", ((C1)this.GetExtent(m.C1)[0]).C1AllorsString);
 
                 secondObject = C1.Create(this.Transaction);
@@ -854,7 +854,7 @@ namespace Allors.Database.Adapters
 
                 this.Transaction.Rollback();
 
-                Assert.Single(this.GetExtent(m.C1));
+                _ = Assert.Single(this.GetExtent(m.C1));
                 Assert.Equal("a", ((C1)this.GetExtent(m.C1)[0]).C1AllorsString);
 
                 anObject.Strategy.Delete();
@@ -872,7 +872,7 @@ namespace Allors.Database.Adapters
                 anObject.Strategy.Delete();
                 this.Transaction.Rollback();
 
-                Assert.Single(this.GetExtent(m.C1));
+                _ = Assert.Single(this.GetExtent(m.C1));
                 Assert.Equal("a", ((C1)this.GetExtent(m.C1)[0]).C1AllorsString);
 
                 secondObject = C1.Create(this.Transaction);
@@ -888,7 +888,7 @@ namespace Allors.Database.Adapters
                 thirdObject.Strategy.Delete();
                 this.Transaction.Rollback();
 
-                Assert.Single(this.GetExtent(m.C1));
+                _ = Assert.Single(this.GetExtent(m.C1));
                 Assert.Equal("a", ((C1)this.GetExtent(m.C1)[0]).C1AllorsString);
 
                 anObject.Strategy.Delete();
@@ -1258,9 +1258,9 @@ namespace Allors.Database.Adapters
 
                 Assert.Equal(fromC1a, toC1a.C1WhereC1C1one2one);
                 Assert.Equal(fromC1a, toC1b.C1WhereC1C1one2many);
-                Assert.Single(toC1a.C1sWhereC1C1many2one);
-                Assert.Single(toC1a.C1sWhereC1C1many2many);
-                Assert.Single(toC1b.C1sWhereC1C1many2many);
+                _ = Assert.Single(toC1a.C1sWhereC1C1many2one);
+                _ = Assert.Single(toC1a.C1sWhereC1C1many2many);
+                _ = Assert.Single(toC1b.C1sWhereC1C1many2many);
 
                 //// C1 <-> C2
 
@@ -1351,9 +1351,9 @@ namespace Allors.Database.Adapters
 
                 Assert.Equal(fromC1a, toC2a.C1WhereC1C2one2one);
                 Assert.Equal(fromC1a, toC2b.C1WhereC1C2one2many);
-                Assert.Single(toC2a.C1sWhereC1C2many2one);
-                Assert.Single(toC2a.C1sWhereC1C2many2many);
-                Assert.Single(toC2b.C1sWhereC1C2many2many);
+                _ = Assert.Single(toC2a.C1sWhereC1C2many2one);
+                _ = Assert.Single(toC2a.C1sWhereC1C2many2many);
+                _ = Assert.Single(toC2b.C1sWhereC1C2many2many);
 
                 //// Cached
 
@@ -1595,9 +1595,9 @@ namespace Allors.Database.Adapters
 
                 Assert.Equal(fromC1a, toC1a.C1WhereC1C1one2one);
                 Assert.Equal(fromC1a, toC1b.C1WhereC1C1one2many);
-                Assert.Single(toC1a.C1sWhereC1C1many2one);
-                Assert.Single(toC1a.C1sWhereC1C1many2many);
-                Assert.Single(toC1b.C1sWhereC1C1many2many);
+                _ = Assert.Single(toC1a.C1sWhereC1C1many2one);
+                _ = Assert.Single(toC1a.C1sWhereC1C1many2many);
+                _ = Assert.Single(toC1b.C1sWhereC1C1many2many);
 
                 //// C1 <-> C2
 
@@ -1836,9 +1836,9 @@ namespace Allors.Database.Adapters
 
                 Assert.Equal(fromC1a, toC2a.C1WhereC1C2one2one);
                 Assert.Equal(fromC1a, toC2b.C1WhereC1C2one2many);
-                Assert.Single(toC2a.C1sWhereC1C2many2one);
-                Assert.Single(toC2a.C1sWhereC1C2many2many);
-                Assert.Single(toC2b.C1sWhereC1C2many2many);
+                _ = Assert.Single(toC2a.C1sWhereC1C2many2one);
+                _ = Assert.Single(toC2a.C1sWhereC1C2many2many);
+                _ = Assert.Single(toC2b.C1sWhereC1C2many2many);
 
                 //// Association
 
@@ -2121,9 +2121,9 @@ namespace Allors.Database.Adapters
 
                 Assert.Equal(fromC1a, toC1a.C1WhereC1C1one2one);
                 Assert.Equal(fromC1a, toC1b.C1WhereC1C1one2many);
-                Assert.Single(toC1a.C1sWhereC1C1many2one);
-                Assert.Single(toC1a.C1sWhereC1C1many2many);
-                Assert.Single(toC1b.C1sWhereC1C1many2many);
+                _ = Assert.Single(toC1a.C1sWhereC1C1many2one);
+                _ = Assert.Single(toC1a.C1sWhereC1C1many2many);
+                _ = Assert.Single(toC1b.C1sWhereC1C1many2many);
 
                 //// C1 <-> C2
 
@@ -2226,9 +2226,9 @@ namespace Allors.Database.Adapters
 
                 Assert.Equal(fromC1a, toC2a.C1WhereC1C2one2one);
                 Assert.Equal(fromC1a, toC2b.C1WhereC1C2one2many);
-                Assert.Single(toC2a.C1sWhereC1C2many2one);
-                Assert.Single(toC2a.C1sWhereC1C2many2many);
-                Assert.Single(toC2b.C1sWhereC1C2many2many);
+                _ = Assert.Single(toC2a.C1sWhereC1C2many2one);
+                _ = Assert.Single(toC2a.C1sWhereC1C2many2many);
+                _ = Assert.Single(toC2b.C1sWhereC1C2many2many);
 
                 //// Cached
 
@@ -2435,9 +2435,9 @@ namespace Allors.Database.Adapters
 
                 Assert.Equal(fromC1a, toC1a.C1WhereC1C1one2one);
                 Assert.Equal(fromC1a, toC1b.C1WhereC1C1one2many);
-                Assert.Single(toC1a.C1sWhereC1C1many2one);
-                Assert.Single(toC1a.C1sWhereC1C1many2many);
-                Assert.Single(toC1b.C1sWhereC1C1many2many);
+                _ = Assert.Single(toC1a.C1sWhereC1C1many2one);
+                _ = Assert.Single(toC1a.C1sWhereC1C1many2many);
+                _ = Assert.Single(toC1b.C1sWhereC1C1many2many);
 
                 //// C1 <-> C2
 
@@ -2642,9 +2642,9 @@ namespace Allors.Database.Adapters
 
                 Assert.Equal(fromC1a, toC2a.C1WhereC1C2one2one);
                 Assert.Equal(fromC1a, toC2b.C1WhereC1C2one2many);
-                Assert.Single(toC2a.C1sWhereC1C2many2one);
-                Assert.Single(toC2a.C1sWhereC1C2many2many);
-                Assert.Single(toC2b.C1sWhereC1C2many2many);
+                _ = Assert.Single(toC2a.C1sWhereC1C2many2one);
+                _ = Assert.Single(toC2a.C1sWhereC1C2many2many);
+                _ = Assert.Single(toC2b.C1sWhereC1C2many2many);
 
                 //// Assignment
 
@@ -2878,16 +2878,16 @@ namespace Allors.Database.Adapters
                 Assert.Equal(c1Removed, anObject.C1C1one2one);
 
                 anObject.AddC1C1one2many(c1Removed);
-                Assert.Single(anObject.C1C1one2manies);
+                _ = Assert.Single(anObject.C1C1one2manies);
 
                 anObject.C1C1one2manies = c1RemovedArray;
-                Assert.Single(anObject.C1C1one2manies);
+                _ = Assert.Single(anObject.C1C1one2manies);
 
                 anObject.AddC1C1many2many(c1Removed);
-                Assert.Single(anObject.C1C1many2manies);
+                _ = Assert.Single(anObject.C1C1many2manies);
 
                 anObject.C1C1many2manies = c1RemovedArray;
-                Assert.Single(anObject.C1C1many2manies);
+                _ = Assert.Single(anObject.C1C1many2manies);
 
                 //// Proxy
 

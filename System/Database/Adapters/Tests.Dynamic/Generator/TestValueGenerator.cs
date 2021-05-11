@@ -71,16 +71,16 @@ namespace Allors.Database.Adapters
         {
             var unitBuffer = new StringBuilder();
 
-            unitBuffer.Append(this.GenerateBoolean() ? "+" : "-");
+            _ = unitBuffer.Append(this.GenerateBoolean() ? "+" : "-");
             for (var i = 0; i < 8; i++)
             {
-                unitBuffer.Append(this.random.Next(9));
+                _ = unitBuffer.Append(this.random.Next(9));
             }
 
-            unitBuffer.Append(NumberFormatInfo.CurrentInfo.CurrencyDecimalSeparator);
+            _ = unitBuffer.Append(NumberFormatInfo.CurrentInfo.CurrencyDecimalSeparator);
             for (var i = 0; i < 2; i++)
             {
-                unitBuffer.Append(this.random.Next(9));
+                _ = unitBuffer.Append(this.random.Next(9));
             }
 
             var unit = decimal.Parse(unitBuffer.ToString());
@@ -99,7 +99,7 @@ namespace Allors.Database.Adapters
             for (var i = 0; i < size; i++)
             {
                 var ch = (char)(this.random.Next(0x01F) + 0x020);
-                stringBuilder.Append(ch);
+                _ = stringBuilder.Append(ch);
             }
 
             return stringBuilder.ToString();

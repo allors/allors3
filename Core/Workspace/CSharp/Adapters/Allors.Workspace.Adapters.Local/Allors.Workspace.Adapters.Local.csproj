@@ -2,11 +2,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="Session\Collections\**" />
-    <EmbeddedResource Remove="Session\Collections\**" />
-    <None Remove="Session\Collections\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Polly" Version="7.2.1" />

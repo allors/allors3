@@ -78,7 +78,7 @@ namespace Allors.Database.Adapters.Npgsql
                     if (!this.Reference.IsNew)
                     {
                         this.Reference.Transaction.Commands.GetUnitRoles(this);
-                        this.cachedObject.TryGetValue(roleType, out role);
+                        _ = this.cachedObject.TryGetValue(roleType, out role);
                     }
                 }
             }
@@ -97,7 +97,7 @@ namespace Allors.Database.Adapters.Npgsql
                 this.SetOriginal(roleType, role);
 
                 this.ModifiedRoleByRoleType[roleType] = role;
-                this.RequireFlushRoles.Add(roleType);
+                _ = this.RequireFlushRoles.Add(roleType);
 
                 this.Reference.Transaction.RequireFlush(this.Reference, this);
             }
@@ -133,7 +133,7 @@ namespace Allors.Database.Adapters.Npgsql
                     if (!this.Reference.IsNew)
                     {
                         this.Reference.Transaction.Commands.GetCompositeRole(this, roleType);
-                        this.cachedObject.TryGetValue(roleType, out role);
+                        _ = this.cachedObject.TryGetValue(roleType, out role);
                     }
                 }
             }
@@ -441,7 +441,7 @@ namespace Allors.Database.Adapters.Npgsql
                 this.requireFlushRoles = new HashSet<IRoleType>();
             }
 
-            this.requireFlushRoles.Add(roleType);
+            _ = this.requireFlushRoles.Add(roleType);
         }
 
         private long[] GetNonModifiedCompositeRoles(IRoleType roleType)
@@ -454,7 +454,7 @@ namespace Allors.Database.Adapters.Npgsql
                 }
 
                 this.Reference.Transaction.Commands.GetCompositesRole(this, roleType);
-                this.cachedObject.TryGetValue(roleType, out roleOut);
+                _ = this.cachedObject.TryGetValue(roleType, out roleOut);
                 return (long[])roleOut;
             }
 
@@ -561,7 +561,7 @@ namespace Allors.Database.Adapters.Npgsql
 
                 if (this.removed != null && this.removed.Contains(objectId))
                 {
-                    this.removed.Remove(objectId);
+                    _ = this.removed.Remove(objectId);
                     return;
                 }
 
@@ -572,7 +572,7 @@ namespace Allors.Database.Adapters.Npgsql
                         this.added = new HashSet<long>();
                     }
 
-                    this.added.Add(objectId);
+                    _ = this.added.Add(objectId);
                 }
             }
 
@@ -585,7 +585,7 @@ namespace Allors.Database.Adapters.Npgsql
 
                 if (this.added != null && this.added.Contains(objectId))
                 {
-                    this.added.Remove(objectId);
+                    _ = this.added.Remove(objectId);
                     return;
                 }
 
@@ -596,7 +596,7 @@ namespace Allors.Database.Adapters.Npgsql
                         this.removed = new HashSet<long>();
                     }
 
-                    this.removed.Add(objectId);
+                    _ = this.removed.Add(objectId);
                 }
             }
 

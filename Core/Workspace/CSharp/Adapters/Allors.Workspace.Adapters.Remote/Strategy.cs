@@ -59,27 +59,6 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal long DatabaseVersion => this.databaseState.Version;
 
-        public IEnumerable<IRelationType> Diff()
-        {
-            if (this.workspaceState != null)
-            {
-                foreach (var diff in this.workspaceState.Diff())
-                {
-                    yield return diff;
-                }
-            }
-
-            if (this.databaseState == null)
-            {
-                yield break;
-            }
-
-            foreach (var diff in this.databaseState.Diff())
-            {
-                yield return diff;
-            }
-        }
-
         public bool Exist(IRoleType roleType)
         {
             if (roleType.ObjectType.IsUnit)
@@ -210,21 +189,21 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        public void SetComposites<T>(IRoleType roleType, in IEnumerable<T> value) where T : IObject
+        public void SetComposites<T>(IRoleType roleType, in IEnumerable<T> role) where T : IObject
         {
             switch (roleType.Origin)
             {
                 case Origin.Session:
-                    this.Session.SessionState.SetCompositesRole(this, roleType, value);
+                    this.Session.SessionState.SetCompositesRole(this, roleType, role);
                     break;
 
                 case Origin.Workspace:
-                    this.workspaceState?.SetCompositesRole(roleType, value);
+                    this.workspaceState?.SetCompositesRole(roleType, role);
 
                     break;
 
                 case Origin.Database:
-                    this.databaseState?.SetCompositesRole(roleType, value);
+                    this.databaseState?.SetCompositesRole(roleType, role);
 
                     break;
                 default:

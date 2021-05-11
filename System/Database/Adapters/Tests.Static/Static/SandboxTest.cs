@@ -106,11 +106,11 @@ namespace Allors.Database.Adapters
                 };
 
                 var arguments = new Mock<IArguments>();
-                arguments.Setup(arg => arg.HasArgument("pString")).Returns(true);
-                arguments.Setup(arg => arg.ResolveUnit(UnitTags.String, "pString")).Returns("ᴀbra");
+                _ = arguments.Setup(arg => arg.HasArgument("pString")).Returns(true);
+                _ = arguments.Setup(arg => arg.ResolveUnit(UnitTags.String, "pString")).Returns("ᴀbra");
                 var objects = this.Transaction.Resolve<C1>(extent, arguments.Object);
 
-                Assert.Single(objects);
+                _ = Assert.Single(objects);
             }
         }
 

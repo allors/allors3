@@ -45,7 +45,7 @@ namespace Allors.Workspace.Adapters.Remote
         internal object GetRole(IRoleType roleType)
         {
             object @object = null;
-            this.roleByRelationType?.TryGetValue(roleType.RelationType, out @object);
+            _ = (this.roleByRelationType?.TryGetValue(roleType.RelationType, out @object));
             return @object;
         }
 

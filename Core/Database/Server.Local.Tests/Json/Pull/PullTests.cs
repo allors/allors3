@@ -49,7 +49,7 @@ namespace Tests
 
             var namedCollection = pullResponse.Collections["Datas"];
 
-            Assert.Single(namedCollection);
+            _ = Assert.Single(namedCollection);
 
             var namedObject = namedCollection.First();
 
@@ -57,7 +57,7 @@ namespace Tests
 
             var objects = pullResponse.Pool;
 
-            Assert.Single(objects);
+            _ = Assert.Single(objects);
 
             var @object = objects[0];
 
@@ -75,7 +75,7 @@ namespace Tests
         [Fact]
         public async void WithExtentRef()
         {
-            this.SetUser("jane@example.com");
+            _ = this.SetUser("jane@example.com");
 
             var pullRequest = new PullRequest
             {
@@ -94,13 +94,13 @@ namespace Tests
 
             var organisations = pullResponse.Collections["Organisations"];
 
-            Assert.Single(organisations);
+            _ = Assert.Single(organisations);
         }
 
         [Fact]
         public async void WithSelectRef()
         {
-            this.SetUser("jane@example.com");
+            _ = this.SetUser("jane@example.com");
 
             var pullRequest = new PullRequest
             {
@@ -119,7 +119,7 @@ namespace Tests
 
             var organisations = pullResponse.Collections["Organisations"];
 
-            Assert.Single(organisations);
+            _ = Assert.Single(organisations);
         }
 
         [Fact]
@@ -129,7 +129,7 @@ namespace Tests
 
             var data = new DataBuilder(this.Transaction).WithString("First").Build();
 
-            this.Transaction.Derive();
+            _ = this.Transaction.Derive();
             this.Transaction.Commit();
 
             var uri = new Uri(@"allors/pull", UriKind.Relative);
@@ -149,7 +149,7 @@ namespace Tests
 
             var namedCollection = pullResponse.Collections["Datas"];
 
-            Assert.Single(namedCollection);
+            _ = Assert.Single(namedCollection);
 
             var namedObject = namedCollection.First();
 
@@ -157,7 +157,7 @@ namespace Tests
 
             var objects = pullResponse.Pool;
 
-            Assert.Single(objects);
+            _ = Assert.Single(objects);
 
             var @object = objects[0];
 
@@ -178,7 +178,7 @@ namespace Tests
 
             var data = new DataBuilder(this.Transaction).WithString("First").Build();
 
-            this.Transaction.Derive();
+            _ = this.Transaction.Derive();
             this.Transaction.Commit();
 
             var pull = new Pull
@@ -203,7 +203,7 @@ namespace Tests
 
             var namedCollection = pullResponse.Collections["Datas"];
 
-            Assert.Single(namedCollection);
+            _ = Assert.Single(namedCollection);
 
             var namedObject = namedCollection.First();
 
@@ -211,7 +211,7 @@ namespace Tests
 
             var objects = pullResponse.Pool;
 
-            Assert.Single(objects);
+            _ = Assert.Single(objects);
 
             var @object = objects[0];
 

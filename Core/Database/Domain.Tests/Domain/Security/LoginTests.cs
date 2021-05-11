@@ -22,16 +22,16 @@ namespace Allors.Database.Domain.Tests
         {
             var person = new PersonBuilder(this.Transaction).WithUserName("user").Build();
 
-            this.Transaction.Derive();
+            _ = this.Transaction.Derive();
 
             var login = new LoginBuilder(this.Transaction).WithProvider("MyProvider").WithKey("XXXYYYZZZ").Build();
             person.AddLogin(login);
 
-            this.Transaction.Derive();
+            _ = this.Transaction.Derive();
 
-            person.Delete();
+            _ = person.Delete();
 
-            this.Transaction.Derive();
+            _ = this.Transaction.Derive();
 
             Assert.True(login.Strategy.IsDeleted);
         }

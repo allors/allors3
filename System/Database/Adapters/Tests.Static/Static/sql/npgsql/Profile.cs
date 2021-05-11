@@ -64,9 +64,9 @@ namespace Allors.Database.Adapters.Npgsql
                 using (var command = connection.CreateCommand())
                 {
                     var sql = new StringBuilder();
-                    sql.Append("DROP TABLE IF EXISTS " + tableName);
+                    _ = sql.Append("DROP TABLE IF EXISTS " + tableName);
                     command.CommandText = sql.ToString();
-                    command.ExecuteNonQuery();
+                    _ = command.ExecuteNonQuery();
                 }
             }
         }
@@ -79,14 +79,14 @@ namespace Allors.Database.Adapters.Npgsql
                 using (var command = connection.CreateCommand())
                 {
                     var sql = new StringBuilder();
-                    sql.Append("SELECT COUNT(*)\n");
-                    sql.Append("FROM pg_class, pg_attribute, pg_index\n");
-                    sql.Append("WHERE pg_class.oid = pg_attribute.attrelid AND\n");
-                    sql.Append("pg_class.oid = pg_index.indrelid AND\n");
-                    sql.Append("pg_index.indkey[0] = pg_attribute.attnum\n");
+                    _ = sql.Append("SELECT COUNT(*)\n");
+                    _ = sql.Append("FROM pg_class, pg_attribute, pg_index\n");
+                    _ = sql.Append("WHERE pg_class.oid = pg_attribute.attrelid AND\n");
+                    _ = sql.Append("pg_class.oid = pg_index.indrelid AND\n");
+                    _ = sql.Append("pg_index.indkey[0] = pg_attribute.attnum\n");
 
-                    sql.Append("AND lower(pg_class.relname) = '" + table.ToLower() + "'\n");
-                    sql.Append("AND lower(pg_attribute.attname) = '" + column.ToLower() + "'\n");
+                    _ = sql.Append("AND lower(pg_class.relname) = '" + table.ToLower() + "'\n");
+                    _ = sql.Append("AND lower(pg_attribute.attname) = '" + column.ToLower() + "'\n");
 
                     command.CommandText = sql.ToString();
                     var count = (long)command.ExecuteScalar();

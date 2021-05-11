@@ -5,16 +5,15 @@
 
 namespace Allors.Workspace.Adapters.Local
 {
-    using System.Collections.Generic;
     using Meta;
     using Numbers;
 
-    public class SessionState
+    public class SessionOriginState
     {
         private readonly INumbers numbers;
         private readonly PropertyByObjectByPropertyType propertyByObjectByPropertyType;
 
-        public SessionState(INumbers numbers)
+        public SessionOriginState(INumbers numbers)
         {
             this.numbers = numbers;
             this.propertyByObjectByPropertyType = new PropertyByObjectByPropertyType(numbers);
@@ -55,7 +54,7 @@ namespace Allors.Workspace.Adapters.Local
             this.propertyByObjectByPropertyType.Set(association, roleType, newRole);
         }
 
-        public void SetCompositesRole(long association, IRoleType roleType, long[] newRole)
+        public void SetCompositesRole(long association, IRoleType roleType, object newRole)
         {
             if (newRole == null)
             {
@@ -169,6 +168,9 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        public IDictionary<IPropertyType, IDictionary<long, object>> Checkpoint() => this.propertyByObjectByPropertyType.Checkpoint();
+        internal void Checkpoint(ChangeSet changeSet)
+        {
+            changeSet.AddSessionStateChanges(this.propertyByObjectByPropertyType.Checkpoint());
+        }
     }
 }

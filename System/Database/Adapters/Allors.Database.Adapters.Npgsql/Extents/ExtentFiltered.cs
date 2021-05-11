@@ -159,8 +159,8 @@ namespace Allors.Database.Adapters.Npgsql
 
                 statement.Append(" FROM " + this.Mapping.TableNameForObjectByClass[rootClass] + " " + alias);
                 statement.AddJoins(rootClass, alias);
-                statement.AddWhere(rootClass, alias);
-                this.filter?.BuildWhere(statement, alias);
+                _ = statement.AddWhere(rootClass, alias);
+                _ = (this.filter?.BuildWhere(statement, alias));
             }
             else
             {
@@ -240,11 +240,11 @@ namespace Allors.Database.Adapters.Npgsql
                     statement.Append(" FROM " + this.Mapping.TableNameForObjectByClass[rootClass] + " " + alias);
 
                     statement.AddJoins(rootClass, alias);
-                    statement.AddWhere(rootClass, alias);
+                    _ = statement.AddWhere(rootClass, alias);
 
                     if (this.filter != null)
                     {
-                        this.filter.BuildWhere(statement, alias);
+                        _ = this.filter.BuildWhere(statement, alias);
                     }
                 }
             }
@@ -270,11 +270,11 @@ namespace Allors.Database.Adapters.Npgsql
                     statement.Append(" FROM " + this.Mapping.TableNameForObjectByClass[rootClass] + " " + alias);
 
                     statement.AddJoins(rootClass, alias);
-                    statement.AddWhere(rootClass, alias);
+                    _ = statement.AddWhere(rootClass, alias);
 
                     if (this.filter != null)
                     {
-                        this.filter.BuildWhere(statement, alias);
+                        _ = this.filter.BuildWhere(statement, alias);
                     }
 
                     if (i < this.objectType.DatabaseClasses.Count() - 1)
@@ -387,11 +387,11 @@ namespace Allors.Database.Adapters.Npgsql
                         statement.Append(" FROM " + this.Mapping.TableNameForObjectByClass[rootClass] + " " + alias);
 
                         statement.AddJoins(rootClass, alias);
-                        statement.AddWhere(rootClass, alias);
+                        _ = statement.AddWhere(rootClass, alias);
 
                         if (this.filter != null)
                         {
-                            this.filter.BuildWhere(statement, alias);
+                            _ = this.filter.BuildWhere(statement, alias);
                         }
 
                         if (i < this.objectType.DatabaseClasses.Count() - 1)

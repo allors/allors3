@@ -37,7 +37,7 @@ namespace Tests
         [Fact]
         public void SameWorkspace()
         {
-            this.SetUser("jane@example.com");
+            _ = this.SetUser("jane@example.com");
 
             var invokeRequest = new InvokeRequest
             {
@@ -61,7 +61,7 @@ namespace Tests
         [Fact]
         public void OtherWorkspace()
         {
-            this.SetUser("jane@example.com");
+            _ = this.SetUser("jane@example.com");
 
             var invokeRequest = new InvokeRequest
             {
@@ -81,7 +81,7 @@ namespace Tests
 
             Assert.True(invokeResponse.HasErrors);
 
-            Assert.Single(invokeResponse.AccessErrors);
+            _ = Assert.Single(invokeResponse.AccessErrors);
 
             var accessError = invokeResponse.AccessErrors[0];
 
@@ -91,7 +91,7 @@ namespace Tests
         [Fact]
         public void NoneWorkspace()
         {
-            this.SetUser("jane@example.com");
+            _ = this.SetUser("jane@example.com");
 
             var invokeRequest = new InvokeRequest
             {
@@ -111,7 +111,7 @@ namespace Tests
 
             Assert.True(invokeResponse.HasErrors);
 
-            Assert.Single(invokeResponse.AccessErrors);
+            _ = Assert.Single(invokeResponse.AccessErrors);
 
             var accessError = invokeResponse.AccessErrors[0];
 

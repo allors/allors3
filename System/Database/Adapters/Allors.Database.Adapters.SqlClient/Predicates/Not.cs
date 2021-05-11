@@ -26,11 +26,11 @@ namespace Allors.Database.Adapters.SqlClient
                     var role = extent.AssociationType.RoleType;
                     if (role.IsMany)
                     {
-                        this.AddContains(role, allorsObject);
+                        _ = this.AddContains(role, allorsObject);
                     }
                     else
                     {
-                        this.AddEquals(role, allorsObject);
+                        _ = this.AddEquals(role, allorsObject);
                     }
                 }
                 else
@@ -38,11 +38,11 @@ namespace Allors.Database.Adapters.SqlClient
                     var association = extent.RoleType.AssociationType;
                     if (association.IsMany)
                     {
-                        this.AddContains(association, allorsObject);
+                        _ = this.AddContains(association, allorsObject);
                     }
                     else
                     {
-                        this.AddEquals(association, allorsObject);
+                        _ = this.AddEquals(association, allorsObject);
                     }
                 }
             }
@@ -272,12 +272,12 @@ namespace Allors.Database.Adapters.SqlClient
             {
                 if (this.filter.IsNotFilter)
                 {
-                    this.filter.BuildWhere(statement, alias);
+                    _ = this.filter.BuildWhere(statement, alias);
                 }
                 else
                 {
                     statement.Append(" NOT (");
-                    this.filter.BuildWhere(statement, alias);
+                    _ = this.filter.BuildWhere(statement, alias);
                     statement.Append(")");
                 }
             }

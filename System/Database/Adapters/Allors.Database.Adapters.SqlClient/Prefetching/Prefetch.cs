@@ -66,7 +66,7 @@ namespace Allors.Database.Adapters.SqlClient
                                     var roles = this.prefetcher.Transaction.State.GetOrCreateRoles(reference);
                                     if (!roles.TryGetUnitRole(roleType, out var role))
                                     {
-                                        referencesWithoutCachedRole.Add(reference);
+                                        _ = referencesWithoutCachedRole.Add(reference);
                                     }
                                 }
 

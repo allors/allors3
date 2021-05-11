@@ -22,16 +22,16 @@ namespace Allors.Database.Configuration
 
         public void Clear(long accessControlId)
         {
-            this.permissionIdsByAccessControlId.TryRemove(accessControlId, out _);
+            _ = this.permissionIdsByAccessControlId.TryRemove(accessControlId, out _);
             foreach (var kvp in this.permissionIdsByAccessControlIdByWorkspaceName)
             {
-                kvp.Value.TryRemove(accessControlId, out _);
+                _ = kvp.Value.TryRemove(accessControlId, out _);
             }
         }
 
         public ISet<long> GetPermissions(long accessControlId)
         {
-            this.permissionIdsByAccessControlId.TryGetValue(accessControlId, out var permissionIds);
+            _ = this.permissionIdsByAccessControlId.TryGetValue(accessControlId, out var permissionIds);
             return permissionIds;
         }
 
@@ -39,7 +39,7 @@ namespace Allors.Database.Configuration
         
         public ISet<long> GetPermissions(string workspaceName, long accessControlId)
         {
-            this.EffectivePermissionIdsByAccessControlId(workspaceName).TryGetValue(accessControlId, out var permissionIds);
+            _ = this.EffectivePermissionIdsByAccessControlId(workspaceName).TryGetValue(accessControlId, out var permissionIds);
             return permissionIds;
         }
 

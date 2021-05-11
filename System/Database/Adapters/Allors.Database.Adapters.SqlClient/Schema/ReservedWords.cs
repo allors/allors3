@@ -102,12 +102,12 @@ namespace Allors.Database.Adapters.SqlClient
             Names = new HashSet<string>();
             foreach (var name in Current)
             {
-                Names.Add(name.ToLowerInvariant());
+                _ = Names.Add(name.ToLowerInvariant());
             }
 
             foreach (var name in Future)
             {
-                Names.Add(name.ToLowerInvariant());
+                _ = Names.Add(name.ToLowerInvariant());
             }
         }
     }

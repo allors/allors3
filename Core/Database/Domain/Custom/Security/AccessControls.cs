@@ -28,23 +28,23 @@ namespace Allors.Database.Domain
                 var roles = new Roles(this.Transaction);
                 var userGroups = new UserGroups(this.Transaction);
 
-                merge(SalesId, v =>
-                {
-                    v.Role = roles.Creator;
-                    v.AddSubjectGroup(userGroups.Sales);
-                });
+                _ = merge(SalesId, v =>
+                  {
+                      v.Role = roles.Creator;
+                      v.AddSubjectGroup(userGroups.Sales);
+                  });
 
-                merge(OperationsId, v =>
-                {
-                    v.Role = roles.Creator;
-                    v.AddSubjectGroup(userGroups.Operations);
-                });
+                _ = merge(OperationsId, v =>
+                  {
+                      v.Role = roles.Creator;
+                      v.AddSubjectGroup(userGroups.Operations);
+                  });
 
-                merge(ProcurementId, v =>
-                {
-                    v.Role = roles.Administrator;
-                    v.AddSubjectGroup(userGroups.Procurement);
-                });
+                _ = merge(ProcurementId, v =>
+                  {
+                      v.Role = roles.Administrator;
+                      v.AddSubjectGroup(userGroups.Procurement);
+                  });
             }
         }
     }

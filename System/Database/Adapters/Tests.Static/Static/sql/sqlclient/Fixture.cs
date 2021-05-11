@@ -17,9 +17,9 @@ namespace Allors.Database.Adapters.SqlClient
             connection.Open();
             using var command = connection.CreateCommand();
             command.CommandText = $"DROP DATABASE IF EXISTS {database}";
-            command.ExecuteNonQuery();
+            _ = command.ExecuteNonQuery();
             command.CommandText = $"CREATE DATABASE {database}";
-            command.ExecuteNonQuery();
+            _ = command.ExecuteNonQuery();
         }
     }
 }

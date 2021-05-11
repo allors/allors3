@@ -83,16 +83,16 @@ namespace Allors.Database.Domain
             if (this.ExistOperation)
             {
                 var operation = this.Operation;
-                toString.Append(operation);
+                _ = toString.Append(operation);
             }
             else
             {
-                toString.Append("[missing operation]");
+                _ = toString.Append("[missing operation]");
             }
 
-            toString.Append(" for ");
+            _ = toString.Append(" for ");
 
-            toString.Append(this.ExistOperandType ? this.OperandType.GetType().Name + ":" + this.OperandType : "[missing operand]");
+            _ = toString.Append(this.ExistOperandType ? this.OperandType.GetType().Name + ":" + this.OperandType : "[missing operand]");
 
             return toString.ToString();
         }

@@ -228,7 +228,7 @@ namespace Allors.Workspace.Adapters.Remote
                         var relationType = kvp.Key;
                         var role = kvp.Value;
 
-                        this.previousChangedRoleByRelationType.TryGetValue(relationType, out var previousRole);
+                        _ = this.previousChangedRoleByRelationType.TryGetValue(relationType, out var previousRole);
                         changeSet.DiffCookedWithCooked(this.strategy, relationType, role, previousRole);
                     }
                 }
@@ -373,19 +373,6 @@ namespace Allors.Workspace.Adapters.Remote
 
             var identities = (long[])this.databaseObject?.GetRole(roleType);
             return identities?.Contains(forRole.Id) == true;
-        }
-
-        internal IEnumerable<IRelationType> Diff()
-        {
-            if (this.changedRoleByRelationType == null)
-            {
-                yield break;
-            }
-
-            foreach (var kvp in this.changedRoleByRelationType)
-            {
-                yield return kvp.Key;
-            }
         }
     }
 }

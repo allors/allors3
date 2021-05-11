@@ -30,7 +30,7 @@ namespace Allors.Workspace.Data
                 else
                 {
                     var newNode = new Node(propertyType);
-                    currentNode.Add(newNode);
+                    _ = currentNode.Add(newNode);
                     currentNode = newNode;
                 }
             }

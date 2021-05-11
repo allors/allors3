@@ -751,7 +751,7 @@ namespace Allors.Database.Adapters
                     this.Population.Load(reader);
                 }
 
-                Assert.Single(notLoadedEventArgs);
+                _ = Assert.Single(notLoadedEventArgs);
                 var notLoadedEventArg = notLoadedEventArgs.First();
                 Assert.Equal(3, notLoadedEventArg.ObjectId);
                 Assert.Equal(new Guid("71000000000000000000000000000000"), notLoadedEventArg.ObjectTypeId);
@@ -814,7 +814,7 @@ namespace Allors.Database.Adapters
                     this.Population.Load(reader);
                 }
 
-                Assert.Single(notLoadedEventArgs);
+                _ = Assert.Single(notLoadedEventArgs);
                 var notLoadedEventArg = notLoadedEventArgs.First();
                 Assert.Equal(2, notLoadedEventArg.AssociationId);
                 Assert.Equal(new Guid("40000000000000000000000000000000"), notLoadedEventArg.RelationTypeId);
@@ -879,7 +879,7 @@ namespace Allors.Database.Adapters
                     this.Population.Load(reader);
                 }
 
-                Assert.Single(notLoadedEventArgs);
+                _ = Assert.Single(notLoadedEventArgs);
                 var notLoadedEventArg = notLoadedEventArgs.First();
                 Assert.Equal(99, notLoadedEventArg.AssociationId);
                 Assert.Equal(new Guid("87eb0d1973a74aaeaeed66dc9163233c"), notLoadedEventArg.RelationTypeId);
@@ -943,7 +943,7 @@ namespace Allors.Database.Adapters
                     this.Population.Load(reader);
                 }
 
-                Assert.Single(notLoadedEventArgs);
+                _ = Assert.Single(notLoadedEventArgs);
                 var notLoadedEventArg = notLoadedEventArgs.First();
                 Assert.Equal(2, notLoadedEventArg.AssociationId);
                 Assert.Equal(new Guid("30000000000000000000000000000000"), notLoadedEventArg.RelationTypeId);
@@ -956,10 +956,10 @@ namespace Allors.Database.Adapters
                     this.c1C = (C1)transaction.Instantiate(3);
                     this.c1D = (C1)transaction.Instantiate(4);
 
-                    Assert.Single(this.c1A.C1C1many2manies);
+                    _ = Assert.Single(this.c1A.C1C1many2manies);
                     Assert.Contains(this.c1B, this.c1A.C1C1many2manies);
                     Assert.Equal(this.c1D, this.c1C.C1C1one2one);
-                    Assert.Single(this.c1A.C1C1one2manies);
+                    _ = Assert.Single(this.c1A.C1C1one2manies);
                     Assert.Contains(this.c1D, this.c1A.C1C1one2manies);
                 }
             }
@@ -1012,7 +1012,7 @@ namespace Allors.Database.Adapters
                     this.Population.Load(reader);
                 }
 
-                Assert.Single(notLoadedEventArgs);
+                _ = Assert.Single(notLoadedEventArgs);
                 var notLoadedEventArg = notLoadedEventArgs.First();
                 Assert.Equal(99, notLoadedEventArg.AssociationId);
                 Assert.Equal(new Guid("2cd8b843-f1f5-413d-9d6d-0d2b9b3c5cf6"), notLoadedEventArg.RelationTypeId);
@@ -1025,10 +1025,10 @@ namespace Allors.Database.Adapters
                     this.c1C = (C1)transaction.Instantiate(3);
                     this.c1D = (C1)transaction.Instantiate(4);
 
-                    Assert.Single(this.c1A.C1C1many2manies);
+                    _ = Assert.Single(this.c1A.C1C1many2manies);
                     Assert.Contains(this.c1B, this.c1A.C1C1many2manies);
                     Assert.Equal(this.c1D, this.c1C.C1C1one2one);
-                    Assert.Single(this.c1A.C1C1one2manies);
+                    _ = Assert.Single(this.c1A.C1C1one2manies);
                     Assert.Contains(this.c1D, this.c1A.C1C1one2manies);
                 }
             }
@@ -1126,8 +1126,8 @@ namespace Allors.Database.Adapters
 
             Assert.Equal(2, c2ACopy.C1sWhereC1C2many2one.Count);
             Assert.Empty(c2BCopy.C1sWhereC1C2many2one);
-            Assert.Single(c2ACopy.C1sWhereC1C2many2many);
-            Assert.Single(c2BCopy.C1sWhereC1C2many2many);
+            _ = Assert.Single(c2ACopy.C1sWhereC1C2many2many);
+            _ = Assert.Single(c2BCopy.C1sWhereC1C2many2many);
 
             foreach (S1234 allorsObject in everyObject)
             {

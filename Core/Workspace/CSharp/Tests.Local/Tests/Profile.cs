@@ -52,7 +52,7 @@ namespace Tests.Workspace.Local
             var administratorRole = new Roles(session).Administrator;
             var acl = new AccessControlBuilder(session).WithRole(administratorRole).WithSubjectGroup(administrators).WithSecurityToken(defaultSecurityToken).Build();
 
-            session.Derive();
+            _ = session.Derive();
 
             new TestPopulation(session, "full").Apply();
 

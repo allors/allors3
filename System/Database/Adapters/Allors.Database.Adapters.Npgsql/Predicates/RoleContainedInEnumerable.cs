@@ -32,8 +32,8 @@ namespace Allors.Database.Adapters.Npgsql
             var inStatement = new StringBuilder("0");
             foreach (var inObject in this.enumerable)
             {
-                inStatement.Append(",");
-                inStatement.Append(inObject.Id);
+                _ = inStatement.Append(",");
+                _ = inStatement.Append(inObject.Id);
             }
 
             if ((this.role.IsMany && this.role.RelationType.AssociationType.IsMany) || !this.role.RelationType.ExistExclusiveDatabaseClasses)

@@ -56,9 +56,9 @@ namespace Allors.Database.Domain.Tests
             get
             {
                 var aclMock = new Mock<IAccessControlList>();
-                aclMock.Setup(acl => acl.CanRead(It.IsAny<IRoleType>())).Returns(true);
+                _ = aclMock.Setup(acl => acl.CanRead(It.IsAny<IRoleType>())).Returns(true);
                 var aclsMock = new Mock<IAccessControlLists>();
-                aclsMock.Setup(acls => acls[It.IsAny<IObject>()]).Returns(aclMock.Object);
+                _ = aclsMock.Setup(acls => acls[It.IsAny<IObject>()]).Returns(aclMock.Object);
                 return aclsMock;
             }
         }

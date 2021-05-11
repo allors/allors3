@@ -39,8 +39,8 @@ namespace Allors.Database.Domain
                 var instance = this.Transaction.Create<T>();
                 this.OnBuild(instance);
 
-                instance.OnBuild(x => x.WithBuilder(this));
-                instance.OnPostBuild();
+                _ = instance.OnBuild(x => x.WithBuilder(this));
+                _ = instance.OnPostBuild();
 
                 this.built = true;
 

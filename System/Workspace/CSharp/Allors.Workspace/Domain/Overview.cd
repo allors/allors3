@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Interface Name="Allors.Workspace.IWorkspace">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAABAAAAAAAAQAAEAAAAAAAAAAAABAAAA=</HashCode>
+      <FileName>Domain\IWorkspace.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Workspace.ISession">
+    <Position X="3.25" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABIBgBAAAAAAAAAAEAAAEAAAgAAAAAAiAA=</HashCode>
+      <FileName>Domain\ISession.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Workspace" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Allors.Workspace.IStrategy">
+    <Position X="9" Y="0.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAICABgAgAAABQBgEMIABAgAAAAAAAEAAAAAAAkIAAA=</HashCode>
+      <FileName>Domain\IStrategy.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Object" />
+      <Property Name="Session" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Allors.Workspace.IObject">
+    <Position X="12.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAA=</HashCode>
+      <FileName>Domain\IObject.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Strategy" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Allors.Workspace.IChangeSet">
+    <Position X="5.75" Y="3.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAwAAAAQAAAAAAAAAAAQAAAAAAAAAAAE=</HashCode>
+      <FileName>Domain\IChangeSet.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Session" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Created" />
+      <Property Name="Instantiated" />
+    </ShowAsCollectionAssociation>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -129,7 +129,7 @@ namespace Allors.Workspace.Adapters
         /// <returns>The .Net <see cref="Type"/>.</returns>
         public Type GetType(IObjectType objectType)
         {
-            this.typeByObjectType.TryGetValue(objectType, out var type);
+            _ = this.typeByObjectType.TryGetValue(objectType, out var type);
             return type;
         }
 

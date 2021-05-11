@@ -99,7 +99,7 @@ namespace Allors.Database.Domain
 
                 if (permission.OperandType == null)
                 {
-                    permission.Delete();
+                    _ = permission.Delete();
                 }
                 else
                 {
@@ -125,7 +125,7 @@ namespace Allors.Database.Domain
 
             this.OnPostSetup();
 
-            this.transaction.Derive();
+            _ = this.transaction.Derive();
         }
         
         public void Grant(Guid roleId, ObjectType objectType, params Operations[] operations)
@@ -139,15 +139,15 @@ namespace Allors.Database.Domain
                     switch (operation)
                     {
                         case Operations.Read:
-                            this.readPermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
+                            _ = this.readPermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
                             break;
 
                         case Operations.Write:
-                            this.writePermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
+                            _ = this.writePermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
                             break;
 
                         case Operations.Execute:
-                            this.executePermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
+                            _ = this.executePermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
                             break;
 
                         default:
@@ -176,15 +176,15 @@ namespace Allors.Database.Domain
                     switch (operation)
                     {
                         case Operations.Read:
-                            this.readPermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
+                            _ = this.readPermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
                             break;
 
                         case Operations.Write:
-                            this.writePermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
+                            _ = this.writePermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
                             break;
 
                         case Operations.Execute:
-                            this.executePermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
+                            _ = this.executePermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
                             break;
 
                         default:
@@ -217,15 +217,15 @@ namespace Allors.Database.Domain
                     switch (operation)
                     {
                         case Operations.Read:
-                            this.readPermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
+                            _ = this.readPermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
                             break;
 
                         case Operations.Write:
-                            this.writePermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
+                            _ = this.writePermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
                             break;
 
                         case Operations.Execute:
-                            this.executePermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
+                            _ = this.executePermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
                             break;
 
                         default:

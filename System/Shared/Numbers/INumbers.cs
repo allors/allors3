@@ -9,7 +9,7 @@ namespace Allors.Numbers
 
     public interface INumbers
     {
-        public object? From(IEnumerable<long> values);
+        public object? From(IEnumerable<long>? values);
 
         public object? From(params long[] values);
 

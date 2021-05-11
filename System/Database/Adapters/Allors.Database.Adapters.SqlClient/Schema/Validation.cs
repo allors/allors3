@@ -61,55 +61,55 @@ namespace Allors.Database.Adapters.SqlClient
 
                 if (this.MissingTableNames.Count > 0)
                 {
-                    message.Append("Missing Tables:\n");
+                    _ = message.Append("Missing Tables:\n");
                     foreach (var missingTable in this.MissingTableNames)
                     {
-                        message.Append("- " + missingTable + ":\n");
+                        _ = message.Append("- " + missingTable + ":\n");
                     }
                 }
 
                 if (this.InvalidTables.Count > 0)
                 {
-                    message.Append("Invalid Tables:\n");
+                    _ = message.Append("Invalid Tables:\n");
                     foreach (var invalidTable in this.InvalidTables)
                     {
-                        message.Append("- " + invalidTable.Name + ":\n");
+                        _ = message.Append("- " + invalidTable.Name + ":\n");
                     }
                 }
 
                 if (this.MissingTableTypeNames.Count > 0)
                 {
-                    message.Append("Missing Table Types:\n");
+                    _ = message.Append("Missing Table Types:\n");
                     foreach (var missingTableType in this.MissingTableTypeNames)
                     {
-                        message.Append("- " + missingTableType + ":\n");
+                        _ = message.Append("- " + missingTableType + ":\n");
                     }
                 }
 
                 if (this.InvalidTableTypes.Count > 0)
                 {
-                    message.Append("Invalid Table Types:\n");
+                    _ = message.Append("Invalid Table Types:\n");
                     foreach (var invalidTableType in this.InvalidTableTypes)
                     {
-                        message.Append("- " + invalidTableType.Name + ":\n");
+                        _ = message.Append("- " + invalidTableType.Name + ":\n");
                     }
                 }
 
                 if (this.MissingProcedureNames.Count > 0)
                 {
-                    message.Append("Missing Procedures:\n");
+                    _ = message.Append("Missing Procedures:\n");
                     foreach (var missingProcedure in this.MissingProcedureNames)
                     {
-                        message.Append("- " + missingProcedure + ":\n");
+                        _ = message.Append("- " + missingProcedure + ":\n");
                     }
                 }
 
                 if (this.InvalidProcedures.Count > 0)
                 {
-                    message.Append("Invalid Procedures:\n");
+                    _ = message.Append("Invalid Procedures:\n");
                     foreach (var invalidProcedure in this.InvalidProcedures)
                     {
-                        message.Append("- " + invalidProcedure.Name + ":\n");
+                        _ = message.Append("- " + invalidProcedure.Name + ":\n");
                     }
                 }
 
@@ -123,13 +123,13 @@ namespace Allors.Database.Adapters.SqlClient
             var objectsTable = this.Schema.GetTable(this.Database.Mapping.TableNameForObjects);
             if (objectsTable == null)
             {
-                this.MissingTableNames.Add(this.mapping.TableNameForObjects);
+                _ = this.MissingTableNames.Add(this.mapping.TableNameForObjects);
             }
             else
             {
                 if (objectsTable.ColumnByLowercaseColumnName.Count != 3)
                 {
-                    this.InvalidTables.Add(objectsTable);
+                    _ = this.InvalidTables.Add(objectsTable);
                 }
 
                 this.ValidateColumn(objectsTable, Mapping.ColumnNameForObject, Mapping.SqlTypeForObject);
@@ -145,7 +145,7 @@ namespace Allors.Database.Adapters.SqlClient
 
                 if (table == null)
                 {
-                    this.MissingTableNames.Add(tableName);
+                    _ = this.MissingTableNames.Add(tableName);
                 }
                 else
                 {
@@ -206,13 +206,13 @@ namespace Allors.Database.Adapters.SqlClient
 
                     if (table == null)
                     {
-                        this.MissingTableNames.Add(tableName);
+                        _ = this.MissingTableNames.Add(tableName);
                     }
                     else
                     {
                         if (table.ColumnByLowercaseColumnName.Count != 2)
                         {
-                            this.InvalidTables.Add(table);
+                            _ = this.InvalidTables.Add(table);
                         }
 
                         this.ValidateColumn(table, Mapping.ColumnNameForAssociation, Mapping.SqlTypeForObject);
@@ -229,13 +229,13 @@ namespace Allors.Database.Adapters.SqlClient
                 var tableType = this.Schema.GetTableType(this.mapping.TableTypeNameForObject);
                 if (tableType == null)
                 {
-                    this.MissingTableTypeNames.Add(this.mapping.TableTypeNameForObject);
+                    _ = this.MissingTableTypeNames.Add(this.mapping.TableTypeNameForObject);
                 }
                 else
                 {
                     if (tableType.ColumnByLowercaseColumnName.Count != 1)
                     {
-                        this.InvalidTableTypes.Add(tableType);
+                        _ = this.InvalidTableTypes.Add(tableType);
                     }
 
                     this.ValidateColumn(tableType, this.mapping.TableTypeColumnNameForObject, Mapping.SqlTypeForObject);
@@ -275,13 +275,13 @@ namespace Allors.Database.Adapters.SqlClient
 
                 if (procedure == null)
                 {
-                    this.MissingProcedureNames.Add(procedureName);
+                    _ = this.MissingProcedureNames.Add(procedureName);
                 }
                 else
                 {
                     if (!procedure.IsDefinitionCompatible(procedureDefinition))
                     {
-                        this.InvalidProcedures.Add(procedure);
+                        _ = this.InvalidProcedures.Add(procedure);
                     }
                 }
             }
@@ -294,13 +294,13 @@ namespace Allors.Database.Adapters.SqlClient
             var tableType = this.Schema.GetTableType(name);
             if (tableType == null)
             {
-                this.MissingTableTypeNames.Add(name);
+                _ = this.MissingTableTypeNames.Add(name);
             }
             else
             {
                 if (tableType.ColumnByLowercaseColumnName.Count != 2)
                 {
-                    this.InvalidTableTypes.Add(tableType);
+                    _ = this.InvalidTableTypes.Add(tableType);
                 }
 
                 this.ValidateColumn(tableType, this.mapping.TableTypeColumnNameForAssociation, Mapping.SqlTypeForObject);
@@ -315,7 +315,7 @@ namespace Allors.Database.Adapters.SqlClient
 
             if (objectColumn == null || !objectColumn.SqlType.Equals(sqlType))
             {
-                this.InvalidTables.Add(table);
+                _ = this.InvalidTables.Add(table);
             }
         }
 
@@ -325,7 +325,7 @@ namespace Allors.Database.Adapters.SqlClient
 
             if (objectColumn == null || !objectColumn.SqlType.Equals(sqlType))
             {
-                this.InvalidTableTypes.Add(tableType);
+                _ = this.InvalidTableTypes.Add(tableType);
             }
         }
     }

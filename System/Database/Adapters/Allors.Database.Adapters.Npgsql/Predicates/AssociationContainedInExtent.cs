@@ -33,7 +33,7 @@ namespace Allors.Database.Adapters.Npgsql
             {
                 statement.Append(" (" + this.association.SingularFullName + "_A." + Mapping.ColumnNameForAssociation + " IS NOT NULL AND ");
                 statement.Append(" " + this.association.SingularFullName + "_A." + Mapping.ColumnNameForAssociation + " IN (\n");
-                this.inExtent.BuildSql(inStatement);
+                _ = this.inExtent.BuildSql(inStatement);
                 statement.Append(" ))\n");
             }
             else
@@ -42,14 +42,14 @@ namespace Allors.Database.Adapters.Npgsql
                 {
                     statement.Append(" (" + alias + "." + schema.ColumnNameByRelationType[this.association.RelationType] + " IS NOT NULL AND ");
                     statement.Append(" " + alias + "." + schema.ColumnNameByRelationType[this.association.RelationType] + " IN (\n");
-                    this.inExtent.BuildSql(inStatement);
+                    _ = this.inExtent.BuildSql(inStatement);
                     statement.Append(" ))\n");
                 }
                 else
                 {
                     statement.Append(" (" + this.association.SingularFullName + "_A." + Mapping.ColumnNameForObject + " IS NOT NULL AND ");
                     statement.Append(" " + this.association.SingularFullName + "_A." + Mapping.ColumnNameForObject + " IN (\n");
-                    this.inExtent.BuildSql(inStatement);
+                    _ = this.inExtent.BuildSql(inStatement);
                     statement.Append(" ))\n");
                 }
             }

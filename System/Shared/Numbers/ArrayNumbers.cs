@@ -12,7 +12,7 @@ namespace Allors.Numbers
 
     public class ArrayNumbers : INumbers
     {
-        public object? From(IEnumerable<long> values)
+        public object? From(IEnumerable<long>? values)
         {
             switch (values)
             {

@@ -32,31 +32,31 @@ namespace Allors.Database.Domain
 
             var accessControls = new AccessControls(this.Transaction);
 
-            merge(InitialSecurityTokenId, v =>
-            {
-                if (setup.Config.SetupSecurity)
-                {
-                    v.AddAccessControl(accessControls.Creators);
-                    v.AddAccessControl(accessControls.GuestCreator);
-                }
-            });
+            _ = merge(InitialSecurityTokenId, v =>
+              {
+                  if (setup.Config.SetupSecurity)
+                  {
+                      v.AddAccessControl(accessControls.Creators);
+                      v.AddAccessControl(accessControls.GuestCreator);
+                  }
+              });
 
-            merge(DefaultSecurityTokenId, v =>
-            {
-                if (setup.Config.SetupSecurity)
-                {
-                    v.AddAccessControl(accessControls.Administrator);
-                    v.AddAccessControl(accessControls.Guest);
-                }
-            });
+            _ = merge(DefaultSecurityTokenId, v =>
+              {
+                  if (setup.Config.SetupSecurity)
+                  {
+                      v.AddAccessControl(accessControls.Administrator);
+                      v.AddAccessControl(accessControls.Guest);
+                  }
+              });
 
-            merge(AdministratorSecurityTokenId, v =>
-            {
-                if (setup.Config.SetupSecurity)
-                {
-                    v.AddAccessControl(accessControls.Administrator);
-                }
-            });
+            _ = merge(AdministratorSecurityTokenId, v =>
+              {
+                  if (setup.Config.SetupSecurity)
+                  {
+                      v.AddAccessControl(accessControls.Administrator);
+                  }
+              });
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Allors.Workspace
         IObjectFactory ObjectFactory { get; }
 
         IWorkspaceLifecycle Lifecycle { get; }
-        
+
         ISession CreateSession();
     }
 }

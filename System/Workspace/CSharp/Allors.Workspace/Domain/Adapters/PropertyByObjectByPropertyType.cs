@@ -83,7 +83,7 @@ namespace Allors.Workspace.Adapters
 
                         if (changedProperty == null)
                         {
-                            propertyByObject?.Remove(@object);
+                            _ = propertyByObject?.Remove(@object);
                         }
                         else
                         {
@@ -99,7 +99,7 @@ namespace Allors.Workspace.Adapters
 
                     if (propertyByObject?.Count == 0)
                     {
-                        this.propertyByObjectByPropertyType.Remove(propertyType);
+                        _ = this.propertyByObjectByPropertyType.Remove(propertyType);
                     }
                 }
 

@@ -27,7 +27,7 @@ namespace Allors.Database.Domain.Tests
 
             Extent<Organisation> organizations = organizationByName.Build(this.Transaction, arguments).ToArray();
 
-            Assert.Single(organizations);
+            _ = Assert.Single(organizations);
 
             var organization = organizations[0];
 

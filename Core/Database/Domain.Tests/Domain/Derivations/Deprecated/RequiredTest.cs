@@ -23,7 +23,7 @@ namespace Allors.Database.Domain.Tests
 
             var units = new UnitSampleBuilder(this.Transaction).Build();
 
-            this.Transaction.Derive(false);
+            _ = this.Transaction.Derive(false);
 
             var after = this.Transaction.Now();
 

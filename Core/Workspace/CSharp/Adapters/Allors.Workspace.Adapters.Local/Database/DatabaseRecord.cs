@@ -9,12 +9,12 @@ namespace Allors.Workspace.Adapters.Local
     using System.Linq;
     using Meta;
 
-    public class DatabaseObject
+    public class DatabaseRecord : IRecord
     {
         private readonly long[] deniedPermissions;
         private readonly AccessControl[] accessControls;
 
-        internal DatabaseObject(DatabaseAdapter databaseAdapter, long identity, IClass @class)
+        internal DatabaseRecord(DatabaseAdapter databaseAdapter, long identity, IClass @class)
         {
             this.DatabaseAdapter = databaseAdapter;
             this.Identity = identity;
@@ -22,7 +22,7 @@ namespace Allors.Workspace.Adapters.Local
             this.Version = 0;
         }
 
-        internal DatabaseObject(DatabaseAdapter databaseAdapter, long identity, IClass @class, long version, Dictionary<IRoleType, object> roleByRoleType, long[] deniedPermissions, AccessControl[] accessControls)
+        internal DatabaseRecord(DatabaseAdapter databaseAdapter, long identity, IClass @class, long version, Dictionary<IRoleType, object> roleByRoleType, long[] deniedPermissions, AccessControl[] accessControls)
         {
             this.DatabaseAdapter = databaseAdapter;
             this.Identity = identity;

@@ -129,7 +129,7 @@ namespace Allors.Database.Adapters.Npgsql
                             exclusiveRootClasses = new HashSet<IObjectType>();
                             foreach (var concreteClass in associationType.ObjectType.DatabaseClasses)
                             {
-                                exclusiveRootClasses.Add(concreteClass.ExclusiveDatabaseClass);
+                                _ = exclusiveRootClasses.Add(concreteClass.ExclusiveDatabaseClass);
                             }
 
                             exclusiverRootClassesByObjectType[associationType.ObjectType] = exclusiveRootClasses;

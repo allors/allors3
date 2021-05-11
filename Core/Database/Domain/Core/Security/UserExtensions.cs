@@ -74,12 +74,12 @@ namespace Allors.Database.Domain
 
         public static void CoreDelete(this User @this, DeletableDelete method)
         {
-            @this.OwnerAccessControl?.Delete();
-            @this.OwnerSecurityToken?.Delete();
+            _ = (@this.OwnerAccessControl?.Delete());
+            _ = (@this.OwnerSecurityToken?.Delete());
 
             foreach (Login login in @this.Logins)
             {
-                login.Delete();
+                _ = login.Delete();
             }
         }
     }

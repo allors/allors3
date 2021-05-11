@@ -140,7 +140,7 @@ namespace Allors.Database.Adapters.Npgsql
             get
             {
                 Strategy strategy = null;
-                this.weakReference?.TryGetTarget(out strategy);
+                _ = (this.weakReference?.TryGetTarget(out strategy));
                 return strategy;
             }
         }
@@ -166,7 +166,7 @@ namespace Allors.Database.Adapters.Npgsql
             var strategy = this.Target;
             if (strategy != null)
             {
-                referencesWithStrategy.Add(this);
+                _ = referencesWithStrategy.Add(this);
                 strategy.Release();
             }
         }
@@ -188,7 +188,7 @@ namespace Allors.Database.Adapters.Npgsql
             var strategy = this.Target;
             if (strategy != null)
             {
-                referencesWithStrategy.Add(this);
+                _ = referencesWithStrategy.Add(this);
                 strategy.Release();
             }
         }

@@ -39,7 +39,7 @@ namespace Allors.Database.Adapters.SqlClient
 
         internal override string BuildSql(ExtentStatement statement)
         {
-            this.first.BuildSql(statement);
+            _ = this.first.BuildSql(statement);
 
             switch (this.operationType)
             {
@@ -57,7 +57,7 @@ namespace Allors.Database.Adapters.SqlClient
             }
 
             statement.Append("(");
-            this.second.BuildSql(statement);
+            _ = this.second.BuildSql(statement);
             statement.Append(")");
 
             return null;

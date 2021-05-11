@@ -124,7 +124,7 @@ namespace Allors.Database.Adapters
                 var roleByAssociation = roleByAssociationEntry.Value;
                 foreach (var objectToInvalidate in objectsToInvalidate)
                 {
-                    roleByAssociation.Remove(objectToInvalidate);
+                    _ = roleByAssociation.Remove(objectToInvalidate);
                 }
             }
 
@@ -133,7 +133,7 @@ namespace Allors.Database.Adapters
                 var roleByAssociation = roleByAssociationEntry.Value;
                 foreach (var objectToInvalidate in objectsToInvalidate)
                 {
-                    roleByAssociation.Remove(objectToInvalidate);
+                    _ = roleByAssociation.Remove(objectToInvalidate);
                 }
             }
 
@@ -142,7 +142,7 @@ namespace Allors.Database.Adapters
                 var roleByAssociation = roleByAssociationEntry.Value;
                 foreach (var objectToInvalidate in objectsToInvalidate)
                 {
-                    roleByAssociation.Remove(objectToInvalidate);
+                    _ = roleByAssociation.Remove(objectToInvalidate);
                 }
             }
         }

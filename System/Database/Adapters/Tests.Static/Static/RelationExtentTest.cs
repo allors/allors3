@@ -68,15 +68,15 @@ namespace Allors.Database.Adapters
 
                 Assert.Equal(2, managedCompanies.Count);
 
-                managedCompanies.Filter.AddLike(m.Named.Name, "%ne");
+                _ = managedCompanies.Filter.AddLike(m.Named.Name, "%ne");
 
-                Assert.Single(managedCompanies);
+                _ = Assert.Single(managedCompanies);
 
                 managedCompanies = john.CompaniesWhereManager;
 
                 Assert.Equal(2, managedCompanies.Count);
 
-                managedCompanies.AddSort(m.Named.Index, SortDirection.Descending);
+                _ = managedCompanies.AddSort(m.Named.Index, SortDirection.Descending);
 
                 Assert.Equal(2, managedCompanies.Count);
                 Assert.Equal(acme, managedCompanies[0]);
@@ -91,15 +91,15 @@ namespace Allors.Database.Adapters
 
                 Extent janesCompanies = jane.CompaniesWhereOwner;
 
-                janesCompanies.Filter.AddLike(m.Named.Name, "%ne");
+                _ = janesCompanies.Filter.AddLike(m.Named.Name, "%ne");
 
-                Assert.Single(janesCompanies);
+                _ = Assert.Single(janesCompanies);
 
                 janesCompanies = jane.CompaniesWhereOwner;
 
                 Assert.Equal(2, janesCompanies.Count);
 
-                janesCompanies.AddSort(m.Named.Index);
+                _ = janesCompanies.AddSort(m.Named.Index);
 
                 Assert.Equal(2, janesCompanies.Count);
                 Assert.Equal(acne, janesCompanies[0]);
@@ -135,15 +135,15 @@ namespace Allors.Database.Adapters
 
                 Assert.Equal(2, employees.Count);
 
-                employees.Filter.AddLike(m.Named.Name, "Ja%");
+                _ = employees.Filter.AddLike(m.Named.Name, "Ja%");
 
-                Assert.Single(employees);
+                _ = Assert.Single(employees);
 
                 employees = acme.Employees;
 
                 Assert.Equal(2, employees.Count);
 
-                employees.AddSort(m.Named.Index, SortDirection.Descending);
+                _ = employees.AddSort(m.Named.Index, SortDirection.Descending);
 
                 Assert.Equal(2, employees.Count);
                 Assert.Equal(john, employees[0]);
@@ -159,15 +159,15 @@ namespace Allors.Database.Adapters
                 Extent acmeOwners = acme.Owners;
                 Extent acneOwners = acme.Owners;
 
-                acmeOwners.Filter.AddLike(m.Named.Name, "Ja%");
+                _ = acmeOwners.Filter.AddLike(m.Named.Name, "Ja%");
 
-                Assert.Single(acmeOwners);
+                _ = Assert.Single(acmeOwners);
 
                 acmeOwners = acme.Owners;
 
                 Assert.Equal(2, acmeOwners.Count);
 
-                acmeOwners.AddSort(m.Named.Index);
+                _ = acmeOwners.AddSort(m.Named.Index);
 
                 Assert.Equal(2, acmeOwners.Count);
                 Assert.Equal(jane, acmeOwners[0]);

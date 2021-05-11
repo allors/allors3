@@ -110,7 +110,7 @@ namespace Allors.Database.Protocol.Json
                         transaction.Prefetch(prefetcher, @object);
                     }
 
-                    this.objects.Add(@object);
+                    _ = this.objects.Add(@object);
                     this.objectByName[name] = @object;
                     tree?.Resolve(@object, this.AccessControlLists, this.objects);
                 }
@@ -129,7 +129,7 @@ namespace Allors.Database.Protocol.Json
         {
             if (collection?.Count > 0)
             {
-                this.collectionsByName.TryGetValue(name, out var existingCollection);
+                _ = this.collectionsByName.TryGetValue(name, out var existingCollection);
 
                 var filteredCollection = collection.Where(v => this.AllowedClasses != null && this.AllowedClasses.Contains(v.Strategy.Class));
 

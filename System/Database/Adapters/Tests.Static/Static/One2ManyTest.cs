@@ -69,8 +69,8 @@ namespace Allors.Database.Adapters
                         from.AddC1C1one2many(to1); // Add Twice
 
                         mark();
-                        Assert.Single(from.C1C1one2manies);
-                        Assert.Single(from.C1C1one2manies);
+                        _ = Assert.Single(from.C1C1one2manies);
+                        _ = Assert.Single(from.C1C1one2manies);
                         Assert.Contains(to1, from.C1C1one2manies);
                         Assert.Contains(to1, from.C1C1one2manies);
                         Assert.Equal(from, to1.C1WhereC1C1one2many);
@@ -190,8 +190,8 @@ namespace Allors.Database.Adapters
                         from.RemoveC1C1one2many(to2); // Delete Twice
 
                         mark();
-                        Assert.Single(from.C1C1one2manies);
-                        Assert.Single(from.C1C1one2manies);
+                        _ = Assert.Single(from.C1C1one2manies);
+                        _ = Assert.Single(from.C1C1one2manies);
                         Assert.Contains(to1, from.C1C1one2manies);
                         Assert.Contains(to1, from.C1C1one2manies);
                         Assert.Equal(from, to1.C1WhereC1C1one2many);
@@ -378,7 +378,7 @@ namespace Allors.Database.Adapters
                         from.AddC1C1one2many(to1);
 
                         mark();
-                        Assert.Single(from.C1C1one2manies);
+                        _ = Assert.Single(from.C1C1one2manies);
                         Assert.Contains(to1, from.C1C1one2manies);
                         Assert.Equal(from, to1.C1WhereC1C1one2many);
 
@@ -386,7 +386,7 @@ namespace Allors.Database.Adapters
                         fromAnother.RemoveC1C1one2many(to1);
 
                         mark();
-                        Assert.Single(from.C1C1one2manies);
+                        _ = Assert.Single(from.C1C1one2manies);
                         Assert.Contains(to1, from.C1C1one2manies);
                         Assert.Equal(from, to1.C1WhereC1C1one2many);
 
@@ -396,7 +396,7 @@ namespace Allors.Database.Adapters
                         from.C1C1one2manies = to1Array;
 
                         mark();
-                        Assert.Single(from.C1C1one2manies);
+                        _ = Assert.Single(from.C1C1one2manies);
                         Assert.Contains(to1, from.C1C1one2manies);
                         Assert.Equal(from, to1.C1WhereC1C1one2many);
 
@@ -418,7 +418,7 @@ namespace Allors.Database.Adapters
                         from.C1C1one2manies = to2Array;
 
                         mark();
-                        Assert.Single(from.C1C1one2manies);
+                        _ = Assert.Single(from.C1C1one2manies);
                         Assert.Contains(to2, from.C1C1one2manies);
                         Assert.Null(to1.C1WhereC1C1one2many);
                         Assert.Equal(from, to2.C1WhereC1C1one2many);
@@ -439,7 +439,7 @@ namespace Allors.Database.Adapters
 
                         mark();
                         Assert.Empty(from.C1C1one2manies);
-                        Assert.Single(fromAnother.C1C1one2manies);
+                        _ = Assert.Single(fromAnother.C1C1one2manies);
                         Assert.Contains(to1, fromAnother.C1C1one2manies);
                         Assert.Equal(fromAnother, to1.C1WhereC1C1one2many);
 
@@ -451,8 +451,8 @@ namespace Allors.Database.Adapters
                         fromAnother.AddC1C1one2many(to1);
 
                         mark();
-                        Assert.Single(from.C1C1one2manies);
-                        Assert.Single(fromAnother.C1C1one2manies);
+                        _ = Assert.Single(from.C1C1one2manies);
+                        _ = Assert.Single(fromAnother.C1C1one2manies);
                         Assert.Contains(to2, from.C1C1one2manies);
                         Assert.Contains(to1, fromAnother.C1C1one2manies);
                         Assert.Equal(from, to2.C1WhereC1C1one2many);
@@ -462,11 +462,11 @@ namespace Allors.Database.Adapters
 
                         from.C1C1one2manies = to1Array;
                         mark();
-                        Assert.Single(from.C1C1one2manies); // TODO: Add this to others
+                        _ = Assert.Single(from.C1C1one2manies); // TODO: Add this to others
                         fromAnother.C1C1one2manies = to1Array;
                         mark();
                         Assert.Empty(from.C1C1one2manies);
-                        Assert.Single(fromAnother.C1C1one2manies);
+                        _ = Assert.Single(fromAnother.C1C1one2manies);
                         Assert.Contains(to1, fromAnother.C1C1one2manies);
                         Assert.Equal(fromAnother, to1.C1WhereC1C1one2many);
 
@@ -476,10 +476,10 @@ namespace Allors.Database.Adapters
                         fromAnother.AddC1C1one2many(to2);
 
                         mark();
-                        Assert.Single(from.C1C1one2manies);
+                        _ = Assert.Single(from.C1C1one2manies);
                         Assert.Contains(to1, from.C1C1one2manies);
                         Assert.Equal(from, to1.C1WhereC1C1one2many);
-                        Assert.Single(fromAnother.C1C1one2manies);
+                        _ = Assert.Single(fromAnother.C1C1one2manies);
                         Assert.Contains(to2, fromAnother.C1C1one2manies);
                         Assert.Equal(fromAnother, to2.C1WhereC1C1one2many);
 
@@ -490,10 +490,10 @@ namespace Allors.Database.Adapters
                         fromAnother.C1C1one2manies = to2Array;
 
                         mark();
-                        Assert.Single(from.C1C1one2manies);
+                        _ = Assert.Single(from.C1C1one2manies);
                         Assert.Contains(to1, from.C1C1one2manies);
                         Assert.Equal(from, to1.C1WhereC1C1one2many);
-                        Assert.Single(fromAnother.C1C1one2manies);
+                        _ = Assert.Single(fromAnother.C1C1one2manies);
                         Assert.Contains(to2, fromAnother.C1C1one2manies);
                         Assert.Equal(fromAnother, to2.C1WhereC1C1one2many);
 
@@ -509,7 +509,7 @@ namespace Allors.Database.Adapters
                         from.AddC1C1one2many(to1);
                         from.AddC1C1one2many(null);
                         mark();
-                        Assert.Single(from.C1C1one2manies);
+                        _ = Assert.Single(from.C1C1one2manies);
                         Assert.Contains(to1, from.C1C1one2manies);
                         Assert.Equal(from, to1.C1WhereC1C1one2many);
 
@@ -522,7 +522,7 @@ namespace Allors.Database.Adapters
                         from.AddC1C1one2many(to1);
                         from.RemoveC1C1one2many(null);
                         mark();
-                        Assert.Single(from.C1C1one2manies);
+                        _ = Assert.Single(from.C1C1one2manies);
                         Assert.Contains(to1, from.C1C1one2manies);
                         Assert.Equal(from, to1.C1WhereC1C1one2many);
 
@@ -649,7 +649,7 @@ namespace Allors.Database.Adapters
                         from.Strategy.SetRole(m.C1.C1C1one2manies, to1Array);
 
                         mark();
-                        Assert.Single(from.C1C1one2manies);
+                        _ = Assert.Single(from.C1C1one2manies);
                         Assert.Contains(to1Array[0], from.C1C1one2manies);
                         Assert.Equal(from, to1Array[0].C1WhereC1C1one2many);
 
@@ -660,7 +660,7 @@ namespace Allors.Database.Adapters
                         from.AddC1C1one2many(to1);
 
                         mark();
-                        Assert.Single(from.Strategy.GetCompositeRoles(m.C1.C1C1one2manies).ToArray());
+                        _ = Assert.Single(from.Strategy.GetCompositeRoles(m.C1.C1C1one2manies).ToArray());
                         Assert.Equal(to1, from.Strategy.GetCompositeRoles(m.C1.C1C1one2manies).ToArray()[0]);
 
                         // Extent<T>.ToArray()
@@ -670,7 +670,7 @@ namespace Allors.Database.Adapters
                         from.AddC1C1one2many(to1);
 
                         mark();
-                        Assert.Single(from.C1C1one2manies.ToArray());
+                        _ = Assert.Single(from.C1C1one2manies.ToArray());
                         Assert.Equal(to1, from.C1C1one2manies.ToArray()[0]);
                     }
                 }
@@ -710,7 +710,7 @@ namespace Allors.Database.Adapters
 
                     mark();
 
-                    Assert.Single(from.C1C2one2manies);
+                    _ = Assert.Single(from.C1C2one2manies);
                     Assert.Contains(to1, from.C1C2one2manies);
                     Assert.Equal(from, to1.C1WhereC1C2one2many);
                     Assert.Null(to2.C1WhereC1C2one2many);
@@ -792,7 +792,7 @@ namespace Allors.Database.Adapters
 
                     mark();
 
-                    Assert.Single(from.C1C2one2manies);
+                    _ = Assert.Single(from.C1C2one2manies);
                     Assert.Contains(to1, from.C1C2one2manies);
                     Assert.Equal(from, to1.C1WhereC1C2one2many);
                     Assert.Null(to2.C1WhereC1C2one2many);
@@ -820,7 +820,7 @@ namespace Allors.Database.Adapters
 
                     mark();
 
-                    Assert.Single(from.C1C2one2manies);
+                    _ = Assert.Single(from.C1C2one2manies);
                     Assert.Contains(to1, from.C1C2one2manies);
                     Assert.Equal(from, to1.C1WhereC1C2one2many);
 
@@ -831,7 +831,7 @@ namespace Allors.Database.Adapters
 
                     mark();
 
-                    Assert.Single(from.C1C2one2manies);
+                    _ = Assert.Single(from.C1C2one2manies);
                     Assert.Contains(to1, from.C1C2one2manies);
                     Assert.Equal(from, to1.C1WhereC1C2one2many);
 
@@ -855,7 +855,7 @@ namespace Allors.Database.Adapters
 
                     mark();
 
-                    Assert.Single(from.C1C2one2manies);
+                    _ = Assert.Single(from.C1C2one2manies);
                     Assert.Contains(to2, from.C1C2one2manies);
                     Assert.Null(to1.C1WhereC1C2one2many);
                     Assert.Equal(from, to2.C1WhereC1C2one2many);
@@ -878,7 +878,7 @@ namespace Allors.Database.Adapters
                     mark();
 
                     Assert.Empty(from.C1C2one2manies);
-                    Assert.Single(fromAnother.C1C2one2manies);
+                    _ = Assert.Single(fromAnother.C1C2one2manies);
                     Assert.Contains(to1, fromAnother.C1C2one2manies);
                     Assert.Equal(fromAnother, to1.C1WhereC1C2one2many);
 
@@ -890,7 +890,7 @@ namespace Allors.Database.Adapters
                     mark();
 
                     Assert.Empty(from.C1C2one2manies);
-                    Assert.Single(fromAnother.C1C2one2manies);
+                    _ = Assert.Single(fromAnother.C1C2one2manies);
                     Assert.Contains(to1, fromAnother.C1C2one2manies);
                     Assert.Equal(fromAnother, to1.C1WhereC1C2one2many);
 
@@ -901,10 +901,10 @@ namespace Allors.Database.Adapters
 
                     mark();
 
-                    Assert.Single(from.C1C2one2manies);
+                    _ = Assert.Single(from.C1C2one2manies);
                     Assert.Contains(to1, from.C1C2one2manies);
                     Assert.Equal(from, to1.C1WhereC1C2one2many);
-                    Assert.Single(fromAnother.C1C2one2manies);
+                    _ = Assert.Single(fromAnother.C1C2one2manies);
                     Assert.Contains(to2, fromAnother.C1C2one2manies);
                     Assert.Equal(fromAnother, to2.C1WhereC1C2one2many);
 
@@ -916,10 +916,10 @@ namespace Allors.Database.Adapters
 
                     mark();
 
-                    Assert.Single(from.C1C2one2manies);
+                    _ = Assert.Single(from.C1C2one2manies);
                     Assert.Contains(to1, from.C1C2one2manies);
                     Assert.Equal(from, to1.C1WhereC1C2one2many);
-                    Assert.Single(fromAnother.C1C2one2manies);
+                    _ = Assert.Single(fromAnother.C1C2one2manies);
                     Assert.Contains(to2, fromAnother.C1C2one2manies);
                     Assert.Equal(fromAnother, to2.C1WhereC1C2one2many);
 
@@ -935,7 +935,7 @@ namespace Allors.Database.Adapters
                     from.AddC1C2one2many(to1);
                     from.AddC1C2one2many(null);
                     mark();
-                    Assert.Single(from.C1C2one2manies);
+                    _ = Assert.Single(from.C1C2one2manies);
                     Assert.Contains(to1, from.C1C2one2manies);
                     Assert.Equal(from, to1.C1WhereC1C2one2many);
 
@@ -948,7 +948,7 @@ namespace Allors.Database.Adapters
                     from.AddC1C2one2many(to1);
                     from.RemoveC1C2one2many(null);
                     mark();
-                    Assert.Single(from.C1C2one2manies);
+                    _ = Assert.Single(from.C1C2one2manies);
                     Assert.Contains(to1, from.C1C2one2manies);
                     Assert.Equal(from, to1.C1WhereC1C2one2many);
 
@@ -993,7 +993,7 @@ namespace Allors.Database.Adapters
                     from.AddC1C2one2many(to1);
 
                     mark();
-                    Assert.Single(from.Strategy.GetCompositeRoles(m.C1.C1C2one2manies).ToArray());
+                    _ = Assert.Single(from.Strategy.GetCompositeRoles(m.C1.C1C2one2manies).ToArray());
                     Assert.Equal(to1, from.Strategy.GetCompositeRoles(m.C1.C1C2one2manies).ToArray()[0]);
 
                     // Extent<T>.ToArray()
@@ -1003,8 +1003,8 @@ namespace Allors.Database.Adapters
                     from.AddC1C2one2many(to1);
 
                     mark();
-                    Assert.Single(from.C1C2one2manies.ToArray());
-                    Assert.Single(from.C1C2one2manies.ToArray());
+                    _ = Assert.Single(from.C1C2one2manies.ToArray());
+                    _ = Assert.Single(from.C1C2one2manies.ToArray());
                     Assert.Equal(to1, from.C1C2one2manies.ToArray()[0]);
                 }
             }
@@ -1043,7 +1043,7 @@ namespace Allors.Database.Adapters
 
                     mark();
 
-                    Assert.Single(from.C1I1one2manies);
+                    _ = Assert.Single(from.C1I1one2manies);
                     Assert.Contains(to1, from.C1I1one2manies);
                     Assert.Equal(from, to1.C1WhereC1I1one2many);
                     Assert.Null(to2.C1WhereC1I1one2many);
@@ -1125,7 +1125,7 @@ namespace Allors.Database.Adapters
 
                     mark();
 
-                    Assert.Single(from.C1I1one2manies);
+                    _ = Assert.Single(from.C1I1one2manies);
                     Assert.Contains(to1, from.C1I1one2manies);
                     Assert.Equal(from, to1.C1WhereC1I1one2many);
                     Assert.Null(to2.C1WhereC1I1one2many);
@@ -1153,7 +1153,7 @@ namespace Allors.Database.Adapters
 
                     mark();
 
-                    Assert.Single(from.C1I1one2manies);
+                    _ = Assert.Single(from.C1I1one2manies);
                     Assert.Contains(to1, from.C1I1one2manies);
                     Assert.Equal(from, to1.C1WhereC1I1one2many);
 
@@ -1164,7 +1164,7 @@ namespace Allors.Database.Adapters
 
                     mark();
 
-                    Assert.Single(from.C1I1one2manies);
+                    _ = Assert.Single(from.C1I1one2manies);
                     Assert.Contains(to1, from.C1I1one2manies);
                     Assert.Equal(from, to1.C1WhereC1I1one2many);
 
@@ -1188,7 +1188,7 @@ namespace Allors.Database.Adapters
 
                     mark();
 
-                    Assert.Single(from.C1I1one2manies);
+                    _ = Assert.Single(from.C1I1one2manies);
                     Assert.Contains(to2, from.C1I1one2manies);
                     Assert.Null(to1.C1WhereC1I1one2many);
                     Assert.Equal(from, to2.C1WhereC1I1one2many);
@@ -1211,7 +1211,7 @@ namespace Allors.Database.Adapters
                     mark();
 
                     Assert.Empty(from.C1I1one2manies);
-                    Assert.Single(fromAnother.C1I1one2manies);
+                    _ = Assert.Single(fromAnother.C1I1one2manies);
                     Assert.Contains(to1, fromAnother.C1I1one2manies);
                     Assert.Equal(fromAnother, to1.C1WhereC1I1one2many);
 
@@ -1223,7 +1223,7 @@ namespace Allors.Database.Adapters
                     mark();
 
                     Assert.Empty(from.C1I1one2manies);
-                    Assert.Single(fromAnother.C1I1one2manies);
+                    _ = Assert.Single(fromAnother.C1I1one2manies);
                     Assert.Contains(to1, fromAnother.C1I1one2manies);
                     Assert.Equal(fromAnother, to1.C1WhereC1I1one2many);
 
@@ -1234,10 +1234,10 @@ namespace Allors.Database.Adapters
 
                     mark();
 
-                    Assert.Single(from.C1I1one2manies);
+                    _ = Assert.Single(from.C1I1one2manies);
                     Assert.Contains(to1, from.C1I1one2manies);
                     Assert.Equal(from, to1.C1WhereC1I1one2many);
-                    Assert.Single(fromAnother.C1I1one2manies);
+                    _ = Assert.Single(fromAnother.C1I1one2manies);
                     Assert.Contains(to2, fromAnother.C1I1one2manies);
                     Assert.Equal(fromAnother, to2.C1WhereC1I1one2many);
 
@@ -1249,10 +1249,10 @@ namespace Allors.Database.Adapters
 
                     mark();
 
-                    Assert.Single(from.C1I1one2manies);
+                    _ = Assert.Single(from.C1I1one2manies);
                     Assert.Contains(to1, from.C1I1one2manies);
                     Assert.Equal(from, to1.C1WhereC1I1one2many);
-                    Assert.Single(fromAnother.C1I1one2manies);
+                    _ = Assert.Single(fromAnother.C1I1one2manies);
                     Assert.Contains(to2, fromAnother.C1I1one2manies);
                     Assert.Equal(fromAnother, to2.C1WhereC1I1one2many);
 
@@ -1268,7 +1268,7 @@ namespace Allors.Database.Adapters
                     from.AddC1I1one2many(to1);
                     from.AddC1I1one2many(null);
                     mark();
-                    Assert.Single(from.C1I1one2manies);
+                    _ = Assert.Single(from.C1I1one2manies);
                     Assert.Contains(to1, from.C1I1one2manies);
                     Assert.Equal(from, to1.C1WhereC1I1one2many);
 
@@ -1281,7 +1281,7 @@ namespace Allors.Database.Adapters
                     from.AddC1I1one2many(to1);
                     from.RemoveC1I1one2many(null);
                     mark();
-                    Assert.Single(from.C1I1one2manies);
+                    _ = Assert.Single(from.C1I1one2manies);
                     Assert.Contains(to1, from.C1I1one2manies);
                     Assert.Equal(from, to1.C1WhereC1I1one2many);
 
@@ -1327,7 +1327,7 @@ namespace Allors.Database.Adapters
                     from.AddC1I1one2many(to1);
 
                     mark();
-                    Assert.Single(from.Strategy.GetCompositeRoles(m.C1.C1I1one2manies).ToArray());
+                    _ = Assert.Single(from.Strategy.GetCompositeRoles(m.C1.C1I1one2manies).ToArray());
                     Assert.Equal(to1, from.Strategy.GetCompositeRoles(m.C1.C1I1one2manies).ToArray()[0]);
 
                     // Extent<T>.ToArray()
@@ -1337,8 +1337,8 @@ namespace Allors.Database.Adapters
                     from.AddC1I1one2many(to1);
 
                     mark();
-                    Assert.Single(from.C1I1one2manies.ToArray());
-                    Assert.Single(from.C1I1one2manies.ToArray());
+                    _ = Assert.Single(from.C1I1one2manies.ToArray());
+                    _ = Assert.Single(from.C1I1one2manies.ToArray());
                     Assert.Equal(to1, from.C1I1one2manies.ToArray()[0]);
                 }
             }
@@ -1375,7 +1375,7 @@ namespace Allors.Database.Adapters
                     from.AddC1I2one2many(to1); // Add Twice
 
                     mark();
-                    Assert.Single(from.C1I2one2manies);
+                    _ = Assert.Single(from.C1I2one2manies);
                     Assert.Contains(to1, from.C1I2one2manies);
                     Assert.Equal(from, to1.C1WhereC1I2one2many);
                     Assert.Null(to2.C1WhereC1I2one2many);
@@ -1451,7 +1451,7 @@ namespace Allors.Database.Adapters
                     from.RemoveC1I2one2many(to2); // Delete Twice
 
                     mark();
-                    Assert.Single(from.C1I2one2manies);
+                    _ = Assert.Single(from.C1I2one2manies);
                     Assert.Contains(to1, from.C1I2one2manies);
                     Assert.Equal(from, to1.C1WhereC1I2one2many);
                     Assert.Null(to2.C1WhereC1I2one2many);
@@ -1477,7 +1477,7 @@ namespace Allors.Database.Adapters
                     from.AddC1I2one2many(to1);
 
                     mark();
-                    Assert.Single(from.C1I2one2manies);
+                    _ = Assert.Single(from.C1I2one2manies);
                     Assert.Contains(to1, from.C1I2one2manies);
                     Assert.Equal(from, to1.C1WhereC1I2one2many);
 
@@ -1487,7 +1487,7 @@ namespace Allors.Database.Adapters
                     from.C1I2one2manies = to1Array;
 
                     mark();
-                    Assert.Single(from.C1I2one2manies);
+                    _ = Assert.Single(from.C1I2one2manies);
                     Assert.Contains(to1, from.C1I2one2manies);
                     Assert.Equal(from, to1.C1WhereC1I2one2many);
 
@@ -1509,7 +1509,7 @@ namespace Allors.Database.Adapters
                     from.C1I2one2manies = to2Array;
 
                     mark();
-                    Assert.Single(from.C1I2one2manies);
+                    _ = Assert.Single(from.C1I2one2manies);
                     Assert.Contains(to2, from.C1I2one2manies);
                     Assert.Null(to1.C1WhereC1I2one2many);
                     Assert.Equal(from, to2.C1WhereC1I2one2many);
@@ -1530,7 +1530,7 @@ namespace Allors.Database.Adapters
 
                     mark();
                     Assert.Empty(from.C1I2one2manies);
-                    Assert.Single(fromAnother.C1I2one2manies);
+                    _ = Assert.Single(fromAnother.C1I2one2manies);
                     Assert.Contains(to1, fromAnother.C1I2one2manies);
                     Assert.Equal(fromAnother, to1.C1WhereC1I2one2many);
 
@@ -1541,7 +1541,7 @@ namespace Allors.Database.Adapters
 
                     mark();
                     Assert.Empty(from.C1I2one2manies);
-                    Assert.Single(fromAnother.C1I2one2manies);
+                    _ = Assert.Single(fromAnother.C1I2one2manies);
                     Assert.Contains(to1, fromAnother.C1I2one2manies);
                     Assert.Equal(fromAnother, to1.C1WhereC1I2one2many);
 
@@ -1551,10 +1551,10 @@ namespace Allors.Database.Adapters
                     fromAnother.AddC1I2one2many(to2);
 
                     mark();
-                    Assert.Single(from.C1I2one2manies);
+                    _ = Assert.Single(from.C1I2one2manies);
                     Assert.Contains(to1, from.C1I2one2manies);
                     Assert.Equal(from, to1.C1WhereC1I2one2many);
-                    Assert.Single(fromAnother.C1I2one2manies);
+                    _ = Assert.Single(fromAnother.C1I2one2manies);
                     Assert.Contains(to2, fromAnother.C1I2one2manies);
                     Assert.Equal(fromAnother, to2.C1WhereC1I2one2many);
 
@@ -1565,10 +1565,10 @@ namespace Allors.Database.Adapters
                     fromAnother.C1I2one2manies = to2Array;
 
                     mark();
-                    Assert.Single(from.C1I2one2manies);
+                    _ = Assert.Single(from.C1I2one2manies);
                     Assert.Contains(to1, from.C1I2one2manies);
                     Assert.Equal(from, to1.C1WhereC1I2one2many);
-                    Assert.Single(fromAnother.C1I2one2manies);
+                    _ = Assert.Single(fromAnother.C1I2one2manies);
                     Assert.Contains(to2, fromAnother.C1I2one2manies);
                     Assert.Equal(fromAnother, to2.C1WhereC1I2one2many);
 
@@ -1584,7 +1584,7 @@ namespace Allors.Database.Adapters
                     from.AddC1I2one2many(to1);
                     from.AddC1I2one2many(null);
                     mark();
-                    Assert.Single(from.C1I2one2manies);
+                    _ = Assert.Single(from.C1I2one2manies);
                     Assert.Contains(to1, from.C1I2one2manies);
                     Assert.Equal(from, to1.C1WhereC1I2one2many);
 
@@ -1597,7 +1597,7 @@ namespace Allors.Database.Adapters
                     from.AddC1I2one2many(to1);
                     from.RemoveC1I2one2many(null);
                     mark();
-                    Assert.Single(from.C1I2one2manies);
+                    _ = Assert.Single(from.C1I2one2manies);
                     Assert.Contains(to1, from.C1I2one2manies);
                     Assert.Equal(from, to1.C1WhereC1I2one2many);
 
@@ -1643,7 +1643,7 @@ namespace Allors.Database.Adapters
                     from.AddC1I2one2many(to1);
 
                     mark();
-                    Assert.Single(from.Strategy.GetCompositeRoles(m.C1.C1I2one2manies).ToArray());
+                    _ = Assert.Single(from.Strategy.GetCompositeRoles(m.C1.C1I2one2manies).ToArray());
                     Assert.Equal(to1, from.Strategy.GetCompositeRoles(m.C1.C1I2one2manies).ToArray()[0]);
 
                     // Extent<T>.ToArray()
@@ -1653,8 +1653,8 @@ namespace Allors.Database.Adapters
                     from.AddC1I2one2many(to1);
 
                     mark();
-                    Assert.Single(from.C1I2one2manies.ToArray());
-                    Assert.Single(from.C1I2one2manies.ToArray());
+                    _ = Assert.Single(from.C1I2one2manies.ToArray());
+                    _ = Assert.Single(from.C1I2one2manies.ToArray());
                     Assert.Equal(to1, from.C1I2one2manies.ToArray()[0]);
                 }
             }
@@ -1691,7 +1691,7 @@ namespace Allors.Database.Adapters
                     from.AddC3C4one2many(to1); // Add Twice
 
                     mark();
-                    Assert.Single(from.C3C4one2manies);
+                    _ = Assert.Single(from.C3C4one2manies);
                     Assert.Contains(to1, from.C3C4one2manies);
                     Assert.Equal(from, to1.C3WhereC3C4one2many);
                     Assert.Null(to2.C3WhereC3C4one2many);
@@ -1767,7 +1767,7 @@ namespace Allors.Database.Adapters
                     from.RemoveC3C4one2many(to2); // Delete Twice
 
                     mark();
-                    Assert.Single(from.C3C4one2manies);
+                    _ = Assert.Single(from.C3C4one2manies);
                     Assert.Contains(to1, from.C3C4one2manies);
                     Assert.Equal(from, to1.C3WhereC3C4one2many);
                     Assert.Null(to2.C3WhereC3C4one2many);
@@ -1793,7 +1793,7 @@ namespace Allors.Database.Adapters
                     from.AddC3C4one2many(to1);
 
                     mark();
-                    Assert.Single(from.C3C4one2manies);
+                    _ = Assert.Single(from.C3C4one2manies);
                     Assert.Contains(to1, from.C3C4one2manies);
                     Assert.Equal(from, to1.C3WhereC3C4one2many);
 
@@ -1803,7 +1803,7 @@ namespace Allors.Database.Adapters
                     from.C3C4one2manies = to1Array;
 
                     mark();
-                    Assert.Single(from.C3C4one2manies);
+                    _ = Assert.Single(from.C3C4one2manies);
                     Assert.Contains(to1, from.C3C4one2manies);
                     Assert.Equal(from, to1.C3WhereC3C4one2many);
 
@@ -1825,7 +1825,7 @@ namespace Allors.Database.Adapters
                     from.C3C4one2manies = to2Array;
 
                     mark();
-                    Assert.Single(from.C3C4one2manies);
+                    _ = Assert.Single(from.C3C4one2manies);
                     Assert.Contains(to2, from.C3C4one2manies);
                     Assert.Null(to1.C3WhereC3C4one2many);
                     Assert.Equal(from, to2.C3WhereC3C4one2many);
@@ -1846,7 +1846,7 @@ namespace Allors.Database.Adapters
 
                     mark();
                     Assert.Empty(from.C3C4one2manies);
-                    Assert.Single(fromAnother.C3C4one2manies);
+                    _ = Assert.Single(fromAnother.C3C4one2manies);
                     Assert.Contains(to1, fromAnother.C3C4one2manies);
                     Assert.Equal(fromAnother, to1.C3WhereC3C4one2many);
 
@@ -1857,7 +1857,7 @@ namespace Allors.Database.Adapters
 
                     mark();
                     Assert.Empty(from.C3C4one2manies);
-                    Assert.Single(fromAnother.C3C4one2manies);
+                    _ = Assert.Single(fromAnother.C3C4one2manies);
                     Assert.Contains(to1, fromAnother.C3C4one2manies);
                     Assert.Equal(fromAnother, to1.C3WhereC3C4one2many);
 
@@ -1867,10 +1867,10 @@ namespace Allors.Database.Adapters
                     fromAnother.AddC3C4one2many(to2);
 
                     mark();
-                    Assert.Single(from.C3C4one2manies);
+                    _ = Assert.Single(from.C3C4one2manies);
                     Assert.Contains(to1, from.C3C4one2manies);
                     Assert.Equal(from, to1.C3WhereC3C4one2many);
-                    Assert.Single(fromAnother.C3C4one2manies);
+                    _ = Assert.Single(fromAnother.C3C4one2manies);
                     Assert.Contains(to2, fromAnother.C3C4one2manies);
                     Assert.Equal(fromAnother, to2.C3WhereC3C4one2many);
 
@@ -1881,10 +1881,10 @@ namespace Allors.Database.Adapters
                     fromAnother.C3C4one2manies = to2Array;
 
                     mark();
-                    Assert.Single(from.C3C4one2manies);
+                    _ = Assert.Single(from.C3C4one2manies);
                     Assert.Contains(to1, from.C3C4one2manies);
                     Assert.Equal(from, to1.C3WhereC3C4one2many);
-                    Assert.Single(fromAnother.C3C4one2manies);
+                    _ = Assert.Single(fromAnother.C3C4one2manies);
                     Assert.Contains(to2, fromAnother.C3C4one2manies);
                     Assert.Equal(fromAnother, to2.C3WhereC3C4one2many);
 
@@ -1899,7 +1899,7 @@ namespace Allors.Database.Adapters
                     from.AddC3C4one2many(to1);
                     from.AddC3C4one2many(null);
                     mark();
-                    Assert.Single(from.C3C4one2manies);
+                    _ = Assert.Single(from.C3C4one2manies);
                     Assert.Contains(to1, from.C3C4one2manies);
                     Assert.Equal(from, to1.C3WhereC3C4one2many);
 
@@ -1912,7 +1912,7 @@ namespace Allors.Database.Adapters
                     from.AddC3C4one2many(to1);
                     from.RemoveC3C4one2many(null);
                     mark();
-                    Assert.Single(from.C3C4one2manies);
+                    _ = Assert.Single(from.C3C4one2manies);
                     Assert.Contains(to1, from.C3C4one2manies);
                     Assert.Equal(from, to1.C3WhereC3C4one2many);
 
@@ -1958,7 +1958,7 @@ namespace Allors.Database.Adapters
                     from.AddC3C4one2many(to1);
 
                     mark();
-                    Assert.Single(from.Strategy.GetCompositeRoles(m.C3.C3C4one2manies).ToArray());
+                    _ = Assert.Single(from.Strategy.GetCompositeRoles(m.C3.C3C4one2manies).ToArray());
                     Assert.Equal(to1, from.Strategy.GetCompositeRoles(m.C3.C3C4one2manies).ToArray()[0]);
 
                     // Extent<T>.ToArray()
@@ -1968,8 +1968,8 @@ namespace Allors.Database.Adapters
                     from.AddC3C4one2many(to1);
 
                     mark();
-                    Assert.Single(from.C3C4one2manies.ToArray());
-                    Assert.Single(from.C3C4one2manies.ToArray());
+                    _ = Assert.Single(from.C3C4one2manies.ToArray());
+                    _ = Assert.Single(from.C3C4one2manies.ToArray());
                     Assert.Equal(to1, from.C3C4one2manies.ToArray()[0]);
                 }
             }
@@ -2014,8 +2014,8 @@ namespace Allors.Database.Adapters
                         from.AddI1I12one2many(to1); // Add Twice
 
                         mark();
-                        Assert.Single(from.I1I12one2manies);
-                        Assert.Single(from.I1I12one2manies);
+                        _ = Assert.Single(from.I1I12one2manies);
+                        _ = Assert.Single(from.I1I12one2manies);
                         Assert.Contains(to1, from.I1I12one2manies);
                         Assert.Contains(to1, from.I1I12one2manies);
                         Assert.Equal(from, to1.I1WhereI1I12one2many);
@@ -2135,8 +2135,8 @@ namespace Allors.Database.Adapters
                         from.RemoveI1I12one2many(to2); // Delete Twice
 
                         mark();
-                        Assert.Single(from.I1I12one2manies);
-                        Assert.Single(from.I1I12one2manies);
+                        _ = Assert.Single(from.I1I12one2manies);
+                        _ = Assert.Single(from.I1I12one2manies);
                         Assert.Contains(to1, from.I1I12one2manies);
                         Assert.Contains(to1, from.I1I12one2manies);
                         Assert.Equal(from, to1.I1WhereI1I12one2many);
@@ -2327,7 +2327,7 @@ namespace Allors.Database.Adapters
                         from.AddI1I12one2many(to1);
 
                         mark();
-                        Assert.Single(from.I1I12one2manies);
+                        _ = Assert.Single(from.I1I12one2manies);
                         Assert.Contains(to1, from.I1I12one2manies);
                         Assert.Equal(from, to1.I1WhereI1I12one2many);
 
@@ -2335,7 +2335,7 @@ namespace Allors.Database.Adapters
                         fromAnother.RemoveI1I12one2many(to1);
 
                         mark();
-                        Assert.Single(from.I1I12one2manies);
+                        _ = Assert.Single(from.I1I12one2manies);
                         Assert.Contains(to1, from.I1I12one2manies);
                         Assert.Equal(from, to1.I1WhereI1I12one2many);
 
@@ -2345,7 +2345,7 @@ namespace Allors.Database.Adapters
                         from.I1I12one2manies = to1Array;
 
                         mark();
-                        Assert.Single(from.I1I12one2manies);
+                        _ = Assert.Single(from.I1I12one2manies);
                         Assert.Contains(to1, from.I1I12one2manies);
                         Assert.Equal(from, to1.I1WhereI1I12one2many);
 
@@ -2367,7 +2367,7 @@ namespace Allors.Database.Adapters
                         from.I1I12one2manies = to2Array;
 
                         mark();
-                        Assert.Single(from.I1I12one2manies);
+                        _ = Assert.Single(from.I1I12one2manies);
                         Assert.Contains(to2, from.I1I12one2manies);
                         Assert.Null(to1.I1WhereI1I12one2many);
                         Assert.Equal(from, to2.I1WhereI1I12one2many);
@@ -2388,7 +2388,7 @@ namespace Allors.Database.Adapters
 
                         mark();
                         Assert.Empty(from.I1I12one2manies);
-                        Assert.Single(fromAnother.I1I12one2manies);
+                        _ = Assert.Single(fromAnother.I1I12one2manies);
                         Assert.Contains(to1, fromAnother.I1I12one2manies);
                         Assert.Equal(fromAnother, to1.I1WhereI1I12one2many);
 
@@ -2400,8 +2400,8 @@ namespace Allors.Database.Adapters
                         fromAnother.AddI1I12one2many(to1);
 
                         mark();
-                        Assert.Single(from.I1I12one2manies);
-                        Assert.Single(fromAnother.I1I12one2manies);
+                        _ = Assert.Single(from.I1I12one2manies);
+                        _ = Assert.Single(fromAnother.I1I12one2manies);
                         Assert.Contains(to2, from.I1I12one2manies);
                         Assert.Contains(to1, fromAnother.I1I12one2manies);
                         Assert.Equal(from, to2.I1WhereI1I12one2many);
@@ -2414,7 +2414,7 @@ namespace Allors.Database.Adapters
 
                         mark();
                         Assert.Empty(from.I1I12one2manies);
-                        Assert.Single(fromAnother.I1I12one2manies);
+                        _ = Assert.Single(fromAnother.I1I12one2manies);
                         Assert.Contains(to1, fromAnother.I1I12one2manies);
                         Assert.Equal(fromAnother, to1.I1WhereI1I12one2many);
 
@@ -2424,10 +2424,10 @@ namespace Allors.Database.Adapters
                         fromAnother.AddI1I12one2many(to2);
 
                         mark();
-                        Assert.Single(from.I1I12one2manies);
+                        _ = Assert.Single(from.I1I12one2manies);
                         Assert.Contains(to1, from.I1I12one2manies);
                         Assert.Equal(from, to1.I1WhereI1I12one2many);
-                        Assert.Single(fromAnother.I1I12one2manies);
+                        _ = Assert.Single(fromAnother.I1I12one2manies);
                         Assert.Contains(to2, fromAnother.I1I12one2manies);
                         Assert.Equal(fromAnother, to2.I1WhereI1I12one2many);
 
@@ -2438,10 +2438,10 @@ namespace Allors.Database.Adapters
                         fromAnother.I1I12one2manies = to2Array;
 
                         mark();
-                        Assert.Single(from.I1I12one2manies);
+                        _ = Assert.Single(from.I1I12one2manies);
                         Assert.Contains(to1, from.I1I12one2manies);
                         Assert.Equal(from, to1.I1WhereI1I12one2many);
-                        Assert.Single(fromAnother.I1I12one2manies);
+                        _ = Assert.Single(fromAnother.I1I12one2manies);
                         Assert.Contains(to2, fromAnother.I1I12one2manies);
                         Assert.Equal(fromAnother, to2.I1WhereI1I12one2many);
 
@@ -2456,7 +2456,7 @@ namespace Allors.Database.Adapters
                         from.AddI1I12one2many(to1);
                         from.AddI1I12one2many(null);
                         mark();
-                        Assert.Single(from.I1I12one2manies);
+                        _ = Assert.Single(from.I1I12one2manies);
                         Assert.Contains(to1, from.I1I12one2manies);
                         Assert.Equal(from, to1.I1WhereI1I12one2many);
 
@@ -2469,7 +2469,7 @@ namespace Allors.Database.Adapters
                         from.AddI1I12one2many(to1);
                         from.RemoveI1I12one2many(null);
                         mark();
-                        Assert.Single(from.I1I12one2manies);
+                        _ = Assert.Single(from.I1I12one2manies);
                         Assert.Contains(to1, from.I1I12one2manies);
                         Assert.Equal(from, to1.I1WhereI1I12one2many);
 
@@ -2515,7 +2515,7 @@ namespace Allors.Database.Adapters
                         from.AddI1I12one2many(to1);
 
                         mark();
-                        Assert.Single(from.Strategy.GetCompositeRoles(m.I1.I1I12one2manies).ToArray());
+                        _ = Assert.Single(from.Strategy.GetCompositeRoles(m.I1.I1I12one2manies).ToArray());
                         Assert.Equal(to1, from.Strategy.GetCompositeRoles(m.I1.I1I12one2manies).ToArray()[0]);
 
                         // Extent<T>.ToArray() I12->C1
@@ -2525,7 +2525,7 @@ namespace Allors.Database.Adapters
                         from.AddI1I12one2many(to1);
 
                         mark();
-                        Assert.Single(from.I1I12one2manies.ToArray());
+                        _ = Assert.Single(from.I1I12one2manies.ToArray());
                         Assert.Equal(to1, from.I1I12one2manies.ToArray()[0]);
 
                         // Extent.ToArray() I12->C2
@@ -2535,7 +2535,7 @@ namespace Allors.Database.Adapters
                         from.AddI1I12one2many(to3);
 
                         mark();
-                        Assert.Single(from.Strategy.GetCompositeRoles(m.I1.I1I12one2manies).ToArray());
+                        _ = Assert.Single(from.Strategy.GetCompositeRoles(m.I1.I1I12one2manies).ToArray());
                         Assert.Equal(to3, from.Strategy.GetCompositeRoles(m.I1.I1I12one2manies).ToArray()[0]);
 
                         // Extent<T>.ToArray() I12->C2
@@ -2545,7 +2545,7 @@ namespace Allors.Database.Adapters
                         from.AddI1I12one2many(to3);
 
                         mark();
-                        Assert.Single(from.I1I12one2manies.ToArray());
+                        _ = Assert.Single(from.I1I12one2manies.ToArray());
                         Assert.Equal(to3, from.I1I12one2manies.ToArray()[0]);
                     }
                 }
@@ -2583,7 +2583,7 @@ namespace Allors.Database.Adapters
                     from.AddI1I1one2many(to1); // Add Twice
 
                     mark();
-                    Assert.Single(from.I1I1one2manies);
+                    _ = Assert.Single(from.I1I1one2manies);
                     Assert.Contains(to1, from.I1I1one2manies);
                     Assert.Equal(from, to1.I1WhereI1I1one2many);
                     Assert.Null(to2.I1WhereI1I1one2many);
@@ -2659,7 +2659,7 @@ namespace Allors.Database.Adapters
                     from.RemoveI1I1one2many(to2); // Delete Twice
 
                     mark();
-                    Assert.Single(from.I1I1one2manies);
+                    _ = Assert.Single(from.I1I1one2manies);
                     Assert.Contains(to1, from.I1I1one2manies);
                     Assert.Equal(from, to1.I1WhereI1I1one2many);
                     Assert.Null(to2.I1WhereI1I1one2many);
@@ -2685,7 +2685,7 @@ namespace Allors.Database.Adapters
                     from.AddI1I1one2many(to1);
 
                     mark();
-                    Assert.Single(from.I1I1one2manies);
+                    _ = Assert.Single(from.I1I1one2manies);
                     Assert.Contains(to1, from.I1I1one2manies);
                     Assert.Equal(from, to1.I1WhereI1I1one2many);
 
@@ -2695,7 +2695,7 @@ namespace Allors.Database.Adapters
                     from.I1I1one2manies = to1Array;
 
                     mark();
-                    Assert.Single(from.I1I1one2manies);
+                    _ = Assert.Single(from.I1I1one2manies);
                     Assert.Contains(to1, from.I1I1one2manies);
                     Assert.Equal(from, to1.I1WhereI1I1one2many);
 
@@ -2717,7 +2717,7 @@ namespace Allors.Database.Adapters
                     from.I1I1one2manies = to2Array;
 
                     mark();
-                    Assert.Single(from.I1I1one2manies);
+                    _ = Assert.Single(from.I1I1one2manies);
                     Assert.Contains(to2, from.I1I1one2manies);
                     Assert.Null(to1.I1WhereI1I1one2many);
                     Assert.Equal(from, to2.I1WhereI1I1one2many);
@@ -2738,7 +2738,7 @@ namespace Allors.Database.Adapters
 
                     mark();
                     Assert.Empty(from.I1I1one2manies);
-                    Assert.Single(fromAnother.I1I1one2manies);
+                    _ = Assert.Single(fromAnother.I1I1one2manies);
                     Assert.Contains(to1, fromAnother.I1I1one2manies);
                     Assert.Equal(fromAnother, to1.I1WhereI1I1one2many);
 
@@ -2749,7 +2749,7 @@ namespace Allors.Database.Adapters
 
                     mark();
                     Assert.Empty(from.I1I1one2manies);
-                    Assert.Single(fromAnother.I1I1one2manies);
+                    _ = Assert.Single(fromAnother.I1I1one2manies);
                     Assert.Contains(to1, fromAnother.I1I1one2manies);
                     Assert.Equal(fromAnother, to1.I1WhereI1I1one2many);
 
@@ -2759,10 +2759,10 @@ namespace Allors.Database.Adapters
                     fromAnother.AddI1I1one2many(to2);
 
                     mark();
-                    Assert.Single(from.I1I1one2manies);
+                    _ = Assert.Single(from.I1I1one2manies);
                     Assert.Contains(to1, from.I1I1one2manies);
                     Assert.Equal(from, to1.I1WhereI1I1one2many);
-                    Assert.Single(fromAnother.I1I1one2manies);
+                    _ = Assert.Single(fromAnother.I1I1one2manies);
                     Assert.Contains(to2, fromAnother.I1I1one2manies);
                     Assert.Equal(fromAnother, to2.I1WhereI1I1one2many);
 
@@ -2773,10 +2773,10 @@ namespace Allors.Database.Adapters
                     fromAnother.I1I1one2manies = to2Array;
 
                     mark();
-                    Assert.Single(from.I1I1one2manies);
+                    _ = Assert.Single(from.I1I1one2manies);
                     Assert.Contains(to1, from.I1I1one2manies);
                     Assert.Equal(from, to1.I1WhereI1I1one2many);
-                    Assert.Single(fromAnother.I1I1one2manies);
+                    _ = Assert.Single(fromAnother.I1I1one2manies);
                     Assert.Contains(to2, fromAnother.I1I1one2manies);
                     Assert.Equal(fromAnother, to2.I1WhereI1I1one2many);
 
@@ -2791,7 +2791,7 @@ namespace Allors.Database.Adapters
                     from.AddI1I1one2many(to1);
                     from.AddI1I1one2many(null);
                     mark();
-                    Assert.Single(from.I1I1one2manies);
+                    _ = Assert.Single(from.I1I1one2manies);
                     Assert.Contains(to1, from.I1I1one2manies);
                     Assert.Equal(from, to1.I1WhereI1I1one2many);
 
@@ -2804,7 +2804,7 @@ namespace Allors.Database.Adapters
                     from.AddI1I1one2many(to1);
                     from.RemoveI1I1one2many(null);
                     mark();
-                    Assert.Single(from.I1I1one2manies);
+                    _ = Assert.Single(from.I1I1one2manies);
                     Assert.Contains(to1, from.I1I1one2manies);
                     Assert.Equal(from, to1.I1WhereI1I1one2many);
 
@@ -2863,7 +2863,7 @@ namespace Allors.Database.Adapters
                     from.AddI1I1one2many(to1);
 
                     mark();
-                    Assert.Single(from.Strategy.GetCompositeRoles(m.I1.I1I1one2manies).ToArray());
+                    _ = Assert.Single(from.Strategy.GetCompositeRoles(m.I1.I1I1one2manies).ToArray());
                     Assert.Equal(to1, from.Strategy.GetCompositeRoles(m.I1.I1I1one2manies).ToArray()[0]);
 
                     // Extent<T>.ToArray()
@@ -2873,7 +2873,7 @@ namespace Allors.Database.Adapters
                     from.AddI1I1one2many(to1);
 
                     mark();
-                    Assert.Single(from.I1I1one2manies.ToArray());
+                    _ = Assert.Single(from.I1I1one2manies.ToArray());
                     Assert.Equal(to1, from.I1I1one2manies.ToArray()[0]);
                 }
             }
@@ -2910,7 +2910,7 @@ namespace Allors.Database.Adapters
                     from.AddI1I2one2many(to1); // Add Twice
 
                     mark();
-                    Assert.Single(from.I1I2one2manies);
+                    _ = Assert.Single(from.I1I2one2manies);
                     Assert.Contains(to1, from.I1I2one2manies);
                     Assert.Equal(from, to1.I1WhereI1I2one2many);
                     Assert.Null(to2.I1WhereI1I2one2many);
@@ -2986,7 +2986,7 @@ namespace Allors.Database.Adapters
                     from.RemoveI1I2one2many(to2); // Delete Twice
 
                     mark();
-                    Assert.Single(from.I1I2one2manies);
+                    _ = Assert.Single(from.I1I2one2manies);
                     Assert.Contains(to1, from.I1I2one2manies);
                     Assert.Equal(from, to1.I1WhereI1I2one2many);
                     Assert.Null(to2.I1WhereI1I2one2many);
@@ -3012,7 +3012,7 @@ namespace Allors.Database.Adapters
                     from.AddI1I2one2many(to1);
 
                     mark();
-                    Assert.Single(from.I1I2one2manies);
+                    _ = Assert.Single(from.I1I2one2manies);
                     Assert.Contains(to1, from.I1I2one2manies);
                     Assert.Equal(from, to1.I1WhereI1I2one2many);
 
@@ -3022,7 +3022,7 @@ namespace Allors.Database.Adapters
                     from.I1I2one2manies = to1Array;
 
                     mark();
-                    Assert.Single(from.I1I2one2manies);
+                    _ = Assert.Single(from.I1I2one2manies);
                     Assert.Contains(to1, from.I1I2one2manies);
                     Assert.Equal(from, to1.I1WhereI1I2one2many);
 
@@ -3044,7 +3044,7 @@ namespace Allors.Database.Adapters
                     from.I1I2one2manies = to2Array;
 
                     mark();
-                    Assert.Single(from.I1I2one2manies);
+                    _ = Assert.Single(from.I1I2one2manies);
                     Assert.Contains(to2, from.I1I2one2manies);
                     Assert.Null(to1.I1WhereI1I2one2many);
                     Assert.Equal(from, to2.I1WhereI1I2one2many);
@@ -3065,7 +3065,7 @@ namespace Allors.Database.Adapters
 
                     mark();
                     Assert.Empty(from.I1I2one2manies);
-                    Assert.Single(fromAnother.I1I2one2manies);
+                    _ = Assert.Single(fromAnother.I1I2one2manies);
                     Assert.Contains(to1, fromAnother.I1I2one2manies);
                     Assert.Equal(fromAnother, to1.I1WhereI1I2one2many);
 
@@ -3076,7 +3076,7 @@ namespace Allors.Database.Adapters
 
                     mark();
                     Assert.Empty(from.I1I2one2manies);
-                    Assert.Single(fromAnother.I1I2one2manies);
+                    _ = Assert.Single(fromAnother.I1I2one2manies);
                     Assert.Contains(to1, fromAnother.I1I2one2manies);
                     Assert.Equal(fromAnother, to1.I1WhereI1I2one2many);
 
@@ -3086,10 +3086,10 @@ namespace Allors.Database.Adapters
                     fromAnother.AddI1I2one2many(to2);
 
                     mark();
-                    Assert.Single(from.I1I2one2manies);
+                    _ = Assert.Single(from.I1I2one2manies);
                     Assert.Contains(to1, from.I1I2one2manies);
                     Assert.Equal(from, to1.I1WhereI1I2one2many);
-                    Assert.Single(fromAnother.I1I2one2manies);
+                    _ = Assert.Single(fromAnother.I1I2one2manies);
                     Assert.Contains(to2, fromAnother.I1I2one2manies);
                     Assert.Equal(fromAnother, to2.I1WhereI1I2one2many);
 
@@ -3100,10 +3100,10 @@ namespace Allors.Database.Adapters
                     fromAnother.I1I2one2manies = to2Array;
 
                     mark();
-                    Assert.Single(from.I1I2one2manies);
+                    _ = Assert.Single(from.I1I2one2manies);
                     Assert.Contains(to1, from.I1I2one2manies);
                     Assert.Equal(from, to1.I1WhereI1I2one2many);
-                    Assert.Single(fromAnother.I1I2one2manies);
+                    _ = Assert.Single(fromAnother.I1I2one2manies);
                     Assert.Contains(to2, fromAnother.I1I2one2manies);
                     Assert.Equal(fromAnother, to2.I1WhereI1I2one2many);
 
@@ -3118,7 +3118,7 @@ namespace Allors.Database.Adapters
                     from.AddI1I2one2many(to1);
                     from.AddI1I2one2many(null);
                     mark();
-                    Assert.Single(from.I1I2one2manies);
+                    _ = Assert.Single(from.I1I2one2manies);
                     Assert.Contains(to1, from.I1I2one2manies);
                     Assert.Equal(from, to1.I1WhereI1I2one2many);
 
@@ -3131,7 +3131,7 @@ namespace Allors.Database.Adapters
                     from.AddI1I2one2many(to1);
                     from.RemoveI1I2one2many(null);
                     mark();
-                    Assert.Single(from.I1I2one2manies);
+                    _ = Assert.Single(from.I1I2one2manies);
                     Assert.Contains(to1, from.I1I2one2manies);
                     Assert.Equal(from, to1.I1WhereI1I2one2many);
 
@@ -3177,7 +3177,7 @@ namespace Allors.Database.Adapters
                     from.AddI1I2one2many(to1);
 
                     mark();
-                    Assert.Single(from.Strategy.GetCompositeRoles(m.I1.I1I2one2manies).ToArray());
+                    _ = Assert.Single(from.Strategy.GetCompositeRoles(m.I1.I1I2one2manies).ToArray());
                     Assert.Equal(to1, from.Strategy.GetCompositeRoles(m.I1.I1I2one2manies).ToArray()[0]);
 
                     // Extent<T>.ToArray()
@@ -3187,8 +3187,8 @@ namespace Allors.Database.Adapters
                     from.AddI1I2one2many(to1);
 
                     mark();
-                    Assert.Single(from.I1I2one2manies.ToArray());
-                    Assert.Single(from.I1I2one2manies.ToArray());
+                    _ = Assert.Single(from.I1I2one2manies.ToArray());
+                    _ = Assert.Single(from.I1I2one2manies.ToArray());
                     Assert.Equal(to1, from.I1I2one2manies.ToArray()[0]);
                 }
             }
@@ -3233,8 +3233,8 @@ namespace Allors.Database.Adapters
                         from.AddI1I34one2many(to1); // Add Twice
 
                         mark();
-                        Assert.Single(from.I1I34one2manies);
-                        Assert.Single(from.I1I34one2manies);
+                        _ = Assert.Single(from.I1I34one2manies);
+                        _ = Assert.Single(from.I1I34one2manies);
                         Assert.Contains(to1, from.I1I34one2manies);
                         Assert.Contains(to1, from.I1I34one2manies);
                         Assert.Equal(from, to1.I1WhereI1I34one2many);
@@ -3354,8 +3354,8 @@ namespace Allors.Database.Adapters
                         from.RemoveI1I34one2many(to2); // Delete Twice
 
                         mark();
-                        Assert.Single(from.I1I34one2manies);
-                        Assert.Single(from.I1I34one2manies);
+                        _ = Assert.Single(from.I1I34one2manies);
+                        _ = Assert.Single(from.I1I34one2manies);
                         Assert.Contains(to1, from.I1I34one2manies);
                         Assert.Contains(to1, from.I1I34one2manies);
                         Assert.Equal(from, to1.I1WhereI1I34one2many);
@@ -3547,7 +3547,7 @@ namespace Allors.Database.Adapters
                         from.AddI1I34one2many(to1);
 
                         mark();
-                        Assert.Single(from.I1I34one2manies);
+                        _ = Assert.Single(from.I1I34one2manies);
                         Assert.Contains(to1, from.I1I34one2manies);
                         Assert.Equal(from, to1.I1WhereI1I34one2many);
 
@@ -3555,7 +3555,7 @@ namespace Allors.Database.Adapters
                         fromAnother.RemoveI1I34one2many(to1);
 
                         mark();
-                        Assert.Single(from.I1I34one2manies);
+                        _ = Assert.Single(from.I1I34one2manies);
                         Assert.Contains(to1, from.I1I34one2manies);
                         Assert.Equal(from, to1.I1WhereI1I34one2many);
 
@@ -3565,7 +3565,7 @@ namespace Allors.Database.Adapters
                         from.I1I34one2manies = to1Array;
 
                         mark();
-                        Assert.Single(from.I1I34one2manies);
+                        _ = Assert.Single(from.I1I34one2manies);
                         Assert.Contains(to1, from.I1I34one2manies);
                         Assert.Equal(from, to1.I1WhereI1I34one2many);
 
@@ -3587,7 +3587,7 @@ namespace Allors.Database.Adapters
                         from.I1I34one2manies = to2Array;
 
                         mark();
-                        Assert.Single(from.I1I34one2manies);
+                        _ = Assert.Single(from.I1I34one2manies);
                         Assert.Contains(to2, from.I1I34one2manies);
                         Assert.Null(to1.I1WhereI1I34one2many);
                         Assert.Equal(from, to2.I1WhereI1I34one2many);
@@ -3608,7 +3608,7 @@ namespace Allors.Database.Adapters
 
                         mark();
                         Assert.Empty(from.I1I34one2manies);
-                        Assert.Single(fromAnother.I1I34one2manies);
+                        _ = Assert.Single(fromAnother.I1I34one2manies);
                         Assert.Contains(to1, fromAnother.I1I34one2manies);
                         Assert.Equal(fromAnother, to1.I1WhereI1I34one2many);
 
@@ -3620,8 +3620,8 @@ namespace Allors.Database.Adapters
                         fromAnother.AddI1I34one2many(to1);
 
                         mark();
-                        Assert.Single(from.I1I34one2manies);
-                        Assert.Single(fromAnother.I1I34one2manies);
+                        _ = Assert.Single(from.I1I34one2manies);
+                        _ = Assert.Single(fromAnother.I1I34one2manies);
                         Assert.Contains(to2, from.I1I34one2manies);
                         Assert.Contains(to1, fromAnother.I1I34one2manies);
                         Assert.Equal(from, to2.I1WhereI1I34one2many);
@@ -3634,7 +3634,7 @@ namespace Allors.Database.Adapters
 
                         mark();
                         Assert.Empty(from.I1I34one2manies);
-                        Assert.Single(fromAnother.I1I34one2manies);
+                        _ = Assert.Single(fromAnother.I1I34one2manies);
                         Assert.Contains(to1, fromAnother.I1I34one2manies);
                         Assert.Equal(fromAnother, to1.I1WhereI1I34one2many);
 
@@ -3644,10 +3644,10 @@ namespace Allors.Database.Adapters
                         fromAnother.AddI1I34one2many(to2);
 
                         mark();
-                        Assert.Single(from.I1I34one2manies);
+                        _ = Assert.Single(from.I1I34one2manies);
                         Assert.Contains(to1, from.I1I34one2manies);
                         Assert.Equal(from, to1.I1WhereI1I34one2many);
-                        Assert.Single(fromAnother.I1I34one2manies);
+                        _ = Assert.Single(fromAnother.I1I34one2manies);
                         Assert.Contains(to2, fromAnother.I1I34one2manies);
                         Assert.Equal(fromAnother, to2.I1WhereI1I34one2many);
 
@@ -3658,10 +3658,10 @@ namespace Allors.Database.Adapters
                         fromAnother.I1I34one2manies = to2Array;
 
                         mark();
-                        Assert.Single(from.I1I34one2manies);
+                        _ = Assert.Single(from.I1I34one2manies);
                         Assert.Contains(to1, from.I1I34one2manies);
                         Assert.Equal(from, to1.I1WhereI1I34one2many);
-                        Assert.Single(fromAnother.I1I34one2manies);
+                        _ = Assert.Single(fromAnother.I1I34one2manies);
                         Assert.Contains(to2, fromAnother.I1I34one2manies);
                         Assert.Equal(fromAnother, to2.I1WhereI1I34one2many);
 
@@ -3676,7 +3676,7 @@ namespace Allors.Database.Adapters
                         from.AddI1I34one2many(to1);
                         from.AddI1I34one2many(null);
                         mark();
-                        Assert.Single(from.I1I34one2manies);
+                        _ = Assert.Single(from.I1I34one2manies);
                         Assert.Contains(to1, from.I1I34one2manies);
                         Assert.Equal(from, to1.I1WhereI1I34one2many);
 
@@ -3689,7 +3689,7 @@ namespace Allors.Database.Adapters
                         from.AddI1I34one2many(to1);
                         from.RemoveI1I34one2many(null);
                         mark();
-                        Assert.Single(from.I1I34one2manies);
+                        _ = Assert.Single(from.I1I34one2manies);
                         Assert.Contains(to1, from.I1I34one2manies);
                         Assert.Equal(from, to1.I1WhereI1I34one2many);
 
@@ -3735,7 +3735,7 @@ namespace Allors.Database.Adapters
                         from.AddI1I34one2many(to1);
 
                         mark();
-                        Assert.Single(from.Strategy.GetCompositeRoles(m.I1.I1I34one2manies).ToArray());
+                        _ = Assert.Single(from.Strategy.GetCompositeRoles(m.I1.I1I34one2manies).ToArray());
                         Assert.Equal(to1, from.Strategy.GetCompositeRoles(m.I1.I1I34one2manies).ToArray()[0]);
 
                         // Extent<T>.ToArray()
@@ -3745,8 +3745,8 @@ namespace Allors.Database.Adapters
                         from.AddI1I34one2many(to1);
 
                         mark();
-                        Assert.Single(from.I1I34one2manies.ToArray());
-                        Assert.Single(from.I1I34one2manies.ToArray());
+                        _ = Assert.Single(from.I1I34one2manies.ToArray());
+                        _ = Assert.Single(from.I1I34one2manies.ToArray());
                         Assert.Equal(to1, from.I1I34one2manies.ToArray()[0]);
                     }
                 }

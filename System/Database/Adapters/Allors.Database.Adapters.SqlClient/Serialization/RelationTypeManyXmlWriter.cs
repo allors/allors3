@@ -117,10 +117,10 @@ namespace Allors.Database.Adapters.SqlClient
 
             if (this.rolesStringBuilder.Length != 0)
             {
-                this.rolesStringBuilder.Append(Serialization.ObjectsSplitter);
+                _ = this.rolesStringBuilder.Append(Serialization.ObjectsSplitter);
             }
 
-            this.rolesStringBuilder.Append(XmlConvert.ToString(roleId));
+            _ = this.rolesStringBuilder.Append(XmlConvert.ToString(roleId));
         }
 
         /// <summary>

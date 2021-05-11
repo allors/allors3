@@ -60,7 +60,7 @@ namespace Allors.Workspace.Data
                 }
                 else
                 {
-                    currentPath.Add(newNode);
+                    _ = currentPath.Add(newNode);
                     currentPath = newNode;
                 }
             }

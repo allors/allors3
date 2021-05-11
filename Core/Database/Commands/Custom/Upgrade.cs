@@ -53,12 +53,12 @@ namespace Commands
                 {
                     if (!this.excludedObjectTypes.Contains(args.ObjectTypeId))
                     {
-                        notLoadedObjectTypeIds.Add(args.ObjectTypeId);
+                        _ = notLoadedObjectTypeIds.Add(args.ObjectTypeId);
                     }
                     else
                     {
                         var id = args.ObjectId;
-                        notLoadedObjects.Add(id);
+                        _ = notLoadedObjects.Add(id);
                     }
                 };
 
@@ -68,7 +68,7 @@ namespace Commands
                     {
                         if (!notLoadedObjects.Contains(args.AssociationId))
                         {
-                            notLoadedRelationTypeIds.Add(args.RelationTypeId);
+                            _ = notLoadedRelationTypeIds.Add(args.RelationTypeId);
                         }
                     }
                 };

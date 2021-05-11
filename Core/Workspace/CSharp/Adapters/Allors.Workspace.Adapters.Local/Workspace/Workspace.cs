@@ -15,7 +15,7 @@ namespace Allors.Workspace.Adapters.Local
 
     public class Workspace : IWorkspace
     {
-        private readonly Dictionary<long, WorkspaceObject> objectById;
+        private readonly Dictionary<long, WorkspaceRecord> workspacObjectById;
 
         public Workspace(string name, long userId, IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, IDatabase database)
         {
@@ -29,7 +29,7 @@ namespace Allors.Workspace.Adapters.Local
 
             this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
             this.WorkspaceIdsByWorkspaceClass = new Dictionary<IClass, long[]>();
-            this.objectById = new Dictionary<long, WorkspaceObject>();
+            this.workspacObjectById = new Dictionary<long, WorkspaceRecord>();
 
             this.Numbers = new ArrayNumbers();
 
@@ -57,9 +57,9 @@ namespace Allors.Workspace.Adapters.Local
 
         internal Dictionary<IClass, long[]> WorkspaceIdsByWorkspaceClass { get; }
 
-        internal WorkspaceObject Get(long identity)
+        internal WorkspaceRecord Get(long identity)
         {
-            this.objectById.TryGetValue(identity, out var workspaceObject);
+            _ = this.workspacObjectById.TryGetValue(identity, out var workspaceObject);
             return workspaceObject;
         }
 
@@ -67,27 +67,20 @@ namespace Allors.Workspace.Adapters.Local
         {
             this.WorkspaceClassByWorkspaceId.Add(workspaceId, @class);
 
-            if (!this.WorkspaceIdsByWorkspaceClass.TryGetValue(@class, out var ids))
-            {
-                ids = new[] { workspaceId };
-            }
-            else
-            {
-                ids = NullableSortableArraySet.Add(ids, workspaceId);
-            }
-
+            _ = this.WorkspaceIdsByWorkspaceClass.TryGetValue(@class, out var ids);
+            _ = this.Numbers.Add(ids, workspaceId);
             this.WorkspaceIdsByWorkspaceClass[@class] = ids;
         }
 
         internal void Push(long identity, IClass @class, long version, Dictionary<IRelationType, object> changedRoleByRoleType)
         {
-            if (!this.objectById.TryGetValue(identity, out var originalWorkspaceObject))
+            if (!this.workspacObjectById.TryGetValue(identity, out var originalWorkspaceObject))
             {
-                this.objectById[identity] = new WorkspaceObject(this.DatabaseAdapter, identity, @class, ++version, changedRoleByRoleType);
+                this.workspacObjectById[identity] = new WorkspaceRecord(this.DatabaseAdapter, identity, @class, ++version, changedRoleByRoleType);
             }
             else
             {
-                this.objectById[identity] = new WorkspaceObject(originalWorkspaceObject, changedRoleByRoleType);
+                this.workspacObjectById[identity] = new WorkspaceRecord(originalWorkspaceObject, changedRoleByRoleType);
             }
         }
     }

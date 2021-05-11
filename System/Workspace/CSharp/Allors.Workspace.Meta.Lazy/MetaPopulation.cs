@@ -164,7 +164,7 @@ namespace Allors.Workspace.Meta
 
                 foreach (var objectType in this.Composites)
                 {
-                    exclusiveRoleTypesObjectType.TryGetValue(objectType, out var exclusiveRoleTypes);
+                    _ = exclusiveRoleTypesObjectType.TryGetValue(objectType, out var exclusiveRoleTypes);
                     objectType.ExclusiveRoleTypes = exclusiveRoleTypes ?? Array.Empty<IRoleTypeInternals>();
                 }
             }
@@ -177,7 +177,7 @@ namespace Allors.Workspace.Meta
 
                 foreach (var objectType in this.Composites)
                 {
-                    exclusiveAssociationTypesByObjectType.TryGetValue(objectType, out var exclusiveAssociationTypes);
+                    _ = exclusiveAssociationTypesByObjectType.TryGetValue(objectType, out var exclusiveAssociationTypes);
                     objectType.ExclusiveAssociationTypes = exclusiveAssociationTypes ?? Array.Empty<IAssociationTypeInternals>();
                 }
             }
@@ -190,7 +190,7 @@ namespace Allors.Workspace.Meta
 
                 foreach (var objectType in this.Composites)
                 {
-                    exclusiveMethodTypeByObjectType.TryGetValue(objectType, out var exclusiveMethodTypes);
+                    _ = exclusiveMethodTypeByObjectType.TryGetValue(objectType, out var exclusiveMethodTypes);
                     objectType.ExclusiveMethodTypes = exclusiveMethodTypes ?? Array.Empty<IMethodTypeInternals>();
                 }
             }

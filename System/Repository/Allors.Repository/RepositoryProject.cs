@@ -49,7 +49,7 @@ namespace Allors.Repository.Roslyn
                 }
                 else
                 {
-                    ms.Seek(0, SeekOrigin.Begin);
+                    _ = ms.Seek(0, SeekOrigin.Begin);
                     this.Assembly = System.Reflection.Assembly.Load(ms.ToArray());
                 }
             }

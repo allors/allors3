@@ -17,9 +17,9 @@ namespace Allors.Server.Tests
     {
         public SignInTests()
         {
-            new PersonBuilder(this.Transaction).WithUserName("John").Build();
-            new PersonBuilder(this.Transaction).WithUserName("Jane").Build().SetPassword("p@ssw0rd");
-            this.Transaction.Derive();
+            _ = new PersonBuilder(this.Transaction).WithUserName("John").Build();
+            _ = new PersonBuilder(this.Transaction).WithUserName("Jane").Build().SetPassword("p@ssw0rd");
+            _ = this.Transaction.Derive();
             this.Transaction.Commit();
         }
 

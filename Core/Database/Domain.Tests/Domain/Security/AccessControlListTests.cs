@@ -24,7 +24,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenAnAuthenticationPopulatonWhenCreatingAnAccessListForGuestThenPermissionIsDenied()
         {
-            this.Transaction.Derive();
+            _ = this.Transaction.Derive();
             this.Transaction.Commit();
 
             var sessions = new[] { this.Transaction };
@@ -53,9 +53,9 @@ namespace Allors.Database.Domain.Tests
             var permission = this.FindPermission(this.M.Organisation.Name, Operations.Read);
             var role = new RoleBuilder(this.Transaction).WithName("Role").WithPermission(permission).Build();
             var person = new PersonBuilder(this.Transaction).WithFirstName("John").WithLastName("Doe").Build();
-            new AccessControlBuilder(this.Transaction).WithSubject(person).WithRole(role).Build();
+            _ = new AccessControlBuilder(this.Transaction).WithSubject(person).WithRole(role).Build();
 
-            this.Transaction.Derive();
+            _ = this.Transaction.Derive();
             this.Transaction.Commit();
 
             var sessions = new[] { this.Transaction };
@@ -71,7 +71,7 @@ namespace Allors.Database.Domain.Tests
                 var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First);
                 token.AddAccessControl(accessControl);
 
-                this.Transaction.Derive();
+                _ = this.Transaction.Derive();
 
                 Assert.False(this.Transaction.Derive(false).HasErrors);
 
@@ -89,11 +89,11 @@ namespace Allors.Database.Domain.Tests
             var permission = this.FindPermission(this.M.Organisation.Name, Operations.Read);
             var role = new RoleBuilder(this.Transaction).WithName("Role").WithPermission(permission).Build();
             var person = new PersonBuilder(this.Transaction).WithFirstName("John").WithLastName("Doe").Build();
-            new UserGroupBuilder(this.Transaction).WithName("Group").WithMember(person).Build();
+            _ = new UserGroupBuilder(this.Transaction).WithName("Group").WithMember(person).Build();
 
-            new AccessControlBuilder(this.Transaction).WithSubject(person).WithRole(role).Build();
+            _ = new AccessControlBuilder(this.Transaction).WithSubject(person).WithRole(role).Build();
 
-            this.Transaction.Derive();
+            _ = this.Transaction.Derive();
             this.Transaction.Commit();
 
             var sessions = new[] { this.Transaction };
@@ -130,10 +130,10 @@ namespace Allors.Database.Domain.Tests
             var person = new PersonBuilder(this.Transaction).WithFirstName("John").WithLastName("Doe").Build();
             var anotherPerson = new PersonBuilder(this.Transaction).WithFirstName("Jane").WithLastName("Doe").Build();
 
-            this.Transaction.Derive();
+            _ = this.Transaction.Derive();
             this.Transaction.Commit();
 
-            new AccessControlBuilder(this.Transaction).WithSubject(anotherPerson).WithRole(databaseRole).Build();
+            _ = new AccessControlBuilder(this.Transaction).WithSubject(anotherPerson).WithRole(databaseRole).Build();
             this.Transaction.Commit();
 
             var sessions = new[] { this.Transaction };
@@ -167,13 +167,13 @@ namespace Allors.Database.Domain.Tests
             var databaseRole = new RoleBuilder(this.Transaction).WithName("Role").WithPermission(readOrganisationName).Build();
 
             var person = new PersonBuilder(this.Transaction).WithFirstName("John").WithLastName("Doe").Build();
-            new UserGroupBuilder(this.Transaction).WithName("Group").WithMember(person).Build();
+            _ = new UserGroupBuilder(this.Transaction).WithName("Group").WithMember(person).Build();
             var anotherUserGroup = new UserGroupBuilder(this.Transaction).WithName("AnotherGroup").Build();
 
-            this.Transaction.Derive();
+            _ = this.Transaction.Derive();
             this.Transaction.Commit();
 
-            new AccessControlBuilder(this.Transaction).WithSubjectGroup(anotherUserGroup).WithRole(databaseRole).Build();
+            _ = new AccessControlBuilder(this.Transaction).WithSubjectGroup(anotherUserGroup).WithRole(databaseRole).Build();
 
             this.Transaction.Commit();
 
@@ -208,9 +208,9 @@ namespace Allors.Database.Domain.Tests
             var role = new RoleBuilder(this.Transaction).WithName("Role").WithPermission(permission).Build();
             var person = new PersonBuilder(this.Transaction).WithFirstName("John").WithLastName("Doe").Build();
             var person2 = new PersonBuilder(this.Transaction).WithFirstName("Jane").WithLastName("Doe").Build();
-            new AccessControlBuilder(this.Transaction).WithSubject(person).WithRole(role).Build();
+            _ = new AccessControlBuilder(this.Transaction).WithSubject(person).WithRole(role).Build();
 
-            this.Transaction.Derive();
+            _ = this.Transaction.Derive();
             this.Transaction.Commit();
 
             var sessions = new[] { this.Transaction };
@@ -226,14 +226,14 @@ namespace Allors.Database.Domain.Tests
                 var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First);
                 token.AddAccessControl(accessControl);
 
-                this.Transaction.Derive();
+                _ = this.Transaction.Derive();
 
                 var acl = new DatabaseAccessControlLists(person)[organisation];
 
                 accessControl.RemoveSubject(person);
                 accessControl.AddSubject(person2);
 
-                this.Transaction.Derive();
+                _ = this.Transaction.Derive();
 
                 acl = new DatabaseAccessControlLists(person)[organisation];
 
@@ -249,9 +249,9 @@ namespace Allors.Database.Domain.Tests
             var readOrganisationName = this.FindPermission(this.M.Organisation.Name, Operations.Read);
             var databaseRole = new RoleBuilder(this.Transaction).WithName("Role").WithPermission(readOrganisationName).Build();
             var person = new PersonBuilder(this.Transaction).WithFirstName("John").WithLastName("Doe").Build();
-            new AccessControlBuilder(this.Transaction).WithRole(databaseRole).WithSubject(person).Build();
+            _ = new AccessControlBuilder(this.Transaction).WithRole(databaseRole).WithSubject(person).Build();
 
-            this.Transaction.Derive();
+            _ = this.Transaction.Derive();
             this.Transaction.Commit();
 
             var sessions = new[] { this.Transaction };

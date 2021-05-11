@@ -182,7 +182,7 @@ namespace Allors.Database.Adapters.SqlClient
             foreach (var xmlRelation in xmlRelationTypeUnit.Relations)
             {
                 var associationId = xmlRelation.Association;
-                this.objectTypeByObjectId.TryGetValue(associationId, out var associationClass);
+                _ = this.objectTypeByObjectId.TryGetValue(associationId, out var associationClass);
 
                 if (xmlRelation.Role == null)
                 {
@@ -246,7 +246,7 @@ namespace Allors.Database.Adapters.SqlClient
                 if (!string.IsNullOrWhiteSpace(xmlRelation.Role))
                 {
                     var associationId = xmlRelation.Association;
-                    this.objectTypeByObjectId.TryGetValue(associationId, out var associationClass);
+                    _ = this.objectTypeByObjectId.TryGetValue(associationId, out var associationClass);
 
                     var value = xmlRelation.Role;
                     var rs = value.Split(Serialization.ObjectsSplitterCharArray);
@@ -265,7 +265,7 @@ namespace Allors.Database.Adapters.SqlClient
                         foreach (var r in rs)
                         {
                             var roleId = long.Parse(r);
-                            this.objectTypeByObjectId.TryGetValue(roleId, out var roleClass);
+                            _ = this.objectTypeByObjectId.TryGetValue(roleId, out var roleClass);
 
                             if (roleClass == null ||
                                 !this.database.ContainsClass(relationType.RoleType.ObjectType, roleClass))
@@ -289,7 +289,7 @@ namespace Allors.Database.Adapters.SqlClient
                 if (!string.IsNullOrWhiteSpace(xmlRelation.Role))
                 {
                     var associationId = xmlRelation.Association;
-                    this.objectTypeByObjectId.TryGetValue(associationId, out var associationClass);
+                    _ = this.objectTypeByObjectId.TryGetValue(associationId, out var associationClass);
 
                     var value = xmlRelation.Role;
                     var rs = value.Split(Serialization.ObjectsSplitterCharArray);
@@ -317,7 +317,7 @@ namespace Allors.Database.Adapters.SqlClient
                             foreach (var r in rs)
                             {
                                 var role = long.Parse(r);
-                                this.objectTypeByObjectId.TryGetValue(role, out var roleClass);
+                                _ = this.objectTypeByObjectId.TryGetValue(role, out var roleClass);
 
                                 if (roleClass == null || !this.database.ContainsClass(
                                         relationType.RoleType.ObjectType,

@@ -33,7 +33,7 @@ namespace Allors.Database.Adapters.Npgsql
             {
                 statement.Append(" (" + this.role.SingularFullName + "_R." + Mapping.ColumnNameForRole + " IS NOT NULL AND ");
                 statement.Append(" " + this.role.SingularFullName + "_R." + Mapping.ColumnNameForAssociation + " IN (");
-                this.inExtent.BuildSql(inStatement);
+                _ = this.inExtent.BuildSql(inStatement);
                 statement.Append(" ))");
             }
             else
@@ -42,14 +42,14 @@ namespace Allors.Database.Adapters.Npgsql
                 {
                     statement.Append(" (" + this.role.SingularFullName + "_R." + Mapping.ColumnNameForObject + " IS NOT NULL AND ");
                     statement.Append(" " + this.role.SingularFullName + "_R." + Mapping.ColumnNameForObject + " IN (");
-                    this.inExtent.BuildSql(inStatement);
+                    _ = this.inExtent.BuildSql(inStatement);
                     statement.Append(" ))");
                 }
                 else
                 {
                     statement.Append(" (" + schema.ColumnNameByRelationType[this.role.RelationType] + " IS NOT NULL AND ");
                     statement.Append(" " + schema.ColumnNameByRelationType[this.role.RelationType] + " IN (");
-                    this.inExtent.BuildSql(inStatement);
+                    _ = this.inExtent.BuildSql(inStatement);
                     statement.Append(" ))");
                 }
             }

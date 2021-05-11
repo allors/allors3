@@ -217,7 +217,7 @@ namespace Allors.Database
         /// <returns>The current extent.</returns>
         public Extent<T> AddSort(IRoleType roleType)
         {
-            this.BaseExtent.AddSort(roleType);
+            _ = this.BaseExtent.AddSort(roleType);
             return this;
         }
 
@@ -229,7 +229,7 @@ namespace Allors.Database
         /// <returns>The current extent.</returns>
         public Extent<T> AddSort(IRoleType roleType, SortDirection direction)
         {
-            this.BaseExtent.AddSort(roleType, direction);
+            _ = this.BaseExtent.AddSort(roleType, direction);
             return this;
         }
 

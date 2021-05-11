@@ -17,14 +17,14 @@ namespace Tests
         [Fact]
         public void DeletedObject()
         {
-            this.SetUser("jane@example.com");
+            _ = this.SetUser("jane@example.com");
 
             var organisation = new OrganisationBuilder(this.Transaction).WithName("Acme").Build();
-            this.Transaction.Derive();
+            _ = this.Transaction.Derive();
             this.Transaction.Commit();
 
             organisation.Strategy.Delete();
-            this.Transaction.Derive();
+            _ = this.Transaction.Derive();
             this.Transaction.Commit();
 
             var syncRequest = new SyncRequest
@@ -41,7 +41,7 @@ namespace Tests
         [Fact]
         public void ExistingObject()
         {
-            this.SetUser("jane@example.com");
+            _ = this.SetUser("jane@example.com");
 
             var people = new People(this.Transaction).Extent();
             var person = people[0];
@@ -54,7 +54,7 @@ namespace Tests
             var api = new Api(this.Transaction, "Default");
             var syncResponse = api.Sync(syncRequest);
 
-            Assert.Single(syncResponse.Objects);
+            _ = Assert.Single(syncResponse.Objects);
             var syncObject = syncResponse.Objects[0];
 
             Assert.Equal(person.Id, syncObject.Id);
@@ -66,11 +66,11 @@ namespace Tests
         [Fact]
         public void WithoutAccessControl()
         {
-            new PersonBuilder(this.Transaction).WithUserName("noacl").WithFirstName("No").WithLastName("acl").Build();
-            this.Transaction.Derive();
+            _ = new PersonBuilder(this.Transaction).WithUserName("noacl").WithFirstName("No").WithLastName("acl").Build();
+            _ = this.Transaction.Derive();
             this.Transaction.Commit();
 
-            this.SetUser("noacl");
+            _ = this.SetUser("noacl");
 
             var people = new People(this.Transaction).Extent();
             var person = people[0];
@@ -83,7 +83,7 @@ namespace Tests
             var api = new Api(this.Transaction, "Default");
             var syncResponse = api.Sync(syncRequest);
 
-            Assert.Single(syncResponse.Objects);
+            _ = Assert.Single(syncResponse.Objects);
             var syncObject = syncResponse.Objects[0];
 
             Assert.Empty(syncObject.AccessControls);

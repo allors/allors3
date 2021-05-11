@@ -30,9 +30,9 @@ namespace Allors.Database.Domain
 
             var guest = new PersonBuilder(this.transaction).WithFirstName("Gu").WithLastName("Est").WithUserName("guest@example.com").Build();
 
-            jane.SetPassword("jane");
-            john.SetPassword("john");
-            jenny.SetPassword("jenny");
+            _ = jane.SetPassword("jane");
+            _ = john.SetPassword("john");
+            _ = jenny.SetPassword("jenny");
 
             new UserGroups(this.transaction).Administrators.AddMember(jane);
             new UserGroups(this.transaction).Creators.AddMember(jane);
@@ -48,7 +48,7 @@ namespace Allors.Database.Domain
 
             for (var i = 0; i < 100; i++)
             {
-                new OrganisationBuilder(this.transaction)
+                _ = new OrganisationBuilder(this.transaction)
                     .WithName($"Organisation-{i}")
                     .WithOwner(john)
                     .WithEmployee(jenny)

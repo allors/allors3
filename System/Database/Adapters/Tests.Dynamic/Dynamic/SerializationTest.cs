@@ -75,7 +75,7 @@ namespace Allors.Database.Adapters
                     {
                         foreach (var concreteClass in concreteClasses)
                         {
-                            ((ArrayList)objectsByMetaType[concreteClass]).Add(saveTransaction.Create(concreteClass));
+                            _ = ((ArrayList)objectsByMetaType[concreteClass]).Add(saveTransaction.Create(concreteClass));
                         }
                     }
 
@@ -84,7 +84,7 @@ namespace Allors.Database.Adapters
                         for (var j = 0; j < this.ObjectsPerClass; j++)
                         {
                             var concreteClass = t;
-                            ((ArrayList)objectsByMetaType[concreteClass]).Add(saveTransaction.Create(concreteClass));
+                            _ = ((ArrayList)objectsByMetaType[concreteClass]).Add(saveTransaction.Create(concreteClass));
                         }
                     }
 
@@ -145,7 +145,7 @@ namespace Allors.Database.Adapters
                             var rolesForType = (ArrayList)objectsByMetaType[roleType];
                             for (var j = rolesForType.Count - 1; j >= 0; j--)
                             {
-                                roles.Add(rolesForType[j]);
+                                _ = roles.Add(rolesForType[j]);
                             }
                         }
 
@@ -181,11 +181,11 @@ namespace Allors.Database.Adapters
                             var reuseRoleType = false;
                             for (var j = rolesForType.Count - 1; j >= 0; j--)
                             {
-                                roles.Add(rolesForType[j]);
+                                _ = roles.Add(rolesForType[j]);
                                 if (reuseRoleType)
                                 {
                                     reuseRoleType = false;
-                                    roles.Add(rolesForType[j]); // many2one, so role can be reused with other associations
+                                    _ = roles.Add(rolesForType[j]); // many2one, so role can be reused with other associations
                                 }
                                 else
                                 {
@@ -225,7 +225,7 @@ namespace Allors.Database.Adapters
                             var rolesForType = (ArrayList)objectsByMetaType[roleType];
                             for (var j = rolesForType.Count - 1; j >= 0; j--)
                             {
-                                roles.Add(rolesForType[j]);
+                                _ = roles.Add(rolesForType[j]);
                             }
                         }
 
@@ -237,7 +237,7 @@ namespace Allors.Database.Adapters
                             foreach (var associationType in associationTypes)
                             {
                                 var associations = (ArrayList)objectsByMetaType[associationType];
-                                interleavedAssociations.Add(associations[i]);
+                                _ = interleavedAssociations.Add(associations[i]);
                             }
                         }
 
@@ -287,11 +287,11 @@ namespace Allors.Database.Adapters
                             var reuseRoleType = false;
                             for (var j = rolesForType.Count - 1; j >= 0; j--)
                             {
-                                roles.Add(rolesForType[j]);
+                                _ = roles.Add(rolesForType[j]);
                                 if (reuseRoleType)
                                 {
                                     reuseRoleType = false;
-                                    roles.Add(rolesForType[j]); // many2many, so role can be reused with other associations
+                                    _ = roles.Add(rolesForType[j]); // many2many, so role can be reused with other associations
                                 }
                                 else
                                 {
@@ -308,7 +308,7 @@ namespace Allors.Database.Adapters
                             foreach (var associationType in associationTypes)
                             {
                                 var associations = (ArrayList)objectsByMetaType[associationType];
-                                interleavedAssociations.Add(associations[i]);
+                                _ = interleavedAssociations.Add(associations[i]);
                             }
                         }
 

@@ -23,7 +23,7 @@ namespace Allors.Database.Domain.Tests
             administrators.AddMember(administrator);
             var accessClass = new AccessClassBuilder(this.Transaction).Build();
 
-            this.Transaction.Derive();
+            _ = this.Transaction.Derive();
             this.Transaction.Commit();
 
             var defaultSecurityToken = new SecurityTokens(this.Transaction).DefaultSecurityToken;
@@ -50,7 +50,7 @@ namespace Allors.Database.Domain.Tests
 
             accessClass.Block = true;
 
-            this.Transaction.Derive();
+            _ = this.Transaction.Derive();
             this.Transaction.Commit();
 
             // Use default security from Singleton

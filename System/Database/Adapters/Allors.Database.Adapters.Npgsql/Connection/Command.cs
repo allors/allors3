@@ -57,7 +57,7 @@ namespace Allors.Database.Adapters.Npgsql
                     sqlParameter.NpgsqlDbType = NpgsqlDbType.Timestamp;
                 }
 
-                this.NpgsqlCommand.Parameters.Add(sqlParameter);
+                _ = this.NpgsqlCommand.Parameters.Add(sqlParameter);
             }
 
             if (value == null || value == DBNull.Value)
@@ -77,7 +77,7 @@ namespace Allors.Database.Adapters.Npgsql
             sqlParameter.NpgsqlDbType = Mapping.NpgsqlDbTypeForObject;
             sqlParameter.Value = objectId;
 
-            this.NpgsqlCommand.Parameters.Add(sqlParameter);
+            _ = this.NpgsqlCommand.Parameters.Add(sqlParameter);
         }
 
         internal void AddTypeParameter(IClass @class)
@@ -87,7 +87,7 @@ namespace Allors.Database.Adapters.Npgsql
             sqlParameter.NpgsqlDbType = Mapping.NpgsqlDbTypeForClass;
             sqlParameter.Value = @class.Id;
 
-            this.Parameters.Add(sqlParameter);
+            _ = this.Parameters.Add(sqlParameter);
         }
 
         internal void AddCountParameter(int count)
@@ -97,7 +97,7 @@ namespace Allors.Database.Adapters.Npgsql
             sqlParameter.NpgsqlDbType = Mapping.NpgsqlDbTypeForCount;
             sqlParameter.Value = count;
 
-            this.Parameters.Add(sqlParameter);
+            _ = this.Parameters.Add(sqlParameter);
         }
 
         internal void AddCompositeRoleParameter(long objectId)
@@ -107,7 +107,7 @@ namespace Allors.Database.Adapters.Npgsql
             sqlParameter.NpgsqlDbType = Mapping.NpgsqlDbTypeForObject;
             sqlParameter.Value = objectId;
 
-            this.Parameters.Add(sqlParameter);
+            _ = this.Parameters.Add(sqlParameter);
         }
 
         internal void AddAssociationParameter(long objectId)
@@ -117,7 +117,7 @@ namespace Allors.Database.Adapters.Npgsql
             sqlParameter.NpgsqlDbType = Mapping.NpgsqlDbTypeForObject;
             sqlParameter.Value = objectId;
 
-            this.Parameters.Add(sqlParameter);
+            _ = this.Parameters.Add(sqlParameter);
         }
 
         internal void AddObjectArrayParameter(IEnumerable<Reference> references)
@@ -127,7 +127,7 @@ namespace Allors.Database.Adapters.Npgsql
             sqlParameter.ParameterName = this.Mapping.ObjectArrayParam.InvocationName;
             sqlParameter.Value = references.Select(v => v.ObjectId).ToArray();
 
-            this.Parameters.Add(sqlParameter);
+            _ = this.Parameters.Add(sqlParameter);
         }
 
         internal void SetObjectArrayParameter(IEnumerable<Reference> references)
@@ -143,7 +143,7 @@ namespace Allors.Database.Adapters.Npgsql
             sqlParameter.ParameterName = this.Mapping.ObjectArrayParam.InvocationName;
             sqlParameter.Value = objectIds.ToArray();
 
-            this.Parameters.Add(sqlParameter);
+            _ = this.Parameters.Add(sqlParameter);
         }
 
         internal void SetObjectArrayParameter(IEnumerable<long> objectIds)
@@ -165,8 +165,8 @@ namespace Allors.Database.Adapters.Npgsql
             objectParameter.Value = relations.Select(v => v.Association).ToArray();
             roleParameter.Value = relations.Select(v => v.Role).ToArray();
 
-            this.Parameters.Add(objectParameter);
-            this.Parameters.Add(roleParameter);
+            _ = this.Parameters.Add(objectParameter);
+            _ = this.Parameters.Add(roleParameter);
         }
 
         internal void SetUnitRoleArrayParameter(IRoleType roleType, ICollection<UnitRelation> relations)
@@ -191,8 +191,8 @@ namespace Allors.Database.Adapters.Npgsql
             objectParameter.Value = relations.Select(v => v.Association).ToArray();
             roleParameter.Value = relations.Select(v => v.Role).ToArray();
 
-            this.Parameters.Add(objectParameter);
-            this.Parameters.Add(roleParameter);
+            _ = this.Parameters.Add(objectParameter);
+            _ = this.Parameters.Add(roleParameter);
         }
 
         internal void SetCompositeRoleArrayParameter(ICollection<CompositeRelation> relations)
@@ -223,7 +223,7 @@ namespace Allors.Database.Adapters.Npgsql
 
             try
             {
-                this.NpgsqlCommand.ExecuteNonQuery();
+                _ = this.NpgsqlCommand.ExecuteNonQuery();
             }
             finally
             {

@@ -23,7 +23,7 @@ namespace Allors.Workspace.Adapters.Local
         {
             this.MetaPopulation = metaPopulation;
             this.Database = database;
-            this.ObjectsById = new ConcurrentDictionary<long, DatabaseObject>();
+            this.ObjectsById = new ConcurrentDictionary<long, DatabaseRecord>();
             this.Identities = new Identities();
             this.permissionCache = this.Database.Context().PermissionsCache;
             this.AccessControlById = new Dictionary<long, AccessControl>();
@@ -35,7 +35,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public IDatabase Database { get; }
 
-        public ConcurrentDictionary<long, DatabaseObject> ObjectsById { get; }
+        public ConcurrentDictionary<long, DatabaseRecord> ObjectsById { get; }
 
         internal Identities Identities { get; }
 
@@ -78,13 +78,13 @@ namespace Allors.Workspace.Adapters.Local
                     ?.Select(this.GetAccessControl)
                     .ToArray() ?? Array.Empty<AccessControl>();
 
-                this.ObjectsById[id] = new DatabaseObject(this, id, workspaceClass, @object.Strategy.ObjectVersion, roleByRoleType, deniedPermissions, accessControls);
+                this.ObjectsById[id] = new DatabaseRecord(this, id, workspaceClass, @object.Strategy.ObjectVersion, roleByRoleType, deniedPermissions, accessControls);
             }
         }
 
-        internal DatabaseObject Get(long identity)
+        internal DatabaseRecord Get(long identity)
         {
-            this.ObjectsById.TryGetValue(identity, out var databaseObjects);
+            _ = this.ObjectsById.TryGetValue(identity, out var databaseObjects);
             return databaseObjects;
         }
 
@@ -99,22 +99,22 @@ namespace Allors.Workspace.Adapters.Local
             switch (operation)
             {
                 case Operations.Read:
-                    permissionCache.RoleReadPermissionIdByRelationTypeId.TryGetValue(operandId, out permission);
+                    _ = permissionCache.RoleReadPermissionIdByRelationTypeId.TryGetValue(operandId, out permission);
                     break;
                 case Operations.Write:
-                    permissionCache.RoleWritePermissionIdByRelationTypeId.TryGetValue(operandId, out permission);
+                    _ = permissionCache.RoleWritePermissionIdByRelationTypeId.TryGetValue(operandId, out permission);
                     break;
                 default:
-                    permissionCache.MethodExecutePermissionIdByMethodTypeId.TryGetValue(operandId, out permission);
+                    _ = permissionCache.MethodExecutePermissionIdByMethodTypeId.TryGetValue(operandId, out permission);
                     break;
             }
 
             return permission;
         }
 
-        internal DatabaseObject PushResponse(long identity, IClass @class)
+        internal DatabaseRecord PushResponse(long identity, IClass @class)
         {
-            var databaseObject = new DatabaseObject(this, identity, @class);
+            var databaseObject = new DatabaseRecord(this, identity, @class);
             this.ObjectsById[identity] = databaseObject;
             return databaseObject;
         }

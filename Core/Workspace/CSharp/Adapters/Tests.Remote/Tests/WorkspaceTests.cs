@@ -13,7 +13,7 @@ namespace Tests.Workspace.Remote
         [Fact]
         public void Load()
         {
-            this.Database.SyncResponse(Fixture.LoadData(this.M));
+            _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
 
             var martien = this.Database.Get(3);
 
@@ -30,7 +30,7 @@ namespace Tests.Workspace.Remote
         [Fact]
         public void Diff()
         {
-            this.Database.SyncResponse(Fixture.LoadData(this.M));
+            _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Pool =
@@ -50,7 +50,7 @@ namespace Tests.Workspace.Remote
         [Fact]
         public void DiffVersion()
         {
-            this.Database.SyncResponse(Fixture.LoadData(this.M));
+            _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Pool =
@@ -64,7 +64,7 @@ namespace Tests.Workspace.Remote
 
             var requireLoad = this.Database.Diff(pullResponse);
 
-            Assert.Single(requireLoad.Objects);
+            _ = Assert.Single(requireLoad.Objects);
 
             Assert.Equal(3, requireLoad.Objects[0]);
         }
@@ -72,7 +72,7 @@ namespace Tests.Workspace.Remote
         [Fact]
         public void DiffAccessControl()
         {
-            this.Database.SyncResponse(Fixture.LoadData(this.M));
+            _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Pool =
@@ -86,7 +86,7 @@ namespace Tests.Workspace.Remote
 
             var requireLoad = this.Database.Diff(pullResponse);
 
-            Assert.Single(requireLoad.Objects);
+            _ = Assert.Single(requireLoad.Objects);
 
             Assert.Equal(1, requireLoad.Objects[0]);
         }
@@ -94,7 +94,7 @@ namespace Tests.Workspace.Remote
         [Fact]
         public void DiffChangeDeniedPermission()
         {
-            this.Database.SyncResponse(Fixture.LoadData(this.M));
+            _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Pool =
@@ -108,7 +108,7 @@ namespace Tests.Workspace.Remote
 
             var requireLoad = this.Database.Diff(pullResponse);
 
-            Assert.Single(requireLoad.Objects);
+            _ = Assert.Single(requireLoad.Objects);
 
             Assert.Equal(2, requireLoad.Objects[0]);
         }
@@ -116,7 +116,7 @@ namespace Tests.Workspace.Remote
         [Fact]
         public void DiffAddDeniedPermission()
         {
-            this.Database.SyncResponse(Fixture.LoadData(this.M));
+            _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Pool =
@@ -136,7 +136,7 @@ namespace Tests.Workspace.Remote
         [Fact]
         public void DiffRemoveDeniedPermission()
         {
-            this.Database.SyncResponse(Fixture.LoadData(this.M));
+            _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Pool =
@@ -150,7 +150,7 @@ namespace Tests.Workspace.Remote
 
             var requireLoad = this.Database.Diff(pullResponse);
 
-            Assert.Single(requireLoad.Objects);
+            _ = Assert.Single(requireLoad.Objects);
 
             Assert.Equal(2, requireLoad.Objects[0]);
         }

@@ -59,7 +59,7 @@ namespace Allors.Database.Domain.Derivations.Default
             if (!this.derivable.Strategy.IsDeleted && graph.IsScheduled(this.derivable))
             {
                 // TODO: Remove OnDerive
-                this.derivable.OnDerive(x => x.WithDerivation(graph.Derivation));
+                _ = this.derivable.OnDerive(x => x.WithDerivation(graph.Derivation));
                 postDeriveBacklog.Add(this.derivable);
             }
 

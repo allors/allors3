@@ -65,7 +65,7 @@ namespace Allors.Workspace.Derivations.Default
                                     matchesByRule.Add(rule, matches);
                                 }
 
-                                matches.Add(instantiated.Object);
+                                _ = matches.Add(instantiated.Object);
                             }
                         }
                     }

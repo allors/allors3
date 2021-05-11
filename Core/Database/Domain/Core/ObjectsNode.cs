@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
                 this.dependencies = new HashSet<ObjectsNode>();
             }
 
-            this.dependencies.Add(objectsNode);
+            _ = this.dependencies.Add(objectsNode);
         }
 
         public bool Equals(ObjectsNode other) => other != null && this.objects.Equals(other.objects);

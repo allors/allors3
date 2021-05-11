@@ -28,7 +28,7 @@ namespace Allors.Database.Data
         void IPredicate.Build(ITransaction transaction, IArguments arguments, Database.ICompositePredicate compositePredicate)
         {
             var values = this.Parameter != null ? arguments.ResolveUnits(this.RoleType.ObjectType.Tag, this.Parameter) : this.Values.ToArray();
-            compositePredicate.AddBetween(this.RoleType, values[0], values[1]);
+            _ = compositePredicate.AddBetween(this.RoleType, values[0], values[1]);
         }
 
         public void Accept(IVisitor visitor) => visitor.VisitBetween(this);

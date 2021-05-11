@@ -22,7 +22,7 @@ namespace Tests
             var meta = this.Transaction.Database.Context().MetaCache;
             var accessControl = new AccessControls(this.Transaction).Administrator;
 
-            this.SetUser("jane@example.com");
+            _ = this.SetUser("jane@example.com");
 
             var securityRequest = new SecurityRequest
             {
@@ -32,7 +32,7 @@ namespace Tests
             var api = new Api(this.Transaction, workspaceName);
             var securityResponse = api.Security(securityRequest);
 
-            Assert.Single(securityResponse.AccessControls);
+            _ = Assert.Single(securityResponse.AccessControls);
 
             var securityResponseAccessControl = securityResponse.AccessControls.First();
 
@@ -64,7 +64,7 @@ namespace Tests
             var metaCache = this.Transaction.Database.Context().MetaCache;
             var accessControl = new AccessControls(this.Transaction).Administrator;
 
-            this.SetUser("jane@example.com");
+            _ = this.SetUser("jane@example.com");
 
             var securityRequest = new SecurityRequest
             {
@@ -74,7 +74,7 @@ namespace Tests
             var api = new Api(this.Transaction, workspaceName);
             var securityResponse = api.Security(securityRequest);
 
-            Assert.Single(securityResponse.AccessControls);
+            _ = Assert.Single(securityResponse.AccessControls);
 
             var securityResponseAccessControl = securityResponse.AccessControls.First();
 

@@ -30,7 +30,7 @@ namespace Allors.Database.Data
         void IPredicate.Build(ITransaction transaction, IArguments arguments, Database.ICompositePredicate compositePredicate)
         {
             var value = this.Parameter != null ? (string)arguments.ResolveUnit(this.RoleType.ObjectType.Tag, this.Parameter) : this.Value;
-            compositePredicate.AddLike(this.RoleType, value);
+            _ = compositePredicate.AddLike(this.RoleType, value);
         }
 
         public void Accept(IVisitor visitor) => visitor.VisitLike(this);

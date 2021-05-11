@@ -50,18 +50,18 @@ namespace Allors.Database.Adapters.Npgsql
                 var objectType = transaction.Database.Cache.GetObjectType(objectId);
                 if (objectType == null)
                 {
-                    this.ExistingObjectIdsWithoutReference.Add(objectId);
+                    _ = this.ExistingObjectIdsWithoutReference.Add(objectId);
 
                     transaction.InstantiateReferences(this.ExistingObjectIdsWithoutReference);
 
                     this.ExistingObjectIdsWithoutReference = new HashSet<long>();
-                    this.ReferenceByObjectId.TryGetValue(objectId, out reference);
+                    _ = this.ReferenceByObjectId.TryGetValue(objectId, out reference);
                 }
                 else
                 {
                     reference = new Reference(transaction, objectType, objectId, false);
                     this.ReferenceByObjectId[objectId] = reference;
-                    this.ReferencesWithoutVersions.Add(reference);
+                    _ = this.ReferencesWithoutVersions.Add(reference);
                 }
             }
             else
@@ -85,7 +85,7 @@ namespace Allors.Database.Adapters.Npgsql
                     if (objectType == null)
                     {
                         instantiate = true;
-                        this.ExistingObjectIdsWithoutReference.Add(objectId);
+                        _ = this.ExistingObjectIdsWithoutReference.Add(objectId);
                     }
                 }
             }
@@ -104,13 +104,13 @@ namespace Allors.Database.Adapters.Npgsql
                     var objectType = transaction.Database.Cache.GetObjectType(objectId);
                     if (objectType == null)
                     {
-                        this.ExistingObjectIdsWithoutReference.Add(objectId);
+                        _ = this.ExistingObjectIdsWithoutReference.Add(objectId);
                     }
                     else
                     {
                         reference = new Reference(transaction, objectType, objectId, false);
                         this.ReferenceByObjectId[objectId] = reference;
-                        this.ReferencesWithoutVersions.Add(reference);
+                        _ = this.ReferencesWithoutVersions.Add(reference);
                     }
                 }
                 else
@@ -130,7 +130,7 @@ namespace Allors.Database.Adapters.Npgsql
             {
                 reference = new Reference(transaction, objectType, objectId, false);
                 this.ReferenceByObjectId[objectId] = reference;
-                this.ReferencesWithoutVersions.Add(reference);
+                _ = this.ReferencesWithoutVersions.Add(reference);
             }
             else
             {
@@ -203,7 +203,7 @@ namespace Allors.Database.Adapters.Npgsql
             var objectId = long.Parse(objectStringId);
             if (!this.ReferenceByObjectId.ContainsKey(objectId))
             {
-                this.ExistingObjectIdsWithoutReference.Add(objectId);
+                _ = this.ExistingObjectIdsWithoutReference.Add(objectId);
             }
 
             return objectId;

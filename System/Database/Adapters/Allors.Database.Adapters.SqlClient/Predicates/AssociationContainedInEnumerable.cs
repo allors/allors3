@@ -32,8 +32,8 @@ namespace Allors.Database.Adapters.SqlClient
             var inStatement = new StringBuilder("0");
             foreach (var inObject in this.enumerable)
             {
-                inStatement.Append(",");
-                inStatement.Append(inObject.Id.ToString());
+                _ = inStatement.Append(",");
+                _ = inStatement.Append(inObject.Id.ToString());
             }
 
             if ((this.association.IsMany && this.association.RelationType.RoleType.IsMany) || !this.association.RelationType.ExistExclusiveDatabaseClasses)

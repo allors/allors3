@@ -43,7 +43,7 @@ namespace Tests.Workspace.Local
                 var administratorRole = new Roles(this.Transaction).Administrator;
                 var acl = new AccessControlBuilder(this.Transaction).WithRole(administratorRole).WithSubjectGroup(administrators).WithSecurityToken(defaultSecurityToken).Build();
 
-                this.Transaction.Derive();
+                _ = this.Transaction.Derive();
 
                 new TestPopulation(this.Transaction, "full").Apply();
 

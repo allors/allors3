@@ -610,7 +610,7 @@ namespace Allors.Repository.Domain
                 Logger.Error($"{name} has a duplicate {key}: {id}");
             }
 
-            ids.Add(id);
+            _ = ids.Add(id);
         }
     }
 }

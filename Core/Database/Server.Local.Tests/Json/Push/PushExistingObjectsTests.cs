@@ -38,7 +38,7 @@ namespace Tests
         [Fact]
         public void WorkspaceX1ObjectInWorkspaceX()
         {
-            this.SetUser("jane@example.com");
+            _ = this.SetUser("jane@example.com");
 
             var pushRequest = new PushRequest
             {
@@ -73,7 +73,7 @@ namespace Tests
         [Fact]
         public void WorkspaceX1ObjectInWorkspaceY()
         {
-            this.SetUser("jane@example.com");
+            _ = this.SetUser("jane@example.com");
 
             var pushRequest = new PushRequest
             {

@@ -118,7 +118,7 @@ namespace Allors.Database.Adapters.Memory
             {
                 var roleType = relationType.RoleType;
 
-                sortedStrategiesByRoleType.TryGetValue(roleType, out var strategies);
+                _ = sortedStrategiesByRoleType.TryGetValue(roleType, out var strategies);
 
                 if (strategies != null)
                 {

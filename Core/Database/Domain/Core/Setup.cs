@@ -48,7 +48,7 @@ namespace Allors.Database.Domain
 
             this.OnPostSetup();
 
-            this.transaction.Derive();
+            _ = this.transaction.Derive();
 
             if (this.Config.SetupSecurity)
             {

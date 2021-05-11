@@ -25,11 +25,11 @@ namespace Tests.Workspace
 
             var result = await session1.Pull(new[]
             {
-                        new Pull
-                        {
-                            Extent = new Extent(this.M.Person),
-                        },
-                    });
+                new Pull
+                {
+                    Extent = new Extent(this.M.Person),
+                },
+            });
 
             var workspaceOrganisation1 = session1.Create<WorkspaceOrganisation>();
             var databasePerson1 = result.GetCollection<Person>().First();

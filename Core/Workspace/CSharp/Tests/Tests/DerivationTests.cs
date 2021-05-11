@@ -39,7 +39,7 @@ namespace Tests.Workspace
 
             Assert.Null(person.SessionFullName);
 
-            session.Derive();
+            _ = session.Derive();
 
             Assert.Equal($"Jane Doe", person.SessionFullName);
         }

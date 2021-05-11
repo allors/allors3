@@ -119,7 +119,7 @@ namespace Allors.Workspace.Adapters.Local
                         session.Prefetch(prefetcher, @object);
                     }
 
-                    this.Objects.Add(@object);
+                    _ = this.Objects.Add(@object);
                     this.DatabaseObjectByName[name] = @object;
                     tree?.Resolve(@object, this.AccessControlLists, this.Objects);
                 }
@@ -138,7 +138,7 @@ namespace Allors.Workspace.Adapters.Local
         {
             if (collection?.Count > 0)
             {
-                this.DatabaseCollectionsByName.TryGetValue(name, out var existingCollection);
+                _ = this.DatabaseCollectionsByName.TryGetValue(name, out var existingCollection);
 
                 var filteredCollection = collection.Where(v => this.AllowedClasses != null && this.AllowedClasses.Contains(v.Strategy.Class));
 
@@ -265,7 +265,7 @@ namespace Allors.Workspace.Adapters.Local
             var roleTypes = composite.DatabaseRoleTypes.Where(v => v.RelationType.WorkspaceNames.Length > 0);
             var acl = this.AccessControlLists[obj];
 
-            foreach (var keyValuePair in local.DatabaseState.ChangedRoleByRelationType)
+            foreach (var keyValuePair in local.DatabaseOriginState.ChangedRoleByRelationType)
             {
                 var relationType = keyValuePair.Key;
                 var roleType = ((IRelationType)this.M.FindByTag(keyValuePair.Key.Tag)).RoleType;

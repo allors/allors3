@@ -32,7 +32,7 @@ namespace Allors.Database.Domain.Tests
                 .WithC1C2One2Many(c2C)
                 .Build();
 
-            this.Transaction.Derive();
+            _ = this.Transaction.Derive();
 
             var path = new Select(this.M.C1.C1C2One2Manies, this.M.C2.C2AllorsString);
 
@@ -64,7 +64,7 @@ namespace Allors.Database.Domain.Tests
                 .WithC1C2One2Many(c2C)
                 .Build();
 
-            this.Transaction.Derive();
+            _ = this.Transaction.Derive();
 
             var path = new Select(this.M.C1.C1C2One2Manies, this.M.C2.C2AllorsString);
 
@@ -96,9 +96,9 @@ namespace Allors.Database.Domain.Tests
                 .WithC1C2One2Many(c2C)
                 .Build();
 
-            this.Transaction.Derive();
+            _ = this.Transaction.Derive();
 
-            Select.TryParse(this.M.C2, "C1WhereC1C2One2Many", out var @select);
+            _ = Select.TryParse(this.M.C2, "C1WhereC1C2One2Many", out var @select);
 
             var result = (C1)@select.Get(c2A, this.AclsMock.Object);
             Assert.Equal(result, c1A);

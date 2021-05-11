@@ -226,19 +226,19 @@ WHERE
 
         public SchemaTable GetTable(string tableName)
         {
-            this.TableByName.TryGetValue(tableName.ToLowerInvariant(), out var table);
+            _ = this.TableByName.TryGetValue(tableName.ToLowerInvariant(), out var table);
             return table;
         }
 
         public SchemaTableType GetTableType(string tableTypeName)
         {
-            this.TableTypeByName.TryGetValue(tableTypeName, out var tableType);
+            _ = this.TableTypeByName.TryGetValue(tableTypeName, out var tableType);
             return tableType;
         }
 
         public SchemaProcedure GetProcedure(string procedureName)
         {
-            this.ProcedureByName.TryGetValue(procedureName, out var procedure);
+            _ = this.ProcedureByName.TryGetValue(procedureName, out var procedure);
             return procedure;
         }
 
@@ -246,7 +246,7 @@ WHERE
         {
             if (this.IndexByIndexNameByTableName.TryGetValue(tableName.ToLowerInvariant(), out var indexByLowercaseIndexName))
             {
-                indexByLowercaseIndexName.TryGetValue(indexName.ToLowerInvariant(), out var index);
+                _ = indexByLowercaseIndexName.TryGetValue(indexName.ToLowerInvariant(), out var index);
                 return index;
             }
 

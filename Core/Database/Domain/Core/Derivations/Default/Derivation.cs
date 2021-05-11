@@ -55,7 +55,7 @@ namespace Allors.Database.Domain.Derivations.Default
                     var newObjects = changeSet.Created.Select(v => (Object)v.GetObject());
                     foreach (var newObject in newObjects)
                     {
-                        newObject.OnInit();
+                        _ = newObject.OnInit();
                     }
                 }
 

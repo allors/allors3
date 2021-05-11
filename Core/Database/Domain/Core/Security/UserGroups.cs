@@ -29,9 +29,9 @@ namespace Allors.Database.Domain
         {
             var merge = this.Cache.Merger().Action();
 
-            merge(AdministratorsId, v => v.Name = "Administrators");
-            merge(CreatorsId, v => v.Name = "Creators");
-            merge(GuestsId, v => v.Name = "Guests");
+            _ = merge(AdministratorsId, v => v.Name = "Administrators");
+            _ = merge(CreatorsId, v => v.Name = "Creators");
+            _ = merge(GuestsId, v => v.Name = "Guests");
         }
     }
 }

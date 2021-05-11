@@ -24,7 +24,7 @@ namespace Allors.Database.Adapters.Npgsql
             Names = new HashSet<string>();
             foreach (var name in Current)
             {
-                Names.Add(name.ToLowerInvariant());
+                _ = Names.Add(name.ToLowerInvariant());
             }
         }
     }

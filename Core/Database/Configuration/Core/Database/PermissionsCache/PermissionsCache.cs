@@ -48,7 +48,7 @@ namespace Allors.Database.Configuration
                 }
             }
 
-            permissionCacheEntryByClassId.TryGetValue(classId, out var permissionsCacheEntry);
+            _ = permissionCacheEntryByClassId.TryGetValue(classId, out var permissionsCacheEntry);
             return permissionsCacheEntry;
         }
 

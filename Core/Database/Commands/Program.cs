@@ -60,7 +60,7 @@ namespace Commands
                     configurationBuilder.AddCrossPlatform(".");
                     configurationBuilder.AddCrossPlatform(root);
                     configurationBuilder.AddCrossPlatform(Path.Combine(root, "commands"));
-                    configurationBuilder.AddEnvironmentVariables();
+                    _ = configurationBuilder.AddEnvironmentVariables();
 
                     this.configuration = configurationBuilder.Build();
                 }
@@ -95,7 +95,7 @@ namespace Commands
             try
             {
                 var app = new CommandLineApplication<Program>();
-                app.Conventions.UseDefaultConventions();
+                _ = app.Conventions.UseDefaultConventions();
                 return app.Execute(args);
             }
             catch (Exception e)

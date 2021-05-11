@@ -188,11 +188,11 @@ namespace Allors.Database.Adapters
                 var array = extent.ToArray();
 
                 var nestedPrefetchPolicyBuilder = new PrefetchPolicyBuilder();
-                nestedPrefetchPolicyBuilder.WithRule(m.C2.C2C2one2manies);
+                _ = nestedPrefetchPolicyBuilder.WithRule(m.C2.C2C2one2manies);
                 var nestedPrefetchPolicy = nestedPrefetchPolicyBuilder.Build();
 
                 var prefetchPolicyBuilder = new PrefetchPolicyBuilder();
-                prefetchPolicyBuilder.WithRule(m.C1.C1C2many2one, nestedPrefetchPolicy);
+                _ = prefetchPolicyBuilder.WithRule(m.C1.C1C2many2one, nestedPrefetchPolicy);
                 var prefetchPolicy = prefetchPolicyBuilder.Build();
                 transaction.Prefetch(prefetchPolicy, new[] { c1a, c1b });
 
@@ -231,11 +231,11 @@ namespace Allors.Database.Adapters
                 var array = extent.ToArray();
 
                 var nestedPrefetchPolicyBuilder = new PrefetchPolicyBuilder();
-                nestedPrefetchPolicyBuilder.WithRule(m.C2.C2C2one2manies);
+                _ = nestedPrefetchPolicyBuilder.WithRule(m.C2.C2C2one2manies);
                 var nestedPrefetchPolicy = nestedPrefetchPolicyBuilder.Build();
 
                 var prefetchPolicyBuilder = new PrefetchPolicyBuilder();
-                prefetchPolicyBuilder.WithRule(m.C1.C1C2one2manies, nestedPrefetchPolicy);
+                _ = prefetchPolicyBuilder.WithRule(m.C1.C1C2one2manies, nestedPrefetchPolicy);
                 var prefetchPolicy = prefetchPolicyBuilder.Build();
                 transaction.Prefetch(prefetchPolicy, new[] { c1a, c1b });
 

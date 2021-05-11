@@ -36,11 +36,11 @@ namespace Allors.Database.Data
                 {
                     if (objects != null)
                     {
-                        compositePredicate.AddContainedIn(roleType, objects);
+                        _ = compositePredicate.AddContainedIn(roleType, objects);
                     }
                     else
                     {
-                        compositePredicate.AddContainedIn(roleType, this.Extent.Build(transaction, arguments));
+                        _ = compositePredicate.AddContainedIn(roleType, this.Extent.Build(transaction, arguments));
                     }
                 }
                 else
@@ -48,11 +48,11 @@ namespace Allors.Database.Data
                     var associationType = (IAssociationType)this.PropertyType;
                     if (objects != null)
                     {
-                        compositePredicate.AddContainedIn(associationType, objects);
+                        _ = compositePredicate.AddContainedIn(associationType, objects);
                     }
                     else
                     {
-                        compositePredicate.AddContainedIn(associationType, this.Extent.Build(transaction, arguments));
+                        _ = compositePredicate.AddContainedIn(associationType, this.Extent.Build(transaction, arguments));
                     }
                 }
             }

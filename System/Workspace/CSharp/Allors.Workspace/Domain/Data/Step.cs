@@ -65,7 +65,7 @@ namespace Allors.Workspace.Data
         public override string ToString()
         {
             var name = new StringBuilder();
-            name.Append(this.PropertyType.Name);
+            _ = name.Append(this.PropertyType.Name);
             if (this.ExistNext)
             {
                 this.Next.ToStringAppendToName(name);
@@ -76,7 +76,7 @@ namespace Allors.Workspace.Data
 
         private void ToStringAppendToName(StringBuilder name)
         {
-            name.Append("." + this.PropertyType.Name);
+            _ = name.Append("." + this.PropertyType.Name);
 
             if (this.ExistNext)
             {

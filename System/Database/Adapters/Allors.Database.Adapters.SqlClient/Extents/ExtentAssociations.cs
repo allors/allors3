@@ -143,7 +143,7 @@ namespace Allors.Database.Adapters.SqlClient
         {
             this.LazyUpgrade();
 
-            this.upgrade.AddSort(sort);
+            _ = this.upgrade.AddSort(sort);
 
             return this;
         }
@@ -152,7 +152,7 @@ namespace Allors.Database.Adapters.SqlClient
         {
             this.LazyUpgrade();
 
-            this.upgrade.AddSort(sort, direction);
+            _ = this.upgrade.AddSort(sort, direction);
 
             return this;
         }

@@ -153,7 +153,7 @@ namespace Allors.Workspace.Adapters.Local
 
             try
             {
-                method.Invoke(obj, null);
+                _ = method.Invoke(obj, null);
             }
             catch (Exception e)
             {

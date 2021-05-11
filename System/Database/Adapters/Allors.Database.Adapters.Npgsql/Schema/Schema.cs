@@ -186,13 +186,13 @@ WHERE routine_schema = @routineSchema";
 
         public SchemaTable GetTable(string tableName)
         {
-            this.TableByName.TryGetValue(tableName.ToLowerInvariant(), out var table);
+            _ = this.TableByName.TryGetValue(tableName.ToLowerInvariant(), out var table);
             return table;
         }
 
         public SchemaProcedure GetProcedure(string procedureName)
         {
-            this.ProcedureByName.TryGetValue(procedureName, out var procedure);
+            _ = this.ProcedureByName.TryGetValue(procedureName, out var procedure);
             return procedure;
         }
 
@@ -200,7 +200,7 @@ WHERE routine_schema = @routineSchema";
         {
             if (this.IndexByIndexNameByTableName.TryGetValue(tableName.ToLowerInvariant(), out var indexByLowercaseIndexName))
             {
-                indexByLowercaseIndexName.TryGetValue(indexName.ToLowerInvariant(), out var index);
+                _ = indexByLowercaseIndexName.TryGetValue(indexName.ToLowerInvariant(), out var index);
                 return index;
             }
 

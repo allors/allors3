@@ -28,7 +28,7 @@ namespace Allors.Database.Domain.Tests
             var queryExtent = filter.Build(this.Transaction, arguments);
 
             var extent = this.Transaction.Extent(this.M.Person);
-            extent.Filter.AddEquals(this.M.Person.FirstName, "John");
+            _ = extent.Filter.AddEquals(this.M.Person.FirstName, "John");
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
         }
@@ -52,7 +52,7 @@ namespace Allors.Database.Domain.Tests
             queryExtent = filter.Build(this.Transaction, arguments);
 
             extent = this.Transaction.Extent(this.M.Person);
-            extent.Filter.AddEquals(this.M.Person.FirstName, "John");
+            _ = extent.Filter.AddEquals(this.M.Person.FirstName, "John");
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
         }
@@ -105,8 +105,8 @@ namespace Allors.Database.Domain.Tests
 
             var extent = this.Transaction.Extent(this.M.Person);
             var and = extent.Filter.AddAnd();
-            and.AddEquals(this.M.Person.FirstName, "John");
-            and.AddEquals(this.M.Person.LastName, "Doe");
+            _ = and.AddEquals(this.M.Person.FirstName, "John");
+            _ = and.AddEquals(this.M.Person.LastName, "Doe");
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
         }
@@ -142,7 +142,7 @@ namespace Allors.Database.Domain.Tests
                 var queryExtent = filter.Build(this.Transaction, arguments);
 
                 var extent = this.Transaction.Extent(this.M.Person);
-                extent.Filter.AddEquals(this.M.Person.FirstName, "John");
+                _ = extent.Filter.AddEquals(this.M.Person.FirstName, "John");
 
                 Assert.Equal(extent.ToArray(), queryExtent.ToArray());
             }
@@ -179,9 +179,9 @@ namespace Allors.Database.Domain.Tests
             var queryExtent = filter.Build(this.Transaction, arguments);
 
             var c2s = this.Transaction.Extent(this.M.C2);
-            c2s.Filter.AddEquals(this.M.C2.C2AllorsString, "c2B");
+            _ = c2s.Filter.AddEquals(this.M.C2.C2AllorsString, "c2B");
             var extent = this.Transaction.Extent(this.M.C1);
-            extent.Filter.AddContainedIn(this.M.C1.C1C2One2One, c2s);
+            _ = extent.Filter.AddContainedIn(this.M.C1.C1C2One2One, c2s);
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
         }

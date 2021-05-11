@@ -17,13 +17,13 @@ namespace Allors.Database.Domain
 
         public static bool HasChangedRole(this IChangeSet @this, Object derivable, IRoleType roleType)
         {
-            @this.RoleTypesByAssociation.TryGetValue(derivable.Id, out var changedRoleTypes);
+            _ = @this.RoleTypesByAssociation.TryGetValue(derivable.Id, out var changedRoleTypes);
             return changedRoleTypes?.Contains(roleType) ?? false;
         }
 
         public static bool HasChangedRoles(this IChangeSet @this, Object derivable, params IRoleType[] roleTypes)
         {
-            @this.RoleTypesByAssociation.TryGetValue(derivable.Id, out var changedRoleTypes);
+            _ = @this.RoleTypesByAssociation.TryGetValue(derivable.Id, out var changedRoleTypes);
             if (changedRoleTypes != null)
             {
                 if (roleTypes.Length == 0 || roleTypes.Any(roleType => changedRoleTypes.Contains(roleType)))
@@ -57,7 +57,7 @@ namespace Allors.Database.Domain
                     break;
             }
 
-            @this.RoleTypesByAssociation.TryGetValue(derivable.Id, out var changedRoleTypes);
+            _ = @this.RoleTypesByAssociation.TryGetValue(derivable.Id, out var changedRoleTypes);
             if (changedRoleTypes != null)
             {
                 if (changedRoleTypes.Any(roleType => check(roleType)))

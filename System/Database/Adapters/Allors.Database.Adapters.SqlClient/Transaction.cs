@@ -55,7 +55,7 @@ namespace Allors.Database.Adapters.SqlClient
                     return null;
                 }
 
-                this.properties.TryGetValue(name, out var value);
+                _ = this.properties.TryGetValue(name, out var value);
                 return value;
             }
 
@@ -68,7 +68,7 @@ namespace Allors.Database.Adapters.SqlClient
 
                 if (value == null)
                 {
-                    this.properties.Remove(name);
+                    _ = this.properties.Remove(name);
                 }
                 else
                 {
@@ -492,7 +492,7 @@ namespace Allors.Database.Adapters.SqlClient
                 this.State.TriggersFlushRolesByAssociationType[associationType] = associations;
             }
 
-            associations.Add(role);
+            _ = associations.Add(role);
         }
 
         internal void FlushConditionally(long roleId, IAssociationType associationType)

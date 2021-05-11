@@ -74,10 +74,10 @@ namespace Allors.Database.Domain.Derivations.Default
                     var @object = postDeriveBacklog[i];
                     if (!postDerived.Contains(@object) && !@object.Strategy.IsDeleted)
                     {
-                        @object.OnPostDerive(x => x.WithDerivation(this.Derivation));
+                        _ = @object.OnPostDerive(x => x.WithDerivation(this.Derivation));
                     }
 
-                    postDerived.Add(@object);
+                    _ = postDerived.Add(@object);
                 }
 
                 return postDeriveBacklog;

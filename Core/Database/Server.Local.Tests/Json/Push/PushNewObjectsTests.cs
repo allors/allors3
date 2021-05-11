@@ -18,7 +18,7 @@ namespace Tests
         [Fact]
         public void WorkspaceX1ObjectInWorkspaceX()
         {
-            this.SetUser("jane@example.com");
+            _ = this.SetUser("jane@example.com");
 
             var pushRequest = new PushRequest
             {
@@ -38,7 +38,7 @@ namespace Tests
         [Fact]
         public void WorkspaceX1ObjectInWorkspaceY()
         {
-            this.SetUser("jane@example.com");
+            _ = this.SetUser("jane@example.com");
 
             var pushRequest = new PushRequest
             {
@@ -58,7 +58,7 @@ namespace Tests
         [Fact]
         public void WorkspaceX1ObjectInWorkspaceNone()
         {
-            this.SetUser("jane@example.com");
+            _ = this.SetUser("jane@example.com");
 
             var pushRequest = new PushRequest
             {
@@ -77,7 +77,7 @@ namespace Tests
 
         public void WorkspaceY1ObjectInWorkspaceNone()
         {
-            this.SetUser("jane@example.com");
+            _ = this.SetUser("jane@example.com");
 
             var pushRequest = new PushRequest
             {
@@ -97,7 +97,7 @@ namespace Tests
         [Fact]
         public void WorkspaceNoneObjectInWorkspaceX()
         {
-            this.SetUser("jane@example.com");
+            _ = this.SetUser("jane@example.com");
 
             var pushRequest = new PushRequest
             {
@@ -117,7 +117,7 @@ namespace Tests
         [Fact]
         public void WorkspaceNoneObjectInWorkspaceY()
         {
-            this.SetUser("jane@example.com");
+            _ = this.SetUser("jane@example.com");
 
             var pushRequest = new PushRequest
             {
@@ -137,7 +137,7 @@ namespace Tests
         [Fact]
         public void WorkspaceNoneObjectInWorkspaceNone()
         {
-            this.SetUser("jane@example.com");
+            _ = this.SetUser("jane@example.com");
 
             var pushRequest = new PushRequest
             {
