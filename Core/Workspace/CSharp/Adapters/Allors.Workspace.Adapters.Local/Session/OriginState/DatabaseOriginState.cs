@@ -9,7 +9,11 @@ namespace Allors.Workspace.Adapters.Local
 
     internal sealed class DatabaseOriginState : RecordBasedOriginState
     {
-        internal DatabaseOriginState(Strategy strategy, DatabaseRecord record) : base(strategy, record) { }
+        internal DatabaseOriginState(Strategy strategy, DatabaseRecord record) : base(strategy)
+        {
+            this.DatabaseRecord = record;
+            this.PreviousRecord = this.DatabaseRecord;
+        }
 
         public bool CanRead(IRoleType roleType)
         {
@@ -46,20 +50,22 @@ namespace Allors.Workspace.Adapters.Local
 
         private bool ExistDatabaseObjects => this.Record != null;
 
-        private DatabaseRecord DatabaseRecord => (DatabaseRecord)this.Record;
+        protected override IRecord Record => this.DatabaseRecord;
+
+        private DatabaseRecord DatabaseRecord { get; set; }
 
         public long Version => this.DatabaseRecord.Version;
 
-        public override bool HasChanges => this.Record == null || this.ChangedRoleByRelationType?.Count > 0;
+        public bool HasChanges => this.Record == null || this.ChangedRoleByRelationType?.Count > 0;
 
-        internal override void Reset()
+        internal void Reset()
         {
-            this.Record = this.Session.DatabaseAdapter.Get(this.Id);
+            this.DatabaseRecord = this.Session.DatabaseAdapter.Get(this.Id);
             this.ChangedRoleByRelationType = null;
         }
 
-        protected override void OnChange() => this.Session.OnChange(this);
+        internal void PushResponse(DatabaseRecord newDatabaseRecord) => this.DatabaseRecord = newDatabaseRecord;
 
-        internal void PushResponse(DatabaseRecord newDatabaseRecord) => this.Record = newDatabaseRecord;
+        protected override void OnChange() => this.Session.OnChange(this);
     }
 }

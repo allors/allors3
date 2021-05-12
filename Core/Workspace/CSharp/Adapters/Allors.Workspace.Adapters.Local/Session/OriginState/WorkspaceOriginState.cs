@@ -5,20 +5,35 @@
 
 namespace Allors.Workspace.Adapters.Local
 {
-    using Meta;
-
     internal sealed class WorkspaceOriginState : RecordBasedOriginState
     {
-        internal WorkspaceOriginState(Strategy strategy, IRecord record) : base(strategy, record) { }
+        internal WorkspaceOriginState(Strategy strategy, WorkspaceRecord record) : base(strategy)
+        {
+            this.WorkspaceRecord = record;
+            this.PreviousRecord = this.WorkspaceRecord;
+        }
+
+        protected override IRecord Record => this.WorkspaceRecord;
+
+        private WorkspaceRecord WorkspaceRecord { get; set; }
 
         protected override void OnChange() => this.Strategy.Session.OnChange(this);
 
-        public override bool HasChanges => this.ChangedRoleByRelationType?.Count > 0;
+        public bool HasChanges => this.ChangedRoleByRelationType?.Count > 0;
 
-
-        internal override void Reset()
+        internal void Push()
         {
-            this.Record = this.Workspace.Get(this.Id);
+            if (this.HasChanges)
+            {
+                this.Workspace.Push(this.Id, this.Class, this.Record?.Version ?? 0, this.ChangedRoleByRelationType);
+            }
+
+            this.Reset();
+        }
+
+        internal void Reset()
+        {
+            this.WorkspaceRecord = this.Workspace.Get(this.Id);
             this.ChangedRoleByRelationType = null;
         }
     }

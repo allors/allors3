@@ -264,15 +264,12 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        internal Strategy GetStrategy(long? identity) => identity.HasValue ? this.GetStrategy(identity.Value) : null;
-
         internal Strategy GetStrategy(long identity)
         {
             if (identity == 0)
             {
                 return default;
             }
-
 
             if (this.strategyByWorkspaceId.TryGetValue(identity, out var sessionStrategy))
             {

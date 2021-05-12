@@ -231,14 +231,14 @@ namespace Allors.Workspace.Adapters.Local
                     break;
 
                 case Origin.Workspace:
-                    this.workspaceOriginState.AddRole(roleType, value.Id);
+                    this.workspaceOriginState.AddCompositeRole(roleType, value.Id);
 
                     break;
 
                 case Origin.Database:
                     if (this.CanWrite(roleType))
                     {
-                        this.DatabaseOriginState.AddRole(roleType, value.Id);
+                        this.DatabaseOriginState.AddCompositeRole(roleType, value.Id);
                     }
 
                     break;
@@ -256,14 +256,14 @@ namespace Allors.Workspace.Adapters.Local
                     break;
 
                 case Origin.Workspace:
-                    this.workspaceOriginState.RemoveRole(roleType, value.Id);
+                    this.workspaceOriginState.RemoveCompositeRole(roleType, value.Id);
 
                     break;
 
                 case Origin.Database:
                     if (this.CanWrite(roleType))
                     {
-                        this.DatabaseOriginState.RemoveRole(roleType, value.Id);
+                        this.DatabaseOriginState.RemoveCompositeRole(roleType, value.Id);
                     }
 
                     break;

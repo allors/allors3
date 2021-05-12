@@ -12,17 +12,11 @@ namespace Allors.Workspace.Adapters.Local
 
     internal abstract class RecordBasedOriginState
     {
-
-        protected RecordBasedOriginState(Strategy strategy, IRecord record)
-        {
-            this.Strategy = strategy;
-            this.Record = record;
-            this.PreviousRecord = this.Record;
-        }
+        protected RecordBasedOriginState(Strategy strategy) => this.Strategy = strategy;
 
         protected Strategy Strategy { get; }
 
-        protected IRecord Record { get; set; }
+        protected abstract IRecord Record { get; }
 
         protected IRecord PreviousRecord { get; set; }
 
@@ -30,8 +24,7 @@ namespace Allors.Workspace.Adapters.Local
 
         protected Dictionary<IRelationType, object> PreviousChangedRoleByRelationType { get; set; }
 
-        public abstract bool HasChanges { get; }
-
+        #region Proxy Properties
         protected long Id => this.Strategy.Id;
 
         protected IClass Class => this.Strategy.Class;
@@ -40,7 +33,9 @@ namespace Allors.Workspace.Adapters.Local
 
         protected Workspace Workspace => this.Session.Workspace;
 
-        internal abstract void Reset();
+        private INumbers Numbers => this.Strategy.Numbers;
+
+        #endregion
 
         internal object GetRole(IRoleType roleType)
         {
@@ -83,28 +78,7 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        internal void SetCompositesRole(IRoleType roleType, object role)
-        {
-            var previousRole = this.GetRole(roleType);
-
-            this.SetChangedRole(roleType, role);
-
-            var associationType = roleType.AssociationType;
-            if (associationType.IsMany)
-            {
-                return;
-            }
-
-            // OneToMany
-            var addedRoles = this.Numbers.Except(role, previousRole);
-            foreach (var addedRole in this.Numbers.Enumerate(addedRoles))
-            {
-                var previousAssociationObject = this.Session.GetAssociation<IObject>(addedRole, associationType).FirstOrDefault();
-                previousAssociationObject?.Strategy.Set(roleType, null);
-            }
-        }
-
-        internal void AddRole(IRoleType roleType, long roleToAdd)
+        internal void AddCompositeRole(IRoleType roleType, long roleToAdd)
         {
             var previousRole = this.GetRole(roleType);
 
@@ -128,7 +102,7 @@ namespace Allors.Workspace.Adapters.Local
             previousAssociationObject?.Strategy.Set(roleType, null);
         }
 
-        internal void RemoveRole(IRoleType roleType, long roleToRemove)
+        internal void RemoveCompositeRole(IRoleType roleType, long roleToRemove)
         {
             var previousRole = this.GetRole(roleType);
 
@@ -142,21 +116,30 @@ namespace Allors.Workspace.Adapters.Local
             this.SetChangedRole(roleType, role);
         }
 
-        protected INumbers Numbers => this.Strategy.Numbers;
-
-        internal void Push()
+        internal void SetCompositesRole(IRoleType roleType, object role)
         {
-            if (this.HasChanges)
+            var previousRole = this.GetRole(roleType);
+
+            this.SetChangedRole(roleType, role);
+
+            var associationType = roleType.AssociationType;
+            if (associationType.IsMany)
             {
-                this.Workspace.Push(this.Id, this.Class, this.Record?.Version ?? 0, this.ChangedRoleByRelationType);
+                return;
             }
 
-            this.Reset();
+            // OneToMany
+            var addedRoles = this.Numbers.Except(role, previousRole);
+            foreach (var addedRole in this.Numbers.Enumerate(addedRoles))
+            {
+                var previousAssociationObject = this.Session.GetAssociation<IObject>(addedRole, associationType).FirstOrDefault();
+                previousAssociationObject?.Strategy.Set(roleType, null);
+            }
         }
 
         internal void Checkpoint(ChangeSet changeSet)
         {
-            // Same workspace object
+            // Same record
             if (this.Record.Version == this.PreviousRecord.Version)
             {
                 // No previous changed roles
@@ -171,7 +154,7 @@ namespace Allors.Workspace.Adapters.Local
                             var cooked = kvp.Value;
                             var raw = this.Record.GetRole(relationType.RoleType);
 
-                            changeSet.DiffCookedWithRaw(this.Strategy, relationType, cooked, raw);
+                            changeSet.Diff(this.Strategy, relationType, cooked, raw);
                         }
                     }
                 }
@@ -184,11 +167,11 @@ namespace Allors.Workspace.Adapters.Local
                         var role = kvp.Value;
 
                         _ = this.PreviousChangedRoleByRelationType.TryGetValue(relationType, out var previousRole);
-                        changeSet.DiffCookedWithCooked(this.Strategy, relationType, role, previousRole);
+                        changeSet.Diff(this.Strategy, relationType, role, previousRole);
                     }
                 }
             }
-            // Different workspace objects
+            // Different record
             else
             {
                 var hasPreviousCooked = this.PreviousChangedRoleByRelationType != null;
@@ -202,12 +185,12 @@ namespace Allors.Workspace.Adapters.Local
                     {
                         if (hasCooked && this.ChangedRoleByRelationType.TryGetValue(relationType, out var cooked))
                         {
-                            changeSet.DiffCookedWithCooked(this.Strategy, relationType, cooked, previousCooked);
+                            changeSet.Diff(this.Strategy, relationType, cooked, previousCooked);
                         }
                         else
                         {
                             var raw = this.Record.GetRole(roleType);
-                            changeSet.DiffRawWithCooked(this.Strategy, relationType, raw, previousCooked);
+                            changeSet.Diff(this.Strategy, relationType, raw, previousCooked);
                         }
                     }
                     else
@@ -215,12 +198,12 @@ namespace Allors.Workspace.Adapters.Local
                         var previousRaw = this.PreviousRecord?.GetRole(roleType);
                         if (hasCooked && this.ChangedRoleByRelationType.TryGetValue(relationType, out var cooked))
                         {
-                            changeSet.DiffCookedWithRaw(this.Strategy, relationType, cooked, previousRaw);
+                            changeSet.Diff(this.Strategy, relationType, cooked, previousRaw);
                         }
                         else
                         {
                             var raw = this.Record.GetRole(roleType);
-                            changeSet.DiffRawWithRaw(this.Strategy, relationType, raw, previousRaw);
+                            changeSet.Diff(this.Strategy, relationType, raw, previousRaw);
                         }
                     }
                 }
