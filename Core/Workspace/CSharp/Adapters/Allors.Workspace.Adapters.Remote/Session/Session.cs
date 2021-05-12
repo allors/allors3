@@ -85,7 +85,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public T Create<T>(IClass @class) where T : IObject
         {
-            var workspaceId = this.Database.Identities.NextId();
+            var workspaceId = this.Database.WorkspaceIdGenerator.Next();
             var strategy = new Strategy(this, @class, workspaceId);
             this.AddStrategy(strategy);
 

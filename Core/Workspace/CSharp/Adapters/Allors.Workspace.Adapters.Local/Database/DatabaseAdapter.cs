@@ -24,22 +24,22 @@ namespace Allors.Workspace.Adapters.Local
             this.MetaPopulation = metaPopulation;
             this.Database = database;
             this.ObjectsById = new ConcurrentDictionary<long, DatabaseRecord>();
-            this.Identities = new Identities();
+            this.WorkspaceIdGenerator = new WorkspaceIdGenerator();
             this.permissionCache = this.Database.Context().PermissionsCache;
             this.AccessControlById = new Dictionary<long, AccessControl>();
         }
 
-        public IMetaPopulation MetaPopulation { get; }
+        private IMetaPopulation MetaPopulation { get; }
 
-        public Database.Meta.IMetaPopulation DatabaseMetaPopulation => this.Database.MetaPopulation;
+        private Database.Meta.IMetaPopulation DatabaseMetaPopulation => this.Database.MetaPopulation;
 
         public IDatabase Database { get; }
 
-        public ConcurrentDictionary<long, DatabaseRecord> ObjectsById { get; }
+        private ConcurrentDictionary<long, DatabaseRecord> ObjectsById { get; }
 
-        internal Identities Identities { get; }
+        internal WorkspaceIdGenerator WorkspaceIdGenerator { get; }
 
-        internal Dictionary<long, AccessControl> AccessControlById { get; set; }
+        private Dictionary<long, AccessControl> AccessControlById { get; set; }
 
         internal void Sync(IEnumerable<IObject> objects, IAccessControlLists acls)
         {

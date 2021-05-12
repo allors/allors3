@@ -31,11 +31,11 @@ namespace Allors.Workspace.Adapters.Remote
         private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> writePermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> executePermissionByOperandTypeByClass;
 
-        internal Database(IMetaPopulation metaPopulation, HttpClient httpClient, Identities identities)
+        internal Database(IMetaPopulation metaPopulation, HttpClient httpClient, WorkspaceIdGenerator workspaceIdGenerator)
         {
             this.MetaPopulation = metaPopulation;
             this.HttpClient = httpClient;
-            this.Identities = identities;
+            this.WorkspaceIdGenerator = workspaceIdGenerator;
 
             this.HttpClient.DefaultRequestHeaders.Accept.Clear();
             this.HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -56,7 +56,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public HttpClient HttpClient { get; }
 
-        internal Identities Identities { get; }
+        internal WorkspaceIdGenerator WorkspaceIdGenerator { get; }
 
         internal IAsyncPolicy Policy { get; set; } = Polly.Policy
            .Handle<HttpRequestException>()

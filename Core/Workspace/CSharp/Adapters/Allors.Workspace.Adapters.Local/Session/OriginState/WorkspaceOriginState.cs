@@ -19,7 +19,7 @@ namespace Allors.Workspace.Adapters.Local
 
         protected override void OnChange() => this.Strategy.Session.OnChange(this);
 
-        public bool HasChanges => this.ChangedRoleByRelationType?.Count > 0;
+        private bool HasChanges => this.ChangedRoleByRelationType?.Count > 0;
 
         internal void Push()
         {

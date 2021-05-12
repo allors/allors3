@@ -21,7 +21,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.Lifecycle = state;
 
             this.ObjectFactory = new ReflectionObjectFactory(this.MetaPopulation, instance);
-            this.Database = new Database(this.MetaPopulation, httpClient, new Identities());
+            this.Database = new Database(this.MetaPopulation, httpClient, new WorkspaceIdGenerator());
 
             this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
             this.WorkspaceIdsByWorkspaceClass = new Dictionary<IClass, long[]>();

@@ -62,17 +62,18 @@ namespace Allors.Workspace.Adapters.Local
             return workspaceObject;
         }
 
-        internal void RegisterRecord(IClass @class, long workspaceId)
-        {
-            this.WorkspaceClassByWorkspaceId.Add(workspaceId, @class);
-
-            _ = this.WorkspaceIdsByWorkspaceClass.TryGetValue(@class, out var ids);
-            _ = this.Numbers.Add(ids, workspaceId);
-            this.WorkspaceIdsByWorkspaceClass[@class] = ids;
-        }
-
         internal void Push(long id, IClass @class, long version, Dictionary<IRelationType, object> changedRoleByRoleType)
         {
+            if (!this.WorkspaceClassByWorkspaceId.ContainsKey(id))
+            {
+                this.WorkspaceClassByWorkspaceId.Add(id, @class);
+
+                _ = this.WorkspaceIdsByWorkspaceClass.TryGetValue(@class, out var ids);
+                _ = this.Numbers.Add(ids, id);
+                this.WorkspaceIdsByWorkspaceClass[@class] = ids;
+
+            }
+
             if (!this.recordById.TryGetValue(id, out var originalWorkspaceRecord))
             {
                 this.recordById[id] = new WorkspaceRecord(this.DatabaseAdapter, id, @class, ++version, changedRoleByRoleType);

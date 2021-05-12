@@ -60,30 +60,25 @@ namespace Allors.Workspace.Adapters.Local
 
         public Task<IInvokeResult> Invoke(Method[] methods, InvokeOptions options = null)
         {
-            var localInvokeResult = new InvokeResult(this, this.Workspace);
-            localInvokeResult.Execute(methods, options);
-            return Task.FromResult<IInvokeResult>(localInvokeResult);
+            var result = new InvokeResult(this, this.Workspace);
+            result.Execute(methods, options);
+            return Task.FromResult<IInvokeResult>(result);
         }
 
         public T Create<T>() where T : class, IObject => this.Create<T>((IClass)this.Workspace.ObjectFactory.GetObjectType<T>());
 
         public T Create<T>(IClass @class) where T : IObject
         {
-            var workspaceId = this.DatabaseAdapter.Identities.NextId();
+            var workspaceId = this.DatabaseAdapter.WorkspaceIdGenerator.Next();
             var strategy = new Strategy(this, @class, workspaceId);
             this.AddStrategy(strategy);
 
-            switch (@class.Origin)
+            _ = @class.Origin switch
             {
-                case Origin.Database:
-                    _ = (this.newDatabaseStrategies ??= new HashSet<Strategy>()).Add(strategy);
-                    break;
-                case Origin.Workspace:
-                    _ = (this.workspaceStrategies ??= new HashSet<Strategy>()).Add(strategy);
-                    // TODO: move to Push
-                    this.Workspace.RegisterRecord(@class, workspaceId);
-                    break;
-            }
+                Origin.Database => (this.newDatabaseStrategies ??= new HashSet<Strategy>()).Add(strategy),
+                Origin.Workspace => (this.workspaceStrategies ??= new HashSet<Strategy>()).Add(strategy),
+                _ => default
+            };
 
             _ = this.changeSet.Created.Add(strategy);
 
@@ -98,15 +93,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public T Get<T>(long id) where T : IObject => (T)this.GetStrategy(id)?.Object;
 
-        public T Get<T>(string idAsString) where T : IObject
-        {
-            if (long.TryParse(idAsString, out var id))
-            {
-                return (T)this.GetStrategy(id)?.Object;
-            }
-
-            return default;
-        }
+        public T Get<T>(string idAsString) where T : IObject => long.TryParse(idAsString, out var id) ? (T)this.GetStrategy(id)?.Object : default;
 
         public IEnumerable<T> Get<T>(IEnumerable<IObject> objects) where T : IObject => objects.Select(this.Get<T>);
 
@@ -199,24 +186,22 @@ namespace Allors.Workspace.Adapters.Local
             var newStrategies = this.newDatabaseStrategies?.ToArray() ?? Array.Empty<Strategy>();
             var changedStrategies = this.databaseStrategies?.Where(v => v.HasDatabaseChanges).ToArray() ?? Array.Empty<Strategy>();
 
-            var localPushResult = new PushResult(this, this.Workspace);
-            localPushResult.Execute(newStrategies, changedStrategies);
+            var result = new PushResult(this, this.Workspace);
+            result.Execute(newStrategies, changedStrategies);
 
-            if (!localPushResult.HasErrors)
+            if (!result.HasErrors)
             {
-                this.PushResponse(localPushResult);
+                this.PushResponse(result);
 
-                var objects = localPushResult.Objects;
+                var objects = result.Objects;
 
-                this.Workspace.DatabaseAdapter.Sync(objects, localPushResult.AccessControlLists);
+                this.Workspace.DatabaseAdapter.Sync(objects, result.AccessControlLists);
 
-                foreach (var databaseObject in objects)
+                foreach (var id in objects
+                    .Select(databaseObject => databaseObject.Id)
+                    .Where(id => !this.strategyByWorkspaceId.ContainsKey(id)))
                 {
-                    var id = databaseObject.Id;
-                    if (!this.strategyByWorkspaceId.ContainsKey(id))
-                    {
-                        _ = this.InstantiateDatabaseStrategy(id);
-                    }
+                    _ = this.InstantiateDatabaseStrategy(id);
                 }
 
                 if (this.workspaceStrategies != null)
@@ -230,7 +215,7 @@ namespace Allors.Workspace.Adapters.Local
                 this.Reset();
             }
 
-            return Task.FromResult<IPushResult>(localPushResult);
+            return Task.FromResult<IPushResult>(result);
         }
 
         public IChangeSet Checkpoint()
