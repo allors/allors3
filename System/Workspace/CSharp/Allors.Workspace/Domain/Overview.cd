@@ -6,6 +6,9 @@
       <HashCode>AAQAAAAAAAAAABAAAAAAAAQAAEAAAAAAAAAAAABAAAA=</HashCode>
       <FileName>Domain\IWorkspace.cs</FileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ObjectFactory" />
+    </ShowAsAssociation>
   </Interface>
   <Interface Name="Allors.Workspace.ISession">
     <Position X="3.25" Y="0.5" Width="2" />
@@ -20,7 +23,7 @@
   <Interface Name="Allors.Workspace.IStrategy">
     <Position X="9" Y="0.5" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAICABgAgAAABQBgEMIABAgAAAAAAAEAAAAAAAkIAAA=</HashCode>
+      <HashCode>AAICABgAgAAABQBgEMIABAgAAAAAAAEAAAAAAAEIAAA=</HashCode>
       <FileName>Domain\IStrategy.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -51,6 +54,13 @@
       <Property Name="Created" />
       <Property Name="Instantiated" />
     </ShowAsCollectionAssociation>
+  </Interface>
+  <Interface Name="Allors.Workspace.IObjectFactory">
+    <Position X="0.5" Y="4.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAEEAAAAAAAAAAAA=</HashCode>
+      <FileName>Domain\IObjectFactory.cs</FileName>
+    </TypeIdentifier>
   </Interface>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

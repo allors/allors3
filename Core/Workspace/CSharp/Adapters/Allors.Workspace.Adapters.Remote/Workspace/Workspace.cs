@@ -20,7 +20,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.MetaPopulation = metaPopulation;
             this.Lifecycle = state;
 
-            this.ObjectFactory = new ObjectFactory(this.MetaPopulation, instance);
+            this.ObjectFactory = new ReflectionObjectFactory(this.MetaPopulation, instance);
             this.Database = new Database(this.MetaPopulation, httpClient, new Identities());
 
             this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
@@ -38,7 +38,7 @@ namespace Allors.Workspace.Adapters.Remote
         public IWorkspaceLifecycle Lifecycle { get; }
 
         IObjectFactory IWorkspace.ObjectFactory => this.ObjectFactory;
-        internal ObjectFactory ObjectFactory { get; }
+        internal ReflectionObjectFactory ObjectFactory { get; }
 
         public ISession CreateSession() => new Session(this, this.Lifecycle.CreateSessionContext());
 

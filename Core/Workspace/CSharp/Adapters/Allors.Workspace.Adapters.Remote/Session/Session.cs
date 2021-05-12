@@ -113,13 +113,13 @@ namespace Allors.Workspace.Adapters.Remote
 
         public T Get<T>(T @object) where T : IObject => this.Get<T>(@object.Id);
 
-        public T Get<T>(long? identity) where T : IObject => identity.HasValue ? this.Get<T>((long)identity) : default;
+        public T Get<T>(long? id) where T : IObject => id.HasValue ? this.Get<T>((long)id) : default;
 
-        public T Get<T>(long identity) where T : IObject => (T)this.GetStrategy(identity)?.Object;
+        public T Get<T>(long id) where T : IObject => (T)this.GetStrategy(id)?.Object;
 
-        public T Get<T>(string identity) where T : IObject
+        public T Get<T>(string idAsString) where T : IObject
         {
-            if (long.TryParse(identity, out var id))
+            if (long.TryParse(idAsString, out var id))
             {
                 return (T)this.GetStrategy(id)?.Object;
             }

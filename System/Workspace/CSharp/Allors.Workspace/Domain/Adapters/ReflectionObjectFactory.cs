@@ -1,4 +1,4 @@
-// <copyright file="ObjectFactory.cs" company="Allors bvba">
+// <copyright file="StaticObjectFactory.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -12,7 +12,7 @@ namespace Allors.Workspace.Adapters
     using System.Reflection;
     using Meta;
 
-    public class ObjectFactory : IObjectFactory
+    public class ReflectionObjectFactory : IObjectFactory
     {
         /// <summary>
         /// <see cref="Type"/> by <see cref="IObjectType"/> cache.
@@ -39,7 +39,7 @@ namespace Allors.Workspace.Adapters
         private readonly Dictionary<IObjectType, object> emptyArrayByObjectType;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ObjectFactory"/> class.
+        /// Initializes a new instance of the <see cref="ReflectionObjectFactory"/> class.
         /// </summary>
         /// <param name="metaPopulation">
         /// The meta databaseOrigin.
@@ -51,7 +51,7 @@ namespace Allors.Workspace.Adapters
         /// The namespace.
         /// </param>
         /// <exception cref="ArgumentException"></exception>
-        public ObjectFactory(IMetaPopulation metaPopulation, Type instance)
+        public ReflectionObjectFactory(IMetaPopulation metaPopulation, Type instance)
         {
             var assembly = instance.GetTypeInfo().Assembly;
 

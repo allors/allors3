@@ -34,6 +34,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public IDictionary<IAssociationType, ISet<IStrategy>> RolesByAssociationType { get; }
 
+
         internal void AddSessionStateChanges(IDictionary<IPropertyType, IDictionary<long, object>> sessionStateChangeSet)
         {
             foreach (var kvp in sessionStateChangeSet)

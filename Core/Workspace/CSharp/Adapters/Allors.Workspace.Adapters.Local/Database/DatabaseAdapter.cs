@@ -82,9 +82,9 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        internal DatabaseRecord Get(long identity)
+        internal DatabaseRecord GetRecord(long id)
         {
-            _ = this.ObjectsById.TryGetValue(identity, out var databaseObjects);
+            _ = this.ObjectsById.TryGetValue(id, out var databaseObjects);
             return databaseObjects;
         }
 
@@ -112,10 +112,10 @@ namespace Allors.Workspace.Adapters.Local
             return permission;
         }
 
-        internal DatabaseRecord PushResponse(long identity, IClass @class)
+        internal DatabaseRecord PushResponse(long id, IClass @class)
         {
-            var databaseObject = new DatabaseRecord(this, identity, @class);
-            this.ObjectsById[identity] = databaseObject;
+            var databaseObject = new DatabaseRecord(this, id, @class);
+            this.ObjectsById[id] = databaseObject;
             return databaseObject;
         }
 

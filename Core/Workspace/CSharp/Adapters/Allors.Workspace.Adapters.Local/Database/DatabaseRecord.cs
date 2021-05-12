@@ -1,4 +1,4 @@
-// <copyright file="LocalDatabaseObject.cs" company="Allors bvba">
+// <copyright file="DatabaseRecord.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -14,18 +14,18 @@ namespace Allors.Workspace.Adapters.Local
         private readonly long[] deniedPermissions;
         private readonly AccessControl[] accessControls;
 
-        internal DatabaseRecord(DatabaseAdapter databaseAdapter, long identity, IClass @class)
+        internal DatabaseRecord(DatabaseAdapter databaseAdapter, long id, IClass @class)
         {
             this.DatabaseAdapter = databaseAdapter;
-            this.Identity = identity;
+            this.Id = id;
             this.Class = @class;
             this.Version = 0;
         }
 
-        internal DatabaseRecord(DatabaseAdapter databaseAdapter, long identity, IClass @class, long version, Dictionary<IRoleType, object> roleByRoleType, long[] deniedPermissions, AccessControl[] accessControls)
+        internal DatabaseRecord(DatabaseAdapter databaseAdapter, long id, IClass @class, long version, Dictionary<IRoleType, object> roleByRoleType, long[] deniedPermissions, AccessControl[] accessControls)
         {
             this.DatabaseAdapter = databaseAdapter;
-            this.Identity = identity;
+            this.Id = id;
             this.Class = @class;
             this.Version = version;
             this.RoleByRoleType = roleByRoleType;
@@ -37,7 +37,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public IClass Class { get; }
 
-        public long Identity { get; }
+        public long Id { get; }
 
         public long Version { get; }
 

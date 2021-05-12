@@ -8,6 +8,7 @@ namespace Allors.Workspace.Adapters.Local
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Runtime.InteropServices.ComTypes;
     using System.Threading.Tasks;
     using Data;
     using Meta;
@@ -17,12 +18,14 @@ namespace Allors.Workspace.Adapters.Local
     {
         private readonly Dictionary<long, Strategy> strategyByWorkspaceId;
         private readonly Dictionary<IClass, ISet<Strategy>> strategiesByClass;
-        private readonly ISet<Strategy> databaseStrategies;
+
+        private ISet<Strategy> databaseStrategies;
         private ISet<Strategy> workspaceStrategies;
 
         private ISet<Strategy> newDatabaseStrategies;
         private ISet<DatabaseOriginState> changedDatabaseStates;
         private ISet<WorkspaceOriginState> changedWorkspaceStates;
+
         private ChangeSet changeSet;
 
         internal Session(Workspace workspace, ISessionLifecycle sessionLifecycle)
@@ -30,12 +33,10 @@ namespace Allors.Workspace.Adapters.Local
             this.Workspace = workspace;
             this.DatabaseAdapter = this.Workspace.DatabaseAdapter;
             this.Lifecycle = sessionLifecycle;
-
             this.Numbers = this.Workspace.Numbers;
 
             this.strategyByWorkspaceId = new Dictionary<long, Strategy>();
             this.strategiesByClass = new Dictionary<IClass, ISet<Strategy>>();
-            this.databaseStrategies = new HashSet<Strategy>();
 
             this.SessionOriginState = new SessionOriginState(workspace.Numbers);
 
@@ -44,12 +45,12 @@ namespace Allors.Workspace.Adapters.Local
             this.Lifecycle.OnInit(this);
         }
 
-        public INumbers Numbers { get; set; }
-
         public ISessionLifecycle Lifecycle { get; }
 
         IWorkspace ISession.Workspace => this.Workspace;
         internal Workspace Workspace { get; }
+
+        internal INumbers Numbers { get; }
 
         internal DatabaseAdapter DatabaseAdapter { get; }
 
@@ -72,18 +73,16 @@ namespace Allors.Workspace.Adapters.Local
             var strategy = new Strategy(this, @class, workspaceId);
             this.AddStrategy(strategy);
 
-            if (@class.Origin == Origin.Database)
+            switch (@class.Origin)
             {
-                this.newDatabaseStrategies ??= new HashSet<Strategy>();
-                _ = this.newDatabaseStrategies.Add(strategy);
-            }
-
-            if (@class.Origin == Origin.Workspace)
-            {
-                this.workspaceStrategies ??= new HashSet<Strategy>();
-                _ = this.workspaceStrategies.Add(strategy);
-                // TODO: move to Push
-                this.Workspace.RegisterWorkspaceObject(@class, workspaceId);
+                case Origin.Database:
+                    _ = (this.newDatabaseStrategies ??= new HashSet<Strategy>()).Add(strategy);
+                    break;
+                case Origin.Workspace:
+                    _ = (this.workspaceStrategies ??= new HashSet<Strategy>()).Add(strategy);
+                    // TODO: move to Push
+                    this.Workspace.RegisterRecord(@class, workspaceId);
+                    break;
             }
 
             _ = this.changeSet.Created.Add(strategy);
@@ -95,13 +94,13 @@ namespace Allors.Workspace.Adapters.Local
 
         public T Get<T>(T @object) where T : IObject => this.Get<T>(@object.Id);
 
-        public T Get<T>(long? identity) where T : IObject => identity.HasValue ? this.Get<T>((long)identity) : default;
+        public T Get<T>(long? id) where T : IObject => id.HasValue ? this.Get<T>((long)id) : default;
 
-        public T Get<T>(long identity) where T : IObject => (T)this.GetStrategy(identity)?.Object;
+        public T Get<T>(long id) where T : IObject => (T)this.GetStrategy(id)?.Object;
 
-        public T Get<T>(string identity) where T : IObject
+        public T Get<T>(string idAsString) where T : IObject
         {
-            if (long.TryParse(identity, out var id))
+            if (long.TryParse(idAsString, out var id))
             {
                 return (T)this.GetStrategy(id)?.Object;
             }
@@ -144,7 +143,7 @@ namespace Allors.Workspace.Adapters.Local
                                 }
                                 else
                                 {
-                                    strategy = this.InstantiateWorkspaceObject(id);
+                                    strategy = this.InstantiateWorkspaceStrategy(id);
                                     yield return (T)strategy.Object;
                                 }
                             }
@@ -213,10 +212,10 @@ namespace Allors.Workspace.Adapters.Local
 
                 foreach (var databaseObject in objects)
                 {
-                    var identity = databaseObject.Id;
-                    if (!this.strategyByWorkspaceId.ContainsKey(identity))
+                    var id = databaseObject.Id;
+                    if (!this.strategyByWorkspaceId.ContainsKey(id))
                     {
-                        _ = this.InstantiateDatabaseObject(identity);
+                        _ = this.InstantiateDatabaseStrategy(id);
                     }
                 }
 
@@ -264,19 +263,19 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        internal Strategy GetStrategy(long identity)
+        internal Strategy GetStrategy(long id)
         {
-            if (identity == 0)
+            if (id == 0)
             {
                 return default;
             }
 
-            if (this.strategyByWorkspaceId.TryGetValue(identity, out var sessionStrategy))
+            if (this.strategyByWorkspaceId.TryGetValue(id, out var sessionStrategy))
             {
                 return sessionStrategy;
             }
 
-            return identity < 0 ? this.InstantiateWorkspaceObject(identity) : null;
+            return id < 0 ? this.InstantiateWorkspaceStrategy(id) : null;
         }
 
         internal object GetRole(Strategy association, IRoleType roleType)
@@ -292,8 +291,7 @@ namespace Allors.Workspace.Adapters.Local
                 return this.Get<IObject>((long?)role);
             }
 
-            var ids = (IEnumerable<long>)role;
-            return ids?.Select(this.Get<IObject>).ToArray() ?? this.Workspace.ObjectFactory.EmptyArray(roleType.ObjectType);
+            return role != null ? this.Numbers.Enumerate(role).Select(this.Get<IObject>).ToArray() : this.Workspace.ObjectFactory.EmptyArray(roleType.ObjectType);
         }
 
         internal IEnumerable<T> GetAssociation<T>(long role, IAssociationType associationType) where T : IObject
@@ -314,46 +312,34 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        internal void OnChange(DatabaseOriginState state)
-        {
-            this.changedDatabaseStates ??= new HashSet<DatabaseOriginState>();
-            _ = this.changedDatabaseStates.Add(state);
-        }
+        internal void OnChange(DatabaseOriginState state) => _ = (this.changedDatabaseStates ??= new HashSet<DatabaseOriginState>()).Add(state);
 
-        internal void OnChange(WorkspaceOriginState state)
-        {
-            this.changedWorkspaceStates ??= new HashSet<WorkspaceOriginState>();
-            _ = this.changedWorkspaceStates.Add(state);
-        }
+        internal void OnChange(WorkspaceOriginState state) => _ = (this.changedWorkspaceStates ??= new HashSet<WorkspaceOriginState>()).Add(state);
 
-        private Strategy InstantiateDatabaseObject(long identity)
+        private Strategy InstantiateDatabaseStrategy(long id)
         {
-            var databaseObject = this.DatabaseAdapter.Get(identity);
-            var strategy = new Strategy(this, databaseObject);
-            this.databaseStrategies.Add(strategy);
+            var databaseRecord = this.DatabaseAdapter.GetRecord(id);
+            var strategy = new Strategy(this, databaseRecord);
+            _ = (this.databaseStrategies ??= new HashSet<Strategy>()).Add(strategy);
             this.AddStrategy(strategy);
-            this.OnInstantiate(strategy);
-
+            this.OnInstantiated(strategy);
             return strategy;
         }
 
-        private Strategy InstantiateWorkspaceObject(long identity)
+        private Strategy InstantiateWorkspaceStrategy(long id)
         {
-            if (!this.Workspace.WorkspaceClassByWorkspaceId.TryGetValue(identity, out var @class))
+            if (!this.Workspace.WorkspaceClassByWorkspaceId.TryGetValue(id, out var @class))
             {
                 return null;
             }
 
-            var strategy = new Strategy(this, @class, identity);
-            this.workspaceStrategies ??= new HashSet<Strategy>();
-            _ = this.workspaceStrategies.Add(strategy);
+            var strategy = new Strategy(this, @class, id);
+            _ = (this.workspaceStrategies ??= new HashSet<Strategy>()).Add(strategy);
             this.AddStrategy(strategy);
-            this.OnInstantiate(strategy);
+            this.OnInstantiated(strategy);
 
             return strategy;
         }
-
-        private void OnInstantiate(Strategy strategy) => this.changeSet.Instantiated.Add(strategy);
 
         private IEnumerable<Strategy> Get(IComposite objectType)
         {
@@ -401,10 +387,10 @@ namespace Allors.Workspace.Adapters.Local
 
             foreach (var databaseObject in pullResult.DatabaseObjects)
             {
-                var identity = databaseObject.Id;
-                if (!this.strategyByWorkspaceId.ContainsKey(identity))
+                var id = databaseObject.Id;
+                if (!this.strategyByWorkspaceId.ContainsKey(id))
                 {
-                    _ = this.InstantiateDatabaseObject(identity);
+                    _ = this.InstantiateDatabaseStrategy(id);
                 }
             }
 
@@ -429,7 +415,7 @@ namespace Allors.Workspace.Adapters.Local
                     var databaseObject = this.DatabaseAdapter.PushResponse(databaseId, strategy.Class);
                     strategy.DatabasePushResponse(databaseObject);
 
-                    this.databaseStrategies.Add(strategy);
+                    _ = (this.databaseStrategies ??= new HashSet<Strategy>()).Add(strategy);
                     this.AddStrategy(strategy);
                 }
             }
@@ -441,5 +427,7 @@ namespace Allors.Workspace.Adapters.Local
 
             this.newDatabaseStrategies = null;
         }
+
+        private void OnInstantiated(Strategy strategy) => this.changeSet.Instantiated.Add(strategy);
     }
 }

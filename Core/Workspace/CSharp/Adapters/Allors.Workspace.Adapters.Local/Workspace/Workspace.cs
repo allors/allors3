@@ -11,11 +11,10 @@ namespace Allors.Workspace.Adapters.Local
     using Meta;
     using Numbers;
     using IObjectFactory = Allors.Workspace.IObjectFactory;
-    using ObjectFactory = Adapters.ObjectFactory;
 
     public class Workspace : IWorkspace
     {
-        private readonly Dictionary<long, WorkspaceRecord> workspacObjectById;
+        private readonly Dictionary<long, WorkspaceRecord> recordById;
 
         public Workspace(string name, long userId, IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, IDatabase database)
         {
@@ -24,19 +23,17 @@ namespace Allors.Workspace.Adapters.Local
             this.MetaPopulation = metaPopulation;
             this.Lifecycle = state;
 
-            this.ObjectFactory = new ObjectFactory(this.MetaPopulation, instance);
+            this.ObjectFactory = new ReflectionObjectFactory(this.MetaPopulation, instance);
             this.DatabaseAdapter = new DatabaseAdapter(this.MetaPopulation, database);
 
             this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
             this.WorkspaceIdsByWorkspaceClass = new Dictionary<IClass, long[]>();
-            this.workspacObjectById = new Dictionary<long, WorkspaceRecord>();
+            this.recordById = new Dictionary<long, WorkspaceRecord>();
 
             this.Numbers = new ArrayNumbers();
 
             this.Lifecycle.OnInit(this);
         }
-
-        public INumbers Numbers { get; set; }
 
         public string Name { get; }
 
@@ -47,9 +44,9 @@ namespace Allors.Workspace.Adapters.Local
         public IWorkspaceLifecycle Lifecycle { get; }
 
         IObjectFactory IWorkspace.ObjectFactory => this.ObjectFactory;
-        internal ObjectFactory ObjectFactory { get; }
+        internal ReflectionObjectFactory ObjectFactory { get; }
 
-        public ISession CreateSession() => new Session(this, this.Lifecycle.CreateSessionContext());
+        internal INumbers Numbers { get; }
 
         internal DatabaseAdapter DatabaseAdapter { get; }
 
@@ -57,13 +54,15 @@ namespace Allors.Workspace.Adapters.Local
 
         internal Dictionary<IClass, long[]> WorkspaceIdsByWorkspaceClass { get; }
 
-        internal WorkspaceRecord Get(long identity)
+        public ISession CreateSession() => new Session(this, this.Lifecycle.CreateSessionContext());
+
+        internal WorkspaceRecord GetRecord(long id)
         {
-            _ = this.workspacObjectById.TryGetValue(identity, out var workspaceObject);
+            _ = this.recordById.TryGetValue(id, out var workspaceObject);
             return workspaceObject;
         }
 
-        internal void RegisterWorkspaceObject(IClass @class, long workspaceId)
+        internal void RegisterRecord(IClass @class, long workspaceId)
         {
             this.WorkspaceClassByWorkspaceId.Add(workspaceId, @class);
 
@@ -72,15 +71,15 @@ namespace Allors.Workspace.Adapters.Local
             this.WorkspaceIdsByWorkspaceClass[@class] = ids;
         }
 
-        internal void Push(long identity, IClass @class, long version, Dictionary<IRelationType, object> changedRoleByRoleType)
+        internal void Push(long id, IClass @class, long version, Dictionary<IRelationType, object> changedRoleByRoleType)
         {
-            if (!this.workspacObjectById.TryGetValue(identity, out var originalWorkspaceObject))
+            if (!this.recordById.TryGetValue(id, out var originalWorkspaceRecord))
             {
-                this.workspacObjectById[identity] = new WorkspaceRecord(this.DatabaseAdapter, identity, @class, ++version, changedRoleByRoleType);
+                this.recordById[id] = new WorkspaceRecord(this.DatabaseAdapter, id, @class, ++version, changedRoleByRoleType);
             }
             else
             {
-                this.workspacObjectById[identity] = new WorkspaceRecord(originalWorkspaceObject, changedRoleByRoleType);
+                this.recordById[id] = new WorkspaceRecord(originalWorkspaceRecord, changedRoleByRoleType);
             }
         }
     }

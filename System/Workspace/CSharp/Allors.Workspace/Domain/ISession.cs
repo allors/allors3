@@ -24,11 +24,11 @@ namespace Allors.Workspace
 
         T Get<T>(T @object) where T : IObject;
 
-        T Get<T>(long? identity) where T : IObject;
+        T Get<T>(long? id) where T : IObject;
 
-        T Get<T>(long identity) where T : IObject;
+        T Get<T>(long id) where T : IObject;
 
-        T Get<T>(string identity) where T : IObject;
+        T Get<T>(string idAsString) where T : IObject;
 
         IEnumerable<T> Get<T>(IEnumerable<IObject> objects) where T : IObject;
 

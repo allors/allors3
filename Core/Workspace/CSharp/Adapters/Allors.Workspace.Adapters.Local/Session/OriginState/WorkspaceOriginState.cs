@@ -33,7 +33,7 @@ namespace Allors.Workspace.Adapters.Local
 
         internal void Reset()
         {
-            this.WorkspaceRecord = this.Workspace.Get(this.Id);
+            this.WorkspaceRecord = this.Workspace.GetRecord(this.Id);
             this.ChangedRoleByRelationType = null;
         }
     }

@@ -19,30 +19,30 @@ namespace Allors.Workspace.Adapters.Local
 
         internal DatabaseOriginState DatabaseOriginState { get; }
 
-        internal Strategy(Session session, IClass @class, long identity)
+        internal Strategy(Session session, IClass @class, long id)
         {
             this.Session = session;
-            this.Id = identity;
+            this.Id = id;
             this.Class = @class;
 
             if (!this.Class.HasSessionOrigin)
             {
-                this.workspaceOriginState = new WorkspaceOriginState(this, this.Session.Workspace.Get(this.Id));
+                this.workspaceOriginState = new WorkspaceOriginState(this, this.Session.Workspace.GetRecord(this.Id));
             }
 
             if (this.Class.HasDatabaseOrigin)
             {
-                this.DatabaseOriginState = new DatabaseOriginState(this, this.Session.DatabaseAdapter.Get(this.Id));
+                this.DatabaseOriginState = new DatabaseOriginState(this, this.Session.DatabaseAdapter.GetRecord(this.Id));
             }
         }
 
         internal Strategy(Session session, DatabaseRecord databaseRecord)
         {
             this.Session = session;
-            this.Id = databaseRecord.Identity;
+            this.Id = databaseRecord.Id;
             this.Class = databaseRecord.Class;
 
-            this.workspaceOriginState = new WorkspaceOriginState(this, this.Session.Workspace.Get(this.Id));
+            this.workspaceOriginState = new WorkspaceOriginState(this, this.Session.Workspace.GetRecord(this.Id));
             this.DatabaseOriginState = new DatabaseOriginState(this, databaseRecord);
         }
 
@@ -345,7 +345,7 @@ namespace Allors.Workspace.Adapters.Local
 
         internal void DatabasePushResponse(DatabaseRecord databaseRecord)
         {
-            this.Id = databaseRecord.Identity;
+            this.Id = databaseRecord.Id;
             this.DatabaseOriginState.PushResponse(databaseRecord);
         }
 

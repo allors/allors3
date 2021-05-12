@@ -17,7 +17,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public bool CanRead(IRoleType roleType)
         {
-            if (!this.ExistDatabaseObjects)
+            if (!this.ExistDatabaseRecord)
             {
                 return true;
             }
@@ -28,7 +28,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public bool CanWrite(IRoleType roleType)
         {
-            if (!this.ExistDatabaseObjects)
+            if (!this.ExistDatabaseRecord)
             {
                 return true;
             }
@@ -39,7 +39,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public bool CanExecute(IMethodType methodType)
         {
-            if (!this.ExistDatabaseObjects)
+            if (!this.ExistDatabaseRecord)
             {
                 return true;
             }
@@ -48,7 +48,7 @@ namespace Allors.Workspace.Adapters.Local
             return this.DatabaseRecord.IsPermitted(permission);
         }
 
-        private bool ExistDatabaseObjects => this.Record != null;
+        private bool ExistDatabaseRecord => this.Record != null;
 
         protected override IRecord Record => this.DatabaseRecord;
 
@@ -60,7 +60,7 @@ namespace Allors.Workspace.Adapters.Local
 
         internal void Reset()
         {
-            this.DatabaseRecord = this.Session.DatabaseAdapter.Get(this.Id);
+            this.DatabaseRecord = this.Session.DatabaseAdapter.GetRecord(this.Id);
             this.ChangedRoleByRelationType = null;
         }
 
