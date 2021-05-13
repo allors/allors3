@@ -23,7 +23,7 @@ namespace Allors.Workspace.Adapters.Local
         {
             this.MetaPopulation = metaPopulation;
             this.Database = database;
-            this.ObjectsById = new ConcurrentDictionary<long, DatabaseRecord>();
+            this.RecordsById = new ConcurrentDictionary<long, DatabaseRecord>();
             this.WorkspaceIdGenerator = new WorkspaceIdGenerator();
             this.permissionCache = this.Database.Context().PermissionsCache;
             this.AccessControlById = new Dictionary<long, AccessControl>();
@@ -35,7 +35,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public IDatabase Database { get; }
 
-        private ConcurrentDictionary<long, DatabaseRecord> ObjectsById { get; }
+        private ConcurrentDictionary<long, DatabaseRecord> RecordsById { get; }
 
         internal WorkspaceIdGenerator WorkspaceIdGenerator { get; }
 
@@ -78,13 +78,13 @@ namespace Allors.Workspace.Adapters.Local
                     ?.Select(this.GetAccessControl)
                     .ToArray() ?? Array.Empty<AccessControl>();
 
-                this.ObjectsById[id] = new DatabaseRecord(this, id, workspaceClass, @object.Strategy.ObjectVersion, roleByRoleType, deniedPermissions, accessControls);
+                this.RecordsById[id] = new DatabaseRecord(this, id, workspaceClass, @object.Strategy.ObjectVersion, roleByRoleType, deniedPermissions, accessControls);
             }
         }
 
         internal DatabaseRecord GetRecord(long id)
         {
-            _ = this.ObjectsById.TryGetValue(id, out var databaseObjects);
+            _ = this.RecordsById.TryGetValue(id, out var databaseObjects);
             return databaseObjects;
         }
 
@@ -112,17 +112,17 @@ namespace Allors.Workspace.Adapters.Local
             return permission;
         }
 
-        internal DatabaseRecord PushResponse(long id, IClass @class)
+        internal DatabaseRecord OnPushed(long id, IClass @class)
         {
-            var databaseObject = new DatabaseRecord(this, id, @class);
-            this.ObjectsById[id] = databaseObject;
-            return databaseObject;
+            var record = new DatabaseRecord(this, id, @class);
+            this.RecordsById[id] = record;
+            return record;
         }
 
         public IEnumerable<IObject> ObjectsToSync(PullResult pullResult) =>
             pullResult.DatabaseObjects.Where(v =>
             {
-                if (this.ObjectsById.TryGetValue(v.Id, out var databaseRoles))
+                if (this.RecordsById.TryGetValue(v.Id, out var databaseRoles))
                 {
                     return v.Strategy.ObjectVersion != databaseRoles.Version;
                 }

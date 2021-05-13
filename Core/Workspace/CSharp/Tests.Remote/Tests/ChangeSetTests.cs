@@ -1,4 +1,4 @@
-// <copyright file="SaveTests.cs" company="Allors bvba">
+// <copyright file="DerivationTests.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -7,9 +7,9 @@ namespace Tests.Workspace.Remote
 {
     using Xunit;
 
-    public class SaveTests : Workspace.SaveTests, IClassFixture<Fixture>
+    public class ChangeSetTests : Workspace.ChangeSetTests, IClassFixture<Fixture>
     {
-        public SaveTests(Fixture fixture) : base(fixture) => this.Profile = new Profile();
+        public ChangeSetTests(Fixture fixture) : base(fixture) => this.Profile = new Profile();
 
         protected override IProfile Profile { get; }
     }

@@ -17,9 +17,9 @@ namespace Allors.Workspace.Adapters.Local
 
     public class PushResult : Result, IPushResult
     {
-        internal PushResult(Session session, Workspace workspace) : base(session)
+        internal PushResult(Session session) : base(session)
         {
-            this.Workspace = workspace;
+            this.Workspace = session.Workspace;
             this.Transaction = this.Workspace.DatabaseAdapter.Database.CreateTransaction();
 
             var sessionContext = this.Transaction.Context();
@@ -29,9 +29,6 @@ namespace Allors.Workspace.Adapters.Local
 
             this.AccessControlLists = new WorkspaceAccessControlLists(this.Workspace.Name, user);
             this.AllowedClasses = metaCache.GetWorkspaceClasses(this.Workspace.Name);
-            this.PreparedSelects = databaseContext.PreparedSelects;
-            this.PreparedExtents = databaseContext.PreparedExtents;
-            this.M = databaseContext.M;
             this.M = databaseContext.M;
             this.Build = @class => (IObject)DefaultObjectBuilder.Build(this.Transaction, @class);
             this.Derive = () => this.Transaction.Derive(false);
@@ -39,179 +36,51 @@ namespace Allors.Workspace.Adapters.Local
             this.Objects = new HashSet<IObject>();
         }
 
-        public Dictionary<string, ISet<IObject>> DatabaseCollectionsByName { get; } = new Dictionary<string, ISet<IObject>>();
-
-        public Dictionary<string, IObject> DatabaseObjectByName { get; } = new Dictionary<string, IObject>();
-
-        public Dictionary<string, object> DatabaseValueByName { get; } = new Dictionary<string, object>();
-
-        public HashSet<IObject> Objects { get; }
-
-        public Workspace Workspace { get; }
-
-        public ITransaction Transaction { get; }
-
-        public ISet<IClass> AllowedClasses { get; }
-
-        public IPreparedSelects PreparedSelects { get; }
-
-        public IPreparedExtents PreparedExtents { get; }
+        internal Dictionary<long, IObject> ObjectByNewId { get; private set; }
 
         internal IAccessControlLists AccessControlLists { get; }
 
-        public MetaPopulation M { get; set; }
+        internal ISet<IObject> Objects { get; }
 
-        public Func<IClass, IObject> Build { get; }
+        private Workspace Workspace { get; }
 
-        public Func<IDerivationResult> Derive { get; }
+        private ITransaction Transaction { get; }
 
-        public Dictionary<long, IObject> ObjectByNewId { get; set; }
+        private ISet<IClass> AllowedClasses { get; }
 
-        public void AddCollection(string name, in IEnumerable<IObject> collection)
-        {
-            switch (collection)
-            {
-                case ICollection<IObject> asCollection:
-                    this.AddCollectionInternal(name, asCollection, null);
-                    break;
-                default:
-                    this.AddCollectionInternal(name, collection.ToArray(), null);
-                    break;
-            }
-        }
+        private MetaPopulation M { get; }
 
-        public void AddCollection(string name, in ICollection<IObject> collection) => this.AddCollectionInternal(name, collection, null);
+        private Func<IClass, IObject> Build { get; }
 
-        public void AddCollection(string name, IEnumerable<IObject> collection, Node[] tree)
-        {
-            switch (collection)
-            {
-                case ICollection<IObject> list:
-                    this.AddCollectionInternal(name, list, tree);
-                    break;
-                default:
-                {
-                    this.AddCollectionInternal(name, collection.ToArray(), tree);
-                    break;
-                }
-            }
-        }
+        private Func<IDerivationResult> Derive { get; }
 
-        public void AddObject(string name, IObject @object)
-        {
-            if (@object != null)
-            {
-                this.AddObject(name, @object, null);
-            }
-        }
-
-        public void AddObject(string name, IObject @object, Node[] tree)
-        {
-            if (@object != null)
-            {
-                if (this.AllowedClasses?.Contains(@object.Strategy.Class) == true)
-                {
-                    if (tree != null)
-                    {
-                        // Prefetch
-                        var session = @object.Strategy.Transaction;
-                        var prefetcher = tree.BuildPrefetchPolicy();
-                        session.Prefetch(prefetcher, @object);
-                    }
-
-                    _ = this.Objects.Add(@object);
-                    this.DatabaseObjectByName[name] = @object;
-                    tree?.Resolve(@object, this.AccessControlLists, this.Objects);
-                }
-            }
-        }
-
-        public void AddValue(string name, object value)
-        {
-            if (value != null)
-            {
-                this.DatabaseValueByName.Add(name, value);
-            }
-        }
-
-        private void AddCollectionInternal(string name, in ICollection<IObject> collection, Node[] tree)
-        {
-            if (collection?.Count > 0)
-            {
-                _ = this.DatabaseCollectionsByName.TryGetValue(name, out var existingCollection);
-
-                var filteredCollection = collection.Where(v => this.AllowedClasses != null && this.AllowedClasses.Contains(v.Strategy.Class));
-
-                if (tree != null)
-                {
-                    var prefetchPolicy = tree.BuildPrefetchPolicy();
-
-                    ICollection<IObject> newCollection;
-
-                    if (existingCollection != null)
-                    {
-                        newCollection = filteredCollection.ToArray();
-                        this.Transaction.Prefetch(prefetchPolicy, newCollection);
-                        existingCollection.UnionWith(newCollection);
-                    }
-                    else
-                    {
-                        var newSet = new HashSet<IObject>(filteredCollection);
-                        newCollection = newSet;
-                        this.Transaction.Prefetch(prefetchPolicy, newCollection);
-                        this.DatabaseCollectionsByName.Add(name, newSet);
-                    }
-
-                    this.Objects.UnionWith(newCollection);
-
-                    foreach (var newObject in newCollection)
-                    {
-                        tree.Resolve(newObject, this.AccessControlLists, this.Objects);
-                    }
-                }
-                else
-                {
-                    if (existingCollection != null)
-                    {
-                        existingCollection.UnionWith(filteredCollection);
-                    }
-                    else
-                    {
-                        var newWorkspaceCollection = new HashSet<IObject>(filteredCollection);
-                        this.DatabaseCollectionsByName.Add(name, newWorkspaceCollection);
-                        this.Objects.UnionWith(newWorkspaceCollection);
-                    }
-                }
-            }
-        }
-
-        internal void Execute(Strategy[] newStrategies, Strategy[] changedStrategies)
+        internal void Execute(PushToDatabaseTracker tracker)
         {
             var metaPopulation = this.Workspace.DatabaseAdapter.Database.MetaPopulation;
 
-            if (newStrategies?.Length > 0)
-            {
-                this.ObjectByNewId = newStrategies.ToDictionary(
-                    x => x.Id,
-                    x =>
+            this.ObjectByNewId = tracker.Created?.ToDictionary(
+                x => x.Id,
+                x =>
+                {
+                    var cls = (IClass)metaPopulation.FindByTag(x.Class.Tag);
+                    if (this.AllowedClasses?.Contains(cls) == true)
                     {
-                        var cls = (IClass)metaPopulation.FindByTag(x.Class.Tag);
-                        if (this.AllowedClasses?.Contains(cls) == true)
-                        {
-                            return this.Build(cls);
-                        }
+                        var newObject = this.Build(cls);
+                        _ = this.Objects.Add(newObject);
+                        return newObject;
+                    }
 
-                        this.AddAccessError(x);
+                    this.AddAccessError(x);
 
-                        return null;
-                    });
-            }
+                    return null;
+                });
 
-            if (changedStrategies?.Length > 0)
+            if (tracker.Changed != null)
             {
                 // bulk load all objects
-                var objectIds = changedStrategies.Select(v => v.Id).ToArray();
+                var objectIds = tracker.Changed.Select(v => v.Strategy.Id).ToArray();
                 var objects = this.Transaction.Instantiate(objectIds);
+                this.Objects.UnionWith(objects);
 
                 if (objectIds.Length != objects.Length)
                 {
@@ -225,21 +94,21 @@ namespace Allors.Workspace.Adapters.Local
 
                 if (!this.HasErrors)
                 {
-                    foreach (var pushRequestObject in changedStrategies)
+                    foreach (var state in tracker.Changed)
                     {
-                        var obj = this.Transaction.Instantiate(pushRequestObject.Id);
-
-                        if (!pushRequestObject.DatabaseVersion.Equals(obj.Strategy.ObjectVersion))
+                        var strategy = state.Strategy;
+                        var obj = this.Transaction.Instantiate(strategy.Id);
+                        if (!strategy.DatabaseVersion.Equals(obj.Strategy.ObjectVersion))
                         {
-                            this.AddVersionError(obj.Id);;
+                            this.AddVersionError(obj.Id);
                         }
                         else if (this.AllowedClasses?.Contains(obj.Strategy.Class) == true)
                         {
-                            this.PushRequestRoles(pushRequestObject, obj);
+                            this.PushRequestRoles(strategy, obj);
                         }
                         else
                         {
-                            this.AddAccessError(pushRequestObject);
+                            this.AddAccessError(strategy);
                         }
                     }
                 }
@@ -253,8 +122,18 @@ namespace Allors.Workspace.Adapters.Local
 
             if (!this.HasErrors)
             {
-
                 this.Transaction.Commit();
+            }
+
+            if (this.ObjectByNewId?.Count > 0)
+            {
+                foreach (var kvp in this.ObjectByNewId)
+                {
+                    var workspaceId = kvp.Key;
+                    var databaseId = kvp.Value.Id;
+
+                    this.Session.OnNewObjectPushed(workspaceId, databaseId);
+                }
             }
         }
 

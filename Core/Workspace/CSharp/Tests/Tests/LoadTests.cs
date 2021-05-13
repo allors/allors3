@@ -28,12 +28,12 @@ namespace Tests.Workspace
                 Extent = new Extent(this.M.C1),
             };
 
-            var result = session.Pull(pull).Result;
+            var result = await session.Pull(pull);
 
             var c1s = result.GetCollection<C1>("C1s");
             Assert.Equal(4, c1s.Length);
 
-            result = session.Pull(pull).Result;
+            result = await session.Pull(pull);
 
             var c1s2 = result.GetCollection<C1>("C1s");
             Assert.Equal(4, c1s2.Length);
@@ -90,7 +90,7 @@ namespace Tests.Workspace
                 Extent = new Extent(this.M.C1),
             };
 
-            var result = session.Pull(pull).Result;
+            var result = await session.Pull(pull);
 
             var c1s = result.GetCollection<C1>("C1s");
 

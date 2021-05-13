@@ -15,6 +15,14 @@ namespace Allors.Workspace.Adapters.Local
             this.PreviousRecord = this.DatabaseRecord;
         }
 
+        public long Version => this.DatabaseRecord.Version;
+
+        private bool ExistDatabaseRecord => this.Record != null;
+
+        protected override IRecord Record => this.DatabaseRecord;
+
+        private DatabaseRecord DatabaseRecord { get; set; }
+
         public bool CanRead(IRoleType roleType)
         {
             if (!this.ExistDatabaseRecord)
@@ -48,16 +56,6 @@ namespace Allors.Workspace.Adapters.Local
             return this.DatabaseRecord.IsPermitted(permission);
         }
 
-        private bool ExistDatabaseRecord => this.Record != null;
-
-        protected override IRecord Record => this.DatabaseRecord;
-
-        private DatabaseRecord DatabaseRecord { get; set; }
-
-        public long Version => this.DatabaseRecord.Version;
-
-        public bool HasChanges => this.Record == null || this.ChangedRoleByRelationType?.Count > 0;
-
         internal void Reset()
         {
             this.DatabaseRecord = this.Session.DatabaseAdapter.GetRecord(this.Id);
@@ -66,6 +64,10 @@ namespace Allors.Workspace.Adapters.Local
 
         internal void PushResponse(DatabaseRecord newDatabaseRecord) => this.DatabaseRecord = newDatabaseRecord;
 
-        protected override void OnChange() => this.Session.OnChange(this);
+        protected override void OnChange()
+        {
+            this.Session.ChangeSetTracker.OnChanged(this);
+            this.Session.PushToDatabaseTracker.OnChanged(this);
+        }
     }
 }

@@ -24,7 +24,7 @@ namespace Allors.Workspace.Adapters.Local
         }
 
         ISession IChangeSet.Session => this.Session;
-        public Session Session { get; }
+        private Session Session { get; }
 
         public ISet<IStrategy> Created { get; }
 
@@ -33,7 +33,6 @@ namespace Allors.Workspace.Adapters.Local
         public IDictionary<IRoleType, ISet<IStrategy>> AssociationsByRoleType { get; }
 
         public IDictionary<IAssociationType, ISet<IStrategy>> RolesByAssociationType { get; }
-
 
         internal void AddSessionStateChanges(IDictionary<IPropertyType, IDictionary<long, object>> sessionStateChangeSet)
         {
@@ -52,32 +51,6 @@ namespace Allors.Workspace.Adapters.Local
                         break;
                 }
             }
-        }
-
-        internal void AddAssociation(IRelationType relationType, Strategy association)
-        {
-            var roleType = relationType.RoleType;
-
-            if (!this.AssociationsByRoleType.TryGetValue(roleType, out var associations))
-            {
-                associations = new HashSet<IStrategy>();
-                this.AssociationsByRoleType.Add(roleType, associations);
-            }
-
-            _ = associations.Add(association);
-        }
-
-        internal void AddRole(IRelationType relationType, Strategy role)
-        {
-            var associationType = relationType.AssociationType;
-
-            if (!this.RolesByAssociationType.TryGetValue(associationType, out var roles))
-            {
-                roles = new HashSet<IStrategy>();
-                this.RolesByAssociationType.Add(associationType, roles);
-            }
-
-            _ = roles.Add(role);
         }
 
         internal void Diff(Strategy association, IRelationType relationType, object current, object previous)
@@ -137,5 +110,30 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
+        private void AddAssociation(IRelationType relationType, Strategy association)
+        {
+            var roleType = relationType.RoleType;
+
+            if (!this.AssociationsByRoleType.TryGetValue(roleType, out var associations))
+            {
+                associations = new HashSet<IStrategy>();
+                this.AssociationsByRoleType.Add(roleType, associations);
+            }
+
+            _ = associations.Add(association);
+        }
+
+        private void AddRole(IRelationType relationType, Strategy role)
+        {
+            var associationType = relationType.AssociationType;
+
+            if (!this.RolesByAssociationType.TryGetValue(associationType, out var roles))
+            {
+                roles = new HashSet<IStrategy>();
+                this.RolesByAssociationType.Add(associationType, roles);
+            }
+
+            _ = roles.Add(role);
+        }
     }
 }

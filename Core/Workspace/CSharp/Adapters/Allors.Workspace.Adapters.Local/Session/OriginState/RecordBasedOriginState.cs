@@ -14,7 +14,9 @@ namespace Allors.Workspace.Adapters.Local
     {
         protected RecordBasedOriginState(Strategy strategy) => this.Strategy = strategy;
 
-        protected Strategy Strategy { get; }
+        internal Strategy Strategy { get; }
+
+        internal bool HasChanges => this.Record == null || this.ChangedRoleByRelationType?.Count > 0;
 
         protected abstract IRecord Record { get; }
 

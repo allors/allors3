@@ -17,10 +17,12 @@ namespace Allors.Workspace.Adapters.Local
 
         private WorkspaceRecord WorkspaceRecord { get; set; }
 
-        protected override void OnChange() => this.Strategy.Session.OnChange(this);
-
-        private bool HasChanges => this.ChangedRoleByRelationType?.Count > 0;
-
+        protected override void OnChange()
+        {
+            this.Strategy.Session.ChangeSetTracker.OnChanged(this);
+            this.Strategy.Session.PushToWorkspaceTracker.OnChanged(this);
+        }
+        
         internal void Push()
         {
             if (this.HasChanges)

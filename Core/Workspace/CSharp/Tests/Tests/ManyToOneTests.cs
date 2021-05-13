@@ -67,6 +67,8 @@ namespace Tests.Workspace
 
             workspaceOrganisation1.WorkspaceDatabaseOwner = databasePerson1;
 
+            await session1.Push();
+
             var session2 = this.Workspace.CreateSession();
 
             var workspaceOrganisation2 = session2.Get(workspaceOrganisation1);
@@ -111,6 +113,8 @@ namespace Tests.Workspace
             var workspacePerson1 = session.Create<WorkspacePerson>();
 
             workspaceOrganisation1.WorkspaceWorkspaceOwner = workspacePerson1;
+
+            await session.Push();
 
             var session2 = this.Workspace.CreateSession();
 

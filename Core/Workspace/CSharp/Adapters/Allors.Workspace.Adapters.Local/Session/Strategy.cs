@@ -15,10 +15,6 @@ namespace Allors.Workspace.Adapters.Local
     {
         private IObject @object;
 
-        private readonly WorkspaceOriginState workspaceOriginState;
-
-        internal DatabaseOriginState DatabaseOriginState { get; }
-
         internal Strategy(Session session, IClass @class, long id)
         {
             this.Session = session;
@@ -27,7 +23,7 @@ namespace Allors.Workspace.Adapters.Local
 
             if (!this.Class.HasSessionOrigin)
             {
-                this.workspaceOriginState = new WorkspaceOriginState(this, this.Session.Workspace.GetRecord(this.Id));
+                this.WorkspaceOriginState = new WorkspaceOriginState(this, this.Session.Workspace.GetRecord(this.Id));
             }
 
             if (this.Class.HasDatabaseOrigin)
@@ -42,7 +38,7 @@ namespace Allors.Workspace.Adapters.Local
             this.Id = databaseRecord.Id;
             this.Class = databaseRecord.Class;
 
-            this.workspaceOriginState = new WorkspaceOriginState(this, this.Session.Workspace.GetRecord(this.Id));
+            this.WorkspaceOriginState = new WorkspaceOriginState(this, this.Session.Workspace.GetRecord(this.Id));
             this.DatabaseOriginState = new DatabaseOriginState(this, databaseRecord);
         }
 
@@ -56,6 +52,10 @@ namespace Allors.Workspace.Adapters.Local
         public IObject Object => this.@object ??= this.Session.Workspace.ObjectFactory.Create(this);
 
         internal INumbers Numbers => this.Session.Numbers;
+
+        internal DatabaseOriginState DatabaseOriginState { get; }
+
+        internal WorkspaceOriginState WorkspaceOriginState { get; }
 
         internal bool HasDatabaseChanges => this.DatabaseOriginState.HasChanges;
 
@@ -95,7 +95,7 @@ namespace Allors.Workspace.Adapters.Local
             roleType.Origin switch
             {
                 Origin.Session => this.Session.GetRole(this, roleType),
-                Origin.Workspace => this.workspaceOriginState?.GetRole(roleType),
+                Origin.Workspace => this.WorkspaceOriginState?.GetRole(roleType),
                 Origin.Database => this.CanRead(roleType) ? this.DatabaseOriginState?.GetRole(roleType) : null,
                 _ => throw new ArgumentException("Unsupported Origin")
             };
@@ -104,18 +104,17 @@ namespace Allors.Workspace.Adapters.Local
             this.Session.Get<T>(roleType.Origin switch
             {
                 Origin.Session => (long?)this.Session.GetRole(this, roleType),
-                Origin.Workspace => (long?)this.workspaceOriginState?.GetRole(roleType),
+                Origin.Workspace => (long?)this.WorkspaceOriginState?.GetRole(roleType),
                 Origin.Database => this.CanRead(roleType) ? (long?)this.DatabaseOriginState?.GetRole(roleType) : null,
                 _ => throw new ArgumentException("Unsupported Origin")
             });
-
 
         public IEnumerable<T> GetComposites<T>(IRoleType roleType) where T : IObject
         {
             var roles = roleType.Origin switch
             {
                 Origin.Session => this.Session.GetRole(this, roleType),
-                Origin.Workspace => this.workspaceOriginState?.GetRole(roleType),
+                Origin.Workspace => this.WorkspaceOriginState?.GetRole(roleType),
                 Origin.Database => this.CanRead(roleType) ? this.DatabaseOriginState?.GetRole(roleType) : null,
                 _ => throw new ArgumentException("Unsupported Origin")
             };
@@ -154,7 +153,7 @@ namespace Allors.Workspace.Adapters.Local
                     break;
 
                 case Origin.Workspace:
-                    this.workspaceOriginState?.SetUnitRole(roleType, value);
+                    this.WorkspaceOriginState?.SetUnitRole(roleType, value);
 
                     break;
 
@@ -179,7 +178,7 @@ namespace Allors.Workspace.Adapters.Local
                     break;
 
                 case Origin.Workspace:
-                    this.workspaceOriginState?.SetCompositeRole(roleType, value?.Id);
+                    this.WorkspaceOriginState?.SetCompositeRole(roleType, value?.Id);
 
                     break;
 
@@ -206,7 +205,7 @@ namespace Allors.Workspace.Adapters.Local
                     break;
 
                 case Origin.Workspace:
-                    this.workspaceOriginState?.SetCompositesRole(roleType, roleNumbers);
+                    this.WorkspaceOriginState?.SetCompositesRole(roleType, roleNumbers);
 
                     break;
 
@@ -231,7 +230,7 @@ namespace Allors.Workspace.Adapters.Local
                     break;
 
                 case Origin.Workspace:
-                    this.workspaceOriginState.AddCompositeRole(roleType, value.Id);
+                    this.WorkspaceOriginState.AddCompositeRole(roleType, value.Id);
 
                     break;
 
@@ -256,7 +255,7 @@ namespace Allors.Workspace.Adapters.Local
                     break;
 
                 case Origin.Workspace:
-                    this.workspaceOriginState.RemoveCompositeRole(roleType, value.Id);
+                    this.WorkspaceOriginState.RemoveCompositeRole(roleType, value.Id);
 
                     break;
 
@@ -327,7 +326,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public void Reset()
         {
-            this.workspaceOriginState?.Reset();
+            this.WorkspaceOriginState?.Reset();
             this.DatabaseOriginState?.Reset();
         }
 
@@ -337,7 +336,7 @@ namespace Allors.Workspace.Adapters.Local
             return roleType.Origin switch
             {
                 Origin.Session => Equals(role, forRoleId),
-                Origin.Workspace => this.workspaceOriginState?.IsAssociationForRole(roleType, forRoleId) ?? false,
+                Origin.Workspace => this.WorkspaceOriginState?.IsAssociationForRole(roleType, forRoleId) ?? false,
                 Origin.Database => this.DatabaseOriginState?.IsAssociationForRole(roleType, forRoleId) ?? false,
                 _ => throw new ArgumentException("Unsupported Origin")
             };
@@ -348,7 +347,5 @@ namespace Allors.Workspace.Adapters.Local
             this.Id = databaseRecord.Id;
             this.DatabaseOriginState.PushResponse(databaseRecord);
         }
-
-        internal void WorkspacePush() => this.workspaceOriginState.Push();
     }
 }
