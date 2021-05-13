@@ -19,7 +19,7 @@ namespace Allors.Workspace.Data
 
         public IExtent Extent { get; set; }
 
-        public IEnumerable<IStrategy> Objects { get; set; }
+        public IEnumerable<IObject> Objects { get; set; }
 
         public string Parameter { get; set; }
 

@@ -9,18 +9,31 @@
 namespace Allors.Workspace.Adapters.Local
 {
     using System.Collections.Generic;
+    using System.Resources;
 
     internal sealed class ChangeSetTracker
     {
+        private readonly Session session;
+
+        private ISet<IStrategy> created;
+        private ISet<IStrategy> instantiated;
         private ISet<DatabaseOriginState> databaseOriginStates;
         private ISet<WorkspaceOriginState> workspaceOriginStates;
+
+        internal ChangeSetTracker(Session session) => this.session = session;
+
+        internal void OnCreated(Strategy strategy) => _ = (this.created ??= new HashSet<IStrategy>()).Add(strategy);
+
+        internal void OnInstantiated(Strategy strategy) => _ = (this.instantiated ??= new HashSet<IStrategy>()).Add(strategy);
 
         internal void OnChanged(DatabaseOriginState state) => _ = (this.databaseOriginStates ??= new HashSet<DatabaseOriginState>()).Add(state);
 
         internal void OnChanged(WorkspaceOriginState state) => _ = (this.workspaceOriginStates ??= new HashSet<WorkspaceOriginState>()).Add(state);
 
-        internal void Checkpoint(ChangeSet changeSet)
+        internal ChangeSet Checkpoint()
         {
+            var changeSet = new ChangeSet(this.created, this.instantiated);
+
             if (this.databaseOriginStates != null)
             {
                 foreach (var changed in this.databaseOriginStates)
@@ -37,8 +50,12 @@ namespace Allors.Workspace.Adapters.Local
                 }
             }
 
+            this.created = null;
+            this.instantiated = null;
             this.databaseOriginStates = null;
             this.workspaceOriginStates = null;
+
+            return changeSet;
         }
     }
 }

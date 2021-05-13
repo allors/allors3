@@ -168,9 +168,6 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        internal void Checkpoint(ChangeSet changeSet)
-        {
-            changeSet.AddSessionStateChanges(this.propertyByObjectByPropertyType.Checkpoint());
-        }
+        internal void Checkpoint(ChangeSet changeSet) => changeSet.AddSessionStateChanges(this.propertyByObjectByPropertyType.Checkpoint());
     }
 }

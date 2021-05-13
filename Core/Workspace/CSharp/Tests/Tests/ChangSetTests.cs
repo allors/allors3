@@ -1,4 +1,4 @@
-// <copyright file="DerivationNodesTest.cs" company="Allors bvba">
+// <copyright file="ChangeSetTests.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -18,13 +18,28 @@ namespace Tests.Workspace
         protected ChangeSetTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
+        public async void Instantiated()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var pull = new Pull { Extent = new Extent(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
+            await session.Pull(pull);
+
+            var changeSet = session.Checkpoint();
+
+            Assert.Single(changeSet.Instantiated);
+        }
+
+        [Fact]
         public async void ChangeSetAfterPush()
         {
             await this.Login("administrator");
 
             var session = this.Workspace.CreateSession();
 
-            var pull = new Pull { Extent = new Extent(this.M.C1) { Predicate = new Equals(this.M.C1.C1AllorsString) { Value = "c1A" } } };
+            var pull = new Pull { Extent = new Extent(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
             var result = await session.Pull(pull);
             var c1a = result.GetCollection<C1>().First();
 

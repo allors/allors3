@@ -142,7 +142,7 @@ namespace Allors.Workspace.Adapters.Local
         internal void Checkpoint(ChangeSet changeSet)
         {
             // Same record
-            if (this.Record.Version == this.PreviousRecord.Version)
+            if (this.PreviousRecord == null || this.Record == null || this.Record.Version == this.PreviousRecord.Version)
             {
                 // No previous changed roles
                 if (this.PreviousChangedRoleByRelationType == null)
@@ -153,10 +153,10 @@ namespace Allors.Workspace.Adapters.Local
                         foreach (var kvp in this.ChangedRoleByRelationType)
                         {
                             var relationType = kvp.Key;
-                            var cooked = kvp.Value;
-                            var raw = this.Record.GetRole(relationType.RoleType);
+                            var current = kvp.Value;
+                            var previous = this.Record?.GetRole(relationType.RoleType);
 
-                            changeSet.Diff(this.Strategy, relationType, cooked, raw);
+                            changeSet.Diff(this.Strategy, relationType, current, previous);
                         }
                     }
                 }
@@ -166,46 +166,48 @@ namespace Allors.Workspace.Adapters.Local
                     foreach (var kvp in this.ChangedRoleByRelationType)
                     {
                         var relationType = kvp.Key;
-                        var role = kvp.Value;
+                        var current = kvp.Value;
 
-                        _ = this.PreviousChangedRoleByRelationType.TryGetValue(relationType, out var previousRole);
-                        changeSet.Diff(this.Strategy, relationType, role, previousRole);
+                        _ = this.PreviousChangedRoleByRelationType.TryGetValue(relationType, out var previous);
+                        changeSet.Diff(this.Strategy, relationType, current, previous);
                     }
                 }
             }
             // Different record
             else
             {
-                var hasPreviousCooked = this.PreviousChangedRoleByRelationType != null;
-                var hasCooked = this.ChangedRoleByRelationType != null;
+                var hasCurrentChanged = this.ChangedRoleByRelationType != null;
 
                 foreach (var roleType in this.Class.WorkspaceRoleTypes)
                 {
                     var relationType = roleType.RelationType;
 
-                    if (hasPreviousCooked && this.PreviousChangedRoleByRelationType.TryGetValue(relationType, out var previousCooked))
+                    object previous = null;
+                    object current = null;
+
+                    if (this.PreviousChangedRoleByRelationType?.TryGetValue(relationType, out previous) == true)
                     {
-                        if (hasCooked && this.ChangedRoleByRelationType.TryGetValue(relationType, out var cooked))
+                        if (this.ChangedRoleByRelationType?.TryGetValue(relationType, out current) == true)
                         {
-                            changeSet.Diff(this.Strategy, relationType, cooked, previousCooked);
+                            changeSet.Diff(this.Strategy, relationType, current, previous);
                         }
                         else
                         {
-                            var raw = this.Record.GetRole(roleType);
-                            changeSet.Diff(this.Strategy, relationType, raw, previousCooked);
+                            current = this.Record.GetRole(roleType);
+                            changeSet.Diff(this.Strategy, relationType, current, previous);
                         }
                     }
                     else
                     {
-                        var previousRaw = this.PreviousRecord?.GetRole(roleType);
-                        if (hasCooked && this.ChangedRoleByRelationType.TryGetValue(relationType, out var cooked))
+                        previous = this.PreviousRecord?.GetRole(roleType);
+                        if (this.ChangedRoleByRelationType?.TryGetValue(relationType, out current) == true)
                         {
-                            changeSet.Diff(this.Strategy, relationType, cooked, previousRaw);
+                            changeSet.Diff(this.Strategy, relationType, current, previous);
                         }
                         else
                         {
-                            var raw = this.Record.GetRole(roleType);
-                            changeSet.Diff(this.Strategy, relationType, raw, previousRaw);
+                            current = this.Record.GetRole(roleType);
+                            changeSet.Diff(this.Strategy, relationType, current, previous);
                         }
                     }
                 }

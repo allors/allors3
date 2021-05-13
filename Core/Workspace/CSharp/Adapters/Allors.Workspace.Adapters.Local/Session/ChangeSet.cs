@@ -10,6 +10,7 @@ namespace Allors.Workspace.Adapters.Local
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Collections;
     using Meta;
 
     internal sealed class ChangeSet : IChangeSet
@@ -21,6 +22,12 @@ namespace Allors.Workspace.Adapters.Local
             this.Instantiated = new HashSet<IStrategy>();
             this.AssociationsByRoleType = new Dictionary<IRoleType, ISet<IStrategy>>();
             this.RolesByAssociationType = new Dictionary<IAssociationType, ISet<IStrategy>>();
+        }
+
+        public ChangeSet(ISet<IStrategy> created, ISet<IStrategy> instantiated)
+        {
+            this.Created = created ?? EmptySet<IStrategy>.Instance;
+            this.Instantiated = instantiated ?? EmptySet<IStrategy>.Instance;
         }
 
         ISession IChangeSet.Session => this.Session;

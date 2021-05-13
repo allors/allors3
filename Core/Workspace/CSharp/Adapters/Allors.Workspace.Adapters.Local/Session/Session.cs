@@ -30,7 +30,7 @@ namespace Allors.Workspace.Adapters.Local
             this.strategiesByClass = new Dictionary<IClass, ISet<Strategy>>();
             this.SessionOriginState = new SessionOriginState(workspace.Numbers);
 
-            this.ChangeSetTracker = new ChangeSetTracker();
+            this.ChangeSetTracker = new ChangeSetTracker(this);
             this.PushToWorkspaceTracker = new PushToWorkspaceTracker();
             this.PushToDatabaseTracker = new PushToDatabaseTracker(this);
 
@@ -80,8 +80,7 @@ namespace Allors.Workspace.Adapters.Local
                 }
             }
 
-            this.ChangeSetTracker.OnChanged(strategy.DatabaseOriginState);
-            this.ChangeSetTracker.OnChanged(strategy.WorkspaceOriginState);
+            this.ChangeSetTracker.OnCreated(strategy);
 
             return (T)strategy.Object;
         }
@@ -196,11 +195,8 @@ namespace Allors.Workspace.Adapters.Local
 
         public IChangeSet Checkpoint()
         {
-            var changeSet = new ChangeSet(this);
-
+            var changeSet = this.ChangeSetTracker.Checkpoint();
             this.SessionOriginState.Checkpoint(changeSet);
-            this.ChangeSetTracker.Checkpoint(changeSet);
-
             return changeSet;
         }
 
@@ -278,8 +274,7 @@ namespace Allors.Workspace.Adapters.Local
             var strategy = new Strategy(this, databaseRecord);
             this.AddStrategy(strategy);
 
-            this.ChangeSetTracker.OnChanged(strategy.DatabaseOriginState);
-            this.ChangeSetTracker.OnChanged(strategy.WorkspaceOriginState);
+            this.ChangeSetTracker.OnInstantiated(strategy);
 
             return strategy;
         }
@@ -294,8 +289,7 @@ namespace Allors.Workspace.Adapters.Local
             var strategy = new Strategy(this, @class, id);
             this.AddStrategy(strategy);
 
-            this.ChangeSetTracker.OnChanged(strategy.DatabaseOriginState);
-            this.ChangeSetTracker.OnChanged(strategy.WorkspaceOriginState);
+            this.ChangeSetTracker.OnInstantiated(strategy);
 
             return strategy;
         }
