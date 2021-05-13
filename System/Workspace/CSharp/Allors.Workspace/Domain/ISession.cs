@@ -55,7 +55,5 @@ namespace Allors.Workspace
         IPushResult PushToWorkspace();
 
         IChangeSet Checkpoint();
-
-        void Reset();
     }
 }

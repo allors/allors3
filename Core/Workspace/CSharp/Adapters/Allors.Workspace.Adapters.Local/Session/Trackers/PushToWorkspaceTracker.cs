@@ -31,14 +31,17 @@ namespace Allors.Workspace.Adapters.Local
                 }
             }
 
-            foreach (var state in this.changed)
+            if (this.changed != null)
             {
-                if (this.created?.Contains(state.Strategy) == true)
+                foreach (var state in this.changed)
                 {
-                    continue;
-                }
+                    if (this.created?.Contains(state.Strategy) == true)
+                    {
+                        continue;
+                    }
 
-                state.Push();
+                    state.Push();
+                }
             }
 
             this.created = null;

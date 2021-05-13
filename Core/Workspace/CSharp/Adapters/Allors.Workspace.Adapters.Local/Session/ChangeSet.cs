@@ -15,19 +15,13 @@ namespace Allors.Workspace.Adapters.Local
 
     internal sealed class ChangeSet : IChangeSet
     {
-        public ChangeSet(Session session)
+        public ChangeSet(Session session, ISet<IStrategy> created, ISet<IStrategy> instantiated)
         {
             this.Session = session;
-            this.Created = new HashSet<IStrategy>();
-            this.Instantiated = new HashSet<IStrategy>();
+            this.Created = created;
+            this.Instantiated = instantiated;
             this.AssociationsByRoleType = new Dictionary<IRoleType, ISet<IStrategy>>();
             this.RolesByAssociationType = new Dictionary<IAssociationType, ISet<IStrategy>>();
-        }
-
-        public ChangeSet(ISet<IStrategy> created, ISet<IStrategy> instantiated)
-        {
-            this.Created = created ?? EmptySet<IStrategy>.Instance;
-            this.Instantiated = instantiated ?? EmptySet<IStrategy>.Instance;
         }
 
         ISession IChangeSet.Session => this.Session;

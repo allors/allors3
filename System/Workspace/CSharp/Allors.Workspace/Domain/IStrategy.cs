@@ -51,7 +51,5 @@ namespace Allors.Workspace
         T GetComposite<T>(IAssociationType associationType) where T : IObject;
 
         IEnumerable<T> GetComposites<T>(IAssociationType associationType) where T : IObject;
-
-        void Reset();
     }
 }

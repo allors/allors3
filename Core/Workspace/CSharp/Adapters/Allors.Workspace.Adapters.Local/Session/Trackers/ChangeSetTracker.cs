@@ -32,7 +32,7 @@ namespace Allors.Workspace.Adapters.Local
 
         internal ChangeSet Checkpoint()
         {
-            var changeSet = new ChangeSet(this.created, this.instantiated);
+            var changeSet = new ChangeSet(this.session, this.created, this.instantiated);
 
             if (this.databaseOriginStates != null)
             {

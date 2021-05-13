@@ -167,15 +167,7 @@ namespace Allors.Workspace.Adapters.Local
 
             return this.OnPull(result);
         }
-
-        public void Reset()
-        {
-            foreach (var kvp in this.strategyByWorkspaceId)
-            {
-                kvp.Value.Reset();
-            }
-        }
-
+        
         public Task<IPushResult> Push()
         {
             var result = new PushResult(this);
@@ -204,9 +196,15 @@ namespace Allors.Workspace.Adapters.Local
         {
             this.Workspace.DatabaseAdapter.Sync(result.Objects, result.AccessControlLists);
 
-            foreach (var @object in result.Objects.Where(v => !this.strategyByWorkspaceId.ContainsKey(v.Id)))
+            foreach (var @object in result.Objects)
             {
-                _ = this.InstantiateDatabaseStrategy(@object.Id);
+                if (!this.strategyByWorkspaceId.ContainsKey(@object.Id))
+                {
+                    _ = this.InstantiateDatabaseStrategy(@object.Id);
+                }
+
+                var strategy = this.GetStrategy(@object.Id);
+                strategy.DatabaseOriginState.Reset();
             }
         }
 

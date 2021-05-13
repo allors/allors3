@@ -323,13 +323,7 @@ namespace Allors.Workspace.Adapters.Local
         public bool CanWrite(IRoleType roleType) => this.DatabaseOriginState?.CanWrite(roleType) ?? true;
 
         public bool CanExecute(IMethodType methodType) => this.DatabaseOriginState?.CanExecute(methodType) ?? false;
-
-        public void Reset()
-        {
-            this.WorkspaceOriginState?.Reset();
-            this.DatabaseOriginState?.Reset();
-        }
-
+        
         internal bool IsAssociationForRole(IRoleType roleType, long forRoleId)
         {
             var role = this.Session.SessionOriginState.Get(this.Id, roleType);
