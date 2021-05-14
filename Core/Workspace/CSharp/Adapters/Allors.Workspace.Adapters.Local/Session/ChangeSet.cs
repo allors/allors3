@@ -68,20 +68,22 @@ namespace Allors.Workspace.Adapters.Local
             {
                 if (roleType.IsOne)
                 {
-                    if (!Equals(current, previous))
+                    if (Equals(current, previous))
                     {
-                        if (previous != null)
-                        {
-                            this.AddRole(relationType, this.Session.GetStrategy((long)previous));
-                        }
-
-                        if (current != null)
-                        {
-                            this.AddRole(relationType, this.Session.GetStrategy((long)current));
-                        }
-
-                        this.AddAssociation(relationType, association);
+                        return;
                     }
+
+                    if (previous != null)
+                    {
+                        this.AddRole(relationType, this.Session.GetStrategy((long)previous));
+                    }
+
+                    if (current != null)
+                    {
+                        this.AddRole(relationType, this.Session.GetStrategy((long)current));
+                    }
+
+                    this.AddAssociation(relationType, association);
                 }
                 else
                 {

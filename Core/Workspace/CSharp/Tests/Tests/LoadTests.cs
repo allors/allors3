@@ -57,7 +57,7 @@ namespace Tests.Workspace
 
             foreach (var c1 in c1s)
             {
-                foreach (var roleType in this.M.C1.DatabaseRoleTypes)
+                foreach (var roleType in this.M.C1.DatabaseOriginRoleTypes)
                 {
                     Assert.False(c1.Strategy.Exist(roleType));
                 }
@@ -96,7 +96,7 @@ namespace Tests.Workspace
 
             foreach (var c1 in c1s)
             {
-                foreach (var roleType in this.M.C1.DatabaseRoleTypes)
+                foreach (var roleType in this.M.C1.DatabaseOriginRoleTypes)
                 {
                     Assert.False(c1.Strategy.Exist(roleType));
                 }

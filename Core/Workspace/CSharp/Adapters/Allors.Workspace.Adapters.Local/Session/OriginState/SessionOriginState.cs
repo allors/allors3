@@ -8,22 +8,24 @@ namespace Allors.Workspace.Adapters.Local
     using Meta;
     using Numbers;
 
-    public class SessionOriginState
+    internal class SessionOriginState
     {
         private readonly INumbers numbers;
         private readonly PropertyByObjectByPropertyType propertyByObjectByPropertyType;
 
-        public SessionOriginState(INumbers numbers)
+        internal SessionOriginState(INumbers numbers)
         {
             this.numbers = numbers;
             this.propertyByObjectByPropertyType = new PropertyByObjectByPropertyType(numbers);
         }
 
-        public object Get(long @object, IPropertyType propertyType) => this.propertyByObjectByPropertyType.Get(@object, propertyType);
+        internal void Checkpoint(ChangeSet changeSet) => changeSet.AddSessionStateChanges(this.propertyByObjectByPropertyType.Checkpoint());
 
-        public void SetUnitRole(long association, IRoleType roleType, object role) => this.propertyByObjectByPropertyType.Set(association, roleType, role);
+        internal object Get(long @object, IPropertyType propertyType) => this.propertyByObjectByPropertyType.Get(@object, propertyType);
 
-        public void SetCompositeRole(long association, IRoleType roleType, long? newRole)
+        internal void SetUnitRole(long association, IRoleType roleType, object role) => this.propertyByObjectByPropertyType.Set(association, roleType, role);
+
+        internal void SetCompositeRole(long association, IRoleType roleType, long? newRole)
         {
             if (newRole == null)
             {
@@ -54,7 +56,7 @@ namespace Allors.Workspace.Adapters.Local
             this.propertyByObjectByPropertyType.Set(association, roleType, newRole);
         }
 
-        public void SetCompositesRole(long association, IRoleType roleType, object newRole)
+        internal void SetCompositesRole(long association, IRoleType roleType, object newRole)
         {
             if (newRole == null)
             {
@@ -79,7 +81,7 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        public void AddRole(long association, IRoleType roleType, long roleToAdd)
+        internal void AddRole(long association, IRoleType roleType, long roleToAdd)
         {
             var associationType = roleType.AssociationType;
             var previousRole = this.propertyByObjectByPropertyType.Get(association, roleType);
@@ -103,7 +105,7 @@ namespace Allors.Workspace.Adapters.Local
             this.propertyByObjectByPropertyType.Set(roleToAdd, associationType, this.numbers.Add(roleAssociations, association));
         }
 
-        public void RemoveRole(long association, IRoleType roleType, long roleToRemove)
+        private void RemoveRole(long association, IRoleType roleType, long roleToRemove)
         {
             var associationType = roleType.AssociationType;
 
@@ -140,7 +142,7 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        public void RemoveRole(long association, IRoleType roleType)
+        private void RemoveRole(long association, IRoleType roleType)
         {
             if (roleType.ObjectType.IsUnit)
             {
@@ -167,7 +169,5 @@ namespace Allors.Workspace.Adapters.Local
                 }
             }
         }
-
-        internal void Checkpoint(ChangeSet changeSet) => changeSet.AddSessionStateChanges(this.propertyByObjectByPropertyType.Checkpoint());
     }
 }

@@ -90,9 +90,9 @@ namespace Allors.Workspace.Meta
 
         IEnumerable<IRoleType> IComposite.RoleTypes => this.LazyRoleTypes ?? new HashSet<IRoleTypeInternals>(this.ExclusiveRoleTypes.Union(this.Supertypes.SelectMany(v => v.ExclusiveRoleTypes)));
 
-        IEnumerable<IRoleType> IComposite.WorkspaceRoleTypes => this.LazyWorkspaceRoleTypes;
+        IEnumerable<IRoleType> IComposite.WorkspaceOriginRoleTypes => this.LazyWorkspaceRoleTypes;
 
-        IEnumerable<IRoleType> IComposite.DatabaseRoleTypes => this.LazyDatabaseRoleTypes;
+        IEnumerable<IRoleType> IComposite.DatabaseOriginRoleTypes => this.LazyDatabaseRoleTypes;
 
         IEnumerable<IMethodType> IComposite.MethodTypes => this.LazyMethodTypes;
 

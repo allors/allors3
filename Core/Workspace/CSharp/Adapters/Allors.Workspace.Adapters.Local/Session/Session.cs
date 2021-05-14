@@ -28,7 +28,7 @@ namespace Allors.Workspace.Adapters.Local
             this.strategiesByClass = new Dictionary<IClass, ISet<Strategy>>();
             this.SessionOriginState = new SessionOriginState(workspace.Numbers);
 
-            this.ChangeSetTracker = new ChangeSetTracker(this);
+            this.ChangeSetTracker = new ChangeSetTracker();
             this.PushToDatabaseTracker = new PushToDatabaseTracker();
             this.PushToWorkspaceTracker = new PushToWorkspaceTracker();
 
@@ -170,23 +170,42 @@ namespace Allors.Workspace.Adapters.Local
         {
             var result = new Push(this);
 
-            _ = this.PushToWorkspace(result);
+            this.PushToDatabase(result);
             if (!result.HasErrors)
             {
-                _ = this.PushToDatabase(result);
+                this.PushToWorkspace(result);
             }
 
             return Task.FromResult<IPushResult>(result);
         }
 
-        public Task<IPushResult> PushToDatabase() => Task.FromResult<IPushResult>(this.PushToDatabase(new Push(this)));
-
-        public IPushResult PushToWorkspace() => this.PushToWorkspace(new Push(this));
-
         public IChangeSet Checkpoint()
         {
-            var changeSet = this.ChangeSetTracker.Checkpoint();
+            var changeSet = new ChangeSet(this, this.ChangeSetTracker.Created, this.ChangeSetTracker.Instantiated);
+
+            if (this.ChangeSetTracker.DatabaseOriginStates != null)
+            {
+                foreach (var databaseOriginState in this.ChangeSetTracker.DatabaseOriginStates)
+                {
+                    databaseOriginState.Checkpoint(changeSet);
+                }
+            }
+
+            if (this.ChangeSetTracker.WorkspaceOriginStates != null)
+            {
+                foreach (var workspaceOriginState in this.ChangeSetTracker.WorkspaceOriginStates)
+                {
+                    workspaceOriginState.Checkpoint(changeSet);
+                }
+            }
+
             this.SessionOriginState.Checkpoint(changeSet);
+
+            this.ChangeSetTracker.Created = null;
+            this.ChangeSetTracker.Instantiated = null;
+            this.ChangeSetTracker.DatabaseOriginStates = null;
+            this.ChangeSetTracker.WorkspaceOriginStates = null;
+
             return changeSet;
         }
 

@@ -1,4 +1,4 @@
-// <copyright file="Object.cs" company="Allors bvba">
+// <copyright file="RecordBasedOriginState.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -18,13 +18,15 @@ namespace Allors.Workspace.Adapters.Local
 
         internal bool HasChanges => this.Record == null || this.ChangedRoleByRelationType?.Count > 0;
 
+        protected abstract IEnumerable<IRoleType> RoleTypes { get; }
+
         protected abstract IRecord Record { get; }
 
         protected IRecord PreviousRecord { get; set; }
 
-        protected internal Dictionary<IRelationType, object> ChangedRoleByRelationType { get; set; }
+        protected internal Dictionary<IRelationType, object> ChangedRoleByRelationType { get; protected set; }
 
-        protected Dictionary<IRelationType, object> PreviousChangedRoleByRelationType { get; set; }
+        private Dictionary<IRelationType, object> PreviousChangedRoleByRelationType { get; set; }
 
         #region Proxy Properties
         protected long Id => this.Strategy.Id;
@@ -176,9 +178,7 @@ namespace Allors.Workspace.Adapters.Local
             // Different record
             else
             {
-                var hasCurrentChanged = this.ChangedRoleByRelationType != null;
-
-                foreach (var roleType in this.Class.WorkspaceRoleTypes)
+                foreach (var roleType in this.RoleTypes)
                 {
                     var relationType = roleType.RelationType;
 
@@ -217,7 +217,7 @@ namespace Allors.Workspace.Adapters.Local
             this.PreviousChangedRoleByRelationType = this.ChangedRoleByRelationType;
         }
 
-        public bool IsAssociationForRole(IRoleType roleType, long forRole)
+        internal bool IsAssociationForRole(IRoleType roleType, long forRole)
         {
             if (roleType.ObjectType.IsUnit)
             {
@@ -234,13 +234,13 @@ namespace Allors.Workspace.Adapters.Local
             return this.Numbers.Contains(role, forRole);
         }
 
+        protected abstract void OnChange();
+
         private void SetChangedRole(IRoleType roleType, object role)
         {
             this.ChangedRoleByRelationType ??= new Dictionary<IRelationType, object>();
             this.ChangedRoleByRelationType[roleType.RelationType] = role;
             this.OnChange();
         }
-
-        protected abstract void OnChange();
     }
 }

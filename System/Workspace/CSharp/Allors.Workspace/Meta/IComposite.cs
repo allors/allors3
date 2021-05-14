@@ -22,9 +22,9 @@ namespace Allors.Workspace.Meta
 
         IEnumerable<IRoleType> RoleTypes { get; }
 
-        IEnumerable<IRoleType> WorkspaceRoleTypes { get; }
+        IEnumerable<IRoleType> DatabaseOriginRoleTypes { get; }
 
-        IEnumerable<IRoleType> DatabaseRoleTypes { get; }
+        IEnumerable<IRoleType> WorkspaceOriginRoleTypes { get; }
 
         IEnumerable<IMethodType> MethodTypes { get; }
 

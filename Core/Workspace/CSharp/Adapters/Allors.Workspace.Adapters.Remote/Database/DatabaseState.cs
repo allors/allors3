@@ -239,7 +239,7 @@ namespace Allors.Workspace.Adapters.Remote
                 var hasPreviousCooked = this.previousChangedRoleByRelationType != null;
                 var hasCooked = this.changedRoleByRelationType != null;
 
-                foreach (var roleType in this.Class.WorkspaceRoleTypes)
+                foreach (var roleType in this.Class.WorkspaceOriginRoleTypes)
                 {
                     var relationType = roleType.RelationType;
 

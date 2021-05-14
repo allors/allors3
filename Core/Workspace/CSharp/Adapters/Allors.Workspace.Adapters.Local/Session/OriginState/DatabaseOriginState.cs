@@ -1,10 +1,11 @@
-// <copyright file="Object.cs" company="Allors bvba">
+// <copyright file="DatabaseOriginState.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
 namespace Allors.Workspace.Adapters.Local
 {
+    using System.Collections.Generic;
     using Meta;
 
     internal sealed class DatabaseOriginState : RecordBasedOriginState
@@ -18,6 +19,8 @@ namespace Allors.Workspace.Adapters.Local
         public long Version => this.DatabaseRecord.Version;
 
         private bool ExistDatabaseRecord => this.Record != null;
+
+        protected override IEnumerable<IRoleType> RoleTypes => this.Class.DatabaseOriginRoleTypes;
 
         protected override IRecord Record => this.DatabaseRecord;
 

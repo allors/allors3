@@ -57,8 +57,6 @@ namespace Allors.Workspace.Adapters.Local
 
         internal WorkspaceOriginState WorkspaceOriginState { get; }
 
-        internal bool HasDatabaseChanges => this.DatabaseOriginState.HasChanges;
-
         internal long DatabaseVersion => this.DatabaseOriginState.Version;
 
         public bool Exist(IRoleType roleType)
@@ -323,7 +321,7 @@ namespace Allors.Workspace.Adapters.Local
         public bool CanWrite(IRoleType roleType) => this.DatabaseOriginState?.CanWrite(roleType) ?? true;
 
         public bool CanExecute(IMethodType methodType) => this.DatabaseOriginState?.CanExecute(methodType) ?? false;
-        
+
         internal bool IsAssociationForRole(IRoleType roleType, long forRoleId)
         {
             var role = this.Session.SessionOriginState.Get(this.Id, roleType);

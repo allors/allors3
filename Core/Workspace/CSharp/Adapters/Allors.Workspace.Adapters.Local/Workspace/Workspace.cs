@@ -71,7 +71,6 @@ namespace Allors.Workspace.Adapters.Local
                 _ = this.WorkspaceIdsByWorkspaceClass.TryGetValue(@class, out var ids);
                 _ = this.Numbers.Add(ids, id);
                 this.WorkspaceIdsByWorkspaceClass[@class] = ids;
-
             }
 
             if (!this.recordById.TryGetValue(id, out var originalWorkspaceRecord))

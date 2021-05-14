@@ -45,7 +45,7 @@ namespace Allors.Workspace.Adapters.Local
 
         private IEnumerable<KeyValuePair<IRelationType, object>> Import(IReadOnlyDictionary<IRelationType, object> changedRoleByRoleType, IReadOnlyDictionary<IRelationType, object> originalRoleByRoleType = null)
         {
-            foreach (var roleType in this.@class.WorkspaceRoleTypes)
+            foreach (var roleType in this.@class.WorkspaceOriginRoleTypes)
             {
                 var relationType = roleType.RelationType;
 

@@ -12,49 +12,20 @@ namespace Allors.Workspace.Adapters.Local
 
     internal sealed class ChangeSetTracker
     {
-        private readonly Session session;
+        internal ISet<IStrategy> Created { get; set; }
 
-        private ISet<IStrategy> created;
-        private ISet<IStrategy> instantiated;
-        private ISet<DatabaseOriginState> databaseOriginStates;
-        private ISet<WorkspaceOriginState> workspaceOriginStates;
+        internal ISet<IStrategy> Instantiated { get; set; }
 
-        internal ChangeSetTracker(Session session) => this.session = session;
+        internal ISet<DatabaseOriginState> DatabaseOriginStates { get; set; }
 
-        internal void OnCreated(Strategy strategy) => _ = (this.created ??= new HashSet<IStrategy>()).Add(strategy);
+        internal ISet<WorkspaceOriginState> WorkspaceOriginStates { get; set; }
 
-        internal void OnInstantiated(Strategy strategy) => _ = (this.instantiated ??= new HashSet<IStrategy>()).Add(strategy);
+        internal void OnCreated(Strategy strategy) => _ = (this.Created ??= new HashSet<IStrategy>()).Add(strategy);
 
-        internal void OnChanged(DatabaseOriginState state) => _ = (this.databaseOriginStates ??= new HashSet<DatabaseOriginState>()).Add(state);
+        internal void OnInstantiated(Strategy strategy) => _ = (this.Instantiated ??= new HashSet<IStrategy>()).Add(strategy);
 
-        internal void OnChanged(WorkspaceOriginState state) => _ = (this.workspaceOriginStates ??= new HashSet<WorkspaceOriginState>()).Add(state);
+        internal void OnChanged(DatabaseOriginState state) => _ = (this.DatabaseOriginStates ??= new HashSet<DatabaseOriginState>()).Add(state);
 
-        internal ChangeSet Checkpoint()
-        {
-            var changeSet = new ChangeSet(this.session, this.created, this.instantiated);
-
-            if (this.databaseOriginStates != null)
-            {
-                foreach (var changed in this.databaseOriginStates)
-                {
-                    changed.Checkpoint(changeSet);
-                }
-            }
-
-            if (this.workspaceOriginStates != null)
-            {
-                foreach (var changed in this.workspaceOriginStates)
-                {
-                    changed.Checkpoint(changeSet);
-                }
-            }
-
-            this.created = null;
-            this.instantiated = null;
-            this.databaseOriginStates = null;
-            this.workspaceOriginStates = null;
-
-            return changeSet;
-        }
+        internal void OnChanged(WorkspaceOriginState state) => _ = (this.WorkspaceOriginStates ??= new HashSet<WorkspaceOriginState>()).Add(state);
     }
 }
