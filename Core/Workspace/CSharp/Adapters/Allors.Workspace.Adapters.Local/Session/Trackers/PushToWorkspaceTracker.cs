@@ -1,4 +1,4 @@
-// <copyright file="PushToWorkspaceTracker.cs" company="Allors bvba">
+// <copyright file="PushTracker.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -9,45 +9,15 @@
 namespace Allors.Workspace.Adapters.Local
 {
     using System.Collections.Generic;
-    using System.Linq;
 
     internal sealed class PushToWorkspaceTracker
     {
-        private ISet<Strategy> created;
+        internal ISet<Strategy> Created { get; set; }
 
-        private ISet<WorkspaceOriginState> changed;
+        internal ISet<WorkspaceOriginState> Changed { get; set; }
 
-        internal void OnCreated(Strategy strategy) => _ = (this.created ??= new HashSet<Strategy>()).Add(strategy);
+        internal void OnCreated(Strategy strategy) => _ = (this.Created ??= new HashSet<Strategy>()).Add(strategy);
 
-        internal void OnChanged(WorkspaceOriginState state) => _ = (this.changed ??= new HashSet<WorkspaceOriginState>()).Add(state);
-
-        public PushResult Push(PushResult result)
-        {
-            if (this.created != null)
-            {
-                foreach (var strategy in this.created)
-                {
-                    strategy.WorkspaceOriginState.Push();
-                }
-            }
-
-            if (this.changed != null)
-            {
-                foreach (var state in this.changed)
-                {
-                    if (this.created?.Contains(state.Strategy) == true)
-                    {
-                        continue;
-                    }
-
-                    state.Push();
-                }
-            }
-
-            this.created = null;
-            this.changed = null;
-
-            return result;
-        }
+        internal void OnChanged(WorkspaceOriginState state) => _ = (this.Changed ??= new HashSet<WorkspaceOriginState>()).Add(state);
     }
 }

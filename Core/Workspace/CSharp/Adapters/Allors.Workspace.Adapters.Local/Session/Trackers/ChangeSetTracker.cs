@@ -9,7 +9,6 @@
 namespace Allors.Workspace.Adapters.Local
 {
     using System.Collections.Generic;
-    using System.Resources;
 
     internal sealed class ChangeSetTracker
     {

@@ -9,15 +9,14 @@ namespace Allors.Workspace.Adapters.Local
     using System.Collections.Generic;
     using System.Linq;
     using Database;
-    using Database.Data;
     using Database.Derivations;
     using Database.Domain;
     using Database.Meta;
     using Database.Security;
 
-    public class PushResult : Result, IPushResult
+    public class Push : Result, IPushResult
     {
-        internal PushResult(Session session) : base(session)
+        internal Push(Session session) : base(session)
         {
             this.Workspace = session.Workspace;
             this.Transaction = this.Workspace.DatabaseAdapter.Database.CreateTransaction();
@@ -123,17 +122,6 @@ namespace Allors.Workspace.Adapters.Local
             if (!this.HasErrors)
             {
                 this.Transaction.Commit();
-            }
-
-            if (this.ObjectByNewId?.Count > 0)
-            {
-                foreach (var kvp in this.ObjectByNewId)
-                {
-                    var workspaceId = kvp.Key;
-                    var databaseId = kvp.Value.Id;
-
-                    this.Session.OnNewObjectPushed(workspaceId, databaseId);
-                }
             }
         }
 

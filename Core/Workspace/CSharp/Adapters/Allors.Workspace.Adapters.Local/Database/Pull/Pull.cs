@@ -14,15 +14,14 @@ namespace Allors.Workspace.Adapters.Local
     using Database.Security;
     using Protocol.Direct;
     using IObject = Allors.Workspace.IObject;
-    using Pull = Data.Pull;
     using User = Database.Domain.User;
 
-    public class PullResult : Result, IPullResult, IProcedureOutput
+    public class Pull : Result, IPullResult, IProcedureOutput
     {
         private IDictionary<string, IObject[]> collections;
         private IDictionary<string, IObject> objects;
 
-        public PullResult(Session session, Workspace workspace) : base(session)
+        public Pull(Session session, Workspace workspace) : base(session)
         {
             this.Workspace = workspace;
             this.Transaction = this.Workspace.DatabaseAdapter.Database.CreateTransaction();
@@ -68,7 +67,7 @@ namespace Allors.Workspace.Adapters.Local
             localProcedure.Execute(this);
         }
 
-        public void Execute(IEnumerable<Pull> workspacePulls)
+        public void Execute(IEnumerable<Allors.Workspace.Data.Pull> workspacePulls)
         {
             var visitor = new ToDatabaseVisitor(this.Transaction);
             var pulls = workspacePulls.Select(v => visitor.Visit(v));

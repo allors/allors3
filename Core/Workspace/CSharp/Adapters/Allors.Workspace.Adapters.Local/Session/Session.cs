@@ -8,9 +8,7 @@ namespace Allors.Workspace.Adapters.Local
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Runtime.InteropServices.ComTypes;
     using System.Threading.Tasks;
-    using Data;
     using Meta;
     using Numbers;
 
@@ -31,8 +29,8 @@ namespace Allors.Workspace.Adapters.Local
             this.SessionOriginState = new SessionOriginState(workspace.Numbers);
 
             this.ChangeSetTracker = new ChangeSetTracker(this);
+            this.PushToDatabaseTracker = new PushToDatabaseTracker();
             this.PushToWorkspaceTracker = new PushToWorkspaceTracker();
-            this.PushToDatabaseTracker = new PushToDatabaseTracker(this);
 
             this.Lifecycle.OnInit(this);
         }
@@ -46,9 +44,9 @@ namespace Allors.Workspace.Adapters.Local
 
         internal ChangeSetTracker ChangeSetTracker { get; }
 
-        internal PushToWorkspaceTracker PushToWorkspaceTracker { get; }
-
         internal PushToDatabaseTracker PushToDatabaseTracker { get; }
+
+        internal PushToWorkspaceTracker PushToWorkspaceTracker { get; }
 
         internal DatabaseAdapter DatabaseAdapter { get; }
 
@@ -58,7 +56,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public Task<IInvokeResult> Invoke(Method[] methods, InvokeOptions options = null)
         {
-            var result = new InvokeResult(this, this.Workspace);
+            var result = new Invoke(this, this.Workspace);
             result.Execute(methods, options);
             return Task.FromResult<IInvokeResult>(result);
         }
@@ -151,70 +149,45 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        public Task<IPullResult> Pull(params Pull[] pulls)
+        public Task<IPullResult> Pull(params Data.Pull[] pulls)
         {
-            var result = new PullResult(this, this.Workspace);
+            var result = new Pull(this, this.Workspace);
             result.Execute(pulls);
             return this.OnPull(result);
         }
 
-        public Task<IPullResult> Pull(Data.Procedure procedure, params Pull[] pulls)
+        public Task<IPullResult> Pull(Data.Procedure procedure, params Data.Pull[] pulls)
         {
-            var result = new PullResult(this, this.Workspace);
+            var result = new Pull(this, this.Workspace);
 
             result.Execute(procedure);
             result.Execute(pulls);
 
             return this.OnPull(result);
         }
-        
+
         public Task<IPushResult> Push()
         {
-            var result = new PushResult(this);
+            var result = new Push(this);
 
-            this.PushToWorkspaceTracker.Push(result);
-            if (result.HasErrors)
+            _ = this.PushToWorkspace(result);
+            if (!result.HasErrors)
             {
-                this.PushToDatabaseTracker.Push(result);
+                _ = this.PushToDatabase(result);
             }
 
             return Task.FromResult<IPushResult>(result);
         }
 
-        public Task<IPushResult> PushToDatabase() => Task.FromResult<IPushResult>(this.PushToDatabaseTracker.Push(new PushResult(this)));
+        public Task<IPushResult> PushToDatabase() => Task.FromResult<IPushResult>(this.PushToDatabase(new Push(this)));
 
-        public IPushResult PushToWorkspace() => this.PushToWorkspaceTracker.Push(new PushResult(this));
+        public IPushResult PushToWorkspace() => this.PushToWorkspace(new Push(this));
 
         public IChangeSet Checkpoint()
         {
             var changeSet = this.ChangeSetTracker.Checkpoint();
             this.SessionOriginState.Checkpoint(changeSet);
             return changeSet;
-        }
-
-        internal void OnPush(PushResult result)
-        {
-            this.Workspace.DatabaseAdapter.Sync(result.Objects, result.AccessControlLists);
-
-            foreach (var @object in result.Objects)
-            {
-                if (!this.strategyByWorkspaceId.ContainsKey(@object.Id))
-                {
-                    _ = this.InstantiateDatabaseStrategy(@object.Id);
-                }
-
-                var strategy = this.GetStrategy(@object.Id);
-                strategy.DatabaseOriginState.Reset();
-            }
-        }
-
-        internal void OnNewObjectPushed(long workspaceId, long databaseId)
-        {
-            var strategy = this.strategyByWorkspaceId[workspaceId];
-            this.RemoveStrategy(strategy);
-            var databaseRecord = this.DatabaseAdapter.OnPushed(databaseId, strategy.Class);
-            strategy.DatabasePushResponse(databaseRecord);
-            this.AddStrategy(strategy);
         }
 
         internal Strategy GetStrategy(long id)
@@ -326,13 +299,13 @@ namespace Allors.Workspace.Adapters.Local
             _ = strategies.Remove(strategy);
         }
 
-        private Task<IPullResult> OnPull(PullResult pullResult)
+        private Task<IPullResult> OnPull(Pull pull)
         {
-            var syncObjects = this.DatabaseAdapter.ObjectsToSync(pullResult);
+            var syncObjects = this.DatabaseAdapter.ObjectsToSync(pull);
 
-            this.Workspace.DatabaseAdapter.Sync(syncObjects, pullResult.AccessControlLists);
+            this.Workspace.DatabaseAdapter.Sync(syncObjects, pull.AccessControlLists);
 
-            foreach (var databaseObject in pullResult.DatabaseObjects)
+            foreach (var databaseObject in pull.DatabaseObjects)
             {
                 var id = databaseObject.Id;
                 if (!this.strategyByWorkspaceId.ContainsKey(id))
@@ -341,7 +314,88 @@ namespace Allors.Workspace.Adapters.Local
                 }
             }
 
-            return Task.FromResult<IPullResult>(pullResult);
+            return Task.FromResult<IPullResult>(pull);
+        }
+
+        private IPushResult PushToDatabase(Push push)
+        {
+            push.Execute(this.PushToDatabaseTracker);
+
+            if (push.HasErrors)
+            {
+                return push;
+            }
+
+            this.PushToDatabaseTracker.Changed = null;
+
+            if (push.ObjectByNewId?.Count > 0)
+            {
+                foreach (var kvp in push.ObjectByNewId)
+                {
+                    var workspaceId = kvp.Key;
+                    var databaseId = kvp.Value.Id;
+
+                    var strategy = this.strategyByWorkspaceId[workspaceId];
+
+                    _ = this.PushToDatabaseTracker.Created.Remove(strategy);
+
+                    this.RemoveStrategy(strategy);
+                    var databaseRecord = this.DatabaseAdapter.OnPushed(databaseId, strategy.Class);
+                    strategy.DatabasePushResponse(databaseRecord);
+                    this.AddStrategy(strategy);
+                }
+            }
+
+            if (this.PushToDatabaseTracker.Created?.Count > 0)
+            {
+                throw new Exception("Not all new objects received ids");
+            }
+
+            this.PushToDatabaseTracker.Created = null;
+
+            this.Workspace.DatabaseAdapter.Sync(push.Objects, push.AccessControlLists);
+
+            foreach (var @object in push.Objects)
+            {
+                if (!this.strategyByWorkspaceId.ContainsKey(@object.Id))
+                {
+                    _ = this.InstantiateDatabaseStrategy(@object.Id);
+                }
+
+                var strategy = this.GetStrategy(@object.Id);
+                strategy.DatabaseOriginState.Reset();
+            }
+
+            return push;
+        }
+
+        private IPushResult PushToWorkspace(IPushResult result)
+        {
+            if (this.PushToWorkspaceTracker.Created != null)
+            {
+                foreach (var strategy in this.PushToWorkspaceTracker.Created)
+                {
+                    strategy.WorkspaceOriginState.Push();
+                }
+            }
+
+            if (this.PushToWorkspaceTracker.Changed != null)
+            {
+                foreach (var state in this.PushToWorkspaceTracker.Changed)
+                {
+                    if (this.PushToWorkspaceTracker.Created?.Contains(state.Strategy) == true)
+                    {
+                        continue;
+                    }
+
+                    state.Push();
+                }
+            }
+
+            this.PushToWorkspaceTracker.Created = null;
+            this.PushToWorkspaceTracker.Changed = null;
+
+            return result;
         }
     }
 }

@@ -15,9 +15,9 @@ namespace Allors.Workspace.Adapters.Local
     using Database.Security;
     using Method = Allors.Workspace.Method;
 
-    public class InvokeResult : Result
+    public class Invoke : Result
     {
-        internal InvokeResult(Session session, Workspace workspace) : base(session)
+        internal Invoke(Session session, Workspace workspace) : base(session)
         {
             this.Workspace = workspace;
             this.Transaction = this.Workspace.DatabaseAdapter.Database.CreateTransaction();
@@ -54,7 +54,7 @@ namespace Allors.Workspace.Adapters.Local
             {
                 foreach (var method in methods)
                 {
-                    var error = this.Invoke(method);
+                    var error = this.Execute(method);
                     if (!error)
                     {
                         var derivationResult = this.Derive();
@@ -84,7 +84,7 @@ namespace Allors.Workspace.Adapters.Local
                 var error = false;
                 foreach (var method in methods)
                 {
-                    error = this.Invoke(method);
+                    error = this.Execute(method);
                     if (error)
                     {
                         break;
@@ -108,7 +108,7 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        private bool Invoke(Method invocation)
+        private bool Execute(Method invocation)
         {
             var obj = this.Transaction.Instantiate(invocation.Object.Id);
             if (obj == null)

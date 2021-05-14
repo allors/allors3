@@ -17,12 +17,12 @@ namespace Allors.Workspace.Adapters.Local
     public class PullExtent
     {
         private readonly ITransaction transaction;
-        private readonly Pull pull;
+        private readonly Database.Data.Pull pull;
         private readonly IAccessControlLists acls;
         private readonly IPreparedExtents preparedExtents;
         private readonly IPreparedSelects preparedSelects;
 
-        public PullExtent(ITransaction transaction, Pull pull, IAccessControlLists acls, IPreparedSelects preparedSelects,
+        public PullExtent(ITransaction transaction, Database.Data.Pull pull, IAccessControlLists acls, IPreparedSelects preparedSelects,
             IPreparedExtents preparedExtents)
         {
             this.transaction = transaction;
@@ -32,7 +32,7 @@ namespace Allors.Workspace.Adapters.Local
             this.preparedSelects = preparedSelects;
         }
 
-        public void Execute(PullResult response)
+        public void Execute(Pull response)
         {
             if (this.pull.Extent == null && !this.pull.ExtentRef.HasValue)
             {

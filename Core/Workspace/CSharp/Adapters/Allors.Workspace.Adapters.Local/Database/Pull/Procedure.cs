@@ -35,7 +35,7 @@ namespace Allors.Workspace.Adapters.Local
             this.errors.Add(derivationResult);
         }
 
-        public void Execute(PullResult pullResponse)
+        public void Execute(Pull pullResponse)
         {
             if (this.procedure.Pool != null)
             {
