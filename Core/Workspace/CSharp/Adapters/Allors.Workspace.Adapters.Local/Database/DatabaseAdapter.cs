@@ -29,19 +29,18 @@ namespace Allors.Workspace.Adapters.Local
             this.AccessControlById = new Dictionary<long, AccessControl>();
         }
 
-        private IMetaPopulation MetaPopulation { get; }
-
-        private Database.Meta.IMetaPopulation DatabaseMetaPopulation => this.Database.MetaPopulation;
-
-        public IDatabase Database { get; }
-
-        private ConcurrentDictionary<long, DatabaseRecord> RecordsById { get; }
+        internal IDatabase Database { get; }
 
         internal WorkspaceIdGenerator WorkspaceIdGenerator { get; }
 
-        private Dictionary<long, AccessControl> AccessControlById { get; set; }
+        private Database.Meta.IMetaPopulation DatabaseMetaPopulation => this.Database.MetaPopulation;
+        private IMetaPopulation MetaPopulation { get; }
 
-        internal void Sync(IEnumerable<IObject> objects, IAccessControlLists acls)
+        private ConcurrentDictionary<long, DatabaseRecord> RecordsById { get; }
+
+        private Dictionary<long, AccessControl> AccessControlById { get; }
+
+        internal void Sync(IEnumerable<IObject> objects, IAccessControlLists accessControlLists)
         {
             // TODO: Prefetch objects
             static object GetRole(IObject @object, IRoleType roleType)
@@ -71,7 +70,7 @@ namespace Allors.Workspace.Adapters.Local
                         ((IRelationType)this.MetaPopulation.FindByTag(w.RelationType.Tag)).RoleType,
                     w => GetRole(@object, w));
 
-                var acl = acls[@object];
+                var acl = accessControlLists[@object];
 
                 var deniedPermissions = acl.DeniedPermissionIds?.ToArray() ?? Array.Empty<long>();
                 var accessControls = acl.AccessControls
@@ -94,18 +93,18 @@ namespace Allors.Workspace.Adapters.Local
             var operandId = this.DatabaseMetaPopulation.FindByTag(operandType.OperandTag).Id;
 
             long permission;
-            var permissionCache = this.permissionCache.Get(classId);
+            var permissionCacheEntry = this.permissionCache.Get(classId);
 
             switch (operation)
             {
                 case Operations.Read:
-                    _ = permissionCache.RoleReadPermissionIdByRelationTypeId.TryGetValue(operandId, out permission);
+                    _ = permissionCacheEntry.RoleReadPermissionIdByRelationTypeId.TryGetValue(operandId, out permission);
                     break;
                 case Operations.Write:
-                    _ = permissionCache.RoleWritePermissionIdByRelationTypeId.TryGetValue(operandId, out permission);
+                    _ = permissionCacheEntry.RoleWritePermissionIdByRelationTypeId.TryGetValue(operandId, out permission);
                     break;
                 default:
-                    _ = permissionCache.MethodExecutePermissionIdByMethodTypeId.TryGetValue(operandId, out permission);
+                    _ = permissionCacheEntry.MethodExecutePermissionIdByMethodTypeId.TryGetValue(operandId, out permission);
                     break;
             }
 
@@ -119,7 +118,7 @@ namespace Allors.Workspace.Adapters.Local
             return record;
         }
 
-        public IEnumerable<IObject> ObjectsToSync(Pull pull) =>
+        internal IEnumerable<IObject> ObjectsToSync(Pull pull) =>
             pull.DatabaseObjects.Where(v =>
             {
                 if (this.RecordsById.TryGetValue(v.Id, out var databaseRoles))
@@ -132,20 +131,21 @@ namespace Allors.Workspace.Adapters.Local
 
         private AccessControl GetAccessControl(IAccessControl accessControl)
         {
-            if (!this.AccessControlById.TryGetValue(accessControl.Strategy.ObjectId, out var localAccessControl))
+            if (!this.AccessControlById.TryGetValue(accessControl.Strategy.ObjectId, out var acessControl))
             {
-                localAccessControl = new AccessControl(accessControl.Strategy.ObjectId);
+                acessControl = new AccessControl(accessControl.Strategy.ObjectId);
+                this.AccessControlById.Add(accessControl.Strategy.ObjectId, acessControl);
             }
 
-            if (localAccessControl.Version == accessControl.Strategy.ObjectVersion)
+            if (acessControl.Version == accessControl.Strategy.ObjectVersion)
             {
-                return localAccessControl;
+                return acessControl;
             }
 
-            localAccessControl.Version = accessControl.Strategy.ObjectVersion;
-            localAccessControl.PermissionIds = new HashSet<long>(accessControl.Permissions.Select(v => v.Id));
+            acessControl.Version = accessControl.Strategy.ObjectVersion;
+            acessControl.PermissionIds = new HashSet<long>(accessControl.Permissions.Select(v => v.Id));
 
-            return localAccessControl;
+            return acessControl;
         }
     }
 }

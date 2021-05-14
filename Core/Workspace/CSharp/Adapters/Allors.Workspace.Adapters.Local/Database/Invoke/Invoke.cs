@@ -168,13 +168,13 @@ namespace Allors.Workspace.Adapters.Local
             }
 
             var derivationResult = this.Derive();
-            if (derivationResult.HasErrors)
+            if (!derivationResult.HasErrors)
             {
-                this.AddDerivationErrors(derivationResult.Errors);
-                return true;
+                return false;
             }
 
-            return false;
+            this.AddDerivationErrors(derivationResult.Errors);
+            return true;
         }
     }
 }

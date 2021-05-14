@@ -35,7 +35,7 @@ namespace Allors.Workspace.Adapters.Local
         }
 
         public long Version { get; private set; }
-        
+
         public object GetRole(IRoleType roleType)
         {
             object @object = null;
