@@ -29,13 +29,14 @@ namespace Tests.Workspace
 
             Assert.False(organisation.JustDidIt);
 
-            var result = await session.Invoke(organisation.JustDoIt);
+            var invokeResult = await session.Invoke(organisation.JustDoIt);
 
-            Assert.False(result.HasErrors);
+            Assert.False(invokeResult.HasErrors);
 
             pull = new[] { new Pull { Object = organisation }, };
 
-            organisation = (await session.Pull(pull)).GetObject<Organisation>();
+            var pullResult = await session.Pull(pull);
+            organisation = pullResult.GetObject<Organisation>();
 
             Assert.True(organisation.JustDidIt);
         }
