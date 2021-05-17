@@ -60,7 +60,7 @@ namespace Tests.Workspace
             {
                 Extent = new Extent(this.M.C1)
                 {
-                    Predicate = new Equals(this.M.C1.C1AllorsString) {Value = "c1A"}
+                    Predicate = new Equals(this.M.C1.Name) {Value = "c1A"}
                 }
             };
 

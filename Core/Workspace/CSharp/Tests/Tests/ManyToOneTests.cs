@@ -122,7 +122,7 @@ namespace Tests.Workspace
 
             workspaceOrganisation1.RemoveWorkspaceWorkspaceOwner();
 
-            Assert.Null(workspaceOrganisation2.WorkspaceWorkspaceOwner);
+            Assert.NotNull(workspaceOrganisation2.WorkspaceWorkspaceOwner);
             Assert.Null(workspaceOrganisation1.WorkspaceWorkspaceOwner);
         }
     }

@@ -33,7 +33,8 @@ namespace Allors.Workspace.Adapters.Local
                 return true;
             }
 
-            var permission = this.Session.Workspace.DatabaseAdapter.GetPermission(this.Class, roleType, Operations.Read);
+            var permission =
+                this.Session.Workspace.DatabaseAdapter.GetPermission(this.Class, roleType, Operations.Read);
             return this.DatabaseRecord.IsPermitted(permission);
         }
 
@@ -44,7 +45,8 @@ namespace Allors.Workspace.Adapters.Local
                 return true;
             }
 
-            var permission = this.Session.Workspace.DatabaseAdapter.GetPermission(this.Class, roleType, Operations.Write);
+            var permission =
+                this.Session.Workspace.DatabaseAdapter.GetPermission(this.Class, roleType, Operations.Write);
             return this.DatabaseRecord.IsPermitted(permission);
         }
 
@@ -55,8 +57,15 @@ namespace Allors.Workspace.Adapters.Local
                 return true;
             }
 
-            var permission = this.Session.Workspace.DatabaseAdapter.GetPermission(this.Class, methodType, Operations.Execute);
+            var permission =
+                this.Session.Workspace.DatabaseAdapter.GetPermission(this.Class, methodType, Operations.Execute);
             return this.DatabaseRecord.IsPermitted(permission);
+        }
+
+        internal void OnPulled()
+        {
+            // TODO: check for overwrites
+            this.DatabaseRecord = this.Session.DatabaseAdapter.GetRecord(this.Id);
         }
 
         internal void Reset()

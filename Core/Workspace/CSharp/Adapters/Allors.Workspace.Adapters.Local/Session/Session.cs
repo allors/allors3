@@ -153,7 +153,10 @@ namespace Allors.Workspace.Adapters.Local
         {
             var result = new Pull(this, this.Workspace);
             result.Execute(pulls);
-            return this.OnPull(result);
+
+            this.OnPulled(result);
+
+            return Task.FromResult<IPullResult>(result);
         }
 
         public Task<IPullResult> Pull(Data.Procedure procedure, params Data.Pull[] pulls)
@@ -163,7 +166,9 @@ namespace Allors.Workspace.Adapters.Local
             result.Execute(procedure);
             result.Execute(pulls);
 
-            return this.OnPull(result);
+            this.OnPulled(result);
+
+            return Task.FromResult<IPullResult>(result);
         }
 
         public Task<IPushResult> Push()
@@ -318,7 +323,7 @@ namespace Allors.Workspace.Adapters.Local
             _ = strategies.Remove(strategy);
         }
 
-        private Task<IPullResult> OnPull(Pull pull)
+        private void OnPulled(Pull pull)
         {
             var syncObjects = this.DatabaseAdapter.ObjectsToSync(pull);
 
@@ -326,14 +331,15 @@ namespace Allors.Workspace.Adapters.Local
 
             foreach (var databaseObject in pull.DatabaseObjects)
             {
-                var id = databaseObject.Id;
-                if (!this.strategyByWorkspaceId.ContainsKey(id))
+                if (!this.strategyByWorkspaceId.TryGetValue(databaseObject.Id, out var strategy))
                 {
-                    _ = this.InstantiateDatabaseStrategy(id);
+                    this.InstantiateDatabaseStrategy(databaseObject.Id);
+                }
+                else
+                {
+                    strategy.DatabaseOriginState.OnPulled();
                 }
             }
-
-            return Task.FromResult<IPullResult>(pull);
         }
 
         private IPushResult PushToDatabase(Push push)

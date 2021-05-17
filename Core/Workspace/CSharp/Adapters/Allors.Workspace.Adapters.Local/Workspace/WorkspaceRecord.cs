@@ -49,14 +49,14 @@ namespace Allors.Workspace.Adapters.Local
             {
                 var relationType = roleType.RelationType;
 
-                if (changedRoleByRoleType.TryGetValue(relationType, out var role))
+                if (changedRoleByRoleType != null && changedRoleByRoleType.TryGetValue(relationType, out var role))
                 {
                     if (role != null)
                     {
                         yield return new KeyValuePair<IRelationType, object>(relationType, role);
                     }
                 }
-                else if (originalRoleByRoleType?.TryGetValue(roleType.RelationType, out role) == true)
+                else if (originalRoleByRoleType != null && originalRoleByRoleType.TryGetValue(roleType.RelationType, out role) == true)
                 {
                     yield return new KeyValuePair<IRelationType, object>(relationType, role);
                 }
