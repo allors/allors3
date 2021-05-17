@@ -45,6 +45,12 @@ namespace Allors.Protocol.Json.Data
         [JsonPropertyName("vs")]
         public object[] Values { get; set; }
 
+        [JsonPropertyName("pa")]
+        public int? Path { get; set; }
+
+        [JsonPropertyName("pas")]
+        public int[] Paths { get; set; }
+
         [JsonPropertyName("e")]
         public Extent Extent { get; set; }
 

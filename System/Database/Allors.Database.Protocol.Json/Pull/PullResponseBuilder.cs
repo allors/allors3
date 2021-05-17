@@ -38,8 +38,6 @@ namespace Allors.Database.Protocol.Json
             this.objects = new HashSet<IObject>();
             this.accessControlsWriter = new AccessControlsWriter(this.AccessControlLists);
             this.permissionsWriter = new PermissionsWriter(this.AccessControlLists);
-
-
         }
 
         public ITransaction Transaction { get; }

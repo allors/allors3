@@ -305,7 +305,8 @@ namespace Allors.Database.Protocol.Json
                             var equals = new Data.Equals(propertyType)
                             {
                                 Dependencies = visited.Dependencies,
-                                Parameter = visited.Parameter
+                                Parameter = visited.Parameter,
+                                Path = this.metaPopulation.FindRoleType(visited.Path)
                             };
 
                             this.predicates.Push(equals);
@@ -331,6 +332,7 @@ namespace Allors.Database.Protocol.Json
                                 Dependencies = visited.Dependencies,
                                 Parameter = visited.Parameter,
                                 Values = visited.Values?.Select(v => UnitConvert.FromJson(roleType.ObjectType.Tag, v)).ToArray(),
+                                Paths = visited.Paths?.Select(v => this.metaPopulation.FindRoleType(v)).ToArray()
                             };
 
                             this.predicates.Push(between);
@@ -344,6 +346,7 @@ namespace Allors.Database.Protocol.Json
                                 Dependencies = visited.Dependencies,
                                 Parameter = visited.Parameter,
                                 Value = UnitConvert.FromJson(roleType.ObjectType.Tag, visited.Value),
+                                Path = this.metaPopulation.FindRoleType(visited.Path)
                             };
 
                             this.predicates.Push(greaterThan);
@@ -357,6 +360,7 @@ namespace Allors.Database.Protocol.Json
                                 Dependencies = visited.Dependencies,
                                 Parameter = visited.Parameter,
                                 Value = UnitConvert.FromJson(roleType.ObjectType.Tag, visited.Value),
+                                Path = this.metaPopulation.FindRoleType(visited.Path)
                             };
 
                             this.predicates.Push(lessThan);
