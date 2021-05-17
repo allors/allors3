@@ -97,6 +97,9 @@ namespace Allors.Database.Domain
                 @this.TotalExtraCharge = 0;
                 @this.TotalIncVat = 0;
                 @this.GrandTotal = 0;
+                @this.TotalShippingAndHandlingInPreferredCurrency = 0;
+                @this.TotalFeeInPreferredCurrency = 0;
+                @this.TotalExtraChargeInPreferredCurrency = 0;
 
                 foreach (PurchaseOrderItem orderItem in @this.ValidOrderItems)
                 {
