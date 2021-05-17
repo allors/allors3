@@ -38,14 +38,14 @@ namespace Allors.Workspace.Adapters.Remote
 
         private IWorkspace Workspace { get; }
 
-        public T[] GetCollection<T>()
+        public T[] GetCollection<T>() where T : IObject
         {
             var objectType = this.Workspace.ObjectFactory.GetObjectType<T>();
             var key = objectType.PluralName;
             return this.GetCollection<T>(key);
         }
 
-        public T[] GetCollection<T>(string key) => this.Collections.TryGetValue(key, out var collection) ? collection?.Cast<T>().ToArray() : null;
+        public T[] GetCollection<T>(string key) where T : IObject => this.Collections.TryGetValue(key, out var collection) ? collection?.Cast<T>().ToArray() : null;
 
         public T GetObject<T>()
             where T : class, IObject

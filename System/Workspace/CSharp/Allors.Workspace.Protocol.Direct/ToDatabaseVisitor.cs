@@ -207,7 +207,7 @@ namespace Allors.Workspace.Protocol.Direct
 
         private IRoleType Visit(Meta.IRoleType ws) => ((IRelationType)this.metaPopulation.FindByTag(ws.OperandTag)).RoleType;
 
-        private IObject[] Visit(IEnumerable<Workspace.IObject> ws) => this.transaction.Instantiate(ws.Select(v => v.Id));
+        private IObject[] Visit(IEnumerable<Workspace.IObject> ws) => ws != null ? this.transaction.Instantiate(ws.Select(v => v.Id)) : null;
 
         private IArguments Visit(IDictionary<string, object> ws) => new Arguments(ws);
     }

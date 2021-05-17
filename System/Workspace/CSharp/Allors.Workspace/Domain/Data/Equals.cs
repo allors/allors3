@@ -5,14 +5,20 @@
 
 namespace Allors.Workspace.Data
 {
-    
+
     using Meta;
 
     public class Equals : IPropertyPredicate
     {
         public string[] Dependencies { get; set; }
 
-        public Equals(IPropertyType propertyType = null) => this.PropertyType = propertyType;
+        public Equals(IPropertyType propertyType = null, IObject @object = null, object value = null, string parameter = null)
+        {
+            this.PropertyType = propertyType;
+            this.Object = @object;
+            this.Value = value;
+            this.Parameter = parameter;
+        }
 
         /// <inheritdoc/>
         public IPropertyType PropertyType { get; set; }

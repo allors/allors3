@@ -215,14 +215,14 @@ namespace Allors.Workspace.Adapters.Local
 
         public IDictionary<string, object> Values => this.ValueByName;
 
-        public T[] GetCollection<T>()
+        public T[] GetCollection<T>() where T : IObject
         {
             var objectType = this.Workspace.ObjectFactory.GetObjectType<T>();
             var key = objectType.PluralName;
             return this.GetCollection<T>(key);
         }
 
-        public T[] GetCollection<T>(string key) => this.Collections.TryGetValue(key, out var collection) ? collection?.Cast<T>().ToArray() : null;
+        public T[] GetCollection<T>(string key) where T : IObject => this.Collections.TryGetValue(key, out var collection) ? collection?.Cast<T>().ToArray() : null;
 
         public T GetObject<T>()
             where T : class, IObject

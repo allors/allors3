@@ -236,6 +236,7 @@ namespace Allors.Database.Adapters
                 {
                     foreach (var useOperator in this.UseOperator)
                     {
+                        // Empty
                         var inExtent = this.Transaction.Extent(m.C1);
                         _ = inExtent.Filter.AddEquals(m.C1.C1AllorsString, "Nothing here!");
                         if (useOperator)
