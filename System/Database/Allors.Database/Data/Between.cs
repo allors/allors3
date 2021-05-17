@@ -19,6 +19,8 @@ namespace Allors.Database.Data
 
         public IEnumerable<object> Values { get; set; }
 
+        public IEnumerable<IRoleType> Paths { get; set; }
+
         public string Parameter { get; set; }
 
         bool IPredicate.ShouldTreeShake(IArguments arguments) => this.HasMissingDependencies(arguments) || ((IPredicate)this).HasMissingArguments(arguments);
@@ -27,8 +29,16 @@ namespace Allors.Database.Data
 
         void IPredicate.Build(ITransaction transaction, IArguments arguments, Database.ICompositePredicate compositePredicate)
         {
-            var values = this.Parameter != null ? arguments.ResolveUnits(this.RoleType.ObjectType.Tag, this.Parameter) : this.Values.ToArray();
-            _ = compositePredicate.AddBetween(this.RoleType, values[0], values[1]);
+            if (this.Paths?.Count() == 2)
+            {
+                var paths = this.Paths.ToArray();
+                _ = compositePredicate.AddBetween(this.RoleType, paths[0], paths[1]);
+            }
+            else
+            {
+                var values = this.Parameter != null ? arguments.ResolveUnits(this.RoleType.ObjectType.Tag, this.Parameter) : this.Values?.ToArray();
+                _ = compositePredicate.AddBetween(this.RoleType, values[0], values[1]);
+            }
         }
 
         public void Accept(IVisitor visitor) => visitor.VisitBetween(this);

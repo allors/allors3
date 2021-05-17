@@ -21,6 +21,8 @@ namespace Allors.Database.Data
 
         public object Value { get; set; }
 
+        public IRoleType Path { get; set; }
+
         public string Parameter { get; set; }
 
         bool IPredicate.ShouldTreeShake(IArguments arguments) => this.HasMissingDependencies(arguments) || ((IPredicate)this).HasMissingArguments(arguments);
@@ -45,7 +47,7 @@ namespace Allors.Database.Data
 
                 case IRoleType roleType when roleType.ObjectType.IsUnit:
                 {
-                    var equals = this.Parameter != null ? arguments.ResolveUnit(roleType.ObjectType.Tag, this.Parameter) : this.Value;
+                    var equals = this.Path ?? (this.Parameter != null ? arguments.ResolveUnit(roleType.ObjectType.Tag, this.Parameter) : this.Value);
                     if (@equals != null)
                     {
                         _ = compositePredicate.AddEquals(roleType, @equals);

@@ -89,6 +89,7 @@ namespace Allors.Workspace.Protocol.Direct
             Dependencies = ws.Dependencies,
             Parameter = ws.Parameter,
             Values = ws.Values,
+            Paths = this.Visit(ws.Paths)
         };
 
         private IPredicate Visit(Data.ContainedIn ws) => new ContainedIn(this.Visit(ws.PropertyType))
@@ -112,6 +113,7 @@ namespace Allors.Workspace.Protocol.Direct
             Parameter = ws.Parameter,
             Object = this.Visit(ws.Object),
             Value = ws.Value,
+            Path = this.Visit(ws.Path),
         };
 
         private IPredicate Visit(Data.Exists ws) => new Exists(this.Visit(ws.PropertyType))
@@ -125,12 +127,14 @@ namespace Allors.Workspace.Protocol.Direct
             Dependencies = ws.Dependencies,
             Parameter = ws.Parameter,
             Value = ws.Value,
+            Path = this.Visit(ws.Path)
         };
 
-        private IPredicate Visit(Data.Instanceof ws) => new Instanceof(this.Visit(ws.ObjectType))
+        private IPredicate Visit(Data.Instanceof ws) => new Instanceof(this.Visit(ws.PropertyType))
         {
             Dependencies = ws.Dependencies,
             Parameter = ws.Parameter,
+            ObjectType = this.Visit(ws.ObjectType)
         };
 
         private IPredicate Visit(Data.LessThan ws) => new LessThan(this.Visit(ws.RoleType))
@@ -138,6 +142,7 @@ namespace Allors.Workspace.Protocol.Direct
             Dependencies = ws.Dependencies,
             Parameter = ws.Parameter,
             Value = ws.Value,
+            Path = this.Visit(ws.Path)
         };
 
         private IPredicate Visit(Data.Like ws) => new Like(this.Visit(ws.RoleType))
@@ -189,7 +194,7 @@ namespace Allors.Workspace.Protocol.Direct
             return null;
         }
 
-        private Database.Data.Sort[] Visit(Data.Sort[] ws) => ws.Select(v => new Database.Data.Sort { RoleType = this.Visit(v.RoleType), SortDirection = (SortDirection)(int)v.SortDirection }).ToArray();
+        private Database.Data.Sort[] Visit(Data.Sort[] ws) => ws?.Select(v => new Database.Data.Sort { RoleType = this.Visit(v.RoleType), SortDirection = (SortDirection)(int)v.SortDirection }).ToArray();
 
         private IObjectType Visit(Meta.IObjectType ws) => ws != null ? (IObjectType)this.metaPopulation.FindByTag(ws.Tag) : null;
 
@@ -200,12 +205,15 @@ namespace Allors.Workspace.Protocol.Direct
             {
                 Meta.IAssociationType associationType => this.Visit(associationType),
                 Meta.IRoleType roleType => this.Visit(roleType),
+                null => null,
                 _ => throw new ArgumentException("Invalid property type")
             };
 
-        private IAssociationType Visit(Meta.IAssociationType ws) => ((IRelationType)this.metaPopulation.FindByTag(ws.OperandTag)).AssociationType;
+        private IAssociationType Visit(Meta.IAssociationType ws) => ws != null ? ((IRelationType)this.metaPopulation.FindByTag(ws.OperandTag)).AssociationType : null;
 
-        private IRoleType Visit(Meta.IRoleType ws) => ((IRelationType)this.metaPopulation.FindByTag(ws.OperandTag)).RoleType;
+        private IRoleType Visit(Meta.IRoleType ws) => ws != null ? ((IRelationType)this.metaPopulation.FindByTag(ws.OperandTag)).RoleType : null;
+
+        private IRoleType[] Visit(IEnumerable<Meta.IRoleType> ws) => ws?.Select(v => ((IRelationType)this.metaPopulation.FindByTag(v.OperandTag)).RoleType).ToArray();
 
         private IObject[] Visit(IEnumerable<Workspace.IObject> ws) => ws != null ? this.transaction.Instantiate(ws.Select(v => v.Id)) : null;
 

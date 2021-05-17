@@ -246,10 +246,10 @@ namespace Allors.Database.Protocol.Json
                     {
                         case PredicateKind.InstanceOf:
 
-                            var instanceOf = new Data.Instanceof(visited.ObjectType != null ? (IComposite)this.transaction.Database.MetaPopulation.FindByTag(visited.ObjectType.Value) : null)
+                            var instanceOf = new Data.Instanceof(propertyType)
                             {
                                 Dependencies = visited.Dependencies,
-                                PropertyType = propertyType,
+                                ObjectType = visited.ObjectType != null ? (IComposite)this.transaction.Database.MetaPopulation.FindByTag(visited.ObjectType.Value) : null
                             };
 
                             this.predicates.Push(instanceOf);
@@ -257,10 +257,9 @@ namespace Allors.Database.Protocol.Json
 
                         case PredicateKind.Exists:
 
-                            var exists = new Data.Exists
+                            var exists = new Data.Exists(propertyType)
                             {
                                 Dependencies = visited.Dependencies,
-                                PropertyType = propertyType,
                                 Parameter = visited.Parameter,
                             };
 
@@ -269,10 +268,9 @@ namespace Allors.Database.Protocol.Json
 
                         case PredicateKind.Contains:
 
-                            var contains = new Data.Contains
+                            var contains = new Data.Contains(propertyType)
                             {
                                 Dependencies = visited.Dependencies,
-                                PropertyType = propertyType,
                                 Parameter = visited.Parameter,
                                 Object = visited.Object.HasValue ? this.transaction.Instantiate(visited.Object.Value) : null,
                             };

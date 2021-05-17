@@ -12,13 +12,7 @@ namespace Allors.Workspace.Data
     {
         public string[] Dependencies { get; set; }
 
-        public Equals(IPropertyType propertyType = null, IObject @object = null, object value = null, string parameter = null)
-        {
-            this.PropertyType = propertyType;
-            this.Object = @object;
-            this.Value = value;
-            this.Parameter = parameter;
-        }
+        public Equals(IPropertyType propertyType = null) => this.PropertyType = propertyType;
 
         /// <inheritdoc/>
         public IPropertyType PropertyType { get; set; }
@@ -26,6 +20,8 @@ namespace Allors.Workspace.Data
         public IObject Object { get; set; }
 
         public object Value { get; set; }
+
+        public IRoleType Path { get; set; }
 
         public string Parameter { get; set; }
 

@@ -18,6 +18,8 @@ namespace Allors.Workspace.Data
 
         public IEnumerable<object> Values { get; set; }
 
+        public IEnumerable<IRoleType> Paths { get; set; }
+
         public string Parameter { get; set; }
 
         public void Accept(IVisitor visitor) => visitor.VisitBetween(this);
