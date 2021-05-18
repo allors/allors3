@@ -13,7 +13,7 @@ namespace Allors.Database.Data
     {
         public string[] Dependencies { get; set; }
 
-        public Instanceof(IComposite objectType = null) => this.ObjectType = objectType;
+        public Instanceof(IPropertyType propertyType = null) => this.PropertyType = propertyType;
 
         public string Parameter { get; set; }
 

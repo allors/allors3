@@ -25,6 +25,12 @@ namespace Allors.Database.Data
         Database.Extent IExtent.Build(ITransaction transaction, IArguments arguments)
         {
             var extent = transaction.Except(this.Operands[0].Build(transaction, arguments), this.Operands[1].Build(transaction, arguments));
+
+            if (this.Sorting == null)
+            {
+                return extent;
+            }
+
             foreach (var sort in this.Sorting)
             {
                 sort.Build(extent);

@@ -79,7 +79,8 @@ namespace Allors.Workspace.Protocol.Json
                 Kind = PredicateKind.Between,
                 Dependencies = visited.Dependencies,
                 RoleType = visited.RoleType?.RelationType.Tag,
-                Values = visited.Values.Select(UnitConvert.ToJson).ToArray(),
+                Values = visited.Values?.Select(UnitConvert.ToJson).ToArray(),
+                Paths = visited.Paths?.Select(v=>v.RelationType.Tag).ToArray(),
                 Parameter = visited.Parameter,
             };
 
@@ -132,6 +133,7 @@ namespace Allors.Workspace.Protocol.Json
                 RoleType = (visited.PropertyType as IRoleType)?.RelationType.Tag,
                 Object = visited.Object?.Id,
                 Value = UnitConvert.ToJson(visited.Value),
+                Path = visited.Path?.RelationType.Tag,
                 Parameter = visited.Parameter,
             };
 
@@ -238,6 +240,7 @@ namespace Allors.Workspace.Protocol.Json
                 Dependencies = visited.Dependencies,
                 RoleType = visited.RoleType?.RelationType.Tag,
                 Value = UnitConvert.ToJson(visited.Value),
+                Path = visited.Path?.RelationType.Tag,
                 Parameter = visited.Parameter,
             };
 
@@ -300,6 +303,7 @@ namespace Allors.Workspace.Protocol.Json
                 Dependencies = visited.Dependencies,
                 RoleType = visited.RoleType?.RelationType.Tag,
                 Value = UnitConvert.ToJson(visited.Value),
+                Path = visited.Path?.RelationType.Tag,
                 Parameter = visited.Parameter,
             };
 

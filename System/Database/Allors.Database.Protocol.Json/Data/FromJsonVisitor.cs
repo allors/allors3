@@ -246,10 +246,10 @@ namespace Allors.Database.Protocol.Json
                     {
                         case PredicateKind.InstanceOf:
 
-                            var instanceOf = new Data.Instanceof(visited.ObjectType != null ? (IComposite)this.transaction.Database.MetaPopulation.FindByTag(visited.ObjectType.Value) : null)
+                            var instanceOf = new Data.Instanceof(propertyType)
                             {
                                 Dependencies = visited.Dependencies,
-                                PropertyType = propertyType,
+                                ObjectType = visited.ObjectType != null ? (IComposite)this.transaction.Database.MetaPopulation.FindByTag(visited.ObjectType.Value) : null
                             };
 
                             this.predicates.Push(instanceOf);
@@ -257,10 +257,9 @@ namespace Allors.Database.Protocol.Json
 
                         case PredicateKind.Exists:
 
-                            var exists = new Data.Exists
+                            var exists = new Data.Exists(propertyType)
                             {
                                 Dependencies = visited.Dependencies,
-                                PropertyType = propertyType,
                                 Parameter = visited.Parameter,
                             };
 
@@ -269,10 +268,9 @@ namespace Allors.Database.Protocol.Json
 
                         case PredicateKind.Contains:
 
-                            var contains = new Data.Contains
+                            var contains = new Data.Contains(propertyType)
                             {
                                 Dependencies = visited.Dependencies,
-                                PropertyType = propertyType,
                                 Parameter = visited.Parameter,
                                 Object = visited.Object.HasValue ? this.transaction.Instantiate(visited.Object.Value) : null,
                             };
@@ -307,7 +305,8 @@ namespace Allors.Database.Protocol.Json
                             var equals = new Data.Equals(propertyType)
                             {
                                 Dependencies = visited.Dependencies,
-                                Parameter = visited.Parameter
+                                Parameter = visited.Parameter,
+                                Path = this.metaPopulation.FindRoleType(visited.Path)
                             };
 
                             this.predicates.Push(equals);
@@ -333,6 +332,7 @@ namespace Allors.Database.Protocol.Json
                                 Dependencies = visited.Dependencies,
                                 Parameter = visited.Parameter,
                                 Values = visited.Values?.Select(v => UnitConvert.FromJson(roleType.ObjectType.Tag, v)).ToArray(),
+                                Paths = visited.Paths?.Select(v => this.metaPopulation.FindRoleType(v)).ToArray()
                             };
 
                             this.predicates.Push(between);
@@ -346,6 +346,7 @@ namespace Allors.Database.Protocol.Json
                                 Dependencies = visited.Dependencies,
                                 Parameter = visited.Parameter,
                                 Value = UnitConvert.FromJson(roleType.ObjectType.Tag, visited.Value),
+                                Path = this.metaPopulation.FindRoleType(visited.Path)
                             };
 
                             this.predicates.Push(greaterThan);
@@ -359,6 +360,7 @@ namespace Allors.Database.Protocol.Json
                                 Dependencies = visited.Dependencies,
                                 Parameter = visited.Parameter,
                                 Value = UnitConvert.FromJson(roleType.ObjectType.Tag, visited.Value),
+                                Path = this.metaPopulation.FindRoleType(visited.Path)
                             };
 
                             this.predicates.Push(lessThan);

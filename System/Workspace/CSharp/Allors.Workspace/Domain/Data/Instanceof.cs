@@ -5,14 +5,14 @@
 
 namespace Allors.Workspace.Data
 {
-    
+
     using Meta;
 
     public class Instanceof : IPropertyPredicate
     {
         public string[] Dependencies { get; set; }
 
-        public Instanceof(IComposite objectType = null) => this.ObjectType = objectType;
+        public Instanceof(IPropertyType propertyType = null) => this.PropertyType = propertyType;
 
         public string Parameter { get; set; }
 

@@ -7,7 +7,7 @@ namespace Allors
 {
     using System;
     using System.Globalization;
-    using System.Xml;
+    using System.Text.Json;
 
     public static class UnitConvert
     {
@@ -33,17 +33,27 @@ namespace Allors
                 return null;
             }
 
-            return tag switch
+            var jsonElement = (JsonElement)value;
+
+            return jsonElement.ValueKind switch
             {
-                UnitTags.DateTime => value,
-                UnitTags.Binary => Convert.FromBase64String((string)value),
-                UnitTags.Boolean => value,
-                UnitTags.Decimal => XmlConvert.ToDecimal((string)value),
-                UnitTags.Float => Convert.ToDouble(value),
-                UnitTags.Integer => Convert.ToInt32(value),
-                UnitTags.String => value,
-                UnitTags.Unique => XmlConvert.ToGuid((string)value),
-                _ => throw new Exception($"Unknown unit type with tag {tag}")
+                JsonValueKind.Null => null,
+                JsonValueKind.Undefined => null,
+                JsonValueKind.False => false,
+                JsonValueKind.True => true,
+                _ => tag switch
+                {
+                    UnitTags.DateTime => jsonElement.GetDateTime(),
+                    UnitTags.Binary => Convert.FromBase64String(jsonElement.GetString()),
+                    UnitTags.Decimal => jsonElement.ValueKind == JsonValueKind.String
+                        ? Convert.ToDecimal(jsonElement.GetString(), CultureInfo.InvariantCulture)
+                        : jsonElement.GetDecimal(),
+                    UnitTags.Float => jsonElement.GetDouble(),
+                    UnitTags.Integer => jsonElement.GetInt32(),
+                    UnitTags.String => jsonElement.GetString(),
+                    UnitTags.Unique => jsonElement.GetGuid(),
+                    _ => throw new Exception($"{jsonElement.ValueKind} not supported for tag {tag}")
+                }
             };
         }
     }

@@ -200,21 +200,19 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Transaction.Database.Context().M;
+                var population = new TestPopulation(this.Transaction);
 
-                var c1 = this.Transaction.Create<C1>();
-                var c2a = this.Transaction.Create<C2>();
-                var c2b = this.Transaction.Create<C2>();
+                // Interface
+                var firstExtent = this.Transaction.Extent(m.I12);
+                var secondExtent = this.Transaction.Extent(m.I12);
+                _ = secondExtent.Filter.AddInstanceof(m.C2);
 
-                c1.I1I12one2one = c2a;
+                Assert.Equal(4, secondExtent.Count);
 
-                this.Transaction.Commit();
+                var extent = this.Transaction.Intersect(firstExtent, secondExtent);
 
-                c1.I1I12one2one = c2b;
-
-                this.Transaction.Commit();
-
-                Assert.Null(c2a.I1WhereI1I12one2one);
-                Assert.Equal(c1, c2b.I1WhereI1I12one2one);
+                Assert.Equal(4, extent.Count);
             }
         }
     }

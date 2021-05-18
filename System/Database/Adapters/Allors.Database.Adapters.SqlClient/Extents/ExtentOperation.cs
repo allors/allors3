@@ -39,7 +39,9 @@ namespace Allors.Database.Adapters.SqlClient
 
         internal override string BuildSql(ExtentStatement statement)
         {
+            statement.Append("(");
             _ = this.first.BuildSql(statement);
+            statement.Append(")");
 
             switch (this.operationType)
             {
