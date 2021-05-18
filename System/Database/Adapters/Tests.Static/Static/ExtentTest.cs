@@ -3456,6 +3456,33 @@ namespace Allors.Database.Adapters
                 }
 
                 Assert.True(exceptionThrown);
+
+                // Interface
+                firstExtent = this.Transaction.Extent(m.I12);
+                secondExtent = this.Transaction.Extent(m.I12);
+                _ = secondExtent.Filter.AddInstanceof(m.C2);
+
+                Assert.Equal(4, secondExtent.Count);
+
+                extent = this.Transaction.Intersect(firstExtent, secondExtent);
+
+                Assert.Equal(4, extent.Count);
+                Assert.False(extent.Contains(this.c1A));
+                Assert.False(extent.Contains(this.c1B));
+                Assert.False(extent.Contains(this.c1C));
+                Assert.False(extent.Contains(this.c1D));
+                Assert.True(extent.Contains(this.c2A));
+                Assert.True(extent.Contains(this.c2B));
+                Assert.True(extent.Contains(this.c2C));
+                Assert.True(extent.Contains(this.c2D));
+                Assert.False(extent.Contains(this.c3A));
+                Assert.False(extent.Contains(this.c3B));
+                Assert.False(extent.Contains(this.c3C));
+                Assert.False(extent.Contains(this.c3D));
+                Assert.False(extent.Contains(this.c4A));
+                Assert.False(extent.Contains(this.c4B));
+                Assert.False(extent.Contains(this.c4C));
+                Assert.False(extent.Contains(this.c4D));
             }
         }
 
