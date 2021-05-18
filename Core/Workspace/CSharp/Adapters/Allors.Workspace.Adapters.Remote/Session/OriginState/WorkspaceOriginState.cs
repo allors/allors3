@@ -8,33 +8,26 @@ namespace Allors.Workspace.Adapters.Remote
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Protocol.Json.Api.Push;
-    using Allors.Workspace;
-    using Remote;
-    using Allors.Workspace.Meta;
+    using Meta;
 
-    internal sealed class DatabaseState
+    internal sealed class WorkspaceOriginState
     {
         private readonly Strategy strategy;
 
-        private DatabaseObject databaseObject;
+        private WorkspaceObject workspaceObject;
         private Dictionary<IRelationType, object> changedRoleByRelationType;
 
-        private DatabaseObject previousDatabaseObject;
+        private WorkspaceObject previousWorkspaceObject;
         private Dictionary<IRelationType, object> previousChangedRoleByRelationType;
 
-        internal DatabaseState(Strategy strategy, DatabaseObject databaseObject = null)
+        internal WorkspaceOriginState(Strategy strategy)
         {
             this.strategy = strategy;
-            this.databaseObject = databaseObject ?? this.Database.Get(this.Identity);
-            this.previousDatabaseObject = this.databaseObject;
+            this.workspaceObject = this.Workspace.Get(this.Identity);
+            this.previousWorkspaceObject = this.workspaceObject;
         }
 
-        internal bool HasDatabaseChanges => this.databaseObject == null || this.changedRoleByRelationType != null;
-
-        private bool ExistDatabaseObjects => this.databaseObject != null;
-
-        internal long Version => this.databaseObject?.Version ?? 0;
+        internal bool HasWorkspaceChanges => this.changedRoleByRelationType != null;
 
         private long Identity => this.strategy.Id;
 
@@ -42,40 +35,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         private Session Session => this.strategy.Session;
 
-        private Database Database => this.Session.Database;
-
-        public bool CanRead(IRoleType roleType)
-        {
-            if (!this.ExistDatabaseObjects)
-            {
-                return true;
-            }
-
-            var permission = this.Session.Workspace.Database.GetPermission(this.Class, roleType, Operations.Read);
-            return this.databaseObject.IsPermitted(permission);
-        }
-
-        public bool CanWrite(IRoleType roleType)
-        {
-            if (!this.ExistDatabaseObjects)
-            {
-                return true;
-            }
-
-            var permission = this.Session.Workspace.Database.GetPermission(this.Class, roleType, Operations.Write);
-            return this.databaseObject.IsPermitted(permission);
-        }
-
-        public bool CanExecute(IMethodType methodType)
-        {
-            if (!this.ExistDatabaseObjects)
-            {
-                return true;
-            }
-
-            var permission = this.Session.Workspace.Database.GetPermission(this.Class, methodType, Operations.Execute);
-            return this.databaseObject.IsPermitted(permission);
-        }
+        private Workspace Workspace => this.Session.Workspace;
 
         internal object GetRole(IRoleType roleType)
         {
@@ -84,7 +44,7 @@ namespace Allors.Workspace.Adapters.Remote
 
                 if (this.changedRoleByRelationType == null || !this.changedRoleByRelationType.TryGetValue(roleType.RelationType, out var unit))
                 {
-                    unit = this.databaseObject?.GetRole(roleType);
+                    unit = this.workspaceObject?.GetRole(roleType);
                 }
 
                 return unit;
@@ -98,7 +58,7 @@ namespace Allors.Workspace.Adapters.Remote
                     return workspaceRole?.Object;
                 }
 
-                var identity = (long?)this.databaseObject?.GetRole(roleType);
+                var identity = (long?)this.workspaceObject?.GetRole(roleType);
                 workspaceRole = this.Session.GetStrategy(identity);
 
                 return workspaceRole?.Object;
@@ -110,7 +70,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return workspaceRoles != null ? workspaceRoles.Select(v => v.Object).ToArray() : Array.Empty<IObject>();
             }
 
-            var identities = (long[])this.databaseObject?.GetRole(roleType);
+            var identities = (long[])this.workspaceObject?.GetRole(roleType);
             return identities == null ? Array.Empty<IObject>() : identities.Select(v => this.Session.Get<IObject>(v)).ToArray();
         }
 
@@ -188,21 +148,32 @@ namespace Allors.Workspace.Adapters.Remote
             }
 
             this.changedRoleByRelationType ??= new Dictionary<IRelationType, object>();
-            this.changedRoleByRelationType[roleType.RelationType] = role.Select(v => (Strategy)v.Strategy).ToArray();
+            this.changedRoleByRelationType[roleType.RelationType] = role;
 
             this.Session.OnChange(this);
         }
 
+        internal void Push()
+        {
+            if (this.HasWorkspaceChanges)
+            {
+                this.Workspace.Push(this.Identity, this.Class, this.workspaceObject?.Version ?? 0, this.changedRoleByRelationType);
+            }
+
+            this.workspaceObject = this.Workspace.Get(this.Identity);
+            this.changedRoleByRelationType = null;
+        }
+
         internal void Reset()
         {
-            this.databaseObject = this.Database.Get(this.Identity);
+            this.workspaceObject = this.Workspace.Get(this.Identity);
             this.changedRoleByRelationType = null;
         }
 
         internal void Checkpoint(ChangeSet changeSet)
         {
             // Same workspace object
-            if (this.databaseObject.Version == this.previousDatabaseObject.Version)
+            if (this.workspaceObject.Version == this.previousWorkspaceObject.Version)
             {
                 // No previous changed roles
                 if (this.previousChangedRoleByRelationType == null)
@@ -214,7 +185,7 @@ namespace Allors.Workspace.Adapters.Remote
                         {
                             var relationType = kvp.Key;
                             var cooked = kvp.Value;
-                            var raw = this.databaseObject.GetRole(relationType.RoleType);
+                            var raw = this.workspaceObject.GetRole(relationType.RoleType);
 
                             changeSet.DiffCookedWithRaw(this.strategy, relationType, cooked, raw);
                         }
@@ -251,99 +222,28 @@ namespace Allors.Workspace.Adapters.Remote
                         }
                         else
                         {
-                            var raw = this.databaseObject.GetRole(roleType);
+                            var raw = this.workspaceObject.GetRole(roleType);
                             changeSet.DiffRawWithCooked(this.strategy, relationType, raw, previousCooked);
                         }
                     }
                     else
                     {
-                        var previousRaw = this.previousDatabaseObject?.GetRole(roleType);
+                        var previousRaw = this.previousWorkspaceObject?.GetRole(roleType);
                         if (hasCooked && this.changedRoleByRelationType.TryGetValue(relationType, out var cooked) == true)
                         {
                             changeSet.DiffCookedWithRaw(this.strategy, relationType, cooked, previousRaw);
                         }
                         else
                         {
-                            var raw = this.databaseObject.GetRole(roleType);
+                            var raw = this.workspaceObject.GetRole(roleType);
                             changeSet.DiffRawWithRaw(this.strategy, relationType, raw, previousRaw);
                         }
                     }
                 }
             }
 
-            this.previousDatabaseObject = this.databaseObject;
+            this.previousWorkspaceObject = this.workspaceObject;
             this.previousChangedRoleByRelationType = this.changedRoleByRelationType;
-        }
-
-        internal void PushResponse(DatabaseObject newDatabaseObject) => this.databaseObject = newDatabaseObject;
-
-        internal PushRequestNewObject PushNew() => new PushRequestNewObject
-        {
-            WorkspaceId = this.Identity,
-            ObjectType = this.Class.Tag,
-            Roles = this.PushRoles(),
-        };
-
-        internal PushRequestObject PushExisting() => new PushRequestObject
-        {
-            DatabaseId = this.Identity,
-            Version = this.Version,
-            Roles = this.PushRoles(),
-        };
-
-        private PushRequestRole[] PushRoles()
-        {
-            if (this.changedRoleByRelationType?.Count > 0)
-            {
-                var roles = new List<PushRequestRole>();
-
-                foreach (var keyValuePair in this.changedRoleByRelationType)
-                {
-                    var relationType = keyValuePair.Key;
-                    var roleValue = keyValuePair.Value;
-
-                    var pushRequestRole = new PushRequestRole { RelationType = relationType.Tag };
-
-                    if (relationType.RoleType.ObjectType.IsUnit)
-                    {
-                        pushRequestRole.SetUnitRole = UnitConvert.ToJson(roleValue);
-                    }
-                    else
-                    {
-                        if (relationType.RoleType.IsOne)
-                        {
-                            pushRequestRole.SetCompositeRole = ((Strategy)roleValue)?.Id;
-                        }
-                        else
-                        {
-                            var roleIds = ((Strategy[])roleValue).Select(v => v.Id).ToArray();
-                            if (!this.ExistDatabaseObjects)
-                            {
-                                pushRequestRole.AddCompositesRole = roleIds;
-                            }
-                            else
-                            {
-                                var databaseRole = (long[])this.databaseObject.GetRole(relationType.RoleType);
-                                if (databaseRole == null)
-                                {
-                                    pushRequestRole.AddCompositesRole = roleIds;
-                                }
-                                else
-                                {
-                                    pushRequestRole.AddCompositesRole = roleIds.Except(databaseRole).ToArray();
-                                    pushRequestRole.RemoveCompositesRole = databaseRole.Except(roleIds).ToArray();
-                                }
-                            }
-                        }
-                    }
-
-                    roles.Add(pushRequestRole);
-                }
-
-                return roles.ToArray();
-            }
-
-            return null;
         }
 
         public bool IsAssociationForRole(IRoleType roleType, Strategy forRole)
@@ -361,7 +261,7 @@ namespace Allors.Workspace.Adapters.Remote
                     return workspaceRole?.Equals(forRole) == true;
                 }
 
-                var identity = (long?)this.databaseObject?.GetRole(roleType);
+                var identity = (long?)this.workspaceObject?.GetRole(roleType);
                 return identity?.Equals(forRole.Id) == true;
             }
 
@@ -371,8 +271,9 @@ namespace Allors.Workspace.Adapters.Remote
                 return workspaceRoles?.Contains(forRole) == true;
             }
 
-            var identities = (long[])this.databaseObject?.GetRole(roleType);
+            var identities = (long[])this.workspaceObject?.GetRole(roleType);
             return identities?.Contains(forRole.Id) == true;
         }
+
     }
 }

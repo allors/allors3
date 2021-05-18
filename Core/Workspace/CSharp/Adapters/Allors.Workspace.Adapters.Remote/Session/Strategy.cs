@@ -15,8 +15,8 @@ namespace Allors.Workspace.Adapters.Remote
     {
         private IObject @object;
 
-        private readonly WorkspaceState workspaceState;
-        private readonly DatabaseState databaseState;
+        private readonly WorkspaceOriginState workspaceState;
+        private readonly DatabaseOriginState databaseState;
 
         internal Strategy(Session session, IClass @class, long identity)
         {
@@ -26,12 +26,12 @@ namespace Allors.Workspace.Adapters.Remote
 
             if (!this.Class.HasSessionOrigin)
             {
-                this.workspaceState = new WorkspaceState(this);
+                this.workspaceState = new WorkspaceOriginState(this);
             }
 
             if (this.Class.HasDatabaseOrigin)
             {
-                this.databaseState = new DatabaseState(this);
+                this.databaseState = new DatabaseOriginState(this);
             }
         }
 
@@ -41,8 +41,8 @@ namespace Allors.Workspace.Adapters.Remote
             this.Id = databaseObject.Identity;
             this.Class = databaseObject.Class;
 
-            this.workspaceState = new WorkspaceState(this);
-            this.databaseState = new DatabaseState(this, databaseObject);
+            this.workspaceState = new WorkspaceOriginState(this);
+            this.databaseState = new DatabaseOriginState(this, databaseObject);
         }
 
         ISession IStrategy.Session => this.Session;

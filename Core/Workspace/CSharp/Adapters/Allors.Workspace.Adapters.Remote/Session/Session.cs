@@ -27,8 +27,8 @@ namespace Allors.Workspace.Adapters.Remote
         private ISet<Strategy> newDatabaseStrategies;
         private ISet<Strategy> workspaceStrategies;
 
-        private ISet<DatabaseState> changedDatabaseStates;
-        private ISet<WorkspaceState> changedWorkspaceStates;
+        private ISet<DatabaseOriginState> changedDatabaseStates;
+        private ISet<WorkspaceOriginState> changedWorkspaceStates;
 
         private ISet<IStrategy> created;
         private ISet<IStrategy> instantiated;
@@ -43,7 +43,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.strategiesByClass = new Dictionary<IClass, Strategy[]>();
             this.existingDatabaseStrategies = new List<Strategy>();
 
-            this.SessionState = new SessionState();
+            this.SessionState = new SessionOriginState();
             this.Lifecycle.OnInit(this);
         }
 
@@ -56,7 +56,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal bool HasDatabaseChanges => this.newDatabaseStrategies?.Count > 0 || this.existingDatabaseStrategies.Any(v => v.HasDatabaseChanges);
 
-        internal SessionState SessionState { get; }
+        internal SessionOriginState SessionState { get; }
 
         public async Task<IInvokeResult> Invoke(Method method, InvokeOptions options = null) => await this.Invoke(new[] { method }, options);
 
@@ -364,15 +364,15 @@ namespace Allors.Workspace.Adapters.Remote
             this.newDatabaseStrategies = null;
         }
 
-        internal void OnChange(DatabaseState state)
+        internal void OnChange(DatabaseOriginState state)
         {
-            this.changedDatabaseStates ??= new HashSet<DatabaseState>();
+            this.changedDatabaseStates ??= new HashSet<DatabaseOriginState>();
             _ = this.changedDatabaseStates.Add(state);
         }
 
-        internal void OnChange(WorkspaceState state)
+        internal void OnChange(WorkspaceOriginState state)
         {
-            this.changedWorkspaceStates ??= new HashSet<WorkspaceState>();
+            this.changedWorkspaceStates ??= new HashSet<WorkspaceOriginState>();
             _ = this.changedWorkspaceStates.Add(state);
         }
 

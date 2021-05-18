@@ -11,7 +11,7 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Linq;
     using Meta;
 
-    public class SessionState
+    public class SessionOriginState
     {
         private readonly IDictionary<IRoleType, IDictionary<Strategy, object>> roleByAssociationByRoleType;
         private readonly IDictionary<IAssociationType, IDictionary<Strategy, object>> associationByRoleByAssociationType;
@@ -19,7 +19,7 @@ namespace Allors.Workspace.Adapters.Remote
         private IDictionary<IRoleType, IDictionary<Strategy, object>> changedRoleByAssociationByRoleType;
         private IDictionary<IAssociationType, IDictionary<Strategy, object>> changedAssociationByRoleByAssociationType;
 
-        public SessionState()
+        public SessionOriginState()
         {
             this.roleByAssociationByRoleType = new Dictionary<IRoleType, IDictionary<Strategy, object>>();
             this.associationByRoleByAssociationType = new Dictionary<IAssociationType, IDictionary<Strategy, object>>();

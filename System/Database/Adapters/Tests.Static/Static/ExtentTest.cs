@@ -15723,7 +15723,7 @@ namespace Allors.Database.Adapters
                 var extent = this.Transaction.Extent(m.C1);
                 _ = extent.Filter.AddEquals(m.C1.C1AllorsString, m.C1.C1StringEquals);
 
-                Assert.Equal(1, extent.Count);
+                Assert.Single(extent);
                 this.AssertC1(extent, false, false, true, false);
                 this.AssertC2(extent, false, false, false, false);
                 this.AssertC3(extent, false, false, false, false);
