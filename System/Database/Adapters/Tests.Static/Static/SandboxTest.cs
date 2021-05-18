@@ -203,16 +203,12 @@ namespace Allors.Database.Adapters
                 var m = this.Transaction.Database.Context().M;
                 var population = new TestPopulation(this.Transaction);
 
-                // Interface
-                var firstExtent = this.Transaction.Extent(m.I12);
-                var secondExtent = this.Transaction.Extent(m.I12);
-                _ = secondExtent.Filter.AddInstanceof(m.C2);
+                this.Profile.Transaction.Commit();
 
-                Assert.Equal(4, secondExtent.Count);
+                var extent = this.Transaction.Extent(m.C1);
+                _ = extent.Filter.AddEquals(m.C1.C1AllorsString, m.C1.C1StringEquals);
 
-                var extent = this.Transaction.Intersect(firstExtent, secondExtent);
-
-                Assert.Equal(4, extent.Count);
+                Assert.Single(extent);
             }
         }
     }

@@ -30,7 +30,15 @@ namespace Allors.Database.Adapters.SqlClient
             var schema = statement.Mapping;
             if (this.role.ObjectType.IsUnit && this.equalsRole.ObjectType.IsUnit)
             {
-                statement.Append(" " + alias + "." + schema.ColumnNameByRelationType[this.role.RelationType] + "=" + alias + "." + schema.ColumnNameByRelationType[this.equalsRole.RelationType]);
+
+                if (this.role.ObjectType.Tag == UnitTags.String)
+                {
+                    statement.Append(" " + alias + "." + schema.ColumnNameByRelationType[this.role.RelationType] + " COLLATE Latin1_General_100_BIN2 =" + alias + "." + schema.ColumnNameByRelationType[this.equalsRole.RelationType] + " COLLATE Latin1_General_100_BIN2");
+                }
+                else
+                {
+                    statement.Append(" " + alias + "." + schema.ColumnNameByRelationType[this.role.RelationType] + "=" + alias + "." + schema.ColumnNameByRelationType[this.equalsRole.RelationType]);
+                }
             }
             else if (((IComposite)this.role.ObjectType).ExistExclusiveDatabaseClass && ((IComposite)this.equalsRole.ObjectType).ExistExclusiveDatabaseClass)
             {

@@ -15720,17 +15720,14 @@ namespace Allors.Database.Adapters
                 this.Populate();
                 var m = this.Transaction.Database.Context().M;
 
-                // Class
                 var extent = this.Transaction.Extent(m.C1);
-                _ = extent.Filter.AddEquals(m.C1.C1AllorsString, m.C1.C1AllorsString);
+                _ = extent.Filter.AddEquals(m.C1.C1AllorsString, m.C1.C1StringEquals);
 
-                Assert.Equal(3, extent.Count);
-                this.AssertC1(extent, false, true, true, true);
+                Assert.Equal(2, extent.Count);
+                this.AssertC1(extent, false, false, true, false);
                 this.AssertC2(extent, false, false, false, false);
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
-
-                // TODO: Equal Role
             }
         }
 

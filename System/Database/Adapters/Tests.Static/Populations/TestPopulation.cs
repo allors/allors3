@@ -1,4 +1,4 @@
-﻿// <copyright file="TestPopulation.cs" company="Allors bvba">
+// <copyright file="TestPopulation.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -142,6 +142,11 @@ namespace Allors.Database.Adapters
             this.C4B.S1234AllorsString = "ᴀbra";
             this.C4C.S1234AllorsString = "ᴀbracadabra";
             this.C4D.S1234AllorsString = "ᴀbracadabra";
+
+
+            this.C1B.C1StringEquals = "bra";
+            this.C1C.C1StringEquals = "ᴀbracadabra";
+            this.C1D.C1StringEquals = "bracadabra";
 
             // Integer
             this.C1B.C1AllorsInteger = 1;
