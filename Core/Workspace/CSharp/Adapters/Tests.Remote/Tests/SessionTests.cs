@@ -68,99 +68,99 @@ namespace Tests.Workspace.Remote
             Assert.Equal("X", martien2.MiddleName);
         }
 
-        [Fact]
-        public void HasChanges()
-        {
-            _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
+        //[Fact]
+        //public void HasChanges()
+        //{
+        //    _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
 
-            var session = this.CreateSession();
-            var martien = session.InstantiateDatabaseObject(3).Object as Person;
-            var acme = session.InstantiateDatabaseObject(101).Object as Organisation;
+        //    var session = this.CreateSession();
+        //    var martien = session.InstantiateDatabaseObject(3).Object as Person;
+        //    var acme = session.InstantiateDatabaseObject(101).Object as Organisation;
 
-            Assert.False(session.HasDatabaseChanges);
+        //    Assert.False(session.HasDatabaseChanges);
 
-            var firstName = martien.FirstName;
-            martien.FirstName = firstName;
+        //    var firstName = martien.FirstName;
+        //    martien.FirstName = firstName;
 
-            Assert.False(session.HasDatabaseChanges);
+        //    Assert.False(session.HasDatabaseChanges);
 
-            martien.UserName = null;
+        //    martien.UserName = null;
 
-            Assert.False(session.HasDatabaseChanges);
+        //    Assert.False(session.HasDatabaseChanges);
 
-            var owner = acme.Owner;
-            acme.Owner = owner;
+        //    var owner = acme.Owner;
+        //    acme.Owner = owner;
 
-            Assert.False(session.HasDatabaseChanges);
+        //    Assert.False(session.HasDatabaseChanges);
 
-            acme.CycleOne = null;
+        //    acme.CycleOne = null;
 
-            Assert.False(session.HasDatabaseChanges);
+        //    Assert.False(session.HasDatabaseChanges);
 
-            var employees = acme.Employees;
-            acme.Employees = employees;
+        //    var employees = acme.Employees;
+        //    acme.Employees = employees;
 
-            Assert.False(session.HasDatabaseChanges);
+        //    Assert.False(session.HasDatabaseChanges);
 
-            employees = employees.Reverse().ToArray();
-            acme.Employees = employees;
+        //    employees = employees.Reverse().ToArray();
+        //    acme.Employees = employees;
 
-            Assert.False(session.HasDatabaseChanges);
+        //    Assert.False(session.HasDatabaseChanges);
 
-            acme.CycleMany = null;
+        //    acme.CycleMany = null;
 
-            Assert.False(session.HasDatabaseChanges);
-        }
+        //    Assert.False(session.HasDatabaseChanges);
+        //}
 
-        [Fact]
-        public void UnitSave()
-        {
-            _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
-            var session = this.CreateSession();
+        //[Fact]
+        //public void UnitSave()
+        //{
+        //    _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
+        //    var session = this.CreateSession();
 
-            var koen = session.InstantiateDatabaseObject(1).Object as Person;
-            var patrick = session.InstantiateDatabaseObject(2).Object as Person;
-            var martien = session.InstantiateDatabaseObject(3).Object as Person;
+        //    var koen = session.InstantiateDatabaseObject(1).Object as Person;
+        //    var patrick = session.InstantiateDatabaseObject(2).Object as Person;
+        //    var martien = session.InstantiateDatabaseObject(3).Object as Person;
 
-            koen.FirstName = "K";
-            koen.LastName = "VE";
-            martien.FirstName = "Martinus";
-            martien.MiddleName = "X";
+        //    koen.FirstName = "K";
+        //    koen.LastName = "VE";
+        //    martien.FirstName = "Martinus";
+        //    martien.MiddleName = "X";
 
-            var save = session.PushRequest();
+        //    var save = session.PushRequest();
 
-            Assert.Equal(2, save.Objects.Length);
+        //    Assert.Equal(2, save.Objects.Length);
 
-            var savedKoen = save.Objects.First(v => v.DatabaseId == 1);
+        //    var savedKoen = save.Objects.First(v => v.DatabaseId == 1);
 
-            Assert.Equal(1001, savedKoen.Version);
-            Assert.Equal(2, savedKoen.Roles.Length);
+        //    Assert.Equal(1001, savedKoen.Version);
+        //    Assert.Equal(2, savedKoen.Roles.Length);
 
-            var savedKoenFirstName = savedKoen.Roles.First(v => v.RelationType == this.M.Person.FirstName.RelationType.Tag);
-            var savedKoenLastName = savedKoen.Roles.First(v => v.RelationType == this.M.Person.LastName.RelationType.Tag);
+        //    var savedKoenFirstName = savedKoen.Roles.First(v => v.RelationType == this.M.Person.FirstName.RelationType.Tag);
+        //    var savedKoenLastName = savedKoen.Roles.First(v => v.RelationType == this.M.Person.LastName.RelationType.Tag);
 
-            Assert.Equal("K", savedKoenFirstName.SetUnitRole);
-            Assert.Null(savedKoenFirstName.AddCompositesRole);
-            Assert.Null(savedKoenFirstName.RemoveCompositesRole);
-            Assert.Equal("VE", savedKoenLastName.SetUnitRole);
-            Assert.Null(savedKoenLastName.AddCompositesRole);
-            Assert.Null(savedKoenLastName.RemoveCompositesRole);
+        //    Assert.Equal("K", savedKoenFirstName.SetUnitRole);
+        //    Assert.Null(savedKoenFirstName.AddCompositesRole);
+        //    Assert.Null(savedKoenFirstName.RemoveCompositesRole);
+        //    Assert.Equal("VE", savedKoenLastName.SetUnitRole);
+        //    Assert.Null(savedKoenLastName.AddCompositesRole);
+        //    Assert.Null(savedKoenLastName.RemoveCompositesRole);
 
-            var savedMartien = save.Objects.First(v => v.DatabaseId == 3);
+        //    var savedMartien = save.Objects.First(v => v.DatabaseId == 3);
 
-            Assert.Equal(1003, savedMartien.Version);
-            Assert.Equal(2, savedMartien.Roles.Length);
+        //    Assert.Equal(1003, savedMartien.Version);
+        //    Assert.Equal(2, savedMartien.Roles.Length);
 
-            var savedMartienFirstName = savedMartien.Roles.First(v => v.RelationType == this.M.Person.FirstName.RelationType.Tag);
-            var savedMartienMiddleName = savedMartien.Roles.First(v => v.RelationType == this.M.Person.MiddleName.RelationType.Tag);
+        //    var savedMartienFirstName = savedMartien.Roles.First(v => v.RelationType == this.M.Person.FirstName.RelationType.Tag);
+        //    var savedMartienMiddleName = savedMartien.Roles.First(v => v.RelationType == this.M.Person.MiddleName.RelationType.Tag);
 
-            Assert.Equal("Martinus", savedMartienFirstName.SetUnitRole);
-            Assert.Null(savedMartienFirstName.AddCompositesRole);
-            Assert.Null(savedMartienFirstName.RemoveCompositesRole);
-            Assert.Equal("X", savedMartienMiddleName.SetUnitRole);
-            Assert.Null(savedMartienMiddleName.AddCompositesRole);
-            Assert.Null(savedMartienMiddleName.RemoveCompositesRole);
-        }
+        //    Assert.Equal("Martinus", savedMartienFirstName.SetUnitRole);
+        //    Assert.Null(savedMartienFirstName.AddCompositesRole);
+        //    Assert.Null(savedMartienFirstName.RemoveCompositesRole);
+        //    Assert.Equal("X", savedMartienMiddleName.SetUnitRole);
+        //    Assert.Null(savedMartienMiddleName.AddCompositesRole);
+        //    Assert.Null(savedMartienMiddleName.RemoveCompositesRole);
+        //}
 
         [Fact]
         public void OneGet()
@@ -506,75 +506,75 @@ namespace Tests.Workspace.Remote
             }
         }
 
-        [Fact]
-        public void SyncWithNewObjects()
-        {
-            _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
+        //[Fact]
+        //public void SyncWithNewObjects()
+        //{
+        //    _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
 
-            var session = this.CreateSession();
+        //    var session = this.CreateSession();
 
-            var martien = session.InstantiateDatabaseObject(3).Object as Person;
+        //    var martien = session.InstantiateDatabaseObject(3).Object as Person;
 
-            var mathijs = session.Create<Person>(this.M.Person) as Person;
-            mathijs.FirstName = "Mathijs";
-            mathijs.LastName = "Verwer";
+        //    var mathijs = session.Create<Person>(this.M.Person) as Person;
+        //    mathijs.FirstName = "Mathijs";
+        //    mathijs.LastName = "Verwer";
 
-            var acme2 = session.Create<Organisation>(this.M.Organisation) as Organisation;
-            acme2.Name = "Acme 2";
-            acme2.Owner = martien;
-            acme2.Manager = mathijs;
-            acme2.AddEmployee(martien);
-            acme2.AddEmployee(mathijs);
+        //    var acme2 = session.Create<Organisation>(this.M.Organisation) as Organisation;
+        //    acme2.Name = "Acme 2";
+        //    acme2.Owner = martien;
+        //    acme2.Manager = mathijs;
+        //    acme2.AddEmployee(martien);
+        //    acme2.AddEmployee(mathijs);
 
-            session.Reset();
+        //    session.Reset();
 
-            // Assert.Null(mathijs.DatabaseId);
-            Assert.True(mathijs.Strategy.Id < 0);
-            Assert.Null(mathijs.FirstName);
-            Assert.Null(mathijs.LastName);
+        //    // Assert.Null(mathijs.DatabaseId);
+        //    Assert.True(mathijs.Strategy.Id < 0);
+        //    Assert.Null(mathijs.FirstName);
+        //    Assert.Null(mathijs.LastName);
 
-            // Assert.Null(acme2.DatabaseId);
-            Assert.True(acme2.Strategy.Id < 0);
-            Assert.Null(acme2.Owner);
-            Assert.Null(acme2.Manager);
+        //    // Assert.Null(acme2.DatabaseId);
+        //    Assert.True(acme2.Strategy.Id < 0);
+        //    Assert.Null(acme2.Owner);
+        //    Assert.Null(acme2.Manager);
 
-            Assert.Empty(acme2.Employees);
-        }
+        //    Assert.Empty(acme2.Employees);
+        //}
 
-        [Fact]
-        public void Onsaved()
-        {
-            _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
+        //[Fact]
+        //public void Onsaved()
+        //{
+        //    _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
 
-            var session = this.CreateSession();
+        //    var session = this.CreateSession();
 
-            var pushResponse = new PushResponse();
+        //    var pushResponse = new PushResponse();
 
-            session.PushResponse(pushResponse);
+        //    session.PushResponse(pushResponse);
 
-            var mathijs = session.Create<Person>(this.M.Person) as Person;
-            mathijs.FirstName = "Mathijs";
-            mathijs.LastName = "Verwer";
+        //    var mathijs = session.Create<Person>(this.M.Person) as Person;
+        //    mathijs.FirstName = "Mathijs";
+        //    mathijs.LastName = "Verwer";
 
-            var workspaceId = mathijs.Strategy.Id;
+        //    var workspaceId = mathijs.Strategy.Id;
 
-            pushResponse = new PushResponse
-            {
-                NewObjects = new[] { new PushResponseNewObject { DatabaseId = 10000, WorkspaceId = workspaceId } },
-            };
+        //    pushResponse = new PushResponse
+        //    {
+        //        NewObjects = new[] { new PushResponseNewObject { DatabaseId = 10000, WorkspaceId = workspaceId } },
+        //    };
 
-            session.PushResponse(pushResponse);
+        //    session.PushResponse(pushResponse);
 
-            Assert.NotNull(mathijs.Strategy.Id);
-            Assert.Equal(10000, mathijs.Id);
-            Assert.Equal("Person", mathijs.Strategy.Class.SingularName);
+        //    Assert.NotNull(mathijs.Strategy.Id);
+        //    Assert.Equal(10000, mathijs.Id);
+        //    Assert.Equal("Person", mathijs.Strategy.Class.SingularName);
 
-            var mathijs2 = session.Get<Person>(10000);
+        //    var mathijs2 = session.Get<Person>(10000);
 
-            Assert.NotNull(mathijs2);
+        //    Assert.NotNull(mathijs2);
 
-            Assert.Equal(mathijs, mathijs2);
-        }
+        //    Assert.Equal(mathijs, mathijs2);
+        //}
 
         /*
         [Fact]

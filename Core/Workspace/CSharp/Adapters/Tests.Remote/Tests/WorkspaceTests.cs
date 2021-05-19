@@ -15,7 +15,7 @@ namespace Tests.Workspace.Remote
         {
             _ = this.Database.SyncResponse(Fixture.LoadData(this.M));
 
-            var martien = this.Database.Get(3);
+            var martien = this.Database.GetRecord(3);
 
             Assert.Equal(3, martien.Id);
             Assert.Equal(1003, martien.Version);

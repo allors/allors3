@@ -24,13 +24,6 @@ namespace Allors.Workspace.Adapters.Remote
         private readonly Dictionary<long, Strategy> strategyByWorkspaceId;
         private readonly Dictionary<IClass, ISet<Strategy>> strategiesByClass;
 
-        private readonly IList<Strategy> existingDatabaseStrategies;
-        private ISet<Strategy> newDatabaseStrategies;
-        private ISet<DatabaseOriginState> changedDatabaseStates;
-
-        private ISet<IStrategy> created;
-        private ISet<IStrategy> instantiated;
-
         internal Session(Workspace workspace, ISessionLifecycle sessionLifecycle)
         {
             this.Workspace = workspace;
@@ -40,11 +33,10 @@ namespace Allors.Workspace.Adapters.Remote
 
             this.strategyByWorkspaceId = new Dictionary<long, Strategy>();
             this.strategiesByClass = new Dictionary<IClass, ISet<Strategy>>();
-            this.existingDatabaseStrategies = new List<Strategy>();
-
             this.SessionOriginState = new SessionOriginState(this.Numbers);
 
             this.ChangeSetTracker = new ChangeSetTracker();
+            this.PushToDatabaseTracker = new PushToDatabaseTracker();
             this.PushToWorkspaceTracker = new PushToWorkspaceTracker();
 
             this.Lifecycle.OnInit(this);
@@ -57,12 +49,12 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal ChangeSetTracker ChangeSetTracker { get; }
 
+        internal PushToDatabaseTracker PushToDatabaseTracker { get; }
+
         internal PushToWorkspaceTracker PushToWorkspaceTracker { get; }
 
         internal Database Database { get; }
-
-        internal bool HasDatabaseChanges => this.newDatabaseStrategies?.Count > 0 || this.existingDatabaseStrategies.Any(v => v.HasDatabaseChanges);
-
+        
         internal INumbers Numbers { get; }
 
         internal SessionOriginState SessionOriginState { get; }
@@ -98,22 +90,16 @@ namespace Allors.Workspace.Adapters.Remote
             var strategy = new Strategy(this, @class, workspaceId);
             this.AddStrategy(strategy);
 
-            if (@class.Origin == Origin.Database)
-            {
-                this.newDatabaseStrategies ??= new HashSet<Strategy>();
-                _ = this.newDatabaseStrategies.Add(strategy);
-            }
-
-            if (@class.Origin == Origin.Workspace)
+            if (@class.Origin != Origin.Session)
             {
                 this.PushToWorkspaceTracker.OnCreated(strategy);
+                if (@class.Origin == Origin.Database)
+                {
+                    this.PushToDatabaseTracker.OnCreated(strategy);
+                }
             }
 
             this.ChangeSetTracker.OnCreated(strategy);
-
-            // TODO: Remove
-            this.created ??= new HashSet<IStrategy>();
-            _ = this.created.Add(strategy);
 
             return (T)strategy.Object;
         }
@@ -214,59 +200,28 @@ namespace Allors.Workspace.Adapters.Remote
             var pullResponse = await this.Database.Pull(pullRequest);
             return await this.OnPull(pullResponse);
         }
-
-        public void Reset()
-        {
-            foreach (var kvp in this.strategyByWorkspaceId)
-            {
-                kvp.Value.Reset();
-            }
-        }
-
+        
         public async Task<IPushResult> Push()
         {
-            var pushRequest = this.PushRequest();
-            var pushResponse = await this.Database.Push(pushRequest);
-            if (!pushResponse.HasErrors)
-            {
-                this.PushResponse(pushResponse);
-
-                var objects = pushRequest.Objects.Select(v => v.DatabaseId).ToArray();
-                if (pushResponse.NewObjects != null)
-                {
-                    objects = objects.Union(pushResponse.NewObjects.Select(v => v.DatabaseId)).ToArray();
-                }
-
-                var syncRequests = new SyncRequest
-                {
-                    Objects = objects,
-                };
-
-                await this.Sync(syncRequests);
-              
-            }
-
-            var result = new PushResult(this, pushResponse);
+            var result = await this.PushToDatabase();
 
             if (!result.HasErrors)
             {
                 this.PushToWorkspace(result);
             }
 
-            this.Reset();
-
             return result;
         }
-
+        
         public IChangeSet Checkpoint()
         {
-            var changeSet = new ChangeSet(this, this.created, this.instantiated);
+            var changeSet = new ChangeSet(this, this.ChangeSetTracker.Created, this.ChangeSetTracker.Instantiated);
 
-            if (this.changedDatabaseStates != null)
+            if (this.ChangeSetTracker.DatabaseOriginStates != null)
             {
-                foreach (var changed in this.changedDatabaseStates)
+                foreach (var databaseOriginState in this.ChangeSetTracker.DatabaseOriginStates)
                 {
-                    changed.Checkpoint(changeSet);
+                    databaseOriginState.Checkpoint(changeSet);
                 }
             }
 
@@ -284,10 +239,6 @@ namespace Allors.Workspace.Adapters.Remote
             this.ChangeSetTracker.Instantiated = null;
             this.ChangeSetTracker.DatabaseOriginStates = null;
             this.ChangeSetTracker.WorkspaceOriginStates = null;
-
-            // TODO: Remove
-            this.created = null;
-            this.instantiated = null;
 
             return changeSet;
         }
@@ -345,32 +296,15 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        internal IEnumerable<T> GetAssociation<T>(Strategy role, IAssociationType associationType) where T : IObject
-        {
-            var roleType = associationType.RoleType;
-
-            foreach (var association in this.Get(associationType.ObjectType))
-            {
-                if (!association.CanRead(roleType))
-                {
-                    continue;
-                }
-
-                if (association.IsAssociationForRole(roleType, role))
-                {
-                    yield return (T)association.Object;
-                }
-            }
-        }
-
         internal PushRequest PushRequest() => new PushRequest
         {
-            NewObjects = this.newDatabaseStrategies?.Select(v => v.DatabasePushNew()).ToArray(),
-            Objects = this.existingDatabaseStrategies.Where(v => v.HasDatabaseChanges).Select(v => v.DatabasePushExisting()).ToArray(),
+            NewObjects = this.PushToDatabaseTracker.Created?.Select(v => v.DatabasePushNew()).ToArray(),
+            Objects = this.PushToDatabaseTracker.Changed?.Select(v => v.Strategy.DatabasePushExisting()).ToArray(),
         };
 
         internal void PushResponse(PushResponse pushResponse)
         {
+           
             if (pushResponse.NewObjects != null && pushResponse.NewObjects.Length > 0)
             {
                 foreach (var pushResponseNewObject in pushResponse.NewObjects)
@@ -380,38 +314,23 @@ namespace Allors.Workspace.Adapters.Remote
 
                     var strategy = this.strategyByWorkspaceId[workspaceId];
 
-                    _ = this.newDatabaseStrategies.Remove(strategy);
+                    _ = this.PushToDatabaseTracker.Created.Remove(strategy);
+
                     this.RemoveStrategy(strategy);
-
-                    var databaseObject = this.Database.PushResponse(databaseId, strategy.Class);
-                    strategy.DatabasePushResponse(databaseObject);
-
-                    this.existingDatabaseStrategies.Add(strategy);
+                    var databaseRecord = this.Database.OnPushed(databaseId, strategy.Class);
+                    strategy.DatabasePushResponse(databaseRecord);
                     this.AddStrategy(strategy);
                 }
             }
-
-            if (this.newDatabaseStrategies?.Count > 0)
-            {
-                throw new Exception("Not all new objects received ids");
-            }
-
-            this.newDatabaseStrategies = null;
         }
 
-        internal void OnChange(DatabaseOriginState state)
+        internal Strategy InstantiateDatabaseObject(long id)
         {
-            this.changedDatabaseStates ??= new HashSet<DatabaseOriginState>();
-            _ = this.changedDatabaseStates.Add(state);
-        }
-
-        internal Strategy InstantiateDatabaseObject(long identity)
-        {
-            var databaseObject = this.Database.Get(identity);
+            var databaseObject = this.Database.GetRecord(id);
             var strategy = new Strategy(this, databaseObject);
-            this.existingDatabaseStrategies.Add(strategy);
             this.AddStrategy(strategy);
-            this.OnInstantiate(strategy);
+
+            this.ChangeSetTracker.OnInstantiated(strategy);
 
             return strategy;
         }
@@ -467,13 +386,7 @@ namespace Allors.Workspace.Adapters.Remote
                 }
             }
         }
-
-        private void OnInstantiate(Strategy strategy)
-        {
-            this.instantiated ??= new HashSet<IStrategy>();
-            _ = this.instantiated.Add(strategy);
-        }
-
+        
         internal IEnumerable<Strategy> Get(IComposite objectType)
         {
             var classes = new HashSet<IClass>(objectType.Classes);
@@ -507,7 +420,33 @@ namespace Allors.Workspace.Adapters.Remote
 
             _ = strategies.Remove(strategy);
         }
-        
+
+        private async Task<PushResult> PushToDatabase()
+        {
+            var pushRequest = this.PushRequest();
+            var pushResponse = await this.Database.Push(pushRequest);
+            if (!pushResponse.HasErrors)
+            {
+                this.PushResponse(pushResponse);
+
+                var objects = pushRequest.Objects?.Select(v => v.DatabaseId).ToArray() ?? Array.Empty<long>();
+                if (pushResponse.NewObjects != null)
+                {
+                    objects = objects.Union(pushResponse.NewObjects.Select(v => v.DatabaseId)).ToArray();
+                }
+
+                var syncRequests = new SyncRequest
+                {
+                    Objects = objects,
+                };
+
+                await this.Sync(syncRequests);
+            }
+
+            var result = new PushResult(this, pushResponse);
+            return result;
+        }
+
         private IPushResult PushToWorkspace(IPushResult result)
         {
             if (this.PushToWorkspaceTracker.Created != null)

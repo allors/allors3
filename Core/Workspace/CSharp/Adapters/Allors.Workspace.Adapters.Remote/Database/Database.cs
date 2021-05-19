@@ -25,7 +25,7 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class Database
     {
-        private readonly Dictionary<long, DatabaseRecord> objectsById;
+        private readonly Dictionary<long, DatabaseRecord> recordsById;
 
         private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> readPermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> writePermissionByOperandTypeByClass;
@@ -43,7 +43,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.AccessControlById = new Dictionary<long, AccessControl>();
             this.PermissionById = new Dictionary<long, Permission>();
 
-            this.objectsById = new Dictionary<long, DatabaseRecord>();
+            this.recordsById = new Dictionary<long, DatabaseRecord>();
 
             this.readPermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, Permission>>();
             this.writePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, Permission>>();
@@ -88,7 +88,7 @@ namespace Allors.Workspace.Adapters.Remote
         internal DatabaseRecord PushResponse(long identity, IClass @class)
         {
             var databaseObject = new DatabaseRecord(this, identity, @class);
-            this.objectsById[identity] = databaseObject;
+            this.recordsById[identity] = databaseObject;
             return databaseObject;
         }
 
@@ -98,7 +98,7 @@ namespace Allors.Workspace.Adapters.Remote
             foreach (var syncResponseObject in syncResponse.Objects)
             {
                 var databaseObjects = new DatabaseRecord(this, ctx, syncResponseObject);
-                this.objectsById[databaseObjects.Id] = databaseObjects;
+                this.recordsById[databaseObjects.Id] = databaseObjects;
             }
 
             if (ctx.MissingAccessControlIds.Count > 0 || ctx.MissingPermissionIds.Count > 0)
@@ -119,7 +119,7 @@ namespace Allors.Workspace.Adapters.Remote
                 Objects = response.Pool
                     .Where(v =>
                     {
-                        if (!this.objectsById.TryGetValue(v.Id, out var databaseObject))
+                        if (!this.recordsById.TryGetValue(v.Id, out var databaseObject))
                         {
                             return true;
                         }
@@ -169,9 +169,9 @@ namespace Allors.Workspace.Adapters.Remote
                     .Select(v => v.Id).ToArray(),
             };
 
-        internal DatabaseRecord Get(long identity)
+        internal DatabaseRecord GetRecord(long identity)
         {
-            _ = this.objectsById.TryGetValue(identity, out var databaseObjects);
+            _ = this.recordsById.TryGetValue(identity, out var databaseObjects);
             return databaseObjects;
         }
 
@@ -384,6 +384,13 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var json = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<T>(json);
+        }
+        
+        internal DatabaseRecord OnPushed(long id, IClass @class)
+        {
+            var record = new DatabaseRecord(this, id, @class);
+            this.recordsById[id] = record;
+            return record;
         }
     }
 }

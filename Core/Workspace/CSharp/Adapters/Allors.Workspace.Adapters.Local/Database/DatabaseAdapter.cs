@@ -17,16 +17,18 @@ namespace Allors.Workspace.Adapters.Local
 
     internal class DatabaseAdapter
     {
+        private readonly ConcurrentDictionary<long, DatabaseRecord> recordsById;
+        private readonly Dictionary<long, AccessControl> accessControlById;
         private readonly IPermissionsCache permissionCache;
 
         internal DatabaseAdapter(IMetaPopulation metaPopulation, IDatabase database)
         {
             this.MetaPopulation = metaPopulation;
             this.Database = database;
-            this.RecordsById = new ConcurrentDictionary<long, DatabaseRecord>();
+            this.recordsById = new ConcurrentDictionary<long, DatabaseRecord>();
             this.WorkspaceIdGenerator = new WorkspaceIdGenerator();
             this.permissionCache = this.Database.Context().PermissionsCache;
-            this.AccessControlById = new Dictionary<long, AccessControl>();
+            this.accessControlById = new Dictionary<long, AccessControl>();
         }
 
         internal IDatabase Database { get; }
@@ -35,11 +37,7 @@ namespace Allors.Workspace.Adapters.Local
 
         private Database.Meta.IMetaPopulation DatabaseMetaPopulation => this.Database.MetaPopulation;
         private IMetaPopulation MetaPopulation { get; }
-
-        private ConcurrentDictionary<long, DatabaseRecord> RecordsById { get; }
-
-        private Dictionary<long, AccessControl> AccessControlById { get; }
-
+        
         internal void Sync(IEnumerable<IObject> objects, IAccessControlLists accessControlLists)
         {
             // TODO: Prefetch objects
@@ -77,13 +75,13 @@ namespace Allors.Workspace.Adapters.Local
                     ?.Select(this.GetAccessControl)
                     .ToArray() ?? Array.Empty<AccessControl>();
 
-                this.RecordsById[id] = new DatabaseRecord(id, workspaceClass, @object.Strategy.ObjectVersion, roleByRoleType, deniedPermissions, accessControls);
+                this.recordsById[id] = new DatabaseRecord(id, workspaceClass, @object.Strategy.ObjectVersion, roleByRoleType, deniedPermissions, accessControls);
             }
         }
 
         internal DatabaseRecord GetRecord(long id)
         {
-            _ = this.RecordsById.TryGetValue(id, out var databaseObjects);
+            _ = this.recordsById.TryGetValue(id, out var databaseObjects);
             return databaseObjects;
         }
 
@@ -114,14 +112,14 @@ namespace Allors.Workspace.Adapters.Local
         internal DatabaseRecord OnPushed(long id, IClass @class)
         {
             var record = new DatabaseRecord(id, @class);
-            this.RecordsById[id] = record;
+            this.recordsById[id] = record;
             return record;
         }
 
         internal IEnumerable<IObject> ObjectsToSync(Pull pull) =>
             pull.DatabaseObjects.Where(v =>
             {
-                if (this.RecordsById.TryGetValue(v.Id, out var databaseRoles))
+                if (this.recordsById.TryGetValue(v.Id, out var databaseRoles))
                 {
                     return v.Strategy.ObjectVersion != databaseRoles.Version;
                 }
@@ -131,10 +129,10 @@ namespace Allors.Workspace.Adapters.Local
 
         private AccessControl GetAccessControl(IAccessControl accessControl)
         {
-            if (!this.AccessControlById.TryGetValue(accessControl.Strategy.ObjectId, out var acessControl))
+            if (!this.accessControlById.TryGetValue(accessControl.Strategy.ObjectId, out var acessControl))
             {
                 acessControl = new AccessControl(accessControl.Strategy.ObjectId);
-                this.AccessControlById.Add(accessControl.Strategy.ObjectId, acessControl);
+                this.accessControlById.Add(accessControl.Strategy.ObjectId, acessControl);
             }
 
             if (acessControl.Version == accessControl.Strategy.ObjectVersion)
