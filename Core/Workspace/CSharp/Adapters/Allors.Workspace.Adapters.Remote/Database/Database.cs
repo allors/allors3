@@ -25,7 +25,7 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class Database
     {
-        private readonly Dictionary<long, DatabaseObject> objectsById;
+        private readonly Dictionary<long, DatabaseRecord> objectsById;
 
         private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> readPermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> writePermissionByOperandTypeByClass;
@@ -43,7 +43,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.AccessControlById = new Dictionary<long, AccessControl>();
             this.PermissionById = new Dictionary<long, Permission>();
 
-            this.objectsById = new Dictionary<long, DatabaseObject>();
+            this.objectsById = new Dictionary<long, DatabaseRecord>();
 
             this.readPermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, Permission>>();
             this.writePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, Permission>>();
@@ -85,9 +85,9 @@ namespace Allors.Workspace.Adapters.Remote
             return true;
         }
 
-        internal DatabaseObject PushResponse(long identity, IClass @class)
+        internal DatabaseRecord PushResponse(long identity, IClass @class)
         {
-            var databaseObject = new DatabaseObject(this, identity, @class);
+            var databaseObject = new DatabaseRecord(this, identity, @class);
             this.objectsById[identity] = databaseObject;
             return databaseObject;
         }
@@ -97,7 +97,7 @@ namespace Allors.Workspace.Adapters.Remote
             var ctx = new ResponseContext(this.AccessControlById, this.PermissionById);
             foreach (var syncResponseObject in syncResponse.Objects)
             {
-                var databaseObjects = new DatabaseObject(this, ctx, syncResponseObject);
+                var databaseObjects = new DatabaseRecord(this, ctx, syncResponseObject);
                 this.objectsById[databaseObjects.Identity] = databaseObjects;
             }
 
@@ -169,7 +169,7 @@ namespace Allors.Workspace.Adapters.Remote
                     .Select(v => v.Id).ToArray(),
             };
 
-        internal DatabaseObject Get(long identity)
+        internal DatabaseRecord Get(long identity)
         {
             _ = this.objectsById.TryGetValue(identity, out var databaseObjects);
             return databaseObjects;

@@ -14,17 +14,17 @@ namespace Allors.Workspace.Adapters.Remote
     {
         private readonly Strategy strategy;
 
-        private WorkspaceObject workspaceObject;
+        private WorkspaceRecord workspaceRecord;
         private Dictionary<IRelationType, object> changedRoleByRelationType;
 
-        private WorkspaceObject previousWorkspaceObject;
+        private WorkspaceRecord previousWorkspaceRecord;
         private Dictionary<IRelationType, object> previousChangedRoleByRelationType;
 
         internal WorkspaceOriginState(Strategy strategy)
         {
             this.strategy = strategy;
-            this.workspaceObject = this.Workspace.Get(this.Identity);
-            this.previousWorkspaceObject = this.workspaceObject;
+            this.workspaceRecord = this.Workspace.Get(this.Identity);
+            this.previousWorkspaceRecord = this.workspaceRecord;
         }
 
         internal bool HasWorkspaceChanges => this.changedRoleByRelationType != null;
@@ -44,7 +44,7 @@ namespace Allors.Workspace.Adapters.Remote
 
                 if (this.changedRoleByRelationType == null || !this.changedRoleByRelationType.TryGetValue(roleType.RelationType, out var unit))
                 {
-                    unit = this.workspaceObject?.GetRole(roleType);
+                    unit = this.workspaceRecord?.GetRole(roleType);
                 }
 
                 return unit;
@@ -58,7 +58,7 @@ namespace Allors.Workspace.Adapters.Remote
                     return workspaceRole?.Object;
                 }
 
-                var identity = (long?)this.workspaceObject?.GetRole(roleType);
+                var identity = (long?)this.workspaceRecord?.GetRole(roleType);
                 workspaceRole = this.Session.GetStrategy(identity);
 
                 return workspaceRole?.Object;
@@ -70,7 +70,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return workspaceRoles != null ? workspaceRoles.Select(v => v.Object).ToArray() : Array.Empty<IObject>();
             }
 
-            var identities = (long[])this.workspaceObject?.GetRole(roleType);
+            var identities = (long[])this.workspaceRecord?.GetRole(roleType);
             return identities == null ? Array.Empty<IObject>() : identities.Select(v => this.Session.Get<IObject>(v)).ToArray();
         }
 
@@ -157,23 +157,23 @@ namespace Allors.Workspace.Adapters.Remote
         {
             if (this.HasWorkspaceChanges)
             {
-                this.Workspace.Push(this.Identity, this.Class, this.workspaceObject?.Version ?? 0, this.changedRoleByRelationType);
+                this.Workspace.Push(this.Identity, this.Class, this.workspaceRecord?.Version ?? 0, this.changedRoleByRelationType);
             }
 
-            this.workspaceObject = this.Workspace.Get(this.Identity);
+            this.workspaceRecord = this.Workspace.Get(this.Identity);
             this.changedRoleByRelationType = null;
         }
 
         internal void Reset()
         {
-            this.workspaceObject = this.Workspace.Get(this.Identity);
+            this.workspaceRecord = this.Workspace.Get(this.Identity);
             this.changedRoleByRelationType = null;
         }
 
         internal void Checkpoint(ChangeSet changeSet)
         {
             // Same workspace object
-            if (this.workspaceObject.Version == this.previousWorkspaceObject.Version)
+            if (this.workspaceRecord.Version == this.previousWorkspaceRecord.Version)
             {
                 // No previous changed roles
                 if (this.previousChangedRoleByRelationType == null)
@@ -185,7 +185,7 @@ namespace Allors.Workspace.Adapters.Remote
                         {
                             var relationType = kvp.Key;
                             var cooked = kvp.Value;
-                            var raw = this.workspaceObject.GetRole(relationType.RoleType);
+                            var raw = this.workspaceRecord.GetRole(relationType.RoleType);
 
                             changeSet.DiffCookedWithRaw(this.strategy, relationType, cooked, raw);
                         }
@@ -222,27 +222,27 @@ namespace Allors.Workspace.Adapters.Remote
                         }
                         else
                         {
-                            var raw = this.workspaceObject.GetRole(roleType);
+                            var raw = this.workspaceRecord.GetRole(roleType);
                             changeSet.DiffRawWithCooked(this.strategy, relationType, raw, previousCooked);
                         }
                     }
                     else
                     {
-                        var previousRaw = this.previousWorkspaceObject?.GetRole(roleType);
+                        var previousRaw = this.previousWorkspaceRecord?.GetRole(roleType);
                         if (hasCooked && this.changedRoleByRelationType.TryGetValue(relationType, out var cooked) == true)
                         {
                             changeSet.DiffCookedWithRaw(this.strategy, relationType, cooked, previousRaw);
                         }
                         else
                         {
-                            var raw = this.workspaceObject.GetRole(roleType);
+                            var raw = this.workspaceRecord.GetRole(roleType);
                             changeSet.DiffRawWithRaw(this.strategy, relationType, raw, previousRaw);
                         }
                     }
                 }
             }
 
-            this.previousWorkspaceObject = this.workspaceObject;
+            this.previousWorkspaceRecord = this.workspaceRecord;
             this.previousChangedRoleByRelationType = this.changedRoleByRelationType;
         }
 
@@ -261,7 +261,7 @@ namespace Allors.Workspace.Adapters.Remote
                     return workspaceRole?.Equals(forRole) == true;
                 }
 
-                var identity = (long?)this.workspaceObject?.GetRole(roleType);
+                var identity = (long?)this.workspaceRecord?.GetRole(roleType);
                 return identity?.Equals(forRole.Id) == true;
             }
 
@@ -271,7 +271,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return workspaceRoles?.Contains(forRole) == true;
             }
 
-            var identities = (long[])this.workspaceObject?.GetRole(roleType);
+            var identities = (long[])this.workspaceRecord?.GetRole(roleType);
             return identities?.Contains(forRole.Id) == true;
         }
 

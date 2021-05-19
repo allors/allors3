@@ -12,7 +12,7 @@ namespace Allors.Workspace.Adapters.Remote
     using Allors.Protocol.Json.Api.Sync;
     using Collections;
 
-    internal class DatabaseObject
+    internal class DatabaseRecord
     {
         private Permission[] deniedPermissions;
         private AccessControl[] accessControls;
@@ -20,7 +20,7 @@ namespace Allors.Workspace.Adapters.Remote
         private Dictionary<IRelationType, object> roleByRelationType;
         private SyncResponseRole[] syncResponseRoles;
 
-        internal DatabaseObject(Database database, long identity, IClass @class)
+        internal DatabaseRecord(Database database, long identity, IClass @class)
         {
             this.Database = database;
             this.Identity = identity;
@@ -28,7 +28,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.Version = 0;
         }
 
-        internal DatabaseObject(Database database, ResponseContext ctx, SyncResponseObject syncResponseObject)
+        internal DatabaseRecord(Database database, ResponseContext ctx, SyncResponseObject syncResponseObject)
         {
             this.Database = database;
             this.Identity = syncResponseObject.Id;

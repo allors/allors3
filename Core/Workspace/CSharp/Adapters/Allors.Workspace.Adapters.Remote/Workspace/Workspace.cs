@@ -12,7 +12,7 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class Workspace : IWorkspace
     {
-        private readonly Dictionary<long, WorkspaceObject> objectById;
+        private readonly Dictionary<long, WorkspaceRecord> objectById;
 
         internal Workspace(string name, IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, HttpClient httpClient)
         {
@@ -26,7 +26,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
             this.WorkspaceIdsByWorkspaceClass = new Dictionary<IClass, long[]>();
 
-            this.objectById = new Dictionary<long, WorkspaceObject>();
+            this.objectById = new Dictionary<long, WorkspaceRecord>();
 
             this.Lifecycle.OnInit(this);
         }
@@ -48,7 +48,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal Dictionary<IClass, long[]> WorkspaceIdsByWorkspaceClass { get; }
 
-        internal WorkspaceObject Get(long identity)
+        internal WorkspaceRecord Get(long identity)
         {
             _ = this.objectById.TryGetValue(identity, out var workspaceObject);
             return workspaceObject;
@@ -74,11 +74,11 @@ namespace Allors.Workspace.Adapters.Remote
         {
             if (!this.objectById.TryGetValue(identity, out var originalWorkspaceObject))
             {
-                this.objectById[identity] = new WorkspaceObject(this.Database, identity, @class, ++version, changedRoleByRoleType);
+                this.objectById[identity] = new WorkspaceRecord(this.Database, identity, @class, ++version, changedRoleByRoleType);
             }
             else
             {
-                this.objectById[identity] = new WorkspaceObject(originalWorkspaceObject, changedRoleByRoleType);
+                this.objectById[identity] = new WorkspaceRecord(originalWorkspaceObject, changedRoleByRoleType);
             }
         }
     }

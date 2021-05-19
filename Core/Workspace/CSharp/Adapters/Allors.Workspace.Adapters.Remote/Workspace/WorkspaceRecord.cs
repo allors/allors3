@@ -9,11 +9,11 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Linq;
     using Meta;
 
-    internal class WorkspaceObject
+    internal class WorkspaceRecord
     {
         private readonly IReadOnlyDictionary<IRelationType, object> roleByRelationType;
 
-        internal WorkspaceObject(Database database, long identity, IClass @class, long version, IReadOnlyDictionary<IRelationType, object> roleByRelationType)
+        internal WorkspaceRecord(Database database, long identity, IClass @class, long version, IReadOnlyDictionary<IRelationType, object> roleByRelationType)
         {
             this.Database = database;
             this.Identity = identity;
@@ -23,15 +23,15 @@ namespace Allors.Workspace.Adapters.Remote
             this.roleByRelationType = this.Import(roleByRelationType).ToDictionary(v => v.Key, v => v.Value);
         }
 
-        public WorkspaceObject(WorkspaceObject originalWorkspaceObject, IReadOnlyDictionary<IRelationType, object> changedRoleByRoleType)
+        public WorkspaceRecord(WorkspaceRecord originalWorkspaceRecord, IReadOnlyDictionary<IRelationType, object> changedRoleByRoleType)
         {
-            this.Database = originalWorkspaceObject.Database;
-            this.Identity = originalWorkspaceObject.Identity;
-            this.Class = originalWorkspaceObject.Class;
-            this.Version = ++originalWorkspaceObject.Version;
+            this.Database = originalWorkspaceRecord.Database;
+            this.Identity = originalWorkspaceRecord.Identity;
+            this.Class = originalWorkspaceRecord.Class;
+            this.Version = ++originalWorkspaceRecord.Version;
 
 
-            this.roleByRelationType = this.Import(changedRoleByRoleType, originalWorkspaceObject.roleByRelationType).ToDictionary(v => v.Key, v => v.Value);
+            this.roleByRelationType = this.Import(changedRoleByRoleType, originalWorkspaceRecord.roleByRelationType).ToDictionary(v => v.Key, v => v.Value);
         }
 
         internal Database Database { get; }

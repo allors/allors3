@@ -35,14 +35,14 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        internal Strategy(Session session, DatabaseObject databaseObject)
+        internal Strategy(Session session, DatabaseRecord databaseRecord)
         {
             this.Session = session;
-            this.Id = databaseObject.Identity;
-            this.Class = databaseObject.Class;
+            this.Id = databaseRecord.Identity;
+            this.Class = databaseRecord.Class;
 
             this.workspaceState = new WorkspaceOriginState(this);
-            this.databaseState = new DatabaseOriginState(this, databaseObject);
+            this.databaseState = new DatabaseOriginState(this, databaseRecord);
         }
 
         ISession IStrategy.Session => this.Session;
@@ -290,10 +290,10 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal PushRequestObject DatabasePushExisting() => this.databaseState.PushExisting();
 
-        internal void DatabasePushResponse(DatabaseObject databaseObject)
+        internal void DatabasePushResponse(DatabaseRecord databaseRecord)
         {
-            this.Id = databaseObject.Identity;
-            this.databaseState.PushResponse(databaseObject);
+            this.Id = databaseRecord.Identity;
+            this.databaseState.PushResponse(databaseRecord);
         }
 
         internal void WorkspacePush() => this.workspaceState.Push();
