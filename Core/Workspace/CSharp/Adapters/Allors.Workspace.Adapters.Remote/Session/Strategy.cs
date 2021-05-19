@@ -150,7 +150,7 @@ namespace Allors.Workspace.Adapters.Remote
             switch (roleType.Origin)
             {
                 case Origin.Session:
-                    this.Session.SessionState.SetUnitRole(this, roleType, value);
+                    this.Session.SessionOriginState.SetUnitRole(this.Id, roleType, value);
                     break;
 
                 case Origin.Workspace:
@@ -172,7 +172,7 @@ namespace Allors.Workspace.Adapters.Remote
             switch (roleType.Origin)
             {
                 case Origin.Session:
-                    this.Session.SessionState.SetCompositeRole(this, roleType, value);
+                    this.Session.SessionOriginState.SetCompositeRole(this.Id, roleType, value?.Id);
                     break;
 
                 case Origin.Workspace:
@@ -194,7 +194,7 @@ namespace Allors.Workspace.Adapters.Remote
             switch (roleType.Origin)
             {
                 case Origin.Session:
-                    this.Session.SessionState.SetCompositesRole(this, roleType, role);
+                    this.Session.SessionOriginState.SetCompositesRole(this.Id, roleType, role);
                     break;
 
                 case Origin.Workspace:
@@ -257,7 +257,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return this.Session.GetAssociation<T>(this, associationType).FirstOrDefault();
             }
 
-            this.Session.SessionState.GetAssociation(this, associationType, out var association);
+            var association = this.Session.SessionOriginState.Get(this.Id, associationType);
             var id = (long?)association;
             return id != null ? this.Session.Get<T>(id) : default;
         }
@@ -269,7 +269,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return this.Session.GetAssociation<T>(this, associationType);
             }
 
-            this.Session.SessionState.GetAssociation(this, associationType, out var association);
+            var association = this.Session.SessionOriginState.Get(this.Id, associationType);
             var ids = (IEnumerable<long>)association;
             return ids?.Select(v => this.Session.Get<T>(v)).ToArray() ?? Array.Empty<T>();
         }
@@ -298,14 +298,17 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal void WorkspacePush() => this.workspaceState.Push();
 
-        public bool IsAssociationForRole(IRoleType roleType, Strategy role)
-            =>
-                roleType.Origin switch
-                {
-                    Origin.Session => this.Session.SessionState.IsAssociationForRole(this, roleType, role),
-                    Origin.Workspace => this.workspaceState?.IsAssociationForRole(roleType, role) ?? false,
-                    Origin.Database => this.databaseState?.IsAssociationForRole(roleType, role) ?? false,
-                    _ => throw new ArgumentException("Unsupported Origin")
-                };
+        public bool IsAssociationForRole(IRoleType roleType, Strategy forRole)
+        {
+            var role = this.Session.SessionOriginState.Get(this.Id, roleType);
+
+            return roleType.Origin switch
+            {
+                Origin.Session => Equals(role, forRole.Id),
+                Origin.Workspace => this.workspaceState?.IsAssociationForRole(roleType, forRole) ?? false,
+                Origin.Database => this.databaseState?.IsAssociationForRole(roleType, forRole) ?? false,
+                _ => throw new ArgumentException("Unsupported Origin")
+            };
+        }
     }
 }

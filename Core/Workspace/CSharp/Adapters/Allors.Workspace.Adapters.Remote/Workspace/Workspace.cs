@@ -9,10 +9,11 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Collections.Generic;
     using System.Net.Http;
     using Meta;
+    using Numbers;
 
     public class Workspace : IWorkspace
     {
-        private readonly Dictionary<long, WorkspaceRecord> objectById;
+        private readonly Dictionary<long, WorkspaceRecord> recordById;
 
         internal Workspace(string name, IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, HttpClient httpClient)
         {
@@ -26,7 +27,9 @@ namespace Allors.Workspace.Adapters.Remote
             this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
             this.WorkspaceIdsByWorkspaceClass = new Dictionary<IClass, long[]>();
 
-            this.objectById = new Dictionary<long, WorkspaceRecord>();
+            this.recordById = new Dictionary<long, WorkspaceRecord>();
+
+            this.Numbers = new ArrayNumbers();
 
             this.Lifecycle.OnInit(this);
         }
@@ -40,6 +43,8 @@ namespace Allors.Workspace.Adapters.Remote
         IObjectFactory IWorkspace.ObjectFactory => this.ObjectFactory;
         internal ReflectionObjectFactory ObjectFactory { get; }
 
+        internal INumbers Numbers { get; }
+
         public ISession CreateSession() => new Session(this, this.Lifecycle.CreateSessionContext());
 
         public Database Database { get; }
@@ -50,7 +55,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal WorkspaceRecord Get(long identity)
         {
-            _ = this.objectById.TryGetValue(identity, out var workspaceObject);
+            _ = this.recordById.TryGetValue(identity, out var workspaceObject);
             return workspaceObject;
         }
 
@@ -72,13 +77,13 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal void Push(long identity, IClass @class, long version, Dictionary<IRelationType, object> changedRoleByRoleType)
         {
-            if (!this.objectById.TryGetValue(identity, out var originalWorkspaceObject))
+            if (!this.recordById.TryGetValue(identity, out var originalWorkspaceObject))
             {
-                this.objectById[identity] = new WorkspaceRecord(this.Database, identity, @class, ++version, changedRoleByRoleType);
+                this.recordById[identity] = new WorkspaceRecord(this.Database, identity, @class, ++version, changedRoleByRoleType);
             }
             else
             {
-                this.objectById[identity] = new WorkspaceRecord(originalWorkspaceObject, changedRoleByRoleType);
+                this.recordById[identity] = new WorkspaceRecord(originalWorkspaceObject, changedRoleByRoleType);
             }
         }
     }

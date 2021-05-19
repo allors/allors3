@@ -15,6 +15,7 @@ namespace Allors.Workspace.Adapters.Remote
     using Allors.Protocol.Json.Api.Sync;
     using Data;
     using Meta;
+    using Numbers;
     using Protocol.Json;
     using InvokeOptions = InvokeOptions;
 
@@ -38,12 +39,13 @@ namespace Allors.Workspace.Adapters.Remote
             this.Workspace = workspace;
             this.Database = this.Workspace.Database;
             this.Lifecycle = sessionLifecycle;
+            this.Numbers = this.Workspace.Numbers;
 
             this.strategyByWorkspaceId = new Dictionary<long, Strategy>();
             this.strategiesByClass = new Dictionary<IClass, Strategy[]>();
             this.existingDatabaseStrategies = new List<Strategy>();
 
-            this.SessionState = new SessionOriginState();
+            this.SessionOriginState = new SessionOriginState(this.Numbers);
             this.Lifecycle.OnInit(this);
         }
 
@@ -56,7 +58,9 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal bool HasDatabaseChanges => this.newDatabaseStrategies?.Count > 0 || this.existingDatabaseStrategies.Any(v => v.HasDatabaseChanges);
 
-        internal SessionOriginState SessionState { get; }
+        internal INumbers Numbers { get; }
+
+        internal SessionOriginState SessionOriginState { get; }
 
         public async Task<IInvokeResult> Invoke(Method method, InvokeOptions options = null) => await this.Invoke(new[] { method }, options);
 
@@ -251,7 +255,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public IChangeSet Checkpoint()
         {
-            var changeSet = new ChangeSet(this, this.created, this.instantiated, this.SessionState.Checkpoint());
+            var changeSet = new ChangeSet(this, this.created, this.instantiated);
 
             if (this.changedWorkspaceStates != null)
             {
@@ -295,7 +299,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal object GetRole(Strategy association, IRoleType roleType)
         {
-            this.SessionState.GetRole(association, roleType, out var role);
+            var role = this.SessionOriginState.Get(association.Id, roleType);
             if (roleType.ObjectType.IsUnit)
             {
                 return role;

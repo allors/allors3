@@ -10,349 +10,168 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
+    using Numbers;
 
     public class SessionOriginState
     {
-        private readonly IDictionary<IRoleType, IDictionary<Strategy, object>> roleByAssociationByRoleType;
-        private readonly IDictionary<IAssociationType, IDictionary<Strategy, object>> associationByRoleByAssociationType;
+        private readonly INumbers numbers;
+        private readonly PropertyByObjectByPropertyType propertyByObjectByPropertyType;
 
-        private IDictionary<IRoleType, IDictionary<Strategy, object>> changedRoleByAssociationByRoleType;
-        private IDictionary<IAssociationType, IDictionary<Strategy, object>> changedAssociationByRoleByAssociationType;
-
-        public SessionOriginState()
+        internal SessionOriginState(INumbers numbers)
         {
-            this.roleByAssociationByRoleType = new Dictionary<IRoleType, IDictionary<Strategy, object>>();
-            this.associationByRoleByAssociationType = new Dictionary<IAssociationType, IDictionary<Strategy, object>>();
-
-            this.changedRoleByAssociationByRoleType = new Dictionary<IRoleType, IDictionary<Strategy, object>>();
-            this.changedAssociationByRoleByAssociationType = new Dictionary<IAssociationType, IDictionary<Strategy, object>>();
+            this.numbers = numbers;
+            this.propertyByObjectByPropertyType = new PropertyByObjectByPropertyType(numbers);
         }
 
-        public SessionStateChangeSet Checkpoint()
+        internal void Checkpoint(ChangeSet changeSet) => changeSet.AddSessionStateChanges(this.propertyByObjectByPropertyType.Checkpoint());
+
+        internal object Get(long @object, IPropertyType propertyType) => this.propertyByObjectByPropertyType.Get(@object, propertyType);
+
+        internal void SetUnitRole(long association, IRoleType roleType, object role) => this.propertyByObjectByPropertyType.Set(association, roleType, role);
+
+        internal void SetCompositeRole(long association, IRoleType roleType, long? newRole)
         {
-            foreach (var roleType in this.changedRoleByAssociationByRoleType.Keys.ToArray())
-            {
-                var changedRoleByAssociation = this.changedRoleByAssociationByRoleType[roleType];
-                var roleByAssociation = this.RoleByAssociation(roleType);
-
-                foreach (var association in changedRoleByAssociation.Keys.ToArray())
-                {
-                    var role = changedRoleByAssociation[association];
-                    _ = roleByAssociation.TryGetValue(association, out var originalRole);
-
-                    var areEqual = ReferenceEquals(originalRole, role) ||
-                                   (roleType.IsOne && Equals(originalRole, role)) ||
-                                   (roleType.IsMany && ((IStructuralEquatable)originalRole)?.Equals((IStructuralEquatable)role) == true);
-
-                    if (areEqual)
-                    {
-                        _ = changedRoleByAssociation.Remove(association);
-                        continue;
-                    }
-
-                    roleByAssociation[association] = role;
-                }
-
-                if (roleByAssociation.Count == 0)
-                {
-                    _ = this.changedRoleByAssociationByRoleType.Remove(roleType);
-                }
-            }
-
-            foreach (var associationType in this.changedAssociationByRoleByAssociationType.Keys.ToArray())
-            {
-                var changedAssociationByRole = this.changedAssociationByRoleByAssociationType[associationType];
-                var associationByRole = this.AssociationByRole(associationType);
-
-                foreach (var role in changedAssociationByRole.Keys.ToArray())
-                {
-                    var changedAssociation = changedAssociationByRole[role];
-                    _ = associationByRole.TryGetValue(role, out var originalRole);
-
-                    var areEqual = ReferenceEquals(originalRole, changedAssociation) ||
-                                   (associationType.IsOne && Equals(originalRole, changedAssociation)) ||
-                                   (associationType.IsMany && ((IStructuralEquatable)originalRole)?.Equals((IStructuralEquatable)changedAssociation) == true);
-
-                    if (areEqual)
-                    {
-                        _ = changedAssociationByRole.Remove(role);
-                        continue;
-                    }
-
-                    associationByRole[role] = changedAssociation;
-                }
-
-                if (associationByRole.Count == 0)
-                {
-                    _ = this.changedAssociationByRoleByAssociationType.Remove(associationType);
-                }
-            }
-
-            var changeSet = new SessionStateChangeSet(this.changedRoleByAssociationByRoleType, this.changedAssociationByRoleByAssociationType);
-
-            this.changedRoleByAssociationByRoleType = new Dictionary<IRoleType, IDictionary<Strategy, object>>();
-            this.changedAssociationByRoleByAssociationType = new Dictionary<IAssociationType, IDictionary<Strategy, object>>();
-
-            return changeSet;
-        }
-
-        public void GetRole(Strategy association, IRoleType roleType, out object role)
-        {
-            if (this.changedRoleByAssociationByRoleType.TryGetValue(roleType, out var changedRoleByAssociation) &&
-                changedRoleByAssociation.TryGetValue(association, out role))
-            {
-                return;
-            }
-
-            _ = this.RoleByAssociation(roleType).TryGetValue(association, out role);
-        }
-
-        public void SetUnitRole(Strategy association, IRoleType roleType, object role)
-        {
-            if (role == null)
-            {
-                this.RemoveRole(association, roleType);
-                return;
-            }
-
-            var unitRole = roleType.NormalizeUnit(role);
-            this.ChangedRoleByAssociation(roleType)[association] = unitRole;
-        }
-
-        public void SetCompositeRole(Strategy association, IRoleType roleType, object role)
-        {
-            if (role == null)
+            if (newRole == null)
             {
                 this.RemoveRole(association, roleType);
                 return;
             }
 
             var associationType = roleType.AssociationType;
-            this.GetRole(association, roleType, out var previousRole);
-            var roleIdentity = (Strategy)role;
-            this.GetAssociation(roleIdentity, associationType, out var previousAssociation);
-
-            // Role
-            var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
-            changedRoleByAssociation[association] = roleIdentity;
 
             // Association
-            var changedAssociationByRole = this.ChangedAssociationByRole(associationType);
+            var previousRole = (long?)this.propertyByObjectByPropertyType.Get(association, roleType);
+            if (previousRole.HasValue)
+            {
+                this.propertyByObjectByPropertyType.Set(previousRole.Value, associationType, null);
+            }
+
             if (associationType.IsOne)
             {
-                // One to One
-                var previousAssociationObject = (Strategy)previousAssociation;
-                if (previousAssociationObject != null)
+                // OneToOne
+                var previousAssociation = (long?)this.propertyByObjectByPropertyType.Get(newRole.Value, associationType);
+                if (previousAssociation.HasValue)
                 {
-                    changedRoleByAssociation[previousAssociationObject] = null;
+                    this.propertyByObjectByPropertyType.Set(previousAssociation.Value, roleType, null);
                 }
-
-                if (previousRole != null)
-                {
-                    var previousRoleObject = (Strategy)previousRole;
-                    changedAssociationByRole[previousRoleObject] = null;
-                }
-
-                changedAssociationByRole[roleIdentity] = association;
             }
-            else
-            {
-                changedAssociationByRole[roleIdentity] = NullableSortableArraySet.Remove(previousAssociation, roleIdentity);
-            }
+
+            // Role
+            this.propertyByObjectByPropertyType.Set(association, roleType, newRole);
         }
 
-        public void SetCompositesRole(Strategy association, IRoleType roleType, object role)
+        internal void SetCompositesRole(long association, IRoleType roleType, object newRole)
         {
-            if (role == null)
+            if (newRole == null)
             {
                 this.RemoveRole(association, roleType);
                 return;
             }
 
-            this.GetRole(association, roleType, out var previousRole);
-            var compositesRole = (Strategy[])role;
-            var previousRoles = (Strategy[])previousRole ?? Array.Empty<Strategy>();
+            var previousRole = (long[])this.Get(association, roleType);
 
             // Use Diff (Add/Remove)
-            var addedRoles = compositesRole.Except(previousRoles);
-            var removedRoles = previousRoles.Except(compositesRole);
+            var addedRoles = this.numbers.Except(newRole, previousRole);
+            var removedRoles = this.numbers.Except(previousRole, newRole);
 
-            foreach (var addedRole in addedRoles)
+            foreach (var addedRole in this.numbers.Enumerate(addedRoles))
             {
                 this.AddRole(association, roleType, addedRole);
             }
 
-            foreach (var removeRole in removedRoles)
+            foreach (var removedRole in this.numbers.Enumerate(removedRoles))
             {
-                this.RemoveRole(association, roleType, removeRole);
+                this.RemoveRole(association, roleType, removedRole);
             }
         }
 
-        public void AddRole(Strategy association, IRoleType roleType, Strategy role)
+        internal void AddRole(long association, IRoleType roleType, long roleToAdd)
         {
             var associationType = roleType.AssociationType;
-            this.GetAssociation(role, associationType, out var previousAssociation);
+            var previousRole = this.propertyByObjectByPropertyType.Get(association, roleType);
 
-            // Role
-            var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
-            this.GetRole(association, roleType, out var previousRole);
-            var roleArray = (Strategy[])previousRole;
-            roleArray = NullableSortableArraySet.Add(roleArray, role);
-            changedRoleByAssociation[association] = roleArray;
-
-            // Association
-            var changedAssociationByRole = this.ChangedAssociationByRole(associationType);
-            if (associationType.IsOne)
-            {
-                // One to Many
-                var previousAssociationObject = (Strategy)previousAssociation;
-                if (previousAssociationObject != null)
-                {
-                    this.GetRole(previousAssociationObject, roleType, out var previousAssociationRole);
-                    changedRoleByAssociation[previousAssociationObject] = NullableSortableArraySet.Remove(previousAssociationRole, role);
-                }
-
-                changedAssociationByRole[role] = association;
-            }
-            else
-            {
-                // Many to Many
-                changedAssociationByRole[role] = NullableSortableArraySet.Add(previousAssociation, association);
-            }
-        }
-
-        public void RemoveRole(Strategy association, IRoleType roleType, Strategy role)
-        {
-            var associationType = roleType.AssociationType;
-            this.GetAssociation(role, associationType, out var previousAssociation);
-
-            this.GetRole(association, roleType, out var previousRole);
-            if (previousRole != null)
-            {
-                // Role
-                var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
-                changedRoleByAssociation[association] = NullableSortableArraySet.Remove(previousRole, role);
-
-                // Association
-                var changedAssociationByRole = this.ChangedAssociationByRole(associationType);
-                if (associationType.IsOne)
-                {
-                    // One to Many
-                    changedAssociationByRole[role] = null;
-                }
-                else
-                {
-                    // Many to Many
-                    changedAssociationByRole[role] = NullableSortableArraySet.Add(previousAssociation, association);
-                }
-            }
-        }
-
-        public void RemoveRole(Strategy association, IRoleType roleType)
-        {
-            if (roleType.ObjectType.IsUnit)
-            {
-                // Role
-                this.ChangedRoleByAssociation(roleType)[association] = null;
-            }
-            else
-            {
-                var associationType = roleType.AssociationType;
-                this.GetRole(association, roleType, out var previousRole);
-
-                if (roleType.IsOne)
-                {
-                    // Role
-                    var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
-                    changedRoleByAssociation[association] = null;
-
-                    // Association
-                    var changedAssociationByRole = this.ChangedAssociationByRole(associationType);
-                    if (associationType.IsOne)
-                    {
-                        // One to One
-                        if (previousRole != null)
-                        {
-                            var previousRoleObject = (Strategy)previousRole;
-                            changedAssociationByRole[previousRoleObject] = null;
-                        }
-                    }
-                }
-                else
-                {
-
-                    var previousRoles = (Strategy[])previousRole;
-                    if (previousRoles != null)
-                    {
-                        // Use Diff (Remove)
-                        foreach (var removeRole in previousRoles)
-                        {
-                            this.RemoveRole(association, roleType, removeRole);
-                        }
-                    }
-                }
-            }
-        }
-
-        public void GetAssociation(Strategy role, IAssociationType associationType, out object association)
-        {
-            if (this.changedAssociationByRoleByAssociationType.TryGetValue(associationType, out var changedAssociationByRole) &&
-                changedAssociationByRole.TryGetValue(role, out association))
+            if (this.numbers.Contains(previousRole, roleToAdd))
             {
                 return;
             }
 
-            _ = this.AssociationByRole(associationType).TryGetValue(role, out association);
-        }
+            // Role
+            this.propertyByObjectByPropertyType.Set(association, roleType, this.numbers.Add(previousRole, roleToAdd));
 
-        private IDictionary<Strategy, object> AssociationByRole(IAssociationType associationType)
-        {
-            if (!this.associationByRoleByAssociationType.TryGetValue(associationType, out var associationByRole))
+            // Association
+            if (associationType.IsOne)
             {
-                associationByRole = new Dictionary<Strategy, object>();
-                this.associationByRoleByAssociationType[associationType] = associationByRole;
+                var previousRoleAssociations = this.propertyByObjectByPropertyType.Get((long)previousRole, associationType);
+                this.propertyByObjectByPropertyType.Set((long)previousRole, associationType, this.numbers.Remove(previousRoleAssociations, association));
             }
 
-            return associationByRole;
+            var roleAssociations = this.propertyByObjectByPropertyType.Get((long)roleToAdd, associationType);
+            this.propertyByObjectByPropertyType.Set(roleToAdd, associationType, this.numbers.Add(roleAssociations, association));
         }
 
-        private IDictionary<Strategy, object> RoleByAssociation(IRoleType roleType)
+        private void RemoveRole(long association, IRoleType roleType, long roleToRemove)
         {
-            if (!this.roleByAssociationByRoleType.TryGetValue(roleType, out var roleByAssociation))
+            var associationType = roleType.AssociationType;
+
+            var previousRole = this.propertyByObjectByPropertyType.Get(association, roleType);
+            if (associationType.IsOne)
             {
-                roleByAssociation = new Dictionary<Strategy, object>();
-                this.roleByAssociationByRoleType[roleType] = roleByAssociation;
+                if ((long?)previousRole == roleToRemove)
+                {
+                    return;
+                }
+
+                // Role
+                this.propertyByObjectByPropertyType.Set(association, roleType, null);
+
+                // Association
+                var removedRole = this.numbers.Remove(previousRole, roleToRemove);
+                this.propertyByObjectByPropertyType.Set(roleToRemove, associationType, removedRole);
             }
-
-            return roleByAssociation;
-        }
-
-        private IDictionary<Strategy, object> ChangedAssociationByRole(IAssociationType associationType)
-        {
-            if (!this.changedAssociationByRoleByAssociationType.TryGetValue(associationType, out var changedAssociationByRole))
+            else
             {
-                changedAssociationByRole = new Dictionary<Strategy, object>();
-                this.changedAssociationByRoleByAssociationType[associationType] = changedAssociationByRole;
-            }
+                if (!this.numbers.Contains(previousRole, roleToRemove))
+                {
+                    return;
+                }
 
-            return changedAssociationByRole;
+                // Role
+                var removedRole = this.numbers.Remove(previousRole, roleToRemove);
+                this.propertyByObjectByPropertyType.Set(association, roleType, removedRole);
+
+                // Association
+                var previousAssociations = this.propertyByObjectByPropertyType.Get(roleToRemove, associationType);
+                var removedAssociations = this.numbers.Remove(previousAssociations, association);
+                this.propertyByObjectByPropertyType.Set(roleToRemove, associationType, removedAssociations);
+            }
         }
 
-        private IDictionary<Strategy, object> ChangedRoleByAssociation(IRoleType roleType)
+        private void RemoveRole(long association, IRoleType roleType)
         {
-            if (!this.changedRoleByAssociationByRoleType.TryGetValue(roleType, out var changedRoleByAssociation))
+            if (roleType.ObjectType.IsUnit)
             {
-                changedRoleByAssociation = new Dictionary<Strategy, object>();
-                this.changedRoleByAssociationByRoleType[roleType] = changedRoleByAssociation;
+                // Role
+                this.SetUnitRole(association, roleType, null);
             }
+            else
+            {
+                var previousRole = this.Get(association, roleType);
 
-            return changedRoleByAssociation;
-        }
-
-        public bool IsAssociationForRole(Strategy association, IRoleType roleType, Strategy forRole)
-        {
-            this.GetRole(association, roleType, out var role);
-            return role?.Equals(forRole) == true;
+                if (roleType.IsOne)
+                {
+                    if (previousRole != null)
+                    {
+                        this.RemoveRole(association, roleType, (long)previousRole);
+                    }
+                }
+                else
+                {
+                    foreach (var removeRole in this.numbers.Enumerate(previousRole))
+                    {
+                        this.RemoveRole(association, roleType, removeRole);
+                    }
+                }
+            }
         }
     }
 }
