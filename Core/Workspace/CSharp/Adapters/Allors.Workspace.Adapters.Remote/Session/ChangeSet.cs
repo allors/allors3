@@ -79,6 +79,65 @@ namespace Allors.Workspace.Adapters.Remote
             _ = roles.Add(role);
         }
 
+        internal void Diff(Strategy association, IRelationType relationType, object current, object previous)
+        {
+            var roleType = relationType.RoleType;
+
+            if (roleType.ObjectType.IsUnit)
+            {
+                if (!Equals(current, previous))
+                {
+                    this.AddAssociation(relationType, association);
+                }
+            }
+            else
+            {
+                if (roleType.IsOne)
+                {
+                    if (Equals(current, previous))
+                    {
+                        return;
+                    }
+
+                    if (previous != null)
+                    {
+                        this.AddRole(relationType, this.Session.GetStrategy((long)previous));
+                    }
+
+                    if (current != null)
+                    {
+                        this.AddRole(relationType, this.Session.GetStrategy((long)current));
+                    }
+
+                    this.AddAssociation(relationType, association);
+                }
+                else
+                {
+                    var numbers = this.Session.Numbers;
+                    var hasChange = false;
+
+                    var addedRoles = numbers.Except(current, previous);
+                    foreach (var v in numbers.Enumerate(addedRoles))
+                    {
+                        this.AddRole(relationType, this.Session.GetStrategy(v));
+                        hasChange = true;
+                    }
+
+                    var removedRoles = numbers.Except(previous, current);
+                    foreach (var v in numbers.Enumerate(removedRoles))
+                    {
+                        this.AddRole(relationType, this.Session.GetStrategy(v));
+                        hasChange = true;
+                    }
+
+                    if (hasChange)
+                    {
+                        this.AddAssociation(relationType, association);
+                    }
+                }
+            }
+        }
+
         internal void DiffCookedWithCooked(Strategy association, IRelationType relationType, object current, object previous)
         {
             var roleType = relationType.RoleType;

@@ -22,14 +22,11 @@ namespace Allors.Workspace.Adapters.Remote
     public class Session : ISession
     {
         private readonly Dictionary<long, Strategy> strategyByWorkspaceId;
-        private readonly Dictionary<IClass, Strategy[]> strategiesByClass;
+        private readonly Dictionary<IClass, ISet<Strategy>> strategiesByClass;
 
         private readonly IList<Strategy> existingDatabaseStrategies;
         private ISet<Strategy> newDatabaseStrategies;
-        private ISet<Strategy> workspaceStrategies;
-
         private ISet<DatabaseOriginState> changedDatabaseStates;
-        private ISet<WorkspaceOriginState> changedWorkspaceStates;
 
         private ISet<IStrategy> created;
         private ISet<IStrategy> instantiated;
@@ -42,10 +39,14 @@ namespace Allors.Workspace.Adapters.Remote
             this.Numbers = this.Workspace.Numbers;
 
             this.strategyByWorkspaceId = new Dictionary<long, Strategy>();
-            this.strategiesByClass = new Dictionary<IClass, Strategy[]>();
+            this.strategiesByClass = new Dictionary<IClass, ISet<Strategy>>();
             this.existingDatabaseStrategies = new List<Strategy>();
 
             this.SessionOriginState = new SessionOriginState(this.Numbers);
+
+            this.ChangeSetTracker = new ChangeSetTracker();
+            this.PushToWorkspaceTracker = new PushToWorkspaceTracker();
+
             this.Lifecycle.OnInit(this);
         }
 
@@ -53,6 +54,10 @@ namespace Allors.Workspace.Adapters.Remote
 
         IWorkspace ISession.Workspace => this.Workspace;
         internal Workspace Workspace { get; }
+
+        internal ChangeSetTracker ChangeSetTracker { get; }
+
+        internal PushToWorkspaceTracker PushToWorkspaceTracker { get; }
 
         internal Database Database { get; }
 
@@ -101,12 +106,12 @@ namespace Allors.Workspace.Adapters.Remote
 
             if (@class.Origin == Origin.Workspace)
             {
-                this.workspaceStrategies ??= new HashSet<Strategy>();
-                _ = this.workspaceStrategies.Add(strategy);
-                // TODO: move to Push
-                this.Workspace.RegisterWorkspaceObject(@class, workspaceId);
+                this.PushToWorkspaceTracker.OnCreated(strategy);
             }
 
+            this.ChangeSetTracker.OnCreated(strategy);
+
+            // TODO: Remove
             this.created ??= new HashSet<IStrategy>();
             _ = this.created.Add(strategy);
 
@@ -238,32 +243,24 @@ namespace Allors.Workspace.Adapters.Remote
                 };
 
                 await this.Sync(syncRequests);
-
-                if (this.workspaceStrategies != null)
-                {
-                    foreach (var workspaceStrategy in this.workspaceStrategies)
-                    {
-                        workspaceStrategy.WorkspacePush();
-                    }
-                }
-
-                this.Reset();
+              
             }
 
-            return new PushResult(this, pushResponse);
+            var result = new PushResult(this, pushResponse);
+
+            if (!result.HasErrors)
+            {
+                this.PushToWorkspace(result);
+            }
+
+            this.Reset();
+
+            return result;
         }
 
         public IChangeSet Checkpoint()
         {
             var changeSet = new ChangeSet(this, this.created, this.instantiated);
-
-            if (this.changedWorkspaceStates != null)
-            {
-                foreach (var changed in this.changedWorkspaceStates)
-                {
-                    changed.Checkpoint(changeSet);
-                }
-            }
 
             if (this.changedDatabaseStates != null)
             {
@@ -273,6 +270,22 @@ namespace Allors.Workspace.Adapters.Remote
                 }
             }
 
+            if (this.ChangeSetTracker.WorkspaceOriginStates != null)
+            {
+                foreach (var workspaceOriginState in this.ChangeSetTracker.WorkspaceOriginStates)
+                {
+                    workspaceOriginState.Checkpoint(changeSet);
+                }
+            }
+
+            this.SessionOriginState.Checkpoint(changeSet);
+
+            this.ChangeSetTracker.Created = null;
+            this.ChangeSetTracker.Instantiated = null;
+            this.ChangeSetTracker.DatabaseOriginStates = null;
+            this.ChangeSetTracker.WorkspaceOriginStates = null;
+
+            // TODO: Remove
             this.created = null;
             this.instantiated = null;
 
@@ -312,6 +325,24 @@ namespace Allors.Workspace.Adapters.Remote
 
             var ids = (IEnumerable<long>)role;
             return ids?.Select(this.Get<IObject>).ToArray() ?? this.Workspace.ObjectFactory.EmptyArray(roleType.ObjectType);
+        }
+
+        internal IEnumerable<T> GetAssociation<T>(long role, IAssociationType associationType) where T : IObject
+        {
+            var roleType = associationType.RoleType;
+
+            foreach (var association in this.Get(associationType.ObjectType))
+            {
+                if (!association.CanRead(roleType))
+                {
+                    continue;
+                }
+
+                if (association.IsAssociationForRole(roleType, role))
+                {
+                    yield return (T)association.Object;
+                }
+            }
         }
 
         internal IEnumerable<T> GetAssociation<T>(Strategy role, IAssociationType associationType) where T : IObject
@@ -374,12 +405,6 @@ namespace Allors.Workspace.Adapters.Remote
             _ = this.changedDatabaseStates.Add(state);
         }
 
-        internal void OnChange(WorkspaceOriginState state)
-        {
-            this.changedWorkspaceStates ??= new HashSet<WorkspaceOriginState>();
-            _ = this.changedWorkspaceStates.Add(state);
-        }
-
         internal Strategy InstantiateDatabaseObject(long identity)
         {
             var databaseObject = this.Database.Get(identity);
@@ -399,10 +424,9 @@ namespace Allors.Workspace.Adapters.Remote
             }
 
             var strategy = new Strategy(this, @class, identity);
-            this.workspaceStrategies ??= new HashSet<Strategy>();
-            _ = this.workspaceStrategies.Add(strategy);
             this.AddStrategy(strategy);
-            this.OnInstantiate(strategy);
+
+            this.ChangeSetTracker.OnInstantiated(strategy);
 
             return strategy;
         }
@@ -463,14 +487,12 @@ namespace Allors.Workspace.Adapters.Remote
             var @class = strategy.Class;
             if (!this.strategiesByClass.TryGetValue(@class, out var strategies))
             {
-                strategies = new[] { strategy };
+                this.strategiesByClass[@class] = new HashSet<Strategy> { strategy };
             }
             else
             {
-                strategies = NullableSortableArraySet.Add(strategies, strategy);
+                _ = strategies.Add(strategy);
             }
-
-            this.strategiesByClass[@class] = strategies;
         }
 
         private void RemoveStrategy(Strategy strategy)
@@ -478,11 +500,41 @@ namespace Allors.Workspace.Adapters.Remote
             _ = this.strategyByWorkspaceId.Remove(strategy.Id);
 
             var @class = strategy.Class;
-            if (this.strategiesByClass.TryGetValue(@class, out var strategies))
+            if (!this.strategiesByClass.TryGetValue(@class, out var strategies))
             {
-                strategies = NullableSortableArraySet.Remove(strategies, strategy);
-                this.strategiesByClass[@class] = strategies;
+                return;
             }
+
+            _ = strategies.Remove(strategy);
+        }
+        
+        private IPushResult PushToWorkspace(IPushResult result)
+        {
+            if (this.PushToWorkspaceTracker.Created != null)
+            {
+                foreach (var strategy in this.PushToWorkspaceTracker.Created)
+                {
+                    strategy.WorkspaceOriginState.Push();
+                }
+            }
+
+            if (this.PushToWorkspaceTracker.Changed != null)
+            {
+                foreach (var state in this.PushToWorkspaceTracker.Changed)
+                {
+                    if (this.PushToWorkspaceTracker.Created?.Contains(state.Strategy) == true)
+                    {
+                        continue;
+                    }
+
+                    state.Push();
+                }
+            }
+
+            this.PushToWorkspaceTracker.Created = null;
+            this.PushToWorkspaceTracker.Changed = null;
+
+            return result;
         }
     }
 }

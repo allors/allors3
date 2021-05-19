@@ -12,8 +12,4 @@
     <ProjectReference Include="..\..\..\..\..\System\Workspace\CSharp\Allors.Workspace.Protocol.Json\Allors.Workspace.Protocol.Json.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Session\Trackers\" />
-  </ItemGroup>
-
 </Project>

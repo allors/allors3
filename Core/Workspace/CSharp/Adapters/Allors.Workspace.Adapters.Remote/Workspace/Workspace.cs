@@ -36,6 +36,8 @@ namespace Allors.Workspace.Adapters.Remote
 
         public string Name { get; }
 
+        public long UserId { get; }
+
         public IMetaPopulation MetaPopulation { get; }
 
         public IWorkspaceLifecycle Lifecycle { get; }
@@ -45,46 +47,40 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal INumbers Numbers { get; }
 
-        public ISession CreateSession() => new Session(this, this.Lifecycle.CreateSessionContext());
-
-        public Database Database { get; }
+        internal Database Database { get; }
 
         internal Dictionary<long, IClass> WorkspaceClassByWorkspaceId { get; }
 
         internal Dictionary<IClass, long[]> WorkspaceIdsByWorkspaceClass { get; }
 
-        internal WorkspaceRecord Get(long identity)
+        public ISession CreateSession() => new Session(this, this.Lifecycle.CreateSessionContext());
+
+        internal WorkspaceRecord GetRecord(long id)
         {
-            _ = this.recordById.TryGetValue(identity, out var workspaceObject);
+            _ = this.recordById.TryGetValue(id, out var workspaceObject);
             return workspaceObject;
         }
 
-        internal void RegisterWorkspaceObject(IClass @class, long workspaceId)
+        internal void Push(long id, IClass @class, long version, Dictionary<IRelationType, object> changedRoleByRoleType)
         {
-            this.WorkspaceClassByWorkspaceId.Add(workspaceId, @class);
-
-            if (!this.WorkspaceIdsByWorkspaceClass.TryGetValue(@class, out var ids))
+            if (!this.WorkspaceClassByWorkspaceId.ContainsKey(id))
             {
-                ids = new[] { workspaceId };
+                this.WorkspaceClassByWorkspaceId.Add(id, @class);
+
+                _ = this.WorkspaceIdsByWorkspaceClass.TryGetValue(@class, out var ids);
+                _ = this.Numbers.Add(ids, id);
+                this.WorkspaceIdsByWorkspaceClass[@class] = ids;
+            }
+
+            if (!this.recordById.TryGetValue(id, out var originalWorkspaceRecord))
+            {
+                this.recordById[id] = new WorkspaceRecord(this.Database, id, @class, ++version, changedRoleByRoleType);
             }
             else
             {
-                ids = NullableSortableArraySet.Add(ids, workspaceId);
-            }
-
-            this.WorkspaceIdsByWorkspaceClass[@class] = ids;
-        }
-
-        internal void Push(long identity, IClass @class, long version, Dictionary<IRelationType, object> changedRoleByRoleType)
-        {
-            if (!this.recordById.TryGetValue(identity, out var originalWorkspaceObject))
-            {
-                this.recordById[identity] = new WorkspaceRecord(this.Database, identity, @class, ++version, changedRoleByRoleType);
-            }
-            else
-            {
-                this.recordById[identity] = new WorkspaceRecord(originalWorkspaceObject, changedRoleByRoleType);
+                this.recordById[id] = new WorkspaceRecord(originalWorkspaceRecord, changedRoleByRoleType);
             }
         }
+
     }
 }

@@ -120,6 +120,8 @@ namespace Tests.Workspace
 
             var workspaceOrganisation2 = session2.Get(workspaceOrganisation1);
 
+            Assert.NotNull(workspaceOrganisation2.WorkspaceWorkspaceOwner);
+            
             workspaceOrganisation1.RemoveWorkspaceWorkspaceOwner();
 
             Assert.NotNull(workspaceOrganisation2.WorkspaceWorkspaceOwner);
