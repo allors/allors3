@@ -17,7 +17,7 @@ namespace Tests.Workspace.Remote
 
             var martien = this.Database.Get(3);
 
-            Assert.Equal(3, martien.Identity);
+            Assert.Equal(3, martien.Id);
             Assert.Equal(1003, martien.Version);
             Assert.Equal("Person", martien.Class.SingularName);
             Assert.Equal("Martien", martien.GetRole(this.M.Person.FirstName));

@@ -38,7 +38,7 @@ namespace Allors.Workspace.Adapters.Remote
         internal Strategy(Session session, DatabaseRecord databaseRecord)
         {
             this.Session = session;
-            this.Id = databaseRecord.Identity;
+            this.Id = databaseRecord.Id;
             this.Class = databaseRecord.Class;
 
             this.workspaceState = new WorkspaceOriginState(this);
@@ -292,7 +292,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal void DatabasePushResponse(DatabaseRecord databaseRecord)
         {
-            this.Id = databaseRecord.Identity;
+            this.Id = databaseRecord.Id;
             this.databaseState.PushResponse(databaseRecord);
         }
 

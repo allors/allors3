@@ -14,26 +14,24 @@ namespace Allors.Workspace.Adapters.Local
         private readonly long[] deniedPermissions;
         private readonly AccessControl[] accessControls;
 
-        internal DatabaseRecord(DatabaseAdapter databaseAdapter, long id, IClass @class)
+        private readonly Dictionary<IRoleType, object> roleByRoleType;
+
+        internal DatabaseRecord(long id, IClass @class)
         {
-            this.DatabaseAdapter = databaseAdapter;
             this.Id = id;
             this.Class = @class;
             this.Version = 0;
         }
 
-        internal DatabaseRecord(DatabaseAdapter databaseAdapter, long id, IClass @class, long version, Dictionary<IRoleType, object> roleByRoleType, long[] deniedPermissions, AccessControl[] accessControls)
+        internal DatabaseRecord(long id, IClass @class, long version, Dictionary<IRoleType, object> roleByRoleType, long[] deniedPermissions, AccessControl[] accessControls)
         {
-            this.DatabaseAdapter = databaseAdapter;
             this.Id = id;
             this.Class = @class;
             this.Version = version;
-            this.RoleByRoleType = roleByRoleType;
+            this.roleByRoleType = roleByRoleType;
             this.deniedPermissions = deniedPermissions;
             this.accessControls = accessControls;
         }
-
-        internal DatabaseAdapter DatabaseAdapter { get; }
 
         public IClass Class { get; }
 
@@ -41,16 +39,14 @@ namespace Allors.Workspace.Adapters.Local
 
         public long Version { get; }
 
-        public Dictionary<IRoleType, object> RoleByRoleType { get; }
-
         public object GetRole(IRoleType roleType)
         {
-            if (this.RoleByRoleType == null)
+            if (this.roleByRoleType == null)
             {
                 return null;
             }
 
-            _ = this.RoleByRoleType.TryGetValue(roleType, out var role);
+            _ = this.roleByRoleType.TryGetValue(roleType, out var role);
             return role;
         }
 

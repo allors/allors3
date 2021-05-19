@@ -9,40 +9,35 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Linq;
     using Meta;
 
-    internal class WorkspaceRecord
+    internal class WorkspaceRecord : IRecord
     {
+        private readonly Database database;
+        private readonly IClass @class;
+        private readonly long id;
         private readonly IReadOnlyDictionary<IRelationType, object> roleByRelationType;
 
-        internal WorkspaceRecord(Database database, long identity, IClass @class, long version, IReadOnlyDictionary<IRelationType, object> roleByRelationType)
+        internal WorkspaceRecord(Database database, long id, IClass @class, long version, IReadOnlyDictionary<IRelationType, object> roleByRelationType)
         {
-            this.Database = database;
-            this.Identity = identity;
-            this.Class = @class;
+            this.database = database;
+            this.id = id;
+            this.@class = @class;
             this.Version = version;
-
             this.roleByRelationType = this.Import(roleByRelationType).ToDictionary(v => v.Key, v => v.Value);
         }
 
         public WorkspaceRecord(WorkspaceRecord originalWorkspaceRecord, IReadOnlyDictionary<IRelationType, object> changedRoleByRoleType)
         {
-            this.Database = originalWorkspaceRecord.Database;
-            this.Identity = originalWorkspaceRecord.Identity;
-            this.Class = originalWorkspaceRecord.Class;
+            this.database = originalWorkspaceRecord.database;
+            this.id = originalWorkspaceRecord.id;
+            this.@class = originalWorkspaceRecord.@class;
             this.Version = ++originalWorkspaceRecord.Version;
-
 
             this.roleByRelationType = this.Import(changedRoleByRoleType, originalWorkspaceRecord.roleByRelationType).ToDictionary(v => v.Key, v => v.Value);
         }
 
-        internal Database Database { get; }
+        public long Version { get; private set; }
 
-        internal IClass Class { get; }
-
-        internal long Identity { get; }
-
-        internal long Version { get; private set; }
-
-        internal object GetRole(IRoleType roleType)
+        public object GetRole(IRoleType roleType)
         {
             object @object = null;
             _ = (this.roleByRelationType?.TryGetValue(roleType.RelationType, out @object));
@@ -51,7 +46,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         private IEnumerable<KeyValuePair<IRelationType, object>> Import(IReadOnlyDictionary<IRelationType, object> changedRoleByRoleType, IReadOnlyDictionary<IRelationType, object> originalRoleByRoleType = null)
         {
-            foreach (var roleType in this.Class.WorkspaceOriginRoleTypes)
+            foreach (var roleType in this.@class.WorkspaceOriginRoleTypes)
             {
                 var relationType = roleType.RelationType;
 

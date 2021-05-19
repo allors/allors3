@@ -12,7 +12,7 @@ namespace Allors.Workspace.Adapters.Remote
     using Allors.Protocol.Json.Api.Sync;
     using Collections;
 
-    internal class DatabaseRecord
+    internal class DatabaseRecord : IRecord
     {
         private Permission[] deniedPermissions;
         private AccessControl[] accessControls;
@@ -20,32 +20,32 @@ namespace Allors.Workspace.Adapters.Remote
         private Dictionary<IRelationType, object> roleByRelationType;
         private SyncResponseRole[] syncResponseRoles;
 
-        internal DatabaseRecord(Database database, long identity, IClass @class)
+        private readonly Database database;
+
+        internal DatabaseRecord(Database database, long id, IClass @class)
         {
-            this.Database = database;
-            this.Identity = identity;
+            this.database = database;
+            this.Id = id;
             this.Class = @class;
             this.Version = 0;
         }
 
         internal DatabaseRecord(Database database, ResponseContext ctx, SyncResponseObject syncResponseObject)
         {
-            this.Database = database;
-            this.Identity = syncResponseObject.Id;
-            this.Class = (IClass)this.Database.MetaPopulation.FindByTag(syncResponseObject.ObjectType);
+            this.database = database;
+            this.Id = syncResponseObject.Id;
+            this.Class = (IClass)this.database.MetaPopulation.FindByTag(syncResponseObject.ObjectType);
             this.Version = syncResponseObject.Version;
             this.syncResponseRoles = syncResponseObject.Roles;
             this.AccessControlIds = syncResponseObject.AccessControls != null ? (ISet<long>)new HashSet<long>(ctx.CheckForMissingAccessControls(syncResponseObject.AccessControls)) : EmptySet<long>.Instance;
             this.DeniedPermissionIds = syncResponseObject.DeniedPermissions != null ? (ISet<long>)new HashSet<long>(ctx.CheckForMissingPermissions(syncResponseObject.DeniedPermissions)): EmptySet<long>.Instance;
         }
 
-        internal Database Database { get; }
-
         internal IClass Class { get; }
 
-        internal long Identity { get; }
+        internal long Id { get; }
 
-        internal long Version { get; private set; }
+        public long Version { get; private set; }
 
         internal ISet<long> AccessControlIds { get; }
 
@@ -57,9 +57,9 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 if (this.syncResponseRoles != null)
                 {
-                    var meta = this.Database.MetaPopulation;
+                    var meta = this.database.MetaPopulation;
 
-                    var metaPopulation = this.Database.MetaPopulation;
+                    var metaPopulation = this.database.MetaPopulation;
                     this.roleByRelationType = this.syncResponseRoles.ToDictionary(
                         v => (IRelationType)meta.FindByTag(v.RoleType),
                         v =>
@@ -92,7 +92,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 null when this.AccessControlIds == null => Array.Empty<AccessControl>(),
                 null => this.AccessControlIds
-                    .Select(v => this.Database.AccessControlById[v])
+                    .Select(v => this.database.AccessControlById[v])
                     .ToArray(),
                 _ => this.accessControls
             };
@@ -102,7 +102,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 null when this.DeniedPermissionIds == null => Array.Empty<Permission>(),
                 null => this.DeniedPermissionIds
-                    .Select(v => this.Database.PermissionById[v])
+                    .Select(v => this.database.PermissionById[v])
                     .ToArray(),
                 _ => this.deniedPermissions
             };

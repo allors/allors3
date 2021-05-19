@@ -98,7 +98,7 @@ namespace Allors.Workspace.Adapters.Remote
             foreach (var syncResponseObject in syncResponse.Objects)
             {
                 var databaseObjects = new DatabaseRecord(this, ctx, syncResponseObject);
-                this.objectsById[databaseObjects.Identity] = databaseObjects;
+                this.objectsById[databaseObjects.Id] = databaseObjects;
             }
 
             if (ctx.MissingAccessControlIds.Count > 0 || ctx.MissingPermissionIds.Count > 0)
