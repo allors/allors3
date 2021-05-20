@@ -1,4 +1,4 @@
-// <copyright file="RemoteSessionChangeSet.cs" company="Allors bvba">
+// <copyright file="ChangeSet.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -6,13 +6,13 @@
 //   Defines the AllorsChangeSetMemory type.
 // </summary>
 
-namespace Allors.Workspace.Adapters.Remote
+namespace Allors.Workspace.Adapters
 {
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
 
-    internal sealed class ChangeSet : IChangeSet
+    public sealed class ChangeSet : IChangeSet
     {
         public ChangeSet(Session session, ISet<IStrategy> created, ISet<IStrategy> instantiated)
         {
@@ -35,7 +35,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public IDictionary<IAssociationType, ISet<IStrategy>> RolesByAssociationType { get; }
 
-        internal void AddSessionStateChanges(
+        public void AddSessionStateChanges(
             IDictionary<IPropertyType, IDictionary<long, object>> sessionStateChangeSet)
         {
             foreach (var kvp in sessionStateChangeSet)
@@ -55,7 +55,7 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        internal void AddAssociation(IRelationType relationType, Strategy association)
+        public void AddAssociation(IRelationType relationType, Strategy association)
         {
             var roleType = relationType.RoleType;
 
@@ -68,7 +68,7 @@ namespace Allors.Workspace.Adapters.Remote
             _ = associations.Add(association);
         }
 
-        internal void AddRole(IRelationType relationType, Strategy role)
+        public void AddRole(IRelationType relationType, Strategy role)
         {
             var associationType = relationType.AssociationType;
 
@@ -81,7 +81,7 @@ namespace Allors.Workspace.Adapters.Remote
             _ = roles.Add(role);
         }
 
-        internal void Diff(Strategy association, IRelationType relationType, object current, object previous)
+        public void Diff(Strategy association, IRelationType relationType, object current, object previous)
         {
             var roleType = relationType.RoleType;
 
@@ -140,7 +140,7 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        internal void DiffCookedWithCooked(Strategy association, IRelationType relationType, object current,
+        public void DiffCookedWithCooked(Strategy association, IRelationType relationType, object current,
             object previous)
         {
             var roleType = relationType.RoleType;
@@ -219,7 +219,7 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        internal void DiffCookedWithRaw(Strategy association, IRelationType relationType, object current,
+        public void DiffCookedWithRaw(Strategy association, IRelationType relationType, object current,
             object previous)
         {
             var roleType = relationType.RoleType;
@@ -319,7 +319,7 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        internal void DiffRawWithRaw(Strategy association, IRelationType relationType, object current, object previous)
+        public void DiffRawWithRaw(Strategy association, IRelationType relationType, object current, object previous)
         {
             var roleType = relationType.RoleType;
 

@@ -18,8 +18,8 @@ namespace Allors.Workspace.Adapters.Local
     {
         internal Push(Session session) : base(session)
         {
-            this.Workspace = session.Workspace;
-            this.Transaction = this.Workspace.Database.WrappedDatabase.CreateTransaction();
+            this.Workspace = (Workspace)session.Workspace;
+            this.Transaction = ((Database)this.Workspace.Database).WrappedDatabase.CreateTransaction();
 
             var sessionContext = this.Transaction.Context();
             var databaseContext = this.Transaction.Database.Context();
@@ -55,13 +55,13 @@ namespace Allors.Workspace.Adapters.Local
 
         internal void Execute(PushToDatabaseTracker tracker)
         {
-            var metaPopulation = this.Workspace.Database.WrappedDatabase.MetaPopulation;
+            var metaPopulation = ((Database)this.Workspace.Database).WrappedDatabase.MetaPopulation;
 
             this.ObjectByNewId = tracker.Created?.ToDictionary(
-                x => x.Id,
-                x =>
+                k => k.Id,
+                v =>
                 {
-                    var cls = (IClass)metaPopulation.FindByTag(x.Class.Tag);
+                    var cls = (IClass)metaPopulation.FindByTag(v.Class.Tag);
                     if (this.AllowedClasses?.Contains(cls) == true)
                     {
                         var newObject = this.Build(cls);
@@ -69,7 +69,7 @@ namespace Allors.Workspace.Adapters.Local
                         return newObject;
                     }
 
-                    this.AddAccessError(x);
+                    this.AddAccessError((Strategy)v);
 
                     return null;
                 });
@@ -95,7 +95,7 @@ namespace Allors.Workspace.Adapters.Local
                 {
                     foreach (var state in tracker.Changed)
                     {
-                        var strategy = state.Strategy;
+                        var strategy = (Strategy)state.Strategy;
                         var obj = this.Transaction.Instantiate(strategy.Id);
                         if (!strategy.DatabaseVersion.Equals(obj.Strategy.ObjectVersion))
                         {

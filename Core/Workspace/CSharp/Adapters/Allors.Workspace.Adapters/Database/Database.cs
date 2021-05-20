@@ -18,5 +18,9 @@ namespace Allors.Workspace.Adapters
         public IMetaPopulation MetaPopulation { get; }
 
         public WorkspaceIdGenerator WorkspaceIdGenerator { get; }
+
+        public abstract DatabaseRecord GetRecord(long identity);
+
+        public abstract long GetPermission(IClass @class, IOperandType operandType, Operations operation);
     }
 }

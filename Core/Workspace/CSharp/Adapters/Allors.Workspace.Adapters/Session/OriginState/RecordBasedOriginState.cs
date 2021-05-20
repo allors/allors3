@@ -3,20 +3,20 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Workspace.Adapters.Remote
+namespace Allors.Workspace.Adapters
 {
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
     using Numbers;
 
-    internal abstract class RecordBasedOriginState
+    public abstract class RecordBasedOriginState
     {
         protected RecordBasedOriginState(Strategy strategy) => this.Strategy = strategy;
 
-        internal Strategy Strategy { get; }
+        public Strategy Strategy { get; }
 
-        internal bool HasChanges => this.Record == null || this.ChangedRoleByRelationType?.Count > 0;
+        public bool HasChanges => this.Record == null || this.ChangedRoleByRelationType?.Count > 0;
 
         protected abstract IEnumerable<IRoleType> RoleTypes { get; }
 
@@ -24,11 +24,11 @@ namespace Allors.Workspace.Adapters.Remote
 
         protected IRecord PreviousRecord { get; set; }
 
-        protected internal Dictionary<IRelationType, object> ChangedRoleByRelationType { get; protected set; }
+        public Dictionary<IRelationType, object> ChangedRoleByRelationType { get; protected set; }
 
         private Dictionary<IRelationType, object> PreviousChangedRoleByRelationType { get; set; }
 
-        internal object GetRole(IRoleType roleType)
+        public object GetRole(IRoleType roleType)
         {
             if (this.ChangedRoleByRelationType != null &&
                 this.ChangedRoleByRelationType.TryGetValue(roleType.RelationType, out var role))
@@ -39,9 +39,9 @@ namespace Allors.Workspace.Adapters.Remote
             return this.Record?.GetRole(roleType);
         }
 
-        internal void SetUnitRole(IRoleType roleType, object role) => this.SetChangedRole(roleType, role);
+        public void SetUnitRole(IRoleType roleType, object role) => this.SetChangedRole(roleType, role);
 
-        internal void SetCompositeRole(IRoleType roleType, long? role)
+        public void SetCompositeRole(IRoleType roleType, long? role)
         {
             var previousRole = (long?)this.GetRole(roleType);
 
@@ -71,7 +71,7 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        internal void AddCompositeRole(IRoleType roleType, long roleToAdd)
+        public void AddCompositeRole(IRoleType roleType, long roleToAdd)
         {
             var previousRole = this.GetRole(roleType);
 
@@ -96,7 +96,7 @@ namespace Allors.Workspace.Adapters.Remote
             previousAssociationObject?.Strategy.Set(roleType, null);
         }
 
-        internal void RemoveCompositeRole(IRoleType roleType, long roleToRemove)
+        public void RemoveCompositeRole(IRoleType roleType, long roleToRemove)
         {
             var previousRole = this.GetRole(roleType);
 
@@ -110,7 +110,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.SetChangedRole(roleType, role);
         }
 
-        internal void SetCompositesRole(IRoleType roleType, object role)
+        public void SetCompositesRole(IRoleType roleType, object role)
         {
             var previousRole = this.GetRole(roleType);
 
@@ -132,7 +132,7 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        internal void Checkpoint(ChangeSet changeSet)
+        public void Checkpoint(ChangeSet changeSet)
         {
             // Same record
             if (this.PreviousRecord == null || this.Record == null ||
@@ -209,7 +209,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.PreviousChangedRoleByRelationType = this.ChangedRoleByRelationType;
         }
 
-        internal bool IsAssociationForRole(IRoleType roleType, long forRole)
+        public bool IsAssociationForRole(IRoleType roleType, long forRole)
         {
             if (roleType.ObjectType.IsUnit)
             {

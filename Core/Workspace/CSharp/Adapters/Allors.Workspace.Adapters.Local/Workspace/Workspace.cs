@@ -20,7 +20,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public long UserId { get; }
 
-        internal Database Database { get; }
+        public override Adapters.Database Database { get; }
 
         public override ISession CreateSession() => new Session(this, this.Lifecycle.CreateSessionContext());
     }

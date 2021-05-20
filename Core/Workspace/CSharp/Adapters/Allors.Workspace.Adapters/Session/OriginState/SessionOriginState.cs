@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Workspace.Adapters.Remote
+namespace Allors.Workspace.Adapters
 {
     using Meta;
     using Numbers;
@@ -13,22 +13,22 @@ namespace Allors.Workspace.Adapters.Remote
         private readonly INumbers numbers;
         private readonly PropertyByObjectByPropertyType propertyByObjectByPropertyType;
 
-        internal SessionOriginState(INumbers numbers)
+        public SessionOriginState(INumbers numbers)
         {
             this.numbers = numbers;
             this.propertyByObjectByPropertyType = new PropertyByObjectByPropertyType(numbers);
         }
 
-        internal void Checkpoint(ChangeSet changeSet) =>
+        public void Checkpoint(ChangeSet changeSet) =>
             changeSet.AddSessionStateChanges(this.propertyByObjectByPropertyType.Checkpoint());
 
-        internal object Get(long @object, IPropertyType propertyType) =>
+        public object Get(long @object, IPropertyType propertyType) =>
             this.propertyByObjectByPropertyType.Get(@object, propertyType);
 
-        internal void SetUnitRole(long association, IRoleType roleType, object role) =>
+        public void SetUnitRole(long association, IRoleType roleType, object role) =>
             this.propertyByObjectByPropertyType.Set(association, roleType, role);
 
-        internal void SetCompositeRole(long association, IRoleType roleType, long? newRole)
+        public void SetCompositeRole(long association, IRoleType roleType, long? newRole)
         {
             if (newRole == null)
             {
@@ -60,7 +60,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.propertyByObjectByPropertyType.Set(association, roleType, newRole);
         }
 
-        internal void SetCompositesRole(long association, IRoleType roleType, object newRole)
+        public void SetCompositesRole(long association, IRoleType roleType, object newRole)
         {
             if (newRole == null)
             {
@@ -85,7 +85,7 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        internal void AddRole(long association, IRoleType roleType, long roleToAdd)
+        public void AddRole(long association, IRoleType roleType, long roleToAdd)
         {
             var associationType = roleType.AssociationType;
             var previousRole = this.propertyByObjectByPropertyType.Get(association, roleType);

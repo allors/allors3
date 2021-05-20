@@ -3,14 +3,14 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Workspace.Adapters.Remote
+namespace Allors.Workspace.Adapters
 {
     using System.Collections.Generic;
     using Meta;
 
-    internal sealed class WorkspaceOriginState : RecordBasedOriginState
+    public sealed class WorkspaceOriginState : RecordBasedOriginState
     {
-        internal WorkspaceOriginState(Strategy strategy, WorkspaceRecord record) : base(strategy)
+        public WorkspaceOriginState(Strategy strategy, WorkspaceRecord record) : base(strategy)
         {
             this.WorkspaceRecord = record;
             this.PreviousRecord = this.WorkspaceRecord;
@@ -28,7 +28,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.Strategy.Session.PushToWorkspaceTracker.OnChanged(this);
         }
 
-        internal void Push()
+        public void Push()
         {
             if (this.HasChanges)
             {

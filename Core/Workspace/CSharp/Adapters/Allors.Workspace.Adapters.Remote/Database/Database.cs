@@ -85,7 +85,7 @@ namespace Allors.Workspace.Adapters.Remote
             return true;
         }
 
-        internal long GetPermission(IClass @class, IOperandType operandType, Operations operation)
+        public override long GetPermission(IClass @class, IOperandType operandType, Operations operation)
         {
             switch (operation)
             {
@@ -181,9 +181,9 @@ namespace Allors.Workspace.Adapters.Remote
                     .Select(v => v.Id).ToArray()
             };
 
-        internal DatabaseRecord GetRecord(long identity)
+        public override Adapters.DatabaseRecord GetRecord(long id)
         {
-            _ = this.recordsById.TryGetValue(identity, out var databaseObjects);
+            _ = this.recordsById.TryGetValue(id, out var databaseObjects);
             return databaseObjects;
         }
 

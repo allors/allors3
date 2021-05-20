@@ -17,7 +17,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.Lifecycle.OnInit(this);
         }
 
-        internal Database Database { get; }
+        public override Adapters.Database Database { get; }
 
         public override ISession CreateSession() => new Session(this, this.Lifecycle.CreateSessionContext());
     }

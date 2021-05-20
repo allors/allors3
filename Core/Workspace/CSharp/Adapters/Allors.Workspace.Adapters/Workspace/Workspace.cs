@@ -1,4 +1,4 @@
-// <copyright file="LocalWorkspace.cs" company="Allors bvba">
+// <copyright file="Workspace.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -30,7 +30,9 @@ namespace Allors.Workspace.Adapters
 
             this.Numbers = new ArrayNumbers();
         }
-        
+
+        public abstract Database Database { get; }
+
         public ReflectionObjectFactory ObjectFactory { get; }
 
         public INumbers Numbers { get; }

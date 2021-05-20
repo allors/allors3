@@ -18,7 +18,7 @@ namespace Allors.Workspace
 
         T Create<T>() where T : class, IObject;
 
-        T Create<T>(IClass @class) where T : IObject;
+        T Create<T>(IClass @class) where T : class, IObject;
 
         T Get<T>(IObject @object) where T : IObject;
 

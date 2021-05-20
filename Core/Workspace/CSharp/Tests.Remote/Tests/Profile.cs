@@ -27,7 +27,7 @@ namespace Tests.Workspace.Remote
 
         public Workspace Workspace { get; private set; }
 
-        public Database Database => this.Workspace.Database;
+        public Database Database => (Database)this.Workspace.Database;
 
         public M M => this.Workspace.Context().M;
 

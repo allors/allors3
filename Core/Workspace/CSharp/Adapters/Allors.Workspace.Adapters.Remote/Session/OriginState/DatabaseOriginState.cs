@@ -10,78 +10,24 @@ namespace Allors.Workspace.Adapters.Remote
     using Allors.Protocol.Json.Api.Push;
     using Meta;
 
-    internal sealed class DatabaseOriginState : RecordBasedOriginState
+    internal sealed class DatabaseOriginState : Adapters.DatabaseOriginState
     {
-        internal DatabaseOriginState(Strategy strategy, DatabaseRecord record) : base(strategy)
+        internal DatabaseOriginState(Strategy strategy, DatabaseRecord record) : base(strategy, record)
         {
-            this.DatabaseRecord = record;
-            this.PreviousRecord = this.DatabaseRecord;
-        }
-
-        public long Version => this.DatabaseRecord.Version;
-
-        private bool ExistDatabaseRecord => this.Record != null;
-
-        protected override IEnumerable<IRoleType> RoleTypes => this.Class.DatabaseOriginRoleTypes;
-
-        protected override IRecord Record => this.DatabaseRecord;
-
-        private DatabaseRecord DatabaseRecord { get; set; }
-
-        public bool CanRead(IRoleType roleType)
-        {
-            if (!this.ExistDatabaseRecord)
-            {
-                return true;
-            }
-
-            var permission =
-                this.Session.Workspace.Database.GetPermission(this.Class, roleType, Operations.Read);
-            return this.DatabaseRecord.IsPermitted(permission);
-        }
-
-        public bool CanWrite(IRoleType roleType)
-        {
-            if (!this.ExistDatabaseRecord)
-            {
-                return true;
-            }
-
-            var permission =
-                this.Session.Workspace.Database.GetPermission(this.Class, roleType, Operations.Write);
-            return this.DatabaseRecord.IsPermitted(permission);
-        }
-
-        public bool CanExecute(IMethodType methodType)
-        {
-            if (!this.ExistDatabaseRecord)
-            {
-                return true;
-            }
-
-            var permission =
-                this.Session.Workspace.Database.GetPermission(this.Class, methodType, Operations.Execute);
-            return this.DatabaseRecord.IsPermitted(permission);
-        }
-
-        internal void OnPulled() =>
-            // TODO: check for overwrites
-            this.DatabaseRecord = this.Session.Database.GetRecord(this.Id);
-
-        internal void Reset()
-        {
-            this.DatabaseRecord = this.Session.Database.GetRecord(this.Id);
-            this.ChangedRoleByRelationType = null;
         }
 
         internal PushRequestNewObject PushNew() => new PushRequestNewObject
         {
-            WorkspaceId = this.Id, ObjectType = this.Class.Tag, Roles = this.PushRoles()
+            WorkspaceId = this.Id,
+            ObjectType = this.Class.Tag,
+            Roles = this.PushRoles()
         };
 
         internal PushRequestObject PushExisting() => new PushRequestObject
         {
-            DatabaseId = this.Id, Version = this.Version, Roles = this.PushRoles()
+            DatabaseId = this.Id,
+            Version = this.Version,
+            Roles = this.PushRoles()
         };
 
         private PushRequestRole[] PushRoles()
@@ -95,7 +41,7 @@ namespace Allors.Workspace.Adapters.Remote
                     var relationType = keyValuePair.Key;
                     var roleValue = keyValuePair.Value;
 
-                    var pushRequestRole = new PushRequestRole {RelationType = relationType.Tag};
+                    var pushRequestRole = new PushRequestRole { RelationType = relationType.Tag };
 
                     if (relationType.RoleType.ObjectType.IsUnit)
                     {
@@ -137,14 +83,6 @@ namespace Allors.Workspace.Adapters.Remote
             }
 
             return null;
-        }
-
-        internal void PushResponse(DatabaseRecord newDatabaseRecord) => this.DatabaseRecord = newDatabaseRecord;
-
-        protected override void OnChange()
-        {
-            this.Session.ChangeSetTracker.OnChanged(this);
-            this.Session.PushToDatabaseTracker.OnChanged(this);
         }
     }
 }

@@ -79,13 +79,13 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        internal DatabaseRecord GetRecord(long id)
+        public override Adapters.DatabaseRecord GetRecord(long id)
         {
             _ = this.recordsById.TryGetValue(id, out var databaseObjects);
             return databaseObjects;
         }
 
-        internal long GetPermission(IClass @class, IOperandType operandType, Operations operation)
+        public override long GetPermission(IClass @class, IOperandType operandType, Operations operation)
         {
             var classId = this.WrappedDatabase.MetaPopulation.FindByTag(@class.Tag).Id;
             var operandId = this.WrappedDatabase.MetaPopulation.FindByTag(operandType.OperandTag).Id;
