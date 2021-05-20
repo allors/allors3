@@ -134,7 +134,7 @@ namespace Allors.Workspace.Adapters.Local
         {
             if (!this.accessControlById.TryGetValue(accessControl.Strategy.ObjectId, out var acessControl))
             {
-                acessControl = new Adapters.AccessControl(accessControl.Strategy.ObjectId);
+                acessControl = new Adapters.AccessControl();
                 this.accessControlById.Add(accessControl.Strategy.ObjectId, acessControl);
             }
 

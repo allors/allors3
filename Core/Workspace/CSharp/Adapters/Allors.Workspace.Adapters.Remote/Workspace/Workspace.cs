@@ -11,13 +11,15 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class Workspace : Adapters.Workspace
     {
-        internal Workspace(string name, IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, HttpClient httpClient) : base(name, metaPopulation, instance, state)
+        public Workspace(string name, IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, HttpClient httpClient) : base(name, metaPopulation, instance, state)
         {
-            this.Database = new Database(this.MetaPopulation, httpClient, new WorkspaceIdGenerator(), this.Numbers);
+            this.RemoteDatabase = new Database(this.MetaPopulation, httpClient, new WorkspaceIdGenerator(), this.Numbers);
             this.Lifecycle.OnInit(this);
         }
 
-        public override Adapters.Database Database { get; }
+        public override Adapters.Database Database => this.RemoteDatabase;
+
+        internal Database RemoteDatabase { get; }
 
         public override ISession CreateSession() => new Session(this, this.Lifecycle.CreateSessionContext());
     }

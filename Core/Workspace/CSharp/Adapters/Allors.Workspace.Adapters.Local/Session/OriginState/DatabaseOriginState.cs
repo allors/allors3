@@ -5,15 +5,10 @@
 
 namespace Allors.Workspace.Adapters.Local
 {
-    using System.Collections.Generic;
-    using Meta;
-
     internal sealed class DatabaseOriginState : Adapters.DatabaseOriginState
     {
-        internal DatabaseOriginState(Strategy strategy, DatabaseRecord record) : base(strategy, record)
-        {
-        }
+        internal DatabaseOriginState(Strategy strategy, DatabaseRecord record) : base(record) => this.Strategy = strategy;
 
-     
+        public override Adapters.Strategy Strategy { get; }
     }
 }

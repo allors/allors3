@@ -9,10 +9,6 @@ namespace Allors.Workspace.Adapters
 
     public class AccessControl
     {
-        public AccessControl(long id) => this.Id = id;
-
-        public long Id { get; }
-
         public long Version { get; set; }
 
         public ISet<long> PermissionIds { get; set; }

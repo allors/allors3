@@ -8,13 +8,13 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Protocol.Json.Api.Push;
-    using Meta;
 
     internal sealed class DatabaseOriginState : Adapters.DatabaseOriginState
     {
-        internal DatabaseOriginState(Strategy strategy, DatabaseRecord record) : base(strategy, record)
-        {
-        }
+        internal DatabaseOriginState(Strategy strategy, DatabaseRecord record) : base(record) => this.RemoteStrategy = strategy;
+
+        public override Adapters.Strategy Strategy => this.RemoteStrategy;
+        private Strategy RemoteStrategy { get; }
 
         internal PushRequestNewObject PushNew() => new PushRequestNewObject
         {
@@ -34,6 +34,8 @@ namespace Allors.Workspace.Adapters.Remote
         {
             if (this.ChangedRoleByRelationType?.Count > 0)
             {
+                var numbers = this.RemoteStrategy.Numbers;
+
                 var roles = new List<PushRequestRole>();
 
                 foreach (var keyValuePair in this.ChangedRoleByRelationType)
@@ -51,26 +53,25 @@ namespace Allors.Workspace.Adapters.Remote
                     {
                         if (relationType.RoleType.IsOne)
                         {
-                            pushRequestRole.SetCompositeRole = ((Strategy)roleValue)?.Id;
+                            pushRequestRole.SetCompositeRole = (long?)roleValue;
                         }
                         else
                         {
-                            var roleIds = ((Strategy[])roleValue).Select(v => v.Id).ToArray();
                             if (!this.ExistDatabaseRecord)
                             {
-                                pushRequestRole.AddCompositesRole = roleIds;
+                                pushRequestRole.AddCompositesRole = numbers.ToArray(roleValue);
                             }
                             else
                             {
                                 var databaseRole = (long[])this.DatabaseRecord.GetRole(relationType.RoleType);
                                 if (databaseRole == null)
                                 {
-                                    pushRequestRole.AddCompositesRole = roleIds;
+                                    pushRequestRole.AddCompositesRole = numbers.ToArray(roleValue);
                                 }
                                 else
                                 {
-                                    pushRequestRole.AddCompositesRole = roleIds.Except(databaseRole).ToArray();
-                                    pushRequestRole.RemoveCompositesRole = databaseRole.Except(roleIds).ToArray();
+                                    pushRequestRole.AddCompositesRole = numbers.ToArray(numbers.Except(roleValue, databaseRole));
+                                    pushRequestRole.RemoveCompositesRole = numbers.ToArray(numbers.Except(databaseRole, roleValue));
                                 }
                             }
                         }

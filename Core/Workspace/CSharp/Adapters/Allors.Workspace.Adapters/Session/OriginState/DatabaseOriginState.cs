@@ -10,7 +10,7 @@ namespace Allors.Workspace.Adapters
 
     public abstract class DatabaseOriginState : RecordBasedOriginState
     {
-        protected DatabaseOriginState(Strategy strategy, DatabaseRecord record) : base(strategy)
+        protected DatabaseOriginState(DatabaseRecord record)
         {
             this.DatabaseRecord = record;
             this.PreviousRecord = this.DatabaseRecord;
@@ -24,7 +24,7 @@ namespace Allors.Workspace.Adapters
 
         protected override IRecord Record => this.DatabaseRecord;
 
-        protected DatabaseRecord DatabaseRecord { get; set; }
+        protected DatabaseRecord DatabaseRecord { get; private set; }
 
         public bool CanRead(IRoleType roleType)
         {

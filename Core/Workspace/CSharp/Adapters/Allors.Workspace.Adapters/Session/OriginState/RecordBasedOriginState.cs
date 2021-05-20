@@ -12,9 +12,7 @@ namespace Allors.Workspace.Adapters
 
     public abstract class RecordBasedOriginState
     {
-        protected RecordBasedOriginState(Strategy strategy) => this.Strategy = strategy;
-
-        public Strategy Strategy { get; }
+        public abstract Strategy Strategy { get; }
 
         public bool HasChanges => this.Record == null || this.ChangedRoleByRelationType?.Count > 0;
 

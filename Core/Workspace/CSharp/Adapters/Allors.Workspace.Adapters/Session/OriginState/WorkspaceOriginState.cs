@@ -10,11 +10,14 @@ namespace Allors.Workspace.Adapters
 
     public sealed class WorkspaceOriginState : RecordBasedOriginState
     {
-        public WorkspaceOriginState(Strategy strategy, WorkspaceRecord record) : base(strategy)
+        public WorkspaceOriginState(Strategy strategy, WorkspaceRecord record)
         {
+            this.Strategy = strategy;
             this.WorkspaceRecord = record;
             this.PreviousRecord = this.WorkspaceRecord;
         }
+
+        public override Strategy Strategy { get; }
 
         protected override IEnumerable<IRoleType> RoleTypes => this.Class.WorkspaceOriginRoleTypes;
 

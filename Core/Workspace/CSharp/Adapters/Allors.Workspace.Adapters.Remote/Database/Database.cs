@@ -265,7 +265,7 @@ namespace Allors.Workspace.Adapters.Remote
                         ? (ISet<long>)new HashSet<long>(permissionsIds)
                         : EmptySet<long>.Instance;
 
-                    this.AccessControlById[id] = new AccessControl(id) { Version = version, PermissionIds = permissionIdSet };
+                    this.AccessControlById[id] = new AccessControl { Version = version, PermissionIds = permissionIdSet };
                 }
             }
 

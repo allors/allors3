@@ -401,6 +401,14 @@ namespace Allors.Numbers
             }
         }
 
+        public long[] ToArray(object? numbers) =>
+            numbers switch
+            {
+                null => Array.Empty<long>(),
+                long value => new[] { value },
+                _ => (long[])numbers
+            };
+
         public IEnumerable<long> Enumerate(object? numbers) =>
             numbers switch
             {

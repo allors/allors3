@@ -17,6 +17,8 @@ namespace Allors.Numbers
 
         public IEnumerable<long> Enumerate(object? numbers);
 
+        long[] ToArray(object? numbers);
+
         bool AreEqual(object? numbers, object? otherNumbers);
 
         bool Contains(object numbers, long value);
