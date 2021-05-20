@@ -12,7 +12,7 @@ namespace Allors.Workspace.Adapters.Remote
     using Collections;
     using Meta;
 
-    internal class DatabaseRecord : IRecord
+    internal class DatabaseRecord : Adapters.DatabaseRecord
     {
         private readonly Database database;
         private AccessControl[] accessControls;
@@ -21,20 +21,16 @@ namespace Allors.Workspace.Adapters.Remote
         private Dictionary<IRelationType, object> roleByRelationType;
         private SyncResponseRole[] syncResponseRoles;
 
-        internal DatabaseRecord(Database database, long id, IClass @class)
+        internal DatabaseRecord(Database database, IClass @class, long id)
+            : base(@class, id, 0)
         {
             this.database = database;
-            this.Id = id;
-            this.Class = @class;
-            this.Version = 0;
         }
 
         internal DatabaseRecord(Database database, ResponseContext ctx, SyncResponseObject syncResponseObject)
+            : base((IClass)database.MetaPopulation.FindByTag(syncResponseObject.ObjectType), syncResponseObject.Id, syncResponseObject.Version)
         {
             this.database = database;
-            this.Id = syncResponseObject.Id;
-            this.Class = (IClass)this.database.MetaPopulation.FindByTag(syncResponseObject.ObjectType);
-            this.Version = syncResponseObject.Version;
             this.syncResponseRoles = syncResponseObject.Roles;
             this.AccessControlIds = syncResponseObject.AccessControls != null
                 ? (ISet<long>)new HashSet<long>(ctx.CheckForMissingAccessControls(syncResponseObject.AccessControls))
@@ -43,10 +39,6 @@ namespace Allors.Workspace.Adapters.Remote
                 ? (ISet<long>)new HashSet<long>(ctx.CheckForMissingPermissions(syncResponseObject.DeniedPermissions))
                 : EmptySet<long>.Instance;
         }
-
-        internal IClass Class { get; }
-
-        internal long Id { get; }
 
         internal ISet<long> AccessControlIds { get; }
 
@@ -108,9 +100,7 @@ namespace Allors.Workspace.Adapters.Remote
                 _ => this.deniedPermissions
             };
 
-        public long Version { get; }
-
-        public object GetRole(IRoleType roleType)
+        public override object GetRole(IRoleType roleType)
         {
             object @object = null;
             _ = this.RoleByRelationType?.TryGetValue(roleType.RelationType, out @object);

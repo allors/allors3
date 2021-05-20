@@ -9,38 +9,28 @@ namespace Allors.Workspace.Adapters.Local
     using System.Linq;
     using Meta;
 
-    public class DatabaseRecord : IRecord
+    public class DatabaseRecord : Adapters.DatabaseRecord
     {
         private readonly AccessControl[] accessControls;
         private readonly long[] deniedPermissions;
 
         private readonly Dictionary<IRoleType, object> roleByRoleType;
 
-        internal DatabaseRecord(long id, IClass @class)
+        internal DatabaseRecord(IClass @class, long id)
+            : base(@class, id, 0)
         {
-            this.Id = id;
-            this.Class = @class;
-            this.Version = 0;
         }
 
-        internal DatabaseRecord(long id, IClass @class, long version, Dictionary<IRoleType, object> roleByRoleType,
+        internal DatabaseRecord(IClass @class, long id, long version, Dictionary<IRoleType, object> roleByRoleType,
             long[] deniedPermissions, AccessControl[] accessControls)
+            : base(@class, id, version)
         {
-            this.Id = id;
-            this.Class = @class;
-            this.Version = version;
             this.roleByRoleType = roleByRoleType;
             this.deniedPermissions = deniedPermissions;
             this.accessControls = accessControls;
         }
 
-        public IClass Class { get; }
-
-        public long Id { get; }
-
-        public long Version { get; }
-
-        public object GetRole(IRoleType roleType)
+        public override object GetRole(IRoleType roleType)
         {
             if (this.roleByRoleType == null)
             {

@@ -71,8 +71,8 @@ namespace Allors.Workspace.Adapters.Local
                     ?.Select(this.GetAccessControl)
                     .ToArray() ?? Array.Empty<Adapters.AccessControl>();
 
-                this.recordsById[id] = new DatabaseRecord(id, workspaceClass, @object.Strategy.ObjectVersion,
-                    roleByRoleType, deniedPermissions, accessControls);
+                this.recordsById[id] = new DatabaseRecord(workspaceClass, id,
+                    @object.Strategy.ObjectVersion, roleByRoleType, deniedPermissions, accessControls);
             }
         }
 
@@ -111,7 +111,7 @@ namespace Allors.Workspace.Adapters.Local
 
         internal DatabaseRecord OnPushed(long id, IClass @class)
         {
-            var record = new DatabaseRecord(id, @class);
+            var record = new DatabaseRecord(@class, id);
             this.recordsById[id] = record;
             return record;
         }

@@ -8,6 +8,7 @@ namespace Allors
     using System;
     using System.Globalization;
     using System.Text.Json;
+    using System.Xml;
 
     public static class UnitConvert
     {
@@ -28,33 +29,48 @@ namespace Allors
 
         public static object FromJson(int tag, object value)
         {
-            if (value == null)
+            switch (value)
             {
-                return null;
-            }
-
-            var jsonElement = (JsonElement)value;
-
-            return jsonElement.ValueKind switch
-            {
-                JsonValueKind.Null => null,
-                JsonValueKind.Undefined => null,
-                JsonValueKind.False => false,
-                JsonValueKind.True => true,
-                _ => tag switch
+                case null:
+                    return null;
+                case string @string:
+                    return tag switch
+                    {
+                        UnitTags.DateTime => XmlConvert.ToDateTime(@string, XmlDateTimeSerializationMode.Utc),
+                        UnitTags.Binary => Convert.FromBase64String(@string),
+                        UnitTags.Boolean => XmlConvert.ToBoolean(@string),
+                        UnitTags.Decimal => XmlConvert.ToDecimal(@string),
+                        UnitTags.Float => XmlConvert.ToDouble(@string),
+                        UnitTags.Integer => XmlConvert.ToInt32(@string),
+                        UnitTags.String => @string,
+                        UnitTags.Unique => XmlConvert.ToGuid(@string),
+                        _ => throw new Exception($"{@string} not supported for tag {tag}")
+                    };
+                default:
                 {
-                    UnitTags.DateTime => jsonElement.GetDateTime(),
-                    UnitTags.Binary => Convert.FromBase64String(jsonElement.GetString()),
-                    UnitTags.Decimal => jsonElement.ValueKind == JsonValueKind.String
-                        ? Convert.ToDecimal(jsonElement.GetString(), CultureInfo.InvariantCulture)
-                        : jsonElement.GetDecimal(),
-                    UnitTags.Float => jsonElement.GetDouble(),
-                    UnitTags.Integer => jsonElement.GetInt32(),
-                    UnitTags.String => jsonElement.GetString(),
-                    UnitTags.Unique => jsonElement.GetGuid(),
-                    _ => throw new Exception($"{jsonElement.ValueKind} not supported for tag {tag}")
+                    var element = (JsonElement)value;
+                    return element.ValueKind switch
+                    {
+                        JsonValueKind.Null => null,
+                        JsonValueKind.Undefined => null,
+                        JsonValueKind.False => false,
+                        JsonValueKind.True => true,
+                        _ => tag switch
+                        {
+                            UnitTags.DateTime => element.GetDateTime(),
+                            UnitTags.Binary => Convert.FromBase64String(element.GetString()),
+                            UnitTags.Decimal => element.ValueKind == JsonValueKind.String
+                                ? Convert.ToDecimal(element.GetString(), CultureInfo.InvariantCulture)
+                                : element.GetDecimal(),
+                            UnitTags.Float => element.GetDouble(),
+                            UnitTags.Integer => element.GetInt32(),
+                            UnitTags.String => element.GetString(),
+                            UnitTags.Unique => element.GetGuid(),
+                            _ => throw new Exception($"{element.ValueKind} not supported for tag {tag}")
+                        }
+                    };
                 }
-            };
+            }
         }
     }
 }

@@ -124,7 +124,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal DatabaseRecord PushResponse(long identity, IClass @class)
         {
-            var databaseObject = new DatabaseRecord(this, identity, @class);
+            var databaseObject = new DatabaseRecord(this, @class, identity);
             this.recordsById[identity] = databaseObject;
             return databaseObject;
         }
@@ -385,7 +385,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal DatabaseRecord OnPushed(long id, IClass @class)
         {
-            var record = new DatabaseRecord(this, id, @class);
+            var record = new DatabaseRecord(this, @class, id);
             this.recordsById[id] = record;
             return record;
         }
