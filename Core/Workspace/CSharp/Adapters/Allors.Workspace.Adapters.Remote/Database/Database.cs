@@ -23,7 +23,7 @@ namespace Allors.Workspace.Adapters.Remote
     using Meta;
     using Polly;
 
-    public class Database
+    public class Database : Adapters.Database
     {
         private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> executePermissionByOperandTypeByClass;
 
@@ -31,12 +31,9 @@ namespace Allors.Workspace.Adapters.Remote
         private readonly Dictionary<long, DatabaseRecord> recordsById;
         private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> writePermissionByOperandTypeByClass;
 
-        internal Database(IMetaPopulation metaPopulation, HttpClient httpClient,
-            WorkspaceIdGenerator workspaceIdGenerator)
+        internal Database(IMetaPopulation metaPopulation, HttpClient httpClient, WorkspaceIdGenerator workspaceIdGenerator) : base(metaPopulation)
         {
-            this.MetaPopulation = metaPopulation;
             this.HttpClient = httpClient;
-            this.WorkspaceIdGenerator = workspaceIdGenerator;
 
             this.HttpClient.DefaultRequestHeaders.Accept.Clear();
             this.HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -51,11 +48,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.executePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, Permission>>();
         }
 
-        internal IMetaPopulation MetaPopulation { get; }
-
         public HttpClient HttpClient { get; }
-
-        internal WorkspaceIdGenerator WorkspaceIdGenerator { get; }
 
         internal IAsyncPolicy Policy { get; set; } = Polly.Policy
             .Handle<HttpRequestException>()
@@ -71,7 +64,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public async Task<bool> Login(Uri url, string username, string password)
         {
-            var request = new AuthenticationTokenRequest {Login = username, Password = password};
+            var request = new AuthenticationTokenRequest { Login = username, Password = password };
             using var response = await this.PostAsJsonAsync(url, request);
             _ = response.EnsureSuccessStatusCode();
             var authResult = await this.ReadAsAsync<AuthenticationTokenResponse>(response);
@@ -85,6 +78,48 @@ namespace Allors.Workspace.Adapters.Remote
             this.UserId = authResult.UserId;
 
             return true;
+        }
+
+        internal Permission GetPermission(IClass @class, IOperandType operandType, Operations operation)
+        {
+            switch (operation)
+            {
+                case Operations.Read:
+                    if (this.readPermissionByOperandTypeByClass.TryGetValue(@class,
+                        out var readPermissionByOperandType))
+                    {
+                        if (readPermissionByOperandType.TryGetValue(operandType, out var readPermission))
+                        {
+                            return readPermission;
+                        }
+                    }
+
+                    return null;
+
+                case Operations.Write:
+                    if (this.writePermissionByOperandTypeByClass.TryGetValue(@class,
+                        out var writePermissionByOperandType))
+                    {
+                        if (writePermissionByOperandType.TryGetValue(operandType, out var writePermission))
+                        {
+                            return writePermission;
+                        }
+                    }
+
+                    return null;
+
+                default:
+                    if (this.executePermissionByOperandTypeByClass.TryGetValue(@class,
+                        out var executePermissionByOperandType))
+                    {
+                        if (executePermissionByOperandType.TryGetValue(operandType, out var executePermission))
+                        {
+                            return executePermission;
+                        }
+                    }
+
+                    return null;
+            }
         }
 
         internal DatabaseRecord PushResponse(long identity, IClass @class)
@@ -256,58 +291,16 @@ namespace Allors.Workspace.Adapters.Remote
                         ? (ISet<long>)new HashSet<long>(permissionsIds)
                         : EmptySet<long>.Instance;
 
-                    this.AccessControlById[id] = new AccessControl(id, version, permissionIdSet);
+                    this.AccessControlById[id] = new AccessControl(id) { Version = version, PermissionIds = permissionIdSet };
                 }
             }
 
             if (missingPermissionIds != null)
             {
-                return new SecurityRequest {Permissions = missingPermissionIds.ToArray()};
+                return new SecurityRequest { Permissions = missingPermissionIds.ToArray() };
             }
 
             return null;
-        }
-
-        internal Permission GetPermission(IClass @class, IOperandType operandType, Operations operation)
-        {
-            switch (operation)
-            {
-                case Operations.Read:
-                    if (this.readPermissionByOperandTypeByClass.TryGetValue(@class,
-                        out var readPermissionByOperandType))
-                    {
-                        if (readPermissionByOperandType.TryGetValue(operandType, out var readPermission))
-                        {
-                            return readPermission;
-                        }
-                    }
-
-                    return null;
-
-                case Operations.Write:
-                    if (this.writePermissionByOperandTypeByClass.TryGetValue(@class,
-                        out var writePermissionByOperandType))
-                    {
-                        if (writePermissionByOperandType.TryGetValue(operandType, out var writePermission))
-                        {
-                            return writePermission;
-                        }
-                    }
-
-                    return null;
-
-                default:
-                    if (this.executePermissionByOperandTypeByClass.TryGetValue(@class,
-                        out var executePermissionByOperandType))
-                    {
-                        if (executePermissionByOperandType.TryGetValue(operandType, out var executePermission))
-                        {
-                            return executePermission;
-                        }
-                    }
-
-                    return null;
-            }
         }
 
         internal async Task<PullResponse> Pull(PullRequest pullRequest)

@@ -3,18 +3,18 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Workspace.Adapters.Local
+namespace Allors.Workspace.Adapters
 {
     using System.Collections.Generic;
 
-    internal class AccessControl
+    public class AccessControl
     {
-        internal AccessControl(long id) => this.Id = id;
+        public AccessControl(long id) => this.Id = id;
 
-        internal long Id { get; }
+        public long Id { get; }
 
-        internal long Version { get; set; }
+        public long Version { get; set; }
 
-        internal ISet<long> PermissionIds { get; set; }
+        public ISet<long> PermissionIds { get; set; }
     }
 }
