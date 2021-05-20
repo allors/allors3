@@ -7,14 +7,14 @@ namespace Allors.Workspace.Adapters.Local
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Database;
-    using Database.Data;
-    using Database.Domain;
-    using Database.Meta;
-    using Database.Security;
+    using Allors.Database;
+    using Allors.Database.Data;
+    using Allors.Database.Domain;
+    using Allors.Database.Meta;
+    using Allors.Database.Security;
     using Protocol.Direct;
     using IObject = Allors.Workspace.IObject;
-    using User = Database.Domain.User;
+    using User = Allors.Database.Domain.User;
 
     public class Pull : Result, IPullResult, IProcedureOutput
     {
@@ -24,7 +24,7 @@ namespace Allors.Workspace.Adapters.Local
         public Pull(Session session, Workspace workspace) : base(session)
         {
             this.Workspace = workspace;
-            this.Transaction = this.Workspace.DatabaseAdapter.Database.CreateTransaction();
+            this.Transaction = this.Workspace.Database.WrappedDatabase.CreateTransaction();
 
             var databaseContext = this.Transaction.Database.Context();
             var metaCache = databaseContext.MetaCache;
@@ -36,16 +36,18 @@ namespace Allors.Workspace.Adapters.Local
             this.PreparedSelects = databaseContext.PreparedSelects;
             this.PreparedExtents = databaseContext.PreparedExtents;
 
-            this.DatabaseObjects = new HashSet<Database.IObject>();
+            this.DatabaseObjects = new HashSet<Allors.Database.IObject>();
         }
 
         public IAccessControlLists AccessControlLists { get; }
 
-        public HashSet<Database.IObject> DatabaseObjects { get; }
+        public HashSet<Allors.Database.IObject> DatabaseObjects { get; }
 
-        private Dictionary<string, ISet<Database.IObject>> DatabaseCollectionsByName { get; } = new Dictionary<string, ISet<Database.IObject>>();
+        private Dictionary<string, ISet<Allors.Database.IObject>> DatabaseCollectionsByName { get; } =
+            new Dictionary<string, ISet<Allors.Database.IObject>>();
 
-        private Dictionary<string, Database.IObject> DatabaseObjectByName { get; } = new Dictionary<string, Database.IObject>();
+        private Dictionary<string, Allors.Database.IObject> DatabaseObjectByName { get; } =
+            new Dictionary<string, Allors.Database.IObject>();
 
         private Dictionary<string, object> ValueByName { get; } = new Dictionary<string, object>();
 
@@ -59,54 +61,11 @@ namespace Allors.Workspace.Adapters.Local
 
         private IPreparedExtents PreparedExtents { get; }
 
-        public void Execute(Allors.Workspace.Data.Procedure workspaceProcedure)
-        {
-            var visitor = new ToDatabaseVisitor(this.Transaction);
-            var procedure = visitor.Visit(workspaceProcedure);
-            var localProcedure = new Procedure(this.Transaction, procedure, this.AccessControlLists);
-            localProcedure.Execute(this);
-        }
-
-        public void Execute(IEnumerable<Allors.Workspace.Data.Pull> workspacePulls)
-        {
-            var visitor = new ToDatabaseVisitor(this.Transaction);
-            var pulls = workspacePulls.Select(v => visitor.Visit(v));
-
-            foreach (var pull in pulls)
-            {
-                if (pull.Object != null)
-                {
-                    var pullInstantiate = new PullInstantiate(this.Transaction, pull, this.AccessControlLists, this.PreparedSelects);
-                    pullInstantiate.Execute(this);
-                }
-                else
-                {
-                    var pullExtent = new PullExtent(this.Transaction, pull, this.AccessControlLists, this.PreparedSelects, this.PreparedExtents);
-                    pullExtent.Execute(this);
-                }
-            }
-        }
-
-        public void AddCollection(string name, in IEnumerable<Database.IObject> collection)
+        public void AddCollection(string name, in IEnumerable<Allors.Database.IObject> collection, Node[] tree)
         {
             switch (collection)
             {
-                case ICollection<Database.IObject> asCollection:
-                    this.AddCollectionInternal(name, asCollection, null);
-                    break;
-                default:
-                    this.AddCollectionInternal(name, collection.ToArray(), null);
-                    break;
-            }
-        }
-
-        public void AddCollection(string name, in ICollection<Database.IObject> collection) => this.AddCollectionInternal(name, collection, null);
-
-        public void AddCollection(string name, in IEnumerable<Database.IObject> collection, Node[] tree)
-        {
-            switch (collection)
-            {
-                case ICollection<Database.IObject> list:
+                case ICollection<Allors.Database.IObject> list:
                     this.AddCollectionInternal(name, list, tree);
                     break;
                 default:
@@ -117,15 +76,7 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        public void AddObject(string name, Database.IObject @object)
-        {
-            if (@object != null)
-            {
-                this.AddObject(name, @object, null);
-            }
-        }
-
-        public void AddObject(string name, Database.IObject @object, Node[] tree)
+        public void AddObject(string name, Allors.Database.IObject @object, Node[] tree)
         {
             if (@object != null)
             {
@@ -154,19 +105,109 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        private void AddCollectionInternal(string name, in ICollection<Database.IObject> collection, Node[] tree)
+        public IDictionary<string, IObject[]> Collections =>
+            this.collections ??= this.DatabaseCollectionsByName.ToDictionary(v => v.Key,
+                v => v.Value.Select(w => this.Session.Get<IObject>(w.Id)).ToArray());
+
+        public IDictionary<string, IObject> Objects =>
+            this.objects ??= this.DatabaseObjectByName.ToDictionary(v => v.Key,
+                v => this.Session.Get<IObject>(v.Value.Id));
+
+        public IDictionary<string, object> Values => this.ValueByName;
+
+        public T[] GetCollection<T>() where T : IObject
+        {
+            var objectType = this.Workspace.ObjectFactory.GetObjectType<T>();
+            var key = objectType.PluralName;
+            return this.GetCollection<T>(key);
+        }
+
+        public T[] GetCollection<T>(string key) where T : IObject =>
+            this.Collections.TryGetValue(key, out var collection) ? collection?.Cast<T>().ToArray() : null;
+
+        public T GetObject<T>()
+            where T : class, IObject
+        {
+            var objectType = this.Workspace.ObjectFactory.GetObjectType<T>();
+            var key = objectType.SingularName;
+            return this.GetObject<T>(key);
+        }
+
+        public T GetObject<T>(string key)
+            where T : class, IObject => this.Objects.TryGetValue(key, out var @object) ? (T)@object : null;
+
+        public object GetValue(string key) => this.Values[key];
+
+        public T GetValue<T>(string key) => (T)this.GetValue(key);
+
+        public void Execute(Allors.Workspace.Data.Procedure workspaceProcedure)
+        {
+            var visitor = new ToDatabaseVisitor(this.Transaction);
+            var procedure = visitor.Visit(workspaceProcedure);
+            var localProcedure = new Procedure(this.Transaction, procedure, this.AccessControlLists);
+            localProcedure.Execute(this);
+        }
+
+        public void Execute(IEnumerable<Allors.Workspace.Data.Pull> workspacePulls)
+        {
+            var visitor = new ToDatabaseVisitor(this.Transaction);
+            var pulls = workspacePulls.Select(v => visitor.Visit(v));
+
+            foreach (var pull in pulls)
+            {
+                if (pull.Object != null)
+                {
+                    var pullInstantiate = new PullInstantiate(this.Transaction, pull, this.AccessControlLists,
+                        this.PreparedSelects);
+                    pullInstantiate.Execute(this);
+                }
+                else
+                {
+                    var pullExtent = new PullExtent(this.Transaction, pull, this.AccessControlLists,
+                        this.PreparedSelects, this.PreparedExtents);
+                    pullExtent.Execute(this);
+                }
+            }
+        }
+
+        public void AddCollection(string name, in IEnumerable<Allors.Database.IObject> collection)
+        {
+            switch (collection)
+            {
+                case ICollection<Allors.Database.IObject> asCollection:
+                    this.AddCollectionInternal(name, asCollection, null);
+                    break;
+                default:
+                    this.AddCollectionInternal(name, collection.ToArray(), null);
+                    break;
+            }
+        }
+
+        public void AddCollection(string name, in ICollection<Allors.Database.IObject> collection) =>
+            this.AddCollectionInternal(name, collection, null);
+
+        public void AddObject(string name, Allors.Database.IObject @object)
+        {
+            if (@object != null)
+            {
+                this.AddObject(name, @object, null);
+            }
+        }
+
+        private void AddCollectionInternal(string name, in ICollection<Allors.Database.IObject> collection, Node[] tree)
         {
             if (collection?.Count > 0)
             {
                 _ = this.DatabaseCollectionsByName.TryGetValue(name, out var existingCollection);
 
-                var filteredCollection = collection.Where(v => this.AllowedClasses != null && this.AllowedClasses.Contains(v.Strategy.Class));
+                var filteredCollection = collection.Where(v =>
+                    this.AllowedClasses != null && this.AllowedClasses.Contains(v.Strategy.Class));
 
                 if (tree != null)
                 {
                     var prefetchPolicy = tree.BuildPrefetchPolicy();
 
-                    ICollection<Database.IObject> newCollection;
+                    ICollection<Allors.Database.IObject> newCollection;
 
                     if (existingCollection != null)
                     {
@@ -176,7 +217,7 @@ namespace Allors.Workspace.Adapters.Local
                     }
                     else
                     {
-                        var newSet = new HashSet<Database.IObject>(filteredCollection);
+                        var newSet = new HashSet<Allors.Database.IObject>(filteredCollection);
                         newCollection = newSet;
                         this.Transaction.Prefetch(prefetchPolicy, newCollection);
                         this.DatabaseCollectionsByName.Add(name, newSet);
@@ -197,46 +238,12 @@ namespace Allors.Workspace.Adapters.Local
                     }
                     else
                     {
-                        var newWorkspaceCollection = new HashSet<Database.IObject>(filteredCollection);
+                        var newWorkspaceCollection = new HashSet<Allors.Database.IObject>(filteredCollection);
                         this.DatabaseCollectionsByName.Add(name, newWorkspaceCollection);
                         this.DatabaseObjects.UnionWith(newWorkspaceCollection);
                     }
                 }
             }
         }
-
-        public IDictionary<string, IObject[]> Collections =>
-            this.collections ??= this.DatabaseCollectionsByName.ToDictionary(v => v.Key,
-                v => v.Value.Select(w => this.Session.Get<IObject>(w.Id)).ToArray());
-
-        public IDictionary<string, IObject> Objects =>
-            this.objects ??= this.DatabaseObjectByName.ToDictionary(v => v.Key,
-                v => this.Session.Get<IObject>(v.Value.Id));
-
-        public IDictionary<string, object> Values => this.ValueByName;
-
-        public T[] GetCollection<T>() where T : IObject
-        {
-            var objectType = this.Workspace.ObjectFactory.GetObjectType<T>();
-            var key = objectType.PluralName;
-            return this.GetCollection<T>(key);
-        }
-
-        public T[] GetCollection<T>(string key) where T : IObject => this.Collections.TryGetValue(key, out var collection) ? collection?.Cast<T>().ToArray() : null;
-
-        public T GetObject<T>()
-            where T : class, IObject
-        {
-            var objectType = this.Workspace.ObjectFactory.GetObjectType<T>();
-            var key = objectType.SingularName;
-            return this.GetObject<T>(key);
-        }
-
-        public T GetObject<T>(string key)
-            where T : class, IObject => this.Objects.TryGetValue(key, out var @object) ? (T)@object : null;
-
-        public object GetValue(string key) => this.Values[key];
-
-        public T GetValue<T>(string key) => (T)this.GetValue(key);
     }
 }

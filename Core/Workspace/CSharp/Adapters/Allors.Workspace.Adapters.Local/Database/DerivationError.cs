@@ -11,10 +11,10 @@ namespace Allors.Workspace.Adapters.Local
 
     public class DerivationError : IDerivationError
     {
+        private readonly Allors.Database.Derivations.IDerivationError derivationError;
         private readonly Session session;
-        private readonly Database.Derivations.IDerivationError derivationError;
 
-        public DerivationError(Session session, Database.Derivations.IDerivationError derivationError)
+        public DerivationError(Session session, Allors.Database.Derivations.IDerivationError derivationError)
         {
             this.session = session;
             this.derivationError = derivationError;

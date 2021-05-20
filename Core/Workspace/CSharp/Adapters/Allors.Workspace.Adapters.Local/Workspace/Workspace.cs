@@ -6,81 +6,22 @@
 namespace Allors.Workspace.Adapters.Local
 {
     using System;
-    using System.Collections.Generic;
-    using Database;
+    using Allors.Database;
     using Meta;
-    using Numbers;
-    using IObjectFactory = Allors.Workspace.IObjectFactory;
 
-    public class Workspace : IWorkspace
+    public class Workspace : Adapters.Workspace
     {
-        private readonly Dictionary<long, WorkspaceRecord> recordById;
-
-        public Workspace(string name, long userId, IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, IDatabase database)
+        public Workspace(string name, long userId, IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, IDatabase wrappedDatabase) : base(name, metaPopulation, instance, state)
         {
-            this.Name = name;
+            this.Database = new Database(this.MetaPopulation, wrappedDatabase);
             this.UserId = userId;
-            this.MetaPopulation = metaPopulation;
-            this.Lifecycle = state;
-
-            this.ObjectFactory = new ReflectionObjectFactory(this.MetaPopulation, instance);
-            this.DatabaseAdapter = new DatabaseAdapter(this.MetaPopulation, database);
-
-            this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
-            this.WorkspaceIdsByWorkspaceClass = new Dictionary<IClass, long[]>();
-            this.recordById = new Dictionary<long, WorkspaceRecord>();
-
-            this.Numbers = new ArrayNumbers();
-
             this.Lifecycle.OnInit(this);
         }
 
-        public string Name { get; }
-
         public long UserId { get; }
 
-        public IMetaPopulation MetaPopulation { get; }
+        internal Database Database { get; }
 
-        public IWorkspaceLifecycle Lifecycle { get; }
-
-        IObjectFactory IWorkspace.ObjectFactory => this.ObjectFactory;
-        internal ReflectionObjectFactory ObjectFactory { get; }
-
-        internal INumbers Numbers { get; }
-
-        internal DatabaseAdapter DatabaseAdapter { get; }
-
-        internal Dictionary<long, IClass> WorkspaceClassByWorkspaceId { get; }
-
-        internal Dictionary<IClass, long[]> WorkspaceIdsByWorkspaceClass { get; }
-
-        public ISession CreateSession() => new Session(this, this.Lifecycle.CreateSessionContext());
-
-        internal WorkspaceRecord GetRecord(long id)
-        {
-            _ = this.recordById.TryGetValue(id, out var workspaceObject);
-            return workspaceObject;
-        }
-
-        internal void Push(long id, IClass @class, long version, Dictionary<IRelationType, object> changedRoleByRoleType)
-        {
-            if (!this.WorkspaceClassByWorkspaceId.ContainsKey(id))
-            {
-                this.WorkspaceClassByWorkspaceId.Add(id, @class);
-
-                _ = this.WorkspaceIdsByWorkspaceClass.TryGetValue(@class, out var ids);
-                _ = this.Numbers.Add(ids, id);
-                this.WorkspaceIdsByWorkspaceClass[@class] = ids;
-            }
-
-            if (!this.recordById.TryGetValue(id, out var originalWorkspaceRecord))
-            {
-                this.recordById[id] = new WorkspaceRecord(this.DatabaseAdapter, id, @class, ++version, changedRoleByRoleType);
-            }
-            else
-            {
-                this.recordById[id] = new WorkspaceRecord(originalWorkspaceRecord, changedRoleByRoleType);
-            }
-        }
+        public override ISession CreateSession() => new Session(this, this.Lifecycle.CreateSessionContext());
     }
 }

@@ -30,13 +30,13 @@ namespace Allors.Workspace.Adapters.Remote
                 StringComparer.OrdinalIgnoreCase);
         }
 
+        private IWorkspace Workspace { get; }
+
         public IDictionary<string, IObject> Objects { get; }
 
         public IDictionary<string, IObject[]> Collections { get; }
 
         public IDictionary<string, object> Values { get; }
-
-        private IWorkspace Workspace { get; }
 
         public T[] GetCollection<T>() where T : IObject
         {
@@ -45,7 +45,8 @@ namespace Allors.Workspace.Adapters.Remote
             return this.GetCollection<T>(key);
         }
 
-        public T[] GetCollection<T>(string key) where T : IObject => this.Collections.TryGetValue(key, out var collection) ? collection?.Cast<T>().ToArray() : null;
+        public T[] GetCollection<T>(string key) where T : IObject =>
+            this.Collections.TryGetValue(key, out var collection) ? collection?.Cast<T>().ToArray() : null;
 
         public T GetObject<T>()
             where T : class, IObject

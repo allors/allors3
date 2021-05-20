@@ -8,17 +8,17 @@ namespace Allors.Workspace.Adapters.Local
 {
     using System;
     using System.Collections.Generic;
-    using Database;
-    using Database.Derivations;
-    using Database.Security;
+    using Allors.Database;
+    using Allors.Database.Derivations;
+    using Allors.Database.Security;
 
     public class Procedure : IProcedureContext
     {
-        private readonly Database.Data.Procedure procedure;
+        private readonly Allors.Database.Data.Procedure procedure;
 
         private List<IDerivationResult> errors;
 
-        public Procedure(ITransaction transaction, Database.Data.Procedure procedure, IAccessControlLists acls)
+        public Procedure(ITransaction transaction, Allors.Database.Data.Procedure procedure, IAccessControlLists acls)
         {
             this.Transaction = transaction;
             this.procedure = procedure;

@@ -12,8 +12,8 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class DerivationError : IDerivationError
     {
-        private readonly ISession session;
         private readonly ResponseDerivationError responseDerivationError;
+        private readonly ISession session;
 
         public DerivationError(ISession session, ResponseDerivationError responseDerivationError)
         {

@@ -5,10 +5,6 @@
 
 namespace Allors.Workspace.Adapters.Remote
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Linq;
     using Meta;
     using Numbers;
 
@@ -23,11 +19,14 @@ namespace Allors.Workspace.Adapters.Remote
             this.propertyByObjectByPropertyType = new PropertyByObjectByPropertyType(numbers);
         }
 
-        internal void Checkpoint(ChangeSet changeSet) => changeSet.AddSessionStateChanges(this.propertyByObjectByPropertyType.Checkpoint());
+        internal void Checkpoint(ChangeSet changeSet) =>
+            changeSet.AddSessionStateChanges(this.propertyByObjectByPropertyType.Checkpoint());
 
-        internal object Get(long @object, IPropertyType propertyType) => this.propertyByObjectByPropertyType.Get(@object, propertyType);
+        internal object Get(long @object, IPropertyType propertyType) =>
+            this.propertyByObjectByPropertyType.Get(@object, propertyType);
 
-        internal void SetUnitRole(long association, IRoleType roleType, object role) => this.propertyByObjectByPropertyType.Set(association, roleType, role);
+        internal void SetUnitRole(long association, IRoleType roleType, object role) =>
+            this.propertyByObjectByPropertyType.Set(association, roleType, role);
 
         internal void SetCompositeRole(long association, IRoleType roleType, long? newRole)
         {
@@ -49,7 +48,8 @@ namespace Allors.Workspace.Adapters.Remote
             if (associationType.IsOne)
             {
                 // OneToOne
-                var previousAssociation = (long?)this.propertyByObjectByPropertyType.Get(newRole.Value, associationType);
+                var previousAssociation =
+                    (long?)this.propertyByObjectByPropertyType.Get(newRole.Value, associationType);
                 if (previousAssociation.HasValue)
                 {
                     this.propertyByObjectByPropertyType.Set(previousAssociation.Value, roleType, null);
@@ -101,12 +101,15 @@ namespace Allors.Workspace.Adapters.Remote
             // Association
             if (associationType.IsOne)
             {
-                var previousRoleAssociations = this.propertyByObjectByPropertyType.Get((long)previousRole, associationType);
-                this.propertyByObjectByPropertyType.Set((long)previousRole, associationType, this.numbers.Remove(previousRoleAssociations, association));
+                var previousRoleAssociations =
+                    this.propertyByObjectByPropertyType.Get((long)previousRole, associationType);
+                this.propertyByObjectByPropertyType.Set((long)previousRole, associationType,
+                    this.numbers.Remove(previousRoleAssociations, association));
             }
 
-            var roleAssociations = this.propertyByObjectByPropertyType.Get((long)roleToAdd, associationType);
-            this.propertyByObjectByPropertyType.Set(roleToAdd, associationType, this.numbers.Add(roleAssociations, association));
+            var roleAssociations = this.propertyByObjectByPropertyType.Get(roleToAdd, associationType);
+            this.propertyByObjectByPropertyType.Set(roleToAdd, associationType,
+                this.numbers.Add(roleAssociations, association));
         }
 
         private void RemoveRole(long association, IRoleType roleType, long roleToRemove)

@@ -28,7 +28,7 @@ namespace Allors.Workspace.Adapters.Local
 
             if (this.Class.HasDatabaseOrigin)
             {
-                this.DatabaseOriginState = new DatabaseOriginState(this, this.Session.DatabaseAdapter.GetRecord(this.Id));
+                this.DatabaseOriginState = new DatabaseOriginState(this, this.Session.Database.GetRecord(this.Id));
             }
         }
 
@@ -42,14 +42,7 @@ namespace Allors.Workspace.Adapters.Local
             this.DatabaseOriginState = new DatabaseOriginState(this, databaseRecord);
         }
 
-        ISession IStrategy.Session => this.Session;
         internal Session Session { get; }
-
-        public IClass Class { get; }
-
-        public long Id { get; private set; }
-
-        public IObject Object => this.@object ??= this.Session.Workspace.ObjectFactory.Create(this);
 
         internal INumbers Numbers => this.Session.Numbers;
 
@@ -58,6 +51,14 @@ namespace Allors.Workspace.Adapters.Local
         internal WorkspaceOriginState WorkspaceOriginState { get; }
 
         internal long DatabaseVersion => this.DatabaseOriginState.Version;
+
+        ISession IStrategy.Session => this.Session;
+
+        public IClass Class { get; }
+
+        public long Id { get; private set; }
+
+        public IObject Object => this.@object ??= this.Session.Workspace.ObjectFactory.Create(this);
 
         public bool Exist(IRoleType roleType)
         {
@@ -310,7 +311,7 @@ namespace Allors.Workspace.Adapters.Local
 
             return association switch
             {
-                long id => new[] { this.Session.Get<T>(id) },
+                long id => new[] {this.Session.Get<T>(id)},
                 long[] ids => ids.Select(v => this.Session.Get<T>(v)).ToArray(),
                 _ => Array.Empty<T>()
             };

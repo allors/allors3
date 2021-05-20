@@ -64,11 +64,9 @@ namespace Allors.Workspace.Adapters.Remote
             return this.DatabaseRecord.IsPermitted(permission);
         }
 
-        internal void OnPulled()
-        {
+        internal void OnPulled() =>
             // TODO: check for overwrites
             this.DatabaseRecord = this.Session.Database.GetRecord(this.Id);
-        }
 
         internal void Reset()
         {
@@ -78,16 +76,12 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal PushRequestNewObject PushNew() => new PushRequestNewObject
         {
-            WorkspaceId = this.Id,
-            ObjectType = this.Class.Tag,
-            Roles = this.PushRoles(),
+            WorkspaceId = this.Id, ObjectType = this.Class.Tag, Roles = this.PushRoles()
         };
 
         internal PushRequestObject PushExisting() => new PushRequestObject
         {
-            DatabaseId = this.Id,
-            Version = this.Version,
-            Roles = this.PushRoles(),
+            DatabaseId = this.Id, Version = this.Version, Roles = this.PushRoles()
         };
 
         private PushRequestRole[] PushRoles()
@@ -101,7 +95,7 @@ namespace Allors.Workspace.Adapters.Remote
                     var relationType = keyValuePair.Key;
                     var roleValue = keyValuePair.Value;
 
-                    var pushRequestRole = new PushRequestRole { RelationType = relationType.Tag };
+                    var pushRequestRole = new PushRequestRole {RelationType = relationType.Tag};
 
                     if (relationType.RoleType.ObjectType.IsUnit)
                     {

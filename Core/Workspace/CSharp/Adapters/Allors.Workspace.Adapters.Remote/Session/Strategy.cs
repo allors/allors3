@@ -43,15 +43,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.DatabaseOriginState = new DatabaseOriginState(this, databaseRecord);
         }
 
-        ISession IStrategy.Session => this.Session;
-
         internal Session Session { get; }
-
-        public IClass Class { get; }
-
-        public long Id { get; private set; }
-
-        public IObject Object => this.@object ??= this.Session.Workspace.ObjectFactory.Create(this);
 
         internal long DatabaseVersion => this.DatabaseOriginState.Version;
 
@@ -60,6 +52,14 @@ namespace Allors.Workspace.Adapters.Remote
         internal DatabaseOriginState DatabaseOriginState { get; }
 
         internal INumbers Numbers => this.Session.Numbers;
+
+        ISession IStrategy.Session => this.Session;
+
+        public IClass Class { get; }
+
+        public long Id { get; private set; }
+
+        public IObject Object => this.@object ??= this.Session.Workspace.ObjectFactory.Create(this);
 
         public bool Exist(IRoleType roleType)
         {
@@ -271,7 +271,7 @@ namespace Allors.Workspace.Adapters.Remote
 
             return association switch
             {
-                long id => new[] { this.Session.Get<T>(id) },
+                long id => new[] {this.Session.Get<T>(id)},
                 long[] ids => ids.Select(v => this.Session.Get<T>(v)).ToArray(),
                 _ => Array.Empty<T>()
             };
@@ -283,10 +283,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public bool CanExecute(IMethodType methodType) => this.DatabaseOriginState?.CanExecute(methodType) ?? false;
 
-        public void Reset()
-        {
-            this.DatabaseOriginState?.Reset();
-        }
+        public void Reset() => this.DatabaseOriginState?.Reset();
 
         internal PushRequestNewObject DatabasePushNew() => this.DatabaseOriginState.PushNew();
 

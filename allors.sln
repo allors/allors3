@@ -191,6 +191,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Shared", "System\Sha
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Shared.Tests", "System\Shared.Tests\Allors.Shared.Tests.csproj", "{E7D466E3-5915-4489-B1EC-A03200E1967A}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Workspace.Adapters", "Core\Workspace\CSharp\Adapters\Allors.Workspace.Adapters\Allors.Workspace.Adapters.csproj", "{B69A49DA-DB1A-444B-9FA3-3307EFB4DBD3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -489,6 +491,10 @@ Global
 		{E7D466E3-5915-4489-B1EC-A03200E1967A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E7D466E3-5915-4489-B1EC-A03200E1967A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E7D466E3-5915-4489-B1EC-A03200E1967A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B69A49DA-DB1A-444B-9FA3-3307EFB4DBD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B69A49DA-DB1A-444B-9FA3-3307EFB4DBD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B69A49DA-DB1A-444B-9FA3-3307EFB4DBD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B69A49DA-DB1A-444B-9FA3-3307EFB4DBD3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -584,6 +590,7 @@ Global
 		{051EE395-E40D-40B9-A8F8-598C0AEC86D0} = {DD3FE7E0-FA32-442B-869E-2554424B3BAC}
 		{C84609B7-C042-4296-9D7C-CD971D0222C3} = {D494C3BD-C224-4F0B-9F80-E557C5004D34}
 		{E7D466E3-5915-4489-B1EC-A03200E1967A} = {D494C3BD-C224-4F0B-9F80-E557C5004D34}
+		{B69A49DA-DB1A-444B-9FA3-3307EFB4DBD3} = {1C62BCEE-DC47-4093-8359-22F448216C7F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {00D78C3D-8536-4549-B1EE-C19BD0C50387}

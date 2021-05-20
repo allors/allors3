@@ -13,8 +13,6 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Text;
     using System.Text.Json;
     using System.Threading.Tasks;
-    using Meta;
-    using Polly;
     using Allors.Protocol.Json.Api.Invoke;
     using Allors.Protocol.Json.Api.Pull;
     using Allors.Protocol.Json.Api.Push;
@@ -22,16 +20,19 @@ namespace Allors.Workspace.Adapters.Remote
     using Allors.Protocol.Json.Api.Sync;
     using Allors.Protocol.Json.Auth;
     using Collections;
+    using Meta;
+    using Polly;
 
     public class Database
     {
-        private readonly Dictionary<long, DatabaseRecord> recordsById;
-
-        private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> readPermissionByOperandTypeByClass;
-        private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> writePermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> executePermissionByOperandTypeByClass;
 
-        internal Database(IMetaPopulation metaPopulation, HttpClient httpClient, WorkspaceIdGenerator workspaceIdGenerator)
+        private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> readPermissionByOperandTypeByClass;
+        private readonly Dictionary<long, DatabaseRecord> recordsById;
+        private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> writePermissionByOperandTypeByClass;
+
+        internal Database(IMetaPopulation metaPopulation, HttpClient httpClient,
+            WorkspaceIdGenerator workspaceIdGenerator)
         {
             this.MetaPopulation = metaPopulation;
             this.HttpClient = httpClient;
@@ -50,8 +51,6 @@ namespace Allors.Workspace.Adapters.Remote
             this.executePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, Permission>>();
         }
 
-        ~Database() => this.HttpClient.Dispose();
-
         internal IMetaPopulation MetaPopulation { get; }
 
         public HttpClient HttpClient { get; }
@@ -59,8 +58,8 @@ namespace Allors.Workspace.Adapters.Remote
         internal WorkspaceIdGenerator WorkspaceIdGenerator { get; }
 
         internal IAsyncPolicy Policy { get; set; } = Polly.Policy
-           .Handle<HttpRequestException>()
-           .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+            .Handle<HttpRequestException>()
+            .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
 
         public string UserId { get; private set; }
 
@@ -68,9 +67,11 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal Dictionary<long, Permission> PermissionById { get; }
 
+        ~Database() => this.HttpClient.Dispose();
+
         public async Task<bool> Login(Uri url, string username, string password)
         {
-            var request = new AuthenticationTokenRequest { Login = username, Password = password };
+            var request = new AuthenticationTokenRequest {Login = username, Password = password};
             using var response = await this.PostAsJsonAsync(url, request);
             _ = response.EnsureSuccessStatusCode();
             var authResult = await this.ReadAsAsync<AuthenticationTokenResponse>(response);
@@ -79,7 +80,8 @@ namespace Allors.Workspace.Adapters.Remote
                 return false;
             }
 
-            this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authResult.Token);
+            this.HttpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", authResult.Token);
             this.UserId = authResult.UserId;
 
             return true;
@@ -106,7 +108,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return new SecurityRequest
                 {
                     AccessControls = ctx.MissingAccessControlIds.Select(v => v).ToArray(),
-                    Permissions = ctx.MissingPermissionIds.Select(v => v).ToArray(),
+                    Permissions = ctx.MissingPermissionIds.Select(v => v).ToArray()
                 };
             }
 
@@ -166,7 +168,7 @@ namespace Allors.Workspace.Adapters.Remote
 
                         return false;
                     })
-                    .Select(v => v.Id).ToArray(),
+                    .Select(v => v.Id).ToArray()
             };
 
         internal DatabaseRecord GetRecord(long identity)
@@ -250,7 +252,9 @@ namespace Allors.Workspace.Adapters.Remote
                             return v;
                         });
 
-                    var permissionIdSet = permissionsIds != null ? (ISet<long>)new HashSet<long>(permissionsIds) : EmptySet<long>.Instance;
+                    var permissionIdSet = permissionsIds != null
+                        ? (ISet<long>)new HashSet<long>(permissionsIds)
+                        : EmptySet<long>.Instance;
 
                     this.AccessControlById[id] = new AccessControl(id, version, permissionIdSet);
                 }
@@ -258,10 +262,7 @@ namespace Allors.Workspace.Adapters.Remote
 
             if (missingPermissionIds != null)
             {
-                return new SecurityRequest
-                {
-                    Permissions = missingPermissionIds.ToArray(),
-                };
+                return new SecurityRequest {Permissions = missingPermissionIds.ToArray()};
             }
 
             return null;
@@ -272,7 +273,8 @@ namespace Allors.Workspace.Adapters.Remote
             switch (operation)
             {
                 case Operations.Read:
-                    if (this.readPermissionByOperandTypeByClass.TryGetValue(@class, out var readPermissionByOperandType))
+                    if (this.readPermissionByOperandTypeByClass.TryGetValue(@class,
+                        out var readPermissionByOperandType))
                     {
                         if (readPermissionByOperandType.TryGetValue(operandType, out var readPermission))
                         {
@@ -283,7 +285,8 @@ namespace Allors.Workspace.Adapters.Remote
                     return null;
 
                 case Operations.Write:
-                    if (this.writePermissionByOperandTypeByClass.TryGetValue(@class, out var writePermissionByOperandType))
+                    if (this.writePermissionByOperandTypeByClass.TryGetValue(@class,
+                        out var writePermissionByOperandType))
                     {
                         if (writePermissionByOperandType.TryGetValue(operandType, out var writePermission))
                         {
@@ -294,7 +297,8 @@ namespace Allors.Workspace.Adapters.Remote
                     return null;
 
                 default:
-                    if (this.executePermissionByOperandTypeByClass.TryGetValue(@class, out var executePermissionByOperandType))
+                    if (this.executePermissionByOperandTypeByClass.TryGetValue(@class,
+                        out var executePermissionByOperandType))
                     {
                         if (executePermissionByOperandType.TryGetValue(operandType, out var executePermission))
                         {
@@ -324,7 +328,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 Values = values?.ToDictionary(v => v.Key, v => v.Value),
                 Objects = objects?.ToDictionary(v => v.Key, v => v.Value.Id),
-                Collections = collections?.ToDictionary(v => v.Key, v => v.Value.Select(v => v.Id).ToArray()),
+                Collections = collections?.ToDictionary(v => v.Key, v => v.Value.Select(v => v.Id).ToArray())
             };
 
             var uri = new Uri(name + "/pull", UriKind.Relative);
@@ -385,7 +389,7 @@ namespace Allors.Workspace.Adapters.Remote
             var json = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<T>(json);
         }
-        
+
         internal DatabaseRecord OnPushed(long id, IClass @class)
         {
             var record = new DatabaseRecord(this, id, @class);

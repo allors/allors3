@@ -8,18 +8,18 @@ namespace Allors.Workspace.Adapters.Local
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Database;
-    using Database.Derivations;
-    using Database.Domain;
-    using Database.Meta;
-    using Database.Security;
+    using Allors.Database;
+    using Allors.Database.Derivations;
+    using Allors.Database.Domain;
+    using Allors.Database.Meta;
+    using Allors.Database.Security;
 
     public class Push : Result, IPushResult
     {
         internal Push(Session session) : base(session)
         {
             this.Workspace = session.Workspace;
-            this.Transaction = this.Workspace.DatabaseAdapter.Database.CreateTransaction();
+            this.Transaction = this.Workspace.Database.WrappedDatabase.CreateTransaction();
 
             var sessionContext = this.Transaction.Context();
             var databaseContext = this.Transaction.Database.Context();
@@ -55,7 +55,7 @@ namespace Allors.Workspace.Adapters.Local
 
         internal void Execute(PushToDatabaseTracker tracker)
         {
-            var metaPopulation = this.Workspace.DatabaseAdapter.Database.MetaPopulation;
+            var metaPopulation = this.Workspace.Database.WrappedDatabase.MetaPopulation;
 
             this.ObjectByNewId = tracker.Created?.ToDictionary(
                 x => x.Id,

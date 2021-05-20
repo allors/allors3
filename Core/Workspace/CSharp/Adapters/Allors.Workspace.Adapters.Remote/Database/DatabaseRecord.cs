@@ -7,20 +7,19 @@ namespace Allors.Workspace.Adapters.Remote
 {
     using System;
     using System.Collections.Generic;
-    using Meta;
     using System.Linq;
     using Allors.Protocol.Json.Api.Sync;
     using Collections;
+    using Meta;
 
     internal class DatabaseRecord : IRecord
     {
-        private Permission[] deniedPermissions;
+        private readonly Database database;
         private AccessControl[] accessControls;
+        private Permission[] deniedPermissions;
 
         private Dictionary<IRelationType, object> roleByRelationType;
         private SyncResponseRole[] syncResponseRoles;
-
-        private readonly Database database;
 
         internal DatabaseRecord(Database database, long id, IClass @class)
         {
@@ -37,15 +36,17 @@ namespace Allors.Workspace.Adapters.Remote
             this.Class = (IClass)this.database.MetaPopulation.FindByTag(syncResponseObject.ObjectType);
             this.Version = syncResponseObject.Version;
             this.syncResponseRoles = syncResponseObject.Roles;
-            this.AccessControlIds = syncResponseObject.AccessControls != null ? (ISet<long>)new HashSet<long>(ctx.CheckForMissingAccessControls(syncResponseObject.AccessControls)) : EmptySet<long>.Instance;
-            this.DeniedPermissionIds = syncResponseObject.DeniedPermissions != null ? (ISet<long>)new HashSet<long>(ctx.CheckForMissingPermissions(syncResponseObject.DeniedPermissions)): EmptySet<long>.Instance;
+            this.AccessControlIds = syncResponseObject.AccessControls != null
+                ? (ISet<long>)new HashSet<long>(ctx.CheckForMissingAccessControls(syncResponseObject.AccessControls))
+                : EmptySet<long>.Instance;
+            this.DeniedPermissionIds = syncResponseObject.DeniedPermissions != null
+                ? (ISet<long>)new HashSet<long>(ctx.CheckForMissingPermissions(syncResponseObject.DeniedPermissions))
+                : EmptySet<long>.Instance;
         }
 
         internal IClass Class { get; }
 
         internal long Id { get; }
-
-        public long Version { get; private set; }
 
         internal ISet<long> AccessControlIds { get; }
 
@@ -106,6 +107,8 @@ namespace Allors.Workspace.Adapters.Remote
                     .ToArray(),
                 _ => this.deniedPermissions
             };
+
+        public long Version { get; }
 
         public object GetRole(IRoleType roleType)
         {

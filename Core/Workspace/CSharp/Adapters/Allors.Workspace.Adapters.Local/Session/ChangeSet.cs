@@ -23,8 +23,9 @@ namespace Allors.Workspace.Adapters.Local
             this.RolesByAssociationType = new Dictionary<IAssociationType, ISet<IStrategy>>();
         }
 
-        ISession IChangeSet.Session => this.Session;
         private Session Session { get; }
+
+        ISession IChangeSet.Session => this.Session;
 
         public ISet<IStrategy> Created { get; }
 
@@ -34,7 +35,8 @@ namespace Allors.Workspace.Adapters.Local
 
         public IDictionary<IAssociationType, ISet<IStrategy>> RolesByAssociationType { get; }
 
-        internal void AddSessionStateChanges(IDictionary<IPropertyType, IDictionary<long, object>> sessionStateChangeSet)
+        internal void AddSessionStateChanges(
+            IDictionary<IPropertyType, IDictionary<long, object>> sessionStateChangeSet)
         {
             foreach (var kvp in sessionStateChangeSet)
             {

@@ -18,6 +18,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal void OnCreated(Strategy strategy) => _ = (this.Created ??= new HashSet<Strategy>()).Add(strategy);
 
-        internal void OnChanged(WorkspaceOriginState state) => _ = (this.Changed ??= new HashSet<WorkspaceOriginState>()).Add(state);
+        internal void OnChanged(WorkspaceOriginState state) =>
+            _ = (this.Changed ??= new HashSet<WorkspaceOriginState>()).Add(state);
     }
 }

@@ -23,8 +23,9 @@ namespace Allors.Workspace.Adapters.Remote
             this.RolesByAssociationType = new Dictionary<IAssociationType, ISet<IStrategy>>();
         }
 
-        ISession IChangeSet.Session => this.Session;
         private Session Session { get; }
+
+        ISession IChangeSet.Session => this.Session;
 
         public ISet<IStrategy> Created { get; }
 
@@ -34,7 +35,8 @@ namespace Allors.Workspace.Adapters.Remote
 
         public IDictionary<IAssociationType, ISet<IStrategy>> RolesByAssociationType { get; }
 
-        internal void AddSessionStateChanges(IDictionary<IPropertyType, IDictionary<long, object>> sessionStateChangeSet)
+        internal void AddSessionStateChanges(
+            IDictionary<IPropertyType, IDictionary<long, object>> sessionStateChangeSet)
         {
             foreach (var kvp in sessionStateChangeSet)
             {
@@ -138,7 +140,8 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        internal void DiffCookedWithCooked(Strategy association, IRelationType relationType, object current, object previous)
+        internal void DiffCookedWithCooked(Strategy association, IRelationType relationType, object current,
+            object previous)
         {
             var roleType = relationType.RoleType;
 
@@ -216,7 +219,8 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        internal void DiffCookedWithRaw(Strategy association, IRelationType relationType, object current, object previous)
+        internal void DiffCookedWithRaw(Strategy association, IRelationType relationType, object current,
+            object previous)
         {
             var roleType = relationType.RoleType;
 

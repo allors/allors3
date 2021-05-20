@@ -9,35 +9,35 @@ namespace Allors.Workspace.Adapters.Local
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
-    using Database;
-    using Database.Domain;
-    using Database.Security;
+    using Allors.Database;
+    using Allors.Database.Domain;
+    using Allors.Database.Security;
     using Meta;
-    using IRoleType = Database.Meta.IRoleType;
+    using IRoleType = Allors.Database.Meta.IRoleType;
 
-    internal class DatabaseAdapter
+    internal class Database
     {
-        private readonly ConcurrentDictionary<long, DatabaseRecord> recordsById;
         private readonly Dictionary<long, AccessControl> accessControlById;
         private readonly IPermissionsCache permissionCache;
+        private readonly ConcurrentDictionary<long, DatabaseRecord> recordsById;
 
-        internal DatabaseAdapter(IMetaPopulation metaPopulation, IDatabase database)
+        internal Database(IMetaPopulation metaPopulation, IDatabase wrappedDatabase)
         {
             this.MetaPopulation = metaPopulation;
-            this.Database = database;
+            this.WrappedDatabase = wrappedDatabase;
             this.recordsById = new ConcurrentDictionary<long, DatabaseRecord>();
             this.WorkspaceIdGenerator = new WorkspaceIdGenerator();
-            this.permissionCache = this.Database.Context().PermissionsCache;
+            this.permissionCache = this.WrappedDatabase.Context().PermissionsCache;
             this.accessControlById = new Dictionary<long, AccessControl>();
         }
 
-        internal IDatabase Database { get; }
+        internal IDatabase WrappedDatabase { get; }
 
         internal WorkspaceIdGenerator WorkspaceIdGenerator { get; }
 
-        private Database.Meta.IMetaPopulation DatabaseMetaPopulation => this.Database.MetaPopulation;
+        private Allors.Database.Meta.IMetaPopulation DatabaseMetaPopulation => this.WrappedDatabase.MetaPopulation;
         private IMetaPopulation MetaPopulation { get; }
-        
+
         internal void Sync(IEnumerable<IObject> objects, IAccessControlLists accessControlLists)
         {
             // TODO: Prefetch objects
@@ -54,7 +54,9 @@ namespace Allors.Workspace.Adapters.Local
                 }
 
                 var roles = @object.Strategy.GetCompositeRoles(roleType);
-                return roles.Count > 0 ? @object.Strategy.GetCompositeRoles(roleType).Select(v => v.Id).ToArray() : Array.Empty<long>();
+                return roles.Count > 0
+                    ? @object.Strategy.GetCompositeRoles(roleType).Select(v => v.Id).ToArray()
+                    : Array.Empty<long>();
             }
 
             foreach (var @object in objects)
@@ -75,7 +77,8 @@ namespace Allors.Workspace.Adapters.Local
                     ?.Select(this.GetAccessControl)
                     .ToArray() ?? Array.Empty<AccessControl>();
 
-                this.recordsById[id] = new DatabaseRecord(id, workspaceClass, @object.Strategy.ObjectVersion, roleByRoleType, deniedPermissions, accessControls);
+                this.recordsById[id] = new DatabaseRecord(id, workspaceClass, @object.Strategy.ObjectVersion,
+                    roleByRoleType, deniedPermissions, accessControls);
             }
         }
 
@@ -96,13 +99,16 @@ namespace Allors.Workspace.Adapters.Local
             switch (operation)
             {
                 case Operations.Read:
-                    _ = permissionCacheEntry.RoleReadPermissionIdByRelationTypeId.TryGetValue(operandId, out permission);
+                    _ = permissionCacheEntry.RoleReadPermissionIdByRelationTypeId.TryGetValue(operandId,
+                        out permission);
                     break;
                 case Operations.Write:
-                    _ = permissionCacheEntry.RoleWritePermissionIdByRelationTypeId.TryGetValue(operandId, out permission);
+                    _ = permissionCacheEntry.RoleWritePermissionIdByRelationTypeId.TryGetValue(operandId,
+                        out permission);
                     break;
                 default:
-                    _ = permissionCacheEntry.MethodExecutePermissionIdByMethodTypeId.TryGetValue(operandId, out permission);
+                    _ = permissionCacheEntry.MethodExecutePermissionIdByMethodTypeId.TryGetValue(operandId,
+                        out permission);
                     break;
             }
 

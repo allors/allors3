@@ -22,10 +22,13 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal void OnCreated(Strategy strategy) => _ = (this.Created ??= new HashSet<IStrategy>()).Add(strategy);
 
-        internal void OnInstantiated(Strategy strategy) => _ = (this.Instantiated ??= new HashSet<IStrategy>()).Add(strategy);
+        internal void OnInstantiated(Strategy strategy) =>
+            _ = (this.Instantiated ??= new HashSet<IStrategy>()).Add(strategy);
 
-        internal void OnChanged(DatabaseOriginState state) => _ = (this.DatabaseOriginStates ??= new HashSet<DatabaseOriginState>()).Add(state);
+        internal void OnChanged(DatabaseOriginState state) =>
+            _ = (this.DatabaseOriginStates ??= new HashSet<DatabaseOriginState>()).Add(state);
 
-        internal void OnChanged(WorkspaceOriginState state) => _ = (this.WorkspaceOriginStates ??= new HashSet<WorkspaceOriginState>()).Add(state);
+        internal void OnChanged(WorkspaceOriginState state) =>
+            _ = (this.WorkspaceOriginStates ??= new HashSet<WorkspaceOriginState>()).Add(state);
     }
 }

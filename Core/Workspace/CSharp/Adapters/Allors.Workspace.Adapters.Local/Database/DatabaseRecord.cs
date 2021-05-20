@@ -11,8 +11,8 @@ namespace Allors.Workspace.Adapters.Local
 
     public class DatabaseRecord : IRecord
     {
-        private readonly long[] deniedPermissions;
         private readonly AccessControl[] accessControls;
+        private readonly long[] deniedPermissions;
 
         private readonly Dictionary<IRoleType, object> roleByRoleType;
 
@@ -23,7 +23,8 @@ namespace Allors.Workspace.Adapters.Local
             this.Version = 0;
         }
 
-        internal DatabaseRecord(long id, IClass @class, long version, Dictionary<IRoleType, object> roleByRoleType, long[] deniedPermissions, AccessControl[] accessControls)
+        internal DatabaseRecord(long id, IClass @class, long version, Dictionary<IRoleType, object> roleByRoleType,
+            long[] deniedPermissions, AccessControl[] accessControls)
         {
             this.Id = id;
             this.Class = @class;

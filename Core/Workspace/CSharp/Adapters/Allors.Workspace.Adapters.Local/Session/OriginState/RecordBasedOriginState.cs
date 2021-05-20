@@ -28,22 +28,10 @@ namespace Allors.Workspace.Adapters.Local
 
         private Dictionary<IRelationType, object> PreviousChangedRoleByRelationType { get; set; }
 
-        #region Proxy Properties
-        protected long Id => this.Strategy.Id;
-
-        protected IClass Class => this.Strategy.Class;
-
-        protected Session Session => this.Strategy.Session;
-
-        protected Workspace Workspace => this.Session.Workspace;
-
-        private INumbers Numbers => this.Strategy.Numbers;
-
-        #endregion
-
         internal object GetRole(IRoleType roleType)
         {
-            if (this.ChangedRoleByRelationType != null && this.ChangedRoleByRelationType.TryGetValue(roleType.RelationType, out var role))
+            if (this.ChangedRoleByRelationType != null &&
+                this.ChangedRoleByRelationType.TryGetValue(roleType.RelationType, out var role))
             {
                 return role;
             }
@@ -66,7 +54,8 @@ namespace Allors.Workspace.Adapters.Local
 
             if (associationType.IsOne && role.HasValue)
             {
-                var previousAssociationObject = this.Session.GetAssociation<IObject>(role.Value, associationType).FirstOrDefault();
+                var previousAssociationObject =
+                    this.Session.GetAssociation<IObject>(role.Value, associationType).FirstOrDefault();
 
                 this.SetChangedRole(roleType, role);
 
@@ -102,7 +91,8 @@ namespace Allors.Workspace.Adapters.Local
             }
 
             // OneToMany
-            var previousAssociationObject = this.Session.GetAssociation<IObject>(roleToAdd, associationType).FirstOrDefault();
+            var previousAssociationObject =
+                this.Session.GetAssociation<IObject>(roleToAdd, associationType).FirstOrDefault();
             previousAssociationObject?.Strategy.Set(roleType, null);
         }
 
@@ -136,7 +126,8 @@ namespace Allors.Workspace.Adapters.Local
             var addedRoles = this.Numbers.Except(role, previousRole);
             foreach (var addedRole in this.Numbers.Enumerate(addedRoles))
             {
-                var previousAssociationObject = this.Session.GetAssociation<IObject>(addedRole, associationType).FirstOrDefault();
+                var previousAssociationObject =
+                    this.Session.GetAssociation<IObject>(addedRole, associationType).FirstOrDefault();
                 previousAssociationObject?.Strategy.Set(roleType, null);
             }
         }
@@ -144,7 +135,8 @@ namespace Allors.Workspace.Adapters.Local
         internal void Checkpoint(ChangeSet changeSet)
         {
             // Same record
-            if (this.PreviousRecord == null || this.Record == null || this.Record.Version == this.PreviousRecord.Version)
+            if (this.PreviousRecord == null || this.Record == null ||
+                this.Record.Version == this.PreviousRecord.Version)
             {
                 // No previous changed roles
                 if (this.PreviousChangedRoleByRelationType == null)
@@ -242,5 +234,19 @@ namespace Allors.Workspace.Adapters.Local
             this.ChangedRoleByRelationType[roleType.RelationType] = role;
             this.OnChange();
         }
+
+        #region Proxy Properties
+
+        protected long Id => this.Strategy.Id;
+
+        protected IClass Class => this.Strategy.Class;
+
+        protected Session Session => this.Strategy.Session;
+
+        protected Workspace Workspace => this.Session.Workspace;
+
+        private INumbers Numbers => this.Strategy.Numbers;
+
+        #endregion
     }
 }

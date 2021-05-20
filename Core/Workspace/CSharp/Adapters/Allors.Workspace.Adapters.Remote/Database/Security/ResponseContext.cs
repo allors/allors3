@@ -13,7 +13,8 @@ namespace Allors.Workspace.Adapters.Remote
         private readonly Dictionary<long, AccessControl> accessControlById;
         private readonly Dictionary<long, Permission> permissionById;
 
-        internal ResponseContext(Dictionary<long, AccessControl> accessControlById, Dictionary<long, Permission> permissionById)
+        internal ResponseContext(Dictionary<long, AccessControl> accessControlById,
+            Dictionary<long, Permission> permissionById)
         {
             this.accessControlById = accessControlById;
             this.permissionById = permissionById;

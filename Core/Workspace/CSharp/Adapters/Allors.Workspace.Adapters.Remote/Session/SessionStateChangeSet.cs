@@ -10,7 +10,8 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class SessionStateChangeSet
     {
-        public SessionStateChangeSet(IDictionary<IRoleType, IDictionary<Strategy, object>> roleByAssociationByRoleType, IDictionary<IAssociationType, IDictionary<Strategy, object>> associationByRoleByAssociationType)
+        public SessionStateChangeSet(IDictionary<IRoleType, IDictionary<Strategy, object>> roleByAssociationByRoleType,
+            IDictionary<IAssociationType, IDictionary<Strategy, object>> associationByRoleByAssociationType)
         {
             this.RoleByAssociationByRoleType = roleByAssociationByRoleType;
             this.AssociationByRoleByRoleType = associationByRoleByAssociationType;

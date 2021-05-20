@@ -8,11 +8,11 @@ namespace Allors.Workspace.Adapters.Local
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Database;
-    using Database.Derivations;
-    using Database.Domain;
-    using Database.Meta;
-    using Database.Security;
+    using Allors.Database;
+    using Allors.Database.Derivations;
+    using Allors.Database.Domain;
+    using Allors.Database.Meta;
+    using Allors.Database.Security;
     using Method = Allors.Workspace.Method;
 
     public class Invoke : Result
@@ -20,7 +20,7 @@ namespace Allors.Workspace.Adapters.Local
         internal Invoke(Session session, Workspace workspace) : base(session)
         {
             this.Workspace = workspace;
-            this.Transaction = this.Workspace.DatabaseAdapter.Database.CreateTransaction();
+            this.Transaction = this.Workspace.Database.WrappedDatabase.CreateTransaction();
 
             var sessionContext = this.Transaction.Context();
             var databaseContext = this.Transaction.Database.Context();
@@ -103,7 +103,6 @@ namespace Allors.Workspace.Adapters.Local
 
             if (!this.HasErrors)
             {
-
                 this.Transaction.Commit();
             }
         }

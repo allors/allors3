@@ -9,20 +9,21 @@ namespace Allors.Workspace.Adapters.Local
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Database;
-    using Database.Data;
-    using Database.Meta;
-    using Database.Security;
-    using Extent = Database.Extent;
+    using Allors.Database;
+    using Allors.Database.Data;
+    using Allors.Database.Meta;
+    using Allors.Database.Security;
+    using Extent = Allors.Database.Extent;
 
     public class PullInstantiate
     {
-        private readonly ITransaction transaction;
-        private readonly Database.Data.Pull pull;
         private readonly IAccessControlLists acls;
         private readonly IPreparedSelects preparedSelects;
+        private readonly Allors.Database.Data.Pull pull;
+        private readonly ITransaction transaction;
 
-        public PullInstantiate(ITransaction transaction, Database.Data.Pull pull, IAccessControlLists acls, IPreparedSelects preparedSelects)
+        public PullInstantiate(ITransaction transaction, Allors.Database.Data.Pull pull, IAccessControlLists acls,
+            IPreparedSelects preparedSelects)
         {
             this.transaction = transaction;
             this.pull = pull;
@@ -53,7 +54,7 @@ namespace Allors.Workspace.Adapters.Local
                         var name = result.Name;
 
                         var select = result.Select;
-                        if ((select == null) && result.SelectRef.HasValue)
+                        if (@select == null && result.SelectRef.HasValue)
                         {
                             select = this.preparedSelects.Get(result.SelectRef.Value);
                         }
@@ -78,7 +79,9 @@ namespace Allors.Workspace.Adapters.Local
                                     name ??= propertyType.PluralName;
 
                                     var stepResult = select.Step.Get(@object, this.acls);
-                                    var objects = stepResult is HashSet<object> set ? set.Cast<IObject>().ToArray() : ((Extent)stepResult)?.ToArray() ?? new IObject[0];
+                                    var objects = stepResult is HashSet<object> set
+                                        ? set.Cast<IObject>().ToArray()
+                                        : ((Extent)stepResult)?.ToArray() ?? new IObject[0];
 
                                     if (result.Skip.HasValue || result.Take.HasValue)
                                     {
@@ -113,7 +116,8 @@ namespace Allors.Workspace.Adapters.Local
                     }
                     catch (Exception e)
                     {
-                        throw new Exception($"Instantiate: {@object?.Strategy.Class}[{@object?.Strategy.ObjectId}], {result}", e);
+                        throw new Exception(
+                            $"Instantiate: {@object?.Strategy.Class}[{@object?.Strategy.ObjectId}], {result}", e);
                     }
                 }
             }
