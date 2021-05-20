@@ -14,5 +14,4 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("94474285-cafb-4a71-aed2-d6a80564f543")]
 
-[assembly: InternalsVisibleTo("Workspace.Tests")]
 [assembly: InternalsVisibleTo("Workspace.Tests.Remote")]

@@ -49,7 +49,7 @@ namespace Allors.Workspace.Adapters.Remote
             var invokeResponse = await ((Database)this.Database).Invoke(invokeRequest);
             return new InvokeResult(this, invokeResponse);
         }
-        
+
         public override async Task<IPullResult> Pull(params Pull[] pulls)
         {
             var pullRequest = new PullRequest { List = pulls.Select(v => v.ToJson()).ToArray() };
@@ -141,7 +141,7 @@ namespace Allors.Workspace.Adapters.Remote
             return (T)strategy.Object;
         }
 
-        protected override Adapters.Strategy InstantiateDatabaseStrategy(long id)
+        public override Adapters.Strategy InstantiateDatabaseStrategy(long id)
         {
             var databaseRecord = (DatabaseRecord)this.Database.GetRecord(id);
             var strategy = new Strategy(this, databaseRecord);
@@ -152,7 +152,7 @@ namespace Allors.Workspace.Adapters.Remote
             return strategy;
         }
 
-        protected override  Adapters.Strategy InstantiateWorkspaceStrategy(long id)
+        protected override Adapters.Strategy InstantiateWorkspaceStrategy(long id)
         {
             if (!this.Workspace.WorkspaceClassByWorkspaceId.TryGetValue(id, out var @class))
             {
@@ -166,7 +166,7 @@ namespace Allors.Workspace.Adapters.Remote
 
             return strategy;
         }
-        
+
         internal PushRequest PushRequest() => new PushRequest
         {
             NewObjects = this.PushToDatabaseTracker.Created?.Select(v => ((Strategy)v).DatabasePushNew()).ToArray(),

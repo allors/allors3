@@ -217,7 +217,7 @@ namespace Allors.Workspace.Adapters
 
         public abstract T Create<T>(IClass @class) where T : class, IObject;
 
-        protected abstract Strategy InstantiateDatabaseStrategy(long id);
+        public abstract Strategy InstantiateDatabaseStrategy(long id);
 
         protected abstract Strategy InstantiateWorkspaceStrategy(long id);
 

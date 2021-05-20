@@ -84,7 +84,7 @@ namespace Allors.Workspace.Adapters.Local
             return (T)strategy.Object;
         }
 
-        protected override Adapters.Strategy InstantiateDatabaseStrategy(long id)
+        public override Adapters.Strategy InstantiateDatabaseStrategy(long id)
         {
             var databaseRecord = this.Database.GetRecord(id);
             var strategy = new Strategy(this, (DatabaseRecord)databaseRecord);
