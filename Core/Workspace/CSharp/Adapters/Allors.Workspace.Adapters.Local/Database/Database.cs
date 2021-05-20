@@ -13,6 +13,7 @@ namespace Allors.Workspace.Adapters.Local
     using Allors.Database.Domain;
     using Allors.Database.Security;
     using Meta;
+    using Numbers;
     using IRoleType = Allors.Database.Meta.IRoleType;
 
     internal class Database : Adapters.Database
@@ -21,9 +22,10 @@ namespace Allors.Workspace.Adapters.Local
         private readonly IPermissionsCache permissionCache;
         private readonly ConcurrentDictionary<long, DatabaseRecord> recordsById;
 
-        internal Database(IMetaPopulation metaPopulation, IDatabase wrappedDatabase) : base(metaPopulation)
+        internal Database(IMetaPopulation metaPopulation, IDatabase wrappedDatabase, INumbers numbers) : base(metaPopulation)
         {
             this.WrappedDatabase = wrappedDatabase;
+            this.Numbers = numbers;
             this.recordsById = new ConcurrentDictionary<long, DatabaseRecord>();
 
             this.permissionCache = this.WrappedDatabase.Context().PermissionsCache;
@@ -31,6 +33,8 @@ namespace Allors.Workspace.Adapters.Local
         }
 
         internal IDatabase WrappedDatabase { get; }
+
+        internal INumbers Numbers { get; }
 
         internal void Sync(IEnumerable<IObject> objects, IAccessControlLists accessControlLists)
         {
@@ -66,13 +70,12 @@ namespace Allors.Workspace.Adapters.Local
 
                 var acl = accessControlLists[@object];
 
-                var deniedPermissions = acl.DeniedPermissionIds?.ToArray() ?? Array.Empty<long>();
+                var deniedPermissionNumbers = this.Numbers.From(acl.DeniedPermissionIds);
                 var accessControls = acl.AccessControls
                     ?.Select(this.GetAccessControl)
                     .ToArray() ?? Array.Empty<Adapters.AccessControl>();
 
-                this.recordsById[id] = new DatabaseRecord(workspaceClass, id,
-                    @object.Strategy.ObjectVersion, roleByRoleType, deniedPermissions, accessControls);
+                this.recordsById[id] = new DatabaseRecord(this, workspaceClass, id, @object.Strategy.ObjectVersion, roleByRoleType, deniedPermissionNumbers, accessControls);
             }
         }
 
@@ -111,7 +114,7 @@ namespace Allors.Workspace.Adapters.Local
 
         internal DatabaseRecord OnPushed(long id, IClass @class)
         {
-            var record = new DatabaseRecord(@class, id);
+            var record = new DatabaseRecord(this, @class, id);
             this.recordsById[id] = record;
             return record;
         }

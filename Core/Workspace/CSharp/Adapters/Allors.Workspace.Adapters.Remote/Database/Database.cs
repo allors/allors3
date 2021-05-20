@@ -21,44 +21,49 @@ namespace Allors.Workspace.Adapters.Remote
     using Allors.Protocol.Json.Auth;
     using Collections;
     using Meta;
+    using Numbers;
     using Polly;
 
     public class Database : Adapters.Database
     {
-        private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> executePermissionByOperandTypeByClass;
-
-        private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> readPermissionByOperandTypeByClass;
         private readonly Dictionary<long, DatabaseRecord> recordsById;
-        private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> writePermissionByOperandTypeByClass;
 
-        internal Database(IMetaPopulation metaPopulation, HttpClient httpClient, WorkspaceIdGenerator workspaceIdGenerator) : base(metaPopulation)
+        private readonly Dictionary<IClass, Dictionary<IOperandType, long>> readPermissionByOperandTypeByClass;
+        private readonly Dictionary<IClass, Dictionary<IOperandType, long>> writePermissionByOperandTypeByClass;
+        private readonly Dictionary<IClass, Dictionary<IOperandType, long>> executePermissionByOperandTypeByClass;
+
+        internal Database(IMetaPopulation metaPopulation, HttpClient httpClient, WorkspaceIdGenerator workspaceIdGenerator, INumbers numbers) : base(metaPopulation, workspaceIdGenerator)
         {
             this.HttpClient = httpClient;
+            this.Numbers = numbers;
 
             this.HttpClient.DefaultRequestHeaders.Accept.Clear();
             this.HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             this.AccessControlById = new Dictionary<long, AccessControl>();
-            this.PermissionById = new Dictionary<long, Permission>();
 
             this.recordsById = new Dictionary<long, DatabaseRecord>();
 
-            this.readPermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, Permission>>();
-            this.writePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, Permission>>();
-            this.executePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, Permission>>();
+            this.readPermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, long>>();
+            this.writePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, long>>();
+            this.executePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, long>>();
+
+            this.Permissions = new HashSet<long>();
         }
+
+        public IAsyncPolicy Policy { get; set; } = Polly.Policy
+            .Handle<HttpRequestException>()
+            .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
 
         public HttpClient HttpClient { get; }
 
-        internal IAsyncPolicy Policy { get; set; } = Polly.Policy
-            .Handle<HttpRequestException>()
-            .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+        public INumbers Numbers { get; }
 
         public string UserId { get; private set; }
 
         internal Dictionary<long, AccessControl> AccessControlById { get; }
 
-        internal Dictionary<long, Permission> PermissionById { get; }
+        internal ISet<long> Permissions { get; }
 
         ~Database() => this.HttpClient.Dispose();
 
@@ -80,7 +85,7 @@ namespace Allors.Workspace.Adapters.Remote
             return true;
         }
 
-        internal Permission GetPermission(IClass @class, IOperandType operandType, Operations operation)
+        internal long GetPermission(IClass @class, IOperandType operandType, Operations operation)
         {
             switch (operation)
             {
@@ -94,7 +99,7 @@ namespace Allors.Workspace.Adapters.Remote
                         }
                     }
 
-                    return null;
+                    return 0;
 
                 case Operations.Write:
                     if (this.writePermissionByOperandTypeByClass.TryGetValue(@class,
@@ -106,7 +111,7 @@ namespace Allors.Workspace.Adapters.Remote
                         }
                     }
 
-                    return null;
+                    return 0;
 
                 default:
                     if (this.executePermissionByOperandTypeByClass.TryGetValue(@class,
@@ -118,20 +123,13 @@ namespace Allors.Workspace.Adapters.Remote
                         }
                     }
 
-                    return null;
+                    return 0;
             }
-        }
-
-        internal DatabaseRecord PushResponse(long identity, IClass @class)
-        {
-            var databaseObject = new DatabaseRecord(this, @class, identity);
-            this.recordsById[identity] = databaseObject;
-            return databaseObject;
         }
 
         internal SecurityRequest SyncResponse(SyncResponse syncResponse)
         {
-            var ctx = new ResponseContext(this.AccessControlById, this.PermissionById);
+            var ctx = new ResponseContext(this);
             foreach (var syncResponseObject in syncResponse.Objects)
             {
                 var databaseObjects = new DatabaseRecord(this, ctx, syncResponseObject);
@@ -156,50 +154,27 @@ namespace Allors.Workspace.Adapters.Remote
                 Objects = response.Pool
                     .Where(v =>
                     {
-                        if (!this.recordsById.TryGetValue(v.Id, out var databaseObject))
+                        if (!this.recordsById.TryGetValue(v.Id, out var rec))
                         {
                             return true;
                         }
 
-                        if (!databaseObject.Version.Equals(v.Version))
+                        if (!rec.Version.Equals(v.Version))
                         {
                             return true;
                         }
 
-                        // TODO: Update AccessControlIds if proper subset
-                        if (v.AccessControls == null)
-                        {
-                            if (databaseObject.AccessControlIds.Count > 0)
-                            {
-                                return true;
-                            }
-                        }
-                        else if (!databaseObject.AccessControlIds.SetEquals(v.AccessControls))
+                        if (!this.Numbers.AreEqual(rec.AccessControlIds, v.AccessControls))
                         {
                             return true;
                         }
 
-                        if (v.DeniedPermissions == null)
+                        if (!this.Numbers.AreEqual(rec.DeniedPermissions, v.DeniedPermissions))
                         {
-                            if (databaseObject.DeniedPermissionIds.Count > 0)
-                            {
-                                return true;
-                            }
+                            return true;
                         }
-                        else
-                        {
-                            if (databaseObject.DeniedPermissionIds.SetEquals(v.DeniedPermissions))
-                            {
-                                return false;
-                            }
 
-                            if (!databaseObject.DeniedPermissionIds.IsProperSubsetOf(v.DeniedPermissions))
-                            {
-                                return true;
-                            }
-
-                            databaseObject.UpdateDeniedPermissions(v.DeniedPermissions);
-                        }
+                        // TODO: Use smarter updates for DeniedPermissions
 
                         return false;
                     })
@@ -223,8 +198,7 @@ namespace Allors.Workspace.Adapters.Remote
                     var metaObject = this.MetaPopulation.FindByTag((int)syncResponsePermission[2]);
                     var operandType = (IOperandType)(metaObject as IRelationType)?.RoleType ?? (IMethodType)metaObject;
                     var operation = (Operations)syncResponsePermission[3];
-                    var permission = new Permission(id, @class, operandType, operation);
-                    this.PermissionById[id] = permission;
+                    this.Permissions.Add(id);
 
                     switch (operation)
                     {
@@ -232,11 +206,11 @@ namespace Allors.Workspace.Adapters.Remote
                             if (!this.readPermissionByOperandTypeByClass.TryGetValue(@class,
                                 out var readPermissionByOperandType))
                             {
-                                readPermissionByOperandType = new Dictionary<IOperandType, Permission>();
+                                readPermissionByOperandType = new Dictionary<IOperandType, long>();
                                 this.readPermissionByOperandTypeByClass[@class] = readPermissionByOperandType;
                             }
 
-                            readPermissionByOperandType[operandType] = permission;
+                            readPermissionByOperandType[operandType] = id;
 
                             break;
 
@@ -244,11 +218,11 @@ namespace Allors.Workspace.Adapters.Remote
                             if (!this.writePermissionByOperandTypeByClass.TryGetValue(@class,
                                 out var writePermissionByOperandType))
                             {
-                                writePermissionByOperandType = new Dictionary<IOperandType, Permission>();
+                                writePermissionByOperandType = new Dictionary<IOperandType, long>();
                                 this.writePermissionByOperandTypeByClass[@class] = writePermissionByOperandType;
                             }
 
-                            writePermissionByOperandType[operandType] = permission;
+                            writePermissionByOperandType[operandType] = id;
 
                             break;
 
@@ -256,11 +230,11 @@ namespace Allors.Workspace.Adapters.Remote
                             if (!this.executePermissionByOperandTypeByClass.TryGetValue(@class,
                                 out var executePermissionByOperandType))
                             {
-                                executePermissionByOperandType = new Dictionary<IOperandType, Permission>();
+                                executePermissionByOperandType = new Dictionary<IOperandType, long>();
                                 this.executePermissionByOperandTypeByClass[@class] = executePermissionByOperandType;
                             }
 
-                            executePermissionByOperandType[operandType] = permission;
+                            executePermissionByOperandType[operandType] = id;
 
                             break;
                     }
@@ -277,7 +251,7 @@ namespace Allors.Workspace.Adapters.Remote
                     var permissionsIds = syncResponseAccessControl.PermissionIds
                         ?.Select(v =>
                         {
-                            if (this.PermissionById.ContainsKey(v))
+                            if (this.Permissions.Contains(v))
                             {
                                 return v;
                             }
@@ -307,25 +281,6 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var uri = new Uri("pull", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, pullRequest);
-            _ = response.EnsureSuccessStatusCode();
-            return await this.ReadAsAsync<PullResponse>(response);
-        }
-
-        internal async Task<PullResponse> Pull(
-            string name,
-            IEnumerable<KeyValuePair<string, object>> values = null,
-            IEnumerable<KeyValuePair<string, IObject>> objects = null,
-            IEnumerable<KeyValuePair<string, IEnumerable<IObject>>> collections = null)
-        {
-            var pullArgs = new PullArgs
-            {
-                Values = values?.ToDictionary(v => v.Key, v => v.Value),
-                Objects = objects?.ToDictionary(v => v.Key, v => v.Value.Id),
-                Collections = collections?.ToDictionary(v => v.Key, v => v.Value.Select(v => v.Id).ToArray())
-            };
-
-            var uri = new Uri(name + "/pull", UriKind.Relative);
-            var response = await this.PostAsJsonAsync(uri, pullArgs);
             _ = response.EnsureSuccessStatusCode();
             return await this.ReadAsAsync<PullResponse>(response);
         }
@@ -366,7 +321,14 @@ namespace Allors.Workspace.Adapters.Remote
             return await this.ReadAsAsync<SecurityResponse>(response);
         }
 
-        internal async Task<HttpResponseMessage> PostAsJsonAsync(Uri uri, object args) =>
+        internal DatabaseRecord OnPushed(long id, IClass @class)
+        {
+            var record = new DatabaseRecord(this, @class, id);
+            this.recordsById[id] = record;
+            return record;
+        }
+
+        private async Task<HttpResponseMessage> PostAsJsonAsync(Uri uri, object args) =>
             await this.Policy.ExecuteAsync(
                 async () =>
                 {
@@ -377,17 +339,10 @@ namespace Allors.Workspace.Adapters.Remote
                         new StringContent(json, Encoding.UTF8, "application/json"));
                 });
 
-        internal async Task<T> ReadAsAsync<T>(HttpResponseMessage response)
+        private async Task<T> ReadAsAsync<T>(HttpResponseMessage response)
         {
             var json = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<T>(json);
-        }
-
-        internal DatabaseRecord OnPushed(long id, IClass @class)
-        {
-            var record = new DatabaseRecord(this, @class, id);
-            this.recordsById[id] = record;
-            return record;
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Allors.Workspace.Adapters.Remote
     {
         internal Workspace(string name, IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, HttpClient httpClient) : base(name, metaPopulation, instance, state)
         {
-            this.Database = new Database(this.MetaPopulation, httpClient, new WorkspaceIdGenerator());
+            this.Database = new Database(this.MetaPopulation, httpClient, new WorkspaceIdGenerator(), this.Numbers);
             this.Lifecycle.OnInit(this);
         }
 

@@ -13,7 +13,7 @@ namespace Allors.Workspace.Adapters.Local
     {
         public Workspace(string name, long userId, IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, IDatabase wrappedDatabase) : base(name, metaPopulation, instance, state)
         {
-            this.Database = new Database(this.MetaPopulation, wrappedDatabase);
+            this.Database = new Database(this.MetaPopulation, wrappedDatabase, this.Numbers);
             this.UserId = userId;
             this.Lifecycle.OnInit(this);
         }

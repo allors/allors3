@@ -9,10 +9,10 @@ namespace Allors.Workspace.Adapters
 
     public abstract class Database
     {
-        protected Database(IMetaPopulation metaPopulation)
+        protected Database(IMetaPopulation metaPopulation, WorkspaceIdGenerator workspaceIdGenerator = null)
         {
             this.MetaPopulation = metaPopulation;
-            this.WorkspaceIdGenerator = new WorkspaceIdGenerator();
+            this.WorkspaceIdGenerator = workspaceIdGenerator ?? new WorkspaceIdGenerator();
         }
 
         public IMetaPopulation MetaPopulation { get; }

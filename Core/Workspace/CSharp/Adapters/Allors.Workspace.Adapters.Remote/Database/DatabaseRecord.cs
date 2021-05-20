@@ -5,44 +5,32 @@
 
 namespace Allors.Workspace.Adapters.Remote
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Protocol.Json.Api.Sync;
-    using Collections;
     using Meta;
 
     internal class DatabaseRecord : Adapters.DatabaseRecord
     {
         private readonly Database database;
-        private AccessControl[] accessControls;
-        private Permission[] deniedPermissions;
 
         private Dictionary<IRelationType, object> roleByRelationType;
         private SyncResponseRole[] syncResponseRoles;
 
-        internal DatabaseRecord(Database database, IClass @class, long id)
-            : base(@class, id, 0)
-        {
-            this.database = database;
-        }
+        internal DatabaseRecord(Database database, IClass @class, long id) : base(@class, id, 0) => this.database = database;
 
         internal DatabaseRecord(Database database, ResponseContext ctx, SyncResponseObject syncResponseObject)
             : base((IClass)database.MetaPopulation.FindByTag(syncResponseObject.ObjectType), syncResponseObject.Id, syncResponseObject.Version)
         {
             this.database = database;
             this.syncResponseRoles = syncResponseObject.Roles;
-            this.AccessControlIds = syncResponseObject.AccessControls != null
-                ? (ISet<long>)new HashSet<long>(ctx.CheckForMissingAccessControls(syncResponseObject.AccessControls))
-                : EmptySet<long>.Instance;
-            this.DeniedPermissionIds = syncResponseObject.DeniedPermissions != null
-                ? (ISet<long>)new HashSet<long>(ctx.CheckForMissingPermissions(syncResponseObject.DeniedPermissions))
-                : EmptySet<long>.Instance;
+            this.AccessControlIds = ctx.CheckForMissingAccessControls(syncResponseObject.AccessControls);
+            this.DeniedPermissions = ctx.CheckForMissingPermissions(syncResponseObject.DeniedPermissions);
         }
 
-        internal ISet<long> AccessControlIds { get; }
+        internal long[] AccessControlIds { get; }
 
-        internal ISet<long> DeniedPermissionIds { get; private set; }
+        internal long[] DeniedPermissions { get; }
 
         private Dictionary<IRelationType, object> RoleByRelationType
         {
@@ -80,26 +68,6 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        private AccessControl[] AccessControls =>
-            this.accessControls = this.accessControls switch
-            {
-                null when this.AccessControlIds == null => Array.Empty<AccessControl>(),
-                null => this.AccessControlIds
-                    .Select(v => this.database.AccessControlById[v])
-                    .ToArray(),
-                _ => this.accessControls
-            };
-
-        private Permission[] DeniedPermissions =>
-            this.deniedPermissions = this.deniedPermissions switch
-            {
-                null when this.DeniedPermissionIds == null => Array.Empty<Permission>(),
-                null => this.DeniedPermissionIds
-                    .Select(v => this.database.PermissionById[v])
-                    .ToArray(),
-                _ => this.deniedPermissions
-            };
-
         public override object GetRole(IRoleType roleType)
         {
             object @object = null;
@@ -107,24 +75,14 @@ namespace Allors.Workspace.Adapters.Remote
             return @object;
         }
 
-        public bool IsPermitted(Permission permission) =>
-            permission != null &&
-            !this.DeniedPermissions.Contains(permission) &&
-            this.AccessControls.Any(v => v.PermissionIds.Any(w => w == permission.Id));
-
-        internal void UpdateDeniedPermissions(long[] updatedDeniedPermissions)
+        public override bool IsPermitted(long permission)
         {
-            if (this.deniedPermissions == null)
+            if (this.AccessControlIds == null)
             {
-                this.DeniedPermissionIds = EmptySet<long>.Instance;
+                return false;
             }
-            else
-            {
-                if (!this.DeniedPermissionIds.SetEquals(updatedDeniedPermissions))
-                {
-                    this.DeniedPermissionIds = new HashSet<long>(updatedDeniedPermissions);
-                }
-            }
+
+            return !this.database.Numbers.Contains(this.DeniedPermissions, permission) && this.AccessControlIds.Any(v => this.database.AccessControlById[v].PermissionIds.Any(w => w == permission));
         }
     }
 }

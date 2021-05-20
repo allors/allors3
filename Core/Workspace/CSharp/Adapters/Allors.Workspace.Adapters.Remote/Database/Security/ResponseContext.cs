@@ -10,14 +10,11 @@ namespace Allors.Workspace.Adapters.Remote
 
     internal class ResponseContext
     {
-        private readonly Dictionary<long, AccessControl> accessControlById;
-        private readonly Dictionary<long, Permission> permissionById;
+        private readonly Database database;
 
-        internal ResponseContext(Dictionary<long, AccessControl> accessControlById,
-            Dictionary<long, Permission> permissionById)
+        internal ResponseContext(Database database)
         {
-            this.accessControlById = accessControlById;
-            this.permissionById = permissionById;
+            this.database = database;
 
             this.MissingAccessControlIds = new HashSet<long>();
             this.MissingPermissionIds = new HashSet<long>();
@@ -34,7 +31,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return null;
             }
 
-            foreach (var accessControlId in value.Where(v => !this.accessControlById.ContainsKey(v)))
+            foreach (var accessControlId in value.Where(v => !this.database.AccessControlById.ContainsKey(v)))
             {
                 _ = this.MissingAccessControlIds.Add(accessControlId);
             }
@@ -49,7 +46,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return null;
             }
 
-            foreach (var permissionId in value.Where(v => !this.permissionById.ContainsKey(v)))
+            foreach (var permissionId in value.Where(v => !this.database.Permissions.Contains(v)))
             {
                 _ = this.MissingPermissionIds.Add(permissionId);
             }

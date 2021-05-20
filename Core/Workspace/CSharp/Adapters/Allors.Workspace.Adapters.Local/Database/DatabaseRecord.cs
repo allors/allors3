@@ -11,22 +11,22 @@ namespace Allors.Workspace.Adapters.Local
 
     public class DatabaseRecord : Adapters.DatabaseRecord
     {
+        private readonly Database database;
         private readonly AccessControl[] accessControls;
-        private readonly long[] deniedPermissions;
+        private readonly object deniedPermissionNumbers;
 
         private readonly Dictionary<IRoleType, object> roleByRoleType;
 
-        internal DatabaseRecord(IClass @class, long id)
-            : base(@class, id, 0)
-        {
-        }
+        internal DatabaseRecord(Database database, IClass @class, long id)
+            : base(@class, id, 0) =>
+            this.database = database;
 
-        internal DatabaseRecord(IClass @class, long id, long version, Dictionary<IRoleType, object> roleByRoleType,
-            long[] deniedPermissions, AccessControl[] accessControls)
+        internal DatabaseRecord(Database database, IClass @class, long id, long version, Dictionary<IRoleType, object> roleByRoleType, object deniedPermissionNumbers, AccessControl[] accessControls)
             : base(@class, id, version)
         {
+            this.database = database;
             this.roleByRoleType = roleByRoleType;
-            this.deniedPermissions = deniedPermissions;
+            this.deniedPermissionNumbers = deniedPermissionNumbers;
             this.accessControls = accessControls;
         }
 
@@ -41,8 +41,14 @@ namespace Allors.Workspace.Adapters.Local
             return role;
         }
 
-        internal bool IsPermitted(long permission) =>
-            this.deniedPermissions?.Contains(permission) == false &&
-            this.accessControls?.Any(v => v.PermissionIds.Any(w => w == permission)) != false;
+        public override bool IsPermitted(long permission)
+        {
+            if (this.accessControls == null)
+            {
+                return false;
+            }
+
+            return !this.database.Numbers.Contains(this.deniedPermissionNumbers, permission) && this.accessControls.Any(v => v.PermissionIds.Any(w => w == permission));
+        }
     }
 }
