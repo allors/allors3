@@ -10,27 +10,26 @@ namespace Allors.Workspace.Adapters
 
     public abstract class Configuration : IConfiguration
     {
-        protected Configuration(string name, IMetaPopulation metaPopulation, ReflectionObjectFactory objectFactory, IWorkspaceLifecycle lifecycle)
+        protected Configuration(string name, IMetaPopulation metaPopulation, IObjectFactory objectFactory, IWorkspaceLifecycle lifecycle)
         {
             this.Name = name;
             this.MetaPopulation = metaPopulation;
             this.ObjectFactory = objectFactory;
             this.Lifecycle = lifecycle;
             this.Numbers = new ArrayNumbers();
-            this.workspaceIdGenerator = new WorkspaceIdGenerator();
+            this.WorkspaceIdGenerator = new WorkspaceIdGenerator();
         }
 
         public string Name { get; }
 
         public IMetaPopulation MetaPopulation { get; }
 
-        IObjectFactory IConfiguration.ObjectFactory => this.ObjectFactory;
-        public ReflectionObjectFactory ObjectFactory { get; }
+        public IObjectFactory ObjectFactory { get; }
 
         public IWorkspaceLifecycle Lifecycle { get; }
 
         public INumbers Numbers { get; }
 
-        public WorkspaceIdGenerator workspaceIdGenerator { get; }
+        public WorkspaceIdGenerator WorkspaceIdGenerator { get; }
     }
 }

@@ -12,12 +12,10 @@ namespace Allors.Workspace.Adapters
     public class WorkspaceRecord : IRecord
     {
         private readonly IClass @class;
-
         private readonly long id;
         private readonly IReadOnlyDictionary<IRelationType, object> roleByRelationType;
 
-        public WorkspaceRecord(long id, IClass @class, long version,
-            IReadOnlyDictionary<IRelationType, object> roleByRelationType)
+        public WorkspaceRecord(IClass @class, long id, long version, IReadOnlyDictionary<IRelationType, object> roleByRelationType)
         {
             this.id = id;
             this.@class = @class;
@@ -25,8 +23,7 @@ namespace Allors.Workspace.Adapters
             this.roleByRelationType = this.Import(roleByRelationType).ToDictionary(v => v.Key, v => v.Value);
         }
 
-        public WorkspaceRecord(WorkspaceRecord originalRecord,
-            IReadOnlyDictionary<IRelationType, object> changedRoleByRoleType)
+        public WorkspaceRecord(WorkspaceRecord originalRecord, IReadOnlyDictionary<IRelationType, object> changedRoleByRoleType)
         {
             this.id = originalRecord.id;
             this.@class = originalRecord.@class;

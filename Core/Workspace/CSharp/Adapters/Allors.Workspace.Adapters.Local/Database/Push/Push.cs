@@ -26,8 +26,8 @@ namespace Allors.Workspace.Adapters.Local
             var metaCache = databaseContext.MetaCache;
             var user = sessionContext.User;
 
-            this.AccessControlLists = new WorkspaceAccessControlLists(this.Workspace.Name, user);
-            this.AllowedClasses = metaCache.GetWorkspaceClasses(this.Workspace.Name);
+            this.AccessControlLists = new WorkspaceAccessControlLists(this.Workspace.Database.Configuration.Name, user);
+            this.AllowedClasses = metaCache.GetWorkspaceClasses(this.Workspace.Database.Configuration.Name);
             this.M = databaseContext.M;
             this.Build = @class => (IObject)DefaultObjectBuilder.Build(this.Transaction, @class);
             this.Derive = () => this.Transaction.Derive(false);
@@ -97,7 +97,7 @@ namespace Allors.Workspace.Adapters.Local
                     {
                         var strategy = (Strategy)state.Strategy;
                         var obj = this.Transaction.Instantiate(strategy.Id);
-                        if (!strategy.DatabaseVersion.Equals(obj.Strategy.ObjectVersion))
+                        if (!strategy.DatabaseOriginState.Version.Equals(obj.Strategy.ObjectVersion))
                         {
                             this.AddVersionError(obj.Id);
                         }

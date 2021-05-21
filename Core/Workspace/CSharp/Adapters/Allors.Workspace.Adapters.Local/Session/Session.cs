@@ -66,7 +66,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public override T Create<T>(IClass @class)
         {
-            var workspaceId = this.Database.WorkspaceIdGenerator.Next();
+            var workspaceId = this.Workspace.Database.Configuration.WorkspaceIdGenerator.Next();
             var strategy = new Strategy(this, @class, workspaceId);
             this.AddStrategy(strategy);
 
@@ -86,7 +86,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public override Adapters.Strategy InstantiateDatabaseStrategy(long id)
         {
-            var databaseRecord = this.Database.GetRecord(id);
+            var databaseRecord = this.Workspace.Database.GetRecord(id);
             var strategy = new Strategy(this, (DatabaseRecord)databaseRecord);
             this.AddStrategy(strategy);
 
@@ -112,13 +112,13 @@ namespace Allors.Workspace.Adapters.Local
 
         private void OnPulled(Pull pull)
         {
-            var syncObjects = ((DatabaseConnection)this.Database).ObjectsToSync(pull);
+            var syncObjects = ((DatabaseConnection)this.Workspace.Database).ObjectsToSync(pull);
 
             ((DatabaseConnection)this.Workspace.Database).Sync(syncObjects, pull.AccessControlLists);
 
             foreach (var databaseObject in pull.DatabaseObjects)
             {
-                if (!this.strategyByWorkspaceId.TryGetValue(databaseObject.Id, out var strategy))
+                if (!this.StrategyByWorkspaceId.TryGetValue(databaseObject.Id, out var strategy))
                 {
                     this.InstantiateDatabaseStrategy(databaseObject.Id);
                 }
@@ -147,12 +147,12 @@ namespace Allors.Workspace.Adapters.Local
                     var workspaceId = kvp.Key;
                     var databaseId = kvp.Value.Id;
 
-                    var strategy = this.strategyByWorkspaceId[workspaceId];
+                    var strategy = this.StrategyByWorkspaceId[workspaceId];
 
                     _ = this.PushToDatabaseTracker.Created.Remove(strategy);
 
                     this.RemoveStrategy(strategy);
-                    var databaseRecord = ((DatabaseConnection)this.Database).OnPushed(databaseId, strategy.Class);
+                    var databaseRecord = ((DatabaseConnection)this.Workspace.Database).OnPushed(databaseId, strategy.Class);
                     strategy.DatabasePushResponse(databaseRecord);
                     this.AddStrategy(strategy);
                 }
@@ -169,7 +169,7 @@ namespace Allors.Workspace.Adapters.Local
 
             foreach (var @object in push.Objects)
             {
-                if (!this.strategyByWorkspaceId.ContainsKey(@object.Id))
+                if (!this.StrategyByWorkspaceId.ContainsKey(@object.Id))
                 {
                     _ = this.InstantiateDatabaseStrategy(@object.Id);
                 }

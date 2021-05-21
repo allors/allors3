@@ -195,8 +195,8 @@ namespace Allors.Workspace.Adapters.Remote
                 foreach (var syncResponsePermission in securityResponse.Permissions)
                 {
                     var id = syncResponsePermission[0];
-                    var @class = (IClass)this.MetaPopulation.FindByTag((int)syncResponsePermission[1]);
-                    var metaObject = this.MetaPopulation.FindByTag((int)syncResponsePermission[2]);
+                    var @class = (IClass)this.Configuration.MetaPopulation.FindByTag((int)syncResponsePermission[1]);
+                    var metaObject = this.Configuration.MetaPopulation.FindByTag((int)syncResponsePermission[2]);
                     var operandType = (IOperandType)(metaObject as IRelationType)?.RoleType ?? (IMethodType)metaObject;
                     var operation = (Operations)syncResponsePermission[3];
                     this.Permissions.Add(id);

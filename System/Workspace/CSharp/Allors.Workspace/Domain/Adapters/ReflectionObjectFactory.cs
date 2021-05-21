@@ -35,9 +35,7 @@ namespace Allors.Workspace.Adapters
         /// <see cref="ConstructorInfo"/> by <see cref="IObjectType"/> cache.
         /// </summary>
         private readonly Dictionary<IObjectType, ConstructorInfo> contructorInfoByObjectType;
-
-        private readonly Dictionary<IObjectType, object> emptyArrayByObjectType;
-
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="ReflectionObjectFactory"/> class.
         /// </summary>
@@ -68,7 +66,6 @@ namespace Allors.Workspace.Adapters
             this.objectTypeByName = new Dictionary<string, IObjectType>();
             this.objectTypeByObjectTypeTag = new Dictionary<int, IObjectType>();
             this.contructorInfoByObjectType = new Dictionary<IObjectType, ConstructorInfo>();
-            this.emptyArrayByObjectType = new Dictionary<IObjectType, object>();
 
             var typeByName = types.ToDictionary(type => type.Name, type => type);
 
@@ -89,8 +86,6 @@ namespace Allors.Workspace.Adapters
                                                                   ?? type.GetTypeInfo().GetConstructor(databaseParameterTypes)
                                                                   ?? throw new ArgumentException($"{objectType.SingularName} has no Allors constructor.");
                 }
-
-                this.emptyArrayByObjectType.Add(objectType, Array.CreateInstance(type, 0));
             }
         }
 
@@ -132,9 +127,7 @@ namespace Allors.Workspace.Adapters
             _ = this.typeByObjectType.TryGetValue(objectType, out var type);
             return type;
         }
-
-        public object EmptyArray(IObjectType objectType) => this.emptyArrayByObjectType[objectType];
-
+        
         public IObjectType GetObjectType<T>()
         {
             var typeName = typeof(T).Name;

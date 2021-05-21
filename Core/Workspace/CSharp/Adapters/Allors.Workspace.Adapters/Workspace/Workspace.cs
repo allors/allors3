@@ -7,7 +7,6 @@ namespace Allors.Workspace.Adapters
 {
     using System.Collections.Generic;
     using Meta;
-    using Numbers;
 
     public abstract class Workspace : IWorkspace
     {
@@ -24,14 +23,6 @@ namespace Allors.Workspace.Adapters
 
         IDatabaseConnection IWorkspace.DatabaseConnection => this.Database;
         public DatabaseConnection Database { get; }
-
-        public string Name => this.Database.Configuration.Name;
-
-        public INumbers Numbers => this.Database.Configuration.Numbers;
-
-        public ReflectionObjectFactory ObjectFactory => this.Database.Configuration.ObjectFactory;
-
-        public IMetaPopulation MetaPopulation => this.Database.Configuration.MetaPopulation;
 
         public IWorkspaceLifecycle Lifecycle => this.Database.Configuration.Lifecycle;
 
@@ -55,13 +46,13 @@ namespace Allors.Workspace.Adapters
                 this.WorkspaceClassByWorkspaceId.Add(id, @class);
 
                 _ = this.WorkspaceIdsByWorkspaceClass.TryGetValue(@class, out var ids);
-                _ = this.Numbers.Add(ids, id);
+                _ = this.Database.Configuration.Numbers.Add(ids, id);
                 this.WorkspaceIdsByWorkspaceClass[@class] = ids;
             }
 
             if (!this.recordById.TryGetValue(id, out var originalWorkspaceRecord))
             {
-                this.recordById[id] = new WorkspaceRecord(id, @class, ++version, changedRoleByRoleType);
+                this.recordById[id] = new WorkspaceRecord(@class, id, ++version, changedRoleByRoleType);
             }
             else
             {

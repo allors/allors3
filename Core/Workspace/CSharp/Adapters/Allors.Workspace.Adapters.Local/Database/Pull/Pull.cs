@@ -14,6 +14,7 @@ namespace Allors.Workspace.Adapters.Local
     using Allors.Database.Security;
     using Protocol.Direct;
     using IObject = Allors.Workspace.IObject;
+    using IObjectFactory = Allors.Workspace.IObjectFactory;
     using User = Allors.Database.Domain.User;
 
     public class Pull : Result, IPullResult, IProcedureOutput
@@ -31,8 +32,8 @@ namespace Allors.Workspace.Adapters.Local
 
             var user = (User)this.Transaction.Instantiate(this.Workspace.UserId);
 
-            this.AccessControlLists = new WorkspaceAccessControlLists(this.Workspace.Name, user);
-            this.AllowedClasses = metaCache.GetWorkspaceClasses(this.Workspace.Name);
+            this.AccessControlLists = new WorkspaceAccessControlLists(this.Workspace.Database.Configuration.Name, user);
+            this.AllowedClasses = metaCache.GetWorkspaceClasses(this.Workspace.Database.Configuration.Name);
             this.PreparedSelects = databaseContext.PreparedSelects;
             this.PreparedExtents = databaseContext.PreparedExtents;
 
@@ -117,7 +118,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public T[] GetCollection<T>() where T : IObject
         {
-            var objectType = this.Workspace.ObjectFactory.GetObjectType<T>();
+            var objectType = this.Workspace.Database.Configuration.ObjectFactory.GetObjectType<T>();
             var key = objectType.PluralName;
             return this.GetCollection<T>(key);
         }
@@ -128,7 +129,7 @@ namespace Allors.Workspace.Adapters.Local
         public T GetObject<T>()
             where T : class, IObject
         {
-            var objectType = this.Workspace.ObjectFactory.GetObjectType<T>();
+            var objectType = this.Workspace.Database.Configuration.ObjectFactory.GetObjectType<T>();
             var key = objectType.SingularName;
             return this.GetObject<T>(key);
         }

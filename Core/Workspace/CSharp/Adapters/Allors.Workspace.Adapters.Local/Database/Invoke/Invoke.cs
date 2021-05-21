@@ -27,8 +27,8 @@ namespace Allors.Workspace.Adapters.Local
             var metaCache = databaseContext.MetaCache;
             var user = sessionContext.User;
 
-            this.AccessControlLists = new WorkspaceAccessControlLists(this.Workspace.Name, user);
-            this.AllowedClasses = metaCache.GetWorkspaceClasses(this.Workspace.Name);
+            this.AccessControlLists = new WorkspaceAccessControlLists(this.Workspace.Database.Configuration.Name, user);
+            this.AllowedClasses = metaCache.GetWorkspaceClasses(this.Workspace.Database.Configuration.Name);
             this.MetaPopulation = databaseContext.M;
             this.Derive = () => this.Transaction.Derive(false);
         }
@@ -135,7 +135,7 @@ namespace Allors.Workspace.Adapters.Local
                 throw new Exception("Method " + invocation.MethodType + " not found.");
             }
 
-            if (!localStrategy.DatabaseVersion.Equals(obj.Strategy.ObjectVersion))
+            if (!localStrategy.DatabaseOriginState.Version.Equals(obj.Strategy.ObjectVersion))
             {
                 this.AddVersionError(localStrategy.Id);
                 return true;

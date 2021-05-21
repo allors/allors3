@@ -37,7 +37,7 @@ namespace Allors.Workspace.Adapters.Remote
                 List = methods.Select(v => new Invocation
                 {
                     Id = v.Object.Id,
-                    Version = ((Strategy)v.Object.Strategy).DatabaseVersion,
+                    Version = ((Strategy)v.Object.Strategy).DatabaseOriginState.Version,
                     Method = v.MethodType.Tag
                 }).ToArray(),
                 Options = options != null
@@ -95,7 +95,7 @@ namespace Allors.Workspace.Adapters.Remote
 
             foreach (var v in pullResponse.Pool)
             {
-                if (!this.strategyByWorkspaceId.ContainsKey(v.Id))
+                if (!this.StrategyByWorkspaceId.ContainsKey(v.Id))
                 {
                     _ = this.InstantiateDatabaseStrategy(v.Id);
                 }
@@ -106,7 +106,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         private async Task Sync(SyncRequest syncRequest)
         {
-            var database = (DatabaseConnection)this.Database;
+            var database = (DatabaseConnection)this.Workspace.Database;
 
             var syncResponse = await database.Sync(syncRequest);
             var securityRequest = database.SyncResponse(syncResponse);
@@ -126,7 +126,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public override T Create<T>(IClass @class)
         {
-            var workspaceId = this.Database.WorkspaceIdGenerator.Next();
+            var workspaceId = this.Workspace.Database.Configuration.WorkspaceIdGenerator.Next();
             var strategy = new Strategy(this, @class, workspaceId);
             this.AddStrategy(strategy);
 
@@ -146,7 +146,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public override Adapters.Strategy InstantiateDatabaseStrategy(long id)
         {
-            var databaseRecord = (DatabaseRecord)this.Database.GetRecord(id);
+            var databaseRecord = (DatabaseRecord)this.Workspace.Database.GetRecord(id);
             var strategy = new Strategy(this, databaseRecord);
             this.AddStrategy(strategy);
 
@@ -185,7 +185,7 @@ namespace Allors.Workspace.Adapters.Remote
                     var workspaceId = pushResponseNewObject.WorkspaceId;
                     var databaseId = pushResponseNewObject.DatabaseId;
 
-                    var strategy = this.strategyByWorkspaceId[workspaceId];
+                    var strategy = this.StrategyByWorkspaceId[workspaceId];
 
                     _ = this.PushToDatabaseTracker.Created.Remove(strategy);
 

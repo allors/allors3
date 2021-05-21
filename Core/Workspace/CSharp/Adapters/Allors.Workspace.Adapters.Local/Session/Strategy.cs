@@ -13,7 +13,7 @@ namespace Allors.Workspace.Adapters.Local
         {
             if (this.Class.HasDatabaseOrigin)
             {
-                this.DatabaseOriginState = new DatabaseOriginState(this, (DatabaseRecord)session.Database.GetRecord(this.Id));
+                this.DatabaseOriginState = new DatabaseOriginState(this, (DatabaseRecord)session.Workspace.Database.GetRecord(this.Id));
             }
         }
 

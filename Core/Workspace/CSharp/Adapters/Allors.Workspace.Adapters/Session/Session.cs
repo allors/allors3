@@ -10,23 +10,19 @@ namespace Allors.Workspace.Adapters
     using System.Threading.Tasks;
     using Data;
     using Meta;
-    using Numbers;
 
     public abstract class Session : ISession
     {
         private readonly Dictionary<IClass, ISet<Strategy>> strategiesByClass;
-        protected readonly Dictionary<long, Strategy> strategyByWorkspaceId;
 
         protected Session(Workspace workspace, ISessionLifecycle sessionLifecycle)
         {
             this.Workspace = workspace;
-            this.Database = this.Workspace.Database;
             this.Lifecycle = sessionLifecycle;
-            this.Numbers = this.Workspace.Numbers;
 
-            this.strategyByWorkspaceId = new Dictionary<long, Strategy>();
+            this.StrategyByWorkspaceId = new Dictionary<long, Strategy>();
             this.strategiesByClass = new Dictionary<IClass, ISet<Strategy>>();
-            this.SessionOriginState = new SessionOriginState(this.Numbers);
+            this.SessionOriginState = new SessionOriginState(this.Workspace.Database.Configuration.Numbers);
 
             this.ChangeSetTracker = new ChangeSetTracker();
             this.PushToDatabaseTracker = new PushToDatabaseTracker();
@@ -35,9 +31,10 @@ namespace Allors.Workspace.Adapters
             this.Lifecycle.OnInit(this);
         }
 
-        public Workspace Workspace { get; }
+        public ISessionLifecycle Lifecycle { get; }
 
-        public INumbers Numbers { get; }
+        IWorkspace ISession.Workspace => this.Workspace;
+        public Workspace Workspace { get; }
 
         public ChangeSetTracker ChangeSetTracker { get; }
 
@@ -45,16 +42,12 @@ namespace Allors.Workspace.Adapters
 
         public PushToWorkspaceTracker PushToWorkspaceTracker { get; }
 
-        public DatabaseConnection Database { get; }
-
         public SessionOriginState SessionOriginState { get; }
-
-        public ISessionLifecycle Lifecycle { get; }
-
-        IWorkspace ISession.Workspace => this.Workspace;
         
+        protected Dictionary<long, Strategy> StrategyByWorkspaceId { get; }
+
         public T Create<T>() where T : class, IObject =>
-            this.Create<T>((IClass)this.Workspace.ObjectFactory.GetObjectType<T>());
+            this.Create<T>((IClass)this.Workspace.Database.Configuration.ObjectFactory.GetObjectType<T>());
 
         public T Get<T>(IObject @object) where T : IObject => this.Get<T>(@object.Id);
 
@@ -82,7 +75,7 @@ namespace Allors.Workspace.Adapters
 
         public IEnumerable<T> GetAll<T>() where T : IObject
         {
-            var objectType = (IComposite)this.Workspace.ObjectFactory.GetObjectType<T>();
+            var objectType = (IComposite)this.Workspace.Database.Configuration.ObjectFactory.GetObjectType<T>();
             return this.GetAll<T>(objectType);
         }
 
@@ -97,7 +90,7 @@ namespace Allors.Workspace.Adapters
                         {
                             foreach (var id in ids)
                             {
-                                if (this.strategyByWorkspaceId.TryGetValue(id, out var strategy))
+                                if (this.StrategyByWorkspaceId.TryGetValue(id, out var strategy))
                                 {
                                     yield return (T)strategy.Object;
                                 }
@@ -171,7 +164,7 @@ namespace Allors.Workspace.Adapters
                 return default;
             }
 
-            if (this.strategyByWorkspaceId.TryGetValue(id, out var sessionStrategy))
+            if (this.StrategyByWorkspaceId.TryGetValue(id, out var sessionStrategy))
             {
                 return sessionStrategy;
             }
@@ -193,8 +186,8 @@ namespace Allors.Workspace.Adapters
             }
 
             return role != null
-                ? this.Numbers.Enumerate(role).Select(this.Get<IObject>).ToArray()
-                : this.Workspace.ObjectFactory.EmptyArray(roleType.ObjectType);
+                ? this.Workspace.Database.Configuration.Numbers.Enumerate(role).Select(this.Get<IObject>).ToArray()
+                : this.Workspace.Database.EmptyArray(roleType.ObjectType);
         }
 
         public IEnumerable<T> GetAssociation<T>(long role, IAssociationType associationType) where T : IObject
@@ -221,15 +214,9 @@ namespace Allors.Workspace.Adapters
 
         protected abstract Strategy InstantiateWorkspaceStrategy(long id);
 
-        protected IEnumerable<Strategy> Get(IComposite objectType)
-        {
-            var classes = new HashSet<IClass>(objectType.Classes);
-            return this.strategyByWorkspaceId.Where(v => classes.Contains(v.Value.Class)).Select(v => v.Value);
-        }
-
         protected void AddStrategy(Strategy strategy)
         {
-            this.strategyByWorkspaceId.Add(strategy.Id, strategy);
+            this.StrategyByWorkspaceId.Add(strategy.Id, strategy);
 
             var @class = strategy.Class;
             if (!this.strategiesByClass.TryGetValue(@class, out var strategies))
@@ -244,7 +231,7 @@ namespace Allors.Workspace.Adapters
 
         protected void RemoveStrategy(Strategy strategy)
         {
-            _ = this.strategyByWorkspaceId.Remove(strategy.Id);
+            _ = this.StrategyByWorkspaceId.Remove(strategy.Id);
 
             var @class = strategy.Class;
             if (!this.strategiesByClass.TryGetValue(@class, out var strategies))
@@ -282,6 +269,12 @@ namespace Allors.Workspace.Adapters
             this.PushToWorkspaceTracker.Changed = null;
 
             return result;
+        }
+
+        private IEnumerable<Strategy> Get(IComposite objectType)
+        {
+            var classes = new HashSet<IClass>(objectType.Classes);
+            return this.StrategyByWorkspaceId.Where(v => classes.Contains(v.Value.Class)).Select(v => v.Value);
         }
     }
 }

@@ -9,7 +9,6 @@ namespace Allors.Workspace.Adapters
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
-    using Numbers;
 
     public abstract class Strategy : IStrategy
     {
@@ -38,13 +37,9 @@ namespace Allors.Workspace.Adapters
 
         public Session Session { get; }
 
-        public INumbers Numbers => this.Session.Numbers;
-
         public DatabaseOriginState DatabaseOriginState { get; protected set; }
 
         public WorkspaceOriginState WorkspaceOriginState { get; }
-
-        public long DatabaseVersion => this.DatabaseOriginState.Version;
 
         ISession IStrategy.Session => this.Session;
 
@@ -52,7 +47,7 @@ namespace Allors.Workspace.Adapters
 
         public long Id { get; private set; }
 
-        public IObject Object => this.@object ??= this.Session.Workspace.ObjectFactory.Create(this);
+        public IObject Object => this.@object ??= this.Session.Workspace.Database.Configuration.ObjectFactory.Create(this);
 
         public bool Exist(IRoleType roleType)
         {
@@ -112,7 +107,7 @@ namespace Allors.Workspace.Adapters
                 _ => throw new ArgumentException("Unsupported Origin")
             };
 
-            foreach (var role in this.Numbers.Enumerate(roles))
+            foreach (var role in this.Session.Workspace.Database.Configuration.Numbers.Enumerate(roles))
             {
                 yield return this.Session.Get<T>(role);
             }
@@ -189,7 +184,7 @@ namespace Allors.Workspace.Adapters
 
         public void SetComposites<T>(IRoleType roleType, in IEnumerable<T> role) where T : IObject
         {
-            var roleNumbers = this.Numbers.From(role?.Select(v => v.Id));
+            var roleNumbers = this.Session.Workspace.Database.Configuration.Numbers.From(role?.Select(v => v.Id));
 
             switch (roleType.Origin)
             {

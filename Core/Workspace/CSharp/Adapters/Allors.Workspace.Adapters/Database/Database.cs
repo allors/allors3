@@ -5,10 +5,14 @@
 
 namespace Allors.Workspace.Adapters
 {
+    using System;
+    using System.Collections.Concurrent;
     using Meta;
 
     public abstract class DatabaseConnection : IDatabaseConnection
     {
+        private ConcurrentDictionary<IObjectType, object> emptyArrayByObjectType;
+
         protected DatabaseConnection(Configuration configuration) => this.Configuration = configuration;
 
         IConfiguration IDatabaseConnection.Configuration => this.Configuration;
@@ -16,12 +20,25 @@ namespace Allors.Workspace.Adapters
 
         public abstract IWorkspace CreateWorkspace();
 
-        public IMetaPopulation MetaPopulation => this.Configuration.MetaPopulation;
-
-        public WorkspaceIdGenerator WorkspaceIdGenerator => this.Configuration.workspaceIdGenerator;
-
         public abstract DatabaseRecord GetRecord(long identity);
 
         public abstract long GetPermission(IClass @class, IOperandType operandType, Operations operation);
+
+        public object EmptyArray(IObjectType objectType)
+        {
+            this.emptyArrayByObjectType ??= new ConcurrentDictionary<IObjectType, object>();
+
+            if (this.emptyArrayByObjectType.TryGetValue(objectType, out var emptyArray))
+            {
+                return emptyArray;
+            }
+
+            var type = this.Configuration.ObjectFactory.GetType(objectType);
+            emptyArray = Array.CreateInstance(type, 0);
+
+            this.emptyArrayByObjectType.TryAdd(objectType, emptyArray);
+
+            return emptyArray;
+        }
     }
 }

@@ -20,7 +20,7 @@ namespace Allors.Workspace.Adapters.Remote
         internal DatabaseRecord(DatabaseConnection database, IClass @class, long id) : base(@class, id, 0) => this.database = database;
 
         internal DatabaseRecord(DatabaseConnection database, ResponseContext ctx, SyncResponseObject syncResponseObject)
-            : base((IClass)database.MetaPopulation.FindByTag(syncResponseObject.ObjectType), syncResponseObject.Id, syncResponseObject.Version)
+            : base((IClass)database.Configuration.MetaPopulation.FindByTag(syncResponseObject.ObjectType), syncResponseObject.Id, syncResponseObject.Version)
         {
             this.database = database;
             this.syncResponseRoles = syncResponseObject.Roles;
@@ -38,9 +38,9 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 if (this.syncResponseRoles != null)
                 {
-                    var meta = this.database.MetaPopulation;
+                    var meta = this.database.Configuration.MetaPopulation;
 
-                    var metaPopulation = this.database.MetaPopulation;
+                    var metaPopulation = this.database.Configuration.MetaPopulation;
                     this.roleByRelationType = this.syncResponseRoles.ToDictionary(
                         v => (IRelationType)meta.FindByTag(v.RoleType),
                         v =>

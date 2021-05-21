@@ -14,7 +14,7 @@ namespace Allors.Workspace.Adapters
     {
         public abstract Strategy Strategy { get; }
 
-        public bool HasChanges => this.Record == null || this.ChangedRoleByRelationType?.Count > 0;
+        protected bool HasChanges => this.Record == null || this.ChangedRoleByRelationType?.Count > 0;
 
         protected abstract IEnumerable<IRoleType> RoleTypes { get; }
 
@@ -243,7 +243,7 @@ namespace Allors.Workspace.Adapters
 
         protected Workspace Workspace => this.Session.Workspace;
 
-        private INumbers Numbers => this.Strategy.Numbers;
+        private INumbers Numbers => this.Strategy.Session.Workspace.Database.Configuration.Numbers;
 
         #endregion
     }

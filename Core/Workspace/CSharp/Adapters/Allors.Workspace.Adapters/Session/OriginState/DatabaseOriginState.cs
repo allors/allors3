@@ -64,11 +64,11 @@ namespace Allors.Workspace.Adapters
 
         public void OnPulled() =>
             // TODO: check for overwrites
-            this.DatabaseRecord = this.Session.Database.GetRecord(this.Id);
+            this.DatabaseRecord = this.Session.Workspace.Database.GetRecord(this.Id);
 
         public void Reset()
         {
-            this.DatabaseRecord = this.Session.Database.GetRecord(this.Id);
+            this.DatabaseRecord = this.Session.Workspace.Database.GetRecord(this.Id);
             this.ChangedRoleByRelationType = null;
         }
 
