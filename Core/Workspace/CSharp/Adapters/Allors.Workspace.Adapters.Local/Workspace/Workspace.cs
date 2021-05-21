@@ -5,22 +5,11 @@
 
 namespace Allors.Workspace.Adapters.Local
 {
-    using System;
-    using Allors.Database;
-    using Meta;
-
     public class Workspace : Adapters.Workspace
     {
-        public Workspace(string name, long userId, IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, IDatabase wrappedDatabase) : base(name, metaPopulation, instance, state)
-        {
-            this.Database = new Database(this.MetaPopulation, wrappedDatabase, this.Numbers);
-            this.UserId = userId;
-            this.Lifecycle.OnInit(this);
-        }
+        public Workspace(DatabaseConnection database) : base(database) => this.Lifecycle.OnInit(this);
 
-        public long UserId { get; }
-
-        public override Adapters.Database Database { get; }
+        public long UserId => ((DatabaseConnection)this.Database).UserId;
 
         public override ISession CreateSession() => new Session(this, this.Lifecycle.CreateSessionContext());
     }

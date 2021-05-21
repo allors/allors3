@@ -12,14 +12,14 @@ namespace Allors.Workspace.Adapters.Remote
 
     internal class DatabaseRecord : Adapters.DatabaseRecord
     {
-        private readonly Database database;
+        private readonly DatabaseConnection database;
 
         private Dictionary<IRelationType, object> roleByRelationType;
         private SyncResponseRole[] syncResponseRoles;
 
-        internal DatabaseRecord(Database database, IClass @class, long id) : base(@class, id, 0) => this.database = database;
+        internal DatabaseRecord(DatabaseConnection database, IClass @class, long id) : base(@class, id, 0) => this.database = database;
 
-        internal DatabaseRecord(Database database, ResponseContext ctx, SyncResponseObject syncResponseObject)
+        internal DatabaseRecord(DatabaseConnection database, ResponseContext ctx, SyncResponseObject syncResponseObject)
             : base((IClass)database.MetaPopulation.FindByTag(syncResponseObject.ObjectType), syncResponseObject.Id, syncResponseObject.Version)
         {
             this.database = database;

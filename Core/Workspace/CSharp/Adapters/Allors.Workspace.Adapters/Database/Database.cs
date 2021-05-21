@@ -7,17 +7,18 @@ namespace Allors.Workspace.Adapters
 {
     using Meta;
 
-    public abstract class Database
+    public abstract class DatabaseConnection : IDatabaseConnection
     {
-        protected Database(IMetaPopulation metaPopulation, WorkspaceIdGenerator workspaceIdGenerator = null)
-        {
-            this.MetaPopulation = metaPopulation;
-            this.WorkspaceIdGenerator = workspaceIdGenerator ?? new WorkspaceIdGenerator();
-        }
+        protected DatabaseConnection(Configuration configuration) => this.Configuration = configuration;
 
-        public IMetaPopulation MetaPopulation { get; }
+        IConfiguration IDatabaseConnection.Configuration => this.Configuration;
+        public Configuration Configuration { get; }
 
-        public WorkspaceIdGenerator WorkspaceIdGenerator { get; }
+        public abstract IWorkspace CreateWorkspace();
+
+        public IMetaPopulation MetaPopulation => this.Configuration.MetaPopulation;
+
+        public WorkspaceIdGenerator WorkspaceIdGenerator => this.Configuration.workspaceIdGenerator;
 
         public abstract DatabaseRecord GetRecord(long identity);
 

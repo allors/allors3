@@ -19,7 +19,7 @@ namespace Allors.Workspace.Adapters.Local
         internal Push(Session session) : base(session)
         {
             this.Workspace = (Workspace)session.Workspace;
-            this.Transaction = ((Database)this.Workspace.Database).WrappedDatabase.CreateTransaction();
+            this.Transaction = ((DatabaseConnection)this.Workspace.Database).WrappedDatabase.CreateTransaction();
 
             var sessionContext = this.Transaction.Context();
             var databaseContext = this.Transaction.Database.Context();
@@ -55,7 +55,7 @@ namespace Allors.Workspace.Adapters.Local
 
         internal void Execute(PushToDatabaseTracker tracker)
         {
-            var metaPopulation = ((Database)this.Workspace.Database).WrappedDatabase.MetaPopulation;
+            var metaPopulation = ((DatabaseConnection)this.Workspace.Database).WrappedDatabase.MetaPopulation;
 
             this.ObjectByNewId = tracker.Created?.ToDictionary(
                 k => k.Id,

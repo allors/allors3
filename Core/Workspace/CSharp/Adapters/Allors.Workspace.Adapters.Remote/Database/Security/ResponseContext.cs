@@ -10,9 +10,9 @@ namespace Allors.Workspace.Adapters.Remote
 
     internal class ResponseContext
     {
-        private readonly Database database;
+        private readonly DatabaseConnection database;
 
-        internal ResponseContext(Database database)
+        internal ResponseContext(DatabaseConnection database)
         {
             this.database = database;
 

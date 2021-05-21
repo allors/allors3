@@ -11,15 +11,9 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class Workspace : Adapters.Workspace
     {
-        public Workspace(string name, IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, HttpClient httpClient) : base(name, metaPopulation, instance, state)
-        {
-            this.RemoteDatabase = new Database(this.MetaPopulation, httpClient, new WorkspaceIdGenerator(), this.Numbers);
-            this.Lifecycle.OnInit(this);
-        }
+        public Workspace(DatabaseConnection database) : base(database) => this.Lifecycle.OnInit(this);
 
-        public override Adapters.Database Database => this.RemoteDatabase;
-
-        internal Database RemoteDatabase { get; }
+        public new DatabaseConnection Database => (DatabaseConnection)base.Database;
 
         public override ISession CreateSession() => new Session(this, this.Lifecycle.CreateSessionContext());
     }

@@ -11,17 +11,17 @@ namespace Allors.Workspace.Adapters.Local
 
     public class DatabaseRecord : Adapters.DatabaseRecord
     {
-        private readonly Database database;
+        private readonly DatabaseConnection database;
         private readonly AccessControl[] accessControls;
         private readonly object deniedPermissionNumbers;
 
         private readonly Dictionary<IRoleType, object> roleByRoleType;
 
-        internal DatabaseRecord(Database database, IClass @class, long id)
+        internal DatabaseRecord(DatabaseConnection database, IClass @class, long id)
             : base(@class, id, 0) =>
             this.database = database;
 
-        internal DatabaseRecord(Database database, IClass @class, long id, long version, Dictionary<IRoleType, object> roleByRoleType, object deniedPermissionNumbers, AccessControl[] accessControls)
+        internal DatabaseRecord(DatabaseConnection database, IClass @class, long id, long version, Dictionary<IRoleType, object> roleByRoleType, object deniedPermissionNumbers, AccessControl[] accessControls)
             : base(@class, id, version)
         {
             this.database = database;

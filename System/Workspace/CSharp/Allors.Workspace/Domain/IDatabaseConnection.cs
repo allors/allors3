@@ -5,12 +5,10 @@
 
 namespace Allors.Workspace
 {
-    public interface IWorkspace
+    public interface IDatabaseConnection
     {
-        IDatabaseConnection DatabaseConnection { get; }
+        IConfiguration Configuration { get; }
 
-        IWorkspaceLifecycle Lifecycle { get; }
-
-        ISession CreateSession();
+        IWorkspace CreateWorkspace();
     }
 }

@@ -5,49 +5,39 @@
 
 namespace Allors.Workspace.Adapters
 {
-    using System;
     using System.Collections.Generic;
     using Meta;
     using Numbers;
-    using IObjectFactory = Allors.Workspace.IObjectFactory;
 
     public abstract class Workspace : IWorkspace
     {
         private readonly Dictionary<long, WorkspaceRecord> recordById;
 
-        protected Workspace(string name, IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state)
+        protected Workspace(DatabaseConnection database)
         {
-            this.Name = name;
-            this.MetaPopulation = metaPopulation;
-            this.Lifecycle = state;
-
-            this.ObjectFactory = new ReflectionObjectFactory(this.MetaPopulation, instance);
-
+            this.Database = database;
             this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
             this.WorkspaceIdsByWorkspaceClass = new Dictionary<IClass, long[]>();
 
             this.recordById = new Dictionary<long, WorkspaceRecord>();
-
-            this.Numbers = new ArrayNumbers();
         }
 
-        public abstract Database Database { get; }
+        IDatabaseConnection IWorkspace.DatabaseConnection => this.Database;
+        public DatabaseConnection Database { get; }
 
-        public ReflectionObjectFactory ObjectFactory { get; }
+        public string Name => this.Database.Configuration.Name;
 
-        public INumbers Numbers { get; }
+        public INumbers Numbers => this.Database.Configuration.Numbers;
+
+        public ReflectionObjectFactory ObjectFactory => this.Database.Configuration.ObjectFactory;
+
+        public IMetaPopulation MetaPopulation => this.Database.Configuration.MetaPopulation;
+
+        public IWorkspaceLifecycle Lifecycle => this.Database.Configuration.Lifecycle;
 
         public Dictionary<long, IClass> WorkspaceClassByWorkspaceId { get; }
 
         public Dictionary<IClass, long[]> WorkspaceIdsByWorkspaceClass { get; }
-
-        public string Name { get; }
-
-        public IMetaPopulation MetaPopulation { get; }
-
-        public IWorkspaceLifecycle Lifecycle { get; }
-
-        IObjectFactory IWorkspace.ObjectFactory => this.ObjectFactory;
 
         public abstract ISession CreateSession();
 

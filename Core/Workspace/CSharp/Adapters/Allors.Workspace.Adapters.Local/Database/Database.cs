@@ -12,29 +12,31 @@ namespace Allors.Workspace.Adapters.Local
     using Allors.Database;
     using Allors.Database.Domain;
     using Allors.Database.Security;
+    using Antlr.Runtime;
     using Meta;
     using Numbers;
     using IRoleType = Allors.Database.Meta.IRoleType;
 
-    internal class Database : Adapters.Database
+    public class DatabaseConnection : Adapters.DatabaseConnection
     {
         private readonly Dictionary<long, Adapters.AccessControl> accessControlById;
         private readonly IPermissionsCache permissionCache;
         private readonly ConcurrentDictionary<long, DatabaseRecord> recordsById;
 
-        internal Database(IMetaPopulation metaPopulation, IDatabase wrappedDatabase, INumbers numbers) : base(metaPopulation)
+        public DatabaseConnection(Configuration configuration, IDatabase database) : base(configuration)
         {
-            this.WrappedDatabase = wrappedDatabase;
-            this.Numbers = numbers;
-            this.recordsById = new ConcurrentDictionary<long, DatabaseRecord>();
+            this.WrappedDatabase = database;
 
+            this.recordsById = new ConcurrentDictionary<long, DatabaseRecord>();
             this.permissionCache = this.WrappedDatabase.Context().PermissionsCache;
             this.accessControlById = new Dictionary<long, Adapters.AccessControl>();
         }
 
+        public long UserId { get; set; }
+
         internal IDatabase WrappedDatabase { get; }
 
-        internal INumbers Numbers { get; }
+        internal INumbers Numbers => this.Configuration.Numbers;
 
         internal void Sync(IEnumerable<IObject> objects, IAccessControlLists accessControlLists)
         {
@@ -78,6 +80,8 @@ namespace Allors.Workspace.Adapters.Local
                 this.recordsById[id] = new DatabaseRecord(this, workspaceClass, id, @object.Strategy.ObjectVersion, roleByRoleType, deniedPermissionNumbers, accessControls);
             }
         }
+
+        public override IWorkspace CreateWorkspace() => new Workspace(this);
 
         public override Adapters.DatabaseRecord GetRecord(long id)
         {

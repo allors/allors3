@@ -9,12 +9,14 @@ namespace Tests.Workspace.Remote
     using System.Net.Http;
     using System.Threading.Tasks;
     using Allors.Workspace;
-    using Allors.Workspace.Adapters.Remote;
+    using Allors.Workspace.Adapters;
     using Allors.Workspace.Domain;
     using Allors.Workspace.Meta;
     using Allors.Workspace.Meta.Lazy;
     using Xunit;
+    using DatabaseConnection = Allors.Workspace.Adapters.Remote.DatabaseConnection;
     using User = Allors.Workspace.Domain.User;
+    using Workspace = Allors.Workspace.Adapters.Remote.Workspace;
 
     public class Profile : IProfile
     {
@@ -25,23 +27,21 @@ namespace Tests.Workspace.Remote
 
         IWorkspace IProfile.Workspace => this.Workspace;
 
-        public Workspace Workspace { get; private set; }
+        public DatabaseConnection Database { get; private set; }
 
-        public Database Database => (Database)this.Workspace.Database;
+        public IWorkspace Workspace { get; private set; }
 
         public M M => this.Workspace.Context().M;
 
         public async Task InitializeAsync()
         {
-            this.Workspace = new Workspace(
-                "Default",
-                new MetaBuilder().Build(),
-                typeof(User),
-                new WorkspaceContext(),
-                new HttpClient()
-                {
-                    BaseAddress = new Uri(Url),
-                });
+            var metaPopulation = new MetaBuilder().Build();
+            var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Allors.Workspace.Domain.Person));
+            var configuration = new Allors.Workspace.Adapters.Remote.Configuration("Default", metaPopulation, objectFactory, new WorkspaceContext());
+            var httpClient = new HttpClient() { BaseAddress = new Uri(Url) };
+            this.Database = new DatabaseConnection(configuration, httpClient);
+
+            this.Workspace = this.Database.CreateWorkspace();
 
             var response = await this.Database.HttpClient.GetAsync(SetupUrl);
             Assert.True(response.IsSuccessStatusCode);

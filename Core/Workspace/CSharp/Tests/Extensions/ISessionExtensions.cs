@@ -15,7 +15,7 @@ namespace Tests.Workspace
     {
         public static async Task<T> PullObject<T>(this ISession @this, string name) where T : IObject
         {
-            var objectType = (IComposite)@this.Workspace.ObjectFactory.GetObjectType<T>();
+            var objectType = (IComposite)@this.Workspace.DatabaseConnection.Configuration.ObjectFactory.GetObjectType<T>();
             var roleType = objectType.RoleTypes.First(v => v.Name.Equals("Name"));
             var pull = new Pull { Extent = new Extent(objectType) { Predicate = new Equals(roleType) { Value = name } } };
             var result = await @this.Pull(pull);

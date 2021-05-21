@@ -24,7 +24,7 @@ namespace Allors.Workspace.Adapters.Local
         public Pull(Session session, Workspace workspace) : base(session)
         {
             this.Workspace = workspace;
-            this.Transaction = ((Database)this.Workspace.Database).WrappedDatabase.CreateTransaction();
+            this.Transaction = ((DatabaseConnection)this.Workspace.Database).WrappedDatabase.CreateTransaction();
 
             var databaseContext = this.Transaction.Database.Context();
             var metaCache = databaseContext.MetaCache;

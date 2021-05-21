@@ -13,18 +13,23 @@ namespace Tests.Workspace.Local
     using Allors.Database.Configuration;
     using Allors.Database.Domain;
     using Allors.Database.Adapters.Memory;
-    using Allors.Workspace.Adapters.Local;
+    using Allors.Workspace.Adapters;
     using Allors.Workspace.Domain;
     using Allors.Workspace.Meta.Lazy;
+    using Configuration = Allors.Database.Adapters.Memory.Configuration;
+    using DatabaseConnection = Allors.Workspace.Adapters.Local.DatabaseConnection;
     using Person = Allors.Database.Domain.Person;
+    using Workspace = Allors.Workspace.Adapters.Local.Workspace;
 
     public class Profile : IProfile
     {
         public Database Database { get; private set; }
 
+        public DatabaseConnection DatabaseConnection { get; private set; }
+
         IWorkspace IProfile.Workspace => this.Workspace;
 
-        public Workspace Workspace { get; private set; }
+        public IWorkspace Workspace { get; private set; }
 
         public M M => this.Workspace.Context().M;
 
@@ -69,13 +74,12 @@ namespace Tests.Workspace.Local
             var user = new Users(transaction).Extent().ToArray().First(v => v.UserName.Equals(userName, StringComparison.InvariantCultureIgnoreCase));
             transaction.Context().User = user;
 
-            this.Workspace = new Workspace(
-                "Default",
-                user.Id,
-                new MetaBuilder().Build(),
-                typeof(Allors.Workspace.Domain.User),
-                new WorkspaceContext(),
-                this.Database);
+            var metaPopulation = new MetaBuilder().Build();
+            var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Allors.Workspace.Domain.Person));
+            var configuration = new Allors.Workspace.Adapters.Local.Configuration("Default", metaPopulation, objectFactory, new WorkspaceContext());
+            this.DatabaseConnection = new DatabaseConnection(configuration, this.Database) {UserId = user.Id};
+            
+            this.Workspace = this.DatabaseConnection.CreateWorkspace();
 
             return Task.CompletedTask;
         }

@@ -45,7 +45,7 @@ namespace Allors.Workspace.Adapters
 
         public PushToWorkspaceTracker PushToWorkspaceTracker { get; }
 
-        public Database Database { get; }
+        public DatabaseConnection Database { get; }
 
         public SessionOriginState SessionOriginState { get; }
 

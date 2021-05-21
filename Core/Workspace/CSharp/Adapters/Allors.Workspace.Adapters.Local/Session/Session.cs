@@ -112,9 +112,9 @@ namespace Allors.Workspace.Adapters.Local
 
         private void OnPulled(Pull pull)
         {
-            var syncObjects = ((Database)this.Database).ObjectsToSync(pull);
+            var syncObjects = ((DatabaseConnection)this.Database).ObjectsToSync(pull);
 
-            ((Database)this.Workspace.Database).Sync(syncObjects, pull.AccessControlLists);
+            ((DatabaseConnection)this.Workspace.Database).Sync(syncObjects, pull.AccessControlLists);
 
             foreach (var databaseObject in pull.DatabaseObjects)
             {
@@ -152,7 +152,7 @@ namespace Allors.Workspace.Adapters.Local
                     _ = this.PushToDatabaseTracker.Created.Remove(strategy);
 
                     this.RemoveStrategy(strategy);
-                    var databaseRecord = ((Database)this.Database).OnPushed(databaseId, strategy.Class);
+                    var databaseRecord = ((DatabaseConnection)this.Database).OnPushed(databaseId, strategy.Class);
                     strategy.DatabasePushResponse(databaseRecord);
                     this.AddStrategy(strategy);
                 }
@@ -165,7 +165,7 @@ namespace Allors.Workspace.Adapters.Local
 
             this.PushToDatabaseTracker.Created = null;
 
-            ((Database)this.Workspace.Database).Sync(push.Objects, push.AccessControlLists);
+            ((DatabaseConnection)this.Workspace.Database).Sync(push.Objects, push.AccessControlLists);
 
             foreach (var @object in push.Objects)
             {

@@ -24,7 +24,7 @@ namespace Allors.Workspace.Adapters.Remote
     using Numbers;
     using Polly;
 
-    public class Database : Adapters.Database
+    public class DatabaseConnection : Adapters.DatabaseConnection
     {
         private readonly Dictionary<long, DatabaseRecord> recordsById;
 
@@ -32,10 +32,9 @@ namespace Allors.Workspace.Adapters.Remote
         private readonly Dictionary<IClass, Dictionary<IOperandType, long>> writePermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, long>> executePermissionByOperandTypeByClass;
 
-        internal Database(IMetaPopulation metaPopulation, HttpClient httpClient, WorkspaceIdGenerator workspaceIdGenerator, INumbers numbers) : base(metaPopulation, workspaceIdGenerator)
+        public DatabaseConnection(Configuration configuration, HttpClient httpClient) : base(configuration)
         {
             this.HttpClient = httpClient;
-            this.Numbers = numbers;
 
             this.HttpClient.DefaultRequestHeaders.Accept.Clear();
             this.HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -57,7 +56,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public HttpClient HttpClient { get; }
 
-        public INumbers Numbers { get; }
+        public INumbers Numbers => this.Configuration.Numbers;
 
         public string UserId { get; private set; }
 
@@ -65,7 +64,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal ISet<long> Permissions { get; }
 
-        ~Database() => this.HttpClient.Dispose();
+        ~DatabaseConnection() => this.HttpClient.Dispose();
 
         public async Task<bool> Login(Uri url, string username, string password)
         {
@@ -180,6 +179,8 @@ namespace Allors.Workspace.Adapters.Remote
                     })
                     .Select(v => v.Id).ToArray()
             };
+
+        public override IWorkspace CreateWorkspace() => new Workspace(this);
 
         public override Adapters.DatabaseRecord GetRecord(long id)
         {

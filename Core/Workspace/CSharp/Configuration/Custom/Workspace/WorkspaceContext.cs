@@ -20,7 +20,7 @@ namespace Allors.Workspace
 
         public void OnInit(IWorkspace workspace)
         {
-            this.M = (M)workspace.MetaPopulation;
+            this.M = (M)workspace.DatabaseConnection.Configuration.MetaPopulation;
 
             var engine = new Engine(this.CreateRules());
             this.DerivationFactory = new DerivationFactory(engine);
