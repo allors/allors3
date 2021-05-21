@@ -6,18 +6,14 @@
 namespace Allors.Workspace.Adapters
 {
     using Meta;
-    using Numbers;
 
     public abstract class Configuration : IConfiguration
     {
-        protected Configuration(string name, IMetaPopulation metaPopulation, IObjectFactory objectFactory, IWorkspaceLifecycle lifecycle)
+        protected Configuration(string name, IMetaPopulation metaPopulation, IObjectFactory objectFactory)
         {
             this.Name = name;
             this.MetaPopulation = metaPopulation;
             this.ObjectFactory = objectFactory;
-            this.Lifecycle = lifecycle;
-            this.Numbers = new ArrayNumbers();
-            this.WorkspaceIdGenerator = new WorkspaceIdGenerator();
         }
 
         public string Name { get; }
@@ -25,11 +21,5 @@ namespace Allors.Workspace.Adapters
         public IMetaPopulation MetaPopulation { get; }
 
         public IObjectFactory ObjectFactory { get; }
-
-        public IWorkspaceLifecycle Lifecycle { get; }
-
-        public INumbers Numbers { get; }
-
-        public WorkspaceIdGenerator WorkspaceIdGenerator { get; }
     }
 }

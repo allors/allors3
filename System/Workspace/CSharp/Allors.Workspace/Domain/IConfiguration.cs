@@ -14,7 +14,5 @@ namespace Allors.Workspace
         IMetaPopulation MetaPopulation { get; }
 
         IObjectFactory ObjectFactory { get; }
-
-        IWorkspaceLifecycle Lifecycle { get; }
     }
 }

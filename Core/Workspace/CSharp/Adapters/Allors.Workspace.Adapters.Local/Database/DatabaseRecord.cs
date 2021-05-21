@@ -13,7 +13,7 @@ namespace Allors.Workspace.Adapters.Local
     {
         private readonly DatabaseConnection database;
         private readonly AccessControl[] accessControls;
-        private readonly object deniedPermissionNumbers;
+        private readonly ISet<long> deniedPermissionIds;
 
         private readonly Dictionary<IRoleType, object> roleByRoleType;
 
@@ -21,12 +21,12 @@ namespace Allors.Workspace.Adapters.Local
             : base(@class, id, 0) =>
             this.database = database;
 
-        internal DatabaseRecord(DatabaseConnection database, IClass @class, long id, long version, Dictionary<IRoleType, object> roleByRoleType, object deniedPermissionNumbers, AccessControl[] accessControls)
+        internal DatabaseRecord(DatabaseConnection database, IClass @class, long id, long version, Dictionary<IRoleType, object> roleByRoleType, ISet<long> deniedPermissionIds, AccessControl[] accessControls)
             : base(@class, id, version)
         {
             this.database = database;
             this.roleByRoleType = roleByRoleType;
-            this.deniedPermissionNumbers = deniedPermissionNumbers;
+            this.deniedPermissionIds = deniedPermissionIds;
             this.accessControls = accessControls;
         }
 
@@ -48,7 +48,7 @@ namespace Allors.Workspace.Adapters.Local
                 return false;
             }
 
-            return !this.database.Numbers.Contains(this.deniedPermissionNumbers, permission) && this.accessControls.Any(v => v.PermissionIds.Any(w => w == permission));
+            return this.deniedPermissionIds?.Contains(permission) != true && this.accessControls.Any(v => v.PermissionIds.Contains(permission));
         }
     }
 }

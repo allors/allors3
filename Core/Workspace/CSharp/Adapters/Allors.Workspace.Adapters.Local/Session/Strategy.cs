@@ -17,9 +17,6 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        internal Strategy(Session session, DatabaseRecord databaseRecord) : base(session, databaseRecord)
-        {
-            this.DatabaseOriginState = new DatabaseOriginState(this, databaseRecord);
-        }
+        internal Strategy(Session session, DatabaseRecord databaseRecord) : base(session, databaseRecord) => this.DatabaseOriginState = new DatabaseOriginState(this, databaseRecord);
     }
 }

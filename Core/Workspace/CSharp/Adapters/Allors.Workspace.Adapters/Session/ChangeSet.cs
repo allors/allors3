@@ -89,7 +89,7 @@ namespace Allors.Workspace.Adapters
                 }
                 else
                 {
-                    var numbers = this.Session.Workspace.Database.Configuration.Numbers;
+                    var numbers = this.Session.Workspace.Numbers;
                     var hasChange = false;
 
                     var addedRoles = numbers.Except(current, previous);

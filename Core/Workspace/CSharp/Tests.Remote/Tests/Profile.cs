@@ -8,6 +8,7 @@ namespace Tests.Workspace.Remote
     using System;
     using System.Net.Http;
     using System.Threading.Tasks;
+    using Allors.Numbers;
     using Allors.Workspace;
     using Allors.Workspace.Adapters;
     using Allors.Workspace.Domain;
@@ -15,8 +16,6 @@ namespace Tests.Workspace.Remote
     using Allors.Workspace.Meta.Lazy;
     using Xunit;
     using DatabaseConnection = Allors.Workspace.Adapters.Remote.DatabaseConnection;
-    using User = Allors.Workspace.Domain.User;
-    using Workspace = Allors.Workspace.Adapters.Remote.Workspace;
 
     public class Profile : IProfile
     {
@@ -37,9 +36,9 @@ namespace Tests.Workspace.Remote
         {
             var metaPopulation = new MetaBuilder().Build();
             var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Allors.Workspace.Domain.Person));
-            var configuration = new Allors.Workspace.Adapters.Remote.Configuration("Default", metaPopulation, objectFactory, new WorkspaceContext());
+            var configuration = new Allors.Workspace.Adapters.Remote.Configuration("Default", metaPopulation, objectFactory);
             var httpClient = new HttpClient() { BaseAddress = new Uri(Url) };
-            this.Database = new DatabaseConnection(configuration, httpClient);
+            this.Database = new DatabaseConnection(configuration, () => new WorkspaceContext(), httpClient, new WorkspaceIdGenerator(), new ArrayNumbers());
 
             this.Workspace = this.Database.CreateWorkspace();
 
@@ -52,7 +51,6 @@ namespace Tests.Workspace.Remote
 
         public async Task Login(string user)
         {
-
             var uri = new Uri(LoginUrl, UriKind.Relative);
             var response = await this.Database.Login(uri, user, null);
             Assert.True(response);

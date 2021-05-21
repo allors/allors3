@@ -14,24 +14,23 @@ namespace Allors.Workspace.Adapters.Local
 
     public class Session : Adapters.Session
     {
-        internal Session(Workspace workspace, ISessionLifecycle sessionLifecycle) : base(workspace, sessionLifecycle)
-        {
-            this.Lifecycle.OnInit(this);
-        }
+        internal Session(Workspace workspace, ISessionLifecycle sessionLifecycle) : base(workspace, sessionLifecycle) => this.Lifecycle.OnInit(this);
+
+        public new Workspace Workspace => (Workspace)base.Workspace;
 
         public override Task<IInvokeResult> Invoke(Method method, InvokeOptions options = null) =>
             this.Invoke(new[] { method }, options);
 
         public override Task<IInvokeResult> Invoke(Method[] methods, InvokeOptions options = null)
         {
-            var result = new Invoke(this, (Workspace)this.Workspace);
+            var result = new Invoke(this, this.Workspace);
             result.Execute(methods, options);
             return Task.FromResult<IInvokeResult>(result);
         }
 
         public override Task<IPullResult> Pull(params Data.Pull[] pulls)
         {
-            var result = new Pull(this, (Workspace)this.Workspace);
+            var result = new Pull(this, this.Workspace);
             result.Execute(pulls);
 
             this.OnPulled(result);
@@ -41,7 +40,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public override Task<IPullResult> Pull(Data.Procedure procedure, params Data.Pull[] pulls)
         {
-            var result = new Pull(this, (Workspace)this.Workspace);
+            var result = new Pull(this, this.Workspace);
 
             result.Execute(procedure);
             result.Execute(pulls);
@@ -66,7 +65,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public override T Create<T>(IClass @class)
         {
-            var workspaceId = this.Workspace.Database.Configuration.WorkspaceIdGenerator.Next();
+            var workspaceId = this.Workspace.WorkspaceIdGenerator.Next();
             var strategy = new Strategy(this, @class, workspaceId);
             this.AddStrategy(strategy);
 
@@ -124,7 +123,7 @@ namespace Allors.Workspace.Adapters.Local
                 }
                 else
                 {
-                    strategy.DatabaseOriginState.OnPulled();
+                    ((DatabaseOriginState)strategy.DatabaseOriginState).OnPulled();
                 }
             }
         }
@@ -175,7 +174,7 @@ namespace Allors.Workspace.Adapters.Local
                 }
 
                 var strategy = this.GetStrategy(@object.Id);
-                strategy.DatabaseOriginState.Reset();
+                ((DatabaseOriginState)strategy.DatabaseOriginState).Reset();
             }
 
             return push;

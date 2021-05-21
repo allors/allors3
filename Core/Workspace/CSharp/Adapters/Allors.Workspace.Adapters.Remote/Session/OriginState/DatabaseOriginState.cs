@@ -6,9 +6,7 @@
 namespace Allors.Workspace.Adapters.Remote
 {
     using System.Collections.Generic;
-    using System.Linq;
     using Allors.Protocol.Json.Api.Push;
-    using Numbers;
 
     internal sealed class DatabaseOriginState : Adapters.DatabaseOriginState
     {
@@ -35,7 +33,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             if (this.ChangedRoleByRelationType?.Count > 0)
             {
-                var numbers = this.RemoteStrategy.Session.Workspace.Database.Configuration.Numbers;
+                var numbers = this.RemoteStrategy.Session.Workspace.Database.Numbers;
 
                 var roles = new List<PushRequestRole>();
 

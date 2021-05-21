@@ -5,9 +5,11 @@
 
 namespace Allors.Workspace.Adapters.Local
 {
+    using Numbers;
+
     public class Workspace : Adapters.Workspace
     {
-        public Workspace(DatabaseConnection database) : base(database) => this.Lifecycle.OnInit(this);
+        public Workspace(DatabaseConnection database, IWorkspaceLifecycle lifecycle, INumbers numbers) : base(database, lifecycle, numbers, new WorkspaceIdGenerator()) => this.Lifecycle.OnInit(this);
 
         public long UserId => ((DatabaseConnection)this.Database).UserId;
 

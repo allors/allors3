@@ -13,6 +13,7 @@ namespace Tests.Workspace.Local
     using Allors.Database.Configuration;
     using Allors.Database.Domain;
     using Allors.Database.Adapters.Memory;
+    using Allors.Numbers;
     using Allors.Workspace.Adapters;
     using Allors.Workspace.Domain;
     using Allors.Workspace.Meta.Lazy;
@@ -76,9 +77,9 @@ namespace Tests.Workspace.Local
 
             var metaPopulation = new MetaBuilder().Build();
             var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Allors.Workspace.Domain.Person));
-            var configuration = new Allors.Workspace.Adapters.Local.Configuration("Default", metaPopulation, objectFactory, new WorkspaceContext());
-            this.DatabaseConnection = new DatabaseConnection(configuration, this.Database) {UserId = user.Id};
-            
+            var configuration = new Allors.Workspace.Adapters.Local.Configuration("Default", metaPopulation, objectFactory);
+            this.DatabaseConnection = new DatabaseConnection(configuration, this.Database, () => new WorkspaceContext(), () => new ArrayNumbers()) { UserId = user.Id };
+
             this.Workspace = this.DatabaseConnection.CreateWorkspace();
 
             return Task.CompletedTask;

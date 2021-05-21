@@ -22,7 +22,7 @@ namespace Allors.Workspace.Adapters
 
             this.StrategyByWorkspaceId = new Dictionary<long, Strategy>();
             this.strategiesByClass = new Dictionary<IClass, ISet<Strategy>>();
-            this.SessionOriginState = new SessionOriginState(this.Workspace.Database.Configuration.Numbers);
+            this.SessionOriginState = new SessionOriginState(this.Workspace.Numbers);
 
             this.ChangeSetTracker = new ChangeSetTracker();
             this.PushToDatabaseTracker = new PushToDatabaseTracker();
@@ -186,7 +186,7 @@ namespace Allors.Workspace.Adapters
             }
 
             return role != null
-                ? this.Workspace.Database.Configuration.Numbers.Enumerate(role).Select(this.Get<IObject>).ToArray()
+                ? this.Workspace.Numbers.Enumerate(role).Select(this.Get<IObject>).ToArray()
                 : this.Workspace.Database.EmptyArray(roleType.ObjectType);
         }
 

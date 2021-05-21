@@ -12,7 +12,6 @@ namespace Allors.Workspace.Adapters.Local
     using Allors.Database;
     using Allors.Database.Domain;
     using Allors.Database.Security;
-    using Antlr.Runtime;
     using Meta;
     using Numbers;
     using IRoleType = Allors.Database.Meta.IRoleType;
@@ -23,20 +22,23 @@ namespace Allors.Workspace.Adapters.Local
         private readonly IPermissionsCache permissionCache;
         private readonly ConcurrentDictionary<long, DatabaseRecord> recordsById;
 
-        public DatabaseConnection(Configuration configuration, IDatabase database) : base(configuration)
+        private readonly Func<IWorkspaceLifecycle> lifecycleBuilder;
+        private readonly Func<INumbers> numbersBuilder;
+
+        public DatabaseConnection(Configuration configuration, IDatabase database, Func<IWorkspaceLifecycle> lifecycleBuilder, Func<INumbers> numbersBuilder) : base(configuration)
         {
-            this.WrappedDatabase = database;
+            this.Database = database;
+            this.lifecycleBuilder = lifecycleBuilder;
+            this.numbersBuilder = numbersBuilder;
 
             this.recordsById = new ConcurrentDictionary<long, DatabaseRecord>();
-            this.permissionCache = this.WrappedDatabase.Context().PermissionsCache;
+            this.permissionCache = this.Database.Context().PermissionsCache;
             this.accessControlById = new Dictionary<long, Adapters.AccessControl>();
         }
 
         public long UserId { get; set; }
 
-        internal IDatabase WrappedDatabase { get; }
-
-        internal INumbers Numbers => this.Configuration.Numbers;
+        internal IDatabase Database { get; }
 
         internal void Sync(IEnumerable<IObject> objects, IAccessControlLists accessControlLists)
         {
@@ -72,16 +74,15 @@ namespace Allors.Workspace.Adapters.Local
 
                 var acl = accessControlLists[@object];
 
-                var deniedPermissionNumbers = this.Numbers.From(acl.DeniedPermissionIds);
                 var accessControls = acl.AccessControls
                     ?.Select(this.GetAccessControl)
                     .ToArray() ?? Array.Empty<Adapters.AccessControl>();
 
-                this.recordsById[id] = new DatabaseRecord(this, workspaceClass, id, @object.Strategy.ObjectVersion, roleByRoleType, deniedPermissionNumbers, accessControls);
+                this.recordsById[id] = new DatabaseRecord(this, workspaceClass, id, @object.Strategy.ObjectVersion, roleByRoleType, acl.DeniedPermissionIds, accessControls);
             }
         }
 
-        public override IWorkspace CreateWorkspace() => new Workspace(this);
+        public override IWorkspace CreateWorkspace() => new Workspace(this, this.lifecycleBuilder(), this.numbersBuilder());
 
         public override Adapters.DatabaseRecord GetRecord(long id)
         {
@@ -91,8 +92,8 @@ namespace Allors.Workspace.Adapters.Local
 
         public override long GetPermission(IClass @class, IOperandType operandType, Operations operation)
         {
-            var classId = this.WrappedDatabase.MetaPopulation.FindByTag(@class.Tag).Id;
-            var operandId = this.WrappedDatabase.MetaPopulation.FindByTag(operandType.OperandTag).Id;
+            var classId = this.Database.MetaPopulation.FindByTag(@class.Tag).Id;
+            var operandId = this.Database.MetaPopulation.FindByTag(operandType.OperandTag).Id;
 
             long permission;
             var permissionCacheEntry = this.permissionCache.Get(classId);

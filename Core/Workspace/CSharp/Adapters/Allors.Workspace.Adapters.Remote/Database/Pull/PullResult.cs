@@ -14,7 +14,7 @@ namespace Allors.Workspace.Adapters.Remote
     {
         public PullResult(Session session, PullResponse response) : base(session, response)
         {
-            this.Workspace = session.Workspace;
+            this.Workspace = ((Adapters.Session) session).Workspace;
 
             this.Objects = response.Objects.ToDictionary(
                 pair => pair.Key,

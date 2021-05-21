@@ -5,13 +5,11 @@
 
 namespace Allors.Workspace.Adapters.Remote
 {
-    using System;
-    using System.Net.Http;
-    using Meta;
+    using Numbers;
 
     public class Workspace : Adapters.Workspace
     {
-        public Workspace(DatabaseConnection database) : base(database) => this.Lifecycle.OnInit(this);
+        public Workspace(DatabaseConnection database, IWorkspaceLifecycle lifecycle, INumbers numbers, WorkspaceIdGenerator workspaceIdGenerator) : base(database, lifecycle, numbers, workspaceIdGenerator) => this.Lifecycle.OnInit(this);
 
         public new DatabaseConnection Database => (DatabaseConnection)base.Database;
 

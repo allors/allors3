@@ -35,7 +35,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public IEnumerable<IDerivationError> DerivationErrors => this.derivationErrors
             ?.Select<Allors.Database.Derivations.IDerivationError, IDerivationError>(v =>
-                (IDerivationError)new DerivationError(this.Session, v)).ToArray();
+                new DerivationError(this.Session, v)).ToArray();
 
         public bool HasErrors => !string.IsNullOrWhiteSpace(this.ErrorMessage) ||
                                  this.accessErrorStrategies?.Count > 0 || this.databaseMissingIds?.Count > 0 ||

@@ -107,7 +107,7 @@ namespace Allors.Workspace.Adapters
                 _ => throw new ArgumentException("Unsupported Origin")
             };
 
-            foreach (var role in this.Session.Workspace.Database.Configuration.Numbers.Enumerate(roles))
+            foreach (var role in this.Session.Workspace.Numbers.Enumerate(roles))
             {
                 yield return this.Session.Get<T>(role);
             }
@@ -184,7 +184,7 @@ namespace Allors.Workspace.Adapters
 
         public void SetComposites<T>(IRoleType roleType, in IEnumerable<T> role) where T : IObject
         {
-            var roleNumbers = this.Session.Workspace.Database.Configuration.Numbers.From(role?.Select(v => v.Id));
+            var roleNumbers = this.Session.Workspace.Numbers.From(role?.Select(v => v.Id));
 
             switch (roleType.Origin)
             {

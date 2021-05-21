@@ -14,15 +14,13 @@ namespace Allors.Workspace.Adapters.Remote
         {
             if (this.Class.HasDatabaseOrigin)
             {
-                this.DatabaseOriginState = new DatabaseOriginState(this, (DatabaseRecord)((DatabaseConnection)session.Workspace.Database).GetRecord(this.Id));
+                this.DatabaseOriginState = new DatabaseOriginState(this, (DatabaseRecord)((DatabaseConnection)((Adapters.Session) session).Workspace.Database).GetRecord(this.Id));
             }
         }
 
-        internal Strategy(Session session, DatabaseRecord databaseRecord) : base(session, databaseRecord)
-        {
-            this.DatabaseOriginState = new DatabaseOriginState(this, databaseRecord);
-        }
+        internal Strategy(Session session, DatabaseRecord databaseRecord) : base(session, databaseRecord) => this.DatabaseOriginState = new DatabaseOriginState(this, databaseRecord);
 
+        public new Session Session => (Session)base.Session;
 
         internal PushRequestNewObject DatabasePushNew() => ((DatabaseOriginState)this.DatabaseOriginState).PushNew();
 

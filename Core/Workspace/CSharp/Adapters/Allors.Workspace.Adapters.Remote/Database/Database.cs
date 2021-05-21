@@ -32,9 +32,15 @@ namespace Allors.Workspace.Adapters.Remote
         private readonly Dictionary<IClass, Dictionary<IOperandType, long>> writePermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, long>> executePermissionByOperandTypeByClass;
 
-        public DatabaseConnection(Configuration configuration, HttpClient httpClient) : base(configuration)
+        private readonly WorkspaceIdGenerator workspaceIdGenerator;
+        private readonly Func<IWorkspaceLifecycle> lifecycleBuilder;
+
+        public DatabaseConnection(Configuration configuration, Func<IWorkspaceLifecycle> lifecycleBuilder, HttpClient httpClient, WorkspaceIdGenerator workspaceIdGenerator, INumbers numbers) : base(configuration)
         {
             this.HttpClient = httpClient;
+            this.workspaceIdGenerator = workspaceIdGenerator;
+            this.lifecycleBuilder = lifecycleBuilder;
+            this.Numbers = numbers;
 
             this.HttpClient.DefaultRequestHeaders.Accept.Clear();
             this.HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -56,7 +62,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public HttpClient HttpClient { get; }
 
-        public INumbers Numbers => this.Configuration.Numbers;
+        public INumbers Numbers { get; }
 
         public string UserId { get; private set; }
 
@@ -77,8 +83,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return false;
             }
 
-            this.HttpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", authResult.Token);
+            this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authResult.Token);
             this.UserId = authResult.UserId;
 
             return true;
@@ -180,7 +185,7 @@ namespace Allors.Workspace.Adapters.Remote
                     .Select(v => v.Id).ToArray()
             };
 
-        public override IWorkspace CreateWorkspace() => new Workspace(this);
+        public override IWorkspace CreateWorkspace() => new Workspace(this, this.lifecycleBuilder(), this.Numbers, this.workspaceIdGenerator);
 
         public override Adapters.DatabaseRecord GetRecord(long id)
         {

@@ -243,7 +243,7 @@ namespace Allors.Workspace.Adapters
 
         protected Workspace Workspace => this.Session.Workspace;
 
-        private INumbers Numbers => this.Strategy.Session.Workspace.Database.Configuration.Numbers;
+        private INumbers Numbers => this.Strategy.Session.Workspace.Numbers;
 
         #endregion
     }

@@ -10,5 +10,16 @@ namespace Allors.Workspace.Adapters.Local
         internal DatabaseOriginState(Strategy strategy, DatabaseRecord record) : base(record) => this.Strategy = strategy;
 
         public override Adapters.Strategy Strategy { get; }
+
+        public void OnPulled() =>
+            // TODO: check for overwrites
+            this.DatabaseRecord = this.Session.Workspace.Database.GetRecord(this.Id);
+
+        public void Reset()
+        {
+            this.DatabaseRecord = this.Session.Workspace.Database.GetRecord(this.Id);
+            this.ChangedRoleByRelationType = null;
+        }
+
     }
 }

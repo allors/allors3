@@ -24,7 +24,7 @@ namespace Allors.Workspace.Adapters
 
         protected override IRecord Record => this.DatabaseRecord;
 
-        protected DatabaseRecord DatabaseRecord { get; private set; }
+        protected DatabaseRecord DatabaseRecord { get; set; }
 
         public bool CanRead(IRoleType roleType)
         {
@@ -61,17 +61,7 @@ namespace Allors.Workspace.Adapters
                 this.Session.Workspace.Database.GetPermission(this.Class, methodType, Operations.Execute);
             return this.DatabaseRecord.IsPermitted(permission);
         }
-
-        public void OnPulled() =>
-            // TODO: check for overwrites
-            this.DatabaseRecord = this.Session.Workspace.Database.GetRecord(this.Id);
-
-        public void Reset()
-        {
-            this.DatabaseRecord = this.Session.Workspace.Database.GetRecord(this.Id);
-            this.ChangedRoleByRelationType = null;
-        }
-
+        
         public void PushResponse(DatabaseRecord newDatabaseRecord) => this.DatabaseRecord = newDatabaseRecord;
 
         protected override void OnChange()

@@ -20,7 +20,7 @@ namespace Allors.Workspace.Adapters.Local
         internal Invoke(Session session, Workspace workspace) : base(session)
         {
             this.Workspace = workspace;
-            this.Transaction = ((DatabaseConnection)this.Workspace.Database).WrappedDatabase.CreateTransaction();
+            this.Transaction = ((DatabaseConnection)this.Workspace.Database).Database.CreateTransaction();
 
             var sessionContext = this.Transaction.Context();
             var databaseContext = this.Transaction.Database.Context();
