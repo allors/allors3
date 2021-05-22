@@ -9,14 +9,14 @@ namespace Allors.Workspace.Adapters.Local
 
     public sealed class Strategy : Adapters.Strategy
     {
-        internal Strategy(Session session, IClass @class, long id) : base(session, @class, id)
+        internal Strategy(Adapters.Session session, IClass @class, long id) : base(session, @class, id)
         {
             if (this.Class.HasDatabaseOrigin)
             {
-                this.DatabaseOriginState = new DatabaseOriginState(this, (DatabaseRecord)session.Workspace.Database.GetRecord(this.Id));
+                this.DatabaseOriginState = new DatabaseOriginState(this, session.Workspace.DatabaseConnection.GetRecord(this.Id));
             }
         }
 
-        internal Strategy(Session session, DatabaseRecord databaseRecord) : base(session, databaseRecord) => this.DatabaseOriginState = new DatabaseOriginState(this, databaseRecord);
+        internal Strategy(Adapters.Session session, Adapters.DatabaseRecord databaseRecord) : base(session, databaseRecord) => this.DatabaseOriginState = new DatabaseOriginState(this, databaseRecord);
     }
 }

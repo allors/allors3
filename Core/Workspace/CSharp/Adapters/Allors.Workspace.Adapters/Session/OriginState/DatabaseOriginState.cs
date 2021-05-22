@@ -34,7 +34,7 @@ namespace Allors.Workspace.Adapters
             }
 
             var permission =
-                this.Session.Workspace.Database.GetPermission(this.Class, roleType, Operations.Read);
+                this.Session.Workspace.DatabaseConnection.GetPermission(this.Class, roleType, Operations.Read);
             return this.DatabaseRecord.IsPermitted(permission);
         }
 
@@ -46,7 +46,7 @@ namespace Allors.Workspace.Adapters
             }
 
             var permission =
-                this.Session.Workspace.Database.GetPermission(this.Class, roleType, Operations.Write);
+                this.Session.Workspace.DatabaseConnection.GetPermission(this.Class, roleType, Operations.Write);
             return this.DatabaseRecord.IsPermitted(permission);
         }
 
@@ -58,7 +58,7 @@ namespace Allors.Workspace.Adapters
             }
 
             var permission =
-                this.Session.Workspace.Database.GetPermission(this.Class, methodType, Operations.Execute);
+                this.Session.Workspace.DatabaseConnection.GetPermission(this.Class, methodType, Operations.Execute);
             return this.DatabaseRecord.IsPermitted(permission);
         }
         

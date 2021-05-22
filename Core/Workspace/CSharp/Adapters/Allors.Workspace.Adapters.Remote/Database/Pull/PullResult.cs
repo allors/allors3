@@ -12,9 +12,9 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class PullResult : Result, IPullResult
     {
-        public PullResult(Session session, PullResponse response) : base(session, response)
+        public PullResult(Adapters.Session session, PullResponse response) : base(session, response)
         {
-            this.Workspace = ((Adapters.Session) session).Workspace;
+            this.Workspace = session.Workspace;
 
             this.Objects = response.Objects.ToDictionary(
                 pair => pair.Key,

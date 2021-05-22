@@ -15,14 +15,11 @@ namespace Allors.Workspace.Adapters.Remote
     using Data;
     using Meta;
     using Protocol.Json;
-    using InvokeOptions = Allors.Workspace.InvokeOptions;
+    using InvokeOptions = InvokeOptions;
 
     public class Session : Adapters.Session
     {
-        internal Session(Workspace workspace, ISessionLifecycle sessionLifecycle) : base(workspace, sessionLifecycle)
-        {
-            this.Lifecycle.OnInit(this);
-        }
+        internal Session(Adapters.Workspace workspace, ISessionLifecycle sessionLifecycle) : base(workspace, sessionLifecycle) => this.Lifecycle.OnInit(this);
 
         public new Workspace Workspace => (Workspace)base.Workspace;
 
@@ -47,7 +44,7 @@ namespace Allors.Workspace.Adapters.Remote
                     : null
             };
 
-            var invokeResponse = await this.Workspace.Database.Invoke(invokeRequest);
+            var invokeResponse = await this.Workspace.DatabaseConnection.Invoke(invokeRequest);
             return new InvokeResult(this, invokeResponse);
         }
 
@@ -55,7 +52,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var pullRequest = new PullRequest { List = pulls.Select(v => v.ToJson()).ToArray() };
 
-            var pullResponse = await this.Workspace.Database.Pull(pullRequest);
+            var pullResponse = await this.Workspace.DatabaseConnection.Pull(pullRequest);
             return await this.OnPull(pullResponse);
         }
 
@@ -67,7 +64,7 @@ namespace Allors.Workspace.Adapters.Remote
                 List = pulls.Select(v => v.ToJson()).ToArray()
             };
 
-            var pullResponse = await this.Workspace.Database.Pull(pullRequest);
+            var pullResponse = await this.Workspace.DatabaseConnection.Pull(pullRequest);
             return await this.OnPull(pullResponse);
         }
 
@@ -77,7 +74,7 @@ namespace Allors.Workspace.Adapters.Remote
 
             if (!result.HasErrors)
             {
-                this.PushToWorkspace(result);
+                _ = this.PushToWorkspace(result);
             }
 
             return result;
@@ -85,7 +82,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         private async Task<IPullResult> OnPull(PullResponse pullResponse)
         {
-            var syncRequest = this.Workspace.Database.Diff(pullResponse);
+            var syncRequest = this.Workspace.DatabaseConnection.Diff(pullResponse);
             if (syncRequest.Objects.Length > 0)
             {
                 await this.Sync(syncRequest);
@@ -104,7 +101,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         private async Task Sync(SyncRequest syncRequest)
         {
-            var database = (DatabaseConnection)base.Workspace.Database;
+            var database = (DatabaseConnection)base.Workspace.DatabaseConnection;
 
             var syncResponse = await database.Sync(syncRequest);
             var securityRequest = database.SyncResponse(syncResponse);
@@ -144,7 +141,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public override Adapters.Strategy InstantiateDatabaseStrategy(long id)
         {
-            var databaseRecord = (DatabaseRecord)base.Workspace.Database.GetRecord(id);
+            var databaseRecord = (DatabaseRecord)base.Workspace.DatabaseConnection.GetRecord(id);
             var strategy = new Strategy(this, databaseRecord);
             this.AddStrategy(strategy);
 
@@ -168,13 +165,13 @@ namespace Allors.Workspace.Adapters.Remote
             return strategy;
         }
 
-        internal PushRequest PushRequest() => new PushRequest
+        private PushRequest PushRequest() => new PushRequest
         {
             NewObjects = this.PushToDatabaseTracker.Created?.Select(v => ((Strategy)v).DatabasePushNew()).ToArray(),
             Objects = this.PushToDatabaseTracker.Changed?.Select(v => ((Strategy)v.Strategy).DatabasePushExisting()).ToArray()
         };
 
-        internal void PushResponse(PushResponse pushResponse)
+        private void PushResponse(PushResponse pushResponse)
         {
             if (pushResponse.NewObjects != null && pushResponse.NewObjects.Length > 0)
             {
@@ -188,7 +185,7 @@ namespace Allors.Workspace.Adapters.Remote
                     _ = this.PushToDatabaseTracker.Created.Remove(strategy);
 
                     this.RemoveStrategy(strategy);
-                    var databaseRecord = this.Workspace.Database.OnPushed(databaseId, strategy.Class);
+                    var databaseRecord = this.Workspace.DatabaseConnection.OnPushed(databaseId, strategy.Class);
                     strategy.DatabasePushResponse(databaseRecord);
                     this.AddStrategy(strategy);
                 }
@@ -198,7 +195,7 @@ namespace Allors.Workspace.Adapters.Remote
         private async Task<PushResult> PushToDatabase()
         {
             var pushRequest = this.PushRequest();
-            var pushResponse = await this.Workspace.Database.Push(pushRequest);
+            var pushResponse = await this.Workspace.DatabaseConnection.Push(pushRequest);
             if (!pushResponse.HasErrors)
             {
                 this.PushResponse(pushResponse);

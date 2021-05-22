@@ -11,7 +11,9 @@ namespace Allors.Workspace.Adapters.Local
     {
         public Workspace(DatabaseConnection database, IWorkspaceLifecycle lifecycle, INumbers numbers) : base(database, lifecycle, numbers, new WorkspaceIdGenerator()) => this.Lifecycle.OnInit(this);
 
-        public long UserId => ((DatabaseConnection)this.Database).UserId;
+        public new DatabaseConnection DatabaseConnection => (DatabaseConnection)base.DatabaseConnection;
+
+        public long UserId => this.DatabaseConnection.UserId;
 
         public override ISession CreateSession() => new Session(this, this.Lifecycle.CreateSessionContext());
     }

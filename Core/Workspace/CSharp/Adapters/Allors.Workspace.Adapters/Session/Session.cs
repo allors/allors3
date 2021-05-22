@@ -43,11 +43,11 @@ namespace Allors.Workspace.Adapters
         public PushToWorkspaceTracker PushToWorkspaceTracker { get; }
 
         public SessionOriginState SessionOriginState { get; }
-        
+
         protected Dictionary<long, Strategy> StrategyByWorkspaceId { get; }
 
         public T Create<T>() where T : class, IObject =>
-            this.Create<T>((IClass)this.Workspace.Database.Configuration.ObjectFactory.GetObjectType<T>());
+            this.Create<T>((IClass)this.Workspace.DatabaseConnection.Configuration.ObjectFactory.GetObjectType<T>());
 
         public T Get<T>(IObject @object) where T : IObject => this.Get<T>(@object.Id);
 
@@ -75,7 +75,7 @@ namespace Allors.Workspace.Adapters
 
         public IEnumerable<T> GetAll<T>() where T : IObject
         {
-            var objectType = (IComposite)this.Workspace.Database.Configuration.ObjectFactory.GetObjectType<T>();
+            var objectType = (IComposite)this.Workspace.DatabaseConnection.Configuration.ObjectFactory.GetObjectType<T>();
             return this.GetAll<T>(objectType);
         }
 
@@ -187,7 +187,7 @@ namespace Allors.Workspace.Adapters
 
             return role != null
                 ? this.Workspace.Numbers.Enumerate(role).Select(this.Get<IObject>).ToArray()
-                : this.Workspace.Database.EmptyArray(roleType.ObjectType);
+                : this.Workspace.DatabaseConnection.EmptyArray(roleType.ObjectType);
         }
 
         public IEnumerable<T> GetAssociation<T>(long role, IAssociationType associationType) where T : IObject

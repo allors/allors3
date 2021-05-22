@@ -33,7 +33,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             if (this.ChangedRoleByRelationType?.Count > 0)
             {
-                var numbers = this.RemoteStrategy.Session.Workspace.Database.Numbers;
+                var numbers = this.RemoteStrategy.Session.Workspace.DatabaseConnection.Numbers;
 
                 var roles = new List<PushRequestRole>();
 

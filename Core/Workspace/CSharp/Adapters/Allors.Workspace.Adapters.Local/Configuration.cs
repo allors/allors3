@@ -6,7 +6,6 @@
 namespace Allors.Workspace.Adapters.Local
 {
     using Meta;
-    using Numbers;
 
     public class Configuration : Adapters.Configuration
     {

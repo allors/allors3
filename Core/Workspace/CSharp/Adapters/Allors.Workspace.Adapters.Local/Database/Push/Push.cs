@@ -8,26 +8,26 @@ namespace Allors.Workspace.Adapters.Local
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database;
-    using Allors.Database.Derivations;
-    using Allors.Database.Domain;
-    using Allors.Database.Meta;
-    using Allors.Database.Security;
+    using Database;
+    using Database.Derivations;
+    using Database.Domain;
+    using Database.Meta;
+    using Database.Security;
 
     public class Push : Result, IPushResult
     {
         internal Push(Session session) : base(session)
         {
             this.Workspace = session.Workspace;
-            this.Transaction = ((DatabaseConnection)this.Workspace.Database).Database.CreateTransaction();
+            this.Transaction = this.Workspace.DatabaseConnection.Database.CreateTransaction();
 
             var sessionContext = this.Transaction.Context();
             var databaseContext = this.Transaction.Database.Context();
             var metaCache = databaseContext.MetaCache;
             var user = sessionContext.User;
 
-            this.AccessControlLists = new WorkspaceAccessControlLists(this.Workspace.Database.Configuration.Name, user);
-            this.AllowedClasses = metaCache.GetWorkspaceClasses(this.Workspace.Database.Configuration.Name);
+            this.AccessControlLists = new WorkspaceAccessControlLists(this.Workspace.DatabaseConnection.Configuration.Name, user);
+            this.AllowedClasses = metaCache.GetWorkspaceClasses(this.Workspace.DatabaseConnection.Configuration.Name);
             this.M = databaseContext.M;
             this.Build = @class => (IObject)DefaultObjectBuilder.Build(this.Transaction, @class);
             this.Derive = () => this.Transaction.Derive(false);
@@ -55,7 +55,7 @@ namespace Allors.Workspace.Adapters.Local
 
         internal void Execute(PushToDatabaseTracker tracker)
         {
-            var metaPopulation = ((DatabaseConnection)this.Workspace.Database).Database.MetaPopulation;
+            var metaPopulation = this.Workspace.DatabaseConnection.Database.MetaPopulation;
 
             this.ObjectByNewId = tracker.Created?.ToDictionary(
                 k => k.Id,

@@ -15,7 +15,7 @@ namespace Allors.Workspace.Adapters
 
         protected Workspace(DatabaseConnection database, IWorkspaceLifecycle lifecycle, INumbers numbers, WorkspaceIdGenerator workspaceIdGenerator)
         {
-            this.Database = database;
+            this.DatabaseConnection = database;
             this.Lifecycle = lifecycle;
             this.WorkspaceIdGenerator = workspaceIdGenerator;
             this.Numbers = numbers;
@@ -26,8 +26,8 @@ namespace Allors.Workspace.Adapters
             this.recordById = new Dictionary<long, WorkspaceRecord>();
         }
 
-        IDatabaseConnection IWorkspace.DatabaseConnection => this.Database;
-        public DatabaseConnection Database { get; }
+        IDatabaseConnection IWorkspace.DatabaseConnection => this.DatabaseConnection;
+        public DatabaseConnection DatabaseConnection { get; }
 
         public IWorkspaceLifecycle Lifecycle { get; }
 

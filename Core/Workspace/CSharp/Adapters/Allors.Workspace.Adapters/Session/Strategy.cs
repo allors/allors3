@@ -47,7 +47,7 @@ namespace Allors.Workspace.Adapters
 
         public long Id { get; private set; }
 
-        public IObject Object => this.@object ??= this.Session.Workspace.Database.Configuration.ObjectFactory.Create(this);
+        public IObject Object => this.@object ??= this.Session.Workspace.DatabaseConnection.Configuration.ObjectFactory.Create(this);
 
         public bool Exist(IRoleType roleType)
         {

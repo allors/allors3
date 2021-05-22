@@ -204,7 +204,7 @@ namespace Allors.Workspace.Adapters.Remote
                     var metaObject = this.Configuration.MetaPopulation.FindByTag((int)syncResponsePermission[2]);
                     var operandType = (IOperandType)(metaObject as IRelationType)?.RoleType ?? (IMethodType)metaObject;
                     var operation = (Operations)syncResponsePermission[3];
-                    this.Permissions.Add(id);
+                    _ = this.Permissions.Add(id);
 
                     switch (operation)
                     {

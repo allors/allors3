@@ -9,20 +9,20 @@ namespace Allors.Workspace.Adapters.Local
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database;
-    using Allors.Database.Data;
-    using Allors.Database.Security;
-    using Extent = Allors.Database.Extent;
+    using Database;
+    using Database.Data;
+    using Database.Security;
+    using Extent = Database.Extent;
 
     public class PullExtent
     {
         private readonly IAccessControlLists acls;
         private readonly IPreparedExtents preparedExtents;
         private readonly IPreparedSelects preparedSelects;
-        private readonly Allors.Database.Data.Pull pull;
+        private readonly Database.Data.Pull pull;
         private readonly ITransaction transaction;
 
-        public PullExtent(ITransaction transaction, Allors.Database.Data.Pull pull, IAccessControlLists acls,
+        public PullExtent(ITransaction transaction, Database.Data.Pull pull, IAccessControlLists acls,
             IPreparedSelects preparedSelects,
             IPreparedExtents preparedExtents)
         {
@@ -35,12 +35,13 @@ namespace Allors.Workspace.Adapters.Local
 
         public void Execute(Pull response)
         {
-            if (this.pull.Extent == null && !this.pull.ExtentRef.HasValue)
+            var extent = this.pull.Extent ?? (this.pull.ExtentRef.HasValue ? this.preparedExtents.Get(this.pull.ExtentRef.Value) : null);
+
+            if (extent == null)
             {
                 throw new Exception("Either an Extent or an ExtentRef is required.");
             }
 
-            var extent = this.pull.Extent ?? this.preparedExtents.Get(this.pull.ExtentRef.Value);
             var objects = extent.Build(this.transaction, this.pull.Arguments).ToArray();
 
             if (this.pull.Results != null)
@@ -64,15 +65,21 @@ namespace Allors.Workspace.Adapters.Local
                             if (select.Step != null)
                             {
                                 objects = select.Step.IsOne
-                                    ? objects.Select(v => select.Step.Get(v, this.acls)).Where(v => v != null)
-                                        .Cast<IObject>().Distinct().ToArray()
-                                    : objects.SelectMany(v =>
-                                    {
-                                        var stepResult = select.Step.Get(v, this.acls);
-                                        return stepResult is HashSet<object> set
-                                            ? set.Cast<IObject>().ToArray()
-                                            : ((Extent)stepResult)?.ToArray() ?? Array.Empty<IObject>();
-                                    }).Distinct().ToArray();
+                                    ? objects.Select(v => select.Step.Get(v, this.acls))
+                                        .Where(v => v != null)
+                                        .Cast<IObject>()
+                                        .Distinct()
+                                        .ToArray()
+                                    : objects
+                                        .SelectMany(v =>
+                                        {
+                                            var stepResult = select.Step.Get(v, this.acls);
+                                            return stepResult is HashSet<object> set
+                                                ? set.Cast<IObject>().ToArray()
+                                                : ((Extent)stepResult)?.ToArray() ?? Array.Empty<IObject>();
+                                        })
+                                        .Distinct()
+                                        .ToArray();
 
                                 var propertyType = select.Step.End.PropertyType;
                                 name ??= propertyType.PluralName;
@@ -90,8 +97,7 @@ namespace Allors.Workspace.Adapters.Local
 
                                 paged = paged.ToArray();
 
-                                response.AddValue(name + "_total",
-                                    extent.Build(this.transaction, this.pull.Arguments).Count.ToString());
+                                response.AddValue(name + "_total", extent.Build(this.transaction, this.pull.Arguments).Count.ToString());
                                 response.AddCollection(name, paged, include);
                             }
                             else

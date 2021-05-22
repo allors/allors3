@@ -9,20 +9,20 @@ namespace Allors.Workspace.Adapters.Local
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database;
-    using Allors.Database.Data;
-    using Allors.Database.Meta;
-    using Allors.Database.Security;
-    using Extent = Allors.Database.Extent;
+    using Database;
+    using Database.Data;
+    using Database.Meta;
+    using Database.Security;
+    using Extent = Database.Extent;
 
     public class PullInstantiate
     {
         private readonly IAccessControlLists acls;
         private readonly IPreparedSelects preparedSelects;
-        private readonly Allors.Database.Data.Pull pull;
+        private readonly Database.Data.Pull pull;
         private readonly ITransaction transaction;
 
-        public PullInstantiate(ITransaction transaction, Allors.Database.Data.Pull pull, IAccessControlLists acls,
+        public PullInstantiate(ITransaction transaction, Database.Data.Pull pull, IAccessControlLists acls,
             IPreparedSelects preparedSelects)
         {
             this.transaction = transaction;
@@ -54,7 +54,7 @@ namespace Allors.Workspace.Adapters.Local
                         var name = result.Name;
 
                         var select = result.Select;
-                        if (@select == null && result.SelectRef.HasValue)
+                        if (select == null && result.SelectRef.HasValue)
                         {
                             select = this.preparedSelects.Get(result.SelectRef.Value);
                         }
@@ -116,8 +116,7 @@ namespace Allors.Workspace.Adapters.Local
                     }
                     catch (Exception e)
                     {
-                        throw new Exception(
-                            $"Instantiate: {@object?.Strategy.Class}[{@object?.Strategy.ObjectId}], {result}", e);
+                        throw new Exception($"Instantiate: {@object?.Strategy.Class}[{@object?.Strategy.ObjectId}], {result}", e);
                     }
                 }
             }

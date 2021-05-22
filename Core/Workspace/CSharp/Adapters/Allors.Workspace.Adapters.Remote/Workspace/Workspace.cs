@@ -11,7 +11,7 @@ namespace Allors.Workspace.Adapters.Remote
     {
         public Workspace(DatabaseConnection database, IWorkspaceLifecycle lifecycle, INumbers numbers, WorkspaceIdGenerator workspaceIdGenerator) : base(database, lifecycle, numbers, workspaceIdGenerator) => this.Lifecycle.OnInit(this);
 
-        public new DatabaseConnection Database => (DatabaseConnection)base.Database;
+        public new DatabaseConnection DatabaseConnection => (DatabaseConnection)base.DatabaseConnection;
 
         public override ISession CreateSession() => new Session(this, this.Lifecycle.CreateSessionContext());
     }

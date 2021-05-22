@@ -6,15 +6,12 @@
 namespace Allors.Workspace.Adapters.Local
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using Meta;
-    using Numbers;
 
     public class Session : Adapters.Session
     {
-        internal Session(Workspace workspace, ISessionLifecycle sessionLifecycle) : base(workspace, sessionLifecycle) => this.Lifecycle.OnInit(this);
+        internal Session(Adapters.Workspace workspace, ISessionLifecycle sessionLifecycle) : base(workspace, sessionLifecycle) => this.Lifecycle.OnInit(this);
 
         public new Workspace Workspace => (Workspace)base.Workspace;
 
@@ -54,10 +51,10 @@ namespace Allors.Workspace.Adapters.Local
         {
             var result = new Push(this);
 
-            this.PushToDatabase(result);
+            _ = this.PushToDatabase(result);
             if (!result.HasErrors)
             {
-                this.PushToWorkspace(result);
+                _ = this.PushToWorkspace(result);
             }
 
             return Task.FromResult<IPushResult>(result);
@@ -85,7 +82,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public override Adapters.Strategy InstantiateDatabaseStrategy(long id)
         {
-            var databaseRecord = this.Workspace.Database.GetRecord(id);
+            var databaseRecord = this.Workspace.DatabaseConnection.GetRecord(id);
             var strategy = new Strategy(this, (DatabaseRecord)databaseRecord);
             this.AddStrategy(strategy);
 
@@ -111,15 +108,15 @@ namespace Allors.Workspace.Adapters.Local
 
         private void OnPulled(Pull pull)
         {
-            var syncObjects = ((DatabaseConnection)this.Workspace.Database).ObjectsToSync(pull);
+            var syncObjects = this.Workspace.DatabaseConnection.ObjectsToSync(pull);
 
-            ((DatabaseConnection)this.Workspace.Database).Sync(syncObjects, pull.AccessControlLists);
+            this.Workspace.DatabaseConnection.Sync(syncObjects, pull.AccessControlLists);
 
             foreach (var databaseObject in pull.DatabaseObjects)
             {
                 if (!this.StrategyByWorkspaceId.TryGetValue(databaseObject.Id, out var strategy))
                 {
-                    this.InstantiateDatabaseStrategy(databaseObject.Id);
+                    _ = this.InstantiateDatabaseStrategy(databaseObject.Id);
                 }
                 else
                 {
@@ -151,7 +148,7 @@ namespace Allors.Workspace.Adapters.Local
                     _ = this.PushToDatabaseTracker.Created.Remove(strategy);
 
                     this.RemoveStrategy(strategy);
-                    var databaseRecord = ((DatabaseConnection)this.Workspace.Database).OnPushed(databaseId, strategy.Class);
+                    var databaseRecord = this.Workspace.DatabaseConnection.OnPushed(databaseId, strategy.Class);
                     strategy.DatabasePushResponse(databaseRecord);
                     this.AddStrategy(strategy);
                 }
@@ -164,7 +161,7 @@ namespace Allors.Workspace.Adapters.Local
 
             this.PushToDatabaseTracker.Created = null;
 
-            ((DatabaseConnection)this.Workspace.Database).Sync(push.Objects, push.AccessControlLists);
+            this.Workspace.DatabaseConnection.Sync(push.Objects, push.AccessControlLists);
 
             foreach (var @object in push.Objects)
             {

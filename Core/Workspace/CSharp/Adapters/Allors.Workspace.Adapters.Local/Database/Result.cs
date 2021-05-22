@@ -12,7 +12,7 @@ namespace Allors.Workspace.Adapters.Local
     {
         private readonly List<Strategy> accessErrorStrategies;
         private readonly List<long> databaseMissingIds;
-        private List<Allors.Database.Derivations.IDerivationError> derivationErrors;
+        private List<Database.Derivations.IDerivationError> derivationErrors;
         private readonly List<long> versionErrors;
 
         protected Result(Session session)
@@ -41,8 +41,8 @@ namespace Allors.Workspace.Adapters.Local
                                  this.accessErrorStrategies?.Count > 0 || this.databaseMissingIds?.Count > 0 ||
                                  this.versionErrors?.Count > 0 || this.derivationErrors?.Count > 0;
 
-        internal void AddDerivationErrors(Allors.Database.Derivations.IDerivationError[] errors) =>
-            this.derivationErrors.AddRange(errors);
+        internal void AddDerivationErrors(Database.Derivations.IDerivationError[] errors) =>
+            (this.derivationErrors ??= new List<Database.Derivations.IDerivationError>()).AddRange(errors);
 
         internal void AddMissingId(long id) => this.databaseMissingIds.Add(id);
 

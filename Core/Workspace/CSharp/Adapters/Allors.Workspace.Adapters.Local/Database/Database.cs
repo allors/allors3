@@ -9,16 +9,17 @@ namespace Allors.Workspace.Adapters.Local
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database;
-    using Allors.Database.Domain;
-    using Allors.Database.Security;
+    using Database;
+    using Database.Domain;
+    using Database.Security;
     using Meta;
     using Numbers;
-    using IRoleType = Allors.Database.Meta.IRoleType;
+    using AccessControl = Adapters.AccessControl;
+    using IRoleType = Database.Meta.IRoleType;
 
     public class DatabaseConnection : Adapters.DatabaseConnection
     {
-        private readonly Dictionary<long, Adapters.AccessControl> accessControlById;
+        private readonly Dictionary<long, AccessControl> accessControlById;
         private readonly IPermissionsCache permissionCache;
         private readonly ConcurrentDictionary<long, DatabaseRecord> recordsById;
 
@@ -33,7 +34,7 @@ namespace Allors.Workspace.Adapters.Local
 
             this.recordsById = new ConcurrentDictionary<long, DatabaseRecord>();
             this.permissionCache = this.Database.Context().PermissionsCache;
-            this.accessControlById = new Dictionary<long, Adapters.AccessControl>();
+            this.accessControlById = new Dictionary<long, AccessControl>();
         }
 
         public long UserId { get; set; }
@@ -76,9 +77,9 @@ namespace Allors.Workspace.Adapters.Local
 
                 var accessControls = acl.AccessControls
                     ?.Select(this.GetAccessControl)
-                    .ToArray() ?? Array.Empty<Adapters.AccessControl>();
+                    .ToArray() ?? Array.Empty<AccessControl>();
 
-                this.recordsById[id] = new DatabaseRecord(this, workspaceClass, id, @object.Strategy.ObjectVersion, roleByRoleType, acl.DeniedPermissionIds, accessControls);
+                this.recordsById[id] = new DatabaseRecord(workspaceClass, id, @object.Strategy.ObjectVersion, roleByRoleType, acl.DeniedPermissionIds, accessControls);
             }
         }
 
@@ -119,7 +120,7 @@ namespace Allors.Workspace.Adapters.Local
 
         internal DatabaseRecord OnPushed(long id, IClass @class)
         {
-            var record = new DatabaseRecord(this, @class, id);
+            var record = new DatabaseRecord(@class, id);
             this.recordsById[id] = record;
             return record;
         }
@@ -135,11 +136,11 @@ namespace Allors.Workspace.Adapters.Local
                 return true;
             });
 
-        private Adapters.AccessControl GetAccessControl(IAccessControl accessControl)
+        private AccessControl GetAccessControl(IAccessControl accessControl)
         {
             if (!this.accessControlById.TryGetValue(accessControl.Strategy.ObjectId, out var acessControl))
             {
-                acessControl = new Adapters.AccessControl();
+                acessControl = new AccessControl();
                 this.accessControlById.Add(accessControl.Strategy.ObjectId, acessControl);
             }
 

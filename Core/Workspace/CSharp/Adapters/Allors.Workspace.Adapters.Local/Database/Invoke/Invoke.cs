@@ -8,11 +8,11 @@ namespace Allors.Workspace.Adapters.Local
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database;
-    using Allors.Database.Derivations;
-    using Allors.Database.Domain;
-    using Allors.Database.Meta;
-    using Allors.Database.Security;
+    using Database;
+    using Database.Derivations;
+    using Database.Domain;
+    using Database.Meta;
+    using Database.Security;
     using Method = Allors.Workspace.Method;
 
     public class Invoke : Result
@@ -20,16 +20,15 @@ namespace Allors.Workspace.Adapters.Local
         internal Invoke(Session session, Workspace workspace) : base(session)
         {
             this.Workspace = workspace;
-            this.Transaction = ((DatabaseConnection)this.Workspace.Database).Database.CreateTransaction();
+            this.Transaction = this.Workspace.DatabaseConnection.Database.CreateTransaction();
 
             var sessionContext = this.Transaction.Context();
             var databaseContext = this.Transaction.Database.Context();
             var metaCache = databaseContext.MetaCache;
             var user = sessionContext.User;
 
-            this.AccessControlLists = new WorkspaceAccessControlLists(this.Workspace.Database.Configuration.Name, user);
-            this.AllowedClasses = metaCache.GetWorkspaceClasses(this.Workspace.Database.Configuration.Name);
-            this.MetaPopulation = databaseContext.M;
+            this.AccessControlLists = new WorkspaceAccessControlLists(this.Workspace.DatabaseConnection.Configuration.Name, user);
+            this.AllowedClasses = metaCache.GetWorkspaceClasses(this.Workspace.DatabaseConnection.Configuration.Name);
             this.Derive = () => this.Transaction.Derive(false);
         }
 
@@ -40,8 +39,6 @@ namespace Allors.Workspace.Adapters.Local
         private ISet<IClass> AllowedClasses { get; }
 
         private IAccessControlLists AccessControlLists { get; }
-
-        private MetaPopulation MetaPopulation { get; }
 
         private Func<IDerivationResult> Derive { get; }
 
