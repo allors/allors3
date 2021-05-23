@@ -189,12 +189,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Shared.Tests", "Syst
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Workspace.Adapters", "Core\Workspace\CSharp\Adapters\Allors.Workspace.Adapters\Allors.Workspace.Adapters.csproj", "{B69A49DA-DB1A-444B-9FA3-3307EFB4DBD3}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "..\build\_build.csproj", "{D4337C67-EA39-4488-9951-151D1A455C72}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D4337C67-EA39-4488-9951-151D1A455C72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4337C67-EA39-4488-9951-151D1A455C72}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1ABE8E67-974F-4F03-A342-FFF0326A5B33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1ABE8E67-974F-4F03-A342-FFF0326A5B33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1ABE8E67-974F-4F03-A342-FFF0326A5B33}.Release|Any CPU.ActiveCfg = Release|Any CPU
