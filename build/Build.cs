@@ -9,9 +9,9 @@ partial class Build : NukeBuild
     private readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
     private Target Install => _ => _
-        .DependsOn(this.CoreInstall)
-        .DependsOn(this.BaseInstall)
-        .DependsOn(this.AppsInstall);
+        .DependsOn(this.DotnetCoreInstall)
+        .DependsOn(this.DotnetBaseInstall)
+        .DependsOn(this.DotnetAppsInstall);
 
     private Target Clean => _ => _
         .Executes(() =>
@@ -38,7 +38,7 @@ partial class Build : NukeBuild
                 }
             }
 
-            foreach (var path in new[] {this.Paths.System, this.Paths.Core, this.Paths.Apps})
+            foreach (var path in new[] {this.Paths.DotnetSystem, this.Paths.DotnetCore, this.Paths.DotnetApps})
             {
                 foreach (var child in new DirectoryInfo(path).GetDirectories().Where(v => !v.Name.Equals("build")))
                 {
@@ -50,12 +50,12 @@ partial class Build : NukeBuild
         });
 
     private Target Generate => _ => _
-        .DependsOn(this.AdaptersGenerate)
-        .DependsOn(this.CoreGenerate)
-        .DependsOn(this.BaseGenerate)
-        .DependsOn(this.AppsGenerate)
-        .DependsOn(this.DerivationGenerate)
-        .DependsOn(this.SecurityGenerate);
+        .DependsOn(this.DotnetSystemAdaptersGenerate)
+        .DependsOn(this.DotnetCoreGenerate)
+        .DependsOn(this.DotnetBaseGenerate)
+        .DependsOn(this.DotnetAppsGenerate)
+        .DependsOn(this.DemosDerivationGenerate)
+        .DependsOn(this.DemosSecurityGenerate);
 
     private Target Default => _ => _
         .DependsOn(this.Generate);

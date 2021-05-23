@@ -2,41 +2,41 @@ using Nuke.Common;
 
 partial class Build
 {
-    private Target CiAdaptersTestMemory => _ => _
-        .DependsOn(this.AdaptersTestMemory);
+    private Target CiDotnetSystemAdaptersTestMemory => _ => _
+        .DependsOn(this.DotnetSystemAdaptersTestMemory);
 
-    private Target CiAdaptersTestSqlClient => _ => _
-        .DependsOn(this.AdaptersTestSqlClient);
+    private Target CiDotnetSystemAdaptersTestSqlClient => _ => _
+        .DependsOn(this.DotnetSystemAdaptersTestSqlClient);
 
-    private Target CiAdaptersTestNpgsql => _ => _
-        .DependsOn(this.AdaptersTestNpgsql);
+    private Target CiDotnetSystemAdaptersTestNpgsql => _ => _
+        .DependsOn(this.DotnetSystemAdaptersTestNpgsql);
 
-    private Target CiSystemWorkspaceTest => _ => _
-        .DependsOn(this.SystemInstall)
-        .DependsOn(this.SystemWorkspaceTest);
-    
-    private Target CiCoreDatabaseTest => _ => _
-        .DependsOn(this.CoreDatabaseTest);
+    private Target CiDotnetSystemWorkspaceTest => _ => _
+        .DependsOn(this.DotnetSystemInstall)
+        .DependsOn(this.DotnetSystemWorkspaceTest);
 
-    private Target CiCoreWorkspaceTest => _ => _
-        .DependsOn(this.CoreInstall);
+    private Target CiDotnetCoreDatabaseTest => _ => _
+        .DependsOn(this.DotnetCoreDatabaseTest);
+
+    private Target CiDotnetCoreWorkspaceTest => _ => _
+        .DependsOn(this.DotnetCoreInstall);
     //.DependsOn(this.CoreWorkspaceTest);
 
-    private Target CiBaseDatabaseTest => _ => _
-        .DependsOn(this.BaseDatabaseTest);
+    private Target CiDotnetBaseDatabaseTest => _ => _
+        .DependsOn(this.DotnetBaseDatabaseTest);
 
-    private Target CiBaseWorkspaceTest => _ => _
-        .DependsOn(this.BaseInstall)
-        .DependsOn(this.BaseWorkspaceTest);
+    private Target CiDotnetBaseWorkspaceTest => _ => _
+        .DependsOn(this.DotnetBaseInstall)
+        .DependsOn(this.DotnetBaseWorkspaceTest);
 
-    private Target CiAppsDatabaseTest => _ => _
-        .DependsOn(this.AppsDatabaseTest);
+    private Target CiDotnetAppsDatabaseTest => _ => _
+        .DependsOn(this.DotnetAppsDatabaseTest);
 
-    private Target CiAppsWorkspaceTest => _ => _
-        .DependsOn(this.AppsInstall)
-        .DependsOn(this.AppsWorkspaceTest);
+    private Target CiDotnetAppsWorkspaceTest => _ => _
+        .DependsOn(this.DotnetAppsInstall)
+        .DependsOn(this.DotnetAppsWorkspaceTest);
 
     private Target CiDemosTest => _ => _
-        .DependsOn(this.DerivationTest)
-        .DependsOn(this.SecurityTest);
+        .DependsOn(this.DemosDerivationTest)
+        .DependsOn(this.DemosSecurityTest);
 }

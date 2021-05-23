@@ -15,21 +15,21 @@ stages:
     strategy:
       matrix:
         adapters_memory:
-          target: 'CiAdaptersTestMemory'
+          target: 'CiDotnetSystemAdaptersTestMemory'
         adapters_sqlclient:
-          target: 'CiAdaptersTestSqlClient'
+          target: 'CiDotnetSystemAdaptersTestSqlClient'
         adapters_npgsql:
-          target: 'CiAdaptersTestNpgsql'
+          target: 'CiDotnetSystemAdaptersTestNpgsql'
         system_workspace:
-          target: 'CiSystemWorkspaceTest'
+          target: 'CiDotnetSystemWorkspaceTest'
         core_database:
-          target: 'CiCoreDatabaseTest'
+          target: 'CiDotnetCoreDatabaseTest'
         core_workspace:
-          target: 'CiCoreWorkspaceTest'
+          target: 'CiDotnetCoreWorkspaceTest'
         base_database:
-          target: 'CiBaseDatabaseTest'
+          target: 'CiDotnetBaseDatabaseTest'
         apps_database:
-          target: 'CiAppsDatabaseTest'
+          target: 'CiDotnetAppsDatabaseTest'
         demos:
           target: 'CiDemosTest'
 
