@@ -1,47 +1,66 @@
-using System;
+using System.IO;
 using System.Linq;
 using Nuke.Common;
-using Nuke.Common.CI;
-using Nuke.Common.Execution;
-using Nuke.Common.IO;
-using Nuke.Common.ProjectModel;
-using Nuke.Common.Tooling;
-using Nuke.Common.Utilities.Collections;
-using static Nuke.Common.EnvironmentInfo;
 using static Nuke.Common.IO.FileSystemTasks;
-using static Nuke.Common.IO.PathConstruction;
 
-[CheckBuildProjectConfigurations]
-class Build : NukeBuild
+partial class Build : NukeBuild
 {
-    /// Support plugins are available for:
-    ///   - JetBrains ReSharper        https://nuke.build/resharper
-    ///   - JetBrains Rider            https://nuke.build/rider
-    ///   - Microsoft VisualStudio     https://nuke.build/visualstudio
-    ///   - Microsoft VSCode           https://nuke.build/vscode
-
-    public static int Main () => Execute<Build>(x => x.Compile);
-
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
-    readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
+    private readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
-    [Solution] readonly Solution Solution;
+    private Target Install => _ => _
+        .DependsOn(this.DotnetCoreInstall)
+        .DependsOn(this.DotnetBaseInstall)
+        .DependsOn(this.DotnetAppsInstall);
 
-    Target Clean => _ => _
-        .Before(Restore)
+    private Target Clean => _ => _
         .Executes(() =>
         {
+            void Delete(DirectoryInfo directoryInfo)
+            {
+                directoryInfo.Refresh();
+                if (directoryInfo.Exists)
+                {
+                    if (new[] {"node_modules", "packages", "out-tsc", "bin", "obj", "generated"}.Contains(
+                        directoryInfo.Name.ToLowerInvariant()))
+                    {
+                        DeleteDirectory(directoryInfo.FullName);
+                        return;
+                    }
+
+                    if (!directoryInfo.Attributes.HasFlag(FileAttributes.ReparsePoint))
+                    {
+                        foreach (var child in directoryInfo.GetDirectories())
+                        {
+                            Delete(child);
+                        }
+                    }
+                }
+            }
+
+            foreach (var path in new[] {this.Paths.DotnetSystem, this.Paths.DotnetCore, this.Paths.DotnetApps})
+            {
+                foreach (var child in new DirectoryInfo(path).GetDirectories().Where(v => !v.Name.Equals("build")))
+                {
+                    Delete(child);
+                }
+            }
+
+            DeleteDirectory(this.Paths.Artifacts);
         });
 
-    Target Restore => _ => _
-        .Executes(() =>
-        {
-        });
+    private Target Generate => _ => _
+        .DependsOn(this.DotnetSystemAdaptersGenerate)
+        .DependsOn(this.DotnetCoreGenerate)
+        .DependsOn(this.DotnetBaseGenerate)
+        .DependsOn(this.DotnetAppsGenerate)
+        .DependsOn(this.DemosDerivationGenerate)
+        .DependsOn(this.DemosSecurityGenerate);
 
-    Target Compile => _ => _
-        .DependsOn(Restore)
-        .Executes(() =>
-        {
-        });
+    private Target Default => _ => _
+        .DependsOn(this.Generate);
 
+    private Target All => _ => _
+        .DependsOn(this.Install)
+        .DependsOn(this.Generate);
 }
