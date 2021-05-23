@@ -154,44 +154,54 @@ namespace Allors.Repository.Domain
 
         private void CreateDomains(RepositoryProject repositoryProject)
         {
-            var parentByChild = new Dictionary<string, string>();
-
-            foreach (var syntaxTree in repositoryProject.DocumentBySyntaxTree.Keys)
+            try
             {
-                var root = syntaxTree.GetRoot();
-                foreach (var structDeclaration in root.DescendantNodes().OfType<StructDeclarationSyntax>())
+                var parentByChild = new Dictionary<string, string>();
+
+                foreach (var syntaxTree in repositoryProject.DocumentBySyntaxTree.Keys)
                 {
-                    var semanticModel = repositoryProject.Compilation.GetSemanticModel(syntaxTree);
-                    var structureModel = (ITypeSymbol)semanticModel.GetDeclaredSymbol(structDeclaration);
-                    var domainAttribute = structureModel.GetAttributes().FirstOrDefault(v => v.AttributeClass.Name.Equals("DomainAttribute"));
-
-                    if (domainAttribute != null)
+                    var root = syntaxTree.GetRoot();
+                    foreach (var structDeclaration in root.DescendantNodes().OfType<StructDeclarationSyntax>())
                     {
-                        var id = Guid.Parse((string)domainAttribute.ConstructorArguments.First().Value);
+                        var semanticModel = repositoryProject.Compilation.GetSemanticModel(syntaxTree);
+                        var structureModel = (ITypeSymbol)semanticModel.GetDeclaredSymbol(structDeclaration);
+                        var domainAttribute = structureModel.GetAttributes()
+                            .FirstOrDefault(v => v.AttributeClass.Name.Equals("DomainAttribute"));
 
-                        var document = repositoryProject.DocumentBySyntaxTree[syntaxTree];
-                        var fileInfo = new FileInfo(document.FilePath);
-                        var directoryInfo = new DirectoryInfo(fileInfo.DirectoryName);
-
-                        var domain = new Domain(id, directoryInfo);
-                        this.DomainByName.Add(domain.Name, domain);
-
-                        var extendsAttribute = structureModel.GetAttributes().FirstOrDefault(v => v.AttributeClass.Name.Equals("ExtendsAttribute"));
-                        var parent = (string)extendsAttribute?.ConstructorArguments.First().Value;
-
-                        if (!string.IsNullOrEmpty(parent))
+                        if (domainAttribute != null)
                         {
-                            parentByChild.Add(domain.Name, parent);
+                            var id = Guid.Parse((string)domainAttribute.ConstructorArguments.First().Value);
+
+                            var document = repositoryProject.DocumentBySyntaxTree[syntaxTree];
+                            var fileInfo = new FileInfo(document.FilePath);
+                            var directoryInfo = new DirectoryInfo(fileInfo.DirectoryName);
+
+                            var domain = new Domain(id, structureModel.Name, directoryInfo);
+                            this.DomainByName.Add(domain.Name, domain);
+
+                            var extendsAttribute = structureModel.GetAttributes()
+                                .FirstOrDefault(v => v.AttributeClass.Name.Equals("ExtendsAttribute"));
+                            var parent = (string)extendsAttribute?.ConstructorArguments.First().Value;
+
+                            if (!string.IsNullOrEmpty(parent))
+                            {
+                                parentByChild.Add(domain.Name, parent);
+                            }
                         }
                     }
                 }
+
+                foreach (var child in parentByChild.Keys)
+                {
+                    var parent = parentByChild[child];
+                    this.DomainByName[child].Base = this.DomainByName[parent];
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
             }
 
-            foreach (var child in parentByChild.Keys)
-            {
-                var parent = parentByChild[child];
-                this.DomainByName[child].Base = this.DomainByName[parent];
-            }
         }
 
         private void CreateTypes(RepositoryProject repositoryProject)

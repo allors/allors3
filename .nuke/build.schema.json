@@ -1,0 +1,257 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Build Schema",
+  "$ref": "#/definitions/build",
+  "definitions": {
+    "build": {
+      "type": "object",
+      "properties": {
+        "Configuration": {
+          "type": "string",
+          "description": "Configuration to build - Default is 'Debug' (local) or 'Release' (server)",
+          "enum": [
+            "Debug",
+            "Release"
+          ]
+        },
+        "Continue": {
+          "type": "boolean",
+          "description": "Indicates to continue a previously failed build attempt"
+        },
+        "DotNetVerbosity": {
+          "type": "string",
+          "description": "DotNet Verbosity",
+          "enum": [
+            "Detailed",
+            "Diagnostic",
+            "Minimal",
+            "Normal",
+            "Quiet"
+          ]
+        },
+        "Help": {
+          "type": "boolean",
+          "description": "Shows the help text for this build assembly"
+        },
+        "Host": {
+          "type": "string",
+          "description": "Host for execution. Default is 'automatic'",
+          "enum": [
+            "AppVeyor",
+            "AzurePipelines",
+            "Bamboo",
+            "Bitrise",
+            "GitHubActions",
+            "GitLab",
+            "Jenkins",
+            "SpaceAutomation",
+            "TeamCity",
+            "Terminal",
+            "TravisCI"
+          ]
+        },
+        "NoLogo": {
+          "type": "boolean",
+          "description": "Disables displaying the NUKE logo"
+        },
+        "Plan": {
+          "type": "boolean",
+          "description": "Shows the execution plan (HTML)"
+        },
+        "Profile": {
+          "type": "array",
+          "description": "Defines the profiles to load",
+          "items": {
+            "type": "string"
+          }
+        },
+        "Root": {
+          "type": "string",
+          "description": "Root directory during build execution"
+        },
+        "Skip": {
+          "type": "array",
+          "description": "List of targets to be skipped. Empty list skips all dependencies",
+          "items": {
+            "type": "string",
+            "enum": [
+              "All",
+              "CiDemosTest",
+              "CiDotnetAppsDatabaseTest",
+              "CiDotnetAppsWorkspaceTest",
+              "CiDotnetBaseDatabaseTest",
+              "CiDotnetBaseWorkspaceTest",
+              "CiDotnetCoreDatabaseTest",
+              "CiDotnetCoreWorkspaceTest",
+              "CiDotnetSystemAdaptersTestMemory",
+              "CiDotnetSystemAdaptersTestNpgsql",
+              "CiDotnetSystemAdaptersTestSqlClient",
+              "CiDotnetSystemWorkspaceTest",
+              "Clean",
+              "Default",
+              "DemosDerivation",
+              "DemosDerivationGenerate",
+              "DemosDerivationTest",
+              "DemosSecurity",
+              "DemosSecurityGenerate",
+              "DemosSecurityTest",
+              "DotnetApps",
+              "DotnetAppsDatabaseTest",
+              "DotnetAppsDatabaseTestDomain",
+              "DotnetAppsGenerate",
+              "DotnetAppsInstall",
+              "DotnetAppsMerge",
+              "DotnetAppsPublishCommands",
+              "DotnetAppsPublishServer",
+              "DotnetAppsResetDatabase",
+              "DotnetAppsTest",
+              "DotnetAppsWorkspaceTest",
+              "DotnetAppsWorkspaceTypescriptSession",
+              "DotnetAppsWorkspaceTypescriptTest",
+              "DotnetBase",
+              "DotnetBaseDatabaseTest",
+              "DotnetBaseDatabaseTestDomain",
+              "DotnetBaseGenerate",
+              "DotnetBaseInstall",
+              "DotnetBaseMerge",
+              "DotnetBasePublishCommands",
+              "DotnetBasePublishServer",
+              "DotnetBaseResetDatabase",
+              "DotnetBaseTest",
+              "DotnetBaseWorkspaceTest",
+              "DotnetBaseWorkspaceTypescriptSession",
+              "DotnetBaseWorkspaceTypescriptTest",
+              "DotnetCore",
+              "DotnetCoreDatabaseTest",
+              "DotnetCoreDatabaseTestDomain",
+              "DotnetCoreDatabaseTestMeta",
+              "DotnetCoreDatabaseTestServerLocal",
+              "DotnetCoreDatabaseTestServerRemote",
+              "DotnetCoreGenerate",
+              "DotnetCoreInstall",
+              "DotnetCoreMerge",
+              "DotnetCorePublishCommands",
+              "DotnetCorePublishServer",
+              "DotnetCoreResetDatabase",
+              "DotnetCoreTest",
+              "DotnetCoreWorkspaceCSharpTest",
+              "DotnetCoreWorkspaceTest",
+              "DotnetCoreWorkspaceTypescriptClient",
+              "DotnetCoreWorkspaceTypescriptMeta",
+              "DotnetCoreWorkspaceTypescriptTest",
+              "DotnetCoreWorkspaceTypescriptWorkspace",
+              "DotnetSystemAdapters",
+              "DotnetSystemAdaptersGenerate",
+              "DotnetSystemAdaptersTestMemory",
+              "DotnetSystemAdaptersTestNpgsql",
+              "DotnetSystemAdaptersTestSqlClient",
+              "DotnetSystemInstall",
+              "DotnetSystemWorkspaceTest",
+              "DotnetSystemWorkspaceTypescript",
+              "EnsureDirectories",
+              "Generate",
+              "Install",
+              "PostgresDocker"
+            ]
+          }
+        },
+        "Target": {
+          "type": "array",
+          "description": "List of targets to be invoked. Default is '{default_target}'",
+          "items": {
+            "type": "string",
+            "enum": [
+              "All",
+              "CiDemosTest",
+              "CiDotnetAppsDatabaseTest",
+              "CiDotnetAppsWorkspaceTest",
+              "CiDotnetBaseDatabaseTest",
+              "CiDotnetBaseWorkspaceTest",
+              "CiDotnetCoreDatabaseTest",
+              "CiDotnetCoreWorkspaceTest",
+              "CiDotnetSystemAdaptersTestMemory",
+              "CiDotnetSystemAdaptersTestNpgsql",
+              "CiDotnetSystemAdaptersTestSqlClient",
+              "CiDotnetSystemWorkspaceTest",
+              "Clean",
+              "Default",
+              "DemosDerivation",
+              "DemosDerivationGenerate",
+              "DemosDerivationTest",
+              "DemosSecurity",
+              "DemosSecurityGenerate",
+              "DemosSecurityTest",
+              "DotnetApps",
+              "DotnetAppsDatabaseTest",
+              "DotnetAppsDatabaseTestDomain",
+              "DotnetAppsGenerate",
+              "DotnetAppsInstall",
+              "DotnetAppsMerge",
+              "DotnetAppsPublishCommands",
+              "DotnetAppsPublishServer",
+              "DotnetAppsResetDatabase",
+              "DotnetAppsTest",
+              "DotnetAppsWorkspaceTest",
+              "DotnetAppsWorkspaceTypescriptSession",
+              "DotnetAppsWorkspaceTypescriptTest",
+              "DotnetBase",
+              "DotnetBaseDatabaseTest",
+              "DotnetBaseDatabaseTestDomain",
+              "DotnetBaseGenerate",
+              "DotnetBaseInstall",
+              "DotnetBaseMerge",
+              "DotnetBasePublishCommands",
+              "DotnetBasePublishServer",
+              "DotnetBaseResetDatabase",
+              "DotnetBaseTest",
+              "DotnetBaseWorkspaceTest",
+              "DotnetBaseWorkspaceTypescriptSession",
+              "DotnetBaseWorkspaceTypescriptTest",
+              "DotnetCore",
+              "DotnetCoreDatabaseTest",
+              "DotnetCoreDatabaseTestDomain",
+              "DotnetCoreDatabaseTestMeta",
+              "DotnetCoreDatabaseTestServerLocal",
+              "DotnetCoreDatabaseTestServerRemote",
+              "DotnetCoreGenerate",
+              "DotnetCoreInstall",
+              "DotnetCoreMerge",
+              "DotnetCorePublishCommands",
+              "DotnetCorePublishServer",
+              "DotnetCoreResetDatabase",
+              "DotnetCoreTest",
+              "DotnetCoreWorkspaceCSharpTest",
+              "DotnetCoreWorkspaceTest",
+              "DotnetCoreWorkspaceTypescriptClient",
+              "DotnetCoreWorkspaceTypescriptMeta",
+              "DotnetCoreWorkspaceTypescriptTest",
+              "DotnetCoreWorkspaceTypescriptWorkspace",
+              "DotnetSystemAdapters",
+              "DotnetSystemAdaptersGenerate",
+              "DotnetSystemAdaptersTestMemory",
+              "DotnetSystemAdaptersTestNpgsql",
+              "DotnetSystemAdaptersTestSqlClient",
+              "DotnetSystemInstall",
+              "DotnetSystemWorkspaceTest",
+              "DotnetSystemWorkspaceTypescript",
+              "EnsureDirectories",
+              "Generate",
+              "Install",
+              "PostgresDocker"
+            ]
+          }
+        },
+        "Verbosity": {
+          "type": "string",
+          "description": "Logging verbosity during build execution. Default is 'Normal'",
+          "enum": [
+            "Minimal",
+            "Normal",
+            "Quiet",
+            "Verbose"
+          ]
+        }
+      }
+    }
+  }
+}

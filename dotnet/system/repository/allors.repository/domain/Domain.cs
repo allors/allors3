@@ -12,9 +12,10 @@ namespace Allors.Repository.Domain
 
     public class Domain
     {
-        internal Domain(Guid id, DirectoryInfo directoryInfo)
+        internal Domain(Guid id, string name, DirectoryInfo directoryInfo)
         {
             this.Id = id;
+            this.Name = name;
             this.DirectoryInfo = directoryInfo;
 
             this.PartialInterfaceByName = new Dictionary<string, PartialInterface>();
@@ -22,11 +23,11 @@ namespace Allors.Repository.Domain
             this.PartialTypeBySingularName = new Dictionary<string, PartialType>();
         }
 
-        public Guid Id { get; set; }
+        public Guid Id { get; }
 
-        public DirectoryInfo DirectoryInfo { get; set; }
+        public DirectoryInfo DirectoryInfo { get; }
 
-        public string Name => this.DirectoryInfo.Name;
+        public string Name { get; }
 
         public Domain Base { get; set; }
 
