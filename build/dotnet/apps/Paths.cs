@@ -2,7 +2,7 @@ using Nuke.Common.IO;
 
 public partial class Paths
 {
-    public AbsolutePath DotnetApps => this.Root / "apps";
+    public AbsolutePath DotnetApps => this.Dotnet / "apps";
     public AbsolutePath DotnetAppsRepositoryDomainRepository => this.DotnetApps / "Repository/Domain/Repository.csproj";
 
     public AbsolutePath DotnetAppsDatabase => this.DotnetApps / "Database";
