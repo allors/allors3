@@ -23,7 +23,10 @@
     "update": "nx migrate latest",
     "workspace-generator": "nx workspace-generator",
     "dep-graph": "nx dep-graph",
-    "help": "nx help"
+    "help": "nx help",
+    "test:meta-lazy": "npx nx test workspace-meta-lazy-system-tests --skipNxCache",
+    "test:adapters-json": "npx nx test workspace-adapters-json-system-tests --skipNxCache",
+    "test:all": "npm run test:meta-lazy && npm run test:adapters-json"
   },
   "private": true,
   "dependencies": {

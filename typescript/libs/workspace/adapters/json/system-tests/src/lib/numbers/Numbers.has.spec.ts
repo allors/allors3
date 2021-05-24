@@ -1,4 +1,4 @@
-import { Numbers, has } from '@allors/workspace/domain/json/system';
+import { Numbers, has } from '@allors/workspace/adapters/json/system';
 
 describe('Numbers', () => {
   describe('as undefined set', () => {

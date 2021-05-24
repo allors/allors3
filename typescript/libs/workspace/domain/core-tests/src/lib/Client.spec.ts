@@ -1,4 +1,4 @@
-import { Client } from '@allors/workspace/domain/json/system';
+import { Client } from '@allors/workspace/adapters/json/system';
 import { Fixture } from './Fixture';
 
 describe('Client', () => {

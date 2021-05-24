@@ -1,4 +1,4 @@
-import { Numbers, remove } from '@allors/workspace/domain/json/system';
+import { Numbers, remove } from '@allors/workspace/adapters/json/system';
 
 describe('Numbers', () => {
   describe('as undefined set', () => {

@@ -1,4 +1,4 @@
-import { MapMap, Numbers } from '@allors/workspace/domain/json/system';
+import { MapMap, Numbers } from '@allors/workspace/adapters/json/system';
 import { mm } from './mm';
 
 describe('MapMap', () => {
