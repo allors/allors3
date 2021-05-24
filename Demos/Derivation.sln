@@ -21,17 +21,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repository", "derivation\Re
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Allors", "Allors", "{F899580C-01C7-418D-8B5D-4E88580F0316}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database.Adapters.Memory", "..\System\Database\Adapters\Allors.Database.Adapters.Memory\Allors.Database.Adapters.Memory.csproj", "{9444771F-ECE8-447A-A27F-22A639FAF381}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database.Adapters.Memory", "..\dotnet\System\Database\Adapters\Allors.Database.Adapters.Memory\Allors.Database.Adapters.Memory.csproj", "{9444771F-ECE8-447A-A27F-22A639FAF381}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database", "..\System\Database\Allors.Database\Allors.Database.csproj", "{132BB2E4-E746-4CC5-8638-6D26A9DDBA02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database", "..\dotnet\System\Database\Allors.Database\Allors.Database.csproj", "{132BB2E4-E746-4CC5-8638-6D26A9DDBA02}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Configuration", "derivation\Database\Configuration\Configuration.csproj", "{F924EEA4-9A28-4AAB-B066-66175D68E891}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database.Protocol.Json", "..\System\Database\Allors.Database.Protocol.Json\Allors.Database.Protocol.Json.csproj", "{99F190F4-746A-482D-9291-5359FC88E0FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database.Protocol.Json", "..\dotnet\System\Database\Allors.Database.Protocol.Json\Allors.Database.Protocol.Json.csproj", "{99F190F4-746A-482D-9291-5359FC88E0FF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Protocol.Json", "..\System\Protocol\Allors.Protocol.Json\Allors.Protocol.Json.csproj", "{645381ED-E18F-4835-A158-28BB1EFCDF1C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Protocol.Json", "..\dotnet\System\Protocol\Allors.Protocol.Json\Allors.Protocol.Json.csproj", "{645381ED-E18F-4835-A158-28BB1EFCDF1C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Shared", "..\System\Shared\Allors.Shared.csproj", "{329CB912-CE84-4185-939E-7CDCE8304E09}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Shared", "..\dotnet\System\Shared\Allors.Shared.csproj", "{329CB912-CE84-4185-939E-7CDCE8304E09}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -6,26 +6,26 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 partial class Build
 {
     private Target DemosDerivationGenerate => _ => _
-        .After(this.Clean)
+        .After(Clean)
         .Executes(() =>
         {
             DotNetRun(s => s
-                .SetProjectFile(this.Paths.DotnetSystemRepositoryGenerate)
+                .SetProjectFile(Paths.DotnetSystemRepositoryGenerate)
                 .SetApplicationArguments(
-                    $"{this.Paths.DemosDerivationRepositoryDomainRepository} {this.Paths.DotnetSystemRepositoryTemplatesMetaCs} {this.Paths.DemosDerivationDatabaseMetaGenerated}"));
+                    $"{Paths.DemosDerivationRepositoryDomainRepository} {Paths.DotnetSystemRepositoryTemplatesMetaCs} {Paths.DemosDerivationDatabaseMetaGenerated}"));
             DotNetRun(s => s
-                .SetProcessWorkingDirectory(this.Paths.DemosDerivation)
-                .SetProjectFile(this.Paths.DemosDerivationDatabaseGenerate));
+                .SetProcessWorkingDirectory(Paths.DemosDerivation)
+                .SetProjectFile(Paths.DemosDerivationDatabaseGenerate));
         });
 
     private Target DemosDerivationTest => _ => _
-        .DependsOn(this.DemosDerivationGenerate)
+        .DependsOn(DemosDerivationGenerate)
         .Executes(() => DotNetTest(s => s
-            .SetProjectFile(this.Paths.DemosDerivationDatabaseDomainTests)
+            .SetProjectFile(Paths.DemosDerivationDatabaseDomainTests)
             .SetLogger("trx;LogFileName=next.trx")
-            .SetResultsDirectory(this.Paths.ArtifactsTests)));
+            .SetResultsDirectory(Paths.ArtifactsTests)));
 
     private Target DemosDerivation => _ => _
-        .After(this.Clean)
-        .DependsOn(this.DemosDerivationTest);
+        .After(Clean)
+        .DependsOn(DemosDerivationTest);
 }

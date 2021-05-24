@@ -14,20 +14,20 @@ public partial class Build
     private readonly Paths Paths = new Paths(RootDirectory);
 
     public Target EnsureDirectories => _ => _
-        .Executes(() => EnsureExistingDirectory(this.Paths.ArtifactsTests));
+        .Executes(() => EnsureExistingDirectory(Paths.ArtifactsTests));
 
     public static int Main() => Execute<Build>(x => x.Default);
 
     protected override void OnBuildInitialized()
     {
         base.OnBuildInitialized();
-        this.TaskKill();
+        TaskKill();
     }
 
     protected override void OnBuildFinished()
     {
         base.OnBuildFinished();
-        this.TaskKill();
+        TaskKill();
     }
 
     public void TaskKill()

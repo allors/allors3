@@ -2,9 +2,9 @@ using Nuke.Common.IO;
 
 public partial class Paths
 {
-    public AbsolutePath DemosSecurity => this.Demos / "Security";
-    public AbsolutePath DemosSecurityRepositoryDomainRepository => this.DemosSecurity / "Repository/Domain/Repository.csproj";
-    public AbsolutePath DemosSecurityDatabaseMetaGenerated => this.DemosSecurity / "Database/Meta/generated";
-    public AbsolutePath DemosSecurityDatabaseGenerate => this.DemosSecurity / "Database/Generate/Generate.csproj";
-    public AbsolutePath DemosSecurityDatabaseDomainTests => this.DemosSecurity / "Database/Domain.Tests/Domain.Tests.csproj";
+    public AbsolutePath DemosSecurity => Demos / "Security";
+    public AbsolutePath DemosSecurityRepositoryDomainRepository => DemosSecurity / "Repository/Domain/Repository.csproj";
+    public AbsolutePath DemosSecurityDatabaseMetaGenerated => DemosSecurity / "Database/Meta/generated";
+    public AbsolutePath DemosSecurityDatabaseGenerate => DemosSecurity / "Database/Generate/Generate.csproj";
+    public AbsolutePath DemosSecurityDatabaseDomainTests => DemosSecurity / "Database/Domain.Tests/Domain.Tests.csproj";
 }

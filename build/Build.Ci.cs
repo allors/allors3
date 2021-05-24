@@ -3,40 +3,40 @@ using Nuke.Common;
 partial class Build
 {
     private Target CiDotnetSystemAdaptersTestMemory => _ => _
-        .DependsOn(this.DotnetSystemAdaptersTestMemory);
+        .DependsOn(DotnetSystemAdaptersTestMemory);
 
     private Target CiDotnetSystemAdaptersTestSqlClient => _ => _
-        .DependsOn(this.DotnetSystemAdaptersTestSqlClient);
+        .DependsOn(DotnetSystemAdaptersTestSqlClient);
 
     private Target CiDotnetSystemAdaptersTestNpgsql => _ => _
-        .DependsOn(this.DotnetSystemAdaptersTestNpgsql);
+        .DependsOn(DotnetSystemAdaptersTestNpgsql);
 
     private Target CiDotnetSystemWorkspaceTest => _ => _
-        .DependsOn(this.DotnetSystemInstall)
-        .DependsOn(this.DotnetSystemWorkspaceTest);
+        .DependsOn(DotnetSystemInstall)
+        .DependsOn(DotnetSystemWorkspaceTest);
 
     private Target CiDotnetCoreDatabaseTest => _ => _
-        .DependsOn(this.DotnetCoreDatabaseTest);
+        .DependsOn(DotnetCoreDatabaseTest);
 
     private Target CiDotnetCoreWorkspaceTest => _ => _
-        .DependsOn(this.DotnetCoreInstall);
+        .DependsOn(DotnetCoreInstall);
     //.DependsOn(this.CoreWorkspaceTest);
 
     private Target CiDotnetBaseDatabaseTest => _ => _
-        .DependsOn(this.DotnetBaseDatabaseTest);
+        .DependsOn(DotnetBaseDatabaseTest);
 
     private Target CiDotnetBaseWorkspaceTest => _ => _
-        .DependsOn(this.DotnetBaseInstall)
-        .DependsOn(this.DotnetBaseWorkspaceTest);
+        .DependsOn(DotnetBaseInstall)
+        .DependsOn(DotnetBaseWorkspaceTest);
 
     private Target CiDotnetAppsDatabaseTest => _ => _
-        .DependsOn(this.DotnetAppsDatabaseTest);
+        .DependsOn(DotnetAppsDatabaseTest);
 
     private Target CiDotnetAppsWorkspaceTest => _ => _
-        .DependsOn(this.DotnetAppsInstall)
-        .DependsOn(this.DotnetAppsWorkspaceTest);
+        .DependsOn(DotnetAppsInstall)
+        .DependsOn(DotnetAppsWorkspaceTest);
 
     private Target CiDemosTest => _ => _
-        .DependsOn(this.DemosDerivationTest)
-        .DependsOn(this.DemosSecurityTest);
+        .DependsOn(DemosDerivationTest)
+        .DependsOn(DemosSecurityTest);
 }

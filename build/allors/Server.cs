@@ -14,21 +14,21 @@ internal class Server : IDisposable
         var arguments = $@"{path}/Server.dll";
         var workingDirectory = path;
 
-        this.Process = StartProcess(DotNetTasks.DotNetPath, arguments, workingDirectory);
+        Process = StartProcess(DotNetTasks.DotNetPath, arguments, workingDirectory);
     }
 
     private IProcess Process { get; set; }
 
     public void Dispose()
     {
-        this.Process?.Kill();
-        this.Process?.Dispose();
-        this.Process = null;
+        Process?.Kill();
+        Process?.Dispose();
+        Process = null;
     }
 
     public async Task Ready()
     {
-        if (!await this.Get("/allors/Test/Ready", TimeSpan.FromMinutes(5)))
+        if (!await Get("/allors/Test/Ready", TimeSpan.FromMinutes(5)))
         {
             throw new Exception("Server is not ready");
         }

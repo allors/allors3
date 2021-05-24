@@ -25,7 +25,7 @@ internal class IIS : IDisposable
     {
         if (File.Exists(Appcmd))
         {
-            foreach (var appPoolName in this.appPoolNames)
+            foreach (var appPoolName in appPoolNames)
             {
                 ProcessTasks.StartProcess(Appcmd, @$"START APPPOOL ""{appPoolName}""").WaitForExit();
             }

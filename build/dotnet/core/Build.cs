@@ -18,178 +18,178 @@ partial class Build
 
     private Target DotnetCoreMerge => _ => _
         .Executes(() => DotNetRun(s => s
-            .SetProjectFile(this.Paths.DotnetCoreDatabaseMerge)
+            .SetProjectFile(Paths.DotnetCoreDatabaseMerge)
             .SetApplicationArguments(
-                $"{this.Paths.DotnetCoreDatabaseResourcesCore} {this.Paths.DotnetCoreDatabaseResourcesCustom} {this.Paths.DotnetCoreDatabaseResources}")));
+                $"{Paths.DotnetCoreDatabaseResourcesCore} {Paths.DotnetCoreDatabaseResourcesCustom} {Paths.DotnetCoreDatabaseResources}")));
 
     private Target DotnetCoreGenerate => _ => _
-        .After(this.Clean)
-        .DependsOn(this.DotnetCoreMerge)
+        .After(Clean)
+        .DependsOn(DotnetCoreMerge)
         .Executes(() =>
         {
             DotNetRun(s => s
-                .SetProjectFile(this.Paths.DotnetSystemRepositoryGenerate)
+                .SetProjectFile(Paths.DotnetSystemRepositoryGenerate)
                 .SetApplicationArguments(
-                    $"{this.Paths.DotnetCoreRepositoryDomainRepository} {this.Paths.DotnetSystemRepositoryTemplatesMetaCs} {this.Paths.DotnetCoreDatabaseMetaGenerated}"));
+                    $"{Paths.DotnetCoreRepositoryDomainRepository} {Paths.DotnetSystemRepositoryTemplatesMetaCs} {Paths.DotnetCoreDatabaseMetaGenerated}"));
             DotNetRun(s => s
-                .SetProcessWorkingDirectory(this.Paths.DotnetCore)
-                .SetProjectFile(this.Paths.DotnetCoreDatabaseGenerate));
+                .SetProcessWorkingDirectory(Paths.DotnetCore)
+                .SetProjectFile(Paths.DotnetCoreDatabaseGenerate));
         });
 
     private Target DotnetCoreDatabaseTestMeta => _ => _
-        .DependsOn(this.DotnetCoreGenerate)
+        .DependsOn(DotnetCoreGenerate)
         .Executes(() => DotNetTest(s => s
-            .SetProjectFile(this.Paths.DotnetCoreDatabaseMetaTests)
+            .SetProjectFile(Paths.DotnetCoreDatabaseMetaTests)
             .SetLogger("trx;LogFileName=CoreDatabaseMeta.trx")
-            .SetResultsDirectory(this.Paths.ArtifactsTests)));
+            .SetResultsDirectory(Paths.ArtifactsTests)));
 
     private Target DotnetCoreDatabaseTestDomain => _ => _
-        .DependsOn(this.DotnetCoreGenerate)
+        .DependsOn(DotnetCoreGenerate)
         .Executes(() => DotNetTest(s => s
-            .SetProjectFile(this.Paths.DotnetCoreDatabaseDomainTests)
+            .SetProjectFile(Paths.DotnetCoreDatabaseDomainTests)
             .SetLogger("trx;LogFileName=CoreDatabaseDomain.trx")
-            .SetResultsDirectory(this.Paths.ArtifactsTests)));
+            .SetResultsDirectory(Paths.ArtifactsTests)));
 
     private Target DotnetCoreDatabaseTestServerLocal => _ => _
-        .DependsOn(this.DotnetCoreGenerate)
+        .DependsOn(DotnetCoreGenerate)
         .Executes(() => DotNetTest(s => s
-            .SetProjectFile(this.Paths.DotnetCoreDatabaseServerLocalTests)
+            .SetProjectFile(Paths.DotnetCoreDatabaseServerLocalTests)
             .SetLogger("trx;LogFileName=CoreDatabaseApi.trx")
-            .SetResultsDirectory(this.Paths.ArtifactsTests)));
+            .SetResultsDirectory(Paths.ArtifactsTests)));
 
     private Target DotnetCorePublishCommands => _ => _
-        .DependsOn(this.DotnetCoreGenerate)
+        .DependsOn(DotnetCoreGenerate)
         .Executes(() =>
         {
             var dotNetPublishSettings = new DotNetPublishSettings()
-                .SetProcessWorkingDirectory(this.Paths.DotnetCoreDatabaseCommands)
-                .SetOutput(this.Paths.ArtifactsCoreCommands);
+                .SetProcessWorkingDirectory(Paths.DotnetCoreDatabaseCommands)
+                .SetOutput(Paths.ArtifactsCoreCommands);
             DotNetPublish(dotNetPublishSettings);
         });
 
     private Target DotnetCorePublishServer => _ => _
-        .DependsOn(this.DotnetCoreGenerate)
+        .DependsOn(DotnetCoreGenerate)
         .Executes(() =>
         {
             var dotNetPublishSettings = new DotNetPublishSettings()
-                .SetProcessWorkingDirectory(this.Paths.DotnetCoreDatabaseServer)
-                .SetOutput(this.Paths.ArtifactsCoreServer);
+                .SetProcessWorkingDirectory(Paths.DotnetCoreDatabaseServer)
+                .SetOutput(Paths.ArtifactsCoreServer);
             DotNetPublish(dotNetPublishSettings);
         });
 
     private Target DotnetCoreDatabaseTestServerRemote => _ => _
-        .DependsOn(this.DotnetCoreGenerate)
-        .DependsOn(this.DotnetCorePublishServer)
-        .DependsOn(this.DotnetCorePublishCommands)
-        .DependsOn(this.DotnetCoreResetDatabase)
+        .DependsOn(DotnetCoreGenerate)
+        .DependsOn(DotnetCorePublishServer)
+        .DependsOn(DotnetCorePublishCommands)
+        .DependsOn(DotnetCoreResetDatabase)
         .Executes(async () =>
         {
-            DotNet("Commands.dll Populate", this.Paths.ArtifactsCoreCommands);
-            using var server = new Server(this.Paths.ArtifactsCoreServer);
+            DotNet("Commands.dll Populate", Paths.ArtifactsCoreCommands);
+            using var server = new Server(Paths.ArtifactsCoreServer);
             await server.Ready();
             DotNetTest(s => s
-                .SetProjectFile(this.Paths.DotnetCoreDatabaseServerRemoteTests)
+                .SetProjectFile(Paths.DotnetCoreDatabaseServerRemoteTests)
                 .SetLogger("trx;LogFileName=CoreDatabaseServer.trx")
-                .SetResultsDirectory(this.Paths.ArtifactsTests));
+                .SetResultsDirectory(Paths.ArtifactsTests));
         });
 
     private Target DotnetCoreInstall => _ => _
         .Executes(() => NpmInstall(s => s
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-            .SetProcessWorkingDirectory(this.Paths.DotnetCoreWorkspaceTypescript)));
+            .SetProcessWorkingDirectory(Paths.DotnetCoreWorkspaceTypescript)));
 
     private Target DotnetCoreWorkspaceTypescriptMeta => _ => _
-        .After(this.DotnetCoreInstall)
-        .DependsOn(this.DotnetCoreGenerate)
-        .DependsOn(this.EnsureDirectories)
+        .After(DotnetCoreInstall)
+        .DependsOn(DotnetCoreGenerate)
+        .DependsOn(EnsureDirectories)
         .Executes(() => NpmRun(s => s
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-            .SetProcessWorkingDirectory(this.Paths.DotnetCoreWorkspaceTypescript)
+            .SetProcessWorkingDirectory(Paths.DotnetCoreWorkspaceTypescript)
             .SetCommand("test:meta")));
 
     private Target DotnetCoreWorkspaceTypescriptWorkspace => _ => _
-        .After(this.DotnetCoreInstall)
-        .DependsOn(this.DotnetCoreGenerate)
-        .DependsOn(this.EnsureDirectories)
+        .After(DotnetCoreInstall)
+        .DependsOn(DotnetCoreGenerate)
+        .DependsOn(EnsureDirectories)
         .Executes(() => NpmRun(s => s
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-            .SetProcessWorkingDirectory(this.Paths.DotnetCoreWorkspaceTypescript)
+            .SetProcessWorkingDirectory(Paths.DotnetCoreWorkspaceTypescript)
             .SetCommand("test:workspace")));
 
     private Target DotnetCoreWorkspaceTypescriptClient => _ => _
-        .After(this.DotnetCoreInstall)
-        .DependsOn(this.EnsureDirectories)
-        .DependsOn(this.DotnetCoreGenerate)
-        .DependsOn(this.DotnetCorePublishServer)
-        .DependsOn(this.DotnetCorePublishCommands)
-        .DependsOn(this.DotnetCoreResetDatabase)
+        .After(DotnetCoreInstall)
+        .DependsOn(EnsureDirectories)
+        .DependsOn(DotnetCoreGenerate)
+        .DependsOn(DotnetCorePublishServer)
+        .DependsOn(DotnetCorePublishCommands)
+        .DependsOn(DotnetCoreResetDatabase)
         .Executes(async () =>
         {
-            DotNet("Commands.dll Populate", this.Paths.ArtifactsCoreCommands);
-            using var server = new Server(this.Paths.ArtifactsCoreServer);
+            DotNet("Commands.dll Populate", Paths.ArtifactsCoreCommands);
+            using var server = new Server(Paths.ArtifactsCoreServer);
             await server.Ready();
             NpmRun(s => s
                 .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-                .SetProcessWorkingDirectory(this.Paths.DotnetCoreWorkspaceTypescript)
+                .SetProcessWorkingDirectory(Paths.DotnetCoreWorkspaceTypescript)
                 .SetCommand("test:client"));
         });
 
     private Target DotnetCoreWorkspaceCSharpTest => _ => _
-        .DependsOn(this.DotnetCorePublishServer)
-        .DependsOn(this.DotnetCorePublishCommands)
-        .DependsOn(this.DotnetCoreResetDatabase)
+        .DependsOn(DotnetCorePublishServer)
+        .DependsOn(DotnetCorePublishCommands)
+        .DependsOn(DotnetCoreResetDatabase)
         .Executes(async () =>
         {
-            DotNet("Commands.dll Populate", this.Paths.ArtifactsCoreCommands);
+            DotNet("Commands.dll Populate", Paths.ArtifactsCoreCommands);
 
             {
                 DotNetTest(s => s
-                    .SetProjectFile(this.Paths.DotnetCoreWorkspaceCSharpAdaptersLocalTests)
+                    .SetProjectFile(Paths.DotnetCoreWorkspaceCSharpAdaptersLocalTests)
                     .SetLogger("trx;LogFileName=CoreWorkspaceCSharpAdaptersLocalTests.trx")
-                    .SetResultsDirectory(this.Paths.ArtifactsTests));
+                    .SetResultsDirectory(Paths.ArtifactsTests));
 
                 DotNetTest(s => s
-                    .SetProjectFile(this.Paths.DotnetCoreWorkspaceCSharpTestsLocal)
+                    .SetProjectFile(Paths.DotnetCoreWorkspaceCSharpTestsLocal)
                     .SetLogger("trx;LogFileName=CoreWorkspaceCSharpTestsLocal.trx")
-                    .SetResultsDirectory(this.Paths.ArtifactsTests));
+                    .SetResultsDirectory(Paths.ArtifactsTests));
             }
 
             {
-                using var server = new Server(this.Paths.ArtifactsCoreServer);
+                using var server = new Server(Paths.ArtifactsCoreServer);
                 await server.Ready();
 
                 DotNetTest(s => s
-                    .SetProjectFile(this.Paths.DotnetCoreWorkspaceCSharpAdaptersRemoteTests)
+                    .SetProjectFile(Paths.DotnetCoreWorkspaceCSharpAdaptersRemoteTests)
                     .SetLogger("trx;LogFileName=CoreWorkspaceCSharpAdaptersRemoteTests.trx")
-                    .SetResultsDirectory(this.Paths.ArtifactsTests));
+                    .SetResultsDirectory(Paths.ArtifactsTests));
 
                 DotNetTest(s => s
-                    .SetProjectFile(this.Paths.DotnetCoreWorkspaceCSharpTestsRemote)
+                    .SetProjectFile(Paths.DotnetCoreWorkspaceCSharpTestsRemote)
                     .SetLogger("trx;LogFileName=CoreWorkspaceCSharpTestsRemote.trx")
-                    .SetResultsDirectory(this.Paths.ArtifactsTests));
+                    .SetResultsDirectory(Paths.ArtifactsTests));
             }
         });
 
     private Target DotnetCoreDatabaseTest => _ => _
-        .DependsOn(this.DotnetCoreDatabaseTestMeta)
-        .DependsOn(this.DotnetCoreDatabaseTestDomain)
-        .DependsOn(this.DotnetCoreDatabaseTestServerLocal)
-        .DependsOn(this.DotnetCoreDatabaseTestServerRemote);
+        .DependsOn(DotnetCoreDatabaseTestMeta)
+        .DependsOn(DotnetCoreDatabaseTestDomain)
+        .DependsOn(DotnetCoreDatabaseTestServerLocal)
+        .DependsOn(DotnetCoreDatabaseTestServerRemote);
 
     private Target DotnetCoreWorkspaceTypescriptTest => _ => _
-        .DependsOn(this.DotnetCoreWorkspaceTypescriptMeta)
-        .DependsOn(this.DotnetCoreWorkspaceTypescriptWorkspace)
-        .DependsOn(this.DotnetCoreWorkspaceTypescriptClient);
+        .DependsOn(DotnetCoreWorkspaceTypescriptMeta)
+        .DependsOn(DotnetCoreWorkspaceTypescriptWorkspace)
+        .DependsOn(DotnetCoreWorkspaceTypescriptClient);
 
     private Target DotnetCoreWorkspaceTest => _ => _
-        .DependsOn(this.DotnetCoreWorkspaceCSharpTest);
+        .DependsOn(DotnetCoreWorkspaceCSharpTest);
         //.DependsOn(this.CoreWorkspaceTypescriptTest);
 
     private Target DotnetCoreTest => _ => _
-        .DependsOn(this.DotnetCoreDatabaseTest)
-        .DependsOn(this.DotnetCoreWorkspaceTest);
+        .DependsOn(DotnetCoreDatabaseTest)
+        .DependsOn(DotnetCoreWorkspaceTest);
 
     private Target DotnetCore => _ => _
-        .DependsOn(this.Clean)
-        .DependsOn(this.DotnetCoreTest);
+        .DependsOn(Clean)
+        .DependsOn(DotnetCoreTest);
 }

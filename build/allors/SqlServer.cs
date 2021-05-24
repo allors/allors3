@@ -11,33 +11,33 @@ internal class SqlServer : IDisposable
 
     public SqlServer()
     {
-        this.sqlLocalDbApi = new SqlLocalDbApi();
-        this.dbInstance = this.sqlLocalDbApi.GetDefaultInstance();
-        this.manager = this.dbInstance.Manage();
+        sqlLocalDbApi = new SqlLocalDbApi();
+        dbInstance = sqlLocalDbApi.GetDefaultInstance();
+        manager = dbInstance.Manage();
 
-        if (!this.dbInstance.IsRunning)
+        if (!dbInstance.IsRunning)
         {
             Normal("SqlServer: Start");
-            this.manager.Start();
+            manager.Start();
         }
     }
 
     public void Dispose()
     {
-        this.sqlLocalDbApi?.Dispose();
+        sqlLocalDbApi?.Dispose();
 
-        this.sqlLocalDbApi = null;
-        this.dbInstance = null;
-        this.manager = null;
+        sqlLocalDbApi = null;
+        dbInstance = null;
+        manager = null;
     }
 
-    public void Drop(string database) => this.ExecuteCommand($"DROP DATABASE IF EXISTS [{database}]");
+    public void Drop(string database) => ExecuteCommand($"DROP DATABASE IF EXISTS [{database}]");
 
-    public void Create(string database) => this.ExecuteCommand($"CREATE DATABASE [{database}]");
+    public void Create(string database) => ExecuteCommand($"CREATE DATABASE [{database}]");
 
     private int ExecuteCommand(string commandText)
     {
-        using var connection = this.manager.CreateConnection();
+        using var connection = manager.CreateConnection();
         connection.Open();
         using var command = new SqlCommand(commandText, connection);
         return command.ExecuteNonQuery();

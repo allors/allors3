@@ -18,8 +18,8 @@ namespace Allors
         {
             string[,] database =
             {
-                { "../../Core/Database/Templates/domain.cs.stg", "DataBase/Domain/generated" },
-                { "../../Core/Database/Templates/uml.cs.stg", "DataBase/Diagrams/generated" },
+                { "../../dotnet/Core/Database/Templates/domain.cs.stg", "DataBase/Domain/generated" },
+                { "../../dotnet/Core/Database/Templates/uml.cs.stg", "DataBase/Diagrams/generated" },
             };
 
             var metaPopulation = MetaBuilder.Build();

@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\..\..\Core\Database\Generate\Core*\**\*.cs" />
+    <Compile Include="..\..\..\..\dotnet\Core\Database\Generate\Core*\**\*.cs" />
   </ItemGroup>
 
 </Project>

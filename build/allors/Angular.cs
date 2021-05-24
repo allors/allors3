@@ -15,21 +15,21 @@ internal class Angular : IDisposable
             .SetProcessWorkingDirectory(path)
             .SetCommand(command);
 
-        this.Process = ProcessTasks.StartProcess(npmRunSetting);
+        Process = ProcessTasks.StartProcess(npmRunSetting);
     }
 
     private IProcess Process { get; set; }
 
     public void Dispose()
     {
-        this.Process?.Kill();
-        this.Process?.Dispose();
-        this.Process = null;
+        Process?.Kill();
+        Process?.Dispose();
+        Process = null;
     }
 
     public async Task Init()
     {
-        if (!await this.Get("/", TimeSpan.FromMinutes(10)))
+        if (!await Get("/", TimeSpan.FromMinutes(10)))
         {
             throw new Exception("Could not initialize angular");
         }

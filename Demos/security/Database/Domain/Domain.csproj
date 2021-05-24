@@ -15,12 +15,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\..\..\Core\Database\Domain\Core*\**\*.cs" />
-    <Compile Include="..\..\..\..\Base\Database\Domain\Base*\**\*.cs" />
+    <Compile Include="..\..\..\..\dotnet\Core\Database\Domain\Core*\**\*.cs" />
+    <Compile Include="..\..\..\..\dotnet\Base\Database\Domain\Base*\**\*.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\System\Database\Allors.Database.Protocol.Json\Allors.Database.Protocol.Json.csproj" />
+    <ProjectReference Include="..\..\..\..\dotnet\System\Database\Allors.Database.Protocol.Json\Allors.Database.Protocol.Json.csproj" />
     <ProjectReference Include="..\Meta\Meta.csproj" />
     <ProjectReference Include="..\Resources\Resources.csproj" />
   </ItemGroup>

@@ -29,7 +29,7 @@ partial class Build
         {
             var pgServerParams = new Dictionary<string, string> {{"timezone", "UTC"}, {"synchronous_commit", "off"}};
 
-            this.pgServer = new PgServer(
+            pgServer = new PgServer(
                 "10.7.1",
                 "allors",
                 port: 5432,
@@ -37,13 +37,13 @@ partial class Build
                 addLocalUserAccessPermission: true,
                 locale: "English_Belgium.1252");
 
-            this.pgServer.Start();
+            pgServer.Start();
         }
 
         public void Dispose()
         {
-            this.pgServer.Stop();
-            this.pgServer.Dispose();
+            pgServer.Stop();
+            pgServer.Dispose();
         }
 
         public void Init(string database)

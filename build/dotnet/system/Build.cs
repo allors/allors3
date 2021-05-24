@@ -8,73 +8,73 @@ using static Nuke.Common.Tools.Npm.NpmTasks;
 partial class Build
 {
     private Target DotnetSystemAdaptersGenerate => _ => _
-        .After(this.Clean)
+        .After(Clean)
         .Executes(() =>
         {
             DotNetRun(s => s
-                .SetProjectFile(this.Paths.DotnetSystemRepositoryGenerate)
+                .SetProjectFile(Paths.DotnetSystemRepositoryGenerate)
                 .SetApplicationArguments(
-                    $"{this.Paths.DotnetSystemAdaptersRepositoryDomainRepository} {this.Paths.DotnetSystemRepositoryTemplatesMetaCs} {this.Paths.DotnetSystemAdaptersMetaGenerated}"));
+                    $"{Paths.DotnetSystemAdaptersRepositoryDomainRepository} {Paths.DotnetSystemRepositoryTemplatesMetaCs} {Paths.DotnetSystemAdaptersMetaGenerated}"));
             DotNetRun(s => s
-                .SetProcessWorkingDirectory(this.Paths.DotnetSystemAdapters)
-                .SetProjectFile(this.Paths.DotnetSystemAdaptersGenerate));
+                .SetProcessWorkingDirectory(Paths.DotnetSystemAdapters)
+                .SetProjectFile(Paths.DotnetSystemAdaptersGenerate));
         });
 
     private Target DotnetSystemAdaptersTestMemory => _ => _
-        .DependsOn(this.DotnetSystemAdaptersGenerate)
+        .DependsOn(DotnetSystemAdaptersGenerate)
         .Executes(() => DotNetTest(s => s
-            .SetProjectFile(this.Paths.DotnetSystemAdaptersStaticTests)
+            .SetProjectFile(Paths.DotnetSystemAdaptersStaticTests)
             .SetFilter("FullyQualifiedName~Allors.Database.Adapters.Memory")
             .SetLogger("trx;LogFileName=AdaptersMemory.trx")
-            .SetResultsDirectory(this.Paths.ArtifactsTests)));
+            .SetResultsDirectory(Paths.ArtifactsTests)));
 
     private Target DotnetSystemAdaptersTestSqlClient => _ => _
-        .DependsOn(this.DotnetSystemAdaptersGenerate)
+        .DependsOn(DotnetSystemAdaptersGenerate)
         .Executes(() =>
         {
             using (new SqlServer())
             {
                 DotNetTest(s => s
-                    .SetProjectFile(this.Paths.DotnetSystemAdaptersStaticTests)
+                    .SetProjectFile(Paths.DotnetSystemAdaptersStaticTests)
                     .SetFilter("FullyQualifiedName~Allors.Database.Adapters.SqlClient")
                     .SetLogger("trx;LogFileName=AdaptersSqlClient.trx")
-                    .SetResultsDirectory(this.Paths.ArtifactsTests));
+                    .SetResultsDirectory(Paths.ArtifactsTests));
             }
         });
 
     private Target DotnetSystemAdaptersTestNpgsql => _ => _
-        .DependsOn(this.DotnetSystemAdaptersGenerate)
+        .DependsOn(DotnetSystemAdaptersGenerate)
         .Executes(() =>
         {
             using (new Postgres())
             {
                 DotNetTest(s => s
-                    .SetProjectFile(this.Paths.DotnetSystemAdaptersStaticTests)
+                    .SetProjectFile(Paths.DotnetSystemAdaptersStaticTests)
                     .SetFilter("FullyQualifiedName~Allors.Database.Adapters.Npgsql")
                     .SetLogger("trx;LogFileName=AdaptersNpgsql.trx")
-                    .SetResultsDirectory(this.Paths.ArtifactsTests));
+                    .SetResultsDirectory(Paths.ArtifactsTests));
             }
         });
 
     private Target DotnetSystemInstall => _ => _
         .Executes(() => NpmInstall(s => s
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-            .SetProcessWorkingDirectory(this.Paths.DotnetSystemWorkspaceTypescript)));
+            .SetProcessWorkingDirectory(Paths.DotnetSystemWorkspaceTypescript)));
 
     private Target DotnetSystemWorkspaceTypescript => _ => _
-        .After(this.DotnetSystemInstall)
-        .DependsOn(this.EnsureDirectories)
+        .After(DotnetSystemInstall)
+        .DependsOn(EnsureDirectories)
         .Executes(() => NpmRun(s => s
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-            .SetProcessWorkingDirectory(this.Paths.DotnetSystemWorkspaceTypescript)
+            .SetProcessWorkingDirectory(Paths.DotnetSystemWorkspaceTypescript)
             .SetCommand("test:all")));
     
     private Target DotnetSystemWorkspaceTest => _ => _
-        .DependsOn(this.DotnetSystemWorkspaceTypescript);
+        .DependsOn(DotnetSystemWorkspaceTypescript);
 
     private Target DotnetSystemAdapters => _ => _
-        .DependsOn(this.Clean)
-        .DependsOn(this.DotnetSystemAdaptersTestMemory)
-        .DependsOn(this.DotnetSystemAdaptersTestSqlClient)
-        .DependsOn(this.DotnetSystemAdaptersTestNpgsql);
+        .DependsOn(Clean)
+        .DependsOn(DotnetSystemAdaptersTestMemory)
+        .DependsOn(DotnetSystemAdaptersTestSqlClient)
+        .DependsOn(DotnetSystemAdaptersTestNpgsql);
 }

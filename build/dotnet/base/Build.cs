@@ -17,79 +17,79 @@ partial class Build
         });
 
     private Target DotnetBaseDatabaseTest => _ => _
-        .DependsOn(this.DotnetBaseDatabaseTestDomain);
+        .DependsOn(DotnetBaseDatabaseTestDomain);
 
     private Target DotnetBaseMerge => _ => _
         .Executes(() => DotNetRun(s => s
-            .SetProjectFile(this.Paths.DotnetCoreDatabaseMerge)
+            .SetProjectFile(Paths.DotnetCoreDatabaseMerge)
             .SetApplicationArguments(
-                $"{this.Paths.DotnetCoreDatabaseResourcesCore} {this.Paths.DotnetBaseDatabaseResourcesBase} {this.Paths.DotnetBaseDatabaseResources}")));
+                $"{Paths.DotnetCoreDatabaseResourcesCore} {Paths.DotnetBaseDatabaseResourcesBase} {Paths.DotnetBaseDatabaseResources}")));
 
     private Target DotnetBaseDatabaseTestDomain => _ => _
-        .DependsOn(this.DotnetBaseGenerate)
+        .DependsOn(DotnetBaseGenerate)
         .Executes(() => DotNetTest(s => s
-            .SetProjectFile(this.Paths.DotnetBaseDatabaseDomainTests)
+            .SetProjectFile(Paths.DotnetBaseDatabaseDomainTests)
             .SetLogger("trx;LogFileName=BaseDatabaseDomain.trx")
-            .SetResultsDirectory(this.Paths.ArtifactsTests)));
+            .SetResultsDirectory(Paths.ArtifactsTests)));
 
     private Target DotnetBaseGenerate => _ => _
-        .After(this.Clean)
-        .DependsOn(this.DotnetBaseMerge)
+        .After(Clean)
+        .DependsOn(DotnetBaseMerge)
         .Executes(() =>
         {
             DotNetRun(s => s
-                .SetProjectFile(this.Paths.DotnetSystemRepositoryGenerate)
+                .SetProjectFile(Paths.DotnetSystemRepositoryGenerate)
                 .SetApplicationArguments(
-                    $"{this.Paths.DotnetBaseRepositoryDomainRepository} {this.Paths.DotnetSystemRepositoryTemplatesMetaCs} {this.Paths.DotnetBaseDatabaseMetaGenerated}"));
+                    $"{Paths.DotnetBaseRepositoryDomainRepository} {Paths.DotnetSystemRepositoryTemplatesMetaCs} {Paths.DotnetBaseDatabaseMetaGenerated}"));
             DotNetRun(s => s
-                .SetProcessWorkingDirectory(this.Paths.DotnetBase)
-                .SetProjectFile(this.Paths.DotnetBaseDatabaseGenerate));
+                .SetProcessWorkingDirectory(Paths.DotnetBase)
+                .SetProjectFile(Paths.DotnetBaseDatabaseGenerate));
         });
 
     private Target DotnetBasePublishCommands => _ => _
-        .DependsOn(this.DotnetBaseGenerate)
+        .DependsOn(DotnetBaseGenerate)
         .Executes(() =>
         {
             var dotNetPublishSettings = new DotNetPublishSettings()
-                .SetProcessWorkingDirectory(this.Paths.DotnetBaseDatabaseCommands)
-                .SetOutput(this.Paths.ArtifactsBaseCommands);
+                .SetProcessWorkingDirectory(Paths.DotnetBaseDatabaseCommands)
+                .SetOutput(Paths.ArtifactsBaseCommands);
             DotNetPublish(dotNetPublishSettings);
         });
 
     private Target DotnetBasePublishServer => _ => _
-        .DependsOn(this.DotnetBaseGenerate)
+        .DependsOn(DotnetBaseGenerate)
         .Executes(() =>
         {
             var dotNetPublishSettings = new DotNetPublishSettings()
-                .SetProcessWorkingDirectory(this.Paths.DotnetBaseDatabaseServer)
-                .SetOutput(this.Paths.ArtifactsBaseServer);
+                .SetProcessWorkingDirectory(Paths.DotnetBaseDatabaseServer)
+                .SetOutput(Paths.ArtifactsBaseServer);
             DotNetPublish(dotNetPublishSettings);
         });
 
     private Target DotnetBaseInstall => _ => _
         .Executes(() => NpmInstall(s => s
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-            .SetProcessWorkingDirectory(this.Paths.DotnetBaseWorkspaceTypescript)));
+            .SetProcessWorkingDirectory(Paths.DotnetBaseWorkspaceTypescript)));
 
     private Target DotnetBaseWorkspaceTypescriptSession => _ => _
-        .DependsOn(this.DotnetBaseGenerate)
-        .DependsOn(this.EnsureDirectories)
+        .DependsOn(DotnetBaseGenerate)
+        .DependsOn(EnsureDirectories)
         .Executes(() => NpmRun(s => s
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-            .SetProcessWorkingDirectory(this.Paths.DotnetBaseWorkspaceTypescript)
+            .SetProcessWorkingDirectory(Paths.DotnetBaseWorkspaceTypescript)
             .SetCommand("domain:test")));
 
     private Target DotnetBaseWorkspaceTypescriptTest => _ => _
-        .DependsOn(this.DotnetBaseWorkspaceTypescriptSession);
+        .DependsOn(DotnetBaseWorkspaceTypescriptSession);
 
     private Target DotnetBaseWorkspaceTest => _ => _
-        .DependsOn(this.DotnetBaseWorkspaceTypescriptTest);
+        .DependsOn(DotnetBaseWorkspaceTypescriptTest);
 
     private Target DotnetBaseTest => _ => _
-        .DependsOn(this.DotnetBaseDatabaseTest)
-        .DependsOn(this.DotnetBaseWorkspaceTypescriptTest);
+        .DependsOn(DotnetBaseDatabaseTest)
+        .DependsOn(DotnetBaseWorkspaceTypescriptTest);
 
     private Target DotnetBase => _ => _
-        .DependsOn(this.Clean)
-        .DependsOn(this.DotnetBaseTest);
+        .DependsOn(Clean)
+        .DependsOn(DotnetBaseTest);
 }

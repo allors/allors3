@@ -2,20 +2,20 @@ using Nuke.Common.IO;
 
 public partial class Paths
 {
-    public AbsolutePath Artifacts => this.Root / "artifacts";
+    public AbsolutePath Artifacts => Root / "artifacts";
 
-    public AbsolutePath ArtifactsTests => this.Artifacts / "Tests";
+    public AbsolutePath ArtifactsTests => Artifacts / "Tests";
 
     // Core
-    public AbsolutePath ArtifactsCoreCommands => this.Artifacts / "Core/Commands";
-    public AbsolutePath ArtifactsCoreServer => this.Artifacts / "Core/Server";
+    public AbsolutePath ArtifactsCoreCommands => Artifacts / "Core/Commands";
+    public AbsolutePath ArtifactsCoreServer => Artifacts / "Core/Server";
 
     // Base
-    public AbsolutePath ArtifactsBaseCommands => this.Artifacts / "Base/Commands";
-    public AbsolutePath ArtifactsBaseServer => this.Artifacts / "Base/Server";
+    public AbsolutePath ArtifactsBaseCommands => Artifacts / "Base/Commands";
+    public AbsolutePath ArtifactsBaseServer => Artifacts / "Base/Server";
 
 
     // Apps
-    public AbsolutePath ArtifactsAppsCommands => this.Artifacts / "Apps/Commands";
-    public AbsolutePath ArtifactsAppsServer => this.Artifacts / "Apps/Server";
+    public AbsolutePath ArtifactsAppsCommands => Artifacts / "Apps/Commands";
+    public AbsolutePath ArtifactsAppsServer => Artifacts / "Apps/Server";
 }
