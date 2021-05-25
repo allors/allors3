@@ -97,7 +97,7 @@ partial class Build
         .Executes(() => NpmInstall(s => s
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
             .SetProcessWorkingDirectory(Paths.DotnetCoreWorkspaceTypescript)));
-    
+
     private Target DotnetCoreWorkspaceCSharpTest => _ => _
         .DependsOn(DotnetCorePublishServer)
         .DependsOn(DotnetCorePublishCommands)
@@ -139,12 +139,6 @@ partial class Build
         .DependsOn(DotnetCoreDatabaseTestDomain)
         .DependsOn(DotnetCoreDatabaseTestServerLocal)
         .DependsOn(DotnetCoreDatabaseTestServerRemote);
-
-    private Target DotnetCoreWorkspaceTypescriptTest => _ => _
-        .DependsOn(DotnetCoreWorkspaceTypescriptMeta)
-        .DependsOn(DotnetCoreWorkspaceTypescriptWorkspace)
-        .DependsOn(DotnetCoreWorkspaceTypescriptClient);
-
     private Target DotnetCoreWorkspaceTest => _ => _
         .DependsOn(DotnetCoreWorkspaceCSharpTest);
 
