@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
             {
                 m.PurchaseInvoiceItem.RolePattern(v => v.DerivationTrigger),
                 m.PurchaseInvoiceItem.RolePattern(v => v.AmountPaid),
-                m.PurchaseInvoiceItem.RolePattern(v => v.TotalIncVat),
+                m.PurchaseInvoiceItem.RolePattern(v => v.GrandTotal),
                 m.PurchaseInvoice.RolePattern(v => v.PurchaseInvoiceState, v => v.PurchaseInvoiceItems),
                 m.PurchaseInvoice.RolePattern(v => v.AmountPaid, v => v.PurchaseInvoiceItems)
             };
@@ -53,7 +53,7 @@ namespace Allors.Database.Domain
                     {
                         nextState = purchaseInvoiceItemStates.NotPaid;
                     }
-                    else if (@this.ExistAmountPaid && @this.AmountPaid >= @this.TotalIncVat)
+                    else if (@this.ExistAmountPaid && @this.AmountPaid >= @this.GrandTotal)
                     {
                         nextState = purchaseInvoiceItemStates.Paid;
                     }

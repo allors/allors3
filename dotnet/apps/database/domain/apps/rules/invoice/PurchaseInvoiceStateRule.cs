@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 m.PurchaseInvoice.RolePattern(v => v.AmountPaid),
-                m.PurchaseInvoice.RolePattern(v => v.TotalIncVat),
+                m.PurchaseInvoice.RolePattern(v => v.GrandTotal),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -39,7 +39,7 @@ namespace Allors.Database.Domain
                         {
                             nextState = purchaseInvoiceStates.NotPaid;
                         }
-                        else if (@this.AmountPaid >= decimal.Round(@this.TotalIncVat, 2))
+                        else if (@this.AmountPaid >= decimal.Round(@this.GrandTotal, 2))
                         {
                             nextState = purchaseInvoiceStates.Paid;
                         }
