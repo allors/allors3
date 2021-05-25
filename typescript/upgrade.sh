@@ -1,3 +1,5 @@
+cd ..
+
 npx create-nx-workspace@latest allors --preset=empty --cli=nx --nx-cloud=false
 
 cd allors
@@ -5,6 +7,7 @@ cd allors
 rem npm install -D @nrwl/angular
 npm install -D jest-chain
 npm install -D jest-extended
+npm install -D jest-trx-results-processor
 
 npx nx g @nrwl/workspace:library protocol/json/system
 

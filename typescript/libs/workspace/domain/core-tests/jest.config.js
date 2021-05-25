@@ -11,4 +11,16 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../../../coverage/libs/workspace/domain/core-tests',
+  // Allors
+  maxWorkers: 1,
+  testTimeout: 60000,
+  reporters: [
+    'default',
+    [
+      'jest-trx-results-processor',
+      {
+        outputFile: '../artifacts/tests/typscript.workspace.domain.core.trx',
+      },
+    ],
+  ],
 };

@@ -151,7 +151,9 @@
               "EnsureDirectories",
               "Generate",
               "Install",
-              "PostgresDocker"
+              "PostgresDocker",
+              "TypescriptInstall",
+              "TypescriptTest"
             ]
           }
         },
@@ -237,7 +239,9 @@
               "EnsureDirectories",
               "Generate",
               "Install",
-              "PostgresDocker"
+              "PostgresDocker",
+              "TypescriptInstall",
+              "TypescriptTest"
             ]
           }
         },

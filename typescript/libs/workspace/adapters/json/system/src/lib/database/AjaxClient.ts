@@ -1,4 +1,4 @@
-import { Client } from '@allors/workspace/adapters/json/system';
+import { Client } from "./Client";
 
 export class AjaxClient implements Client {
   userId: number;

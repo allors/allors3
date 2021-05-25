@@ -1,13 +1,16 @@
 export * from './lib/collections/MapMap';
 export * from './lib/collections/Numbers';
 
+export * from './lib/database/Client';
+export * from './lib/database/AjaxClient';
+
+
 // export * from './lib/database/invoke/InvokeResult';
 // export * from './lib/database/pull/PullResult';
 // export * from './lib/database/push/PushResult';
 // export * from './lib/database/security/AccessControl';
 // export * from './lib/database/security/Permission';
 // export * from './lib/database/security/ResponseContext';
-// export * from './lib/database/Client';
 // export * from './lib/database/database';
 // export * from './lib/database/databaseObject';
 // export * from './lib/database/databaseState';
