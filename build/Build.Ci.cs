@@ -19,8 +19,8 @@ partial class Build
         .DependsOn(DotnetCoreDatabaseTest);
 
     private Target CiDotnetCoreWorkspaceTest => _ => _
-        .DependsOn(DotnetCoreInstall);
-    //.DependsOn(this.CoreWorkspaceTest);
+        .DependsOn(DotnetCoreInstall)
+        .DependsOn(DotnetCoreWorkspaceTest);
 
     private Target CiDotnetBaseDatabaseTest => _ => _
         .DependsOn(DotnetBaseDatabaseTest);
@@ -35,6 +35,9 @@ partial class Build
     private Target CiDotnetAppsWorkspaceTest => _ => _
         .DependsOn(DotnetAppsInstall)
         .DependsOn(DotnetAppsWorkspaceTest);
+
+    private Target CiTypescriptTest => _ => _
+        .DependsOn(TypescriptTest);
 
     private Target CiDemosTest => _ => _
         .DependsOn(DemosDerivationTest)

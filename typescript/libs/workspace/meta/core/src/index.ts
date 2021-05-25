@@ -1,1 +1,1 @@
-export * from '@allors/workspace/meta/generated';
+export * from './generated';

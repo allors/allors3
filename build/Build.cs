@@ -8,37 +8,28 @@ partial class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     private readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
-    private Target Install => _ => _
-        .DependsOn(DotnetCoreInstall)
-        .DependsOn(DotnetBaseInstall)
-        .DependsOn(DotnetAppsInstall);
-
     private Target Clean => _ => _
         .Executes(() =>
         {
-            void Delete(DirectoryInfo directoryInfo)
+            static void Delete(DirectoryInfo directoryInfo)
             {
                 directoryInfo.Refresh();
-                if (directoryInfo.Exists)
+                if (!directoryInfo.Exists) return;
+                if (new[] { "node_modules", "packages", "out-tsc", "bin", "obj", "generated" }.Contains(
+                    directoryInfo.Name.ToLowerInvariant()))
                 {
-                    if (new[] {"node_modules", "packages", "out-tsc", "bin", "obj", "generated"}.Contains(
-                        directoryInfo.Name.ToLowerInvariant()))
-                    {
-                        DeleteDirectory(directoryInfo.FullName);
-                        return;
-                    }
+                    DeleteDirectory(directoryInfo.FullName);
+                    return;
+                }
 
-                    if (!directoryInfo.Attributes.HasFlag(FileAttributes.ReparsePoint))
-                    {
-                        foreach (var child in directoryInfo.GetDirectories())
-                        {
-                            Delete(child);
-                        }
-                    }
+                if (directoryInfo.Attributes.HasFlag(FileAttributes.ReparsePoint)) return;
+                foreach (var child in directoryInfo.GetDirectories())
+                {
+                    Delete(child);
                 }
             }
 
-            foreach (var path in new[] {Paths.DotnetSystem, Paths.DotnetCore, Paths.DotnetApps})
+            foreach (var path in new[] { Paths.DotnetSystem, Paths.DotnetCore, Paths.DotnetApps })
             {
                 foreach (var child in new DirectoryInfo(path).GetDirectories().Where(v => !v.Name.Equals("build")))
                 {
@@ -49,6 +40,13 @@ partial class Build : NukeBuild
             DeleteDirectory(Paths.Artifacts);
         });
 
+
+    private Target Install => _ => _
+        .DependsOn(DotnetCoreInstall)
+        .DependsOn(DotnetBaseInstall)
+        .DependsOn(DotnetAppsInstall)
+        .DependsOn(TypescriptInstall);
+
     private Target Generate => _ => _
         .DependsOn(DotnetSystemAdaptersGenerate)
         .DependsOn(DotnetCoreGenerate)
@@ -58,9 +56,6 @@ partial class Build : NukeBuild
         .DependsOn(DemosSecurityGenerate);
 
     private Target Default => _ => _
-        .DependsOn(Generate);
-
-    private Target All => _ => _
         .DependsOn(Install)
         .DependsOn(Generate);
 }

@@ -30,6 +30,8 @@ stages:
           target: 'CiDotnetBaseDatabaseTest'
         apps_database:
           target: 'CiDotnetAppsDatabaseTest'
+        typescript:
+          target: 'CiTypescriptTest'
         demos:
           target: 'CiDemosTest'
 

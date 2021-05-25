@@ -1,6 +1,6 @@
 import { map, tap } from 'rxjs/operators';
 import { ajax } from 'rxjs/ajax';
-import { data, M } from '@allors/workspace/meta/core-generated';
+import { data, M } from '@allors/workspace/meta/core';
 import { LazyMetaPopulation } from '@allors/workspace/meta/lazy/system';
 import { Client, AjaxClient } from '@allors/workspace/adapters/json/system';
 import { AuthenticationTokenRequest, AuthenticationTokenResponse } from '@allors/protocol/json/system';

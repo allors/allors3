@@ -29,8 +29,8 @@ namespace Allors.Database
                 { "Workspace/Csharp/Templates/meta.lazy.cs.stg", "Workspace/CSharp/Meta.Lazy/generated" },
                 { "Workspace/Csharp/Templates/domain.cs.stg", "Workspace/CSharp/Domain/generated" },
 
-                { "../../typescript/templates/workspace.meta.ts.stg", "../../typescript/libs/workspace/meta/core-generated/src" },
-                { "../../typescript/templates/workspace.domain.ts.stg", "../../typescript/libs/workspace/domain/core-generated/src" },
+                { "../../typescript/templates/workspace.meta.ts.stg", "../../typescript/libs/workspace/meta/core/src/generated" },
+                { "../../typescript/templates/workspace.domain.ts.stg", "../../typescript/libs/workspace/domain/core/src/generated" },
             };
 
             var metaPopulation = MetaBuilder.Build();

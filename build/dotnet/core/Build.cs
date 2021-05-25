@@ -97,43 +97,7 @@ partial class Build
         .Executes(() => NpmInstall(s => s
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
             .SetProcessWorkingDirectory(Paths.DotnetCoreWorkspaceTypescript)));
-
-    private Target DotnetCoreWorkspaceTypescriptMeta => _ => _
-        .After(DotnetCoreInstall)
-        .DependsOn(DotnetCoreGenerate)
-        .DependsOn(EnsureDirectories)
-        .Executes(() => NpmRun(s => s
-            .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-            .SetProcessWorkingDirectory(Paths.DotnetCoreWorkspaceTypescript)
-            .SetCommand("test:meta")));
-
-    private Target DotnetCoreWorkspaceTypescriptWorkspace => _ => _
-        .After(DotnetCoreInstall)
-        .DependsOn(DotnetCoreGenerate)
-        .DependsOn(EnsureDirectories)
-        .Executes(() => NpmRun(s => s
-            .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-            .SetProcessWorkingDirectory(Paths.DotnetCoreWorkspaceTypescript)
-            .SetCommand("test:workspace")));
-
-    private Target DotnetCoreWorkspaceTypescriptClient => _ => _
-        .After(DotnetCoreInstall)
-        .DependsOn(EnsureDirectories)
-        .DependsOn(DotnetCoreGenerate)
-        .DependsOn(DotnetCorePublishServer)
-        .DependsOn(DotnetCorePublishCommands)
-        .DependsOn(DotnetCoreResetDatabase)
-        .Executes(async () =>
-        {
-            DotNet("Commands.dll Populate", Paths.ArtifactsCoreCommands);
-            using var server = new Server(Paths.ArtifactsCoreServer);
-            await server.Ready();
-            NpmRun(s => s
-                .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-                .SetProcessWorkingDirectory(Paths.DotnetCoreWorkspaceTypescript)
-                .SetCommand("test:client"));
-        });
-
+    
     private Target DotnetCoreWorkspaceCSharpTest => _ => _
         .DependsOn(DotnetCorePublishServer)
         .DependsOn(DotnetCorePublishCommands)
@@ -183,7 +147,6 @@ partial class Build
 
     private Target DotnetCoreWorkspaceTest => _ => _
         .DependsOn(DotnetCoreWorkspaceCSharpTest);
-        //.DependsOn(this.CoreWorkspaceTypescriptTest);
 
     private Target DotnetCoreTest => _ => _
         .DependsOn(DotnetCoreDatabaseTest)
