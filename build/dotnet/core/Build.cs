@@ -108,11 +108,6 @@ partial class Build
 
             {
                 DotNetTest(s => s
-                    .SetProjectFile(Paths.DotnetCoreWorkspaceCSharpAdaptersLocalTests)
-                    .SetLogger("trx;LogFileName=CoreWorkspaceCSharpAdaptersLocalTests.trx")
-                    .SetResultsDirectory(Paths.ArtifactsTests));
-
-                DotNetTest(s => s
                     .SetProjectFile(Paths.DotnetCoreWorkspaceCSharpTestsLocal)
                     .SetLogger("trx;LogFileName=CoreWorkspaceCSharpTestsLocal.trx")
                     .SetResultsDirectory(Paths.ArtifactsTests));
@@ -121,11 +116,6 @@ partial class Build
             {
                 using var server = new Server(Paths.ArtifactsCoreServer);
                 await server.Ready();
-
-                DotNetTest(s => s
-                    .SetProjectFile(Paths.DotnetCoreWorkspaceCSharpAdaptersRemoteTests)
-                    .SetLogger("trx;LogFileName=CoreWorkspaceCSharpAdaptersRemoteTests.trx")
-                    .SetResultsDirectory(Paths.ArtifactsTests));
 
                 DotNetTest(s => s
                     .SetProjectFile(Paths.DotnetCoreWorkspaceCSharpTestsRemote)

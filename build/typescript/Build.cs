@@ -17,7 +17,7 @@ partial class Build
         .DependsOn(EnsureDirectories)
         .Executes(() => NpmRun(s => s
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-            .SetProcessWorkingDirectory(Paths.DotnetSystemWorkspaceTypescript)
+            .SetProcessWorkingDirectory(Paths.Typescript)
             .SetCommand("test:workspace-meta-lazy")));
 
     private Target TypescriptWorkspaceAdaptersJson => _ => _
@@ -26,7 +26,7 @@ partial class Build
         .DependsOn(EnsureDirectories)
         .Executes(() => NpmRun(s => s
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-            .SetProcessWorkingDirectory(Paths.DotnetSystemWorkspaceTypescript)
+            .SetProcessWorkingDirectory(Paths.Typescript)
             .SetCommand("test:workspace-adapters-json")));
 
     private Target TypescriptWorkspaceDomainCore => _ => _
@@ -44,7 +44,7 @@ partial class Build
             await server.Ready();
             NpmRun(s => s
                 .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-                .SetProcessWorkingDirectory(Paths.DotnetCoreWorkspaceTypescript)
+                .SetProcessWorkingDirectory(Paths.Typescript)
                 .SetCommand("test:workspace-domain-core"));
         });
 
