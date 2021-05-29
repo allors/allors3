@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
         }
         public static void AppsOnInit(this Part @this, ObjectOnInit method)
         {
-            var m = @this.Strategy.Transaction.Database.Context().M;
+            var m = @this.Strategy.Transaction.Database.Services().M;
             var settings = @this.Strategy.Transaction.GetSingleton().Settings;
 
             var identifications = @this.ProductIdentifications;

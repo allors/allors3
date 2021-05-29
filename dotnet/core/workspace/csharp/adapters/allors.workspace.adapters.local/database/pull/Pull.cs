@@ -26,7 +26,7 @@ namespace Allors.Workspace.Adapters.Local
             this.Workspace = workspace;
             this.Transaction = this.Workspace.DatabaseConnection.Database.CreateTransaction();
 
-            var databaseContext = this.Transaction.Database.Context();
+            var databaseContext = this.Transaction.Database.Services();
             var metaCache = databaseContext.MetaCache;
 
             var user = (User)this.Transaction.Instantiate(this.Workspace.UserId);

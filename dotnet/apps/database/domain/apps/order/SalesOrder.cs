@@ -500,7 +500,7 @@ namespace Allors.Database.Domain
             if (this.ExistOrderNumber)
             {
                 var transaction = this.Strategy.Transaction;
-                var barcodeService = transaction.Database.Context().BarcodeGenerator;
+                var barcodeService = transaction.Database.Services().BarcodeGenerator;
                 var barcode = barcodeService.Generate(this.OrderNumber, BarcodeType.CODE_128, 320, 80, pure: true);
                 images.Add("Barcode", barcode);
             }

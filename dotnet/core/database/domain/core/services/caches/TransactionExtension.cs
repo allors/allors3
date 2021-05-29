@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         {
             var key = $"{type}.{roleType}";
 
-            var stickies = @this.Database.Context().Caches;
+            var stickies = @this.Database.Services().Caches;
             var cache = stickies.Get<T>(key);
             if (cache == null)
             {

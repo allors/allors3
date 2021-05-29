@@ -26,7 +26,7 @@ namespace Allors.Database.Domain
             this.AccessControlLists = accessControlLists;
             this.Object = (Object)@object;
 
-            var permissionsCache = @object.DatabaseContext().PermissionsCache;
+            var permissionsCache = @object.DatabaseServices().PermissionsCache;
             this.permissionsCacheEntry = permissionsCache.Get(this.Object.Strategy.Class.Id);
 
             this.lazyLoaded = false;

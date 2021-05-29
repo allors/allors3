@@ -18,7 +18,7 @@ namespace Allors.Server.Controllers
         {
             this.WorkspaceService = workspaceService;
             this.Transaction = transactionService.Transaction;
-            this.TreeCache = this.Transaction.Database.Context().TreeCache;
+            this.TreeCache = this.Transaction.Database.Services().TreeCache;
         }
 
         private ITransaction Transaction { get; }
@@ -33,8 +33,8 @@ namespace Allors.Server.Controllers
             var api = new Api(this.Transaction, this.WorkspaceService.Name);
             var response = api.CreatePullResponseBuilder();
 
-            var m = this.Transaction.Database.Context().M;
-            var organisation = new Organisations(this.Transaction).FindBy(m.Organisation.Owner, this.Transaction.Context().User);
+            var m = this.Transaction.Database.Services().M;
+            var organisation = new Organisations(this.Transaction).FindBy(m.Organisation.Owner, this.Transaction.Services().User);
             response.AddObject("root", organisation, new[]
             {
                 new Node(m.Organisation.Employees),

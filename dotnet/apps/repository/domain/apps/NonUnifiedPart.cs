@@ -114,8 +114,6 @@ namespace Allors.Repository
         #region inheritedMethods
         public void OnBuild() { }
 
-        public void OnDerive() { }
-
         public void OnPostBuild() { }
 
         public void OnInit()
@@ -127,8 +125,6 @@ namespace Allors.Repository
         public void Delete()
         {
         }
-
-        public void OnPreDerive() { }
 
         public void SetDisplayName() { }
         #endregion inheritedMethods

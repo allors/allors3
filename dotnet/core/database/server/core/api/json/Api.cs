@@ -25,8 +25,8 @@ namespace Allors.Database.Protocol.Json
         {
             this.Transaction = transaction;
 
-            var transactionContext = transaction.Context();
-            var databaseContext = transaction.Database.Context();
+            var transactionContext = transaction.Services();
+            var databaseContext = transaction.Database.Services();
             var metaCache = databaseContext.MetaCache;
 
             this.User = transactionContext.User;

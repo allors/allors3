@@ -79,7 +79,7 @@ namespace Allors.Database.Domain
             PurchaseShipmentSequence purchaseShipmentSequence,
             WorkEffortSequence workEffortSequence)
             {
-            var m = transaction.Database.Context().M;
+            var m = transaction.Database.Services().M;
 
             var postalAddress1 = new PostalAddressBuilder(transaction)
                     .WithAddress1(address)

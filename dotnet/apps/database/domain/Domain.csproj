@@ -55,7 +55,4 @@
     <EmbeddedResource Include="Templates\ProductQuote.odt" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="generated\" />
-  </ItemGroup>
 </Project>

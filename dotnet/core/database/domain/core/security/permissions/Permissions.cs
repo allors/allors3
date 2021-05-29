@@ -10,13 +10,12 @@ namespace Allors.Database.Domain
     using System.Linq;
     using Allors;
     using Meta;
-   
 
     public partial class Permissions
     {
         public Permission Get(Class @class, IRoleType roleType, Operations operation)
         {
-            var permissionCacheEntry = this.Transaction.Database.Context().PermissionsCache.Get(@class.Id);
+            var permissionCacheEntry = this.Transaction.Database.Services().PermissionsCache.Get(@class.Id);
             if (permissionCacheEntry != null)
             {
                 long id = 0;
@@ -39,7 +38,7 @@ namespace Allors.Database.Domain
 
         public Permission Get(Class @class, IMethodType methodType)
         {
-            var permissionCacheEntry = this.Transaction.Database.Context().PermissionsCache.Get(@class.Id);
+            var permissionCacheEntry = this.Transaction.Database.Services().PermissionsCache.Get(@class.Id);
             if (permissionCacheEntry != null)
             {
                 var id = permissionCacheEntry.MethodExecutePermissionIdByMethodTypeId[methodType.Id];
@@ -52,9 +51,9 @@ namespace Allors.Database.Domain
         public void Sync()
         {
             var permissions = new Permissions(this.Transaction).Extent();
-            this.Transaction.Prefetch(this.DatabaseContext().PrefetchPolicyCache.PermissionsWithClass, permissions);
+            this.Transaction.Prefetch(this.DatabaseServices().PrefetchPolicyCache.PermissionsWithClass, permissions);
 
-            var permissionsCache = this.Transaction.Database.Context().PermissionsCache;
+            var permissionsCache = this.Transaction.Database.Services().PermissionsCache;
 
             var permissionCacheEntryByClassId = permissions
                 .GroupBy(v => v.ClassPointer)
@@ -65,7 +64,7 @@ namespace Allors.Database.Domain
             var permissionIds = new HashSet<long>();
 
             // Create new permissions
-            foreach (var @class in this.DatabaseContext().M.Classes)
+            foreach (var @class in this.DatabaseServices().M.Classes)
             {
                 if (permissionCacheEntryByClassId.TryGetValue(@class.Id, out var permissionCacheEntry))
                 {

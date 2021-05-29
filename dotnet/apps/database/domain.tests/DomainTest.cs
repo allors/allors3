@@ -23,13 +23,13 @@ namespace Allors.Database.Domain.Tests
         public DomainTest(Fixture fixture, bool populate = true)
         {
             var database = new Database(
-                new TestsDomainDatabaseServices(fixture.Engine),
+                new TestDomainDatabaseServices(fixture.Engine),
                 new Configuration
                 {
                     ObjectFactory = new ObjectFactory(fixture.M, typeof(User)),
                 });
 
-            this.M = database.Context().M;
+            this.M = database.Services().M;
 
             this.Setup(database, populate);
         }
@@ -40,7 +40,7 @@ namespace Allors.Database.Domain.Tests
 
         public ITransaction Transaction { get; private set; }
 
-        public ITime Time => this.Transaction.Database.Context().Time;
+        public ITime Time => this.Transaction.Database.Services().Time;
 
         public TimeSpan? TimeShift
         {
@@ -93,7 +93,7 @@ namespace Allors.Database.Domain.Tests
 
             new UserGroups(this.Transaction).Administrators.AddMember(administrator);
 
-            this.Transaction.Context().User = administrator;
+            this.Transaction.Services().User = administrator;
 
             this.Transaction.Derive();
             this.Transaction.Commit();

@@ -48,7 +48,7 @@ namespace Allors.Database.Server.Controllers
         {
             try
             {
-                var timeService = this.Database.Context().Time;
+                var timeService = this.Database.Services().Time;
                 timeService.Shift = new TimeSpan(days, hours, minutes, seconds);
                 return this.Ok();
             }

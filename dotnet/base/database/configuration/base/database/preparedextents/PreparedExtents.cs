@@ -29,7 +29,7 @@ namespace Allors.Database.Configuration
                 var transaction = this.DomainDatabaseServices.Database.CreateTransaction();
                 try
                 {
-                    var m = transaction.Database.Context().M;
+                    var m = transaction.Database.Services().M;
 
                     var filter = new Extent(m.PersistentPreparedExtent)
                     {

@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
                 @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Transaction).Created;
             }
 
-            if (!@this.ExistOwner && @this.Strategy.Transaction.Context().User is Person owner)
+            if (!@this.ExistOwner && @this.Strategy.Transaction.Services().User is Person owner)
             {
                 @this.Owner = owner;
             }

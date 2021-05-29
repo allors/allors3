@@ -29,7 +29,7 @@ namespace Allors.Database.Domain
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
-            var m = cycle.Transaction.Database.Context().M;
+            var m = cycle.Transaction.Database.Services().M;
 
             foreach (var @this in matches.Cast<Quote>().Where(v => v.QuoteState.IsCreated))
             {

@@ -29,7 +29,7 @@ namespace Allors.Database.Domain.Tests
                     ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(User)),
                 });
 
-            this.M = database.Context().M;
+            this.M = database.Services().M;
 
             this.Setup(database, populate);
         }
@@ -40,9 +40,9 @@ namespace Allors.Database.Domain.Tests
 
         public ITransaction Session { get; private set; }
 
-        public ITime Time => this.Session.Database.Context().Time;
+        public ITime Time => this.Session.Database.Services().Time;
 
-        public IDerivationFactory DerivationFactory => this.Session.Database.Context().DerivationFactory;
+        public IDerivationFactory DerivationFactory => this.Session.Database.Services().DerivationFactory;
 
         public TimeSpan? TimeShift
         {

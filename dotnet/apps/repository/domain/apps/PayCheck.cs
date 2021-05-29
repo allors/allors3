@@ -58,10 +58,6 @@ namespace Allors.Repository
         {
         }
 
-        public void OnPreDerive() { }
-
-        public void OnDerive() { }
-
         public void OnPostDerive() { }
 
         public void Delete() { }

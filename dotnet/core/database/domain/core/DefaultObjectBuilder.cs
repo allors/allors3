@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
     {
         public static object Build(ITransaction transaction, IClass @class)
         {
-            var metaService = transaction.Database.Context().MetaCache;
+            var metaService = transaction.Database.Services().MetaCache;
             var builderType = metaService.GetBuilderType(@class);
             object[] parameters = { transaction };
             var builder = (IObjectBuilder)Activator.CreateInstance(builderType, parameters);

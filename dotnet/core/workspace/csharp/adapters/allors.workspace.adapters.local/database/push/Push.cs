@@ -21,8 +21,8 @@ namespace Allors.Workspace.Adapters.Local
             this.Workspace = session.Workspace;
             this.Transaction = this.Workspace.DatabaseConnection.Database.CreateTransaction();
 
-            var sessionContext = this.Transaction.Context();
-            var databaseContext = this.Transaction.Database.Context();
+            var sessionContext = this.Transaction.Services();
+            var databaseContext = this.Transaction.Database.Services();
             var metaCache = databaseContext.MetaCache;
             var user = sessionContext.User;
 

@@ -23,7 +23,7 @@ namespace Allors.Database.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            var m = cycle.Transaction.Database.Context().M;
+            var m = cycle.Transaction.Database.Services().M;
 
             foreach (var @this in matches.Cast<Part>())
             {

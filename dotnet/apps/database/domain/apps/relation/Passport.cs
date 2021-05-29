@@ -7,6 +7,6 @@ namespace Allors.Database.Domain
 {
     public partial class Passport
     {
-        public void AppsOnpostDerive(ObjectOnPostDerive method) => method.Derivation.Validation.AssertIsUnique(this, this.M.Passport.Number);
+        public void AppsOnpostDerive(ObjectOnPostDerive method) => method.Derivation.Validation.AssertIsUnique(method.Derivation.ChangeSet, this, this.M.Passport.Number);
     }
 }

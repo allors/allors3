@@ -66,7 +66,7 @@ namespace Allors.Server.Controllers
 
                     var administrator = new PersonBuilder(transaction).WithUserName("administrator").Build();
                     new UserGroups(transaction).Administrators.AddMember(administrator);
-                    transaction.Context().User = administrator;
+                    transaction.Services().User = administrator;
 
                     new TestPopulation(transaction, population).Apply();
                     _ = transaction.Derive();
@@ -88,7 +88,7 @@ namespace Allors.Server.Controllers
         {
             try
             {
-                var timeService = this.Database.Context().Time;
+                var timeService = this.Database.Services().Time;
                 timeService.Shift = new TimeSpan(days, hours, minutes, seconds);
                 return this.Ok();
             }

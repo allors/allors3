@@ -341,7 +341,7 @@ namespace Allors.Database.Domain
                 return false;
             }
 
-            var m = @this.Strategy.Transaction.Database.Context().M;
+            var m = @this.Strategy.Transaction.Database.Services().M;
 
             var suplierRelationships = @this.SupplierRelationshipsWhereInternalOrganisation;
             suplierRelationships.Filter.AddEquals(m.SupplierRelationship.Supplier, supplier);
@@ -357,7 +357,7 @@ namespace Allors.Database.Domain
                 return false;
             }
 
-            var m = @this.Strategy.Transaction.Database.Context().M;
+            var m = @this.Strategy.Transaction.Database.Services().M;
 
             var subcontractorRelationships = @this.SubContractorRelationshipsWhereContractor;
             subcontractorRelationships.Filter.AddEquals(m.SubContractorRelationship.SubContractor, subcontractor);

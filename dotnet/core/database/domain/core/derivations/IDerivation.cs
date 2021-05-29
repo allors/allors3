@@ -6,12 +6,20 @@
 // ReSharper disable StyleCop.SA1121
 namespace Allors.Database.Domain.Derivations
 {
+    using System;
+
     public interface IDerivation
     {
+        Guid Id { get; }
+
+        DateTime TimeStamp { get; }
+
+        ITransaction Transaction { get; }
+
         IValidation Validation { get; }
 
-        IValidation Derive();
-
         IAccumulatedChangeSet ChangeSet { get; }
+
+        IValidation Derive();
     }
 }

@@ -13,7 +13,7 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static SerialisedItemBuilder WithDefaults(this SerialisedItemBuilder @this, Organisation internalOrganisation)
         {
-            var m = @this.Transaction.Database.Context().M;
+            var m = @this.Transaction.Database.Services().M;
             var faker = @this.Transaction.Faker();
 
             var availability = faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemAvailability>());

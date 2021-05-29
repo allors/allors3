@@ -33,7 +33,7 @@ namespace Allors.Workspace.Adapters.Local
             this.numbersBuilder = numbersBuilder;
 
             this.recordsById = new ConcurrentDictionary<long, DatabaseRecord>();
-            this.permissionCache = this.Database.Context().PermissionsCache;
+            this.permissionCache = this.Database.Services().PermissionsCache;
             this.accessControlById = new Dictionary<long, AccessControl>();
         }
 

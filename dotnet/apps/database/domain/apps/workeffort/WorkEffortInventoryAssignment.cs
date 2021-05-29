@@ -6,6 +6,7 @@
 namespace Allors.Database.Domain
 {
     using System.Linq;
+    using Derivations;
     using Resources;
 
     public partial class WorkEffortInventoryAssignment
@@ -15,7 +16,7 @@ namespace Allors.Database.Domain
             var transaction = this.strategy.Transaction;
 
             // TODO: Avoid creating a Derivation
-            var derivation = this.DatabaseContext().DerivationFactory.CreateDerivation(transaction);
+            var derivation = this.DatabaseServices().DerivationFactory.CreateDerivation(transaction);
             this.SyncInventoryTransactions(derivation, this.InventoryItem, this.Quantity, new InventoryTransactionReasons(transaction).Consumption, true);
         }
 

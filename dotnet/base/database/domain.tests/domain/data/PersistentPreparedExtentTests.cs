@@ -20,7 +20,7 @@ namespace Allors.Database.Domain.Tests
         {
             var organisations = new Organisations(this.Session).Extent().ToArray();
 
-            var extentService = this.Session.Database.Context().PreparedExtents;
+            var extentService = this.Session.Database.Services().PreparedExtents;
             var organizationByName = extentService.Get(PersistentPreparedExtents.ByName);
 
             var arguments = new Arguments(new Dictionary<string, object>

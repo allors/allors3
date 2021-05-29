@@ -88,7 +88,7 @@ namespace Commands
             }
         }
 
-        public MetaPopulation M => this.Database.Context().M;
+        public MetaPopulation M => this.Database.Services().M;
 
         public static int Main(string[] args)
         {

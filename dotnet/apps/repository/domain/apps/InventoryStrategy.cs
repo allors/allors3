@@ -83,8 +83,6 @@ namespace Allors.Repository
 
         public void OnBuild() { }
 
-        public void OnDerive() { }
-
         public void OnPostBuild() { }
 
         public void OnInit()
@@ -93,7 +91,6 @@ namespace Allors.Repository
 
         public void OnPostDerive() { }
 
-        public void OnPreDerive() { }
         #endregion inheritedMethods
     }
 }

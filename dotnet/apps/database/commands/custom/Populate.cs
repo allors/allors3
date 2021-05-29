@@ -33,7 +33,7 @@ namespace Commands
                 transaction.Commit();
 
                 var scheduler = new AutomatedAgents(transaction).System;
-                transaction.Context().User = scheduler;
+                transaction.Services().User = scheduler;
 
                 new Allors.Database.Domain.Upgrade(transaction, this.Parent.DataPath).Execute();
 

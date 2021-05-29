@@ -50,42 +50,5 @@ namespace Allors.Database.Domain
                 }
             }
         }
-
-        public static void CoreOnPreDerive(this Object @this, ObjectOnPreDerive method)
-        {
-            var (iteration, changeSet, derivedObjects) = method;
-
-            if (iteration.IsMarked(@this))
-            {
-                iteration.Schedule(@this);
-            }
-            else
-            {
-                if (!iteration.Cycle.Derivation.DerivedObjects.Contains(@this))
-                {
-                    if (changeSet.IsCreated(@this) || changeSet.HasChangedRoles(@this))
-                    {
-                        iteration.Schedule(@this);
-                    }
-                }
-            }
-        }
-
-        public static void CoreOnPostDerive(this Object @this, ObjectOnPostDerive method)
-        {
-            var derivation = method.Derivation;
-            var @class = (Class)@this.Strategy.Class;
-            var metaService = @this.DatabaseContext().MetaCache;
-
-            foreach (var roleType in metaService.GetRequiredRoleTypes(@class))
-            {
-                derivation.Validation.AssertExists(@this, roleType);
-            }
-
-            foreach (var roleType in @metaService.GetUniqueRoleTypes(@class))
-            {
-                derivation.Validation.AssertIsUnique(derivation.ChangeSet, @this, roleType);
-            }
-        }
     }
 }

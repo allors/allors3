@@ -12,7 +12,7 @@ namespace Allors.Database.Domain
         public static Rule[] Create(MetaPopulation m) =>
             new Rule[]
             {
-                // Core
+                // Base
                 new MediaRule(m),
                 new TransitionalDeniedPermissionRule(m),
 

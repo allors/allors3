@@ -12,7 +12,7 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static SalesOrderItemBuilder WithDefaults(this SalesOrderItemBuilder @this)
         {
-            var m = @this.Transaction.Database.Context().M;
+            var m = @this.Transaction.Database.Services().M;
             var faker = @this.Transaction.Faker();
             var invoiceItemTypes = @this.Transaction.Extent<InvoiceItemType>().ToList();
 
@@ -39,7 +39,7 @@ namespace Allors.Database.Domain.TestPopulation
 
         public static SalesOrderItemBuilder WithSerialisedProductDefaults(this SalesOrderItemBuilder @this)
         {
-            var m = @this.Transaction.Database.Context().M;
+            var m = @this.Transaction.Database.Services().M;
             var faker = @this.Transaction.Faker();
             var invoiceItemType = @this.Transaction.Extent<InvoiceItemType>().FirstOrDefault(v => v.UniqueId.Equals(InvoiceItemTypes.ProductItemId));
 
@@ -62,7 +62,7 @@ namespace Allors.Database.Domain.TestPopulation
 
         public static SalesOrderItemBuilder WithNonSerialisedPartItemDefaults(this SalesOrderItemBuilder @this)
         {
-            var m = @this.Transaction.Database.Context().M;
+            var m = @this.Transaction.Database.Services().M;
             var faker = @this.Transaction.Faker();
             var invoiceItemType = @this.Transaction.Extent<InvoiceItemType>().FirstOrDefault(v => v.UniqueId.Equals(InvoiceItemTypes.PartItemId));
 

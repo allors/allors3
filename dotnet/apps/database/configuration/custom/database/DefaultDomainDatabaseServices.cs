@@ -20,7 +20,7 @@ namespace Allors.Database.Configuration
         {
             base.OnInit(database);
 
-            this.DerivationFactory = new DerivationFactory(this.Engine);
+            this.DerivationFactory = new DefaultDerivationFactory(this.Engine);
         }
     }
 }

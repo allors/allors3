@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
         {
             var transaction = this.Transaction;
 
-            var mailService = transaction.Database.Context().Mailer;
+            var mailService = transaction.Database.Services().Mailer;
             var emailMessages = this.Extent();
             emailMessages.Filter.AddNot().AddExists(this.Meta.DateSending);
             emailMessages.Filter.AddNot().AddExists(this.Meta.DateSent);

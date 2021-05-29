@@ -16,7 +16,7 @@ namespace Allors.Database.Domain.Print.ProductQuoteModel
         public QuoteItemModel(QuoteItem item, Dictionary<string, byte[]> imageByImageName)
         {
             var transaction = item.Strategy.Transaction;
-            var m = transaction.Database.Context().M;
+            var m = transaction.Database.Services().M;
 
             var product = item.Product;
             var serialisedItem = item.SerialisedItem;

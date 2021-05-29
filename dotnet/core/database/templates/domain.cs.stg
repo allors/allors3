@@ -2,7 +2,7 @@ delimiters "$", "$"
 
 TemplateId() ::= <<17ED40F8-BDF8-4A7C-9AE9-1C4D2AD6BA2B>>
 TemplateName() ::= <<Allors C# Domain>>
-TemplateVersion() ::= <<3.0.2>>
+TemplateVersion() ::= <<3.0.3>>
 TemplateAllors() ::= <<1.0>>
 TemplateConfiguration(meta) ::= <<
 $!
@@ -166,7 +166,7 @@ namespace Allors.Database.Domain
 		public $class.name$(Allors.Database.IStrategy strategy)
 		{
 			this.strategy = strategy;
-            this.m = strategy.Transaction.Database.Context().M;
+            this.m = strategy.Transaction.Database.Services().M;
 		}
 
 		public Allors.Database.Meta.MetaPopulation M => m;
@@ -506,7 +506,7 @@ $if(methodType._.ObjectType._.IsClass)$
 		{
 			get
 			{
-			    var m = this.Object.Strategy.Transaction.Database.Context().M;
+			    var m = this.Object.Strategy.Transaction.Database.Services().M;
 				return new Allors.Database.Meta.MethodInvocation(m.$methodType._.ObjectType._.SingularName$, m.$methodType._.ObjectType._.SingularName$.$methodType._.Name$);
 			}
 		}
@@ -535,7 +535,7 @@ methodTypeLeafClass() ::= <<
 		{
 			get
 			{
-			    var m = this.Object.Strategy.Transaction.Database.Context().M;
+			    var m = this.Object.Strategy.Transaction.Database.Services().M;
 				return new Allors.Database.Meta.MethodInvocation(m.$class.SingularName$, m.$class.SingularName$.$methodType._.Name$);
 			}
 		}

@@ -28,7 +28,7 @@ namespace Tests
                     ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(C1)),
                 });
 
-            this.M = database.Context().M;
+            this.M = database.Services().M;
 
             this.Setup(database, populate);
         }
@@ -39,9 +39,9 @@ namespace Tests
 
         public ITransaction Transaction { get; private set; }
 
-        public ITime Time => this.Transaction.Database.Context().Time;
+        public ITime Time => this.Transaction.Database.Services().Time;
 
-        public IDerivationFactory DerivationFactory => this.Transaction.Database.Context().DerivationFactory;
+        public IDerivationFactory DerivationFactory => this.Transaction.Database.Services().DerivationFactory;
 
         public TimeSpan? TimeShift
         {
@@ -69,7 +69,7 @@ namespace Tests
             }
         }
 
-        protected User SetUser(string userName) => this.Transaction.Context().User = new Users(this.Transaction).FindBy(this.M.User.UserName, userName);
+        protected User SetUser(string userName) => this.Transaction.Services().User = new Users(this.Transaction).FindBy(this.M.User.UserName, userName);
 
         protected Stream GetResource(string name)
         {

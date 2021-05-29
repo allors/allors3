@@ -61,22 +61,6 @@ namespace Allors.Database.Domain
 
         public bool InWorkspace(string workspaceName) => this.Class.WorkspaceNames.Contains(workspaceName) && this.MethodType.WorkspaceNames.Contains(workspaceName);
 
-        public void CoreOnPreDerive(ObjectOnPreDerive method)
-        {
-            var (iteration, changeSet, derivedObjects) = method;
-
-            if (changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-            {
-                foreach (Role role in this.RolesWherePermission)
-                {
-                    iteration.AddDependency(role, this);
-                    iteration.Mark(role);
-                }
-
-                this.DatabaseContext().PermissionsCache.Clear();
-            }
-        }
-
         public override string ToString()
         {
             var toString = new StringBuilder();

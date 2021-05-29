@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
     {
         public static void AppsOnPostDerive(this OrderAdjustment @this, ObjectOnPostDerive method)
         {
-            var m = @this.Strategy.Transaction.Database.Context().M;
+            var m = @this.Strategy.Transaction.Database.Services().M;
             method.Derivation.Validation.AssertAtLeastOne(@this, m.OrderAdjustment.Amount, m.OrderAdjustment.Percentage);
             method.Derivation.Validation.AssertExistsAtMostOne(@this, m.OrderAdjustment.Amount, m.OrderAdjustment.Percentage);
         }

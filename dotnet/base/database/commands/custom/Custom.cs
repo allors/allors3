@@ -22,7 +22,7 @@ namespace Commands
             this.Logger.Info("Begin");
 
             var scheduler = new AutomatedAgents(session).System;
-            session.Context().User = scheduler;
+            session.Services().User = scheduler;
 
             // Custom code
             session.Derive();

@@ -44,16 +44,6 @@ namespace Allors.Repository
         void OnInit();
 
         #region Allors
-        [Id("B33F8EAE-17DC-4BF9-AFBB-E7FC38F42695")]
-        #endregion
-        void OnPreDerive();
-
-        #region Allors
-        [Id("C107F8B3-12DC-4FF9-8CBF-A7DEC046244F")]
-        #endregion
-        void OnDerive();
-
-        #region Allors
         [Id("07AFF35D-F4CB-48FE-A39A-176B1931FAB7")]
         #endregion
         void OnPostDerive();

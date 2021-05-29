@@ -5,24 +5,15 @@
 
 namespace Allors.Database.Domain
 {
-    using System.Linq;
     using Database.Security;
 
     public partial class AccessControl : IAccessControl
     {
-        public void CoreOnDerive(ObjectOnDerive method)
+        public void CoreOnPostDerive(ObjectOnPostDerive method)
         {
             var derivation = method.Derivation;
 
             derivation.Validation.AssertAtLeastOne(this, this.Meta.Subjects, this.Meta.SubjectGroups);
-
-            this.EffectiveUsers = this.SubjectGroups.SelectMany(v => v.Members).Union(this.Subjects).ToArray();
-
-            var permissions = this.Role?.Permissions.ToArray();
-            this.EffectivePermissions = permissions;
-
-            // Invalidate cache
-            this.DatabaseContext().AccessControlCache.Clear(this.Id);
         }
 
         IPermission[] IAccessControl.Permissions => this.EffectivePermissions;

@@ -22,6 +22,9 @@ partial class Build
         .DependsOn(DotnetCoreInstall)
         .DependsOn(DotnetCoreWorkspaceTest);
 
+    private Target CiDotnetLegacyDatabaseTest => _ => _
+        .DependsOn(DotnetLegacyDatabaseTest);
+    
     private Target CiDotnetBaseDatabaseTest => _ => _
         .DependsOn(DotnetBaseDatabaseTest);
 

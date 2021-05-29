@@ -19,7 +19,7 @@ namespace Tests
         public void SameWorkspace()
         {
             var workspaceName = "X";
-            var meta = this.Transaction.Database.Context().MetaCache;
+            var meta = this.Transaction.Database.Services().MetaCache;
             var accessControl = new AccessControls(this.Transaction).Administrator;
 
             _ = this.SetUser("jane@example.com");
@@ -61,7 +61,7 @@ namespace Tests
         public void NoneWorkspace()
         {
             var workspaceName = "None";
-            var metaCache = this.Transaction.Database.Context().MetaCache;
+            var metaCache = this.Transaction.Database.Services().MetaCache;
             var accessControl = new AccessControls(this.Transaction).Administrator;
 
             _ = this.SetUser("jane@example.com");

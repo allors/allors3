@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
     {
         public static void AppsOnPostDerive(this AgreementTerm @this, ObjectOnPostDerive method)
         {
-            var m = @this.DatabaseContext().M;
+            var m = @this.DatabaseServices().M;
             method.Derivation.Validation.AssertAtLeastOne(@this, m.AgreementTerm.TermType, m.AgreementTerm.Description);
         }
     }

@@ -19,7 +19,7 @@ namespace Allors.Database.Domain
         public static T SetPassword<T>(this T @this, string clearTextPassword)
             where T : User
         {
-            var passwordService = @this.Transaction().Database.Context().PasswordHasher;
+            var passwordService = @this.Transaction().Database.Services().PasswordHasher;
             @this.UserPasswordHash = passwordService.HashPassword(@this.UserName, clearTextPassword);
             return @this;
         }
@@ -31,7 +31,7 @@ namespace Allors.Database.Domain
                 return false;
             }
 
-            var passwordService = @this.Transaction().Database.Context().PasswordHasher;
+            var passwordService = @this.Transaction().Database.Services().PasswordHasher;
             return passwordService.VerifyHashedPassword(@this.UserName, @this.UserPasswordHash, clearTextPassword);
         }
 
@@ -56,19 +56,6 @@ namespace Allors.Database.Domain
             if (!@this.ExistUserSecurityStamp)
             {
                 @this.UserSecurityStamp = Guid.NewGuid().ToString();
-            }
-        }
-
-        public static void CoreOnDerive(this User @this, ObjectOnDerive method)
-        {
-            @this.NormalizedUserName = Users.Normalize(@this.UserName);
-            @this.NormalizedUserEmail = Users.Normalize(@this.UserEmail);
-
-            if (@this.ExistInUserPassword)
-            {
-                var passwordService = @this.Transaction().Database.Context().PasswordHasher;
-                @this.UserPasswordHash = passwordService.HashPassword(@this.UserName, @this.InUserPassword);
-                @this.RemoveInUserPassword();
             }
         }
 

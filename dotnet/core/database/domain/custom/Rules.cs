@@ -12,6 +12,13 @@ namespace Allors.Database.Domain
         public static Rule[] Create(MetaPopulation m) =>
             new Rule[]
             {
+                // Core
+                new UserNormalizedUserNameRule(m),
+                new UserNormalizedUserEmailRule(m),
+                new UserInUserPasswordRule(m),
+                new AccessControlEffectiveUsersRule(m),
+                new AccessControlEffectivePermissionsRule(m),
+                
                 // Custom
                 new PersonFullNameRule(m),
                 new PersonGreetingRule(m),

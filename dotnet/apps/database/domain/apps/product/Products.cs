@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
             Product product,
             DateTime date)
         {
-            var m = salesOrder.Strategy.Transaction.Database.Context().M;
+            var m = salesOrder.Strategy.Transaction.Database.Services().M;
 
             var productBasePrice = 0M;
             var productDiscount = 0M;

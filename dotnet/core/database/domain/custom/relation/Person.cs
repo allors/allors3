@@ -33,10 +33,5 @@ namespace Allors.Database.Domain
                 this.OrganisationWhereManager.AddEmployee(this);
             }
         }
-
-        public void CustomOnDerive(ObjectOnDerive method)
-        {
-            this.FullName = this.FirstName + " " + this.LastName;
-        }
     }
 }

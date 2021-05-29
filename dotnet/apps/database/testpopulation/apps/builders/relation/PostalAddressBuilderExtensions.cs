@@ -11,7 +11,7 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static PostalAddressBuilder WithDefaults(this PostalAddressBuilder @this)
         {
-            var m = @this.Transaction.Database.Context().M;
+            var m = @this.Transaction.Database.Services().M;
             var faker = @this.Transaction.Faker();
 
             @this.WithAddress1(faker.Address.StreetAddress());

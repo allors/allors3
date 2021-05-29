@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
     {
         public static void AppsMonthly(ITransaction transaction)
         {
-            var m = transaction.Database.Context().M;
+            var m = transaction.Database.Services().M;
 
             var customers = new Parties(transaction).Extent();
             customers.Filter.AddEquals(m.Party.CollectiveWorkEffortInvoice, true);

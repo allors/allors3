@@ -18,7 +18,7 @@ namespace Allors.Database.Server.Controllers
         {
             this.WorkspaceService = workspaceService;
             this.Transaction = sessionService.Transaction;
-            this.TreeCache = this.Transaction.Database.Context().TreeCache;
+            this.TreeCache = this.Transaction.Database.Services().TreeCache;
         }
 
         private ITransaction Transaction { get; }
@@ -32,7 +32,7 @@ namespace Allors.Database.Server.Controllers
         [Authorize]
         public IActionResult UserName()
         {
-            var user = this.Transaction.Context().User;
+            var user = this.Transaction.Services().User;
             var result = user?.UserName;
             return this.Content(result);
         }

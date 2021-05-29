@@ -53,7 +53,7 @@ namespace Tests.Workspace.Local
 
             var administrator = new PersonBuilder(transaction).WithUserName("administrator").Build();
             new UserGroups(transaction).Administrators.AddMember(administrator);
-            transaction.Context().User = administrator;
+            transaction.Services().User = administrator;
 
             new TestPopulation(transaction, "full").Apply();
             _ = transaction.Derive();
@@ -68,7 +68,7 @@ namespace Tests.Workspace.Local
         {
             using var transaction = this.Database.CreateTransaction();
             var user = new Users(transaction).Extent().ToArray().First(v => v.UserName.Equals(userName, StringComparison.InvariantCultureIgnoreCase));
-            transaction.Context().User = user;
+            transaction.Services().User = user;
 
             var metaPopulation = new MetaBuilder().Build();
             var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Allors.Workspace.Domain.Person));

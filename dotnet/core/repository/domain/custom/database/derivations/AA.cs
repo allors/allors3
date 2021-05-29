@@ -103,10 +103,6 @@ namespace Allors.Repository
 
         public void OnInit() { }
 
-        public void OnPreDerive() { }
-
-        public void OnDerive() { }
-
         public void OnPostDerive() { }
 
         #endregion

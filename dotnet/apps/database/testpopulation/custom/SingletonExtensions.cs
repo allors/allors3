@@ -16,7 +16,7 @@ namespace Allors
     {
         public static void Full(this Singleton @this, DirectoryInfo dataPath, Faker faker)
         {
-            var m = @this.Strategy.Transaction.Database.Context().M;
+            var m = @this.Strategy.Transaction.Database.Services().M;
 
             var dutchLocale = new Locales(@this.Transaction()).DutchNetherlands;
             @this.AddAdditionalLocale(dutchLocale);

@@ -24,9 +24,4 @@
     <Compile Include="..\..\..\Base\Database\Configuration\Base*\**\*.cs" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Apps\Database\" />
-    <Folder Include="Apps\Transaction\" />
-  </ItemGroup>
-
 </Project>

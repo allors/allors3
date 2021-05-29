@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
     {
         public static Singleton GetSingleton(this ITransaction @this)
         {
-            var singletonService = @this.Database.Context().SingletonId;
+            var singletonService = @this.Database.Services().SingletonId;
 
             var singleton = (Singleton)@this.Instantiate(singletonService.Id);
             if (singleton == null)
