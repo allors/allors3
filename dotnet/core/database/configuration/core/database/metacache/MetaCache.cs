@@ -18,11 +18,11 @@ namespace Allors.Database.Configuration
         private readonly IReadOnlyDictionary<IClass, Type> builderTypeByClass;
         private readonly IReadOnlyDictionary<string, HashSet<IClass>> workspaceClassesByWorkspaceName;
 
-        public MetaCache(IDatabaseContext databaseContext)
+        public MetaCache(IDomainDatabaseServices domainDatabaseServices)
         {
-            this.DatabaseContext = databaseContext;
+            this.DomainDatabaseServices = domainDatabaseServices;
 
-            var database = this.DatabaseContext.Database;
+            var database = this.DomainDatabaseServices.Database;
             var metaPopulation = (MetaPopulation)database.MetaPopulation;
             var assembly = database.ObjectFactory.Assembly;
 
@@ -52,7 +52,7 @@ namespace Allors.Database.Configuration
                 .ToDictionary(v => v, v => new HashSet<IClass>(metaPopulation.Classes.Where(w => w.WorkspaceNames.Contains(v))));
         }
 
-        public IDatabaseContext DatabaseContext { get; }
+        public IDomainDatabaseServices DomainDatabaseServices { get; }
 
         public IRoleType[] GetRequiredRoleTypes(IClass @class) => this.requiredRoleTypesByClass[@class];
 

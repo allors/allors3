@@ -26,10 +26,10 @@ namespace Allors.Database.Adapters.Memory
 
         private long currentId;
 
-        internal Transaction(Database database, ITransactionLifecycle scope)
+        internal Transaction(Database database, ITransactionServices scope)
         {
             this.Database = database;
-            this.Lifecycle = scope;
+            this.Services = scope;
 
             this.busyCommittingOrRollingBack = false;
 
@@ -39,14 +39,14 @@ namespace Allors.Database.Adapters.Memory
 
             this.Reset();
 
-            this.Lifecycle.OnInit(this);
+            this.Services.OnInit(this);
         }
 
         public IDatabase Population => this.Database;
 
         IDatabase ITransaction.Database => this.Database;
 
-        public ITransactionLifecycle Lifecycle { get; }
+        public ITransactionServices Services { get; }
 
         public Action<IStrategy, IRoleType> OnAccessUnitRole { get; set; }
 

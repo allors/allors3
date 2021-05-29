@@ -38,6 +38,7 @@ namespace Allors.Database.Domain
                   {
                       v.AddAccessControl(accessControls.Creators);
                       v.AddAccessControl(accessControls.GuestCreator);
+                      v.AddAccessControl(accessControls.Administrator);
                   }
               });
 

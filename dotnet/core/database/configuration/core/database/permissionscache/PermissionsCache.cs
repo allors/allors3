@@ -12,9 +12,9 @@ namespace Allors.Database.Configuration
 
     public class PermissionsCache : IPermissionsCache
     {
-        public PermissionsCache(IDatabaseContext databaseContext) => this.DatabaseContext = databaseContext;
+        public PermissionsCache(IDomainDatabaseServices domainDatabaseServices) => this.DomainDatabaseServices = domainDatabaseServices;
 
-        public IDatabaseContext DatabaseContext { get; }
+        public IDomainDatabaseServices DomainDatabaseServices { get; }
 
         private Dictionary<Guid, IPermissionsCacheEntry> PermissionCacheEntryByClassId { get; set; }
 
@@ -25,11 +25,11 @@ namespace Allors.Database.Configuration
             var permissionCacheEntryByClassId = this.PermissionCacheEntryByClassId;
             if (permissionCacheEntryByClassId == null)
             {
-                var transaction = this.DatabaseContext.Database.CreateTransaction();
+                var transaction = this.DomainDatabaseServices.Database.CreateTransaction();
                 try
                 {
                     var permissions = new Permissions(transaction).Extent();
-                    transaction.Prefetch(this.DatabaseContext.PrefetchPolicyCache.PermissionsWithClass, permissions);
+                    transaction.Prefetch(this.DomainDatabaseServices.PrefetchPolicyCache.PermissionsWithClass, permissions);
 
                     permissionCacheEntryByClassId = permissions
                         .GroupBy(v => v.ClassPointer)
@@ -41,7 +41,7 @@ namespace Allors.Database.Configuration
                 }
                 finally
                 {
-                    if (this.DatabaseContext.Database.IsShared)
+                    if (this.DomainDatabaseServices.Database.IsShared)
                     {
                         transaction.Dispose();
                     }

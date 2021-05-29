@@ -18,18 +18,18 @@ namespace Allors.Database.Adapters.SqlClient
 
         private Dictionary<string, object> properties;
 
-        internal Transaction(Database database, Connection connection, ITransactionLifecycle scope)
+        internal Transaction(Database database, Connection connection, ITransactionServices scope)
         {
             this.Database = database;
             this.Connection = connection;
-            this.Lifecycle = scope;
+            this.Services = scope;
 
             this.State = new State();
 
             this.Prefetcher = new Prefetcher(this);
             this.Commands = new Commands(this, connection);
 
-            this.Lifecycle.OnInit(this);
+            this.Services.OnInit(this);
         }
 
         public Connection Connection { get; }
@@ -40,7 +40,7 @@ namespace Allors.Database.Adapters.SqlClient
 
         IDatabase ITransaction.Database => this.Database;
 
-        public ITransactionLifecycle Lifecycle { get; }
+        public ITransactionServices Services { get; }
         
         public Database Database { get; }
 

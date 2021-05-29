@@ -4,18 +4,18 @@ namespace Allors.Database
 {
     public static partial class ObjectExtensions
     {
-        public static ITransactionContext TransactionContext(this IObject @this) => @this.Strategy.Transaction.Context();
+        public static IDomainTransactionServices TransactionContext(this IObject @this) => @this.Strategy.Transaction.Context();
 
-        public static IDatabaseContext DatabaseContext(this IObject @this) => @this.Strategy.Transaction.Database.Context();
+        public static IDomainDatabaseServices DatabaseContext(this IObject @this) => @this.Strategy.Transaction.Database.Context();
     }
 
     public static partial class TransactionExtensions
     {
-        public static ITransactionContext Context(this ITransaction @this) => ((ITransactionContext)@this.Lifecycle);
+        public static IDomainTransactionServices Context(this ITransaction @this) => ((IDomainTransactionServices)@this.Services);
     }
 
     public static partial class DatabaseExtensions
     {
-        public static IDatabaseContext Context(this IDatabase @this) => ((IDatabaseContext)@this.Lifecycle);
+        public static IDomainDatabaseServices Context(this IDatabase @this) => ((IDomainDatabaseServices)@this.Services);
     }
 }

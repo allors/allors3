@@ -21,6 +21,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="..\..\..\Core\Database\Domain\core\services\IDatabaseContext.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Resources\about.md" />
     <None Remove="Resources\avatar.png" />
     <None Remove="Resources\madeliefje.jpg" />

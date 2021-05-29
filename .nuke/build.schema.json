@@ -75,7 +75,6 @@
           "items": {
             "type": "string",
             "enum": [
-              "All",
               "CiDemosTest",
               "CiDotnetAppsDatabaseTest",
               "CiDotnetAppsWorkspaceTest",
@@ -87,6 +86,7 @@
               "CiDotnetSystemAdaptersTestNpgsql",
               "CiDotnetSystemAdaptersTestSqlClient",
               "CiDotnetSystemWorkspaceTest",
+              "CiTypescriptTest",
               "Clean",
               "Default",
               "DemosDerivation",
@@ -136,10 +136,6 @@
               "DotnetCoreTest",
               "DotnetCoreWorkspaceCSharpTest",
               "DotnetCoreWorkspaceTest",
-              "DotnetCoreWorkspaceTypescriptClient",
-              "DotnetCoreWorkspaceTypescriptMeta",
-              "DotnetCoreWorkspaceTypescriptTest",
-              "DotnetCoreWorkspaceTypescriptWorkspace",
               "DotnetSystemAdapters",
               "DotnetSystemAdaptersGenerate",
               "DotnetSystemAdaptersTestMemory",
@@ -153,7 +149,11 @@
               "Install",
               "PostgresDocker",
               "TypescriptInstall",
-              "TypescriptTest"
+              "TypescriptTest",
+              "TypescriptWorkspaceAdaptersJson",
+              "TypescriptWorkspaceDomainCore",
+              "TypescriptWorkspaceMetaLazy",
+              "TypescriptWorkspaceTest"
             ]
           }
         },
@@ -163,7 +163,6 @@
           "items": {
             "type": "string",
             "enum": [
-              "All",
               "CiDemosTest",
               "CiDotnetAppsDatabaseTest",
               "CiDotnetAppsWorkspaceTest",
@@ -175,6 +174,7 @@
               "CiDotnetSystemAdaptersTestNpgsql",
               "CiDotnetSystemAdaptersTestSqlClient",
               "CiDotnetSystemWorkspaceTest",
+              "CiTypescriptTest",
               "Clean",
               "Default",
               "DemosDerivation",
@@ -224,10 +224,6 @@
               "DotnetCoreTest",
               "DotnetCoreWorkspaceCSharpTest",
               "DotnetCoreWorkspaceTest",
-              "DotnetCoreWorkspaceTypescriptClient",
-              "DotnetCoreWorkspaceTypescriptMeta",
-              "DotnetCoreWorkspaceTypescriptTest",
-              "DotnetCoreWorkspaceTypescriptWorkspace",
               "DotnetSystemAdapters",
               "DotnetSystemAdaptersGenerate",
               "DotnetSystemAdaptersTestMemory",
@@ -241,7 +237,11 @@
               "Install",
               "PostgresDocker",
               "TypescriptInstall",
-              "TypescriptTest"
+              "TypescriptTest",
+              "TypescriptWorkspaceAdaptersJson",
+              "TypescriptWorkspaceDomainCore",
+              "TypescriptWorkspaceMetaLazy",
+              "TypescriptWorkspaceTest"
             ]
           }
         },

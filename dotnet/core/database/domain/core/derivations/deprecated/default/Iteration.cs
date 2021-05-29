@@ -4,11 +4,12 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Database.Domain.Derivations.Default
+namespace Allors.Database.Domain.Derivations.Compat.Default
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Derivations.Default;
     using Object = Object;
 
     public class Iteration : IIteration
@@ -77,8 +78,8 @@ namespace Allors.Database.Domain.Derivations.Default
         {
             try
             {
-                var domainDerive = new Derivation(this.Cycle.Derivation.Transaction, this.Cycle.Derivation.Validation, this.Cycle.Derivation.Engine, this.Cycle.Derivation.MaxCycles);
-                var domainAccumulatedChangeSet = domainDerive.Execute();
+                var domainDerive = new DefaultDerivation(this.Cycle.Derivation.Transaction, this.Cycle.Derivation.Validation, this.Cycle.Derivation.Engine, this.Cycle.Derivation.MaxCycles);
+                domainDerive.Derive();
                 
                 // Object Derivations
                 var config = this.Cycle.Derivation.DerivationConfig;
@@ -89,7 +90,7 @@ namespace Allors.Database.Domain.Derivations.Default
                     this.Graph.Mark(marked);
                 }
 
-                this.Preparation = new Preparation(this, marked, domainAccumulatedChangeSet);
+                this.Preparation = new Preparation(this, marked, domainDerive.ChangeSet);
                 this.MarkedBacklog = new HashSet<Object>();
                 this.Preparation.Execute();
 

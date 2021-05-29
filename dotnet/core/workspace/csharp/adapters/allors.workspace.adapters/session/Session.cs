@@ -169,9 +169,9 @@ namespace Allors.Workspace.Adapters
                 return sessionStrategy;
             }
 
-            return id < 0 ? this.InstantiateWorkspaceStrategy(id) : null;
+            return IsNewId(id) ? this.InstantiateWorkspaceStrategy(id) : null;
         }
-
+        
         public object GetRole(Strategy association, IRoleType roleType)
         {
             var role = this.SessionOriginState.Get(association.Id, roleType);
@@ -270,6 +270,8 @@ namespace Allors.Workspace.Adapters
 
             return result;
         }
+
+        internal static bool IsNewId(long id) => id < 0;
 
         private IEnumerable<Strategy> Get(IComposite objectType)
         {

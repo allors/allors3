@@ -38,7 +38,7 @@ namespace Allors.Database.Adapters
         }
 
         public IDatabase CreateMemoryDatabase() =>
-            new Database(new DatabaseContext(), new Memory.Configuration
+            new Database(new DefaultDomainDatabaseServices(), new Memory.Configuration
             {
                 ObjectFactory = new ObjectFactory(this.M, typeof(C1)),
             });

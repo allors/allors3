@@ -18,7 +18,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void NewPushedObjectShouldBeSynced()
+        public async void PushNewObject()
         {
             await this.Login("administrator");
 
@@ -26,7 +26,8 @@ namespace Tests.Workspace
 
             var newObject = session.Create<C1>();
 
-            var pushResult = await session.Push();
+            var result = await session.Push();
+            Assert.False(result.HasErrors);
 
             foreach (var roleType in this.M.C1.RoleTypes)
             {
@@ -48,9 +49,24 @@ namespace Tests.Workspace
             }
         }
 
-
         [Fact]
-        public async void ChangesShouldRemainAfterPush()
+        public async void PushNewObjectWithChangedRoles()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var newObject = session.Create<C1>();
+            newObject.C1AllorsString = "A new object";
+
+            var result = await session.Push();
+            Assert.False(result.HasErrors);
+
+            Assert.Equal("A new object", newObject.C1AllorsString);
+        }
+        
+        [Fact]
+        public async void PushExistingObjectWithChangedRoles()
         {
             await this.Login("administrator");
 
@@ -116,5 +132,22 @@ namespace Tests.Workspace
             Assert.Equal("X", c1aSession1.C1AllorsString);
         }
 
+
+        [Fact]
+        public async void PushShouldDerive()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var person = session.Create<Person>();
+            person.FirstName = "Johny";
+            person.LastName = "Doey";
+            
+            var result = await session.Push();
+            Assert.False(result.HasErrors);
+
+            Assert.Equal("Johny Doey", person.FullName);
+        }
     }
 }

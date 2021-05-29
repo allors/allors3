@@ -84,7 +84,7 @@ namespace Allors.Database.Domain
 
             foreach (var roleType in @metaService.GetUniqueRoleTypes(@class))
             {
-                derivation.Validation.AssertIsUnique(@this, roleType);
+                derivation.Validation.AssertIsUnique(derivation.ChangeSet, @this, roleType);
             }
         }
     }

@@ -54,7 +54,7 @@ namespace Allors.Database.Adapters
         public IDatabase CreateMemoryDatabase()
         {
             var metaPopulation = new MetaBuilder().Build();
-            var scope = new DatabaseContext();
+            var scope = new DefaultDomainDatabaseServices();
             return new Database(scope, new Memory.Configuration
             {
                 ObjectFactory = new ObjectFactory(metaPopulation, typeof(C1)),

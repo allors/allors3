@@ -23,7 +23,7 @@ namespace Allors.Database.Domain.Tests
         public DomainTest(Fixture fixture, bool populate = true)
         {
             var database = new Database(
-                new TestDatabaseContext(fixture.Engine),
+                new TestDomainDatabaseServices(fixture.Engine),
                 new Configuration
                 {
                     ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(User)),

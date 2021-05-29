@@ -10,18 +10,18 @@ namespace Allors.Database.Configuration
 
     public partial class PrefetchPolicyCache : IPrefetchPolicyCache
     {
-        public PrefetchPolicyCache(IDatabaseContext databaseContext)
+        public PrefetchPolicyCache(IDomainDatabaseServices domainDatabaseServices)
         {
-            this.DatabaseContext = databaseContext;
+            this.DomainDatabaseServices = domainDatabaseServices;
 
-            var m = this.DatabaseContext.M;
+            var m = this.DomainDatabaseServices.M;
 
             this.PermissionsWithClass = new PrefetchPolicyBuilder()
                     .WithRule(m.Permission.ClassPointer)
                     .Build();
         }
 
-        public IDatabaseContext DatabaseContext { get; }
+        public IDomainDatabaseServices DomainDatabaseServices { get; }
 
         public PrefetchPolicy PermissionsWithClass { get; }
     }

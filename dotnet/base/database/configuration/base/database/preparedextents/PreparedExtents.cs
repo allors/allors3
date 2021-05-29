@@ -14,19 +14,19 @@ namespace Allors.Database.Configuration
     {
         private readonly ConcurrentDictionary<Guid, IExtent> extentById;
 
-        public PreparedExtents(IDatabaseContext databaseContext)
+        public PreparedExtents(IDomainDatabaseServices domainDatabaseServices)
         {
-            this.DatabaseContext = databaseContext;
+            this.DomainDatabaseServices = domainDatabaseServices;
             this.extentById = new ConcurrentDictionary<Guid, IExtent>();
         }
 
-        public IDatabaseContext DatabaseContext { get; }
+        public IDomainDatabaseServices DomainDatabaseServices { get; }
 
         public IExtent Get(Guid id)
         {
             if (!this.extentById.TryGetValue(id, out var extent))
             {
-                var transaction = this.DatabaseContext.Database.CreateTransaction();
+                var transaction = this.DomainDatabaseServices.Database.CreateTransaction();
                 try
                 {
                     var m = transaction.Database.Context().M;
@@ -45,7 +45,7 @@ namespace Allors.Database.Configuration
                 }
                 finally
                 {
-                    if (this.DatabaseContext.Database.IsShared)
+                    if (this.DomainDatabaseServices.Database.IsShared)
                     {
                         transaction.Dispose();
                     }

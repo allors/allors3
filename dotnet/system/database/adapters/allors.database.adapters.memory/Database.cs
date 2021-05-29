@@ -16,10 +16,10 @@ namespace Allors.Database.Adapters.Memory
         private readonly Dictionary<IObjectType, object> concreteClassesByObjectType;
         private Transaction transaction;
 
-        public Database(IDatabaseLifecycle state, Configuration configuration)
+        public Database(IDatabaseServices state, Configuration configuration)
         {
-            this.Lifecycle = state;
-            if (this.Lifecycle == null)
+            this.Services = state;
+            if (this.Services == null)
             {
                 throw new Exception("Services is missing");
             }
@@ -38,7 +38,7 @@ namespace Allors.Database.Adapters.Memory
 
             this.Procedures = new DefaultProcedures(this.ObjectFactory.Assembly);
 
-            this.Lifecycle.OnInit(this);
+            this.Services.OnInit(this);
         }
 
         public event ObjectNotLoadedEventHandler ObjectNotLoaded;
@@ -55,11 +55,11 @@ namespace Allors.Database.Adapters.Memory
 
         public IMetaPopulation MetaPopulation { get; }
 
-        public IDatabaseLifecycle Lifecycle { get; }
+        public IDatabaseServices Services { get; }
 
         internal bool IsLoading { get; private set; }
 
-        protected virtual Transaction Transaction => this.transaction ??= new Transaction(this, this.Lifecycle.CreateTransactionInstance());
+        protected virtual Transaction Transaction => this.transaction ??= new Transaction(this, this.Services.CreateTransactionServices());
 
         public ITransaction CreateTransaction() => this.CreateDatabaseTransaction();
 
@@ -154,7 +154,7 @@ namespace Allors.Database.Adapters.Memory
 
             this.transaction = null;
 
-            this.Lifecycle.OnInit(this);
+            this.Services.OnInit(this);
         }
 
         internal void OnObjectNotLoaded(Guid metaTypeId, long allorsObjectId)

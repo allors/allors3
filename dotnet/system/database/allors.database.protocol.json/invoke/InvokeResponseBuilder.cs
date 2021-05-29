@@ -60,7 +60,7 @@ namespace Allors.Database.Protocol.Json
                     }
                     else
                     {
-                        this.transaction.Commit();
+                        this.Finalize();
                     }
                 }
             }
@@ -82,13 +82,13 @@ namespace Allors.Database.Protocol.Json
                 }
                 else
                 {
-                    this.transaction.Commit();
+                    this.Finalize();
                 }
             }
 
             return invokeResponse;
         }
-
+        
         private bool Invoke(Invocation invocation, InvokeResponse invokeResponse)
         {
             // TODO: M should be a methodTypeId instead of the methodName
@@ -161,5 +161,7 @@ namespace Allors.Database.Protocol.Json
 
             return false;
         }
+        
+        private void Finalize() => this.transaction.Commit();
     }
 }

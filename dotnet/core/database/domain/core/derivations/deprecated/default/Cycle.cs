@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Database.Domain.Derivations.Default
+namespace Allors.Database.Domain.Derivations.Compat.Default
 {
     using System;
     using System.Collections.Generic;
@@ -13,7 +13,7 @@ namespace Allors.Database.Domain.Derivations.Default
     {
         private Properties properties;
 
-        internal Cycle(DefaultDerivation derivation)
+        internal Cycle(LegacyDerivation derivation)
         {
             this.Derivation = derivation;
             this.ChangeSet = new AccumulatedChangeSet();
@@ -23,13 +23,13 @@ namespace Allors.Database.Domain.Derivations.Default
 
         IIteration ICycle.Iteration => this.Iteration;
 
-        IDerivation ICycle.Derivation => this.Derivation;
+        ILegacyDerivation ICycle.Derivation => this.Derivation;
 
         internal AccumulatedChangeSet ChangeSet { get; }
 
         internal Iteration Iteration { get; set; }
 
-        internal DefaultDerivation Derivation { get; }
+        internal LegacyDerivation Derivation { get; }
 
         public object this[string name]
         {

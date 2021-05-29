@@ -50,7 +50,7 @@ namespace Allors.Server.Tests
             var rules = Rules.Create(metaPopulation);
             var engine = new Engine(rules);
             var database = new Database(
-                new DefaultDatabaseContext(engine),
+                new DefaultDomainDatabaseServices(engine),
                 new Configuration
                 {
                     ConnectionString = configuration["ConnectionStrings:DefaultConnection"],

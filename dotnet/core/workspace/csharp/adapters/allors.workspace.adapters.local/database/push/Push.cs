@@ -61,15 +61,17 @@ namespace Allors.Workspace.Adapters.Local
                 k => k.Id,
                 v =>
                 {
+                    var local = (Strategy)v;
                     var cls = (IClass)metaPopulation.FindByTag(v.Class.Tag);
                     if (this.AllowedClasses?.Contains(cls) == true)
                     {
                         var newObject = this.Build(cls);
                         _ = this.Objects.Add(newObject);
+                        this.PushRequestRoles(local, newObject);
                         return newObject;
                     }
 
-                    this.AddAccessError((Strategy)v);
+                    this.AddAccessError(local);
 
                     return null;
                 });
@@ -127,6 +129,11 @@ namespace Allors.Workspace.Adapters.Local
 
         private void PushRequestRoles(Strategy local, IObject obj)
         {
+            if (local.DatabaseOriginState.ChangedRoleByRelationType == null)
+            {
+                return;
+            }
+
             // TODO: Cache and filter for workspace
             var composite = (IComposite)obj.Strategy.Class;
             var roleTypes = composite.DatabaseRoleTypes.Where(v => v.RelationType.WorkspaceNames.Length > 0);

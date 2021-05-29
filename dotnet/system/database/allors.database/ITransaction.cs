@@ -23,7 +23,7 @@ namespace Allors.Database
         /// <summary>
         /// The lifecycle for this transaction.
         /// </summary>
-        ITransactionLifecycle Lifecycle { get; }
+        ITransactionServices Services { get; }
         
         /// <summary>
         /// Creates a change set of all changes up to this checkpoint,

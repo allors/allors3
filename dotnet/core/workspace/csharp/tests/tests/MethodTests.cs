@@ -6,6 +6,7 @@
 namespace Tests.Workspace
 {
     using System.Linq;
+    using Allors.Workspace;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
     using Xunit;
@@ -17,7 +18,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void Call()
+        public async void CallSingle()
         {
             await this.Login("administrator");
 
@@ -33,12 +34,65 @@ namespace Tests.Workspace
 
             Assert.False(invokeResult.HasErrors);
 
-            pull = new[] { new Pull { Object = organisation }, };
-
-            var pullResult = await session.Pull(pull);
-            organisation = pullResult.GetObject<Organisation>();
+            await session.Pull(pull);
 
             Assert.True(organisation.JustDidIt);
+            Assert.True(organisation.JustDidItDerived);
         }
+
+        [Fact]
+        public async void CallMultiple()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var pull = new[] { new Pull { Extent = new Extent(this.M.Organisation), }, };
+
+            var organisation1 = (await session.Pull(pull)).GetCollection<Organisation>().First();
+            var organisation2 = (await session.Pull(pull)).GetCollection<Organisation>().Skip(1).First();
+
+            Assert.False(organisation1.JustDidIt);
+
+            var invokeResult = await session.Invoke(new[] { organisation1.JustDoIt, organisation2.JustDoIt });
+
+            Assert.False(invokeResult.HasErrors);
+
+            await session.Pull(pull);
+
+            Assert.True(organisation1.JustDidIt);
+            Assert.True(organisation1.JustDidItDerived);
+
+            Assert.True(organisation2.JustDidIt);
+            Assert.True(organisation2.JustDidItDerived);
+        }
+
+        [Fact]
+        public async void CallMultipleIsolated()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var pull = new[] { new Pull { Extent = new Extent(this.M.Organisation), }, };
+
+            var organisation1 = (await session.Pull(pull)).GetCollection<Organisation>().First();
+            var organisation2 = (await session.Pull(pull)).GetCollection<Organisation>().Skip(1).First();
+
+            Assert.False(organisation1.JustDidIt);
+
+            var invokeResult = await session.Invoke(new[] { organisation1.JustDoIt, organisation2.JustDoIt }, new InvokeOptions { Isolated = true });
+
+            Assert.False(invokeResult.HasErrors);
+
+            await session.Pull(pull);
+
+            Assert.True(organisation1.JustDidIt);
+            Assert.True(organisation1.JustDidItDerived);
+
+            Assert.True(organisation2.JustDidIt);
+            Assert.True(organisation2.JustDidItDerived);
+        }
+
     }
 }

@@ -29,7 +29,7 @@ namespace Allors.Database.Domain
 
                 @this.WorkItem = @this.PurchaseInvoice;
 
-                // Lifecycle
+                // Services
                 if (!@this.ExistDateClosed && !@this.PurchaseInvoice.PurchaseInvoiceState.IsAwaitingApproval)
                 {
                     @this.DateClosed = @this.Transaction().Now();

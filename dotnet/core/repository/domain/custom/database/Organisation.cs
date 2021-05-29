@@ -135,7 +135,14 @@ namespace Allors.Repository
         [Required]
         [Workspace(Default)]
         public bool JustDidIt { get; set; }
-        
+
+        #region Allors
+        [Id("BABDCD10-5A5C-417A-9D34-2EA47F207A91")]
+        #endregion
+        [Derived]
+        [Workspace(Default)]
+        public bool JustDidItDerived { get; set; }
+
         [Id("1869873F-F2F0-4D03-A0F9-7DC73491C117")]
         [Workspace(Default)]
         public void JustDoIt() { }

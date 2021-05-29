@@ -39,10 +39,10 @@ namespace Allors.Database.Adapters.SqlClient
 
         private ICacheFactory cacheFactory;
 
-        public Database(IDatabaseLifecycle state, Configuration configuration)
+        public Database(IDatabaseServices state, Configuration configuration)
         {
-            this.Lifecycle = state;
-            if (this.Lifecycle == null)
+            this.Services = state;
+            if (this.Services == null)
             {
                 throw new Exception("Services is missing");
             }
@@ -93,7 +93,7 @@ namespace Allors.Database.Adapters.SqlClient
 
             this.Procedures = new DefaultProcedures(this.ObjectFactory.Assembly);
 
-            this.Lifecycle.OnInit(this);
+            this.Services.OnInit(this);
         }
 
         public event ObjectNotLoadedEventHandler ObjectNotLoaded;
@@ -102,7 +102,7 @@ namespace Allors.Database.Adapters.SqlClient
 
         public IProcedures Procedures { get; }
 
-        public IDatabaseLifecycle Lifecycle { get; }
+        public IDatabaseServices Services { get; }
 
         public IConnectionFactory ConnectionFactory
         {
@@ -199,7 +199,7 @@ namespace Allors.Database.Adapters.SqlClient
                 throw new Exception(this.validationMessage);
             }
 
-            return new Transaction(this, connection, this.Lifecycle.CreateTransactionInstance());
+            return new Transaction(this, connection, this.Services.CreateTransactionServices());
         }
 
         public void Init()
@@ -212,7 +212,7 @@ namespace Allors.Database.Adapters.SqlClient
             {
                 this.ResetSchema();
                 this.Cache.Invalidate();
-                this.Lifecycle.OnInit(this);
+                this.Services.OnInit(this);
             }
         }
 

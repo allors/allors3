@@ -6,6 +6,7 @@
 namespace Allors.Database.Domain
 {
     using Database;
+    using Derivations;
 
     public interface IDerivationFactory
     {

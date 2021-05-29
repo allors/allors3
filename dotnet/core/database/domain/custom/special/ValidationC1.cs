@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
         {
             var derivation = method.Derivation;
 
-            derivation.Validation.AssertIsUnique(this, this.M.ValidationC1.UniqueId);
+            derivation.Validation.AssertIsUnique(derivation.ChangeSet,this, this.M.ValidationC1.UniqueId);
         }
     }
 }

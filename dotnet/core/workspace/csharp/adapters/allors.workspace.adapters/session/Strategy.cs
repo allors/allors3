@@ -47,6 +47,8 @@ namespace Allors.Workspace.Adapters
 
         public long Id { get; private set; }
 
+        public bool IsNew => Session.IsNewId(this.Id);
+
         public IObject Object => this.@object ??= this.Session.Workspace.DatabaseConnection.Configuration.ObjectFactory.Create(this);
 
         public bool Exist(IRoleType roleType)
@@ -300,7 +302,7 @@ namespace Allors.Workspace.Adapters
 
             return association switch
             {
-                long id => new[] {this.Session.Get<T>(id)},
+                long id => new[] { this.Session.Get<T>(id) },
                 long[] ids => ids.Select(v => this.Session.Get<T>(v)).ToArray(),
                 _ => Array.Empty<T>()
             };

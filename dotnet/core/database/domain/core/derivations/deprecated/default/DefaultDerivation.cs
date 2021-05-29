@@ -3,22 +3,23 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Database.Domain.Derivations.Default
+namespace Allors.Database.Domain.Derivations.Compat.Default
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using Derivations.Default;
     using Object = Object;
 
     [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1121:UseBuiltInTypeAlias", Justification = "Allors Object")]
-    public class DefaultDerivation : IDerivation
+    public class LegacyDerivation : ILegacyDerivation
     {
         private bool guard;
 
         private Properties properties;
 
-        public DefaultDerivation(ITransaction transaction, Engine engine, int maxCycles)
+        public LegacyDerivation(ITransaction transaction, Engine engine, int maxCycles)
         {
             this.DerivationConfig = new DerivationConfig();
             this.Transaction = transaction;
@@ -30,7 +31,7 @@ namespace Allors.Database.Domain.Derivations.Default
 
             this.ChangeSet = new AccumulatedChangeSet();
             this.DerivedObjects = new HashSet<Object>();
-            this.Validation = new Validation(this);
+            this.Validation = new Validation();
 
             this.MarkedBacklog = new HashSet<Object>();
 
@@ -53,7 +54,7 @@ namespace Allors.Database.Domain.Derivations.Default
 
         public ISet<Object> DerivedObjects { get; }
 
-        ICycle IDerivation.Cycle => this.Cycle;
+        ICycle ILegacyDerivation.Cycle => this.Cycle;
 
         IAccumulatedChangeSet IDerivation.ChangeSet => this.ChangeSet;
 

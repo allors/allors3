@@ -20,7 +20,6 @@ namespace Tests.Workspace.Local
     using Configuration = Allors.Database.Adapters.Memory.Configuration;
     using DatabaseConnection = Allors.Workspace.Adapters.Local.DatabaseConnection;
     using Person = Allors.Database.Domain.Person;
-    using Workspace = Allors.Workspace.Adapters.Local.Workspace;
 
     public class Profile : IProfile
     {
@@ -37,7 +36,7 @@ namespace Tests.Workspace.Local
         public Profile(Fixture fixture)
         {
             this.Database = new Database(
-                new DefaultDatabaseContext(fixture.Engine),
+                new DefaultDomainDatabaseServices(fixture.Engine),
                 new Configuration
                 {
                     ObjectFactory = new Allors.Database.ObjectFactory(fixture.M, typeof(Person)),
@@ -46,23 +45,19 @@ namespace Tests.Workspace.Local
 
             this.Database.Init();
 
-            using var session = this.Database.CreateTransaction();
-            new Setup(session, new Config()).Apply();
+            using var transaction = this.Database.CreateTransaction();
+            var config = new Config();
+            new Setup(transaction, config).Apply();
+            _ = transaction.Derive();
+            transaction.Commit();
 
-            var administrator = new PersonBuilder(session).WithUserName("administrator").Build();
-            var administrators = new UserGroups(session).Administrators;
-            administrators.AddMember(administrator);
-            session.Context().User = administrator;
+            var administrator = new PersonBuilder(transaction).WithUserName("administrator").Build();
+            new UserGroups(transaction).Administrators.AddMember(administrator);
+            transaction.Context().User = administrator;
 
-            var defaultSecurityToken = new SecurityTokens(session).DefaultSecurityToken;
-            var administratorRole = new Roles(session).Administrator;
-            var acl = new AccessControlBuilder(session).WithRole(administratorRole).WithSubjectGroup(administrators).WithSecurityToken(defaultSecurityToken).Build();
-
-            _ = session.Derive();
-
-            new TestPopulation(session, "full").Apply();
-
-            session.Commit();
+            new TestPopulation(transaction, "full").Apply();
+            _ = transaction.Derive();
+            transaction.Commit();
         }
 
         public Task InitializeAsync() => Task.CompletedTask;

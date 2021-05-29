@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
 
                 @this.WorkItem = @this.PurchaseOrder;
 
-                // Lifecycle
+                // Services
                 if (!@this.ExistDateClosed && !@this.PurchaseOrder.PurchaseOrderState.IsAwaitingApprovalLevel1)
                 {
                     @this.DateClosed = @this.Transaction().Now();

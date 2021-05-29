@@ -4,7 +4,7 @@
 // </copyright>
 
 // ReSharper disable StyleCop.SA1121
-namespace Allors.Database.Domain.Derivations.Default
+namespace Allors.Database.Domain.Derivations.Compat.Default
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -12,13 +12,13 @@ namespace Allors.Database.Domain.Derivations.Default
 
     internal class Graph
     {
-        internal Graph(DefaultDerivation derivation)
+        internal Graph(LegacyDerivation derivation)
         {
             this.Derivation = derivation;
             this.NodeByObject = new Dictionary<Object, Node>();
         }
 
-        internal DefaultDerivation Derivation { get; }
+        internal LegacyDerivation Derivation { get; }
 
         internal Dictionary<Object, Node> NodeByObject { get; }
 

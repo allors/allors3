@@ -18,6 +18,12 @@ namespace Allors.Workspace.Adapters
 
         public void OnCreated(Strategy strategy) => _ = (this.Created ??= new HashSet<Strategy>()).Add(strategy);
 
-        public void OnChanged(DatabaseOriginState state) => _ = (this.Changed ??= new HashSet<DatabaseOriginState>()).Add(state);
+        public void OnChanged(DatabaseOriginState state)
+        {
+            if (!state.Strategy.IsNew)
+            {
+                _ = (this.Changed ??= new HashSet<DatabaseOriginState>()).Add(state);
+            }
+        }
     }
 }

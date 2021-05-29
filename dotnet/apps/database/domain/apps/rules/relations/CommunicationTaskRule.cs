@@ -29,7 +29,7 @@ namespace Allors.Database.Domain
 
                 @this.Title = @this.CommunicationEvent.WorkItemDescription;
 
-                // Lifecycle
+                // Services
                 if (!@this.ExistDateClosed && @this.CommunicationEvent.ExistActualEnd)
                 {
                     @this.DateClosed = @this.Transaction().Now();

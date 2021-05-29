@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Database.Domain.Derivations
+namespace Allors.Database.Domain.Derivations.Compat
 {
     public interface ICycle
     {
@@ -11,7 +11,7 @@ namespace Allors.Database.Domain.Derivations
 
         object this[string name] { get; set; }
 
-        IDerivation Derivation { get; }
+        ILegacyDerivation Derivation { get; }
 
         IIteration Iteration { get; }
     }
