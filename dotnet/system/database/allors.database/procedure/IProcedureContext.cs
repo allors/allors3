@@ -14,6 +14,6 @@ namespace Allors.Database
 
         IAccessControlLists AccessControlLists { get; }
 
-        void AddError(IDerivationResult derivationResult);
+        void AddError(IValidation validation);
     }
 }

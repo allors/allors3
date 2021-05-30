@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Database.Domain.Derivations.Default
+namespace Allors.Database.Domain.Derivations.Rules
 {
     using Database.Derivations;
 
@@ -13,6 +13,6 @@ namespace Allors.Database.Domain.Derivations.Default
 
         public DefaultDerive(ITransaction transaction) => this.transaction = transaction;
 
-        public IDerivationResult Derive() => this.transaction.Derive();
+        public IValidation Derive() => this.transaction.Derive();
     }
 }

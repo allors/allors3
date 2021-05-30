@@ -12,7 +12,7 @@ namespace Allors.Database.Protocol.Json
 
     public static class ResponseExtensions
     {
-        public static void AddDerivationErrors(this Response @this, IDerivationResult validation)
+        public static void AddDerivationErrors(this Response @this, IValidation validation)
         {
             foreach (var derivationError in validation.Errors)
             {

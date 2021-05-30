@@ -13,12 +13,20 @@ namespace Allors.Database.Domain
             new Rule[]
             {
                 // Core
+                new UserNormalizedUserNameRule(m),
+                new UserNormalizedUserEmailRule(m),
+                new UserInUserPasswordRule(m),
+                new AccessControlEffectiveUsersRule(m),
+                new AccessControlEffectivePermissionsRule(m),
+
+                // Base
                 new MediaRule(m),
                 new TransitionalDeniedPermissionRule(m),
+                new NotificationListRule(m),
 
                 // Custom
-                new PersonFullNameDerivation(m),
-                new PersonGreetingDerivation(m),
+                new PersonFullNameRule(m),
+                new PersonGreetingRule(m),
             };
     }
 }

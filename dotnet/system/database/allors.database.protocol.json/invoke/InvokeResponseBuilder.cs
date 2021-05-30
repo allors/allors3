@@ -16,11 +16,11 @@ namespace Allors.Database.Protocol.Json
     public class InvokeResponseBuilder
     {
         private readonly ITransaction transaction;
-        private readonly Func<IDerivationResult> derive;
+        private readonly Func<IValidation> derive;
         private readonly IAccessControlLists accessControlLists;
         private readonly ISet<IClass> allowedClasses;
 
-        public InvokeResponseBuilder(ITransaction transaction, Func<IDerivationResult> derive, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses)
+        public InvokeResponseBuilder(ITransaction transaction, Func<IValidation> derive, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses)
         {
             this.transaction = transaction;
             this.derive = derive;

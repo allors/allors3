@@ -24,7 +24,7 @@ namespace Allors.Database.Protocol.Json
         private readonly AccessControlsWriter accessControlsWriter;
         private readonly PermissionsWriter permissionsWriter;
 
-        private List<IDerivationResult> errors;
+        private List<IValidation> errors;
 
         public PullResponseBuilder(ITransaction transaction, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, IPreparedSelects preparedSelects, IPreparedExtents preparedExtents)
         {
@@ -50,10 +50,10 @@ namespace Allors.Database.Protocol.Json
 
         public IPreparedExtents PreparedExtents { get; }
 
-        public void AddError(IDerivationResult derivationResult)
+        public void AddError(IValidation validation)
         {
-            this.errors ??= new List<IDerivationResult>();
-            this.errors.Add(derivationResult);
+            this.errors ??= new List<IValidation>();
+            this.errors.Add(validation);
         }
 
         public void AddCollection(string name, in IEnumerable<IObject> collection)

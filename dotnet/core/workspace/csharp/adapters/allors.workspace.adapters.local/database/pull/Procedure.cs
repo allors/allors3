@@ -16,7 +16,7 @@ namespace Allors.Workspace.Adapters.Local
     {
         private readonly Database.Data.Procedure procedure;
 
-        private List<IDerivationResult> errors;
+        private List<IValidation> errors;
 
         public Procedure(ITransaction transaction, Database.Data.Procedure procedure, IAccessControlLists acls)
         {
@@ -29,10 +29,10 @@ namespace Allors.Workspace.Adapters.Local
 
         public IAccessControlLists AccessControlLists { get; }
 
-        public void AddError(IDerivationResult derivationResult)
+        public void AddError(IValidation validation)
         {
-            this.errors ??= new List<IDerivationResult>();
-            this.errors.Add(derivationResult);
+            this.errors ??= new List<IValidation>();
+            this.errors.Add(validation);
         }
 
         public void Execute(Pull pullResponse)

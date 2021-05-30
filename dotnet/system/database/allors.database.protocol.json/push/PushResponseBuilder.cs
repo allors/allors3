@@ -16,12 +16,12 @@ namespace Allors.Database.Protocol.Json
     public class PushResponseBuilder
     {
         private readonly ITransaction transaction;
-        private readonly Func<IDerivationResult> derive;
+        private readonly Func<IValidation> derive;
         private readonly IMetaPopulation metaPopulation;
         private readonly ISet<IClass> allowedClasses;
         private readonly Func<IClass, IObject> build;
 
-        public PushResponseBuilder(ITransaction transaction, Func<IDerivationResult> derive, IMetaPopulation metaPopulation, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, Func<IClass, IObject> build)
+        public PushResponseBuilder(ITransaction transaction, Func<IValidation> derive, IMetaPopulation metaPopulation, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, Func<IClass, IObject> build)
         {
             this.transaction = transaction;
             this.derive = derive;

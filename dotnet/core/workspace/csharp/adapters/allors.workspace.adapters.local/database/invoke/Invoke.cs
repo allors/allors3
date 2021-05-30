@@ -40,7 +40,7 @@ namespace Allors.Workspace.Adapters.Local
 
         private IAccessControlLists AccessControlLists { get; }
 
-        private Func<IDerivationResult> Derive { get; }
+        private Func<IValidation> Derive { get; }
 
         internal void Execute(Method[] methods, InvokeOptions options)
         {

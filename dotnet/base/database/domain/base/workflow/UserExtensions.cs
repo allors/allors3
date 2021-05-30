@@ -7,7 +7,6 @@ namespace Allors.Database.Domain
 {
     public static partial class UserExtensions
     {
-
         public static void BaseOnPostBuild(this User @this, ObjectOnPostBuild method)
         {
             if (!@this.ExistNotificationList)
@@ -16,9 +15,6 @@ namespace Allors.Database.Domain
             }
         }
 
-        public static void BaseDelete(this User @this, DeletableDelete method)
-        {
-            @this.NotificationList?.Delete();
-        }
+        public static void BaseDelete(this User @this, DeletableDelete method) => @this.NotificationList?.Delete();
     }
 }

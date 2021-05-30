@@ -7,13 +7,7 @@ namespace Allors.Database.Domain
 {
     public partial class MediaContent
     {
-        public void CoreOnPreDerive(ObjectOnPreDerive method)
-        {
-            var (iteration, changeSet, derivedObjects) = method;
-            iteration.AddDependency(this, this.MediaWhereMediaContent);
-        }
-
-        public void CoreOnDerive(ObjectOnDerive method)
+        public void CoreOnPostDerive(ObjectOnPostDerive method)
         {
             var derivation = method.Derivation;
 

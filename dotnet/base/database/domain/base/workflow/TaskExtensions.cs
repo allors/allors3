@@ -10,30 +10,15 @@ namespace Allors.Database.Domain
 
     public static partial class TaskExtensions
     {
-        public static void CoreOnBuild(this Task @this, ObjectOnBuild method)
+        public static void BaseOnBuild(this Task @this, ObjectOnBuild method)
         {
             if (!@this.ExistDateCreated)
             {
                 @this.DateCreated = @this.Strategy.Transaction.Now();
             }
         }
-
-        public static void CoreOnPreDerive(this Task @this, ObjectOnPreDerive method)
-        {
-            var (iteration, changeSet, derivedObjects) = method;
-
-            // TODO: Review
-            if (iteration.IsMarked(@this) || changeSet.HasChangedRoles(@this) || changeSet.IsCreated(@this))
-            {
-                foreach (TaskAssignment taskAssignment in @this.TaskAssignmentsWhereTask)
-                {
-                    iteration.AddDependency(taskAssignment, @this);
-                    iteration.Mark(taskAssignment);
-                }
-            }
-        }
-
-        public static void CoreDelete(this Task @this, DeletableDelete method)
+        
+        public static void BaseDelete(this Task @this, DeletableDelete _)
         {
             foreach (TaskAssignment taskAssignment in @this.TaskAssignmentsWhereTask)
             {

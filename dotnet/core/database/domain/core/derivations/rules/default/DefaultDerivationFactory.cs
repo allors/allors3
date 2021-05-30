@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Database.Domain.Derivations.Default
+namespace Allors.Database.Domain.Derivations.Rules
 {
     using Domain;
 
@@ -15,6 +15,6 @@ namespace Allors.Database.Domain.Derivations.Default
 
         public int MaxCycles { get; set; } = 10;
 
-        public IDerivation CreateDerivation(ITransaction transaction) => new DefaultDerivation(transaction, new Validation(), this.Engine, this.MaxCycles);
+        public IDerivation CreateDerivation(ITransaction transaction) => new RulesDerivation(transaction, new Validation(), this.Engine, this.MaxCycles);
     }
 }

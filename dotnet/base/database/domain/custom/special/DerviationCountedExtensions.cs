@@ -7,6 +7,6 @@ namespace Allors.Database.Domain
 {
     public static partial class DerivationCountedExtensions
     {
-        public static void CustomOnDerive(this DerivationCounted @this, ObjectOnDerive method) => @this.DerivationCount += 1;
+        public static void CustomOnPostDerive(this DerivationCounted @this, ObjectOnPostDerive _) => @this.DerivationCount += 1;
     }
 }

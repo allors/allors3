@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
     /// </summary>
     public partial class MailboxAddress
     {
-        public void CustomOnDerive(ObjectOnDerive method)
+        public void CustomOnPostDerive(ObjectOnPostDerive method)
         {
             var derivation = method.Derivation;
 

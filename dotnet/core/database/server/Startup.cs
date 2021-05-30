@@ -23,7 +23,7 @@ namespace Allors.Server
     using ObjectFactory = Database.ObjectFactory;
     using Database.Adapters;
     using Database.Configuration;
-    using Database.Domain.Derivations.Default;
+    using Database.Domain.Derivations.Rules;
     using Database.Meta;
     using User = Database.Domain.User;
 

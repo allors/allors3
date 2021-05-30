@@ -3,16 +3,16 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Database.Domain.Derivations.Default
+namespace Allors.Database.Domain.Derivations.Rules
 {
     using Database.Derivations;
 
-    public class DomainDerivationCycle : IDomainDerivationCycle
+    public class Cycle : IDomainDerivationCycle
     {
         public ITransaction Transaction { get; internal set; }
 
         public IChangeSet ChangeSet { get; internal set; }
 
-        public IDomainValidation Validation { get; internal set; }
+        public IValidation Validation { get; internal set; }
     }
 }

@@ -8,7 +8,7 @@ namespace Allors.Database.Configuration
     using Database;
     using Derivations;
     using Domain;
-    using Domain.Derivations.Default;
+    using Domain.Derivations.Rules;
     using Microsoft.AspNetCore.Http;
 
     public class DefaultDomainTransactionServices : IDomainTransactionServices

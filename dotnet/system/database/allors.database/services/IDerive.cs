@@ -7,6 +7,6 @@ namespace Allors.Database.Derivations
 {
     public partial interface IDerive
     {
-        IDerivationResult Derive();
+        IValidation Derive();
     }
 }

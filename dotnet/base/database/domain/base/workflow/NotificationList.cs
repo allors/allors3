@@ -5,15 +5,10 @@
 
 namespace Allors.Database.Domain
 {
-    using System.Linq;
-
     public partial class NotificationList
     {
-        public void CoreOnDerive(ObjectOnDerive method)
+        public void BaseOnPostDerive(ObjectOnPostDerive _)
         {
-            this.UnconfirmedNotifications = this.Notifications.Where(notification => !notification.Confirmed).ToArray();
-            this.ConfirmedNotifications = this.Notifications.Where(notification => notification.Confirmed).ToArray();
-
             if (!this.ExistSecurityTokens)
             {
                 if (this.ExistUserWhereNotificationList)

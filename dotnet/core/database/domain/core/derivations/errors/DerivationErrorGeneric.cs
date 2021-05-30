@@ -6,6 +6,7 @@
 namespace Allors.Database.Domain.Derivations.Errors
 {
     using System;
+    using Database.Derivations;
     using Meta;
 
     public class DerivationErrorGeneric : DerivationError

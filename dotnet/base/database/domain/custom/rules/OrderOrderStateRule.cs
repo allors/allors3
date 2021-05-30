@@ -11,20 +11,22 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class PersonFullNameDerivation : Rule
+    public class OrderOrderStateRule : Rule
     {
-        public PersonFullNameDerivation(MetaPopulation m) : base(m, new Guid("C9895CF4-98B2-4023-A3EA-582107C7D80D")) =>
+        public OrderOrderStateRule(MetaPopulation m) : base(m, new Guid("C9895CF4-98B2-4023-A3EA-582107C7D80D")) =>
             this.Patterns = new Pattern[]
             {
-                new RolePattern(m.Person, m.Person.FirstName),
-                new RolePattern(m.Person, m.Person.LastName),
+                m.Order.RolePattern(v=>v.OrderState)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var person in matches.Cast<Person>())
+            foreach (var @this in matches.Cast<Order>())
             {
-                person.DomainFullName = $"{person.FirstName} {person.LastName}";
+                if (@this.ExistAmount && @this.Amount == -1)
+                {
+                    @this.OrderState = new OrderStates(@this.Strategy.Transaction).Cancelled;
+                }
             }
         }
     }

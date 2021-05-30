@@ -1,15 +1,21 @@
-// <copyright file="IValidation.cs" company="Allors bvba">
+// <copyright file="IDomainDerivation.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
+// <summary>Defines the IDomainDerivation type.</summary>
 
-namespace Allors.Database.Domain.Derivations
+namespace Allors.Database.Derivations
 {
     using Meta;
-    using Database.Derivations;
 
-    public interface IValidation : IDerivationResult, IDomainValidation
+    public interface IValidation
     {
+        bool HasErrors { get; }
+
+        IDerivationError[] Errors { get; }
+
+        void AddError(string error);
+
         void AddError(IDerivationError derivationError);
 
         void AddError(IObject association, IRoleType roleType, string errorMessage, params object[] messageParam);

@@ -5,7 +5,7 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using Derivations.Default;
+    using Derivations.Rules;
     using Meta;
 
     public class Fixture

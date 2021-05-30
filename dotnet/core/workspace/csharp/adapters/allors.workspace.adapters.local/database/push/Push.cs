@@ -51,7 +51,7 @@ namespace Allors.Workspace.Adapters.Local
 
         private Func<IClass, IObject> Build { get; }
 
-        private Func<IDerivationResult> Derive { get; }
+        private Func<IValidation> Derive { get; }
 
         internal void Execute(PushToDatabaseTracker tracker)
         {

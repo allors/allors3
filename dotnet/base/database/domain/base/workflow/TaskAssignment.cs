@@ -7,14 +7,15 @@ namespace Allors.Database.Domain
 {
     public partial class TaskAssignment
     {
-        public void CoreOnDerive(ObjectOnDerive method)
+        public void BaseOnPostDerive(ObjectOnPostDerive _)
         {
-            var defaultSecurityToken = new SecurityTokens(this.Transaction()).DefaultSecurityToken;
-            this.SecurityTokens = new[] { defaultSecurityToken, this.User?.OwnerSecurityToken };
-
-            //this.Task?.ManageNotification(this);
+            if (!this.ExistSecurityTokens)
+            {
+                var defaultSecurityToken = new SecurityTokens(this.Transaction()).DefaultSecurityToken;
+                this.SecurityTokens = new[] { defaultSecurityToken, this.User?.OwnerSecurityToken };
+            }
         }
 
-        public void CoreDelete(DeletableDelete method) => this.Notification?.Delete();
+        public void BaseDelete(DeletableDelete _) => this.Notification?.Delete();
     }
 }

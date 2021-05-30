@@ -7,7 +7,7 @@ namespace Allors.Database.Domain
 {
     public partial class Notification
     {
-        public void CoreOnBuild(ObjectOnBuild method)
+        public void BaseOnBuild(ObjectOnBuild _)
         {
             if (!this.ExistDateCreated)
             {
@@ -20,24 +20,13 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void CoreOnPreDerive(ObjectOnPreDerive method)
-        {
-            var (iteration, changeSet, derivedObjects) = method;
-
-            if (changeSet.HasChangedRole(this, this.Meta.Confirmed))
-            {
-                iteration.AddDependency(this.NotificationListWhereNotification, this);
-                iteration.Mark(this.NotificationListWhereNotification);
-            }
-        }
-
-        public void AppsConfirm(NotificationConfirm method)
+        public void BaseConfirm(NotificationConfirm method)
         {
             this.Confirmed = true;
             method.StopPropagation = true;
         }
 
-        public void CoreOnDerive(ObjectOnDerive method)
+        public void BaseOnPostDerive(ObjectOnPostDerive _)
         {
             if (!this.ExistSecurityTokens)
             {

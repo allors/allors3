@@ -65,6 +65,8 @@
     <None Include="Temp.cd" />
     <None Include="Security\Authentication.cd" />
     <None Include="Security\Authorization.cd" />
+    <None Include="Workflow\Task.cd" />
+    <None Include="Workflow\Notification.cd" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

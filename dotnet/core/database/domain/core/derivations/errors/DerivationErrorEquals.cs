@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Domain.Derivations.Errors
 {
+    using Database.Derivations;
     using Resources;
 
     public class DerivationErrorEquals : DerivationError

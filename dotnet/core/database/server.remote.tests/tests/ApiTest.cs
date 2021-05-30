@@ -18,7 +18,7 @@ namespace Allors.Server.Tests
     using Database.Adapters.SqlClient;
     using Database.Domain;
     using Database.Configuration;
-    using Database.Domain.Derivations.Default;
+    using Database.Domain.Derivations.Rules;
     using Database.Meta;
     using Microsoft.Extensions.Configuration;
     using Protocol.Json.Auth;

@@ -58,7 +58,7 @@ namespace Allors.Database.Protocol.Json
 
         public Func<IClass, IObject> Build { get; }
 
-        public Func<IDerivationResult> Derive { get; }
+        public Func<IValidation> Derive { get; }
 
         public InvokeResponse Invoke(InvokeRequest invokeRequest)
         {

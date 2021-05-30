@@ -16,13 +16,5 @@ namespace Allors.Database.Domain
                 new TransitionalConfiguration(this.M.Order, this.M.Order.ShipmentState),
                 new TransitionalConfiguration(this.M.Order, this.M.Order.PaymentState),
             };
-
-        public void CustomOnDerive(ObjectOnDerive method)
-        {
-            if (this.ExistAmount && this.Amount == -1)
-            {
-                this.OrderState = new OrderStates(this.Strategy.Transaction).Cancelled;
-            }
-        }
     }
 }

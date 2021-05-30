@@ -12,7 +12,7 @@ namespace Allors.Database.Server.Controllers
     using Allors.Server;
     using Services;
     using Configuration;
-    using Domain.Derivations.Default;
+    using Domain.Derivations.Rules;
     using JSNLog;
     using Meta;
     using Microsoft.AspNetCore.Authentication.JwtBearer;

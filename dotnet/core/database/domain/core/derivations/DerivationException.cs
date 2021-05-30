@@ -7,6 +7,7 @@ namespace Allors.Database.Domain.Derivations
 {
     using System;
     using System.Text;
+    using Database.Derivations;
 
     public class DerivationException : Exception
     {
