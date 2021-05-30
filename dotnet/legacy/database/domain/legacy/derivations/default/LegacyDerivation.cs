@@ -3,14 +3,14 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Database.Domain.Derivations.Compat.Default
+namespace Allors.Database.Domain.Derivations.Legacy.Default
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using Database.Derivations;
-    using Derivations.Default;
+    using Rules.Default;
     using Object = Object;
 
     [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1121:UseBuiltInTypeAlias", Justification = "Allors Object")]

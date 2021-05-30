@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Domain
 {
+    using Derivations.Rules;
     using Meta;
 
     public static partial class Rules

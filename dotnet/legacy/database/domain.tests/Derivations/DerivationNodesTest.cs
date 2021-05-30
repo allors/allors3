@@ -13,7 +13,7 @@ namespace Allors.Database.Domain.Tests
 
     using Allors;
     using Allors.Database.Domain;
-    using Derivations.Compat;
+    using Derivations.Legacy;
     using Xunit;
 
     public class DerivationNodesTest : DomainTest, IClassFixture<Fixture>

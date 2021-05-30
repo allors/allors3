@@ -4,11 +4,11 @@
 // </copyright>
 
 
-namespace Allors.Database.Domain
+namespace Allors.Database.Domain.Derivations
 {
     using Meta;
     using System.Linq;
-    using Derivations;
+    using Object = Domain.Object;
 
     public static partial class IChangeSetExtensions
     {

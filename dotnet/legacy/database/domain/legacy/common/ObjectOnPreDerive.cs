@@ -7,7 +7,7 @@ namespace Allors.Database.Domain
 {
     using System.Collections.Generic;
     using Derivations;
-    using Derivations.Compat;
+    using Derivations.Legacy;
 
     public abstract partial class ObjectOnPreDerive
     {

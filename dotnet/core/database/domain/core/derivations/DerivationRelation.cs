@@ -6,8 +6,9 @@
 namespace Allors.Database.Domain.Derivations
 {
     using System.Text;
-    using Meta;
     using Database.Derivations;
+    using Meta;
+    using Derivations.Rules;
 
     public class DerivationRelation : IDerivationRelation
     {

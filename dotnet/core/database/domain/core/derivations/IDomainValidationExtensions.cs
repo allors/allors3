@@ -6,8 +6,9 @@
 namespace Allors.Database.Domain.Derivations
 {
     using Meta;
-    using Database.Derivations;
+    using Derivations.Rules;
     using System.Linq;
+    using Database.Derivations;
 
     public static class IDomainValidationExtensions
     {

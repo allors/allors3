@@ -4,7 +4,7 @@
 // </copyright>
 
 // ReSharper disable StyleCop.SA1121
-namespace Allors.Database.Domain.Derivations.Compat.Default
+namespace Allors.Database.Domain.Derivations.Legacy.Default
 {
     using System.Collections.Generic;
     using System.Linq;

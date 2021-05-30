@@ -4,8 +4,11 @@
 // </copyright>
 // <summary>Defines the IDomainDerivation type.</summary>
 
-namespace Allors.Database.Derivations
+namespace Allors.Database.Domain.Derivations.Rules
 {
+    using Database.Derivations;
+    using Derivations.Rules;
+
     public interface IDomainDerivationCycle
     {
         ITransaction Transaction { get; }

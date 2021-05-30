@@ -4,10 +4,10 @@
 // </copyright>
 // <summary>Defines the IDomainDerivation type.</summary>
 
-namespace Allors.Database.Derivations
+namespace Allors.Database.Domain.Derivations.Rules
 {
     using System.Collections.Generic;
-    using Data;
+    using Database.Data;
     using Meta;
 
     public abstract class Pattern : IPattern

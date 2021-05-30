@@ -4,10 +4,11 @@
 // </copyright>
 // <summary>Defines the IDomainDerivation type.</summary>
 
-namespace Allors.Database.Derivations
+namespace Allors.Database.Domain.Derivations.Rules
 {
     using System;
     using System.Collections.Generic;
+    using Derivations.Rules;
 
     public interface IRule
     {

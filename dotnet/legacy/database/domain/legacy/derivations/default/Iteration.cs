@@ -4,12 +4,12 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Database.Domain.Derivations.Compat.Default
+namespace Allors.Database.Domain.Derivations.Legacy.Default
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Derivations.Default;
+    using Rules.Default;
     using Object = Object;
 
     public class Iteration : IIteration

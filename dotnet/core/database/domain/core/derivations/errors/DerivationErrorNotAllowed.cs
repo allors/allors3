@@ -9,6 +9,7 @@
 namespace Allors.Database.Domain.Derivations.Errors
 {
     using Database.Derivations;
+    using Derivations.Rules;
     using Meta;
     using Resources;
 

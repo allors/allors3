@@ -7,8 +7,8 @@
 namespace Allors.Database.Configuration
 {
     using Database;
-    using Domain.Derivations.Compat.Default;
-    using Domain.Derivations.Default;
+    using Domain.Derivations.Legacy.Default;
+    using Domain.Derivations.Rules.Default;
     using Microsoft.AspNetCore.Http;
 
     public class DefaultDomainDatabaseServices : DomainDatabaseServices

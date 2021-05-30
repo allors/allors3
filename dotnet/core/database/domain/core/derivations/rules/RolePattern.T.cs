@@ -4,13 +4,13 @@
 // </copyright>
 // <summary>Defines the IDomainDerivation type.</summary>
 
-namespace Allors.Database.Derivations
+namespace Allors.Database.Domain.Derivations.Rules
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
-    using Data;
+    using Database.Data;
     using Meta;
 
     public class RolePattern<T> : RolePattern where T : IComposite

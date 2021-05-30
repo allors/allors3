@@ -8,6 +8,7 @@ namespace Allors.Database.Domain.Derivations
     using System;
     using System.Text;
     using Database.Derivations;
+    using Derivations.Rules;
 
     public class DerivationException : Exception
     {
