@@ -10,7 +10,7 @@ namespace Allors.Database.Domain
     using System.Linq;
     using Derivations;
     using Meta;
-    using Database.Derivations;
+    using Derivations.Rules;
 
     public class PartyContactMechanismRule : Rule
     {

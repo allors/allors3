@@ -9,7 +9,7 @@ namespace Allors.Database.Configuration
     using Bogus;
     using Database;
     using Domain;
-    using Domain.Derivations.Default;
+    using Domain.Derivations.Rules.Default;
     using Microsoft.AspNetCore.Http;
 
     public class TestDomainDatabaseServices : DefaultDomainDatabaseServices

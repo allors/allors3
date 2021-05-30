@@ -10,7 +10,7 @@ namespace Allors.Database.Domain
     using System.Globalization;
     using System.Linq;
     using Meta;
-    using Database.Derivations;
+    using Derivations.Rules;
 
     public class ShipmentPackageRule : Rule
     {

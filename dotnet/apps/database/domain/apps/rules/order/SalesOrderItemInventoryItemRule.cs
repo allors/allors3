@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
-    using Database.Derivations;
+    using Derivations.Rules;
     using Resources;
 
     public class SalesOrderItemInventoryItemRule : Rule

@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
     using System.Linq;
     using System.Text.RegularExpressions;
     using Meta;
-    using Database.Derivations;
+    using Derivations.Rules;
     using Resources;
 
     public class BankAccountIbanRule : Rule

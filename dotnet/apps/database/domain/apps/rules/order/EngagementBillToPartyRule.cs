@@ -8,7 +8,7 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Database.Derivations;
+    using Derivations.Rules;
     using Meta;
 
     public class EngagementBillToPartyRule : Rule

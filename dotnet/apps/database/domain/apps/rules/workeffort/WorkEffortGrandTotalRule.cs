@@ -9,6 +9,7 @@ namespace Allors.Database.Domain
     using System.Linq;
     using Allors.Database.Meta;
     using Allors.Database.Derivations;
+    using Derivations.Rules;
 
     public class WorkEffortGrandTotalRule : Rule
     {
