@@ -87,6 +87,7 @@ namespace Allors.Repository
         [Id("2cc74901-cda5-4185-bcd8-d51c745a8437")]
         [Indexed]
         #endregion
+        [Required]
         [Size(256)]
         [Workspace(Default)]
         public string Name { get; set; }

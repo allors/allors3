@@ -78,7 +78,7 @@ namespace Allors.Database.Domain.Derivations.Compat.Default
         {
             try
             {
-                var domainDerive = new DefaultDerivation(this.Cycle.Derivation.Transaction, this.Cycle.Derivation.Validation, this.Cycle.Derivation.Engine, this.Cycle.Derivation.MaxCycles);
+                var domainDerive = new DefaultDerivation(this.Cycle.Derivation.Transaction, this.Cycle.Derivation.Validation, this.Cycle.Derivation.Engine, this.Cycle.Derivation.MaxCycles, true);
                 domainDerive.Derive();
                 
                 // Object Derivations
@@ -90,7 +90,7 @@ namespace Allors.Database.Domain.Derivations.Compat.Default
                     this.Graph.Mark(marked);
                 }
 
-                this.Preparation = new Preparation(this, marked, domainDerive.ChangeSet);
+                this.Preparation = new Preparation(this, marked, domainDerive.AccumulatedChangeSet);
                 this.MarkedBacklog = new HashSet<Object>();
                 this.Preparation.Execute();
 

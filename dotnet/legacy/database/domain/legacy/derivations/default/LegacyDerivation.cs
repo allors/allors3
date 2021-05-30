@@ -9,6 +9,7 @@ namespace Allors.Database.Domain.Derivations.Compat.Default
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using Database.Derivations;
     using Derivations.Default;
     using Object = Object;
 

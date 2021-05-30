@@ -44,7 +44,7 @@ namespace Allors.Database.Domain
                     }
                 }
 
-                static void SyncInventoryTransactions(IDerivationValidation validation,WorkEffortInventoryAssignment workEffortInventoryAssignment, InventoryItem inventoryItem, decimal initialQuantity, InventoryTransactionReason reason, bool isCancellation)
+                static void SyncInventoryTransactions(IValidation validation,WorkEffortInventoryAssignment workEffortInventoryAssignment, InventoryItem inventoryItem, decimal initialQuantity, InventoryTransactionReason reason, bool isCancellation)
                 {
                     var adjustmentQuantity = 0M;
                     var existingQuantity = 0M;

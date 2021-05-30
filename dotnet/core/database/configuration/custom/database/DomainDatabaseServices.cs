@@ -9,7 +9,7 @@ namespace Allors.Database.Configuration
     using Database;
     using Data;
     using Domain;
-    using Domain.Derivations.Rules;
+    using Domain.Derivations.Default;
     using Meta;
     using Microsoft.AspNetCore.Http;
 

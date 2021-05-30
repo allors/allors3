@@ -15,12 +15,12 @@ namespace Allors.Database.Domain.Tests
         public DefaultDerivationLogTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void DeletedUserinterfaceable()
+        public void SingleErrorMessage()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
 
             var validation = this.Transaction.Derive(false);
-            Assert.Equal(1, validation.Errors.Length);
+            Assert.Single(validation.Errors);
 
             var error = validation.Errors[0];
             Assert.Equal("Organisation.Name is required", error.Message);

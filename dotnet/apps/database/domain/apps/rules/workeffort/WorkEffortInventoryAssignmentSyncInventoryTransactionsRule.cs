@@ -49,7 +49,7 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void SyncInventoryTransactions(WorkEffortInventoryAssignment @this,IDerivationValidation validation, InventoryItem inventoryItem, decimal initialQuantity, InventoryTransactionReason reason, bool isCancellation)
+        public void SyncInventoryTransactions(WorkEffortInventoryAssignment @this, IValidation validation, InventoryItem inventoryItem, decimal initialQuantity, InventoryTransactionReason reason, bool isCancellation)
         {
             // TODO: Move sync to new derivations
 

@@ -5,8 +5,6 @@
 
 namespace Allors.Database.Domain
 {
-    using System;
-    using Meta;
     using Domain;
 
     public static partial class ObjectExtensions
@@ -28,23 +26,6 @@ namespace Allors.Database.Domain
                         iteration.Schedule(@this);
                     }
                 }
-            }
-        }
-
-        public static void CoreOnPostDerive(this Object @this, ObjectOnPostDerive method)
-        {
-            var derivation = method.Derivation;
-            var @class = (Class)@this.Strategy.Class;
-            var metaService = @this.DatabaseServices().MetaCache;
-
-            foreach (var roleType in metaService.GetRequiredRoleTypes(@class))
-            {
-                derivation.Validation.AssertExists(@this, roleType);
-            }
-
-            foreach (var roleType in @metaService.GetUniqueRoleTypes(@class))
-            {
-                derivation.Validation.AssertIsUnique(derivation.ChangeSet, @this, roleType);
             }
         }
     }

@@ -1,9 +1,9 @@
-// <copyright file="DomainDerivationCycle.cs" company="Allors bvba">
+// <copyright file="RulesDerivation.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Database.Domain.Derivations.Rules
+namespace Allors.Database.Domain.Derivations.Default
 {
     using System;
     using System.Collections.Generic;
@@ -11,14 +11,15 @@ namespace Allors.Database.Domain.Derivations.Rules
     using Database.Derivations;
     using Object = Domain.Object;
 
-    public class RulesDerivation : IDerivation
+    public class DefaultDerivation : IDerivation
     {
-        public RulesDerivation(ITransaction transaction, IValidation validation, Engine engine, int maxCycles)
+        public DefaultDerivation(ITransaction transaction, IValidation validation, Engine engine, int maxCycles, bool embedded)
         {
             this.Transaction = transaction;
             this.Validation = validation;
             this.Engine = engine;
             this.MaxCycles = maxCycles;
+            this.Embedded = embedded;
 
             this.Id = Guid.NewGuid();
             this.TimeStamp = transaction.Now();
@@ -32,24 +33,38 @@ namespace Allors.Database.Domain.Derivations.Rules
 
         public IValidation Validation { get; }
 
-        IAccumulatedChangeSet IDerivation.ChangeSet => this.ChangeSet;
-        public AccumulatedChangeSet ChangeSet { get; set; }
-        
+        IAccumulatedChangeSet IDerivation.ChangeSet => this.AccumulatedChangeSet;
+        public AccumulatedChangeSet AccumulatedChangeSet { get; set; }
+
+        public AccumulatedChangeSet PostDeriveAccumulatedChangeSet { get; set; }
+
         public Engine Engine { get; }
 
         public int MaxCycles { get; }
+
+        public bool Embedded { get; }
 
         public IValidation Derive()
         {
             var domainCycles = 0;
 
-            this.ChangeSet = new AccumulatedChangeSet();
-
+            this.AccumulatedChangeSet = new AccumulatedChangeSet();
             var changeSet = this.Transaction.Checkpoint();
-            this.ChangeSet.Add(changeSet);
+            this.AccumulatedChangeSet.Add(changeSet);
 
-            while (changeSet.Associations.Any() || changeSet.Roles.Any() || changeSet.Created.Any() ||
-                   changeSet.Deleted.Any())
+            if (!this.Embedded)
+            {
+                this.PostDeriveAccumulatedChangeSet = new AccumulatedChangeSet();
+                this.PostDeriveAccumulatedChangeSet.Add(changeSet);
+            }
+
+            static bool HasChanges(IChangeSet changeSet) =>
+                changeSet.Associations.Any() ||
+                changeSet.Roles.Any() ||
+                changeSet.Created.Any() ||
+                changeSet.Deleted.Any();
+
+            while (!this.Validation.HasErrors && HasChanges(changeSet))
             {
                 if (++domainCycles > this.MaxCycles)
                 {
@@ -170,7 +185,37 @@ namespace Allors.Database.Domain.Derivations.Rules
                 }
 
                 changeSet = this.Transaction.Checkpoint();
-                this.ChangeSet.Add(changeSet);
+                this.AccumulatedChangeSet.Add(changeSet);
+
+                if (!this.Embedded)
+                {
+                    if (HasChanges(changeSet))
+                    {
+                        this.PostDeriveAccumulatedChangeSet.Add(changeSet);
+                    }
+                    else
+                    {
+                        var created = this.PostDeriveAccumulatedChangeSet.Created;
+                        foreach (var strategy in created)
+                        {
+                            var @object = (Object)strategy.GetObject();
+                            @object.OnPostDerive(x => x.WithDerivation(this));
+                        }
+
+                        var changed = this.PostDeriveAccumulatedChangeSet.Associations;
+                        foreach (var id in changed)
+                        {
+                            var @object = (Object)this.Transaction.Instantiate(id);
+                            var strategy = @object?.Strategy;
+                            if (strategy != null && !created.Contains(strategy))
+                            {
+                                @object.OnPostDerive(x => x.WithDerivation(this));
+                            }
+                        }
+
+                        this.PostDeriveAccumulatedChangeSet = new AccumulatedChangeSet();
+                    }
+                }
             }
 
             return this.Validation;
