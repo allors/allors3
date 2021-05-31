@@ -11,7 +11,6 @@ namespace Allors.Database.Domain
     using System.Text;
     using Meta;
     using Derivations.Rules;
-    using Derivations.Rules;
 
     public class AccountingPeriodRule : Rule
     {

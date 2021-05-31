@@ -44,7 +44,7 @@ namespace Allors.Database.Domain
 
             new GenderBuilder(this.Transaction)
                 .WithName("Other")
-                .WithUniqueId(FemaleId)
+                .WithUniqueId(OtherId)
                 .WithIsActive(true)
                 .Build();
         }
