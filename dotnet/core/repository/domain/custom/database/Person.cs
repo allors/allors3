@@ -104,15 +104,7 @@ namespace Allors.Repository
         #endregion
         [Workspace(Default)]
         public DateTime BirthDate { get; set; }
-
-        #region Allors
-        [Id("688ebeb9-8a53-4e8d-b284-3faa0a01ef7c")]
-        [Size(256)]
-        #endregion
-        [Workspace(Default)]
-        [Derived]
-        public string FullName { get; set; }
-
+        
         #region Allors
         [Id("0521122D-1C45-41DC-804C-330FE81136C6")]
         [Size(256)]
@@ -136,7 +128,7 @@ namespace Allors.Repository
         [Size(256)]
         #endregion
         [Workspace(Default)]
-        //[DomainDerived]
+        [Derived]
         public string DomainFullName { get; set; }
 
         #region Allors
@@ -144,7 +136,7 @@ namespace Allors.Repository
         [Size(256)]
         #endregion
         [Workspace(Default)]
-        //[DomainDerived]
+        [Derived]
         public string DomainGreeting { get; set; }
 
 

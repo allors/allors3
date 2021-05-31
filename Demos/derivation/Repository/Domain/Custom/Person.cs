@@ -4,14 +4,6 @@ namespace Allors.Repository
 
     public partial class Person : Deletable
     {
-        #region inherited methods
-
-        public void Delete()
-        {
-        }
-
-        #endregion inherited methods
-
         #region Allors
         [Id("105CF367-F076-45F8-8E2A-2431BB2D65C7")]
         [Size(256)]
@@ -24,7 +16,15 @@ namespace Allors.Repository
         [Size(256)]
         #endregion
         [Workspace]
-
         public string DomainGreeting { get; set; }
+
+
+        #region inherited methods
+
+        public void Delete()
+        {
+        }
+
+        #endregion inherited methods
     }
 }

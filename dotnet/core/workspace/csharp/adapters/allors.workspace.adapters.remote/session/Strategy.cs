@@ -6,6 +6,7 @@
 namespace Allors.Workspace.Adapters.Remote
 {
     using Allors.Protocol.Json.Api.Push;
+    using Allors.Protocol.Json.Api.Sync;
     using Meta;
 
     public sealed class Strategy : Adapters.Strategy

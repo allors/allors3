@@ -18,6 +18,7 @@ namespace Allors.Database.Domain
             {
                 m.Organisation.RolePattern(v => v.Name),
                 m.Organisation.RolePattern(v => v.UniqueId),
+                m.Organisation.RolePattern(v => v.CurrentContacts),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -30,9 +31,11 @@ namespace Allors.Database.Domain
 
                 if (!@this.ExistContactsUserGroup)
                 {
-                    var customerContactGroupName = $"Customer contacts at {@this.Name} ({@this.UniqueId})";
+                    var customerContactGroupName = $"Customer contacts at {@this.Name ?? "Unknown"} ({@this.UniqueId})";
                     @this.ContactsUserGroup = new UserGroupBuilder(@this.Strategy.Transaction).WithName(customerContactGroupName).Build();
                 }
+
+                @this.ContactsUserGroup.Members = @this.CurrentContacts.ToArray();
             }
         }
     }

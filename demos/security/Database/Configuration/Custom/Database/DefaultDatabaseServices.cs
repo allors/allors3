@@ -4,23 +4,23 @@
 // </copyright>
 // <summary>Defines the DomainTest type.</summary>
 
+using Allors.Database.Domain.Derivations.Rules.Default;
+
 namespace Allors.Database.Configuration
 {
-    using Domain;
-    using Domain.Derivations.Default;
     using Microsoft.AspNetCore.Http;
     
 
-    public class DefaultDatabaseContext : DatabaseContext
+    public class DefaultDatabaseServices : DatabaseServices
     {
-        public DefaultDatabaseContext(Engine engine, IHttpContextAccessor httpContextAccessor = null) : base(httpContextAccessor) => this.Engine = engine;
+        public DefaultDatabaseServices(Engine engine, IHttpContextAccessor httpContextAccessor = null) : base(httpContextAccessor) => this.Engine = engine;
 
         public Engine Engine { get; }
 
         public override void OnInit(IDatabase database)
         {
             base.OnInit(database);
-            this.DerivationFactory = new DerivationFactory(this.Engine);
+            this.DerivationFactory = new DefaultDerivationFactory(this.Engine);
         }
     }
 }

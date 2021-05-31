@@ -3,13 +3,14 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+
 namespace Allors.Database.Domain
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database.Meta;
-    using Database.Derivations;
+    using Meta;
+    using Derivations.Rules;
 
     public class CoarseRule : Rule
     {

@@ -102,7 +102,6 @@ namespace Allors.Workspace.Adapters.Remote
         private async Task Sync(SyncRequest syncRequest)
         {
             var database = (DatabaseConnection)base.Workspace.DatabaseConnection;
-
             var syncResponse = await database.Sync(syncRequest);
             var securityRequest = database.SyncResponse(syncResponse);
 
@@ -171,35 +170,31 @@ namespace Allors.Workspace.Adapters.Remote
             Objects = this.PushToDatabaseTracker.Changed?.Select(v => ((Strategy)v.Strategy).DatabasePushExisting()).ToArray()
         };
 
-        private void PushResponse(PushResponse pushResponse)
-        {
-            if (pushResponse.NewObjects != null && pushResponse.NewObjects.Length > 0)
-            {
-                foreach (var pushResponseNewObject in pushResponse.NewObjects)
-                {
-                    var workspaceId = pushResponseNewObject.WorkspaceId;
-                    var databaseId = pushResponseNewObject.DatabaseId;
-
-                    var strategy = this.StrategyByWorkspaceId[workspaceId];
-
-                    _ = this.PushToDatabaseTracker.Created.Remove(strategy);
-
-                    this.RemoveStrategy(strategy);
-                    var databaseRecord = this.Workspace.DatabaseConnection.OnPushed(databaseId, strategy.Class);
-                    strategy.DatabasePushResponse(databaseRecord);
-                    this.AddStrategy(strategy);
-                }
-            }
-        }
-
         private async Task<PushResult> PushToDatabase()
         {
             var pushRequest = this.PushRequest();
             var pushResponse = await this.Workspace.DatabaseConnection.Push(pushRequest);
+
             if (!pushResponse.HasErrors)
             {
-                this.PushResponse(pushResponse);
+                if (pushResponse.NewObjects != null && pushResponse.NewObjects.Length > 0)
+                {
+                    foreach (var pushResponseNewObject in pushResponse.NewObjects)
+                    {
+                        var workspaceId = pushResponseNewObject.WorkspaceId;
+                        var databaseId = pushResponseNewObject.DatabaseId;
 
+                        var strategy = this.StrategyByWorkspaceId[workspaceId];
+
+                        _ = this.PushToDatabaseTracker.Created.Remove(strategy);
+
+                        this.RemoveStrategy(strategy);
+                        var databaseRecord = this.Workspace.DatabaseConnection.OnPushed(databaseId, strategy.Class);
+                        strategy.DatabasePushResponse(databaseRecord);
+                        this.AddStrategy(strategy);
+                    }
+                }
+                
                 var objects = pushRequest.Objects?.Select(v => v.DatabaseId).ToArray() ?? Array.Empty<long>();
                 if (pushResponse.NewObjects != null)
                 {
@@ -207,8 +202,18 @@ namespace Allors.Workspace.Adapters.Remote
                 }
 
                 var syncRequests = new SyncRequest { Objects = objects };
-
                 await this.Sync(syncRequests);
+                
+                foreach (var id in objects)
+                {
+                    if (!this.StrategyByWorkspaceId.ContainsKey(id))
+                    {
+                        _ = this.InstantiateDatabaseStrategy(id);
+                    }
+
+                    var strategy = this.GetStrategy(id);
+                    ((DatabaseOriginState)strategy.DatabaseOriginState).Reset();
+                }
             }
 
             var result = new PushResult(this, pushResponse);

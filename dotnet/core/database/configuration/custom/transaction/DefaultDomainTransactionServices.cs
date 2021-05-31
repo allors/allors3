@@ -19,8 +19,8 @@ namespace Allors.Database.Configuration
 
         public virtual void OnInit(ITransaction transaction)
         {
-            this.httpContext.OnInit(transaction);
             this.Derive = new DefaultDerive(transaction);
+            this.httpContext.OnInit(transaction);
         }
 
         public IDerive Derive { get; private set; }

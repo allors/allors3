@@ -64,7 +64,7 @@ namespace Tests.Workspace
 
             Assert.Equal("A new object", newObject.C1AllorsString);
         }
-        
+
         [Fact]
         public async void PushExistingObjectWithChangedRoles()
         {
@@ -76,7 +76,7 @@ namespace Tests.Workspace
             {
                 Extent = new Extent(this.M.C1)
                 {
-                    Predicate = new Equals(this.M.C1.Name) {Value = "c1A"}
+                    Predicate = new Equals(this.M.C1.Name) { Value = "c1A" }
                 }
             };
 
@@ -143,11 +143,11 @@ namespace Tests.Workspace
             var person = session.Create<Person>();
             person.FirstName = "Johny";
             person.LastName = "Doey";
-            
+
             var result = await session.Push();
             Assert.False(result.HasErrors);
 
-            Assert.Equal("Johny Doey", person.FullName);
+            Assert.Equal("Johny Doey", person.DomainFullName);
         }
     }
 }

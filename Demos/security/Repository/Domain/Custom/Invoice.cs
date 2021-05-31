@@ -24,7 +24,7 @@ namespace Allors.Repository
         #region Allors
 
         [Id("9ef3ad24-28c4-476c-a21d-a5e5c12f496a")]
-       
+
         #endregion Allors
         [Workspace]
         public string Name { get; set; }
@@ -32,11 +32,6 @@ namespace Allors.Repository
         #region inherited methods
 
         public void OnBuild()
-        {
-
-        }
-
-        public void OnDerive()
         {
 
         }
@@ -52,11 +47,6 @@ namespace Allors.Repository
         }
 
         public void OnPostDerive()
-        {
-
-        }
-
-        public void OnPreDerive()
         {
 
         }

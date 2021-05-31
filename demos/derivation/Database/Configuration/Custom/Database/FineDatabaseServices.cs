@@ -6,14 +6,14 @@
 
 namespace Allors.Database.Configuration
 {
-    using Domain;
-    using Domain.Derivations.Default;
     using Microsoft.AspNetCore.Http;
+    using Domain;
+    using Domain.Derivations.Rules;
+    using Domain.Derivations.Rules.Default;
 
-
-    public class FineDatabaseContext : DatabaseContext
+    public class FineDatabaseServices : DatabaseServices
     {
-        public FineDatabaseContext(IHttpContextAccessor httpContextAccessor = null) : base(httpContextAccessor) { }
+        public FineDatabaseServices(IHttpContextAccessor httpContextAccessor = null) : base(httpContextAccessor) { }
 
         public override void OnInit(IDatabase database)
         {
@@ -37,7 +37,7 @@ namespace Allors.Database.Configuration
             };
 
             var engine = new Engine(rules);
-            this.DerivationFactory = new DerivationFactory(engine);
+            this.DerivationFactory = new DefaultDerivationFactory(engine);
         }
     }
 }

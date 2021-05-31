@@ -140,7 +140,7 @@ namespace Allors.Repository
         [Size(256)]
         #endregion
         [Workspace(Default)]
-        //[DomainDerived]
+        [Derived]
         public string DomainFullName { get; set; }
 
         #region Allors
@@ -148,7 +148,7 @@ namespace Allors.Repository
         [Size(256)]
         #endregion
         [Workspace(Default)]
-        //[DomainDerived]
+        [Derived]
         public string DomainGreeting { get; set; }
 
 

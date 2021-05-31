@@ -47,11 +47,7 @@ namespace Allors.Repository
 
         }
 
-        public void OnDerive()
-        {
-
-        }
-
+       
         public void OnInit()
         {
 
@@ -63,11 +59,6 @@ namespace Allors.Repository
         }
 
         public void OnPostDerive()
-        {
-
-        }
-
-        public void OnPreDerive()
         {
 
         }

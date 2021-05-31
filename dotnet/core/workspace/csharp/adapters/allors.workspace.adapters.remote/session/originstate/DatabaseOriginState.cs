@@ -84,5 +84,11 @@ namespace Allors.Workspace.Adapters.Remote
 
             return null;
         }
+
+        public void Reset()
+        {
+            this.DatabaseRecord = this.Session.Workspace.DatabaseConnection.GetRecord(this.Id);
+            this.ChangedRoleByRelationType = null;
+        }
     }
 }

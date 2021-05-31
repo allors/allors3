@@ -8,15 +8,14 @@ namespace Allors.Database.Configuration
 {
     using Database.Data;
     using Domain;
-    using Domain.Derivations.Default;
     using Meta;
     using Microsoft.AspNetCore.Http;
 
-    public abstract class DatabaseContext : IDatabaseContext
+    public abstract class DatabaseServices : IDomainDatabaseServices
     {
         private readonly IHttpContextAccessor httpContextAccessor;
 
-        protected DatabaseContext(IHttpContextAccessor httpContextAccessor = null) => this.httpContextAccessor = httpContextAccessor;
+        protected DatabaseServices(IHttpContextAccessor httpContextAccessor = null) => this.httpContextAccessor = httpContextAccessor;
 
         public virtual void OnInit(IDatabase database)
         {
@@ -83,7 +82,7 @@ namespace Allors.Database.Configuration
 
         public IDerivationFactory DerivationFactory { get; protected set; }
 
-        public ITransactionLifecycle CreateTransactionInstance() => new DefaultTransactionContext(this.httpContextAccessor);
+        public ITransactionServices CreateTransactionServices() => new DefaultTransactionServices(this.httpContextAccessor);
 
         public void Dispose()
         {

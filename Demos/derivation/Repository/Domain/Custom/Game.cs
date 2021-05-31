@@ -93,11 +93,6 @@ namespace Allors.Repository
 
         }
 
-        public void OnDerive()
-        {
-
-        }
-
         public void OnInit()
         {
 
@@ -113,10 +108,6 @@ namespace Allors.Repository
 
         }
 
-        public void OnPreDerive()
-        {
-
-        }
 
         #endregion inherited methods
     }

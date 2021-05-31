@@ -134,8 +134,6 @@ namespace Allors.Database.Domain
             this.InactiveContacts = this.InactiveOrganisationContactRelationships
                 .Select(v => v.Contact)
                 .ToArray();
-
-            this.ContactsUserGroup.Members = this.CurrentContacts.ToArray();
         }
 
         public void AppsDelete(DeletableDelete method)

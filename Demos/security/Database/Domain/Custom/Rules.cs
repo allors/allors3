@@ -3,6 +3,8 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using Allors.Database.Domain.Derivations.Rules;
+
 namespace Allors.Database.Domain
 {
     using Meta;
@@ -13,8 +15,11 @@ namespace Allors.Database.Domain
             new Rule[]
             {
                 // Core
-                new MediaRule(m),
-                new TransitionalDeniedPermissionRule(m),
+                new UserNormalizedUserNameRule(m),
+                new UserNormalizedUserEmailRule(m),
+                new UserInUserPasswordRule(m),
+                new AccessControlEffectiveUsersRule(m),
+                new AccessControlEffectivePermissionsRule(m),
 
                 // Custom
             };

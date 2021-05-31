@@ -6,7 +6,6 @@
 namespace Allors.Database.Domain.Tests.Whist
 {
     using System.Linq;
-    using Derivations.Default;
     using Xunit;
 
     public class ScoreboardTests : DomainTest, IClassFixture<Fixture>
