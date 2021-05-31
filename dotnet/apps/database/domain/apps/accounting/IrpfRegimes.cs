@@ -10,8 +10,8 @@ namespace Allors.Database.Domain
     public partial class IrpfRegimes
     {
         public static readonly Guid Assessable15Id = new Guid("f6780ae0-39fc-459c-8ec0-d3c5a5fb066c");
-        public static readonly Guid Assessable19Id = new Guid("a82edb4e-dc92-4864-96fe-26ec6d1ef914");
-        public static readonly Guid ExemptId = new Guid("82986030-5E18-43c1-8CBE-9832ACD4151D");
+        public static readonly Guid Assessable19Id = new Guid("7F122CD7-4A8B-4BF5-B5AC-2FAD9155F9DD"); // TODO: old guid ("a82edb4e-dc92-4864-96fe-26ec6d1ef914")
+        public static readonly Guid ExemptId = new Guid("424BF73C-9923-4D53-8159-9F2393015145"); // TODO: old guid ("82986030-5E18-43c1-8CBE-9832ACD4151D")
 
         private UniquelyIdentifiableCache<IrpfRegime> cache;
 

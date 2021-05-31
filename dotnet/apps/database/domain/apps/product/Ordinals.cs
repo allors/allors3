@@ -9,8 +9,8 @@ namespace Allors.Database.Domain
 
     public partial class Ordinals
     {
-        private static readonly Guid FirstId = new Guid("E312891F-7744-43ba-A69F-13878B1FC66B");
-        private static readonly Guid SecondId = new Guid("6593FE82-A00F-4de6-9516-D652FE28A3EA");
+        private static readonly Guid FirstId = new Guid("B95AB69E-2DDA-4439-BFD6-626723B98876"); // TODO: old guid ("E312891F-7744-43ba-A69F-13878B1FC66B")
+        private static readonly Guid SecondId = new Guid("41F8AC7C-A676-4A63-8F39-A023E223B544"); // TODO: old guid ("6593FE82-A00F-4de6-9516-D652FE28A3EA")
         private static readonly Guid ThirdId = new Guid("C207121C-B534-4764-9724-3E829E9C9F21");
 
         private UniquelyIdentifiableCache<Ordinal> cache;

@@ -11,9 +11,9 @@ namespace Allors.Database.Domain
 
     public partial class ShipmentStates
     {
-        private static readonly Guid NotShippedId = new Guid("FC38E48D-C8C4-4F26-A8F1-5D4E962B6F93");
-        private static readonly Guid PartiallyShippedId = new Guid("1801737F-2760-4600-9243-7E6BDD8A224D");
-        private static readonly Guid ShippedId = new Guid("04FAD96A-2B0F-4F07-ABB7-57657A34E422");
+        private static readonly Guid NotShippedId = new Guid("C74EBE0F-5A3E-4160-9A34-68DC2C69E8B6");
+        private static readonly Guid PartiallyShippedId = new Guid("5FF39A43-EFD8-4660-A7E8-60A519BF4C74");
+        private static readonly Guid ShippedId = new Guid("B9C74F0B-0FED-4AEF-B087-8062708DCF5F");
 
         private UniquelyIdentifiableCache<ShipmentState> cache;
 
