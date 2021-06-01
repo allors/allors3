@@ -40,6 +40,7 @@ partial class Build
         .DependsOn(DotnetAppsWorkspaceTest);
 
     private Target CiTypescriptTest => _ => _
+        .DependsOn(TypescriptInstall)
         .DependsOn(TypescriptTest);
 
     private Target CiDemosTest => _ => _
