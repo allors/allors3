@@ -27,7 +27,7 @@ namespace Tests.Workspace
                 new Pull
                 {
                     Extent = new Extent(this.M.Person)
-                },
+                }
             };
 
             var session = this.Workspace.CreateSession();

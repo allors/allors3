@@ -105,6 +105,18 @@ namespace Allors.Workspace.Adapters.Remote
             var syncResponse = await database.Sync(syncRequest);
             var securityRequest = database.SyncResponse(syncResponse);
 
+            foreach (var databaseObject in syncResponse.Objects)
+            {
+                if (!this.StrategyByWorkspaceId.TryGetValue(databaseObject.Id, out var strategy))
+                {
+                    _ = this.InstantiateDatabaseStrategy(databaseObject.Id);
+                }
+                else
+                {
+                    ((DatabaseOriginState)strategy.DatabaseOriginState).OnPulled();
+                }
+            }
+
             if (securityRequest != null)
             {
                 var securityResponse = await database.Security(securityRequest);

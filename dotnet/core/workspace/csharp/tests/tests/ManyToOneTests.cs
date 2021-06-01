@@ -27,8 +27,8 @@ namespace Tests.Workspace
             {
                 new Pull
                 {
-                    Extent = new Extent(this.M.Person),
-                },
+                    Extent = new Extent(this.M.Person)
+                }
             });
 
             var workspaceOrganisation1 = session1.Create<WorkspaceOrganisation>();
@@ -58,8 +58,8 @@ namespace Tests.Workspace
             {
                 new Pull
                 {
-                    Extent = new Extent(this.M.Person),
-                },
+                    Extent = new Extent(this.M.Person)
+                }
             });
 
             var workspaceOrganisation1 = session1.Create<WorkspaceOrganisation>();

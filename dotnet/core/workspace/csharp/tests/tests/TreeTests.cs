@@ -32,10 +32,10 @@ namespace Tests.Workspace
                     {
                         Select = new Select
                         {
-                            Include = this.M.C1.Nodes(v=>v.C1C2One2One.Node()),
-                        },
-                    },
-                },
+                            Include = this.M.C1.Nodes(v=>v.C1C2One2One.Node())
+                        }
+                    }
+                }
             };
 
             var result = await session.Pull(pull);

@@ -20,6 +20,5 @@ namespace Allors.Workspace.Adapters.Local
             this.DatabaseRecord = this.Session.Workspace.DatabaseConnection.GetRecord(this.Id);
             this.ChangedRoleByRelationType = null;
         }
-
     }
 }

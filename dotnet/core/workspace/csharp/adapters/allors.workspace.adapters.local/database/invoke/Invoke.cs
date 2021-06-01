@@ -52,16 +52,7 @@ namespace Allors.Workspace.Adapters.Local
                 foreach (var method in methods)
                 {
                     var error = this.Execute(method);
-                    if (!error)
-                    {
-                        var derivationResult = this.Derive();
-                        if (derivationResult.HasErrors)
-                        {
-                            error = true;
-                            this.AddDerivationErrors(derivationResult.Errors);
-                        }
-                    }
-
+                   
                     if (error)
                     {
                         this.Transaction.Rollback();
@@ -82,6 +73,7 @@ namespace Allors.Workspace.Adapters.Local
                 foreach (var method in methods)
                 {
                     error = this.Execute(method);
+                    
                     if (error)
                     {
                         break;

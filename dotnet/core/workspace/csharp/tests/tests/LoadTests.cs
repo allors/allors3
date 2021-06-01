@@ -25,7 +25,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C1),
+                Extent = new Extent(this.M.C1)
             };
 
             var result = await session.Pull(pull);
@@ -48,7 +48,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C1),
+                Extent = new Extent(this.M.C1)
             };
 
             var result = await session.Pull(pull);
@@ -87,7 +87,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C1),
+                Extent = new Extent(this.M.C1)
             };
 
             var result = await session.Pull(pull);

@@ -29,7 +29,7 @@ namespace Tests.Workspace
                 {
                     Extent = new Extent(this.M.C2)
                     {
-                        Predicate = new Equals(this.M.C2.Name) {Value = "c2C"},
+                        Predicate = new Equals(this.M.C2.Name) {Value = "c2C"}
                     },
                     Results = new[]
                     {
@@ -37,11 +37,11 @@ namespace Tests.Workspace
                         {
                             Select = new Select
                             {
-                                Include = new[] {new Node(this.M.C2.C1WhereC1C2One2Many)},
-                            },
-                        },
-                    },
-                },
+                                Include = new[] {new Node(this.M.C2.C1WhereC1C2One2Many)}
+                            }
+                        }
+                    }
+                }
             };
 
             var result = await session.Pull(pull);
@@ -69,7 +69,7 @@ namespace Tests.Workspace
                 {
                     Extent = new Extent(this.M.C2)
                     {
-                        Predicate = new Equals(this.M.C2.Name) {Value = "c2C"},
+                        Predicate = new Equals(this.M.C2.Name) {Value = "c2C"}
                     },
                     Results = new[]
                     {
@@ -77,11 +77,11 @@ namespace Tests.Workspace
                         {
                             Select = new Select
                             {
-                                Include = new[] {new Node(this.M.C2.C1WhereC1C2One2One),},
-                            },
-                        },
-                    },
-                },
+                                Include = new[] {new Node(this.M.C2.C1WhereC1C2One2One)}
+                            }
+                        }
+                    }
+                }
             };
 
             var result = await session.Pull(pull);

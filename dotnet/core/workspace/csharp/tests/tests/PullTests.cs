@@ -805,7 +805,7 @@ namespace Tests.Workspace
                     Operands = new IExtent[]
                     {
                         new Extent(m.C1){Predicate = new Equals(m.C1.Name) {Value = "c1A"}},
-                        new Extent(m.C1){Predicate = new Equals(m.C1.Name) {Value = "c1B"}},
+                        new Extent(m.C1){Predicate = new Equals(m.C1.Name) {Value = "c1B"}}
                     }
                 }
             };
@@ -864,8 +864,8 @@ namespace Tests.Workspace
                         Values = new object[]
                         {
                             new System.DateTime(2000, 1, 1, 0, 0, 4, DateTimeKind.Utc),
-                            new System.DateTime(2000, 1, 1, 0, 0, 6, DateTimeKind.Utc),
-                       }
+                            new System.DateTime(2000, 1, 1, 0, 0, 6, DateTimeKind.Utc)
+                        }
                     }
                 }
             };
@@ -921,7 +921,7 @@ namespace Tests.Workspace
                 {
                     Predicate = new GreaterThan(m.C1.C1AllorsDateTime)
                     {
-                        Value = new System.DateTime(2000, 1, 1, 0, 0, 4, DateTimeKind.Utc),
+                        Value = new System.DateTime(2000, 1, 1, 0, 0, 4, DateTimeKind.Utc)
                     }
                 }
             };
@@ -977,7 +977,7 @@ namespace Tests.Workspace
                 {
                     Predicate = new LessThan(m.C1.C1AllorsDateTime)
                     {
-                        Value = new System.DateTime(2000, 1, 1, 0, 0, 5, DateTimeKind.Utc),
+                        Value = new System.DateTime(2000, 1, 1, 0, 0, 5, DateTimeKind.Utc)
                     }
                 }
             };
@@ -1005,7 +1005,7 @@ namespace Tests.Workspace
                 {
                     Predicate = new Equals(m.C1.C1AllorsDateTime)
                     {
-                        Value = new System.DateTime(2000, 1, 1, 0, 0, 4, DateTimeKind.Utc),
+                        Value = new System.DateTime(2000, 1, 1, 0, 0, 4, DateTimeKind.Utc)
                     }
                 }
             };

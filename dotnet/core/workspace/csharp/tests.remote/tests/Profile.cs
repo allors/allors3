@@ -34,16 +34,16 @@ namespace Tests.Workspace.Remote
 
         public async Task InitializeAsync()
         {
+            var httpClient = new HttpClient { BaseAddress = new Uri(Url), Timeout = TimeSpan.FromMinutes(30)};
+            var response = await httpClient.GetAsync(SetupUrl);
+            Assert.True(response.IsSuccessStatusCode);
+
             var metaPopulation = new MetaBuilder().Build();
             var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Allors.Workspace.Domain.Person));
             var configuration = new Allors.Workspace.Adapters.Remote.Configuration("Default", metaPopulation, objectFactory);
-            var httpClient = new HttpClient() { BaseAddress = new Uri(Url) };
             this.Database = new DatabaseConnection(configuration, () => new WorkspaceContext(), httpClient, new WorkspaceIdGenerator(), new ArrayNumbers());
-
             this.Workspace = this.Database.CreateWorkspace();
 
-            var response = await this.Database.HttpClient.GetAsync(SetupUrl);
-            Assert.True(response.IsSuccessStatusCode);
             await this.Login("administrator");
         }
 

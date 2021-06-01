@@ -26,7 +26,7 @@ namespace Tests.Workspace
                 new Pull
                 {
                     Extent = new Extent(this.M.C1)
-                },
+                }
             };
 
             var session = this.Workspace.CreateSession();

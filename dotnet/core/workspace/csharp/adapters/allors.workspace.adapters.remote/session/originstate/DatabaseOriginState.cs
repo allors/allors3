@@ -85,6 +85,10 @@ namespace Allors.Workspace.Adapters.Remote
             return null;
         }
 
+        public void OnPulled() =>
+            // TODO: check for overwrites
+            this.DatabaseRecord = this.Session.Workspace.DatabaseConnection.GetRecord(this.Id);
+
         public void Reset()
         {
             this.DatabaseRecord = this.Session.Workspace.DatabaseConnection.GetRecord(this.Id);
