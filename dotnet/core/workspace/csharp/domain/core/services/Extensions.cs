@@ -11,11 +11,11 @@ namespace Allors.Workspace.Domain
 
     public static partial class SessionExtensions
     {
-        public static ISessionContext Context(this ISession @this) => ((ISessionContext)@this.Lifecycle);
+        public static ISessionContext Context(this ISession @this) => ((ISessionContext)@this.Services);
     }
 
     public static partial class WorkspaceExtensions
     {
-        public static IWorkspaceContext Context(this IWorkspace @this) => ((IWorkspaceContext)@this.Lifecycle);
+        public static IWorkspaceContext Context(this IWorkspace @this) => ((IWorkspaceContext)@this.Services);
     }
 }

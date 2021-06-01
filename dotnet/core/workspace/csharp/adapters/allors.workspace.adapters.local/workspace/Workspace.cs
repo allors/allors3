@@ -9,12 +9,12 @@ namespace Allors.Workspace.Adapters.Local
 
     public class Workspace : Adapters.Workspace
     {
-        public Workspace(DatabaseConnection database, IWorkspaceLifecycle lifecycle, INumbers numbers) : base(database, lifecycle, numbers, new WorkspaceIdGenerator()) => this.Lifecycle.OnInit(this);
+        public Workspace(DatabaseConnection database, IWorkspaceServices services, INumbers numbers) : base(database, services, numbers, new WorkspaceIdGenerator()) => this.Services.OnInit(this);
 
         public new DatabaseConnection DatabaseConnection => (DatabaseConnection)base.DatabaseConnection;
 
         public long UserId => this.DatabaseConnection.UserId;
 
-        public override ISession CreateSession() => new Session(this, this.Lifecycle.CreateSessionContext());
+        public override ISession CreateSession() => new Session(this, this.Services.CreateSessionServices());
     }
 }

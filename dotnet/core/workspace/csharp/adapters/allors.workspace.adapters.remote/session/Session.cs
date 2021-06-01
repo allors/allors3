@@ -19,7 +19,7 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class Session : Adapters.Session
     {
-        internal Session(Adapters.Workspace workspace, ISessionLifecycle sessionLifecycle) : base(workspace, sessionLifecycle) => this.Lifecycle.OnInit(this);
+        internal Session(Adapters.Workspace workspace, ISessionServices sessionServices) : base(workspace, sessionServices) => this.Services.OnInit(this);
 
         public new Workspace Workspace => (Workspace)base.Workspace;
 

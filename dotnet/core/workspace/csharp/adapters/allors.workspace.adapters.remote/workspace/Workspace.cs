@@ -9,10 +9,10 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class Workspace : Adapters.Workspace
     {
-        public Workspace(DatabaseConnection database, IWorkspaceLifecycle lifecycle, INumbers numbers, WorkspaceIdGenerator workspaceIdGenerator) : base(database, lifecycle, numbers, workspaceIdGenerator) => this.Lifecycle.OnInit(this);
+        public Workspace(DatabaseConnection database, IWorkspaceServices services, INumbers numbers, WorkspaceIdGenerator workspaceIdGenerator) : base(database, services, numbers, workspaceIdGenerator) => this.Services.OnInit(this);
 
         public new DatabaseConnection DatabaseConnection => (DatabaseConnection)base.DatabaseConnection;
 
-        public override ISession CreateSession() => new Session(this, this.Lifecycle.CreateSessionContext());
+        public override ISession CreateSession() => new Session(this, this.Services.CreateSessionServices());
     }
 }

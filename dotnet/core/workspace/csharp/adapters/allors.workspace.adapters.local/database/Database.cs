@@ -23,13 +23,13 @@ namespace Allors.Workspace.Adapters.Local
         private readonly IPermissionsCache permissionCache;
         private readonly ConcurrentDictionary<long, DatabaseRecord> recordsById;
 
-        private readonly Func<IWorkspaceLifecycle> lifecycleBuilder;
+        private readonly Func<IWorkspaceServices> servicesBuilder;
         private readonly Func<INumbers> numbersBuilder;
 
-        public DatabaseConnection(Configuration configuration, IDatabase database, Func<IWorkspaceLifecycle> lifecycleBuilder, Func<INumbers> numbersBuilder) : base(configuration)
+        public DatabaseConnection(Configuration configuration, IDatabase database, Func<IWorkspaceServices> servicesBuilder, Func<INumbers> numbersBuilder) : base(configuration)
         {
             this.Database = database;
-            this.lifecycleBuilder = lifecycleBuilder;
+            this.servicesBuilder = servicesBuilder;
             this.numbersBuilder = numbersBuilder;
 
             this.recordsById = new ConcurrentDictionary<long, DatabaseRecord>();
@@ -83,7 +83,7 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        public override IWorkspace CreateWorkspace() => new Workspace(this, this.lifecycleBuilder(), this.numbersBuilder());
+        public override IWorkspace CreateWorkspace() => new Workspace(this, this.servicesBuilder(), this.numbersBuilder());
 
         public override Adapters.DatabaseRecord GetRecord(long id)
         {

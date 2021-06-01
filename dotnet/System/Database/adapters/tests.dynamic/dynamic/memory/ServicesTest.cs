@@ -23,11 +23,11 @@ namespace Allors.Database.Adapters.Memory
 {
     using Meta;
 
-    public class LifeCycleTest : Adapters.LifeCycleTest
+    public class ServicesTest : Adapters.ServicesTest
     {
         private readonly Profile profile = new Profile();
 
-        public LifeCycleTest() => this.profile.Init();
+        public ServicesTest() => this.profile.Init();
 
         public override void Dispose() => this.profile.Dispose();
 

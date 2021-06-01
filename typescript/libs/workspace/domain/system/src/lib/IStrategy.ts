@@ -47,6 +47,4 @@ export interface IStrategy {
   getCompositeAssociation<T>(associationType: AssociationType): T;
 
   getCompositesAssociation<T>(associationType: AssociationType): T[];
-
-  reset(): void;
 }

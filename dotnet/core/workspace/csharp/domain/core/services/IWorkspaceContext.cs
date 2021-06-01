@@ -7,7 +7,7 @@ namespace Allors.Workspace.Domain
 {
     using Meta;
 
-    public partial interface IWorkspaceContext : IWorkspaceLifecycle
+    public partial interface IWorkspaceContext : IWorkspaceServices
     {
         M M { get; }
 

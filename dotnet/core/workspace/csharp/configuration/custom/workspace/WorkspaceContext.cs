@@ -32,7 +32,7 @@ namespace Allors.Workspace
         {
         }
 
-        public ISessionLifecycle CreateSessionContext() => new SessionContext();
+        public ISessionServices CreateSessionServices() => new SessionContext();
 
         private Rule[] CreateRules()
         {

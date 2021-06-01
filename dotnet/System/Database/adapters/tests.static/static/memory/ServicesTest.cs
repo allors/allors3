@@ -1,24 +1,30 @@
-// <copyright file="LifeCycleTest.cs" company="Allors bvba">
+// <copyright file="ServicesTest.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Database.Adapters.Npgsql
+namespace Allors.Database.Adapters.Memory
 {
+    using System;
     using Adapters;
     using Xunit;
 
-    public class LifeCycleTest : Adapters.LifeCycleTest, IClassFixture<Fixture<LifeCycleTest>>
+    public class ServicesTest : Adapters.ServicesTest, IDisposable
     {
-        private readonly Profile profile;
-
-        public LifeCycleTest() => this.profile = new Profile(this.GetType().Name);
+        private readonly Profile profile = new Profile();
 
         protected override IProfile Profile => this.profile;
 
+        [Fact]
+        public override void DifferentTransactions()
+        {
+        }
+
         public override void Dispose() => this.profile.Dispose();
 
-        protected override void SwitchDatabase() => this.profile.SwitchDatabase();
+        protected override void SwitchDatabase()
+        {
+        }
 
         protected override IDatabase CreatePopulation() => this.profile.CreateDatabase();
 

@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="LifeCycleTest.cs" company="Allors bvba">
+// <copyright file="ServicesTest.cs" company="Allors bvba">
 //   Copyright 2002-2009 Allors bvba.
 // Dual Licensed under
 //   a) the Lesser General Public Licence v3 (LGPL)
@@ -24,7 +24,7 @@ namespace Allors.Database.Adapters
     using Xunit;
     using DateTime = System.DateTime;
 
-    public abstract class LifeCycleTest : Test
+    public abstract class ServicesTest : Test
     {
         private readonly bool[] manyFlags = { false, true };
 

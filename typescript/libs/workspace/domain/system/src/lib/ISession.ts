@@ -32,6 +32,4 @@ export interface ISession {
   push(): Observable<IPushResult>;
 
   checkpoint(): IChangeSet;
-
-  reset(): void;
 }

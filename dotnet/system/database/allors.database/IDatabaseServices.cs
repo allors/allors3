@@ -9,7 +9,7 @@ namespace Allors.Database
     using Data;
 
     /// <summary>
-    /// The Database state's lifecycle.
+    /// The Database's services.
     /// </summary>
     public interface IDatabaseServices : IDisposable
     {

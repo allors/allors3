@@ -15,10 +15,10 @@ namespace Allors.Workspace.Adapters
     {
         private readonly Dictionary<IClass, ISet<Strategy>> strategiesByClass;
 
-        protected Session(Workspace workspace, ISessionLifecycle sessionLifecycle)
+        protected Session(Workspace workspace, ISessionServices sessionServices)
         {
             this.Workspace = workspace;
-            this.Lifecycle = sessionLifecycle;
+            this.Services = sessionServices;
 
             this.StrategyByWorkspaceId = new Dictionary<long, Strategy>();
             this.strategiesByClass = new Dictionary<IClass, ISet<Strategy>>();
@@ -28,10 +28,10 @@ namespace Allors.Workspace.Adapters
             this.PushToDatabaseTracker = new PushToDatabaseTracker();
             this.PushToWorkspaceTracker = new PushToWorkspaceTracker();
 
-            this.Lifecycle.OnInit(this);
+            this.Services.OnInit(this);
         }
 
-        public ISessionLifecycle Lifecycle { get; }
+        public ISessionServices Services { get; }
 
         IWorkspace ISession.Workspace => this.Workspace;
         public Workspace Workspace { get; }

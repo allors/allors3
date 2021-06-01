@@ -9,7 +9,7 @@ namespace Allors.Workspace
     {
         IDatabaseConnection DatabaseConnection { get; }
 
-        IWorkspaceLifecycle Lifecycle { get; }
+        IWorkspaceServices Services { get; }
 
         ISession CreateSession();
     }

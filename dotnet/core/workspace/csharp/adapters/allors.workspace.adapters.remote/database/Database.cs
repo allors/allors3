@@ -33,13 +33,13 @@ namespace Allors.Workspace.Adapters.Remote
         private readonly Dictionary<IClass, Dictionary<IOperandType, long>> executePermissionByOperandTypeByClass;
 
         private readonly WorkspaceIdGenerator workspaceIdGenerator;
-        private readonly Func<IWorkspaceLifecycle> lifecycleBuilder;
+        private readonly Func<IWorkspaceServices> servicesBuilder;
 
-        public DatabaseConnection(Configuration configuration, Func<IWorkspaceLifecycle> lifecycleBuilder, HttpClient httpClient, WorkspaceIdGenerator workspaceIdGenerator, INumbers numbers) : base(configuration)
+        public DatabaseConnection(Configuration configuration, Func<IWorkspaceServices> servicesBuilder, HttpClient httpClient, WorkspaceIdGenerator workspaceIdGenerator, INumbers numbers) : base(configuration)
         {
             this.HttpClient = httpClient;
             this.workspaceIdGenerator = workspaceIdGenerator;
-            this.lifecycleBuilder = lifecycleBuilder;
+            this.servicesBuilder = servicesBuilder;
             this.Numbers = numbers;
 
             this.HttpClient.DefaultRequestHeaders.Accept.Clear();
@@ -185,7 +185,7 @@ namespace Allors.Workspace.Adapters.Remote
                     .Select(v => v.Id).ToArray()
             };
 
-        public override IWorkspace CreateWorkspace() => new Workspace(this, this.lifecycleBuilder(), this.Numbers, this.workspaceIdGenerator);
+        public override IWorkspace CreateWorkspace() => new Workspace(this, this.servicesBuilder(), this.Numbers, this.workspaceIdGenerator);
 
         public override Adapters.DatabaseRecord GetRecord(long id)
         {

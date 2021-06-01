@@ -21,7 +21,7 @@ namespace Allors.Database
         IDatabase Database { get; }
 
         /// <summary>
-        /// The lifecycle for this transaction.
+        /// The services for this transaction.
         /// </summary>
         ITransactionServices Services { get; }
         

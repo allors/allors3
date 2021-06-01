@@ -13,10 +13,10 @@ namespace Allors.Workspace.Adapters
     {
         private readonly Dictionary<long, WorkspaceRecord> recordById;
 
-        protected Workspace(DatabaseConnection database, IWorkspaceLifecycle lifecycle, INumbers numbers, WorkspaceIdGenerator workspaceIdGenerator)
+        protected Workspace(DatabaseConnection database, IWorkspaceServices services, INumbers numbers, WorkspaceIdGenerator workspaceIdGenerator)
         {
             this.DatabaseConnection = database;
-            this.Lifecycle = lifecycle;
+            this.Services = services;
             this.WorkspaceIdGenerator = workspaceIdGenerator;
             this.Numbers = numbers;
 
@@ -29,7 +29,7 @@ namespace Allors.Workspace.Adapters
         IDatabaseConnection IWorkspace.DatabaseConnection => this.DatabaseConnection;
         public DatabaseConnection DatabaseConnection { get; }
 
-        public IWorkspaceLifecycle Lifecycle { get; }
+        public IWorkspaceServices Services { get; }
 
         public WorkspaceIdGenerator WorkspaceIdGenerator { get; }
 

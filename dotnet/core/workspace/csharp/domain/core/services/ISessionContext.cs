@@ -5,7 +5,7 @@
 
 namespace Allors.Workspace.Domain
 {
-    public partial interface ISessionContext : ISessionLifecycle
+    public partial interface ISessionContext : ISessionServices
     {
     }
 }
