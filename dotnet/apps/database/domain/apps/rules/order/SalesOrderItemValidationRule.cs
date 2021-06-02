@@ -49,17 +49,17 @@ namespace Allors.Database.Domain
 
                 if (@this.Part != null && @this.Part.InventoryItemKind.IsSerialised && @this.QuantityOrdered != 1)
                 {
-                    validation.AddError($"{@this} {this.M.SalesOrderItem.QuantityOrdered} {ErrorMessages.InvalidQuantity}");
+                    validation.AddError(@this, this.M.SalesOrderItem.QuantityOrdered, ErrorMessages.InvalidQuantity);
                 }
 
                 if (@this.Part != null && @this.Part.InventoryItemKind.IsNonSerialised && @this.QuantityOrdered == 0)
                 {
-                    validation.AddError($"{@this} {this.M.SalesOrderItem.QuantityOrdered} {ErrorMessages.InvalidQuantity}");
+                    validation.AddError(@this, this.M.SalesOrderItem.QuantityOrdered, ErrorMessages.InvalidQuantity);
                 }
 
                 if (@this.ExistInvoiceItemType && @this.InvoiceItemType.MaxQuantity.HasValue && @this.QuantityOrdered > @this.InvoiceItemType.MaxQuantity.Value)
                 {
-                    validation.AddError($"{@this} {this.M.SalesOrderItem.QuantityOrdered} {ErrorMessages.InvalidQuantity}");
+                    validation.AddError(@this, this.M.SalesOrderItem.QuantityOrdered, ErrorMessages.InvalidQuantity);
                 }
 
                 if (@this.ExistSalesOrderItemWhereOrderedWithFeature)
@@ -74,7 +74,7 @@ namespace Allors.Database.Domain
 
                 if (@this.ExistProduct && @this.ExistQuantityOrdered && @this.QuantityOrdered < @this.QuantityShipped)
                 {
-                    validation.AddError($"{@this} {this.M.SalesOrderItem.QuantityOrdered} {ErrorMessages.SalesOrderItemLessThanAlreadeyShipped}");
+                    validation.AddError(@this, this.M.SalesOrderItem.QuantityOrdered, ErrorMessages.SalesOrderItemLessThanAlreadeyShipped);
                 }
 
                 var isSubTotalItem = @this.ExistInvoiceItemType && (@this.InvoiceItemType.IsProductItem || @this.InvoiceItemType.IsPartItem);
@@ -83,14 +83,16 @@ namespace Allors.Database.Domain
                 {
                     if (@this.QuantityOrdered == 0)
                     {
-                        validation.AddError($"{@this} {this.M.SalesOrderItem.QuantityOrdered} QuantityOrdered is Required");
+                        // TODO: Move text to Resources
+                        validation.AddError(@this, this.M.SalesOrderItem.QuantityOrdered, "QuantityOrdered is Required");
                     }
                 }
                 else
                 {
                     if (@this.AssignedUnitPrice == 0)
                     {
-                        validation.AddError($"{@this} {this.M.SalesOrderItem.AssignedUnitPrice} Price is Required");
+                        // TODO: Move text to Resources
+                        validation.AddError(@this, this.M.SalesOrderItem.AssignedUnitPrice, "Price is Required");
                     }
                 }
 
@@ -101,7 +103,7 @@ namespace Allors.Database.Domain
 
                 if (@this.ExistSerialisedItem && @this.QuantityOrdered != 1)
                 {
-                    validation.AddError($"{@this}, {@this.Meta.QuantityOrdered}, {ErrorMessages.SerializedItemQuantity}");
+                    validation.AddError(@this, @this.Meta.QuantityOrdered, ErrorMessages.SerializedItemQuantity);
                 }
             }
         }

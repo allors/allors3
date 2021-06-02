@@ -11,7 +11,6 @@ namespace Allors.Database.Domain.Derivations.Rules
     using System.Linq;
     using System.Linq.Expressions;
     using Database.Data;
-    using Derivations.Rules;
     using Meta;
 
     public static class ICompositeExtensions

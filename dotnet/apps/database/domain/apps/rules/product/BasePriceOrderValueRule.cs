@@ -28,7 +28,7 @@ namespace Allors.Database.Domain
             {
                 if (@this.ExistOrderValue)
                 {
-                    validation.AddError($"{@this} {this.M.BasePrice.OrderValue} {ErrorMessages.BasePriceOrderValueNotAllowed}");
+                    validation.AddError(@this, this.M.BasePrice.OrderValue, ErrorMessages.BasePriceOrderValueNotAllowed);
                 }
             }
         }

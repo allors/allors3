@@ -7,7 +7,6 @@ namespace Allors.Database.Domain.Derivations.Errors
 {
     using System.Collections.Generic;
     using Database.Derivations;
-    using Derivations.Rules;
     using Meta;
 
     public abstract class DerivationError : IDerivationError
@@ -37,7 +36,7 @@ namespace Allors.Database.Domain.Derivations.Errors
             }
             catch
             {
-                this.message = this.GetType() + ": " + DerivationRelation.ToString(this.Relations);
+                this.message = this.GetType().Name + ": " + DerivationRelation.ToString(this.Relations);
             }
         }
 

@@ -36,7 +36,7 @@ namespace Allors.Database.Domain
                     var maxQuantity = @this.ShipmentItem.Quantity - @this.ShipmentItem.QuantityShipped;
                     if (@this.Quantity == 0 || @this.Quantity > maxQuantity)
                     {
-                        validation.AddError($"{@this}, {this.M.PackagingContent.Quantity}, {ErrorMessages.PackagingContentMaximum}");
+                        validation.AddError(@this, this.M.PackagingContent.Quantity, ErrorMessages.PackagingContentMaximum);
                     }
                 }
             }

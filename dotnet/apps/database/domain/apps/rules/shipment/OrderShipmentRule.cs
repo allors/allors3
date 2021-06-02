@@ -51,17 +51,17 @@ namespace Allors.Database.Domain
 
                         if (salesOrderItem.ExistReservedFromNonSerialisedInventoryItem && @this.Quantity > salesOrderItem.ReservedFromNonSerialisedInventoryItem.QuantityOnHand + quantityPicked)
                         {
-                            validation.AddError($"{@this}, {this.M.OrderShipment.Quantity}, {ErrorMessages.SalesOrderItemQuantityToShipNowNotAvailable}");
+                            validation.AddError(@this, this.M.OrderShipment.Quantity, ErrorMessages.SalesOrderItemQuantityToShipNowNotAvailable);
                         }
                         else if (@this.Quantity > salesOrderItem.QuantityOrdered)
                         {
-                            validation.AddError($"{@this}, {this.M.OrderShipment.Quantity}, {ErrorMessages.SalesOrderItemQuantityToShipNowIsLargerThanQuantityOrdered}");
+                            validation.AddError(@this, this.M.OrderShipment.Quantity, ErrorMessages.SalesOrderItemQuantityToShipNowIsLargerThanQuantityOrdered);
                         }
                         else
                         {
                             if (@this.Quantity > salesOrderItem.QuantityOrdered - salesOrderItem.QuantityShipped - pendingFromOthers + salesOrderItem.QuantityReturned + quantityPicked)
                             {
-                                validation.AddError($"{@this}, {this.M.OrderShipment.Quantity}, {ErrorMessages.SalesOrderItemQuantityToShipNowIsLargerThanQuantityRemaining}");
+                                validation.AddError(@this, this.M.OrderShipment.Quantity, ErrorMessages.SalesOrderItemQuantityToShipNowIsLargerThanQuantityRemaining);
                             }
                         }
                     }

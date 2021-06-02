@@ -40,7 +40,7 @@ namespace Allors.Database.Domain
 
                 if (@this.ExistSerialisedItem && @this.Quantity != 1)
                 {
-                    validation.AddError($"{@this}, {@this.Meta.Quantity}, {ErrorMessages.SerializedItemQuantity}");
+                    validation.AddError(@this, @this.Meta.Quantity, ErrorMessages.SerializedItemQuantity);
                 }
             }
         }

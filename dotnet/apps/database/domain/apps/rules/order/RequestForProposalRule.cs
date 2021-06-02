@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
                    && @this.CurrentVersion.ExistRecipient
                    && @this.Recipient != @this.CurrentVersion.Recipient)
                 {
-                    validation.AddError($"{@this} {this.M.RequestForProposal.Recipient} {ErrorMessages.InternalOrganisationChanged}");
+                    validation.AddError(@this, this.M.RequestForProposal.Recipient, ErrorMessages.InternalOrganisationChanged);
                 }
             }
         }

@@ -29,7 +29,7 @@ namespace Allors.Database.Domain
                 var totalInvoiceItemAmountPaid = @this?.PaymentApplicationsWhereInvoiceItem.Sum(v => v.AmountApplied);
                 if (totalInvoiceItemAmountPaid > @this.TotalIncVat)
                 {
-                    cycle.Validation.AddError($"{@this} {this.M.PaymentApplication.AmountApplied} {ErrorMessages.PaymentApplicationNotLargerThanInvoiceItemAmount}");
+                    cycle.Validation.AddError(@this, this.M.PaymentApplication.AmountApplied, ErrorMessages.PaymentApplicationNotLargerThanInvoiceItemAmount);
                 }
             }
         }

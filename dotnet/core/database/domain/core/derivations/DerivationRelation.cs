@@ -8,7 +8,6 @@ namespace Allors.Database.Domain.Derivations
     using System.Text;
     using Database.Derivations;
     using Meta;
-    using Derivations.Rules;
 
     public class DerivationRelation : IDerivationRelation
     {
@@ -84,15 +83,13 @@ namespace Allors.Database.Domain.Derivations
 
                 return this.Association.Strategy.Class.Name;
             }
-            else
-            {
-                if (this.RelationType != null)
-                {
-                    return this.Role.Strategy.Class.Name + "." + this.RelationType.AssociationType.Name;
-                }
 
-                return this.Role.Strategy.Class.Name;
+            if (this.RelationType != null)
+            {
+                return this.Role.Strategy.Class.Name + "." + this.RelationType.AssociationType.Name;
             }
+
+            return this.Role.Strategy.Class.Name;
         }
     }
 }

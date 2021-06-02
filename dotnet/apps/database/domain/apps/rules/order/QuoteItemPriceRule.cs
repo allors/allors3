@@ -104,7 +104,8 @@ namespace Allors.Database.Domain
                     {
                         if (!unitBasePrice.HasValue)
                         {
-                            validation.AddError($"{@this}, {this.M.QuoteItem.UnitBasePrice} No BasePrice with a Price");
+                            // TODO: Move text to Resources
+                            validation.AddError(@this, this.M.QuoteItem.UnitBasePrice, "No BasePrice with a Price");
                             return;
                         }
 
@@ -141,7 +142,7 @@ namespace Allors.Database.Domain
 
                     if (!@this.ExistUnitPrice)
                     {
-                        validation.AddError($"{@this} {@this.Meta.UnitPrice} {ErrorMessages.UnitPriceRequired}");
+                        validation.AddError(@this, @this.Meta.UnitPrice, ErrorMessages.UnitPriceRequired);
                     }
 
                     foreach (QuoteItem featureItem in @this.QuotedWithFeatures)

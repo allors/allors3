@@ -35,7 +35,7 @@ namespace Allors.Database.Domain
 
                 if (@this.ExistInvoiceItemType && isSubTotalItem && @this.Quantity <= 0)
                 {
-                    validation.AddError($"{@this}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}");
+                    validation.AddError(@this, this.M.SalesInvoiceItem.Quantity, ErrorMessages.InvalidQuantity);
                 }
             }
         }

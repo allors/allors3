@@ -31,7 +31,7 @@ namespace Allors.Database.Domain
                    && @this.CurrentVersion.ExistBilledTo
                    && @this.BilledTo != @this.CurrentVersion.BilledTo)
                 {
-                    validation.AddError($"{@this} {this.M.PurchaseInvoice.BilledTo} {ErrorMessages.InternalOrganisationChanged}");
+                    validation.AddError(@this, this.M.PurchaseInvoice.BilledTo, ErrorMessages.InternalOrganisationChanged);
                 }
 
                 if (!@this.ExistInvoiceNumber && @this.ExistBilledTo)
@@ -48,7 +48,7 @@ namespace Allors.Database.Domain
                 {
                     if (!@this.BilledTo.ActiveSuppliers.Contains(supplier))
                     {
-                        cycle.Validation.AddError($"{@this} {@this.Meta.BilledFrom} {ErrorMessages.PartyIsNotASupplier}");
+                        cycle.Validation.AddError(@this, @this.Meta.BilledFrom, ErrorMessages.PartyIsNotASupplier);
                     }
                 }
 

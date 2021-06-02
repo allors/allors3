@@ -34,7 +34,7 @@ namespace Allors.Database.Domain
                     extent.Filter.AddEquals(@this.M.WorkEffortAssignmentRate.RateType, @this.RateType);
                     if (extent.Count > 1)
                     {
-                        validation.AddError($"{@this}, {@this.Meta.RateType}, {ErrorMessages.WorkEffortRateError}");
+                        validation.AddError(@this, @this.Meta.RateType, ErrorMessages.WorkEffortRateError);
                     }
                 }
             }

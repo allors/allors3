@@ -10,6 +10,7 @@ namespace Allors.Database.Domain.Tests
     using System.Linq;
     using Allors.Database.Derivations;
     using Allors.Database.Domain.TestPopulation;
+    using Derivations.Errors;
     using Resources;
     using Xunit;
 
@@ -636,7 +637,7 @@ namespace Allors.Database.Domain.Tests
         //        .WithPartiallyShip(false)
         //        .Build();
 
-            //this.Transaction.Derive();
+        //this.Transaction.Derive();
 
         //    var salesOrderItem = new SalesOrderItemBuilder(this.Transaction)
         //        .WithProduct(this.good)
@@ -1912,8 +1913,10 @@ namespace Allors.Database.Domain.Tests
 
             item.ReservedFromNonSerialisedInventoryItem = nonSerialisedInventoryItem;
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SalesOrderItem.ReservedFromSerialisedInventoryItem\nSalesOrderItem.ReservedFromNonSerialisedInventoryItem"));
+            var error = (DerivationErrorAtMostOne)this.Transaction.Derive(false).Errors.Single();
+            Assert.Equal(2, error.RoleTypes.Length);
+            Assert.Contains(this.M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem, error.RoleTypes);
+            Assert.Contains(this.M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem, error.RoleTypes);
         }
 
         [Fact]
@@ -1982,6 +1985,13 @@ namespace Allors.Database.Domain.Tests
 
             var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SalesOrderItem.AssignedUnitPrice\nSalesOrderItem.DiscountAdjustments\nSalesOrderItem.SurchargeAdjustments"));
+
+            var error = (DerivationErrorAtMostOne)this.Transaction.Derive(false).Errors.Single();
+            Assert.Equal(3, error.RoleTypes.Length);
+            Assert.Contains(this.M.SalesOrderItem.AssignedUnitPrice, error.RoleTypes);
+            Assert.Contains(this.M.SalesOrderItem.DiscountAdjustments, error.RoleTypes);
+            Assert.Contains(this.M.SalesOrderItem.SurchargeAdjustments, error.RoleTypes);
+
         }
 
         [Fact]
@@ -2021,8 +2031,8 @@ namespace Allors.Database.Domain.Tests
 
             item.ReservedFromNonSerialisedInventoryItem = anotherNonSerialisedInventoryItem;
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.ReservedFromNonSerialisedInventoryItem));
+            var error = this.Transaction.Derive(false).Errors.Single();
+            Assert.Contains(ErrorMessages.ReservedFromNonSerialisedInventoryItem, error.Message);
         }
 
         [Fact]
@@ -3256,7 +3266,7 @@ namespace Allors.Database.Domain.Tests
                 .WithPrice(1)
                 .WithFromDate(this.Transaction.Now().AddDays(-2))
                 .Build();
-            
+
             var order = new SalesOrderBuilder(this.Transaction).WithOrderDate(this.Transaction.Now().AddDays(-1)).WithAssignedVatRegime(new VatRegimes(this.Transaction).Exempt).Build();
             this.Transaction.Derive(false);
 

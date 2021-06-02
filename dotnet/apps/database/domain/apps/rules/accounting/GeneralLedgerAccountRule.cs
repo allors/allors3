@@ -33,7 +33,7 @@ namespace Allors.Database.Domain
 
                     if (generalLedgerAccounts.Count() > 1)
                     {
-                        validation.AddError($"{@this}, {@this.Meta.ReferenceNumber}, {ErrorMessages.AccountNumberUniqueWithinChartOfAccounts}");
+                        validation.AddError(@this, @this.Meta.ReferenceNumber, ErrorMessages.AccountNumberUniqueWithinChartOfAccounts);
                     }
                 }
             }

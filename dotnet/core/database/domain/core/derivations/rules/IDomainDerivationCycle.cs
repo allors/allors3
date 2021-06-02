@@ -7,7 +7,6 @@
 namespace Allors.Database.Domain.Derivations.Rules
 {
     using Database.Derivations;
-    using Derivations.Rules;
 
     public interface IDomainDerivationCycle
     {

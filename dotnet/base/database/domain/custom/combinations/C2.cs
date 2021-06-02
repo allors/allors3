@@ -5,8 +5,6 @@
 
 namespace Allors.Database.Domain
 {
-    using System.Collections.Generic;
-
     public partial class C2
     {
         public override string ToString() => this.Name;

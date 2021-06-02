@@ -47,7 +47,7 @@ namespace Allors.Database.Domain
 
                     if (exchangeRate == null)
                     {
-                        validation.AddError($"{@this}, {@this.Meta.AssignedCurrency}, {ErrorMessages.CurrencyNotAllowed}");
+                        validation.AddError(@this, @this.Meta.AssignedCurrency, ErrorMessages.CurrencyNotAllowed);
                     }
                 }
             }

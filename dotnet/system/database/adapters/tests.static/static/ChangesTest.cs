@@ -24,7 +24,7 @@ namespace Allors.Database.Adapters
         public abstract void Dispose();
 
         [Fact]
-        public void UnitRole()
+        public void StringRole()
         {
             foreach (var init in this.Inits)
             {
@@ -214,6 +214,199 @@ namespace Allors.Database.Adapters
                 Assert.False(roles.Contains(b.Id));
             }
         }
+
+        [Fact]
+        public void BooleanRole()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Transaction.Database.Context().M;
+
+                var a = (C1)this.Transaction.Create(m.C1);
+                var c = this.Transaction.Create(m.C3);
+                this.Transaction.Commit();
+
+                a = (C1)this.Transaction.Instantiate(a);
+                var b = C2.Create(this.Transaction);
+                _ = this.Transaction.Instantiate(c);
+
+                a.RemoveC1AllorsBoolean();
+                b.RemoveC2AllorsBoolean();
+
+                var changeSet = this.Transaction.Checkpoint();
+
+                var associations = changeSet.Associations;
+                var roles = changeSet.Roles;
+
+                Assert.Empty(associations);
+                Assert.Empty(roles);
+
+                a.C1AllorsBoolean = true;
+                b.C2AllorsBoolean = false;
+
+                changeSet = this.Transaction.Checkpoint();
+
+                associations = changeSet.Associations;
+                roles = changeSet.Roles;
+
+                Assert.Equal(2, associations.Count);
+                Assert.Contains(a.Id, associations.ToArray());
+                Assert.Contains(b.Id, associations.ToArray());
+
+                Assert.Equal(true, a.C1AllorsBoolean);
+                Assert.Equal(false, b.C2AllorsBoolean);
+
+                _ = Assert.Single(changeSet.GetRoleTypes(a.Id));
+                Assert.Equal(m.C1.C1AllorsBoolean, changeSet.GetRoleTypes(a.Id).First());
+
+                _ = Assert.Single(changeSet.GetRoleTypes(b.Id));
+                Assert.Equal(m.C2.C2AllorsBoolean, changeSet.GetRoleTypes(b.Id).First());
+
+                Assert.True(associations.Contains(a.Id));
+                Assert.True(associations.Contains(b.Id));
+                Assert.False(associations.Contains(c.Id));
+
+                Assert.False(roles.Contains(a.Id));
+                Assert.False(roles.Contains(b.Id));
+                Assert.False(roles.Contains(c.Id));
+
+                a.C1AllorsBoolean = true;
+                b.C2AllorsBoolean = false;
+
+                changeSet = this.Transaction.Checkpoint();
+
+                associations = changeSet.Associations;
+                roles = changeSet.Roles;
+
+                Assert.Empty(associations);
+                Assert.Empty(roles);
+
+                a.C1AllorsBoolean = false;
+                b.C2AllorsBoolean = true;
+
+                changeSet = this.Transaction.Checkpoint();
+
+                associations = changeSet.Associations;
+                roles = changeSet.Roles;
+
+                Assert.Equal(2, associations.Count);
+                Assert.True(associations.Contains(a.Id));
+                Assert.True(associations.Contains(a.Id));
+
+                _ = Assert.Single(changeSet.GetRoleTypes(a.Id));
+                Assert.Equal(m.C1.C1AllorsBoolean, changeSet.GetRoleTypes(a.Id).First());
+
+                _ = Assert.Single(changeSet.GetRoleTypes(b.Id));
+                Assert.Equal(m.C2.C2AllorsBoolean, changeSet.GetRoleTypes(b.Id).First());
+
+                Assert.True(associations.Contains(a.Id));
+                Assert.True(associations.Contains(b.Id));
+                Assert.False(associations.Contains(c.Id));
+
+                Assert.False(roles.Contains(a.Id));
+                Assert.False(roles.Contains(b.Id));
+                Assert.False(roles.Contains(c.Id));
+
+                changeSet = this.Transaction.Checkpoint();
+
+                associations = changeSet.Associations;
+                roles = changeSet.Roles;
+
+                Assert.Equal(0, associations.Count);
+                Assert.Empty(changeSet.GetRoleTypes(a.Id));
+                Assert.Empty(changeSet.GetRoleTypes(b.Id));
+
+                Assert.False(associations.Contains(a.Id));
+                Assert.False(associations.Contains(b.Id));
+                Assert.False(associations.Contains(c.Id));
+
+                Assert.False(roles.Contains(a.Id));
+                Assert.False(roles.Contains(b.Id));
+                Assert.False(roles.Contains(c.Id));
+
+                a.RemoveC1AllorsBoolean();
+                b.RemoveC2AllorsBoolean();
+
+                changeSet = this.Transaction.Checkpoint();
+
+                associations = changeSet.Associations;
+                roles = changeSet.Roles;
+
+                Assert.Equal(2, associations.Count);
+                Assert.True(associations.Contains(a.Id));
+                Assert.True(associations.Contains(a.Id));
+
+                _ = Assert.Single(changeSet.GetRoleTypes(a.Id));
+                Assert.Equal(m.C1.C1AllorsBoolean, changeSet.GetRoleTypes(a.Id).First());
+
+                _ = Assert.Single(changeSet.GetRoleTypes(b.Id));
+                Assert.Equal(m.C2.C2AllorsBoolean, changeSet.GetRoleTypes(b.Id).First());
+
+                Assert.True(associations.Contains(a.Id));
+                Assert.True(associations.Contains(b.Id));
+                Assert.False(associations.Contains(c.Id));
+
+                Assert.False(roles.Contains(a.Id));
+                Assert.False(roles.Contains(b.Id));
+                Assert.False(roles.Contains(c.Id));
+
+                changeSet = this.Transaction.Checkpoint();
+
+                associations = changeSet.Associations;
+                roles = changeSet.Roles;
+
+                Assert.Equal(0, associations.Count);
+                Assert.Empty(changeSet.GetRoleTypes(a.Id));
+                Assert.Empty(changeSet.GetRoleTypes(b.Id));
+
+                Assert.False(associations.Contains(a.Id));
+                Assert.False(associations.Contains(b.Id));
+                Assert.False(associations.Contains(c.Id));
+
+                Assert.False(roles.Contains(a.Id));
+                Assert.False(roles.Contains(b.Id));
+
+                this.Transaction.Rollback();
+
+                changeSet = this.Transaction.Checkpoint();
+
+                associations = changeSet.Associations;
+                roles = changeSet.Roles;
+
+                Assert.Equal(0, associations.Count);
+                Assert.Empty(changeSet.GetRoleTypes(a.Id));
+                Assert.Empty(changeSet.GetRoleTypes(b.Id));
+
+                Assert.False(associations.Contains(a.Id));
+                Assert.False(associations.Contains(b.Id));
+                Assert.False(associations.Contains(c.Id));
+
+                Assert.False(roles.Contains(a.Id));
+                Assert.False(roles.Contains(b.Id));
+
+                a.C1AllorsBoolean = true;
+
+                this.Transaction.Commit();
+
+                changeSet = this.Transaction.Checkpoint();
+
+                associations = changeSet.Associations;
+                roles = changeSet.Roles;
+
+                Assert.Equal(0, associations.Count);
+                Assert.Empty(changeSet.GetRoleTypes(a.Id));
+                Assert.Empty(changeSet.GetRoleTypes(b.Id));
+
+                Assert.False(associations.Contains(a.Id));
+                Assert.False(associations.Contains(b.Id));
+                Assert.False(associations.Contains(c.Id));
+
+                Assert.False(roles.Contains(a.Id));
+                Assert.False(roles.Contains(b.Id));
+            }
+        }
+
 
         [Fact]
         public void One2OneRole()

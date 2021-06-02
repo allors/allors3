@@ -9,13 +9,12 @@
 namespace Allors.Database.Domain.Derivations.Errors
 {
     using Database.Derivations;
-    using Derivations.Rules;
     using Meta;
     using Resources;
 
     public class DerivationErrorNotAllowed : DerivationError
     {
-        public DerivationErrorNotAllowed(IValidation validation, DerivationRelation relation)
+        public DerivationErrorNotAllowed(IValidation validation, IDerivationRelation relation)
             : base(validation, new[] { relation }, DomainErrors.DerivationErrorNotAllowed)
         {
         }

@@ -153,7 +153,7 @@ namespace Allors.Database.Adapters.Memory
             var previousRole = this.GetInternalizedUnitRole(roleType);
             role = roleType.Normalize(role);
 
-            if (role == previousRole)
+            if (Equals(role, previousRole))
             {
                 return;
             }

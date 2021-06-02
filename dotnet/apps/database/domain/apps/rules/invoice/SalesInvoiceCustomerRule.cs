@@ -47,14 +47,14 @@ namespace Allors.Database.Domain
                     && @this.ExistBilledFrom
                     && !@this.BillToCustomer.AppsIsActiveCustomer(@this.BilledFrom, @this.InvoiceDate))
                 {
-                    validation.AddError($"{@this} {this.M.SalesInvoice.BillToCustomer} {ErrorMessages.PartyIsNotACustomer}");
+                    validation.AddError(@this, this.M.SalesInvoice.BillToCustomer, ErrorMessages.PartyIsNotACustomer);
                 }
 
                 if (@this.ExistShipToCustomer
                     && @this.ExistBilledFrom
                     && !@this.ShipToCustomer.AppsIsActiveCustomer(@this.BilledFrom, @this.InvoiceDate))
                 {
-                    validation.AddError($"{@this} {this.M.SalesInvoice.ShipToCustomer} {ErrorMessages.PartyIsNotACustomer}");
+                    validation.AddError(@this, this.M.SalesInvoice.ShipToCustomer, ErrorMessages.PartyIsNotACustomer);
                 }
 
                 @this.PreviousBillToCustomer = @this.BillToCustomer;

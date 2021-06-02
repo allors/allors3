@@ -8,6 +8,8 @@ namespace Allors.Database.Domain
 {
     public partial class Organisation
     {
+        public void CustomOnPostDerive(ObjectOnPostDerive _) => this.PostDeriveTrigger = true;
+
         public void CustomToggleCanWrite(OrganisationToggleCanWrite method)
         {
             if (this.DeniedPermissions.Count != 0)
@@ -28,10 +30,7 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void CustomJustDoIt(OrganisationJustDoIt method)
-        {
-            this.JustDidIt = true;
-        }
+        public void CustomJustDoIt(OrganisationJustDoIt _) => this.JustDidIt = true;
 
         public override string ToString() => this.Name;
     }

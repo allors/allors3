@@ -29,7 +29,7 @@ namespace Allors.Database.Domain
             {
                 if (@this.ExistAssignmentRates)
                 {
-                    validation.AddError($"{@this}, {@this.Meta.AssignmentRates}, {ErrorMessages.WorkEffortRateError}");
+                    validation.AddError(@this, @this.Meta.AssignmentRates, ErrorMessages.WorkEffortRateError);
                 }
             }
         }

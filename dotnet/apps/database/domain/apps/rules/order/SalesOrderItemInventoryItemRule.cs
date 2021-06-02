@@ -28,7 +28,6 @@ namespace Allors.Database.Domain
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
-            var transaction = cycle.Transaction;
 
             foreach (var @this in matches.Cast<SalesOrderItem>())
             {
@@ -36,7 +35,7 @@ namespace Allors.Database.Domain
                      && @this.ExistPreviousReservedFromNonSerialisedInventoryItem
                     && !Equals(@this.ReservedFromNonSerialisedInventoryItem, @this.PreviousReservedFromNonSerialisedInventoryItem))
                 {
-                    validation.AddError($"{@this} {@this.Meta.ReservedFromNonSerialisedInventoryItem} {ErrorMessages.ReservedFromNonSerialisedInventoryItem}");
+                    validation.AddError(@this, @this.Meta.ReservedFromNonSerialisedInventoryItem, ErrorMessages.ReservedFromNonSerialisedInventoryItem);
                 }
 
                 var salesOrder = @this.SalesOrderWhereSalesOrderItem;

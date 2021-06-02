@@ -6,7 +6,6 @@
 namespace Allors.Database.Domain
 {
     using System;
-    using System.Collections.Concurrent;
     using Meta;
     using Domain;
 

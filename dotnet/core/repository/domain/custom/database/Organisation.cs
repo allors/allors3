@@ -142,6 +142,18 @@ namespace Allors.Repository
         [Derived]
         [Workspace(Default)]
         public bool JustDidItDerived { get; set; }
+        
+        #region Allors
+        [Id("3F73377A-C2F5-4560-B493-B6F23B69F2DA")]
+        #endregion
+        [Required]
+        public bool PostDeriveTrigger { get; set; }
+
+        #region Allors
+        [Id("A05EAA74-39A5-4613-B727-EAEA48416299")]
+        #endregion
+        [Required]
+        public bool PostDeriveTriggered { get; set; }
 
         [Id("1869873F-F2F0-4D03-A0F9-7DC73491C117")]
         [Workspace(Default)]

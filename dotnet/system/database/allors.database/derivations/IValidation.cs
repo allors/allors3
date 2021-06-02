@@ -14,13 +14,13 @@ namespace Allors.Database.Derivations
 
         IDerivationError[] Errors { get; }
 
-        void AddError(string error);
-
         void AddError(IDerivationError derivationError);
 
         void AddError(IObject association, IRoleType roleType, string errorMessage, params object[] messageParam);
 
         void AddError(IObject role, IAssociationType associationType, string errorMessage, params object[] messageParam);
+
+        void AddError(string error);
 
         void AssertExists(IObject association, IRoleType roleType);
 

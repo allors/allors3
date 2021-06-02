@@ -28,7 +28,8 @@ namespace Allors.Database.Domain
             {
                 if (@this.ExistFromCurrency && @this.ExistToCurrency && @this.FromCurrency.Equals(@this.ToCurrency))
                 {
-                    validation.AddError($"{@this}, {@this.FromCurrency}, Currencies can not be same");
+                    // TODO: Move text to Resources
+                    validation.AddError(@this, @this.Meta.FromCurrency, "Currencies can not be same");
                 }
             }
         }

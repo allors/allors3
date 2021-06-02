@@ -43,7 +43,7 @@ namespace Allors.Database.Domain
                     && v.SerialNumber.Equals(@this.SerialNumber)).ToArray();
                 if (doubles?.Length > 1)
                 {
-                    validation.AddError($"{@this} {@this.Meta.SerialNumber} {ErrorMessages.SameSerialNumber}");
+                    validation.AddError(@this, @this.Meta.SerialNumber, ErrorMessages.SameSerialNumber);
                 }
 
                 var characteristicsToDelete = @this.SerialisedItemCharacteristics.ToList();

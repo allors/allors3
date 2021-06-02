@@ -8,7 +8,6 @@ namespace Allors.Database.Domain.Derivations
 {
     using System;
     using Database.Derivations;
-    using Derivations.Rules;
 
     public interface IDerivation
     {

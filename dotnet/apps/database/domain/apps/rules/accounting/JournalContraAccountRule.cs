@@ -31,7 +31,7 @@ namespace Allors.Database.Domain
                     && @this.CurrentVersion.ExistContraAccount
                     && @this.ContraAccount != @this.CurrentVersion.ContraAccount)
                 {
-                    validation.AddError($"{@this} {this.M.Journal.ContraAccount} {ErrorMessages.ContraAccountChanged}");
+                    validation.AddError(@this, this.M.Journal.ContraAccount, ErrorMessages.ContraAccountChanged);
                 }
             }
         }

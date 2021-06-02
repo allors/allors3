@@ -67,8 +67,9 @@ namespace Allors.Database.Domain
 
                 if (@this.Quantity < 0 || @this.Quantity > 1)
                 {
+                    // TODO: Move text to Resources
                     var message = "Invalid transaction";
-                    cycle.Validation.AddError($"{@this} {@this.Meta.Quantity} {message}");
+                    cycle.Validation.AddError(@this, @this.Meta.Quantity, message);
                 }
             }
         }

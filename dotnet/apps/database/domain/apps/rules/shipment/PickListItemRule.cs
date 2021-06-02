@@ -28,7 +28,7 @@ namespace Allors.Database.Domain
             {
                 if (@this.Quantity > 0 && @this.QuantityPicked > @this.Quantity)
                 {
-                    cycle.Validation.AddError($"{@this}, {this.M.PickListItem.QuantityPicked}, {ErrorMessages.PickListItemQuantityMoreThanAllowed}");
+                    cycle.Validation.AddError(@this, this.M.PickListItem.QuantityPicked, ErrorMessages.PickListItemQuantityMoreThanAllowed);
                 }
 
                 if (@this.QuantityPicked > 0 && @this.ExistPickListWherePickListItem && @this.PickListWherePickListItem.PickListState.IsPicked)

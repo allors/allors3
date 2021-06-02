@@ -39,7 +39,7 @@ namespace Allors.Database.Domain
 
                 if (@this.QuantityOrdered < @this.QuantityPendingShipment || @this.QuantityOrdered < @this.QuantityShipped)
                 {
-                    validation.AddError($"{@this} {this.M.SalesOrderItem.QuantityOrdered} {ErrorMessages.SalesOrderItemQuantityToShipNowIsLargerThanQuantityRemaining}");
+                    validation.AddError(@this, this.M.SalesOrderItem.QuantityOrdered, ErrorMessages.SalesOrderItemQuantityToShipNowIsLargerThanQuantityRemaining);
                 }
             }
         }

@@ -31,13 +31,13 @@ namespace Allors.Database.Domain
                 {
                     if (!Regex.IsMatch(@this.Bic, "^([a-zA-Z]){4}([a-zA-Z]){2}([0-9a-zA-Z]){2}([0-9a-zA-Z]{3})?$"))
                     {
-                        validation.AddError($"{@this}, {@this.Bic}, {ErrorMessages.NotAValidBic}");
+                        validation.AddError(@this, @this.Meta.Bic, ErrorMessages.NotAValidBic);
                     }
 
                     var country = new Countries(@this.Strategy.Transaction).FindBy(@this.M.Country.IsoCode, @this.Bic.Substring(4, 2));
                     if (country == null)
                     {
-                        validation.AddError($"{@this}, {@this.Bic}, {ErrorMessages.NotAValidBic}");
+                        validation.AddError(@this, @this.Meta.Bic, ErrorMessages.NotAValidBic);
                     }
                 }
             }

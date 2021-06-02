@@ -74,7 +74,7 @@ namespace Allors.Database.Domain
 
                 if (inventoryItem is NonSerialisedInventoryItem nonserialisedInventoryItem && nonserialisedInventoryItem.QuantityOnHand < adjustmentQuantity)
                 {
-                    validation.AddError($"{@this}, {@this.M.NonSerialisedInventoryItem.QuantityOnHand}, {ErrorMessages.InsufficientStock}");
+                    validation.AddError(@this, @this.M.NonSerialisedInventoryItem.QuantityOnHand, ErrorMessages.InsufficientStock);
                 }
             }
 

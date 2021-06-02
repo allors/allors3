@@ -29,7 +29,7 @@ namespace Allors.Database.Domain
             {
                 if (!@this.CostCenterAccount && @this.CostCenterRequired)
                 {
-                    validation.AddError($"{@this}, {@this.Meta.CostCenterRequired}, {ErrorMessages.NotACostCenterAccount}");
+                    validation.AddError(@this, @this.Meta.CostCenterRequired, ErrorMessages.NotACostCenterAccount);
                 }
             }
         }

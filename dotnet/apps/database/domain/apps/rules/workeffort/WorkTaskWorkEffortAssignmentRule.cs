@@ -50,9 +50,9 @@ namespace Allors.Database.Domain
                         {
                             if (@this.TakenBy?.RequireExistingWorkEffortPartyAssignment == true)
                             {
-                                var message = $"No Work Effort Party Assignment matches Worker: {worker}, Facility: {facility}" +
-                                    $", Work Effort: {@this}, From: {from}, Through {through}";
-                                validation.AddError($"{@this}, {@this.M.WorkEffort.WorkEffortPartyAssignmentsWhereAssignment}, {message}");
+                                // TODO: Move text to Resources
+                                var message = $"No Work Effort Party Assignment matches Worker: {worker}, Facility: {facility}" + $", Work Effort: {@this}, From: {from}, Through {through}";
+                                validation.AddError(@this, @this.M.WorkEffort.WorkEffortPartyAssignmentsWhereAssignment, message);
                             }
                             else if (worker != null) // Sync a new WorkEffortPartyAssignment
                             {

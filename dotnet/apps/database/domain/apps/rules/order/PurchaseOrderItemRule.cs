@@ -46,18 +46,18 @@ namespace Allors.Database.Domain
 
                     if (@this.QuantityOrdered != 1)
                     {
-                        validation.AddError($"{@this} {this.M.PurchaseOrderItem.QuantityOrdered} {ErrorMessages.InvalidQuantity}");
+                        validation.AddError(@this, this.M.PurchaseOrderItem.QuantityOrdered, ErrorMessages.InvalidQuantity);
                     }
                 }
 
                 if (!@this.ExistPart && @this.QuantityOrdered != 1)
                 {
-                    validation.AddError($"{@this} {this.M.PurchaseOrderItem.QuantityOrdered} {ErrorMessages.InvalidQuantity}");
+                    validation.AddError(@this, this.M.PurchaseOrderItem.QuantityOrdered, ErrorMessages.InvalidQuantity);
                 }
 
                 if (@this.ExistPart && @this.Part.InventoryItemKind.IsNonSerialised && @this.QuantityOrdered == 0)
                 {
-                    validation.AddError($"{@this} {this.M.PurchaseOrderItem.QuantityOrdered} {ErrorMessages.InvalidQuantity}");
+                    validation.AddError(@this, this.M.PurchaseOrderItem.QuantityOrdered, ErrorMessages.InvalidQuantity);
                 }
 
                 var purchaseOrder = @this.PurchaseOrderWherePurchaseOrderItem;

@@ -10,7 +10,6 @@ namespace Allors.Database.Domain.Derivations.Rules.Default
     using System.Linq;
     using Database.Derivations;
     using Derivations.Rules;
-    using Rules;
     using Object = Domain.Object;
 
     public class DefaultDerivation : IDerivation
@@ -216,6 +215,8 @@ namespace Allors.Database.Domain.Derivations.Rules.Default
                         }
 
                         this.PostDeriveAccumulatedChangeSet = new AccumulatedChangeSet();
+
+                        changeSet = this.Transaction.Checkpoint();
                     }
                 }
             }

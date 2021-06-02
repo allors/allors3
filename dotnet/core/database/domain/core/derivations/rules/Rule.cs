@@ -8,7 +8,6 @@ namespace Allors.Database.Domain.Derivations.Rules
 {
     using System;
     using System.Collections.Generic;
-    using Derivations.Rules;
     using Meta;
 
     public abstract partial class Rule : IRule

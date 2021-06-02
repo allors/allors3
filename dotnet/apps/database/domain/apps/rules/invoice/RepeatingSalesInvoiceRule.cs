@@ -33,7 +33,7 @@ namespace Allors.Database.Domain
                 {
                     if (!@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Transaction).Month) && !@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Transaction).Week))
                     {
-                        validation.AddError($"{@this} {this.M.RepeatingSalesInvoice.Frequency} {ErrorMessages.FrequencyNotSupported}");
+                        validation.AddError(@this, this.M.RepeatingSalesInvoice.Frequency, ErrorMessages.FrequencyNotSupported);
                     }
 
                     if (@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Transaction).Week) && !@this.ExistDayOfWeek)
@@ -52,7 +52,7 @@ namespace Allors.Database.Domain
                     {
                         if (!@this.NextExecutionDate.DayOfWeek.ToString().Equals(@this.DayOfWeek.Name))
                         {
-                            validation.AddError($"{@this} {this.M.RepeatingSalesInvoice.DayOfWeek} {ErrorMessages.DateDayOfWeek}");
+                            validation.AddError(@this, this.M.RepeatingSalesInvoice.DayOfWeek, ErrorMessages.DateDayOfWeek);
                         }
                     }
                 }

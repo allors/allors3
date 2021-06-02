@@ -10,7 +10,6 @@ namespace Allors.Database.Domain
     using System.Linq;
     using Meta;
     using Derivations.Rules;
-    using Derivations.Rules;
 
     public class UserNormalizedUserEmailRule : Rule
     {

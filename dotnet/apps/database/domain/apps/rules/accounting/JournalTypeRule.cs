@@ -31,7 +31,7 @@ namespace Allors.Database.Domain
                     && @this.CurrentVersion.ExistJournalType
                     && @this.JournalType != @this.CurrentVersion.JournalType)
                 {
-                    validation.AddError($"{@this} {this.M.Journal.JournalType} {ErrorMessages.JournalTypeChanged}");
+                    validation.AddError(@this, this.M.Journal.JournalType, ErrorMessages.JournalTypeChanged);
                 }
             }
         }

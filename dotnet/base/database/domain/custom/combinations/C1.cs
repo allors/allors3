@@ -5,8 +5,6 @@
 
 namespace Allors.Database.Domain
 {
-    using System.Collections.Generic;
-
     public partial class C1
     {
         public void CustomSum(C1Sum method) => method.Result = method.A + method.B;

@@ -35,26 +35,26 @@ namespace Allors.Database.Domain
                     if (Regex.IsMatch(iban, @"\W"))
                     {
                         // contains chars other than (a-zA-Z0-9)
-                        validation.AddError($"{@this}, {@this.Meta.Iban}, {ErrorMessages.IbanIllegalCharacters}");
+                        validation.AddError(@this, @this.Meta.Iban, ErrorMessages.IbanIllegalCharacters);
                     }
 
                     if (!Regex.IsMatch(iban, @"^\D\D\d\d.+"))
                     {
                         // first chars are letter letter digit digit
-                        validation.AddError($"{@this}, {@this.Meta.Iban}, {ErrorMessages.IbanStructuralFailure}");
+                        validation.AddError(@this, @this.Meta.Iban, ErrorMessages.IbanStructuralFailure);
                     }
 
                     if (Regex.IsMatch(iban, @"^\D\D00.+|^\D\D01.+|^\D\D99.+"))
                     {
                         // check digit are 00 or 01 or 99
-                        validation.AddError($"{@this}, {@this.Meta.Iban}, {ErrorMessages.IbanCheckDigitsError}");
+                        validation.AddError(@this, @this.Meta.Iban, ErrorMessages.IbanCheckDigitsError);
                     }
 
                     var country = new Countries(@this.Strategy.Transaction).FindBy(this.M.Country.IsoCode, @this.Iban.Substring(0, 2));
 
                     if (country == null || !country.ExistIbanRegex || !country.ExistIbanLength)
                     {
-                        validation.AddError($"{@this}, {@this.Meta.Iban}, {ErrorMessages.IbanValidationUnavailable}");
+                        validation.AddError(@this, @this.Meta.Iban, ErrorMessages.IbanValidationUnavailable);
                     }
 
                     if (country != null && country.ExistIbanRegex && country.ExistIbanLength)
@@ -62,13 +62,13 @@ namespace Allors.Database.Domain
                         if (iban.Length != country.IbanLength)
                         {
                             // fits length to country
-                            validation.AddError($"{@this}, {@this.Meta.Iban}, {ErrorMessages.IbanLengthFailure}");
+                            validation.AddError(@this, @this.Meta.Iban, ErrorMessages.IbanLengthFailure);
                         }
 
                         if (!Regex.IsMatch(iban.Remove(0, 4), country.IbanRegex))
                         {
                             // check country specific structure
-                            validation.AddError($"{@this}, {@this.Meta.Iban}, {ErrorMessages.IbanStructuralFailure}");
+                            validation.AddError(@this, @this.Meta.Iban, ErrorMessages.IbanStructuralFailure);
                         }
                     }
 
@@ -85,23 +85,23 @@ namespace Allors.Database.Domain
                         var modifiedIban = iban.ToUpper().Substring(4) + iban.Substring(0, 4);
                         modifiedIban = Regex.Replace(modifiedIban, @"\D", m => (m.Value[0] - 55).ToString(CultureInfo.InvariantCulture));
 
-                        var remainer = 0;
+                        var remainder = 0;
                         while (modifiedIban.Length >= 7)
                         {
-                            remainer = int.Parse(remainer + modifiedIban.Substring(0, 7)) % 97;
+                            remainder = int.Parse(remainder + modifiedIban.Substring(0, 7)) % 97;
                             modifiedIban = modifiedIban.Substring(7);
                         }
 
-                        remainer = int.Parse(remainer + modifiedIban) % 97;
+                        remainder = int.Parse(remainder + modifiedIban) % 97;
 
-                        if (remainer != 1)
+                        if (remainder != 1)
                         {
-                            validation.AddError($"{@this}, {@this.Meta.Iban}, {ErrorMessages.IbanIncorrect}");
+                            validation.AddError(@this, @this.Meta.Iban, ErrorMessages.IbanIncorrect);
                         }
                     }
                     catch (Exception)
                     {
-                        validation.AddError($"{@this}, {@this.Meta.Iban}, {ErrorMessages.IbanIncorrect}");
+                        validation.AddError(@this, @this.Meta.Iban, ErrorMessages.IbanIncorrect);
                     }
                 }
             }

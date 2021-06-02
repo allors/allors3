@@ -25,6 +25,7 @@ namespace Allors.Database.Domain
                 new PersonGreetingRule(m),
                 new PersonOwningRule(m),
                 new OrganisationJustDidItRule(m),
+                new OrganisationPostDeriveRule(m),
 
                 // Validation
                 new RoleOne2OneRule(m),

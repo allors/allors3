@@ -10,7 +10,6 @@ namespace Allors.Database.Domain.Derivations.Rules.Default
     using System.Linq;
     using Derivations.Rules;
     using Meta;
-    using Rules;
 
     public class Engine
     {

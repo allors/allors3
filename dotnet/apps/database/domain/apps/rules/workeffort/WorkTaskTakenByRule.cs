@@ -32,7 +32,7 @@ namespace Allors.Database.Domain
                     && @this.CurrentVersion.ExistTakenBy
                     && @this.TakenBy != @this.CurrentVersion.TakenBy)
                 {
-                    validation.AddError($"{@this} {this.M.WorkTask.TakenBy} {ErrorMessages.InternalOrganisationChanged}");
+                    validation.AddError(@this, this.M.WorkTask.TakenBy, ErrorMessages.InternalOrganisationChanged);
                 }
 
                 if (!@this.ExistWorkEffortNumber && @this.ExistTakenBy)

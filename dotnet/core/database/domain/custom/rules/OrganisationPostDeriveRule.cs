@@ -11,19 +11,19 @@ namespace Allors.Database.Domain
     using Meta;
     using Derivations.Rules;
 
-    public class UserNormalizedUserNameRule : Rule
+    public class OrganisationPostDeriveRule : Rule
     {
-        public UserNormalizedUserNameRule(MetaPopulation m) : base(m, new Guid("FD6F30D8-FF50-44FA-8863-343D2B08783B")) =>
+        public OrganisationPostDeriveRule(MetaPopulation m) : base(m, new Guid("755E60CF-1D5E-4D24-8FDE-396FF7C3030B")) =>
             this.Patterns = new Pattern[]
             {
-                m.User.RolePattern(v=>v.UserName),
+                new RolePattern<Meta.Organisation>(m.Organisation, v => v.PostDeriveTrigger),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var @this in matches.Cast<User>())
+            foreach (var organisation in matches.Cast<Organisation>())
             {
-                @this.NormalizedUserName = Users.Normalize(@this.UserName);
+                organisation.PostDeriveTriggered = organisation.PostDeriveTrigger;
             }
         }
     }

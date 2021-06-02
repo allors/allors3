@@ -31,7 +31,7 @@ namespace Allors.Database.Domain
                     && @this.CurrentVersion.ExistIssuer
                     && @this.Issuer != @this.CurrentVersion.Issuer)
                 {
-                    validation.AddError($"{@this} {this.M.Proposal.Issuer} {ErrorMessages.InternalOrganisationChanged}");
+                    validation.AddError(@this, this.M.Proposal.Issuer, ErrorMessages.InternalOrganisationChanged);
                 }
 
                 @this.WorkItemDescription = $"ProductQuote: {@this.QuoteNumber} [{@this.Issuer?.PartyName}]";

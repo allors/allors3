@@ -8,7 +8,6 @@ namespace Allors.Database.Domain
 {
     using System;
     using Database.Derivations;
-    using Derivations.Rules;
     using Derivations;
 
     public static partial class ITransactionExtensions

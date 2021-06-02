@@ -40,7 +40,7 @@ namespace Allors.Database.Domain
                     && @this.CurrentVersion.ExistOrderedBy
                     && @this.OrderedBy != @this.CurrentVersion.OrderedBy)
                 {
-                    validation.AddError($"{@this} {@this.M.PurchaseOrder.OrderedBy} {ErrorMessages.InternalOrganisationChanged}");
+                    validation.AddError(@this, @this.M.PurchaseOrder.OrderedBy, ErrorMessages.InternalOrganisationChanged);
                 }
 
                 if (!@this.ExistOrderNumber)
@@ -56,13 +56,13 @@ namespace Allors.Database.Domain
                 if (@this.TakenViaSupplier is Organisation supplier
                     && !@this.OrderedBy.AppsIsActiveSupplier(@this.TakenViaSupplier, @this.OrderDate))
                 {
-                    validation.AddError($"{@this} {@this.Meta.TakenViaSupplier} {ErrorMessages.PartyIsNotASupplier}");
+                    validation.AddError(@this, @this.Meta.TakenViaSupplier, ErrorMessages.PartyIsNotASupplier);
                 }
 
                 if (@this.TakenViaSubcontractor is Organisation subcontractor
                     && !@this.OrderedBy.AppsIsActiveSubcontractor(@this.TakenViaSubcontractor, @this.OrderDate))
                 {
-                    validation.AddError($"{@this} {@this.Meta.TakenViaSubcontractor} {ErrorMessages.PartyIsNotASubcontractor}");
+                    validation.AddError(@this, @this.Meta.TakenViaSubcontractor, ErrorMessages.PartyIsNotASubcontractor);
                 }
 
                 validation.AssertExistsAtMostOne(@this, @this.Meta.TakenViaSupplier, @this.Meta.TakenViaSubcontractor);

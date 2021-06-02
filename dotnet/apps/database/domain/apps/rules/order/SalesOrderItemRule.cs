@@ -32,7 +32,7 @@ namespace Allors.Database.Domain
                 // laten staan
                 if (@this.ExistPreviousProduct && !@this.PreviousProduct.Equals(@this.Product))
                 {
-                    validation.AddError($"{@this} {this.M.SalesOrderItem.Product} {ErrorMessages.SalesOrderItemProductChangeNotAllowed}");
+                    validation.AddError(@this, this.M.SalesOrderItem.Product, ErrorMessages.SalesOrderItemProductChangeNotAllowed);
                 }
                 else
                 {

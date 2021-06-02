@@ -6,7 +6,6 @@
 
 namespace Allors.Database.Domain.Derivations.Rules
 {
-    using Derivations.Rules;
     using Meta;
 
     public class AssociationPattern : Pattern

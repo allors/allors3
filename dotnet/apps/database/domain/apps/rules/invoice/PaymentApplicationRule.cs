@@ -29,7 +29,7 @@ namespace Allors.Database.Domain
             {
                 if (@this.ExistPaymentWherePaymentApplication && @this.AmountApplied > @this.PaymentWherePaymentApplication.Amount)
                 {
-                    validation.AddError($"{@this} {this.M.PaymentApplication.AmountApplied} {ErrorMessages.PaymentApplicationNotLargerThanPaymentAmount}");
+                    validation.AddError(@this, this.M.PaymentApplication.AmountApplied, ErrorMessages.PaymentApplicationNotLargerThanPaymentAmount);
                 }
 
                 var totalInvoiceAmountPaid = @this.Invoice?.PaymentApplicationsWhereInvoice.Sum(v => v.AmountApplied);
@@ -40,7 +40,7 @@ namespace Allors.Database.Domain
 
                 if (@this.ExistInvoice && totalInvoiceAmountPaid > @this.Invoice.TotalIncVat)
                 {
-                    validation.AddError($"{@this} {this.M.PaymentApplication.AmountApplied} {ErrorMessages.PaymentApplicationNotLargerThanInvoiceAmount}");
+                    validation.AddError(@this, this.M.PaymentApplication.AmountApplied, ErrorMessages.PaymentApplicationNotLargerThanInvoiceAmount);
                 }
             }
         }

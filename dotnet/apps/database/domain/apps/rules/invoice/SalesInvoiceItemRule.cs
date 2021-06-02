@@ -49,12 +49,12 @@ namespace Allors.Database.Domain
 
                 if (@this.Part != null && @this.Part.InventoryItemKind.IsSerialised && @this.Quantity != 1)
                 {
-                    validation.AddError($"{@this}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}");
+                    validation.AddError(@this, this.M.SalesInvoiceItem.Quantity, ErrorMessages.InvalidQuantity);
                 }
 
                 if (@this.Part != null && @this.Part.InventoryItemKind.IsNonSerialised && @this.Quantity == 0)
                 {
-                    validation.AddError($"{@this}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}");
+                    validation.AddError(@this, this.M.SalesInvoiceItem.Quantity, ErrorMessages.InvalidQuantity);
                 }
             }
         }

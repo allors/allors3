@@ -30,32 +30,37 @@ namespace Allors.Database.Domain
                 {
                     if (@this.Quantity != 1 && @this.Quantity != -1 && @this.Quantity != 0)
                     {
+                        // TODO: Move text to Resources
                         var message = "Serialised Inventory Items only accept Quantities of -1, 0, and 1.";
-                        validation.AddError($"{@this} {@this.Meta.Quantity} {message}");
+                        validation.AddError(@this, @this.Meta.Quantity, message);
                     }
 
                     if (!@this.ExistSerialisedItem)
                     {
+                        // TODO: Move text to Resources
                         var message = "The Serial Number is required for Inventory Item Transactions involving Serialised Inventory Items.";
-                        validation.AddError($"{@this} {@this.Meta.SerialisedItem} {message}");
+                        validation.AddError(@this, @this.Meta.SerialisedItem, message);
                     }
 
                     if (@this.Reason.IncreasesQuantityOnHand == true && (@this.Quantity < -1 || @this.Quantity > 1))
                     {
+                        // TODO: Move text to Resources
                         var message = "Invalid transaction";
-                        validation.AddError($"{@this} {@this.Meta.Reason} {message}");
+                        validation.AddError(@this, @this.Meta.Reason, message);
                     }
 
                     if (@this.Reason.IncreasesQuantityOnHand == false && (@this.Quantity < -1 || @this.Quantity > 1))
                     {
+                        // TODO: Move text to Resources
                         var message = "Invalid transaction";
-                        validation.AddError($"{@this} {@this.Meta.Reason} {message}");
+                        validation.AddError(@this, @this.Meta.Reason, message);
                     }
 
                     if (@this.SerialisedItem?.SerialisedInventoryItemsWhereSerialisedItem.Sum(v => v.Quantity) > 1 )
                     {
+                        // TODO: Move text to Resources
                         var message = "Serialised item already in inventory";
-                        validation.AddError($"{@this} {@this.Meta.SerialisedItem} {message}");
+                        validation.AddError(@this, @this.Meta.SerialisedItem, message);
                     }
                 }
             }

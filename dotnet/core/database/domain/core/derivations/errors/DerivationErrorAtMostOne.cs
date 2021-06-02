@@ -6,12 +6,11 @@
 namespace Allors.Database.Domain.Derivations.Errors
 {
     using Database.Derivations;
-    using Derivations.Rules;
     using Resources;
 
     public class DerivationErrorAtMostOne : DerivationError
     {
-        public DerivationErrorAtMostOne(IValidation validation, DerivationRelation[] relations)
+        public DerivationErrorAtMostOne(IValidation validation, IDerivationRelation[] relations)
             : base(validation, relations, DomainErrors.DerivationErrorAtMostOne)
         {
         }

@@ -36,17 +36,17 @@ namespace Allors.Database.Domain
                     && @this.CurrentVersion.ExistTakenBy
                     && @this.TakenBy != @this.CurrentVersion.TakenBy)
                 {
-                    validation.AddError($"{@this} {this.M.SalesOrder.TakenBy} {ErrorMessages.InternalOrganisationChanged}");
+                    validation.AddError(@this, this.M.SalesOrder.TakenBy, ErrorMessages.InternalOrganisationChanged);
                 }
 
                 if (@this.BillToCustomer?.AppsIsActiveCustomer(@this.TakenBy, @this.OrderDate) == false)
                 {
-                    validation.AddError($"{@this} {this.M.SalesOrder.BillToCustomer} {ErrorMessages.PartyIsNotACustomer}");
+                    validation.AddError(@this, this.M.SalesOrder.BillToCustomer, ErrorMessages.PartyIsNotACustomer);
                 }
 
                 if (@this.ShipToCustomer?.AppsIsActiveCustomer(@this.TakenBy, @this.OrderDate) == false)
                 {
-                    validation.AddError($"{@this} {this.M.SalesOrder.ShipToCustomer} {ErrorMessages.PartyIsNotACustomer}");
+                    validation.AddError(@this, this.M.SalesOrder.ShipToCustomer, ErrorMessages.PartyIsNotACustomer);
                 }
 
                 if (@this.SalesOrderState.IsInProcess)

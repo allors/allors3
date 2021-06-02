@@ -40,7 +40,8 @@ namespace Allors.Database.Domain
                     if (primaryAncestors.Contains(primaryAncestor))
                     {
                         var cyclic = string.Join(" -> ", primaryAncestors.Append(primaryAncestor).Select(v => v.Name));
-                        validation.AddError($"{@this} {@this.Meta.PrimaryParent} Cycle detected in " + cyclic);
+                        // TODO: Move text to Resources
+                        validation.AddError(@this, @this.Meta.PrimaryParent, "Cycle detected in " + cyclic);
                         break;
                     }
 
@@ -59,7 +60,8 @@ namespace Allors.Database.Domain
                     if (children.Any(v => descendants.Contains(v)))
                     {
                         var cyclic = string.Join(" -> ", descendants.Union(children).Select(v => v.Name));
-                        validation.AddError($"{@this} {@this.Meta.Children} Cycle detected in " + cyclic);
+                        // TODO: Move text to Resources
+                        validation.AddError(@this, @this.Meta.Children, "Cycle detected in " + cyclic);
                         break;
                     }
 

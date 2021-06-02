@@ -28,7 +28,7 @@ namespace Allors.Database.Domain
             {
                 if (@this.ExistOrderQuantityBreak)
                 {
-                    validation.AddError($"{@this} { this.M.BasePrice.OrderQuantityBreak} {ErrorMessages.BasePriceOrderQuantityBreakNotAllowed}");
+                    validation.AddError(@this,  this.M.BasePrice.OrderQuantityBreak, ErrorMessages.BasePriceOrderQuantityBreakNotAllowed);
                 }
             }
         }
