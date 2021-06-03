@@ -20,7 +20,7 @@ namespace Allors.Database.Adapters.Memory
         public Dictionary<IRoleType, Strategy> OriginalCompositeRoleByRoleType { get; private set; }
 
         public Dictionary<IRoleType, Strategy[]> OriginalCompositesRoleByRoleType { get; private set; }
-        
+
         public void OnChangingUnitRole(IRoleType roleType, object previousRole)
         {
             this.OriginalUnitRoleByRoleType ??= new Dictionary<IRoleType, object>();
@@ -47,7 +47,7 @@ namespace Allors.Database.Adapters.Memory
 
             if (!this.OriginalCompositesRoleByRoleType.ContainsKey(roleType))
             {
-                this.OriginalCompositesRoleByRoleType.Add(roleType, previousRoles.ToArray());
+                this.OriginalCompositesRoleByRoleType.Add(roleType, previousRoles?.ToArray());
             }
         }
     }
