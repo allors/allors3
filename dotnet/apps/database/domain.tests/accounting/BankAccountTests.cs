@@ -7,7 +7,10 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Database.Derivations;
+    using Derivations.Errors;
+    using Meta;
     using Resources;
 
     using Xunit;
@@ -195,7 +198,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenBankAccount_WhenValidatingIban_ThenInvalidIbanResultsInValidationError()
         {
-            var bankAccount=  new BankAccountBuilder(this.Transaction).WithIban("TR330006100519716457841326").Build();
+            var bankAccount = new BankAccountBuilder(this.Transaction).WithIban("TR330006100519716457841326").Build();
 
             var expectedErrorMessage = $"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanIncorrect}";
 
@@ -237,10 +240,15 @@ namespace Allors.Database.Domain.Tests
 
             new OwnBankAccountBuilder(this.Transaction).WithBankAccount(bankAccount).Build();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertExists: BankAccount.Bank"));
-            Assert.Contains(errors, e => e.Message.Equals("AssertExists: BankAccount.Currency"));
-            Assert.Contains(errors, e => e.Message.Equals("AssertExists: BankAccount.NameOnAccount"));
+            var validation = this.Transaction.Derive(false);
+
+            var errors = validation.Errors.Cast<DerivationErrorRequired>().ToArray();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.BankAccount.Bank,
+                this.M.BankAccount.Currency,
+                this.M.BankAccount.NameOnAccount
+            }, errors.SelectMany(v => v.RoleTypes));
         }
     }
 }

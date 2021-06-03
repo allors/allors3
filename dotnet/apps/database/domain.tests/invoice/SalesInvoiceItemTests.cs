@@ -8,10 +8,25 @@ namespace Allors.Database.Domain.Tests
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using TestPopulation;
     using Database.Derivations;
+    using Derivations.Errors;
+    using Meta;
     using Resources;
     using Xunit;
+    using BasePrice = Domain.BasePrice;
+    using City = Domain.City;
+    using Colour = Domain.Colour;
+    using NonUnifiedGood = Domain.NonUnifiedGood;
+    using Organisation = Domain.Organisation;
+    using Part = Domain.Part;
+    using Permission = Domain.Permission;
+    using PostalAddress = Domain.PostalAddress;
+    using SalesInvoice = Domain.SalesInvoice;
+    using Singleton = Domain.Singleton;
+    using SupplierOffering = Domain.SupplierOffering;
+    using VatRegime = Domain.VatRegime;
 
     public class SalesInvoiceItemTests : DomainTest, IClassFixture<Fixture>
     {
@@ -2004,8 +2019,12 @@ namespace Allors.Database.Domain.Tests
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithPart(part).WithProduct(product).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.SalesInvoiceItem.Product,
+                this.M.SalesInvoiceItem.Part,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -2019,8 +2038,12 @@ namespace Allors.Database.Domain.Tests
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithProductFeature(colour).WithProduct(product).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.SalesInvoiceItem.Product,
+                this.M.SalesInvoiceItem.ProductFeatures,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -2034,8 +2057,12 @@ namespace Allors.Database.Domain.Tests
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithProductFeature(colour).WithSerialisedItem(serialisedItem).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.StartsWith("AssertExistsAtMostOne")));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.SalesInvoiceItem.SerialisedItem,
+                this.M.SalesInvoiceItem.ProductFeatures,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -2049,8 +2076,12 @@ namespace Allors.Database.Domain.Tests
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithPart(part).WithSerialisedItem(serialisedItem).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.StartsWith("AssertExistsAtMostOne")));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.SalesInvoiceItem.SerialisedItem,
+                this.M.SalesInvoiceItem.Part,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -2063,8 +2094,11 @@ namespace Allors.Database.Domain.Tests
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithSerialisedItem(serialisedItem).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.StartsWith("AssertExists: ")));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorRequired>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.SalesInvoiceItem.NextSerialisedItemAvailability,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]

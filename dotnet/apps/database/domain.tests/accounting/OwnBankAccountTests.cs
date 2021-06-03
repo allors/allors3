@@ -7,7 +7,10 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Allors.Database.Derivations;
+    using Derivations.Errors;
+    using Meta;
     using Xunit;
 
     public class OwnBankAccountTests : DomainTest, IClassFixture<Fixture>
@@ -196,8 +199,12 @@ namespace Allors.Database.Domain.Tests
 
             this.InternalOrganisation.DefaultCollectionMethod = ownBankAccount;
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.StartsWith("AssertAtLeastOne: OwnBankAccount.GeneralLedgerAccount\nOwnBankAccount.Journal"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtLeastOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.OwnBankAccount.GeneralLedgerAccount,
+                this.M.OwnBankAccount.Journal,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -208,8 +215,12 @@ namespace Allors.Database.Domain.Tests
 
             ownBankAccount.GeneralLedgerAccount = new OrganisationGlAccountBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: OwnBankAccount.GeneralLedgerAccount\nOwnBankAccount.Journal"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.Cash.GeneralLedgerAccount,
+                this.M.Cash.Journal,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -220,8 +231,12 @@ namespace Allors.Database.Domain.Tests
 
             ownBankAccount.Journal = new JournalBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: OwnBankAccount.GeneralLedgerAccount\nOwnBankAccount.Journal"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.Cash.GeneralLedgerAccount,
+                this.M.Cash.Journal,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
     }
 

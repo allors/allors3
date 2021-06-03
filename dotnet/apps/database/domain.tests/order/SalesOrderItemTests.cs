@@ -13,6 +13,8 @@ namespace Allors.Database.Domain.Tests
     using Derivations.Errors;
     using Resources;
     using Xunit;
+    using IRoleType = Meta.IRoleType;
+    using MetaPopulation = Meta.MetaPopulation;
 
     public class SalesOrderItemTests : DomainTest, IClassFixture<Fixture>
     {
@@ -1595,8 +1597,11 @@ namespace Allors.Database.Domain.Tests
 
             item.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Equals("AssertExists: SalesOrderItem.NextSerialisedItemAvailability")));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorRequired>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.SalesOrderItem.NextSerialisedItemAvailability,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -1610,8 +1615,11 @@ namespace Allors.Database.Domain.Tests
 
             item.RemoveNextSerialisedItemAvailability();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Equals("AssertExists: SalesOrderItem.NextSerialisedItemAvailability")));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorRequired>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.SalesOrderItem.NextSerialisedItemAvailability,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -1749,8 +1757,11 @@ namespace Allors.Database.Domain.Tests
 
             item.AddOrderedWithFeature(new SalesOrderItemBuilder(this.Transaction).Build());
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Equals("AssertExists: SalesOrderItem.ProductFeature")));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorRequired>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.SalesOrderItem.ProductFeature,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -1763,21 +1774,26 @@ namespace Allors.Database.Domain.Tests
 
             item.AddOrderedWithFeature(new SalesOrderItemBuilder(this.Transaction).WithProduct(product).Build());
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Equals("AssertNotExists: SalesOrderItem.Product")));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorNotAllowed>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.SalesOrderItem.Product,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
         public void ChangedProductFeatureValidationError()
         {
-            var item = new SalesOrderItemBuilder(this.Transaction)
-                .Build();
+            var item = new SalesOrderItemBuilder(this.Transaction).Build();
             this.Transaction.Derive(false);
 
             item.ProductFeature = new ColourBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Equals("AssertNotExists: SalesOrderItem.ProductFeature")));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorNotAllowed>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.SalesOrderItem.ProductFeature,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -1839,8 +1855,12 @@ namespace Allors.Database.Domain.Tests
 
             item.ProductFeature = new ColourBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SalesOrderItem.Product\nSalesOrderItem.ProductFeature"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.SalesOrderItem.Product,
+                this.M.SalesOrderItem.ProductFeature,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -1855,8 +1875,12 @@ namespace Allors.Database.Domain.Tests
 
             item.Product = product;
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SalesOrderItem.Product\nSalesOrderItem.ProductFeature"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.SalesOrderItem.Product,
+                this.M.SalesOrderItem.ProductFeature,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -1871,8 +1895,12 @@ namespace Allors.Database.Domain.Tests
 
             item.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SalesOrderItem.SerialisedItem\nSalesOrderItem.ProductFeature"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.SalesOrderItem.SerialisedItem,
+                this.M.SalesOrderItem.ProductFeature,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -1887,8 +1915,12 @@ namespace Allors.Database.Domain.Tests
 
             item.ProductFeature = new ColourBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SalesOrderItem.SerialisedItem\nSalesOrderItem.ProductFeature"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.SalesOrderItem.SerialisedItem,
+                this.M.SalesOrderItem.ProductFeature,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -1941,8 +1973,12 @@ namespace Allors.Database.Domain.Tests
 
             item.ReservedFromSerialisedInventoryItem = serialisedInventoryItem;
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SalesOrderItem.ReservedFromSerialisedInventoryItem\nSalesOrderItem.ReservedFromNonSerialisedInventoryItem"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.SalesOrderItem.ReservedFromSerialisedInventoryItem,
+                this.M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -1955,8 +1991,15 @@ namespace Allors.Database.Domain.Tests
 
             item.AddDiscountAdjustment(new DiscountAdjustmentBuilder(this.Transaction).Build());
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SalesOrderItem.AssignedUnitPrice\nSalesOrderItem.DiscountAdjustments\nSalesOrderItem.SurchargeAdjustments"));
+            var validation = this.Transaction.Derive(false);
+
+            var error = (DerivationErrorAtMostOne)validation.Errors.Single();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.SalesOrderItem.AssignedUnitPrice,
+                this.M.SalesOrderItem.DiscountAdjustments,
+                this.M.SalesOrderItem.SurchargeAdjustments
+            }, error.RoleTypes);
         }
 
         [Fact]
@@ -1969,8 +2012,12 @@ namespace Allors.Database.Domain.Tests
 
             item.AddSurchargeAdjustment(new SurchargeAdjustmentBuilder(this.Transaction).Build());
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SalesOrderItem.AssignedUnitPrice\nSalesOrderItem.DiscountAdjustments\nSalesOrderItem.SurchargeAdjustments"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.SalesOrderItem.AssignedUnitPrice,
+                this.M.SalesOrderItem.SurchargeAdjustments,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -1983,15 +2030,19 @@ namespace Allors.Database.Domain.Tests
 
             item.AssignedUnitPrice = 1;
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SalesOrderItem.AssignedUnitPrice\nSalesOrderItem.DiscountAdjustments\nSalesOrderItem.SurchargeAdjustments"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.SalesOrderItem.AssignedUnitPrice,
+                this.M.SalesOrderItem.DiscountAdjustments,
+                this.M.SalesOrderItem.SurchargeAdjustments,
+            }, errors.SelectMany(v => v.RoleTypes));
 
             var error = (DerivationErrorAtMostOne)this.Transaction.Derive(false).Errors.Single();
             Assert.Equal(3, error.RoleTypes.Length);
             Assert.Contains(this.M.SalesOrderItem.AssignedUnitPrice, error.RoleTypes);
             Assert.Contains(this.M.SalesOrderItem.DiscountAdjustments, error.RoleTypes);
             Assert.Contains(this.M.SalesOrderItem.SurchargeAdjustments, error.RoleTypes);
-
         }
 
         [Fact]

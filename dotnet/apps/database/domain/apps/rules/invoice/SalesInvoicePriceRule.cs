@@ -324,7 +324,8 @@ namespace Allors.Database.Domain
                 {
                     if (!unitBasePrice.HasValue)
                     {
-                        validation.AddError($"{salesInvoiceItem}, {this.M.SalesOrderItem.UnitBasePrice} No BasePrice with a Price");
+                        // TODO: Move text to Resources 
+                        validation.AddError(salesInvoiceItem, this.M.SalesOrderItem.UnitBasePrice, "No BasePrice with a Price");
                         return;
                     }
 

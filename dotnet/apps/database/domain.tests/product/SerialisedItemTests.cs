@@ -10,7 +10,11 @@ namespace Allors.Database.Domain.Tests
     using TestPopulation;
     using Resources;
     using System.Collections.Generic;
+    using System.Linq;
     using Allors.Database.Derivations;
+    using Derivations.Errors;
+    using Meta;
+    using Permission = Domain.Permission;
 
     public class SerialisedItemTests : DomainTest, IClassFixture<Fixture>
     {
@@ -137,8 +141,12 @@ namespace Allors.Database.Domain.Tests
 
             serialisedItem.AcquisitionYear = 2020;
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SerialisedItem.AcquiredDate\nSerialisedItem.AcquisitionYear"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.SerialisedItem.AcquiredDate,
+                this.M.SerialisedItem.AcquisitionYear,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -149,8 +157,12 @@ namespace Allors.Database.Domain.Tests
 
             serialisedItem.AcquiredDate = this.Transaction.Now();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SerialisedItem.AcquiredDate\nSerialisedItem.AcquisitionYear"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.SerialisedItem.AcquiredDate,
+                this.M.SerialisedItem.AcquisitionYear,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]

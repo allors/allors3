@@ -7,8 +7,12 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Allors.Database.Derivations;
+    using Derivations.Errors;
+    using Meta;
     using Xunit;
+    using PartyContactMechanism = Domain.PartyContactMechanism;
 
     public class PartyContactMechanismTests : DomainTest, IClassFixture<Fixture>
     {
@@ -63,8 +67,11 @@ namespace Allors.Database.Domain.Tests
 
             partyContactMechanism.UseAsDefault = true;
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertExists: PartyContactMechanism.ContactPurposes"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorRequired>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M. PartyContactMechanism.ContactPurposes,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -72,13 +79,20 @@ namespace Allors.Database.Domain.Tests
         {
             var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction).WithContactPurpose(new ContactMechanismPurposes(this.Transaction).SalesOffice).WithUseAsDefault(true).Build();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.DoesNotContain(errors, e => e.Message.Equals("AssertExists: PartyContactMechanism.ContactPurposes"));
+            {
+                var errors = this.Transaction.Derive(false).Errors;
+                Assert.DoesNotContain(errors, e => e is DerivationErrorRequired);
+            }
 
             partyContactMechanism.RemoveContactPurposes();
 
-            errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertExists: PartyContactMechanism.ContactPurposes"));
+            {
+                var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorRequired>();
+                Assert.Equal(new IRoleType[]
+                {
+                    this.M.PartyContactMechanism.ContactPurposes,
+                }, errors.SelectMany(v => v.RoleTypes));
+            }
         }
 
         [Fact]

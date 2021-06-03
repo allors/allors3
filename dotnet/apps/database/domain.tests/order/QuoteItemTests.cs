@@ -9,9 +9,12 @@ namespace Allors.Database.Domain.Tests
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Database.Derivations;
+    using Derivations.Errors;
+    using Meta;
     using Resources;
     using TestPopulation;
     using Xunit;
+    using Permission = Domain.Permission;
 
     public class QuoteItemTests : DomainTest, IClassFixture<Fixture>
     {
@@ -169,8 +172,12 @@ namespace Allors.Database.Domain.Tests
 
             quoteItem.InvoiceItemType = new InvoiceItemTypes(this.Transaction).ProductItem;
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.StartsWith("AssertAtLeastOne: QuoteItem.Product\nQuoteItem.ProductFeature"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtLeastOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.QuoteItem.Product,
+                this.M.QuoteItem.ProductFeature,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -191,8 +198,12 @@ namespace Allors.Database.Domain.Tests
 
             quoteItem.Product = product;
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne: QuoteItem.Product\nQuoteItem.ProductFeature"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.QuoteItem.Product,
+                this.M.QuoteItem.ProductFeature,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -213,8 +224,12 @@ namespace Allors.Database.Domain.Tests
 
             quoteItem.ProductFeature = productFeature;
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne: QuoteItem.Product\nQuoteItem.ProductFeature"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.QuoteItem.Product,
+                this.M.QuoteItem.ProductFeature,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -235,8 +250,12 @@ namespace Allors.Database.Domain.Tests
 
             quoteItem.Deliverable = deliverable;
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne: QuoteItem.Product\nQuoteItem.ProductFeature"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.QuoteItem.Product,
+                this.M.QuoteItem.ProductFeature,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -257,8 +276,12 @@ namespace Allors.Database.Domain.Tests
 
             quoteItem.WorkEffort = workTask;
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne: QuoteItem.Product\nQuoteItem.ProductFeature"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.QuoteItem.Product,
+                this.M.QuoteItem.ProductFeature,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -279,8 +302,12 @@ namespace Allors.Database.Domain.Tests
 
             quoteItem.SerialisedItem = serialisedItem;
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne: QuoteItem.SerialisedItem\nQuoteItem.ProductFeature"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.QuoteItem.SerialisedItem,
+                this.M.QuoteItem.ProductFeature,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]

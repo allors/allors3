@@ -7,7 +7,10 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Allors.Database.Derivations;
+    using Derivations.Errors;
+    using Meta;
     using Xunit;
 
     public class AgreementTermTest : DomainTest, IClassFixture<Fixture>
@@ -156,8 +159,12 @@ namespace Allors.Database.Domain.Tests
 
             agreementTerm.RemoveTermType();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertAtLeastOne: InvoiceTerm.TermType\nInvoiceTerm.Description"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtLeastOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.InvoiceTerm.TermType,
+                this.M.InvoiceTerm.Description,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
     }
 }

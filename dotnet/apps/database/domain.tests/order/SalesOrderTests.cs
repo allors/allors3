@@ -12,6 +12,16 @@ namespace Allors.Database.Domain.Tests
     using Xunit;
     using System.Collections.Generic;
     using Database.Derivations;
+    using Derivations.Errors;
+    using Meta;
+    using CustomerShipment = Domain.CustomerShipment;
+    using NonSerialisedInventoryItem = Domain.NonSerialisedInventoryItem;
+    using SalesInvoice = Domain.SalesInvoice;
+    using SalesInvoiceItem = Domain.SalesInvoiceItem;
+    using SalesOrderItem = Domain.SalesOrderItem;
+    using ShipmentItem = Domain.ShipmentItem;
+    using Store = Domain.Store;
+    using User = Domain.User;
 
     public class SalesOrderTests : DomainTest, IClassFixture<Fixture>
     {
@@ -3273,9 +3283,11 @@ namespace Allors.Database.Domain.Tests
 
             order.RemoveDerivedShipToAddress();
 
-            var expectedMessage = $"{order} {this.M.SalesOrder.ShipToCustomer} { ErrorMessages.PartyIsNotACustomer}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.StartsWith("AssertExists: ")));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorRequired>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.SalesOrder.ShipToCustomer,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -3295,9 +3307,11 @@ namespace Allors.Database.Domain.Tests
 
             order.RemoveDerivedBillToContactMechanism();
 
-            var expectedMessage = $"{order} {this.M.SalesOrder.ShipToCustomer} { ErrorMessages.PartyIsNotACustomer}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.StartsWith("AssertExists: ")));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorRequired>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.SalesOrder.ShipToCustomer,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]

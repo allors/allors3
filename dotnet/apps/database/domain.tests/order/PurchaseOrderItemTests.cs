@@ -7,10 +7,21 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
+    using System.Linq;
     using TestPopulation;
     using Database.Derivations;
+    using Derivations.Errors;
+    using Meta;
     using Resources;
     using Xunit;
+    using ContactMechanism = Domain.ContactMechanism;
+    using Organisation = Domain.Organisation;
+    using Part = Domain.Part;
+    using Permission = Domain.Permission;
+    using PurchaseOrder = Domain.PurchaseOrder;
+    using PurchaseShipment = Domain.PurchaseShipment;
+    using SupplierOffering = Domain.SupplierOffering;
+    using User = Domain.User;
 
     public class PurchaseOrderItemTests : DomainTest, IClassFixture<Fixture>
     {
@@ -645,8 +656,12 @@ namespace Allors.Database.Domain.Tests
 
             orderItem.Part = serialisedPart;
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.StartsWith("AssertAtLeastOne: PurchaseOrderItem.SerialisedItem\nPurchaseOrderItem.SerialNumber"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtLeastOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.PurchaseOrderItem.SerialisedItem,
+                this.M.PurchaseOrderItem.SerialNumber,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -662,8 +677,12 @@ namespace Allors.Database.Domain.Tests
 
             orderItem.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne: PurchaseOrderItem.SerialisedItem\nPurchaseOrderItem.SerialNumber"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.PurchaseOrderItem.SerialisedItem,
+                this.M.PurchaseOrderItem.SerialNumber,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -679,8 +698,12 @@ namespace Allors.Database.Domain.Tests
 
             orderItem.SerialNumber = "number";
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne: PurchaseOrderItem.SerialisedItem\nPurchaseOrderItem.SerialNumber"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.PurchaseOrderItem.SerialisedItem,
+                this.M.PurchaseOrderItem.SerialNumber,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]

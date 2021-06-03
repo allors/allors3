@@ -7,7 +7,10 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Allors.Database.Derivations;
+    using Derivations.Errors;
+    using Meta;
     using Xunit;
 
     public class DiscountComponentTests : DomainTest, IClassFixture<Fixture>
@@ -55,8 +58,12 @@ namespace Allors.Database.Domain.Tests
 
             discountComponent.Price = 1;
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: DiscountComponent.Price\nDiscountComponent.Percentage"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.DiscountComponent.Price,
+                this.M.DiscountComponent.Percentage,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -67,8 +74,12 @@ namespace Allors.Database.Domain.Tests
 
             discountComponent.Percentage = 1;
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: DiscountComponent.Price\nDiscountComponent.Percentage"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.DiscountComponent.Price,
+                this.M.DiscountComponent.Percentage,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
     }
 }

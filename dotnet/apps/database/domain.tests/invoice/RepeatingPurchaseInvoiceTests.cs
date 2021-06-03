@@ -8,9 +8,13 @@ namespace Allors.Database.Domain.Tests
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Allors.Database.Derivations;
+    using Derivations.Errors;
+    using Meta;
     using Resources;
     using Xunit;
+    using DateTime = System.DateTime;
 
     public class RepeatingPurchaseInvoiceTests : DomainTest, IClassFixture<Fixture>
     {
@@ -39,8 +43,11 @@ namespace Allors.Database.Domain.Tests
 
             repeatingInvoice.RemoveDayOfWeek();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertExists: RepeatingPurchaseInvoice.DayOfWeek"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorRequired>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.RepeatingPurchaseInvoice.DayOfWeek,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -53,8 +60,11 @@ namespace Allors.Database.Domain.Tests
 
             repeatingInvoice.DayOfWeek = new DaysOfWeek(this.Transaction).Monday;
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertNotExists: RepeatingPurchaseInvoice.DayOfWeek"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorNotAllowed>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.RepeatingPurchaseInvoice.DayOfWeek,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]

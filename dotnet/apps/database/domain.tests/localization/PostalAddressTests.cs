@@ -7,7 +7,10 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Allors.Database.Derivations;
+    using Derivations.Errors;
+    using Meta;
     using Xunit;
 
     public class PostalAddressGeographicBoundaryTests : DomainTest, IClassFixture<Fixture>
@@ -61,8 +64,12 @@ namespace Allors.Database.Domain.Tests
 
             postalAddress.Locality = "locality";
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: PostalAddress.PostalAddressBoundaries\nPostalAddress.Locality"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.PostalAddress.PostalAddressBoundaries,
+                this.M.PostalAddress.Locality,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -75,8 +82,12 @@ namespace Allors.Database.Domain.Tests
 
             postalAddress.Region = "Region";
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: PostalAddress.PostalAddressBoundaries\nPostalAddress.Region"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.PostalAddress.PostalAddressBoundaries,
+                this.M.PostalAddress.Region,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -89,8 +100,12 @@ namespace Allors.Database.Domain.Tests
 
             postalAddress.PostalCode = "PostalCode";
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: PostalAddress.PostalAddressBoundaries\nPostalAddress.PostalCode"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.PostalAddress.PostalAddressBoundaries,
+                this.M.PostalAddress.PostalCode,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -103,8 +118,12 @@ namespace Allors.Database.Domain.Tests
 
             postalAddress.Country = new CountryBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: PostalAddress.PostalAddressBoundaries\nPostalAddress.Country"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.PostalAddress.PostalAddressBoundaries,
+                this.M.PostalAddress.Country,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -117,8 +136,12 @@ namespace Allors.Database.Domain.Tests
 
             postalAddress.AddPostalAddressBoundary(new CityBuilder(this.Transaction).Build());
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: PostalAddress.PostalAddressBoundaries\nPostalAddress.Locality"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.PostalAddress.PostalAddressBoundaries,
+                this.M.PostalAddress.Locality,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -131,8 +154,11 @@ namespace Allors.Database.Domain.Tests
 
             postalAddress.RemoveCountry();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertExists: PostalAddress.Country"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorRequired>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.PostalAddress.Country,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -145,8 +171,11 @@ namespace Allors.Database.Domain.Tests
 
             postalAddress.RemoveLocality();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertExists: PostalAddress.Locality"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorRequired>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.PostalAddress.Locality,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
     }
 }

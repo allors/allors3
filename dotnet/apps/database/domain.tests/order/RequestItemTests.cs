@@ -7,9 +7,13 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Allors.Database.Derivations;
+    using Derivations.Errors;
+    using Meta;
     using Resources;
     using Xunit;
+    using Permission = Domain.Permission;
 
     public class RequestItemRuleTests : DomainTest, IClassFixture<Fixture>
     {
@@ -26,8 +30,12 @@ namespace Allors.Database.Domain.Tests
             var requestItem = new RequestItemBuilder(this.Transaction).Build();
             request.AddRequestItem(requestItem);
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.StartsWith("AssertAtLeastOne: RequestItem.Product\nRequestItem.ProductFeature"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtLeastOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.RequestItem.Product,
+                this.M.RequestItem.ProductFeature,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -40,8 +48,12 @@ namespace Allors.Database.Domain.Tests
 
             requestItem.Product = new UnifiedGoodBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne: RequestItem.Product\nRequestItem.ProductFeature"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.RequestItem.Product,
+                this.M.RequestItem.ProductFeature,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -54,8 +66,13 @@ namespace Allors.Database.Domain.Tests
 
             requestItem.ProductFeature = new ColourBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne: RequestItem.Product\nRequestItem.ProductFeature"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.RequestItem.Product,
+                this.M.RequestItem.ProductFeature,
+            }, errors.SelectMany(v => v.RoleTypes));
+
         }
 
         [Fact]
@@ -68,8 +85,12 @@ namespace Allors.Database.Domain.Tests
 
             requestItem.Description = "Description";
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne: RequestItem.Product\nRequestItem.ProductFeature"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.RequestItem.Product,
+                this.M.RequestItem.ProductFeature,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -82,8 +103,12 @@ namespace Allors.Database.Domain.Tests
 
             requestItem.NeededSkill = new NeededSkillBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne: RequestItem.Product\nRequestItem.ProductFeature"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.RequestItem.Product,
+                this.M.RequestItem.ProductFeature,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -96,8 +121,12 @@ namespace Allors.Database.Domain.Tests
 
             requestItem.Deliverable = new DeliverableBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne: RequestItem.Product\nRequestItem.ProductFeature"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.RequestItem.Product,
+                this.M.RequestItem.ProductFeature,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -110,8 +139,12 @@ namespace Allors.Database.Domain.Tests
 
             requestItem.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne: RequestItem.SerialisedItem\nRequestItem.ProductFeature"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.RequestItem.SerialisedItem,
+                this.M.RequestItem.ProductFeature,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]

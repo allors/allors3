@@ -10,6 +10,8 @@ namespace Allors.Database.Domain.Tests
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Database.Derivations;
+    using Derivations.Errors;
+    using Meta;
     using Xunit;
 
     public class TimeEntryTests : DomainTest, IClassFixture<Fixture>
@@ -469,7 +471,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
             this.Transaction.Derive(false);
 
-            timeEntry.BillingFrequency= new TimeFrequencies(this.Transaction).Day;
+            timeEntry.BillingFrequency = new TimeFrequencies(this.Transaction).Day;
             this.Transaction.Derive(false);
 
             Assert.Equal(10, timeEntry.BillingRate);
@@ -1121,8 +1123,11 @@ namespace Allors.Database.Domain.Tests
 
             timeEntry.RemoveBillingFrequency();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals("AssertExists: TimeEntry.BillingFrequency"));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorRequired>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.TimeEntry.BillingFrequency,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]

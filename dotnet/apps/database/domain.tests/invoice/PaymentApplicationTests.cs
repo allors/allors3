@@ -10,6 +10,8 @@ namespace Allors.Database.Domain.Tests
     using System.Linq;
     using TestPopulation;
     using Database.Derivations;
+    using Derivations.Errors;
+    using Meta;
     using Resources;
     using Xunit;
 
@@ -71,9 +73,12 @@ namespace Allors.Database.Domain.Tests
                                         .WithAmountApplied(partialAmount)
                                         .Build();
 
-            var expectedMessage = $"{invoiceItem} { this.M.PaymentApplication.AmountApplied} { ErrorMessages.PaymentApplicationNotLargerThanInvoiceItemAmount}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.StartsWith("AssertExistsAtMostOne")));
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtLeastOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.PaymentApplication.AmountApplied,
+                this.M.InvoiceItem.AmountPaid,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -89,9 +94,12 @@ namespace Allors.Database.Domain.Tests
                                         .WithAmountApplied(partialAmount)
                                         .Build();
 
-            // var expectedMessage = $"{invoiceItem} { this.M.PaymentApplication.AmountApplied} { ErrorMessages.PaymentApplicationNotLargerThanInvoiceItemAmount}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.StartsWith("AssertAtLeastOne")));
+            // TODO: Shouldn't this be Required?
+            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtLeastOne>();
+            Assert.Equal(new IRoleType[]
+            {
+                this.M.PaymentApplication.AmountApplied,
+            }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]

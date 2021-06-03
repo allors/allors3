@@ -35,12 +35,14 @@ namespace Allors.Database.Domain
             {
                 if (@this.ExistScheduledStart && @this.ExistScheduledEnd && @this.ScheduledEnd < @this.ScheduledStart)
                 {
-                    validation.AddError($"Scheduled end date before scheduled start date: {@this}");
+                    // TODO: Move text to Resources
+                    validation.AddError(@this, this.M.CommunicationEvent.ScheduledEnd, $"Scheduled end date before scheduled start date");
                 }
 
                 if (@this.ExistActualStart && @this.ExistActualEnd && @this.ActualEnd < @this.ActualStart)
                 {
-                    validation.AddError($"Actual end date before actual start date: {@this}");
+                    // TODO: Move text to Resources
+                    validation.AddError(@this, this.M.CommunicationEvent.ActualEnd, $"Actual end date before actual start date");
                 }
 
                 //TODO: Begin Run Asynchronously in the Background
