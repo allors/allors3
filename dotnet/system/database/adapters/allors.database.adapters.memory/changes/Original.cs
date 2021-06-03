@@ -13,15 +13,15 @@ namespace Allors.Database.Adapters.Memory
     {
         internal Original(Strategy strategy) => this.Strategy = strategy;
 
-        public Strategy Strategy { get; }
+        internal Strategy Strategy { get; }
 
-        public Dictionary<IRoleType, object> OriginalUnitRoleByRoleType { get; private set; }
+        internal Dictionary<IRoleType, object> OriginalUnitRoleByRoleType { get; private set; }
 
-        public Dictionary<IRoleType, Strategy> OriginalCompositeRoleByRoleType { get; private set; }
+        internal Dictionary<IRoleType, Strategy> OriginalCompositeRoleByRoleType { get; private set; }
 
-        public Dictionary<IRoleType, Strategy[]> OriginalCompositesRoleByRoleType { get; private set; }
+        internal Dictionary<IRoleType, Strategy[]> OriginalCompositesRoleByRoleType { get; private set; }
 
-        public void OnChangingUnitRole(IRoleType roleType, object previousRole)
+        internal void OnChangingUnitRole(IRoleType roleType, object previousRole)
         {
             this.OriginalUnitRoleByRoleType ??= new Dictionary<IRoleType, object>();
 
@@ -31,7 +31,7 @@ namespace Allors.Database.Adapters.Memory
             }
         }
 
-        public void OnChangingCompositeRole(IRoleType roleType, Strategy previousRole)
+        internal void OnChangingCompositeRole(IRoleType roleType, Strategy previousRole)
         {
             this.OriginalCompositeRoleByRoleType ??= new Dictionary<IRoleType, Strategy>();
 
@@ -41,7 +41,7 @@ namespace Allors.Database.Adapters.Memory
             }
         }
 
-        public void OnChangingCompositesRole(IRoleType roleType, IEnumerable<Strategy> previousRoles)
+        internal void OnChangingCompositesRole(IRoleType roleType, IEnumerable<Strategy> previousRoles)
         {
             this.OriginalCompositesRoleByRoleType ??= new Dictionary<IRoleType, Strategy[]>();
 

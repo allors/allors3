@@ -14,33 +14,37 @@ namespace Allors.Database.Adapters.Memory
         private readonly HashSet<IStrategy> created;
         private readonly HashSet<IStrategy> deleted;
 
-        private readonly Dictionary<IStrategy, ISet<IRoleType>> roleTypesByAssociation;
-        private readonly Dictionary<IStrategy, ISet<IAssociationType>> associationTypesByRole;
-
-        private readonly Dictionary<IStrategy, Original> originalByStrategy;
+        private readonly Dictionary<Strategy, ISet<IRoleType>> roleTypesByAssociation;
+        private readonly Dictionary<Strategy, ISet<IAssociationType>> associationTypesByRole;
 
         internal ChangeLog()
         {
             this.created = new HashSet<IStrategy>();
             this.deleted = new HashSet<IStrategy>();
 
-            this.roleTypesByAssociation = new Dictionary<IStrategy, ISet<IRoleType>>();
-            this.associationTypesByRole = new Dictionary<IStrategy, ISet<IAssociationType>>();
+            this.roleTypesByAssociation = new Dictionary<Strategy, ISet<IRoleType>>();
+            this.associationTypesByRole = new Dictionary<Strategy, ISet<IAssociationType>>();
 
-            this.originalByStrategy = new Dictionary<IStrategy, Original>();
+            this.OriginalByStrategy = new Dictionary<IStrategy, Original>();
         }
 
-        public IEnumerable<IStrategy> Created => this.created;
+        internal IEnumerable<IStrategy> Created => this.created;
 
-        public IEnumerable<IStrategy> Deleted => this.deleted;
+        internal IEnumerable<IStrategy> Deleted => this.deleted;
 
-        public IEnumerable<IStrategy> Associations => this.roleTypesByAssociation.Keys;
+        internal IEnumerable<IStrategy> Associations => this.roleTypesByAssociation.Keys;
 
-        public IEnumerable<IStrategy> Roles => this.associationTypesByRole.Keys;
+        internal IEnumerable<IStrategy> Roles => this.associationTypesByRole.Keys;
 
-        public IDictionary<IStrategy, ISet<IRoleType>> RoleTypesByAssociation => this.roleTypesByAssociation;
+        internal IEnumerable<KeyValuePair<Strategy, ISet<IRoleType>>> RoleTypesByAssociation =>
+            this.roleTypesByAssociation
+                .Where(kvp => !kvp.Key.IsDeleted);
 
-        public IDictionary<IStrategy, ISet<IAssociationType>> AssociationTypesByRole => this.associationTypesByRole;
+        internal IEnumerable<KeyValuePair<Strategy, ISet<IAssociationType>>> AssociationTypesByRole =>
+            this.associationTypesByRole
+                .Where(kvp => !kvp.Key.IsDeleted);
+
+        internal Dictionary<IStrategy, Original> OriginalByStrategy { get; }
 
         internal void OnCreated(Strategy strategy) => this.created.Add(strategy);
 
@@ -84,10 +88,10 @@ namespace Allors.Database.Adapters.Memory
 
         private ISet<IRoleType> RoleTypes(Strategy associationId)
         {
-            if (!this.RoleTypesByAssociation.TryGetValue(associationId, out var roleTypes))
+            if (!this.roleTypesByAssociation.TryGetValue(associationId, out var roleTypes))
             {
                 roleTypes = new HashSet<IRoleType>();
-                this.RoleTypesByAssociation[associationId] = roleTypes;
+                this.roleTypesByAssociation[associationId] = roleTypes;
             }
 
             return roleTypes;
@@ -95,10 +99,10 @@ namespace Allors.Database.Adapters.Memory
 
         private ISet<IAssociationType> AssociationTypes(Strategy roleId)
         {
-            if (!this.AssociationTypesByRole.TryGetValue(roleId, out var associationTypes))
+            if (!this.associationTypesByRole.TryGetValue(roleId, out var associationTypes))
             {
                 associationTypes = new HashSet<IAssociationType>();
-                this.AssociationTypesByRole[roleId] = associationTypes;
+                this.associationTypesByRole[roleId] = associationTypes;
             }
 
             return associationTypes;
@@ -106,7 +110,7 @@ namespace Allors.Database.Adapters.Memory
 
         private Original Original(Strategy association)
         {
-            if (!this.originalByStrategy.TryGetValue(association, out var original))
+            if (!this.OriginalByStrategy.TryGetValue(association, out var original))
             {
                 original = new Original(association);
             }

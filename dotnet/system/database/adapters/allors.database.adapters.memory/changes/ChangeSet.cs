@@ -26,8 +26,14 @@ namespace Allors.Database.Adapters.Memory
 
             this.Associations = new HashSet<IObject>(changeLog.Associations.Select(v => v.GetObject()));
             this.Roles = new HashSet<IObject>(changeLog.Roles.Select(v => v.GetObject()));
-            this.RoleTypesByAssociation = changeLog.RoleTypesByAssociation.ToDictionary(kvp => kvp.Key.GetObject(), kvp => kvp.Value);
-            this.AssociationTypesByRole = changeLog.AssociationTypesByRole.ToDictionary(kvp => kvp.Key.GetObject(), kvp => kvp.Value);
+
+            this.RoleTypesByAssociation = changeLog.RoleTypesByAssociation
+                .Select(kvp => new KeyValuePair<IObject, ISet<IRoleType>>(kvp.Key.GetObject(), kvp.Value))
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+            this.AssociationTypesByRole = changeLog.AssociationTypesByRole
+                .Select(kvp => new KeyValuePair<IObject, ISet<IAssociationType>>(kvp.Key.GetObject(), kvp.Value))
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
 
         public ISet<IObject> Created { get; }
