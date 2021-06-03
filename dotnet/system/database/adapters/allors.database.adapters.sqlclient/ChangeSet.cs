@@ -16,115 +16,50 @@ namespace Allors.Database.Adapters.SqlClient
 
     internal sealed class ChangeSet : IChangeSet
     {
-        private readonly HashSet<IStrategy> created;
-        private readonly HashSet<IStrategy> deleted;
+        private IDictionary<IRoleType, ISet<IObject>> associationsByRoleType;
+        private IDictionary<IAssociationType, ISet<IObject>> rolesByAssociationType;
 
-        private readonly HashSet<long> associations;
-        private readonly HashSet<long> roles;
-
-        private readonly Dictionary<long, ISet<IRoleType>> roleTypesByAssociation;
-        private readonly Dictionary<long, ISet<IAssociationType>> associationTypesByRole;
-
-        private IDictionary<IRoleType, ISet<long>> associationsByRoleType;
-        private IDictionary<IAssociationType, ISet<long>> rolesByAssociationType;
-
-        internal ChangeSet()
+        internal ChangeSet(Transaction transaction, ChangeLog changeLog)
         {
-            this.created = new HashSet<IStrategy>();
-            this.deleted = new HashSet<IStrategy>();
-            this.associations = new HashSet<long>();
-            this.roles = new HashSet<long>();
-            this.roleTypesByAssociation = new Dictionary<long, ISet<IRoleType>>();
-            this.associationTypesByRole = new Dictionary<long, ISet<IAssociationType>>();
+            this.Created = new HashSet<IObject>(changeLog.Created.Select(v => v.GetObject()));
+            this.Deleted = changeLog.Deleted;
+
+            this.Associations = new HashSet<IObject>(changeLog.Associations.Select(transaction.Instantiate).Where(v => v != null));
+            this.Roles = new HashSet<IObject>(changeLog.Roles.Select(transaction.Instantiate).Where(v => v != null));
+
+            this.RoleTypesByAssociation = changeLog.RoleTypesByAssociation
+                .Select(kvp => new KeyValuePair<IObject, ISet<IRoleType>>(transaction.Instantiate(kvp.Key), kvp.Value))
+                .Where(kvp => kvp.Key != null)
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+            this.AssociationTypesByRole = changeLog.AssociationTypesByRole
+                .Select(kvp => new KeyValuePair<IObject, ISet<IAssociationType>>(transaction.Instantiate(kvp.Key), kvp.Value))
+                .Where(kvp => kvp.Key != null)
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
 
-        public ISet<IStrategy> Created => this.created;
+        public ISet<IObject> Created { get; }
 
-        public ISet<IStrategy> Deleted => this.deleted;
+        public ISet<IStrategy> Deleted { get; }
 
-        public ISet<long> Associations => this.associations;
+        public ISet<IObject> Associations { get; }
 
-        public ISet<long> Roles => this.roles;
+        public ISet<IObject> Roles { get; }
 
-        public IDictionary<long, ISet<IRoleType>> RoleTypesByAssociation => this.roleTypesByAssociation;
+        public IDictionary<IObject, ISet<IRoleType>> RoleTypesByAssociation { get; }
 
-        public IDictionary<long, ISet<IAssociationType>> AssociationTypesByRole => this.associationTypesByRole;
+        public IDictionary<IObject, ISet<IAssociationType>> AssociationTypesByRole { get; }
 
-        public IDictionary<IRoleType, ISet<long>> AssociationsByRoleType => this.associationsByRoleType ??=
-        (from kvp in this.RoleTypesByAssociation
-         from value in kvp.Value
-         group kvp.Key by value)
-             .ToDictionary(grp => grp.Key, grp => new HashSet<long>(grp) as ISet<long>);
+        public IDictionary<IRoleType, ISet<IObject>> AssociationsByRoleType => this.associationsByRoleType ??=
+            (from kvp in this.RoleTypesByAssociation
+             from value in kvp.Value
+             group kvp.Key by value)
+                 .ToDictionary(grp => grp.Key, grp => new HashSet<IObject>(grp) as ISet<IObject>);
 
-        public IDictionary<IAssociationType, ISet<long>> RolesByAssociationType => this.rolesByAssociationType ??=
+        public IDictionary<IAssociationType, ISet<IObject>> RolesByAssociationType => this.rolesByAssociationType ??=
             (from kvp in this.AssociationTypesByRole
              from value in kvp.Value
              group kvp.Key by value)
-                   .ToDictionary(grp => grp.Key, grp => new HashSet<long>(grp) as ISet<long>);
-
-        internal void OnCreated(IStrategy strategy) => this.created.Add(strategy);
-
-        internal void OnDeleted(IStrategy strategy) => this.deleted.Add(strategy);
-
-        internal void OnChangingUnitRole(long association, IRoleType roleType)
-        {
-            _ = this.associations.Add(association);
-
-            _ = this.RoleTypes(association).Add(roleType);
-        }
-
-        internal void OnChangingCompositeRole(long association, IRoleType roleType, long? previousRole, long? newRole)
-        {
-            _ = this.associations.Add(association);
-
-            if (previousRole != null)
-            {
-                _ = this.roles.Add(previousRole.Value);
-                _ = this.AssociationTypes(previousRole.Value).Add(roleType.AssociationType);
-            }
-
-            if (newRole != null)
-            {
-                _ = this.roles.Add(newRole.Value);
-                _ = this.AssociationTypes(newRole.Value).Add(roleType.AssociationType);
-            }
-
-            _ = this.RoleTypes(association).Add(roleType);
-        }
-
-        internal void OnChangingCompositesRole(long association, IRoleType roleType, Strategy changedRole)
-        {
-            _ = this.associations.Add(association);
-
-            if (changedRole != null)
-            {
-                _ = this.roles.Add(changedRole.ObjectId);
-                _ = this.AssociationTypes(changedRole.ObjectId).Add(roleType.AssociationType);
-            }
-
-            _ = this.RoleTypes(association).Add(roleType);
-        }
-
-        private ISet<IRoleType> RoleTypes(long associationId)
-        {
-            if (!this.RoleTypesByAssociation.TryGetValue(associationId, out var roleTypes))
-            {
-                roleTypes = new HashSet<IRoleType>();
-                this.RoleTypesByAssociation[associationId] = roleTypes;
-            }
-
-            return roleTypes;
-        }
-
-        private ISet<IAssociationType> AssociationTypes(long roleId)
-        {
-            if (!this.AssociationTypesByRole.TryGetValue(roleId, out var associationTypes))
-            {
-                associationTypes = new HashSet<IAssociationType>();
-                this.AssociationTypesByRole[roleId] = associationTypes;
-            }
-
-            return associationTypes;
-        }
+                   .ToDictionary(grp => grp.Key, grp => new HashSet<IObject>(grp) as ISet<IObject>);
     }
 }

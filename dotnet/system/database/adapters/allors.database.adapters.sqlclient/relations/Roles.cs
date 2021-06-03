@@ -91,7 +91,7 @@ namespace Allors.Database.Adapters.SqlClient
             var oldUnit = this.GetUnitRole(roleType);
             if (!Equals(oldUnit, role))
             {
-                this.Reference.Transaction.State.ChangeSet.OnChangingUnitRole(this.Reference.ObjectId, roleType);
+                this.Reference.Transaction.State.ChangeLog.OnChangingUnitRole(this.Reference.ObjectId, roleType);
 
                 this.SetOriginal(roleType, role);
 
@@ -147,7 +147,7 @@ namespace Allors.Database.Adapters.SqlClient
 
             if (newRole != null && !newRole.Equals(previousRole))
             {
-                this.Reference.Transaction.State.ChangeSet.OnChangingCompositeRole(this.Reference.ObjectId, roleType, previousRole, newRole);
+                this.Reference.Transaction.State.ChangeLog.OnChangingCompositeRole(this.Reference.ObjectId, roleType, previousRole, newRole);
 
                 if (roleType.AssociationType.IsOne)
                 {
@@ -161,7 +161,7 @@ namespace Allors.Database.Adapters.SqlClient
                     var newRoleAssociation = newRoleStrategy.GetCompositeAssociation(roleType.AssociationType);
                     if (newRoleAssociation != null && !newRoleAssociation.Id.Equals(this.Reference.ObjectId))
                     {
-                        this.Reference.Transaction.State.ChangeSet.OnChangingCompositeRole(newRoleAssociation.Id, roleType, previousRole, null);
+                        this.Reference.Transaction.State.ChangeLog.OnChangingCompositeRole(newRoleAssociation.Id, roleType, previousRole, null);
 
                         newRoleAssociation.Strategy.RemoveCompositeRole(roleType);
                     }
@@ -209,7 +209,7 @@ namespace Allors.Database.Adapters.SqlClient
             {
                 var currentRoleStrategy = this.Reference.Transaction.State.GetOrCreateReferenceForExistingObject(currentRole.Value, this.Reference.Transaction).Strategy;
 
-                this.Reference.Transaction.State.ChangeSet.OnChangingCompositeRole(this.Reference.ObjectId, roleType, currentRoleStrategy?.ObjectId, null);
+                this.Reference.Transaction.State.ChangeLog.OnChangingCompositeRole(this.Reference.ObjectId, roleType, currentRoleStrategy?.ObjectId, null);
 
                 if (roleType.AssociationType.IsOne)
                 {
@@ -260,7 +260,7 @@ namespace Allors.Database.Adapters.SqlClient
 
             if (!compositesRole.Contains(role.ObjectId))
             {
-                this.Reference.Transaction.State.ChangeSet.OnChangingCompositesRole(this.Reference.ObjectId, roleType, role);
+                this.Reference.Transaction.State.ChangeLog.OnChangingCompositesRole(this.Reference.ObjectId, roleType, role);
 
                 compositesRole.Add(role.ObjectId);
 
@@ -270,7 +270,7 @@ namespace Allors.Database.Adapters.SqlClient
                     var previousAssociation = (Strategy)previousAssociationObject?.Strategy;
                     if (previousAssociation != null && !previousAssociation.ObjectId.Equals(this.Reference.ObjectId))
                     {
-                        this.Reference.Transaction.State.ChangeSet.OnChangingCompositesRole(previousAssociation.ObjectId, roleType, null);
+                        this.Reference.Transaction.State.ChangeLog.OnChangingCompositesRole(previousAssociation.ObjectId, roleType, null);
 
                         previousAssociation.RemoveCompositeRole(roleType, role.GetObject());
                     }
@@ -298,7 +298,7 @@ namespace Allors.Database.Adapters.SqlClient
 
             if (compositesRole.Contains(role.ObjectId))
             {
-                this.Reference.Transaction.State.ChangeSet.OnChangingCompositesRole(this.Reference.ObjectId, roleType, role);
+                this.Reference.Transaction.State.ChangeLog.OnChangingCompositesRole(this.Reference.ObjectId, roleType, role);
 
                 compositesRole.Remove(role.ObjectId);
 

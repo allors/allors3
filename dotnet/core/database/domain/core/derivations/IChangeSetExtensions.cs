@@ -12,18 +12,17 @@ namespace Allors.Database.Domain.Derivations
 
     public static partial class IChangeSetExtensions
     {
-
-        public static bool IsCreated(this IChangeSet @this, Object derivable) => @this.Created.Contains(derivable.Strategy);
+        public static bool IsCreated(this IChangeSet @this, Object derivable) => @this.Created.Contains(derivable);
 
         public static bool HasChangedRole(this IChangeSet @this, Object derivable, IRoleType roleType)
         {
-            _ = @this.RoleTypesByAssociation.TryGetValue(derivable.Id, out var changedRoleTypes);
+            _ = @this.RoleTypesByAssociation.TryGetValue(derivable, out var changedRoleTypes);
             return changedRoleTypes?.Contains(roleType) ?? false;
         }
 
         public static bool HasChangedRoles(this IChangeSet @this, Object derivable, params IRoleType[] roleTypes)
         {
-            _ = @this.RoleTypesByAssociation.TryGetValue(derivable.Id, out var changedRoleTypes);
+            _ = @this.RoleTypesByAssociation.TryGetValue(derivable, out var changedRoleTypes);
             if (changedRoleTypes != null)
             {
                 if (roleTypes.Length == 0 || roleTypes.Any(roleType => changedRoleTypes.Contains(roleType)))
@@ -57,7 +56,7 @@ namespace Allors.Database.Domain.Derivations
                     break;
             }
 
-            _ = @this.RoleTypesByAssociation.TryGetValue(derivable.Id, out var changedRoleTypes);
+            _ = @this.RoleTypesByAssociation.TryGetValue(derivable, out var changedRoleTypes);
             if (changedRoleTypes != null)
             {
                 if (changedRoleTypes.Any(roleType => check(roleType)))

@@ -76,7 +76,7 @@ namespace Allors.Database.Adapters.Memory
 
         internal Transaction Transaction { get; }
 
-        private ChangeSet ChangeSet => this.Transaction.MemoryChangeSet;
+        private ChangeLog ChangeLog => this.Transaction.ChangeLog;
 
         private Dictionary<IRoleType, object> RollbackUnitRoleByRoleType => this.rollbackUnitRoleByRoleType ??= new Dictionary<IRoleType, object>();
 
@@ -163,7 +163,7 @@ namespace Allors.Database.Adapters.Memory
                 this.RollbackUnitRoleByRoleType[roleType] = this.GetInternalizedUnitRole(roleType);
             }
 
-            this.ChangeSet.OnChangingUnitRole(this.ObjectId, roleType);
+            this.ChangeLog.OnChangingUnitRole(this, roleType, previousRole);
 
             switch (role)
             {
@@ -448,7 +448,7 @@ namespace Allors.Database.Adapters.Memory
 
             this.IsDeleted = true;
 
-            this.ChangeSet.OnDeleted(this);
+            this.ChangeLog.OnDeleted(this);
         }
 
         public IObject GetObject()
@@ -621,7 +621,7 @@ namespace Allors.Database.Adapters.Memory
 
             if (!newRoleStrategy.Equals(previousRoleStrategy))
             {
-                this.ChangeSet.OnChangingCompositeRole(this.ObjectId, roleType, previousRoleStrategy?.ObjectId, newRoleStrategy.ObjectId);
+                this.ChangeLog.OnChangingCompositeRole(this, roleType, previousRoleStrategy, newRoleStrategy);
 
                 if (previousRoleStrategy != null)
                 {
@@ -637,7 +637,7 @@ namespace Allors.Database.Adapters.Memory
                 {
                     if (!this.Equals(newRolePreviousAssociationStrategy))
                     {
-                        this.ChangeSet.OnChangingCompositeRole(newRolePreviousAssociationStrategy.ObjectId, roleType, previousRoleStrategy?.ObjectId, null);
+                        this.ChangeLog.OnChangingCompositeRole(newRolePreviousAssociationStrategy, roleType, previousRoleStrategy, null);
 
                         newRolePreviousAssociationStrategy.Backup(roleType);
                         _ = newRolePreviousAssociationStrategy.compositeRoleByRoleType.Remove(roleType);
@@ -664,7 +664,7 @@ namespace Allors.Database.Adapters.Memory
 
             if (!newRoleStrategy.Equals(previousRoleStrategy))
             {
-                this.ChangeSet.OnChangingCompositeRole(this.ObjectId, roleType, previousRoleStrategy?.ObjectId, newRoleStrategy.ObjectId);
+                this.ChangeLog.OnChangingCompositeRole(this, roleType, previousRoleStrategy, newRoleStrategy);
 
                 var associationType = roleType.AssociationType;
 
@@ -947,7 +947,7 @@ namespace Allors.Database.Adapters.Memory
             var previousRole = this.GetCompositeRole(roleType);
             if (previousRole != null)
             {
-                this.ChangeSet.OnChangingCompositeRole(this.ObjectId, roleType, previousRole.Id, null);
+                this.ChangeLog.OnChangingCompositeRole(this, roleType, (Strategy)previousRole.Strategy, null);
 
                 var previousRoleStrategy = this.Transaction.GetStrategy(previousRole);
                 var associationType = roleType.AssociationType;
@@ -969,7 +969,7 @@ namespace Allors.Database.Adapters.Memory
 
             if (previousRole != null)
             {
-                this.ChangeSet.OnChangingCompositeRole(this.ObjectId, roleType, previousRole.Id, null);
+                this.ChangeLog.OnChangingCompositeRole(this, roleType, (Strategy)previousRole.Strategy, null);
 
                 var previousRoleStrategy = this.Transaction.GetStrategy(previousRole);
                 var associationType = roleType.AssociationType;
@@ -998,7 +998,7 @@ namespace Allors.Database.Adapters.Memory
                 return;
             }
 
-            this.ChangeSet.OnChangingCompositesRole(this.ObjectId, roleType, newRoleStrategy);
+            this.ChangeLog.OnChangingCompositesRole(this, roleType, newRoleStrategy, previousRoleStrategies);
 
             // Add the new role
             this.Backup(roleType);
@@ -1031,13 +1031,13 @@ namespace Allors.Database.Adapters.Memory
                 return;
             }
 
-            this.ChangeSet.OnChangingCompositesRole(this.ObjectId, roleType, newRoleStrategy);
+            this.ChangeLog.OnChangingCompositesRole(this, roleType, newRoleStrategy, previousRoleStrategies);
 
             // 1-...
             _ = newRoleStrategy.compositeAssociationByAssociationType.TryGetValue(roleType.AssociationType, out var newRolePreviousAssociationStrategy);
             if (newRolePreviousAssociationStrategy != null)
             {
-                this.ChangeSet.OnChangingCompositesRole(newRolePreviousAssociationStrategy.ObjectId, roleType, null);
+                this.ChangeLog.OnChangingCompositesRole(newRolePreviousAssociationStrategy, roleType, null, previousRoleStrategies);
 
                 // Remove obsolete role
                 newRolePreviousAssociationStrategy.Backup(roleType);
@@ -1079,7 +1079,7 @@ namespace Allors.Database.Adapters.Memory
                 return;
             }
 
-            this.ChangeSet.OnChangingCompositesRole(this.ObjectId, roleType, roleStrategy);
+            this.ChangeLog.OnChangingCompositesRole(this, roleType, roleStrategy, roleStrategies);
 
             // Remove role
             this.Backup(roleType);
@@ -1108,7 +1108,7 @@ namespace Allors.Database.Adapters.Memory
                 return;
             }
 
-            this.ChangeSet.OnChangingCompositesRole(this.ObjectId, roleType, roleStrategy);
+            this.ChangeLog.OnChangingCompositesRole(this, roleType, roleStrategy, roleStrategies);
 
             this.Backup(roleType);
 
@@ -1131,7 +1131,7 @@ namespace Allors.Database.Adapters.Memory
             {
                 foreach (var previousRoleStrategy in previousRoleStrategies)
                 {
-                    this.ChangeSet.OnChangingCompositesRole(this.ObjectId, roleType, previousRoleStrategy);
+                    this.ChangeLog.OnChangingCompositesRole(this, roleType, previousRoleStrategy, previousRoleStrategies);
                 }
 
                 foreach (var strategy in new List<Strategy>(previousRoleStrategies))

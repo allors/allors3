@@ -6,7 +6,7 @@
 //   Defines the AllorsChangeSetMemory type.
 // </summary>
 
-namespace Allors.Database.Adapters.Npgsql
+namespace Allors.Database.Adapters.Memory
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -19,23 +19,15 @@ namespace Allors.Database.Adapters.Npgsql
         private IDictionary<IRoleType, ISet<IObject>> associationsByRoleType;
         private IDictionary<IAssociationType, ISet<IObject>> rolesByAssociationType;
 
-        internal ChangeSet(Transaction transaction, ChangeLog changeLog)
+        internal ChangeSet(ChangeLog changeLog)
         {
             this.Created = new HashSet<IObject>(changeLog.Created.Select(v => v.GetObject()));
-            this.Deleted = changeLog.Deleted;
+            this.Deleted = new HashSet<IStrategy>(changeLog.Deleted);
 
-            this.Associations = new HashSet<IObject>(changeLog.Associations.Select(transaction.Instantiate).Where(v => v != null));
-            this.Roles = new HashSet<IObject>(changeLog.Roles.Select(transaction.Instantiate).Where(v => v != null));
-
-            this.RoleTypesByAssociation = changeLog.RoleTypesByAssociation
-                .Select(kvp => new KeyValuePair<IObject, ISet<IRoleType>>(transaction.Instantiate(kvp.Key), kvp.Value))
-                .Where(kvp => kvp.Key != null)
-                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-
-            this.AssociationTypesByRole = changeLog.AssociationTypesByRole
-                .Select(kvp => new KeyValuePair<IObject, ISet<IAssociationType>>(transaction.Instantiate(kvp.Key), kvp.Value))
-                .Where(kvp => kvp.Key != null)
-                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            this.Associations = new HashSet<IObject>(changeLog.Associations.Select(v => v.GetObject()));
+            this.Roles = new HashSet<IObject>(changeLog.Roles.Select(v => v.GetObject()));
+            this.RoleTypesByAssociation = changeLog.RoleTypesByAssociation.ToDictionary(kvp => kvp.Key.GetObject(), kvp => kvp.Value);
+            this.AssociationTypesByRole = changeLog.AssociationTypesByRole.ToDictionary(kvp => kvp.Key.GetObject(), kvp => kvp.Value);
         }
 
         public ISet<IObject> Created { get; }

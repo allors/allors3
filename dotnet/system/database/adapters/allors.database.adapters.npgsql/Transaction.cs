@@ -89,7 +89,7 @@ namespace Allors.Database.Adapters.Npgsql
 
             this.Database.Cache.SetObjectType(reference.ObjectId, objectType);
 
-            this.State.ChangeSet.OnCreated(reference.Strategy);
+            this.State.ChangeLog.OnCreated(reference.Strategy);
 
             return reference.Strategy.GetObject();
         }
@@ -113,7 +113,7 @@ namespace Allors.Database.Adapters.Npgsql
 
                 domainObjects[i] = reference.Strategy.GetObject();
 
-                this.State.ChangeSet.OnCreated(reference.Strategy);
+                this.State.ChangeLog.OnCreated(reference.Strategy);
             }
 
             return domainObjects;
@@ -241,11 +241,11 @@ namespace Allors.Database.Adapters.Npgsql
         {
             try
             {
-                return this.State.ChangeSet;
+                return new ChangeSet(this, this.State.ChangeLog);
             }
             finally
             {
-                this.State.ChangeSet = new ChangeSet();
+                this.State.ChangeLog = new ChangeLog();
             }
         }
 
@@ -299,7 +299,7 @@ namespace Allors.Database.Adapters.Npgsql
                     this.State.AssociationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Reference, Reference>>();
                     this.State.AssociationsByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Reference, long[]>>();
 
-                    this.State.ChangeSet = new ChangeSet();
+                    this.State.ChangeLog = new ChangeLog();
 
                     this.Database.Cache.OnCommit(accessed, changed);
 
@@ -347,7 +347,7 @@ namespace Allors.Database.Adapters.Npgsql
                     this.State.AssociationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Reference, Reference>>();
                     this.State.AssociationsByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Reference, long[]>>();
 
-                    this.State.ChangeSet = new ChangeSet();
+                    this.State.ChangeLog = new ChangeLog();
 
                     this.Database.Cache.OnRollback(accessed);
 

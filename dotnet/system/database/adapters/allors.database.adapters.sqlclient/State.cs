@@ -22,10 +22,10 @@ namespace Allors.Database.Adapters.SqlClient
             this.AssociationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Reference, Reference>>();
             this.AssociationsByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Reference, long[]>>();
 
-            this.ChangeSet = new ChangeSet();
+            this.ChangeLog = new ChangeLog();
         }
 
-        internal ChangeSet ChangeSet { get; set; }
+        internal ChangeLog ChangeLog { get; set; }
 
         internal Dictionary<long, Reference> ReferenceByObjectId { get; set; }
 

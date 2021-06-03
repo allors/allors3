@@ -75,8 +75,8 @@ namespace Allors.Database.Domain.Derivations.Rules.Default
                 // Initialization
                 if (changeSet.Created.Any())
                 {
-                    var newObjects = changeSet.Created.Select(v => (Object)v.GetObject());
-                    foreach (var newObject in newObjects)
+                    var newObjects = changeSet.Created;
+                    foreach (Object newObject in newObjects)
                     {
                         _ = newObject.OnInit();
                     }
@@ -95,7 +95,7 @@ namespace Allors.Database.Domain.Derivations.Rules.Default
                 foreach (var kvp in changeSet.AssociationsByRoleType)
                 {
                     var roleType = kvp.Key;
-                    var associations = this.Transaction.Instantiate(kvp.Value);
+                    var associations = kvp.Value;
 
                     foreach (var association in associations)
                     {
@@ -197,18 +197,15 @@ namespace Allors.Database.Domain.Derivations.Rules.Default
                     else
                     {
                         var created = this.PostDeriveAccumulatedChangeSet.Created;
-                        foreach (var strategy in created)
+                        foreach (Object @object in created)
                         {
-                            var @object = (Object)strategy.GetObject();
                             @object.OnPostDerive(x => x.WithDerivation(this));
                         }
 
                         var changed = this.PostDeriveAccumulatedChangeSet.Associations;
-                        foreach (var id in changed)
+                        foreach (Object @object in changed)
                         {
-                            var @object = (Object)this.Transaction.Instantiate(id);
-                            var strategy = @object?.Strategy;
-                            if (strategy != null && !created.Contains(strategy))
+                            if (!created.Contains(@object))
                             {
                                 @object.OnPostDerive(x => x.WithDerivation(this));
                             }

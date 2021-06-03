@@ -59,25 +59,25 @@ namespace Allors.Database.Adapters
                 roles = changeSet.Roles;
 
                 Assert.Equal(2, associations.Count);
-                Assert.Contains(a.Id, associations.ToArray());
-                Assert.Contains(b.Id, associations.ToArray());
+                Assert.Contains(a, associations.ToArray());
+                Assert.Contains(b, associations.ToArray());
 
                 Assert.Equal("a changed", a.C1AllorsString);
                 Assert.Equal("b changed", b.C2AllorsString);
 
-                _ = Assert.Single(changeSet.GetRoleTypes(a.Id));
-                Assert.Equal(m.C1.C1AllorsString, changeSet.GetRoleTypes(a.Id).First());
+                _ = Assert.Single(changeSet.GetRoleTypes(a));
+                Assert.Equal(m.C1.C1AllorsString, changeSet.GetRoleTypes(a).First());
 
-                _ = Assert.Single(changeSet.GetRoleTypes(b.Id));
-                Assert.Equal(m.C2.C2AllorsString, changeSet.GetRoleTypes(b.Id).First());
+                _ = Assert.Single(changeSet.GetRoleTypes(b));
+                Assert.Equal(m.C2.C2AllorsString, changeSet.GetRoleTypes(b).First());
 
-                Assert.True(associations.Contains(a.Id));
-                Assert.True(associations.Contains(b.Id));
-                Assert.False(associations.Contains(c.Id));
+                Assert.True(associations.Contains(a));
+                Assert.True(associations.Contains(b));
+                Assert.False(associations.Contains(c));
 
-                Assert.False(roles.Contains(a.Id));
-                Assert.False(roles.Contains(b.Id));
-                Assert.False(roles.Contains(c.Id));
+                Assert.False(roles.Contains(a));
+                Assert.False(roles.Contains(b));
+                Assert.False(roles.Contains(c));
 
                 a.C1AllorsString = "a changed";
                 b.C2AllorsString = "b changed";
@@ -99,22 +99,22 @@ namespace Allors.Database.Adapters
                 roles = changeSet.Roles;
 
                 Assert.Equal(2, associations.Count);
-                Assert.True(associations.Contains(a.Id));
-                Assert.True(associations.Contains(a.Id));
+                Assert.True(associations.Contains(a));
+                Assert.True(associations.Contains(a));
 
-                _ = Assert.Single(changeSet.GetRoleTypes(a.Id));
-                Assert.Equal(m.C1.C1AllorsString, changeSet.GetRoleTypes(a.Id).First());
+                _ = Assert.Single(changeSet.GetRoleTypes(a));
+                Assert.Equal(m.C1.C1AllorsString, changeSet.GetRoleTypes(a).First());
 
-                _ = Assert.Single(changeSet.GetRoleTypes(b.Id));
-                Assert.Equal(m.C2.C2AllorsString, changeSet.GetRoleTypes(b.Id).First());
+                _ = Assert.Single(changeSet.GetRoleTypes(b));
+                Assert.Equal(m.C2.C2AllorsString, changeSet.GetRoleTypes(b).First());
 
-                Assert.True(associations.Contains(a.Id));
-                Assert.True(associations.Contains(b.Id));
-                Assert.False(associations.Contains(c.Id));
+                Assert.True(associations.Contains(a));
+                Assert.True(associations.Contains(b));
+                Assert.False(associations.Contains(c));
 
-                Assert.False(roles.Contains(a.Id));
-                Assert.False(roles.Contains(b.Id));
-                Assert.False(roles.Contains(c.Id));
+                Assert.False(roles.Contains(a));
+                Assert.False(roles.Contains(b));
+                Assert.False(roles.Contains(c));
 
                 changeSet = this.Transaction.Checkpoint();
 
@@ -122,16 +122,16 @@ namespace Allors.Database.Adapters
                 roles = changeSet.Roles;
 
                 Assert.Equal(0, associations.Count);
-                Assert.Empty(changeSet.GetRoleTypes(a.Id));
-                Assert.Empty(changeSet.GetRoleTypes(b.Id));
+                Assert.Empty(changeSet.GetRoleTypes(a));
+                Assert.Empty(changeSet.GetRoleTypes(b));
 
-                Assert.False(associations.Contains(a.Id));
-                Assert.False(associations.Contains(b.Id));
-                Assert.False(associations.Contains(c.Id));
+                Assert.False(associations.Contains(a));
+                Assert.False(associations.Contains(b));
+                Assert.False(associations.Contains(c));
 
-                Assert.False(roles.Contains(a.Id));
-                Assert.False(roles.Contains(b.Id));
-                Assert.False(roles.Contains(c.Id));
+                Assert.False(roles.Contains(a));
+                Assert.False(roles.Contains(b));
+                Assert.False(roles.Contains(c));
 
                 a.RemoveC1AllorsString();
                 b.RemoveC2AllorsString();
@@ -142,22 +142,22 @@ namespace Allors.Database.Adapters
                 roles = changeSet.Roles;
 
                 Assert.Equal(2, associations.Count);
-                Assert.True(associations.Contains(a.Id));
-                Assert.True(associations.Contains(a.Id));
+                Assert.True(associations.Contains(a));
+                Assert.True(associations.Contains(a));
 
-                _ = Assert.Single(changeSet.GetRoleTypes(a.Id));
-                Assert.Equal(m.C1.C1AllorsString, changeSet.GetRoleTypes(a.Id).First());
+                _ = Assert.Single(changeSet.GetRoleTypes(a));
+                Assert.Equal(m.C1.C1AllorsString, changeSet.GetRoleTypes(a).First());
 
-                _ = Assert.Single(changeSet.GetRoleTypes(b.Id));
-                Assert.Equal(m.C2.C2AllorsString, changeSet.GetRoleTypes(b.Id).First());
+                _ = Assert.Single(changeSet.GetRoleTypes(b));
+                Assert.Equal(m.C2.C2AllorsString, changeSet.GetRoleTypes(b).First());
 
-                Assert.True(associations.Contains(a.Id));
-                Assert.True(associations.Contains(b.Id));
-                Assert.False(associations.Contains(c.Id));
+                Assert.True(associations.Contains(a));
+                Assert.True(associations.Contains(b));
+                Assert.False(associations.Contains(c));
 
-                Assert.False(roles.Contains(a.Id));
-                Assert.False(roles.Contains(b.Id));
-                Assert.False(roles.Contains(c.Id));
+                Assert.False(roles.Contains(a));
+                Assert.False(roles.Contains(b));
+                Assert.False(roles.Contains(c));
 
                 changeSet = this.Transaction.Checkpoint();
 
@@ -165,15 +165,15 @@ namespace Allors.Database.Adapters
                 roles = changeSet.Roles;
 
                 Assert.Equal(0, associations.Count);
-                Assert.Empty(changeSet.GetRoleTypes(a.Id));
-                Assert.Empty(changeSet.GetRoleTypes(b.Id));
+                Assert.Empty(changeSet.GetRoleTypes(a));
+                Assert.Empty(changeSet.GetRoleTypes(b));
 
-                Assert.False(associations.Contains(a.Id));
-                Assert.False(associations.Contains(b.Id));
-                Assert.False(associations.Contains(c.Id));
+                Assert.False(associations.Contains(a));
+                Assert.False(associations.Contains(b));
+                Assert.False(associations.Contains(c));
 
-                Assert.False(roles.Contains(a.Id));
-                Assert.False(roles.Contains(b.Id));
+                Assert.False(roles.Contains(a));
+                Assert.False(roles.Contains(b));
 
                 this.Transaction.Rollback();
 
@@ -183,15 +183,15 @@ namespace Allors.Database.Adapters
                 roles = changeSet.Roles;
 
                 Assert.Equal(0, associations.Count);
-                Assert.Empty(changeSet.GetRoleTypes(a.Id));
-                Assert.Empty(changeSet.GetRoleTypes(b.Id));
+                Assert.Empty(changeSet.GetRoleTypes(a));
+                Assert.Empty(changeSet.GetRoleTypes(b));
 
-                Assert.False(associations.Contains(a.Id));
-                Assert.False(associations.Contains(b.Id));
-                Assert.False(associations.Contains(c.Id));
+                Assert.False(associations.Contains(a));
+                Assert.False(associations.Contains(b));
+                Assert.False(associations.Contains(c));
 
-                Assert.False(roles.Contains(a.Id));
-                Assert.False(roles.Contains(b.Id));
+                Assert.False(roles.Contains(a));
+                Assert.False(roles.Contains(b));
 
                 a.C1AllorsString = "a changed";
 
@@ -203,15 +203,37 @@ namespace Allors.Database.Adapters
                 roles = changeSet.Roles;
 
                 Assert.Equal(0, associations.Count);
-                Assert.Empty(changeSet.GetRoleTypes(a.Id));
-                Assert.Empty(changeSet.GetRoleTypes(b.Id));
+                Assert.Empty(changeSet.GetRoleTypes(a));
+                Assert.Empty(changeSet.GetRoleTypes(b));
 
-                Assert.False(associations.Contains(a.Id));
-                Assert.False(associations.Contains(b.Id));
-                Assert.False(associations.Contains(c.Id));
+                Assert.False(associations.Contains(a));
+                Assert.False(associations.Contains(b));
+                Assert.False(associations.Contains(c));
 
-                Assert.False(roles.Contains(a.Id));
-                Assert.False(roles.Contains(b.Id));
+                Assert.False(roles.Contains(a));
+                Assert.False(roles.Contains(b));
+
+                a.RemoveC1AllorsString();
+                a.C1AllorsString = "a changed";
+
+                this.Transaction.Commit();
+
+                changeSet = this.Transaction.Checkpoint();
+
+                associations = changeSet.Associations;
+                roles = changeSet.Roles;
+
+                Assert.Equal(0, associations.Count);
+                Assert.Empty(changeSet.GetRoleTypes(a));
+                Assert.Empty(changeSet.GetRoleTypes(b));
+
+                Assert.False(associations.Contains(a));
+                Assert.False(associations.Contains(b));
+                Assert.False(associations.Contains(c));
+
+                Assert.False(roles.Contains(a));
+                Assert.False(roles.Contains(b));
+
             }
         }
 
@@ -251,25 +273,25 @@ namespace Allors.Database.Adapters
                 roles = changeSet.Roles;
 
                 Assert.Equal(2, associations.Count);
-                Assert.Contains(a.Id, associations.ToArray());
-                Assert.Contains(b.Id, associations.ToArray());
+                Assert.Contains(a, associations.ToArray());
+                Assert.Contains(b, associations.ToArray());
 
                 Assert.Equal(true, a.C1AllorsBoolean);
                 Assert.Equal(false, b.C2AllorsBoolean);
 
-                _ = Assert.Single(changeSet.GetRoleTypes(a.Id));
-                Assert.Equal(m.C1.C1AllorsBoolean, changeSet.GetRoleTypes(a.Id).First());
+                _ = Assert.Single(changeSet.GetRoleTypes(a));
+                Assert.Equal(m.C1.C1AllorsBoolean, changeSet.GetRoleTypes(a).First());
 
-                _ = Assert.Single(changeSet.GetRoleTypes(b.Id));
-                Assert.Equal(m.C2.C2AllorsBoolean, changeSet.GetRoleTypes(b.Id).First());
+                _ = Assert.Single(changeSet.GetRoleTypes(b));
+                Assert.Equal(m.C2.C2AllorsBoolean, changeSet.GetRoleTypes(b).First());
 
-                Assert.True(associations.Contains(a.Id));
-                Assert.True(associations.Contains(b.Id));
-                Assert.False(associations.Contains(c.Id));
+                Assert.True(associations.Contains(a));
+                Assert.True(associations.Contains(b));
+                Assert.False(associations.Contains(c));
 
-                Assert.False(roles.Contains(a.Id));
-                Assert.False(roles.Contains(b.Id));
-                Assert.False(roles.Contains(c.Id));
+                Assert.False(roles.Contains(a));
+                Assert.False(roles.Contains(b));
+                Assert.False(roles.Contains(c));
 
                 a.C1AllorsBoolean = true;
                 b.C2AllorsBoolean = false;
@@ -291,22 +313,22 @@ namespace Allors.Database.Adapters
                 roles = changeSet.Roles;
 
                 Assert.Equal(2, associations.Count);
-                Assert.True(associations.Contains(a.Id));
-                Assert.True(associations.Contains(a.Id));
+                Assert.True(associations.Contains(a));
+                Assert.True(associations.Contains(a));
 
-                _ = Assert.Single(changeSet.GetRoleTypes(a.Id));
-                Assert.Equal(m.C1.C1AllorsBoolean, changeSet.GetRoleTypes(a.Id).First());
+                _ = Assert.Single(changeSet.GetRoleTypes(a));
+                Assert.Equal(m.C1.C1AllorsBoolean, changeSet.GetRoleTypes(a).First());
 
-                _ = Assert.Single(changeSet.GetRoleTypes(b.Id));
-                Assert.Equal(m.C2.C2AllorsBoolean, changeSet.GetRoleTypes(b.Id).First());
+                _ = Assert.Single(changeSet.GetRoleTypes(b));
+                Assert.Equal(m.C2.C2AllorsBoolean, changeSet.GetRoleTypes(b).First());
 
-                Assert.True(associations.Contains(a.Id));
-                Assert.True(associations.Contains(b.Id));
-                Assert.False(associations.Contains(c.Id));
+                Assert.True(associations.Contains(a));
+                Assert.True(associations.Contains(b));
+                Assert.False(associations.Contains(c));
 
-                Assert.False(roles.Contains(a.Id));
-                Assert.False(roles.Contains(b.Id));
-                Assert.False(roles.Contains(c.Id));
+                Assert.False(roles.Contains(a));
+                Assert.False(roles.Contains(b));
+                Assert.False(roles.Contains(c));
 
                 changeSet = this.Transaction.Checkpoint();
 
@@ -314,16 +336,16 @@ namespace Allors.Database.Adapters
                 roles = changeSet.Roles;
 
                 Assert.Equal(0, associations.Count);
-                Assert.Empty(changeSet.GetRoleTypes(a.Id));
-                Assert.Empty(changeSet.GetRoleTypes(b.Id));
+                Assert.Empty(changeSet.GetRoleTypes(a));
+                Assert.Empty(changeSet.GetRoleTypes(b));
 
-                Assert.False(associations.Contains(a.Id));
-                Assert.False(associations.Contains(b.Id));
-                Assert.False(associations.Contains(c.Id));
+                Assert.False(associations.Contains(a));
+                Assert.False(associations.Contains(b));
+                Assert.False(associations.Contains(c));
 
-                Assert.False(roles.Contains(a.Id));
-                Assert.False(roles.Contains(b.Id));
-                Assert.False(roles.Contains(c.Id));
+                Assert.False(roles.Contains(a));
+                Assert.False(roles.Contains(b));
+                Assert.False(roles.Contains(c));
 
                 a.RemoveC1AllorsBoolean();
                 b.RemoveC2AllorsBoolean();
@@ -334,22 +356,22 @@ namespace Allors.Database.Adapters
                 roles = changeSet.Roles;
 
                 Assert.Equal(2, associations.Count);
-                Assert.True(associations.Contains(a.Id));
-                Assert.True(associations.Contains(a.Id));
+                Assert.True(associations.Contains(a));
+                Assert.True(associations.Contains(a));
 
-                _ = Assert.Single(changeSet.GetRoleTypes(a.Id));
-                Assert.Equal(m.C1.C1AllorsBoolean, changeSet.GetRoleTypes(a.Id).First());
+                _ = Assert.Single(changeSet.GetRoleTypes(a));
+                Assert.Equal(m.C1.C1AllorsBoolean, changeSet.GetRoleTypes(a).First());
 
-                _ = Assert.Single(changeSet.GetRoleTypes(b.Id));
-                Assert.Equal(m.C2.C2AllorsBoolean, changeSet.GetRoleTypes(b.Id).First());
+                _ = Assert.Single(changeSet.GetRoleTypes(b));
+                Assert.Equal(m.C2.C2AllorsBoolean, changeSet.GetRoleTypes(b).First());
 
-                Assert.True(associations.Contains(a.Id));
-                Assert.True(associations.Contains(b.Id));
-                Assert.False(associations.Contains(c.Id));
+                Assert.True(associations.Contains(a));
+                Assert.True(associations.Contains(b));
+                Assert.False(associations.Contains(c));
 
-                Assert.False(roles.Contains(a.Id));
-                Assert.False(roles.Contains(b.Id));
-                Assert.False(roles.Contains(c.Id));
+                Assert.False(roles.Contains(a));
+                Assert.False(roles.Contains(b));
+                Assert.False(roles.Contains(c));
 
                 changeSet = this.Transaction.Checkpoint();
 
@@ -357,15 +379,15 @@ namespace Allors.Database.Adapters
                 roles = changeSet.Roles;
 
                 Assert.Equal(0, associations.Count);
-                Assert.Empty(changeSet.GetRoleTypes(a.Id));
-                Assert.Empty(changeSet.GetRoleTypes(b.Id));
+                Assert.Empty(changeSet.GetRoleTypes(a));
+                Assert.Empty(changeSet.GetRoleTypes(b));
 
-                Assert.False(associations.Contains(a.Id));
-                Assert.False(associations.Contains(b.Id));
-                Assert.False(associations.Contains(c.Id));
+                Assert.False(associations.Contains(a));
+                Assert.False(associations.Contains(b));
+                Assert.False(associations.Contains(c));
 
-                Assert.False(roles.Contains(a.Id));
-                Assert.False(roles.Contains(b.Id));
+                Assert.False(roles.Contains(a));
+                Assert.False(roles.Contains(b));
 
                 this.Transaction.Rollback();
 
@@ -375,15 +397,15 @@ namespace Allors.Database.Adapters
                 roles = changeSet.Roles;
 
                 Assert.Equal(0, associations.Count);
-                Assert.Empty(changeSet.GetRoleTypes(a.Id));
-                Assert.Empty(changeSet.GetRoleTypes(b.Id));
+                Assert.Empty(changeSet.GetRoleTypes(a));
+                Assert.Empty(changeSet.GetRoleTypes(b));
 
-                Assert.False(associations.Contains(a.Id));
-                Assert.False(associations.Contains(b.Id));
-                Assert.False(associations.Contains(c.Id));
+                Assert.False(associations.Contains(a));
+                Assert.False(associations.Contains(b));
+                Assert.False(associations.Contains(c));
 
-                Assert.False(roles.Contains(a.Id));
-                Assert.False(roles.Contains(b.Id));
+                Assert.False(roles.Contains(a));
+                Assert.False(roles.Contains(b));
 
                 a.C1AllorsBoolean = true;
 
@@ -395,18 +417,17 @@ namespace Allors.Database.Adapters
                 roles = changeSet.Roles;
 
                 Assert.Equal(0, associations.Count);
-                Assert.Empty(changeSet.GetRoleTypes(a.Id));
-                Assert.Empty(changeSet.GetRoleTypes(b.Id));
+                Assert.Empty(changeSet.GetRoleTypes(a));
+                Assert.Empty(changeSet.GetRoleTypes(b));
 
-                Assert.False(associations.Contains(a.Id));
-                Assert.False(associations.Contains(b.Id));
-                Assert.False(associations.Contains(c.Id));
+                Assert.False(associations.Contains(a));
+                Assert.False(associations.Contains(b));
+                Assert.False(associations.Contains(c));
 
-                Assert.False(roles.Contains(a.Id));
-                Assert.False(roles.Contains(b.Id));
+                Assert.False(roles.Contains(a));
+                Assert.False(roles.Contains(b));
             }
         }
-
 
         [Fact]
         public void One2OneRole()
@@ -452,21 +473,21 @@ namespace Allors.Database.Adapters
                 roles = changes.Roles.ToArray();
 
                 _ = Assert.Single(associations);
-                Assert.Contains(c1a.Id, associations);
+                Assert.Contains(c1a, associations);
 
                 _ = Assert.Single(roles);
-                Assert.Contains(c2b.Id, roles);
+                Assert.Contains(c2b, roles);
 
-                _ = Assert.Single(changes.GetRoleTypes(c1a.Id));
-                Assert.Equal(m.C1.C1C2one2one, changes.GetRoleTypes(c1a.Id).First());
+                _ = Assert.Single(changes.GetRoleTypes(c1a));
+                Assert.Equal(m.C1.C1C2one2one, changes.GetRoleTypes(c1a).First());
 
-                Assert.Contains(c1a.Id, associations);
-                Assert.DoesNotContain(c2b.Id, associations);
-                Assert.DoesNotContain(c2a.Id, associations);
+                Assert.Contains(c1a, associations);
+                Assert.DoesNotContain(c2b, associations);
+                Assert.DoesNotContain(c2a, associations);
 
-                Assert.DoesNotContain(c1a.Id, roles);
-                Assert.Contains(c2b.Id, roles);
-                Assert.DoesNotContain(c2a.Id, roles);
+                Assert.DoesNotContain(c1a, roles);
+                Assert.Contains(c2b, roles);
+                Assert.DoesNotContain(c2a, roles);
 
                 c1a.C1C2one2one = c2b;
 
@@ -486,22 +507,22 @@ namespace Allors.Database.Adapters
                 roles = changes.Roles.ToArray();
 
                 _ = Assert.Single(associations);
-                Assert.Contains(c1a.Id, associations);
+                Assert.Contains(c1a, associations);
 
                 Assert.Equal(2, roles.Length);
-                Assert.Contains(c2b.Id, roles);
-                Assert.Contains(c2a.Id, roles);
+                Assert.Contains(c2b, roles);
+                Assert.Contains(c2a, roles);
 
-                _ = Assert.Single(changes.GetRoleTypes(c1a.Id));
-                Assert.Equal(m.C1.C1C2one2one, changes.GetRoleTypes(c1a.Id).First());
+                _ = Assert.Single(changes.GetRoleTypes(c1a));
+                Assert.Equal(m.C1.C1C2one2one, changes.GetRoleTypes(c1a).First());
 
-                Assert.Contains(c1a.Id, associations);
-                Assert.DoesNotContain(c2b.Id, associations);
-                Assert.DoesNotContain(c2a.Id, associations);
+                Assert.Contains(c1a, associations);
+                Assert.DoesNotContain(c2b, associations);
+                Assert.DoesNotContain(c2a, associations);
 
-                Assert.DoesNotContain(c1a.Id, roles);
-                Assert.Contains(c2b.Id, roles);
-                Assert.Contains(c2a.Id, roles);
+                Assert.DoesNotContain(c1a, roles);
+                Assert.Contains(c2b, roles);
+                Assert.Contains(c2a, roles);
 
                 changes = this.Transaction.Checkpoint();
 
@@ -510,9 +531,9 @@ namespace Allors.Database.Adapters
 
                 Assert.Empty(associations);
                 Assert.Empty(roles);
-                Assert.Empty(changes.GetRoleTypes(c1a.Id));
-                Assert.Empty(changes.GetRoleTypes(c2b.Id));
-                Assert.Empty(changes.GetRoleTypes(c2a.Id));
+                Assert.Empty(changes.GetRoleTypes(c1a));
+                Assert.Empty(changes.GetRoleTypes(c2b));
+                Assert.Empty(changes.GetRoleTypes(c2a));
 
                 c1a.RemoveC1C2one2one();
 
@@ -522,21 +543,21 @@ namespace Allors.Database.Adapters
                 roles = changes.Roles.ToArray();
 
                 _ = Assert.Single(associations);
-                Assert.Contains(c1a.Strategy.ObjectId, associations);
+                Assert.Contains(c1a, associations);
 
                 _ = Assert.Single(roles);
-                Assert.Contains(c2a.Id, roles);
+                Assert.Contains(c2a, roles);
 
-                _ = Assert.Single(changes.GetRoleTypes(c1a.Id));
-                Assert.Equal(m.C1.C1C2one2one, changes.GetRoleTypes(c1a.Id).First());
+                _ = Assert.Single(changes.GetRoleTypes(c1a));
+                Assert.Equal(m.C1.C1C2one2one, changes.GetRoleTypes(c1a).First());
 
-                Assert.Contains(c1a.Id, associations);
-                Assert.DoesNotContain(c2b.Id, associations);
-                Assert.DoesNotContain(c2a.Id, associations);
+                Assert.Contains(c1a, associations);
+                Assert.DoesNotContain(c2b, associations);
+                Assert.DoesNotContain(c2a, associations);
 
-                Assert.DoesNotContain(c1a.Id, roles);
-                Assert.DoesNotContain(c2b.Id, roles);
-                Assert.Contains(c2a.Id, roles);
+                Assert.DoesNotContain(c1a, roles);
+                Assert.DoesNotContain(c2b, roles);
+                Assert.Contains(c2a, roles);
 
                 changes = this.Transaction.Checkpoint();
 
@@ -545,9 +566,9 @@ namespace Allors.Database.Adapters
 
                 Assert.Empty(associations);
                 Assert.Empty(roles);
-                Assert.Empty(changes.GetRoleTypes(c1a.Id));
-                Assert.Empty(changes.GetRoleTypes(c2b.Id));
-                Assert.Empty(changes.GetRoleTypes(c2a.Id));
+                Assert.Empty(changes.GetRoleTypes(c1a));
+                Assert.Empty(changes.GetRoleTypes(c2b));
+                Assert.Empty(changes.GetRoleTypes(c2a));
 
                 c1a.C1C2one2one = c2a;
 
@@ -558,9 +579,9 @@ namespace Allors.Database.Adapters
 
                 Assert.Empty(associations);
                 Assert.Empty(roles);
-                Assert.Empty(changes.GetRoleTypes(c1a.Id));
-                Assert.Empty(changes.GetRoleTypes(c2b.Id));
-                Assert.Empty(changes.GetRoleTypes(c2a.Id));
+                Assert.Empty(changes.GetRoleTypes(c1a));
+                Assert.Empty(changes.GetRoleTypes(c2b));
+                Assert.Empty(changes.GetRoleTypes(c2a));
 
                 c1a.C1C2one2one = c2a;
 
@@ -571,9 +592,9 @@ namespace Allors.Database.Adapters
 
                 Assert.Empty(associations);
                 Assert.Empty(roles);
-                Assert.Empty(changes.GetRoleTypes(c1a.Id));
-                Assert.Empty(changes.GetRoleTypes(c2b.Id));
-                Assert.Empty(changes.GetRoleTypes(c2a.Id));
+                Assert.Empty(changes.GetRoleTypes(c1a));
+                Assert.Empty(changes.GetRoleTypes(c2b));
+                Assert.Empty(changes.GetRoleTypes(c2a));
 
                 c1b.C1C2one2one = c2a;
 
@@ -584,10 +605,25 @@ namespace Allors.Database.Adapters
 
                 Assert.Equal(2, associations.Length);
                 _ = Assert.Single(roles);
-                _ = Assert.Single(changes.GetRoleTypes(c1a.Id));
-                _ = Assert.Single(changes.GetRoleTypes(c1b.Id));
-                Assert.Empty(changes.GetRoleTypes(c2b.Id));
-                Assert.Empty(changes.GetRoleTypes(c2a.Id));
+                _ = Assert.Single(changes.GetRoleTypes(c1a));
+                _ = Assert.Single(changes.GetRoleTypes(c1b));
+                Assert.Empty(changes.GetRoleTypes(c2b));
+                Assert.Empty(changes.GetRoleTypes(c2a));
+
+
+                c1b.RemoveC1C2one2one();
+                c1b.C1C2one2one = c2a;
+
+                this.Transaction.Commit();
+
+                associations = changes.Associations.ToArray();
+                roles = changes.Roles.ToArray();
+
+                Assert.Empty(associations);
+                Assert.Empty(roles);
+                Assert.Empty(changes.GetRoleTypes(c1a));
+                Assert.Empty(changes.GetRoleTypes(c2b));
+                Assert.Empty(changes.GetRoleTypes(c2a));
             }
         }
 
@@ -635,21 +671,21 @@ namespace Allors.Database.Adapters
                 roles = changes.Roles.ToArray();
 
                 _ = Assert.Single(associations);
-                Assert.Contains(c1a.Id, associations);
+                Assert.Contains(c1a, associations);
 
                 _ = Assert.Single(roles);
-                Assert.Contains(c2b.Id, roles);
+                Assert.Contains(c2b, roles);
 
-                _ = Assert.Single(changes.GetRoleTypes(c1a.Id));
-                Assert.Equal(m.C1.C1C2many2one, changes.GetRoleTypes(c1a.Id).First());
+                _ = Assert.Single(changes.GetRoleTypes(c1a));
+                Assert.Equal(m.C1.C1C2many2one, changes.GetRoleTypes(c1a).First());
 
-                Assert.Contains(c1a.Id, associations);
-                Assert.DoesNotContain(c2b.Id, associations);
-                Assert.DoesNotContain(c2a.Id, associations);
+                Assert.Contains(c1a, associations);
+                Assert.DoesNotContain(c2b, associations);
+                Assert.DoesNotContain(c2a, associations);
 
-                Assert.DoesNotContain(c1a.Id, roles);
-                Assert.Contains(c2b.Id, roles);
-                Assert.DoesNotContain(c2a.Id, roles);
+                Assert.DoesNotContain(c1a, roles);
+                Assert.Contains(c2b, roles);
+                Assert.DoesNotContain(c2a, roles);
 
                 c1a.C1C2many2one = c2b;
 
@@ -669,22 +705,22 @@ namespace Allors.Database.Adapters
                 roles = changes.Roles.ToArray();
 
                 _ = Assert.Single(associations);
-                Assert.Contains(c1a.Id, associations);
+                Assert.Contains(c1a, associations);
 
                 Assert.Equal(2, roles.Length);
-                Assert.Contains(c2b.Id, roles);
-                Assert.Contains(c2a.Id, roles);
+                Assert.Contains(c2b, roles);
+                Assert.Contains(c2a, roles);
 
-                _ = Assert.Single(changes.GetRoleTypes(c1a.Id));
-                Assert.Equal(m.C1.C1C2many2one, changes.GetRoleTypes(c1a.Id).First());
+                _ = Assert.Single(changes.GetRoleTypes(c1a));
+                Assert.Equal(m.C1.C1C2many2one, changes.GetRoleTypes(c1a).First());
 
-                Assert.Contains(c1a.Id, associations);
-                Assert.DoesNotContain(c2b.Id, associations);
-                Assert.DoesNotContain(c2a.Id, associations);
+                Assert.Contains(c1a, associations);
+                Assert.DoesNotContain(c2b, associations);
+                Assert.DoesNotContain(c2a, associations);
 
-                Assert.DoesNotContain(c1a.Id, roles);
-                Assert.Contains(c2b.Id, roles);
-                Assert.Contains(c2a.Id, roles);
+                Assert.DoesNotContain(c1a, roles);
+                Assert.Contains(c2b, roles);
+                Assert.Contains(c2a, roles);
 
                 changes = this.Transaction.Checkpoint();
 
@@ -693,9 +729,9 @@ namespace Allors.Database.Adapters
 
                 Assert.Empty(associations);
                 Assert.Empty(roles);
-                Assert.Empty(changes.GetRoleTypes(c1a.Id));
-                Assert.Empty(changes.GetRoleTypes(c2b.Id));
-                Assert.Empty(changes.GetRoleTypes(c2a.Id));
+                Assert.Empty(changes.GetRoleTypes(c1a));
+                Assert.Empty(changes.GetRoleTypes(c2b));
+                Assert.Empty(changes.GetRoleTypes(c2a));
 
                 c1a.RemoveC1C2many2one();
 
@@ -705,21 +741,21 @@ namespace Allors.Database.Adapters
                 roles = changes.Roles.ToArray();
 
                 _ = Assert.Single(associations);
-                Assert.Contains(c1a.Strategy.ObjectId, associations);
+                Assert.Contains(c1a, associations);
 
                 _ = Assert.Single(roles);
-                Assert.Contains(c2a.Id, roles);
+                Assert.Contains(c2a, roles);
 
-                _ = Assert.Single(changes.GetRoleTypes(c1a.Id));
-                Assert.Equal(m.C1.C1C2many2one, changes.GetRoleTypes(c1a.Id).First());
+                _ = Assert.Single(changes.GetRoleTypes(c1a));
+                Assert.Equal(m.C1.C1C2many2one, changes.GetRoleTypes(c1a).First());
 
-                Assert.Contains(c1a.Id, associations);
-                Assert.DoesNotContain(c2b.Id, associations);
-                Assert.DoesNotContain(c2a.Id, associations);
+                Assert.Contains(c1a, associations);
+                Assert.DoesNotContain(c2b, associations);
+                Assert.DoesNotContain(c2a, associations);
 
-                Assert.DoesNotContain(c1a.Id, roles);
-                Assert.DoesNotContain(c2b.Id, roles);
-                Assert.Contains(c2a.Id, roles);
+                Assert.DoesNotContain(c1a, roles);
+                Assert.DoesNotContain(c2b, roles);
+                Assert.Contains(c2a, roles);
 
                 changes = this.Transaction.Checkpoint();
 
@@ -728,9 +764,9 @@ namespace Allors.Database.Adapters
 
                 Assert.Empty(associations);
                 Assert.Empty(roles);
-                Assert.Empty(changes.GetRoleTypes(c1a.Id));
-                Assert.Empty(changes.GetRoleTypes(c2b.Id));
-                Assert.Empty(changes.GetRoleTypes(c2a.Id));
+                Assert.Empty(changes.GetRoleTypes(c1a));
+                Assert.Empty(changes.GetRoleTypes(c2b));
+                Assert.Empty(changes.GetRoleTypes(c2a));
 
                 c1a.C1C2many2one = c2a;
 
@@ -741,9 +777,9 @@ namespace Allors.Database.Adapters
 
                 Assert.Empty(associations);
                 Assert.Empty(roles);
-                Assert.Empty(changes.GetRoleTypes(c1a.Id));
-                Assert.Empty(changes.GetRoleTypes(c2b.Id));
-                Assert.Empty(changes.GetRoleTypes(c2a.Id));
+                Assert.Empty(changes.GetRoleTypes(c1a));
+                Assert.Empty(changes.GetRoleTypes(c2b));
+                Assert.Empty(changes.GetRoleTypes(c2a));
 
                 c1a.C1C2many2one = c2a;
 
@@ -754,9 +790,9 @@ namespace Allors.Database.Adapters
 
                 Assert.Empty(associations);
                 Assert.Empty(roles);
-                Assert.Empty(changes.GetRoleTypes(c1a.Id));
-                Assert.Empty(changes.GetRoleTypes(c2b.Id));
-                Assert.Empty(changes.GetRoleTypes(c2a.Id));
+                Assert.Empty(changes.GetRoleTypes(c1a));
+                Assert.Empty(changes.GetRoleTypes(c2b));
+                Assert.Empty(changes.GetRoleTypes(c2a));
 
                 c1b.C1C2many2one = c2a;
 
@@ -767,10 +803,24 @@ namespace Allors.Database.Adapters
 
                 _ = Assert.Single(associations);
                 _ = Assert.Single(roles);
-                Assert.Empty(changes.GetRoleTypes(c1a.Id));
-                _ = Assert.Single(changes.GetRoleTypes(c1b.Id));
-                Assert.Empty(changes.GetRoleTypes(c2b.Id));
-                Assert.Empty(changes.GetRoleTypes(c2a.Id));
+                Assert.Empty(changes.GetRoleTypes(c1a));
+                _ = Assert.Single(changes.GetRoleTypes(c1b));
+                Assert.Empty(changes.GetRoleTypes(c2b));
+                Assert.Empty(changes.GetRoleTypes(c2a));
+
+                c1b.RemoveC1C2many2one();
+                c1b.C1C2many2one = c2a;
+
+                changes = this.Transaction.Checkpoint();
+
+                associations = changes.Associations.ToArray();
+                roles = changes.Roles.ToArray();
+                
+                Assert.Empty(associations);
+                Assert.Empty(roles);
+                Assert.Empty(changes.GetRoleTypes(c1a));
+                Assert.Empty(changes.GetRoleTypes(c2b));
+                Assert.Empty(changes.GetRoleTypes(c2a));
             }
         }
 
@@ -830,21 +880,21 @@ namespace Allors.Database.Adapters
                 roles = changes.Roles.ToArray();
 
                 _ = Assert.Single(associations);
-                Assert.Contains(c1a.Id, associations);
+                Assert.Contains(c1a, associations);
 
                 _ = Assert.Single(roles);
-                Assert.Contains(c2b.Id, roles);
+                Assert.Contains(c2b, roles);
 
-                _ = Assert.Single(changes.GetRoleTypes(c1a.Id));
-                Assert.Equal(m.C1.C1C2one2manies, changes.GetRoleTypes(c1a.Id).First());
+                _ = Assert.Single(changes.GetRoleTypes(c1a));
+                Assert.Equal(m.C1.C1C2one2manies, changes.GetRoleTypes(c1a).First());
 
-                Assert.Contains(c1a.Id, associations);
-                Assert.DoesNotContain(c2b.Id, associations);
-                Assert.DoesNotContain(c2a.Id, associations);
+                Assert.Contains(c1a, associations);
+                Assert.DoesNotContain(c2b, associations);
+                Assert.DoesNotContain(c2a, associations);
 
-                Assert.DoesNotContain(c1a.Id, roles);
-                Assert.Contains(c2b.Id, roles);
-                Assert.DoesNotContain(c2a.Id, roles);
+                Assert.DoesNotContain(c1a, roles);
+                Assert.Contains(c2b, roles);
+                Assert.DoesNotContain(c2a, roles);
 
                 c1a.AddC1C2one2many(c2b);
 
@@ -874,21 +924,21 @@ namespace Allors.Database.Adapters
                 roles = changes.Roles.ToArray();
 
                 _ = Assert.Single(associations);
-                Assert.Contains(c1a.Id, associations);
+                Assert.Contains(c1a, associations);
 
                 _ = Assert.Single(roles);
-                Assert.Contains(c2a.Id, roles);
+                Assert.Contains(c2a, roles);
 
-                _ = Assert.Single(changes.GetRoleTypes(c1a.Id));
-                Assert.Equal(m.C1.C1C2one2manies, changes.GetRoleTypes(c1a.Id).First());
+                _ = Assert.Single(changes.GetRoleTypes(c1a));
+                Assert.Equal(m.C1.C1C2one2manies, changes.GetRoleTypes(c1a).First());
 
-                Assert.Contains(c1a.Id, associations);
-                Assert.DoesNotContain(c2b.Id, associations);
-                Assert.DoesNotContain(c2a.Id, associations);
+                Assert.Contains(c1a, associations);
+                Assert.DoesNotContain(c2b, associations);
+                Assert.DoesNotContain(c2a, associations);
 
-                Assert.DoesNotContain(c1a.Id, roles);
-                Assert.DoesNotContain(c2b.Id, roles);
-                Assert.Contains(c2a.Id, roles);
+                Assert.DoesNotContain(c1a, roles);
+                Assert.DoesNotContain(c2b, roles);
+                Assert.Contains(c2a, roles);
 
                 changes = this.Transaction.Checkpoint();
 
@@ -897,9 +947,9 @@ namespace Allors.Database.Adapters
 
                 Assert.Empty(associations);
                 Assert.Empty(roles);
-                Assert.Empty(changes.GetRoleTypes(c1a.Id));
-                Assert.Empty(changes.GetRoleTypes(c2b.Id));
-                Assert.Empty(changes.GetRoleTypes(c2a.Id));
+                Assert.Empty(changes.GetRoleTypes(c1a));
+                Assert.Empty(changes.GetRoleTypes(c2b));
+                Assert.Empty(changes.GetRoleTypes(c2a));
 
                 c1a.RemoveC1C2one2many(c2a);
 
@@ -909,21 +959,21 @@ namespace Allors.Database.Adapters
                 roles = changes.Roles.ToArray();
 
                 _ = Assert.Single(associations);
-                Assert.Contains(c1a.Id, associations);
+                Assert.Contains(c1a, associations);
 
                 _ = Assert.Single(roles);
-                Assert.Contains(c2a.Id, roles);
+                Assert.Contains(c2a, roles);
 
-                _ = Assert.Single(changes.GetRoleTypes(c1a.Id));
-                Assert.Equal(m.C1.C1C2one2manies, changes.GetRoleTypes(c1a.Id).First());
+                _ = Assert.Single(changes.GetRoleTypes(c1a));
+                Assert.Equal(m.C1.C1C2one2manies, changes.GetRoleTypes(c1a).First());
 
-                Assert.Contains(c1a.Id, associations);
-                Assert.DoesNotContain(c2b.Id, associations);
-                Assert.DoesNotContain(c2a.Id, associations);
+                Assert.Contains(c1a, associations);
+                Assert.DoesNotContain(c2b, associations);
+                Assert.DoesNotContain(c2a, associations);
 
-                Assert.DoesNotContain(c1a.Id, roles);
-                Assert.DoesNotContain(c2b.Id, roles);
-                Assert.Contains(c2a.Id, roles);
+                Assert.DoesNotContain(c1a, roles);
+                Assert.DoesNotContain(c2b, roles);
+                Assert.Contains(c2a, roles);
 
                 changes = this.Transaction.Checkpoint();
 
@@ -932,9 +982,9 @@ namespace Allors.Database.Adapters
 
                 Assert.Empty(associations);
                 Assert.Empty(roles);
-                Assert.Empty(changes.GetRoleTypes(c1a.Id));
-                Assert.Empty(changes.GetRoleTypes(c2b.Id));
-                Assert.Empty(changes.GetRoleTypes(c2a.Id));
+                Assert.Empty(changes.GetRoleTypes(c1a));
+                Assert.Empty(changes.GetRoleTypes(c2b));
+                Assert.Empty(changes.GetRoleTypes(c2a));
 
                 c1a.RemoveC1C2one2many(c2b);
 
@@ -944,21 +994,21 @@ namespace Allors.Database.Adapters
                 roles = changes.Roles.ToArray();
 
                 _ = Assert.Single(associations);
-                Assert.Contains(c1a.Id, associations);
+                Assert.Contains(c1a, associations);
 
                 _ = Assert.Single(roles);
-                Assert.Contains(c2b.Id, roles);
+                Assert.Contains(c2b, roles);
 
-                _ = Assert.Single(changes.GetRoleTypes(c1a.Id));
-                Assert.Equal(m.C1.C1C2one2manies, changes.GetRoleTypes(c1a.Id).First());
+                _ = Assert.Single(changes.GetRoleTypes(c1a));
+                Assert.Equal(m.C1.C1C2one2manies, changes.GetRoleTypes(c1a).First());
 
-                Assert.Contains(c1a.Id, associations);
-                Assert.DoesNotContain(c2b.Id, associations);
-                Assert.DoesNotContain(c2a.Id, associations);
+                Assert.Contains(c1a, associations);
+                Assert.DoesNotContain(c2b, associations);
+                Assert.DoesNotContain(c2a, associations);
 
-                Assert.DoesNotContain(c1a.Id, roles);
-                Assert.Contains(c2b.Id, roles);
-                Assert.DoesNotContain(c2a.Id, roles);
+                Assert.DoesNotContain(c1a, roles);
+                Assert.Contains(c2b, roles);
+                Assert.DoesNotContain(c2a, roles);
 
                 changes = this.Transaction.Checkpoint();
 
@@ -967,9 +1017,9 @@ namespace Allors.Database.Adapters
 
                 Assert.Empty(associations);
                 Assert.Empty(roles);
-                Assert.Empty(changes.GetRoleTypes(c1a.Id));
-                Assert.Empty(changes.GetRoleTypes(c2b.Id));
-                Assert.Empty(changes.GetRoleTypes(c2a.Id));
+                Assert.Empty(changes.GetRoleTypes(c1a));
+                Assert.Empty(changes.GetRoleTypes(c2b));
+                Assert.Empty(changes.GetRoleTypes(c2a));
 
                 c1a.AddC1C2one2many(c2a);
 
@@ -983,9 +1033,9 @@ namespace Allors.Database.Adapters
                 Assert.Empty(associations);
                 Assert.Empty(roles);
 
-                Assert.Empty(changes.GetRoleTypes(c1a.Id));
-                Assert.Empty(changes.GetRoleTypes(c2b.Id));
-                Assert.Empty(changes.GetRoleTypes(c2a.Id));
+                Assert.Empty(changes.GetRoleTypes(c1a));
+                Assert.Empty(changes.GetRoleTypes(c2b));
+                Assert.Empty(changes.GetRoleTypes(c2a));
 
                 c1a.AddC1C2one2many(c2a);
 
@@ -999,9 +1049,9 @@ namespace Allors.Database.Adapters
                 Assert.Empty(associations);
                 Assert.Empty(roles);
 
-                Assert.Empty(changes.GetRoleTypes(c1a.Id));
-                Assert.Empty(changes.GetRoleTypes(c2b.Id));
-                Assert.Empty(changes.GetRoleTypes(c2a.Id));
+                Assert.Empty(changes.GetRoleTypes(c1a));
+                Assert.Empty(changes.GetRoleTypes(c2b));
+                Assert.Empty(changes.GetRoleTypes(c2a));
 
                 c1b.AddC1C2one2many(c2a);
 
@@ -1012,10 +1062,27 @@ namespace Allors.Database.Adapters
 
                 Assert.Equal(2, associations.Length);
                 _ = Assert.Single(roles);
-                _ = Assert.Single(changes.GetRoleTypes(c1a.Id));
-                _ = Assert.Single(changes.GetRoleTypes(c1b.Id));
-                Assert.Empty(changes.GetRoleTypes(c2b.Id));
-                Assert.Empty(changes.GetRoleTypes(c2a.Id));
+                _ = Assert.Single(changes.GetRoleTypes(c1a));
+                _ = Assert.Single(changes.GetRoleTypes(c1b));
+                Assert.Empty(changes.GetRoleTypes(c2b));
+                Assert.Empty(changes.GetRoleTypes(c2a));
+                
+                c1b.RemoveC1C2one2manies();
+                c1b.AddC1C2one2many(c2a);
+
+                changes = this.Transaction.Checkpoint();
+
+                associations = changes.Associations.ToArray();
+                roles = changes.Roles.ToArray();
+
+                Assert.Empty(associations);
+                Assert.Empty(roles);
+
+                Assert.Empty(changes.GetRoleTypes(c1a));
+                Assert.Empty(changes.GetRoleTypes(c2b));
+                Assert.Empty(changes.GetRoleTypes(c2a));
+
+                c1b.AddC1C2one2many(c2a);
             }
         }
 
@@ -1075,21 +1142,21 @@ namespace Allors.Database.Adapters
                 roles = changes.Roles.ToArray();
 
                 _ = Assert.Single(associations);
-                Assert.Contains(c1a.Id, associations);
+                Assert.Contains(c1a, associations);
 
                 _ = Assert.Single(roles);
-                Assert.Contains(c2b.Id, roles);
+                Assert.Contains(c2b, roles);
 
-                _ = Assert.Single(changes.GetRoleTypes(c1a.Id));
-                Assert.Equal(m.C1.C1C2many2manies, changes.GetRoleTypes(c1a.Id).First());
+                _ = Assert.Single(changes.GetRoleTypes(c1a));
+                Assert.Equal(m.C1.C1C2many2manies, changes.GetRoleTypes(c1a).First());
 
-                Assert.Contains(c1a.Id, associations);
-                Assert.DoesNotContain(c2b.Id, associations);
-                Assert.DoesNotContain(c2a.Id, associations);
+                Assert.Contains(c1a, associations);
+                Assert.DoesNotContain(c2b, associations);
+                Assert.DoesNotContain(c2a, associations);
 
-                Assert.DoesNotContain(c1a.Id, roles);
-                Assert.Contains(c2b.Id, roles);
-                Assert.DoesNotContain(c2a.Id, roles);
+                Assert.DoesNotContain(c1a, roles);
+                Assert.Contains(c2b, roles);
+                Assert.DoesNotContain(c2a, roles);
 
                 c1a.AddC1C2many2many(c2b);
 
@@ -1119,21 +1186,21 @@ namespace Allors.Database.Adapters
                 roles = changes.Roles.ToArray();
 
                 _ = Assert.Single(associations);
-                Assert.Contains(c1a.Id, associations);
+                Assert.Contains(c1a, associations);
 
                 _ = Assert.Single(roles);
-                Assert.Contains(c2a.Id, roles);
+                Assert.Contains(c2a, roles);
 
-                _ = Assert.Single(changes.GetRoleTypes(c1a.Id));
-                Assert.Equal(m.C1.C1C2many2manies, changes.GetRoleTypes(c1a.Id).First());
+                _ = Assert.Single(changes.GetRoleTypes(c1a));
+                Assert.Equal(m.C1.C1C2many2manies, changes.GetRoleTypes(c1a).First());
 
-                Assert.Contains(c1a.Id, associations);
-                Assert.DoesNotContain(c2b.Id, associations);
-                Assert.DoesNotContain(c2a.Id, associations);
+                Assert.Contains(c1a, associations);
+                Assert.DoesNotContain(c2b, associations);
+                Assert.DoesNotContain(c2a, associations);
 
-                Assert.DoesNotContain(c1a.Id, roles);
-                Assert.DoesNotContain(c2b.Id, roles);
-                Assert.Contains(c2a.Id, roles);
+                Assert.DoesNotContain(c1a, roles);
+                Assert.DoesNotContain(c2b, roles);
+                Assert.Contains(c2a, roles);
 
                 changes = this.Transaction.Checkpoint();
 
@@ -1142,9 +1209,9 @@ namespace Allors.Database.Adapters
 
                 Assert.Empty(associations);
                 Assert.Empty(roles);
-                Assert.Empty(changes.GetRoleTypes(c1a.Id));
-                Assert.Empty(changes.GetRoleTypes(c2b.Id));
-                Assert.Empty(changes.GetRoleTypes(c2a.Id));
+                Assert.Empty(changes.GetRoleTypes(c1a));
+                Assert.Empty(changes.GetRoleTypes(c2b));
+                Assert.Empty(changes.GetRoleTypes(c2a));
 
                 c1a.RemoveC1C2many2many(c2a);
 
@@ -1154,21 +1221,21 @@ namespace Allors.Database.Adapters
                 roles = changes.Roles.ToArray();
 
                 _ = Assert.Single(associations);
-                Assert.Contains(c1a.Id, associations);
+                Assert.Contains(c1a, associations);
 
                 _ = Assert.Single(roles);
-                Assert.Contains(c2a.Id, roles);
+                Assert.Contains(c2a, roles);
 
-                _ = Assert.Single(changes.GetRoleTypes(c1a.Id));
-                Assert.Equal(m.C1.C1C2many2manies, changes.GetRoleTypes(c1a.Id).First());
+                _ = Assert.Single(changes.GetRoleTypes(c1a));
+                Assert.Equal(m.C1.C1C2many2manies, changes.GetRoleTypes(c1a).First());
 
-                Assert.Contains(c1a.Id, associations);
-                Assert.DoesNotContain(c2b.Id, associations);
-                Assert.DoesNotContain(c2a.Id, associations);
+                Assert.Contains(c1a, associations);
+                Assert.DoesNotContain(c2b, associations);
+                Assert.DoesNotContain(c2a, associations);
 
-                Assert.DoesNotContain(c1a.Id, roles);
-                Assert.DoesNotContain(c2b.Id, roles);
-                Assert.Contains(c2a.Id, roles);
+                Assert.DoesNotContain(c1a, roles);
+                Assert.DoesNotContain(c2b, roles);
+                Assert.Contains(c2a, roles);
 
                 changes = this.Transaction.Checkpoint();
 
@@ -1177,9 +1244,9 @@ namespace Allors.Database.Adapters
 
                 Assert.Empty(associations);
                 Assert.Empty(roles);
-                Assert.Empty(changes.GetRoleTypes(c1a.Id));
-                Assert.Empty(changes.GetRoleTypes(c2b.Id));
-                Assert.Empty(changes.GetRoleTypes(c2a.Id));
+                Assert.Empty(changes.GetRoleTypes(c1a));
+                Assert.Empty(changes.GetRoleTypes(c2b));
+                Assert.Empty(changes.GetRoleTypes(c2a));
 
                 c1a.RemoveC1C2many2many(c2b);
 
@@ -1189,21 +1256,21 @@ namespace Allors.Database.Adapters
                 roles = changes.Roles.ToArray();
 
                 _ = Assert.Single(associations);
-                Assert.Contains(c1a.Id, associations);
+                Assert.Contains(c1a, associations);
 
                 _ = Assert.Single(roles);
-                Assert.Contains(c2b.Id, roles);
+                Assert.Contains(c2b, roles);
 
-                _ = Assert.Single(changes.GetRoleTypes(c1a.Id));
-                Assert.Equal(m.C1.C1C2many2manies, changes.GetRoleTypes(c1a.Id).First());
+                _ = Assert.Single(changes.GetRoleTypes(c1a));
+                Assert.Equal(m.C1.C1C2many2manies, changes.GetRoleTypes(c1a).First());
 
-                Assert.Contains(c1a.Id, associations);
-                Assert.DoesNotContain(c2b.Id, associations);
-                Assert.DoesNotContain(c2a.Id, associations);
+                Assert.Contains(c1a, associations);
+                Assert.DoesNotContain(c2b, associations);
+                Assert.DoesNotContain(c2a, associations);
 
-                Assert.DoesNotContain(c1a.Id, roles);
-                Assert.Contains(c2b.Id, roles);
-                Assert.DoesNotContain(c2a.Id, roles);
+                Assert.DoesNotContain(c1a, roles);
+                Assert.Contains(c2b, roles);
+                Assert.DoesNotContain(c2a, roles);
 
                 changes = this.Transaction.Checkpoint();
 
@@ -1212,9 +1279,9 @@ namespace Allors.Database.Adapters
 
                 Assert.Empty(associations);
                 Assert.Empty(roles);
-                Assert.Empty(changes.GetRoleTypes(c1a.Id));
-                Assert.Empty(changes.GetRoleTypes(c2b.Id));
-                Assert.Empty(changes.GetRoleTypes(c2a.Id));
+                Assert.Empty(changes.GetRoleTypes(c1a));
+                Assert.Empty(changes.GetRoleTypes(c2b));
+                Assert.Empty(changes.GetRoleTypes(c2a));
 
                 c1a.AddC1C2many2many(c2a);
 
@@ -1228,9 +1295,9 @@ namespace Allors.Database.Adapters
                 Assert.Empty(associations);
                 Assert.Empty(roles);
 
-                Assert.Empty(changes.GetRoleTypes(c1a.Id));
-                Assert.Empty(changes.GetRoleTypes(c2b.Id));
-                Assert.Empty(changes.GetRoleTypes(c2a.Id));
+                Assert.Empty(changes.GetRoleTypes(c1a));
+                Assert.Empty(changes.GetRoleTypes(c2b));
+                Assert.Empty(changes.GetRoleTypes(c2a));
 
                 c1a.AddC1C2many2many(c2a);
 
@@ -1244,9 +1311,9 @@ namespace Allors.Database.Adapters
                 Assert.Empty(associations);
                 Assert.Empty(roles);
 
-                Assert.Empty(changes.GetRoleTypes(c1a.Id));
-                Assert.Empty(changes.GetRoleTypes(c2b.Id));
-                Assert.Empty(changes.GetRoleTypes(c2a.Id));
+                Assert.Empty(changes.GetRoleTypes(c1a));
+                Assert.Empty(changes.GetRoleTypes(c2b));
+                Assert.Empty(changes.GetRoleTypes(c2a));
 
                 c1b.AddC1C2many2many(c2a);
 
@@ -1257,10 +1324,26 @@ namespace Allors.Database.Adapters
 
                 _ = Assert.Single(associations);
                 _ = Assert.Single(roles);
-                Assert.Empty(changes.GetRoleTypes(c1a.Id));
-                _ = Assert.Single(changes.GetRoleTypes(c1b.Id));
-                Assert.Empty(changes.GetRoleTypes(c2b.Id));
-                Assert.Empty(changes.GetRoleTypes(c2a.Id));
+                Assert.Empty(changes.GetRoleTypes(c1a));
+                _ = Assert.Single(changes.GetRoleTypes(c1b));
+                Assert.Empty(changes.GetRoleTypes(c2b));
+                Assert.Empty(changes.GetRoleTypes(c2a));
+
+                c1b.RemoveC1C2many2manies();
+                c1b.AddC1C2many2many(c2a);
+
+                changes = this.Transaction.Checkpoint();
+
+                associations = changes.Associations.ToArray();
+                roles = changes.Roles.ToArray();
+
+                Assert.Empty(associations);
+                Assert.Empty(roles);
+
+                Assert.Empty(changes.GetRoleTypes(c1a));
+                Assert.Empty(changes.GetRoleTypes(c2b));
+                Assert.Empty(changes.GetRoleTypes(c2a));
+
             }
         }
 
@@ -1324,7 +1407,7 @@ namespace Allors.Database.Adapters
                 var changes = this.Transaction.Checkpoint();
 
                 _ = Assert.Single(changes.Created);
-                Assert.Contains(b.Strategy, changes.Created.ToArray());
+                Assert.Contains(b, changes.Created.ToArray());
 
                 this.Transaction.Rollback();
 

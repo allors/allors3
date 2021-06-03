@@ -6,7 +6,7 @@
 //   Defines the AllorsChangeSetMemory type.
 // </summary>
 
-namespace Allors.Database.Adapters.Memory
+namespace Allors.Database.Adapters.SqlClient
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -14,7 +14,7 @@ namespace Allors.Database.Adapters.Memory
 
     using Meta;
 
-    internal sealed class ChangeSet : IChangeSet
+    internal sealed class ChangeLog 
     {
         private readonly HashSet<IStrategy> created;
         private readonly HashSet<IStrategy> deleted;
@@ -28,7 +28,7 @@ namespace Allors.Database.Adapters.Memory
         private IDictionary<IRoleType, ISet<long>> associationsByRoleType;
         private IDictionary<IAssociationType, ISet<long>> rolesByAssociationType;
 
-        internal ChangeSet()
+        internal ChangeLog()
         {
             this.created = new HashSet<IStrategy>();
             this.deleted = new HashSet<IStrategy>();
@@ -51,10 +51,10 @@ namespace Allors.Database.Adapters.Memory
         public IDictionary<long, ISet<IAssociationType>> AssociationTypesByRole => this.associationTypesByRole;
 
         public IDictionary<IRoleType, ISet<long>> AssociationsByRoleType => this.associationsByRoleType ??=
-            (from kvp in this.RoleTypesByAssociation
-             from value in kvp.Value
-             group kvp.Key by value)
-                 .ToDictionary(grp => grp.Key, grp => new HashSet<long>(grp) as ISet<long>);
+        (from kvp in this.RoleTypesByAssociation
+         from value in kvp.Value
+         group kvp.Key by value)
+             .ToDictionary(grp => grp.Key, grp => new HashSet<long>(grp) as ISet<long>);
 
         public IDictionary<IAssociationType, ISet<long>> RolesByAssociationType => this.rolesByAssociationType ??=
             (from kvp in this.AssociationTypesByRole

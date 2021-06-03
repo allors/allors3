@@ -109,7 +109,7 @@ namespace Allors.Database.Adapters.Npgsql
             this.Transaction.Commands.DeleteObject(this);
             this.Reference.Exists = false;
 
-            this.Transaction.State.ChangeSet.OnDeleted(this);
+            this.Transaction.State.ChangeLog.OnDeleted(this);
         }
 
         public virtual bool ExistRole(IRoleType roleType)

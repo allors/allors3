@@ -26,17 +26,17 @@ namespace Allors.Database.Domain.Derivations.Legacy.Default
             // Initialization
             if (domainAccumulatedChangeSet == null && changeSet.Created.Any())
             {
-                var newObjects = changeSet.Created.Select(v => (Object)v.GetObject());
-                foreach (var newObject in newObjects)
+                var newObjects = changeSet.Created;
+                foreach (Object newObject in newObjects)
                 {
                     _ = newObject.OnInit();
                 }
             }
 
             // ChangedObjects
-            var changedObjectIds = new HashSet<long>(changeSet.Associations);
+            var changedObjectIds = new HashSet<IObject>(changeSet.Associations);
             changedObjectIds.UnionWith(changeSet.Roles);
-            changedObjectIds.UnionWith(changeSet.Created.Select(v => v.ObjectId));
+            changedObjectIds.UnionWith(changeSet.Created);
 
             this.Objects = new HashSet<Object>(derivation.Transaction.Instantiate(changedObjectIds).Cast<Object>());
             this.Objects.ExceptWith(this.Iteration.Cycle.Derivation.DerivedObjects);

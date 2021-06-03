@@ -41,7 +41,7 @@ namespace Allors.Database.Adapters.SqlClient
         IDatabase ITransaction.Database => this.Database;
 
         public ITransactionServices Services { get; }
-        
+
         public Database Database { get; }
 
         private Prefetcher Prefetcher { get; }
@@ -89,7 +89,7 @@ namespace Allors.Database.Adapters.SqlClient
 
             this.Database.Cache.SetObjectType(reference.ObjectId, objectType);
 
-            this.State.ChangeSet.OnCreated(reference.Strategy);
+            this.State.ChangeLog.OnCreated(reference.Strategy);
 
             return reference.Strategy.GetObject();
         }
@@ -113,7 +113,7 @@ namespace Allors.Database.Adapters.SqlClient
 
                 domainObjects[i] = reference.Strategy.GetObject();
 
-                this.State.ChangeSet.OnCreated(reference.Strategy);
+                this.State.ChangeLog.OnCreated(reference.Strategy);
             }
 
             return domainObjects;
@@ -241,11 +241,11 @@ namespace Allors.Database.Adapters.SqlClient
         {
             try
             {
-                return this.State.ChangeSet;
+                return new ChangeSet(this, this.State.ChangeLog);
             }
             finally
             {
-                this.State.ChangeSet = new ChangeSet();
+                this.State.ChangeLog = new ChangeLog();
             }
         }
 
@@ -298,7 +298,7 @@ namespace Allors.Database.Adapters.SqlClient
                     this.State.AssociationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Reference, Reference>>();
                     this.State.AssociationsByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Reference, long[]>>();
 
-                    this.State.ChangeSet = new ChangeSet();
+                    this.State.ChangeLog = new ChangeLog();
 
                     this.Database.Cache.OnCommit(accessed, changed);
 
@@ -346,7 +346,7 @@ namespace Allors.Database.Adapters.SqlClient
                     this.State.AssociationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Reference, Reference>>();
                     this.State.AssociationsByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Reference, long[]>>();
 
-                    this.State.ChangeSet = new ChangeSet();
+                    this.State.ChangeLog = new ChangeLog();
 
                     this.Database.Cache.OnRollback(accessed);
 

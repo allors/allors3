@@ -11,43 +11,43 @@ namespace Allors.Database.Domain.Derivations
 
     public class AccumulatedChangeSet : IAccumulatedChangeSet
     {
-        private IDictionary<IRoleType, ISet<long>> associationsByRoleType;
+        private IDictionary<IRoleType, ISet<IObject>> associationsByRoleType;
 
-        private IDictionary<IAssociationType, ISet<long>> rolesByAssociationType;
+        private IDictionary<IAssociationType, ISet<IObject>> rolesByAssociationType;
 
         internal AccumulatedChangeSet()
         {
-            this.Created = new HashSet<IStrategy>();
+            this.Created = new HashSet<IObject>();
             this.Deleted = new HashSet<IStrategy>();
-            this.Associations = new HashSet<long>();
-            this.Roles = new HashSet<long>();
-            this.RoleTypesByAssociation = new Dictionary<long, ISet<IRoleType>>();
-            this.AssociationTypesByRole = new Dictionary<long, ISet<IAssociationType>>();
+            this.Associations = new HashSet<IObject>();
+            this.Roles = new HashSet<IObject>();
+            this.RoleTypesByAssociation = new Dictionary<IObject, ISet<IRoleType>>();
+            this.AssociationTypesByRole = new Dictionary<IObject, ISet<IAssociationType>>();
         }
 
-        public ISet<IStrategy> Created { get; }
+        public ISet<IObject> Created { get; }
 
         public ISet<IStrategy> Deleted { get; }
 
-        public ISet<long> Associations { get; }
+        public ISet<IObject> Associations { get; }
 
-        public ISet<long> Roles { get; }
+        public ISet<IObject> Roles { get; }
 
-        public IDictionary<long, ISet<IRoleType>> RoleTypesByAssociation { get; }
+        public IDictionary<IObject, ISet<IRoleType>> RoleTypesByAssociation { get; }
 
-        public IDictionary<long, ISet<IAssociationType>> AssociationTypesByRole { get; }
+        public IDictionary<IObject, ISet<IAssociationType>> AssociationTypesByRole { get; }
 
-        public IDictionary<IRoleType, ISet<long>> AssociationsByRoleType => this.associationsByRoleType ??=
+        public IDictionary<IRoleType, ISet<IObject>> AssociationsByRoleType => this.associationsByRoleType ??=
             (from kvp in this.RoleTypesByAssociation
              from value in kvp.Value
              group kvp.Key by value)
-                 .ToDictionary(grp => grp.Key, grp => new HashSet<long>(grp) as ISet<long>);
+                 .ToDictionary(grp => grp.Key, grp => new HashSet<IObject>(grp) as ISet<IObject>);
 
-        public IDictionary<IAssociationType, ISet<long>> RolesByAssociationType => this.rolesByAssociationType ??=
+        public IDictionary<IAssociationType, ISet<IObject>> RolesByAssociationType => this.rolesByAssociationType ??=
             (from kvp in this.AssociationTypesByRole
              from value in kvp.Value
              group kvp.Key by value)
-                   .ToDictionary(grp => grp.Key, grp => new HashSet<long>(grp) as ISet<long>);
+                   .ToDictionary(grp => grp.Key, grp => new HashSet<IObject>(grp) as ISet<IObject>);
 
         public void Add(IChangeSet changeSet)
         {

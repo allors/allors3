@@ -72,7 +72,7 @@ namespace Allors.Database.Domain.Derivations
 
         public void AssertIsUnique(IChangeSet changeSet, IObject association, IRoleType roleType)
         {
-            if (changeSet.RoleTypesByAssociation.TryGetValue(association.Id, out var roleTypes))
+            if (changeSet.RoleTypesByAssociation.TryGetValue(association, out var roleTypes))
             {
                 if (roleTypes.Contains(roleType))
                 {

@@ -35,7 +35,7 @@ namespace Allors.Database.Adapters.Memory
 
             this.concreteClassesByObjectType = new Dictionary<IObjectType, IObjectType[]>();
 
-            this.MemoryChangeSet = new ChangeSet();
+            this.ChangeLog = new ChangeLog();
 
             this.Reset();
 
@@ -60,7 +60,7 @@ namespace Allors.Database.Adapters.Memory
 
         public bool IsProfilingEnabled => false;
 
-        internal ChangeSet MemoryChangeSet { get; private set; }
+        internal ChangeLog ChangeLog { get; private set; }
 
         internal Database Database { get; }
 
@@ -103,7 +103,7 @@ namespace Allors.Database.Adapters.Memory
                         }
                     }
 
-                    this.MemoryChangeSet = new ChangeSet();
+                    this.ChangeLog = new ChangeLog();
                 }
                 finally
                 {
@@ -134,7 +134,7 @@ namespace Allors.Database.Adapters.Memory
                         }
                     }
 
-                    this.MemoryChangeSet = new ChangeSet();
+                    this.ChangeLog = new ChangeLog();
                 }
                 finally
                 {
@@ -224,11 +224,11 @@ namespace Allors.Database.Adapters.Memory
         {
             try
             {
-                return this.MemoryChangeSet;
+                return new ChangeSet(this.ChangeLog);
             }
             finally
             {
-                this.MemoryChangeSet = new ChangeSet();
+                this.ChangeLog = new ChangeLog();
             }
         }
 
@@ -273,7 +273,7 @@ namespace Allors.Database.Adapters.Memory
             var strategy = new Strategy(this, objectType, ++this.currentId, Version.Initial);
             this.AddStrategy(strategy);
 
-            this.MemoryChangeSet.OnCreated(strategy);
+            this.ChangeLog.OnCreated(strategy);
 
             return strategy.GetObject();
         }
@@ -298,7 +298,7 @@ namespace Allors.Database.Adapters.Memory
             strategy = new Strategy(this, objectType, objectId, objectVersion);
             this.AddStrategy(strategy);
 
-            this.MemoryChangeSet.OnCreated(strategy);
+            this.ChangeLog.OnCreated(strategy);
 
             return strategy;
         }

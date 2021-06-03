@@ -15,13 +15,13 @@ namespace Allors.Database.Domain
                 var derivation = method.Derivation;
                 var changeSet = derivation.ChangeSet;
 
-                if (changeSet.Created.Contains(@this.Strategy))
+                if (changeSet.Created.Contains(@this))
                 {
                     @this.CreationDate = @this.Strategy.Transaction.Now();
                     @this.CreatedBy = user;
                 }
 
-                if (changeSet.Associations.Contains(@this.Id))
+                if (changeSet.Associations.Contains(@this))
                 {
                     @this.LastModifiedDate = @this.Strategy.Transaction.Now();
                     @this.LastModifiedBy = user;
