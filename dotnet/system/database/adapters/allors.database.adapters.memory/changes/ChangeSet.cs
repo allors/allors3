@@ -10,8 +10,6 @@ namespace Allors.Database.Adapters.Memory
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Adapters;
-
     using Meta;
 
     internal sealed class ChangeSet : IChangeSet
@@ -19,28 +17,28 @@ namespace Allors.Database.Adapters.Memory
         private IDictionary<IRoleType, ISet<IObject>> associationsByRoleType;
         private IDictionary<IAssociationType, ISet<IObject>> rolesByAssociationType;
 
-        internal ChangeSet(ChangeLog changeLog)
-        {
-            this.Created = new HashSet<IObject>(changeLog.Created.Select(v => v.GetObject()));
-            this.Deleted = new HashSet<IStrategy>(changeLog.Deleted);
+        private ISet<IObject> associations;
+        private ISet<IObject> roles;
 
-            this.Associations = new HashSet<IObject>(changeLog.Associations.Select(v => v.GetObject()));
-            this.Roles = new HashSet<IObject>(changeLog.Roles.Select(v => v.GetObject()));
-            this.RoleTypesByAssociation = changeLog.RoleTypesByAssociation.ToDictionary(kvp => kvp.Key.GetObject(), kvp => kvp.Value);
-            this.AssociationTypesByRole = changeLog.AssociationTypesByRole.ToDictionary(kvp => kvp.Key.GetObject(), kvp => kvp.Value);
+        internal ChangeSet(ISet<IObject> created, ISet<IStrategy> deleted, IDictionary<IObject, ISet<IRoleType>> roleTypesByAssociation, IDictionary<IObject, ISet<IAssociationType>> associationTypesByRole)
+        {
+            this.Created = created;
+            this.Deleted = deleted;
+            this.RoleTypesByAssociation = roleTypesByAssociation;
+            this.AssociationTypesByRole = associationTypesByRole;
         }
 
         public ISet<IObject> Created { get; }
 
         public ISet<IStrategy> Deleted { get; }
 
-        public ISet<IObject> Associations { get; }
-
-        public ISet<IObject> Roles { get; }
-
         public IDictionary<IObject, ISet<IRoleType>> RoleTypesByAssociation { get; }
 
         public IDictionary<IObject, ISet<IAssociationType>> AssociationTypesByRole { get; }
+
+        public ISet<IObject> Associations => this.associations ??= new HashSet<IObject>(this.RoleTypesByAssociation.Keys);
+
+        public ISet<IObject> Roles => this.roles ??= new HashSet<IObject>(this.AssociationTypesByRole.Keys);
 
         public IDictionary<IRoleType, ISet<IObject>> AssociationsByRoleType => this.associationsByRoleType ??=
             (from kvp in this.RoleTypesByAssociation

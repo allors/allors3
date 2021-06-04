@@ -50,5 +50,13 @@ namespace Allors.Database.Adapters.Memory
                 this.OriginalCompositesRoleByRoleType.Add(roleType, previousRoles.ToArray());
             }
         }
+
+        public void Trim(ISet<IRoleType> roleTypes)
+        {
+        }
+
+        public void Trim(ISet<IAssociationType> associationTypes)
+        {
+        }
     }
 }

@@ -224,7 +224,7 @@ namespace Allors.Database.Adapters.Memory
         {
             try
             {
-                return new ChangeSet(this.ChangeLog);
+                return this.ChangeLog.Checkpoint();
             }
             finally
             {

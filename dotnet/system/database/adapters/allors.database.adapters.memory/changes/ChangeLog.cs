@@ -7,40 +7,41 @@ namespace Allors.Database.Adapters.Memory
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Collections;
     using Meta;
 
     internal sealed class ChangeLog
     {
-        private readonly HashSet<IStrategy> created;
+        private readonly HashSet<Strategy> created;
         private readonly HashSet<IStrategy> deleted;
 
-        private readonly Dictionary<IStrategy, ISet<IRoleType>> roleTypesByAssociation;
-        private readonly Dictionary<IStrategy, ISet<IAssociationType>> associationTypesByRole;
+        private readonly Dictionary<Strategy, ISet<IRoleType>> roleTypesByAssociation;
+        private readonly Dictionary<Strategy, ISet<IAssociationType>> associationTypesByRole;
 
-        private readonly Dictionary<IStrategy, Original> originalByStrategy;
+        private readonly Dictionary<Strategy, Original> originalByStrategy;
 
         internal ChangeLog()
         {
-            this.created = new HashSet<IStrategy>();
+            this.created = new HashSet<Strategy>();
             this.deleted = new HashSet<IStrategy>();
 
-            this.roleTypesByAssociation = new Dictionary<IStrategy, ISet<IRoleType>>();
-            this.associationTypesByRole = new Dictionary<IStrategy, ISet<IAssociationType>>();
+            this.roleTypesByAssociation = new Dictionary<Strategy, ISet<IRoleType>>();
+            this.associationTypesByRole = new Dictionary<Strategy, ISet<IAssociationType>>();
 
-            this.originalByStrategy = new Dictionary<IStrategy, Original>();
+            this.originalByStrategy = new Dictionary<Strategy, Original>();
         }
 
-        public IEnumerable<IStrategy> Created => this.created;
+        public IEnumerable<Strategy> Created => this.created;
 
         public IEnumerable<IStrategy> Deleted => this.deleted;
 
-        public IEnumerable<IStrategy> Associations => this.roleTypesByAssociation.Keys;
+        public IEnumerable<Strategy> Associations => this.roleTypesByAssociation.Keys;
 
-        public IEnumerable<IStrategy> Roles => this.associationTypesByRole.Keys;
+        public IEnumerable<Strategy> Roles => this.associationTypesByRole.Keys;
 
-        public IDictionary<IStrategy, ISet<IRoleType>> RoleTypesByAssociation => this.roleTypesByAssociation;
+        public IDictionary<Strategy, ISet<IRoleType>> RoleTypesByAssociation => this.roleTypesByAssociation;
 
-        public IDictionary<IStrategy, ISet<IAssociationType>> AssociationTypesByRole => this.associationTypesByRole;
+        public IDictionary<Strategy, ISet<IAssociationType>> AssociationTypesByRole => this.associationTypesByRole;
 
         internal void OnCreated(Strategy strategy) => this.created.Add(strategy);
 
@@ -80,6 +81,33 @@ namespace Allors.Database.Adapters.Memory
             }
 
             _ = this.RoleTypes(association).Add(roleType);
+        }
+
+        internal ChangeSet Checkpoint()
+        {
+            var created = this.created != null ? new HashSet<IObject>(this.created.Select(v => v.GetObject())) : null;
+
+            foreach (var kvp in this.roleTypesByAssociation)
+            {
+                var original = this.Original(kvp.Key);
+                original.Trim(kvp.Value);
+            }
+
+            foreach (var kvp in this.associationTypesByRole)
+            {
+                var original = this.Original(kvp.Key);
+                original.Trim(kvp.Value);
+            }
+
+            var roleTypesByAssociation = this.RoleTypesByAssociation
+                .Where(kvp => kvp.Value.Count > 0)
+                .ToDictionary(kvp => kvp.Key.GetObject(), kvp => kvp.Value);
+
+            var associationTypesByRole = this.AssociationTypesByRole
+                .Where(kvp => kvp.Value.Count > 0)
+                .ToDictionary(kvp => kvp.Key.GetObject(), kvp => kvp.Value);
+
+            return new ChangeSet(created, this.deleted, roleTypesByAssociation, associationTypesByRole);
         }
 
         private ISet<IRoleType> RoleTypes(Strategy associationId)
