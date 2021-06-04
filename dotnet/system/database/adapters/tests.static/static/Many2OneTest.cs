@@ -65,8 +65,8 @@ namespace Allors.Database.Adapters
                         from1.C1C1many2one = to;
                         from1.C1C1many2one = to; // Twice
                         mark();
-                        _ = Assert.Single(to.C1sWhereC1C1many2one);
-                        _ = Assert.Single(to.C1sWhereC1C1many2one);
+                        Assert.Single(to.C1sWhereC1C1many2one);
+                        Assert.Single(to.C1sWhereC1C1many2one);
                         Assert.Equal(from1, to.C1sWhereC1C1many2one[0]);
                         Assert.Equal(from1, to.C1sWhereC1C1many2one[0]);
                         Assert.Equal(to, from1.C1C1many2one);
@@ -185,8 +185,8 @@ namespace Allors.Database.Adapters
                         from2.RemoveC1C1many2one();
                         from2.RemoveC1C1many2one(); // Twice
                         mark();
-                        _ = Assert.Single(to.C1sWhereC1C1many2one);
-                        _ = Assert.Single(to.C1sWhereC1C1many2one);
+                        Assert.Single(to.C1sWhereC1C1many2one);
+                        Assert.Single(to.C1sWhereC1C1many2one);
                         Assert.Equal(from1, to.C1sWhereC1C1many2one[0]);
                         Assert.Equal(from1, to.C1sWhereC1C1many2one[0]);
                         Assert.Equal(to, from1.C1C1many2one);
@@ -355,8 +355,8 @@ namespace Allors.Database.Adapters
                         mark();
                         Assert.Equal(to, from1.C1C1many2one);
                         Assert.Equal(to, from1.C1C1many2one);
-                        _ = Assert.Single(to.C1sWhereC1C1many2one);
-                        _ = Assert.Single(to.C1sWhereC1C1many2one);
+                        Assert.Single(to.C1sWhereC1C1many2one);
+                        Assert.Single(to.C1sWhereC1C1many2one);
                         Assert.Contains(from1, to.C1sWhereC1C1many2one);
                         Assert.Contains(from1, to.C1sWhereC1C1many2one);
                         from1.RemoveC1C1many2one();
@@ -396,8 +396,8 @@ namespace Allors.Database.Adapters
                         from1.C1C1many2one = to;
                         from1.C1C1many2one = to; // Twice
                         mark();
-                        _ = Assert.Single(to.C1sWhereC1C1many2one);
-                        _ = Assert.Single(to.C1sWhereC1C1many2one);
+                        Assert.Single(to.C1sWhereC1C1many2one);
+                        Assert.Single(to.C1sWhereC1C1many2one);
                         Assert.Equal(to, from1.C1C1many2one);
                         Assert.Equal(to, from1.C1C1many2one);
                         Assert.Empty(toAnother.C1sWhereC1C1many2one);
@@ -411,8 +411,8 @@ namespace Allors.Database.Adapters
                         Assert.Empty(to.C1sWhereC1C1many2one);
                         Assert.Equal(toAnother, from1.C1C1many2one);
                         Assert.Equal(toAnother, from1.C1C1many2one);
-                        _ = Assert.Single(toAnother.C1sWhereC1C1many2one);
-                        _ = Assert.Single(toAnother.C1sWhereC1C1many2one);
+                        Assert.Single(toAnother.C1sWhereC1C1many2one);
+                        Assert.Single(toAnother.C1sWhereC1C1many2one);
                         Assert.Contains(from1, toAnother.C1sWhereC1C1many2one);
                         Assert.Contains(from1, toAnother.C1sWhereC1C1many2one);
                         from1.C1C1many2one = null;
@@ -477,8 +477,8 @@ namespace Allors.Database.Adapters
                         mark();
                         Assert.Equal(to, from1.C1C1many2one);
                         Assert.Equal(to, from1.C1C1many2one);
-                        _ = Assert.Single(to.C1sWhereC1C1many2one);
-                        _ = Assert.Single(to.C1sWhereC1C1many2one);
+                        Assert.Single(to.C1sWhereC1C1many2one);
+                        Assert.Single(to.C1sWhereC1C1many2one);
                         Assert.Contains(from1, to.C1sWhereC1C1many2one);
                         Assert.Contains(from1, to.C1sWhereC1C1many2one);
                         Assert.Null(from2.C1C1many2one);
@@ -490,14 +490,14 @@ namespace Allors.Database.Adapters
                         mark();
                         Assert.Equal(to, from1.C1C1many2one);
                         Assert.Equal(to, from1.C1C1many2one);
-                        _ = Assert.Single(to.C1sWhereC1C1many2one);
-                        _ = Assert.Single(to.C1sWhereC1C1many2one);
+                        Assert.Single(to.C1sWhereC1C1many2one);
+                        Assert.Single(to.C1sWhereC1C1many2one);
                         Assert.Contains(from1, to.C1sWhereC1C1many2one);
                         Assert.Contains(from1, to.C1sWhereC1C1many2one);
                         Assert.Equal(toAnother, from2.C1C1many2one);
                         Assert.Equal(toAnother, from2.C1C1many2one);
-                        _ = Assert.Single(toAnother.C1sWhereC1C1many2one);
-                        _ = Assert.Single(toAnother.C1sWhereC1C1many2one);
+                        Assert.Single(toAnother.C1sWhereC1C1many2one);
+                        Assert.Single(toAnother.C1sWhereC1C1many2one);
                         Assert.Contains(from2, toAnother.C1sWhereC1C1many2one);
                         Assert.Contains(from2, toAnother.C1sWhereC1C1many2one);
                         from1.C1C1many2one = null;
@@ -574,8 +574,8 @@ namespace Allors.Database.Adapters
                         Assert.Equal(to, from1.C1C1many2one);
                         Assert.Null(from2.C1C1many2one);
                         Assert.Null(from2.C1C1many2one);
-                        _ = Assert.Single(to.C1sWhereC1C1many2one);
-                        _ = Assert.Single(to.C1sWhereC1C1many2one);
+                        Assert.Single(to.C1sWhereC1C1many2one);
+                        Assert.Single(to.C1sWhereC1C1many2one);
                         Assert.Contains(from1, to.C1sWhereC1C1many2one);
                         Assert.Contains(from1, to.C1sWhereC1C1many2one);
                         Assert.DoesNotContain(from2, to.C1sWhereC1C1many2one);
@@ -716,9 +716,9 @@ namespace Allors.Database.Adapters
                         mark();
                         from1.C1C1many2one = to;
                         mark(); // Twice
-                        _ = Assert.Single(to.C1sWhereC1C1many2one);
+                        Assert.Single(to.C1sWhereC1C1many2one);
                         mark();
-                        _ = Assert.Single(to.C1sWhereC1C1many2one);
+                        Assert.Single(to.C1sWhereC1C1many2one);
                         mark();
                         Assert.Equal(from1, to.C1sWhereC1C1many2one[0]);
                         mark();
@@ -932,9 +932,9 @@ namespace Allors.Database.Adapters
                         mark();
                         from2.RemoveC1C1many2one();
                         mark(); // Twice
-                        _ = Assert.Single(to.C1sWhereC1C1many2one);
+                        Assert.Single(to.C1sWhereC1C1many2one);
                         mark();
-                        _ = Assert.Single(to.C1sWhereC1C1many2one);
+                        Assert.Single(to.C1sWhereC1C1many2one);
                         mark();
                         Assert.Equal(from1, to.C1sWhereC1C1many2one[0]);
                         mark();
@@ -1228,9 +1228,9 @@ namespace Allors.Database.Adapters
                         mark();
                         Assert.Equal(to, from1.C1C1many2one);
                         mark();
-                        _ = Assert.Single(to.C1sWhereC1C1many2one);
+                        Assert.Single(to.C1sWhereC1C1many2one);
                         mark();
-                        _ = Assert.Single(to.C1sWhereC1C1many2one);
+                        Assert.Single(to.C1sWhereC1C1many2one);
                         mark();
                         Assert.Contains(from1, to.C1sWhereC1C1many2one);
                         mark();
@@ -1297,9 +1297,9 @@ namespace Allors.Database.Adapters
                         mark();
                         from1.C1C1many2one = to;
                         mark(); // Twice
-                        _ = Assert.Single(to.C1sWhereC1C1many2one);
+                        Assert.Single(to.C1sWhereC1C1many2one);
                         mark();
-                        _ = Assert.Single(to.C1sWhereC1C1many2one);
+                        Assert.Single(to.C1sWhereC1C1many2one);
                         mark();
                         Assert.Equal(to, from1.C1C1many2one);
                         mark();
@@ -1325,9 +1325,9 @@ namespace Allors.Database.Adapters
                         mark();
                         Assert.Equal(toAnother, from1.C1C1many2one);
                         mark();
-                        _ = Assert.Single(toAnother.C1sWhereC1C1many2one);
+                        Assert.Single(toAnother.C1sWhereC1C1many2one);
                         mark();
-                        _ = Assert.Single(toAnother.C1sWhereC1C1many2one);
+                        Assert.Single(toAnother.C1sWhereC1C1many2one);
                         mark();
                         Assert.Contains(from1, toAnother.C1sWhereC1C1many2one);
                         mark();
@@ -1442,9 +1442,9 @@ namespace Allors.Database.Adapters
                         mark();
                         Assert.Equal(to, from1.C1C1many2one);
                         mark();
-                        _ = Assert.Single(to.C1sWhereC1C1many2one);
+                        Assert.Single(to.C1sWhereC1C1many2one);
                         mark();
-                        _ = Assert.Single(to.C1sWhereC1C1many2one);
+                        Assert.Single(to.C1sWhereC1C1many2one);
                         mark();
                         Assert.Contains(from1, to.C1sWhereC1C1many2one);
                         mark();
@@ -1466,9 +1466,9 @@ namespace Allors.Database.Adapters
                         mark();
                         Assert.Equal(to, from1.C1C1many2one);
                         mark();
-                        _ = Assert.Single(to.C1sWhereC1C1many2one);
+                        Assert.Single(to.C1sWhereC1C1many2one);
                         mark();
-                        _ = Assert.Single(to.C1sWhereC1C1many2one);
+                        Assert.Single(to.C1sWhereC1C1many2one);
                         mark();
                         Assert.Contains(from1, to.C1sWhereC1C1many2one);
                         mark();
@@ -1478,9 +1478,9 @@ namespace Allors.Database.Adapters
                         mark();
                         Assert.Equal(toAnother, from2.C1C1many2one);
                         mark();
-                        _ = Assert.Single(toAnother.C1sWhereC1C1many2one);
+                        Assert.Single(toAnother.C1sWhereC1C1many2one);
                         mark();
-                        _ = Assert.Single(toAnother.C1sWhereC1C1many2one);
+                        Assert.Single(toAnother.C1sWhereC1C1many2one);
                         mark();
                         Assert.Contains(from2, toAnother.C1sWhereC1C1many2one);
                         mark();
@@ -1619,9 +1619,9 @@ namespace Allors.Database.Adapters
                         mark();
                         Assert.Null(from2.C1C1many2one);
                         mark();
-                        _ = Assert.Single(to.C1sWhereC1C1many2one);
+                        Assert.Single(to.C1sWhereC1C1many2one);
                         mark();
-                        _ = Assert.Single(to.C1sWhereC1C1many2one);
+                        Assert.Single(to.C1sWhereC1C1many2one);
                         mark();
                         Assert.Contains(from1, to.C1sWhereC1C1many2one);
                         mark();
@@ -1829,8 +1829,8 @@ namespace Allors.Database.Adapters
                         from1.C1C2many2one = to;
                         from1.C1C2many2one = to; // Twice
                         mark();
-                        _ = Assert.Single(to.C1sWhereC1C2many2one);
-                        _ = Assert.Single(to.C1sWhereC1C2many2one);
+                        Assert.Single(to.C1sWhereC1C2many2one);
+                        Assert.Single(to.C1sWhereC1C2many2one);
                         Assert.Equal(from1, to.C1sWhereC1C2many2one[0]);
                         Assert.Equal(from1, to.C1sWhereC1C2many2one[0]);
                         Assert.Equal(to, from1.C1C2many2one);
@@ -1949,8 +1949,8 @@ namespace Allors.Database.Adapters
                         from2.RemoveC1C2many2one();
                         from2.RemoveC1C2many2one(); // Twice
                         mark();
-                        _ = Assert.Single(to.C1sWhereC1C2many2one);
-                        _ = Assert.Single(to.C1sWhereC1C2many2one);
+                        Assert.Single(to.C1sWhereC1C2many2one);
+                        Assert.Single(to.C1sWhereC1C2many2one);
                         Assert.Equal(from1, to.C1sWhereC1C2many2one[0]);
                         Assert.Equal(from1, to.C1sWhereC1C2many2one[0]);
                         Assert.Equal(to, from1.C1C2many2one);
@@ -2119,8 +2119,8 @@ namespace Allors.Database.Adapters
                         mark();
                         Assert.Equal(to, from1.C1C2many2one);
                         Assert.Equal(to, from1.C1C2many2one);
-                        _ = Assert.Single(to.C1sWhereC1C2many2one);
-                        _ = Assert.Single(to.C1sWhereC1C2many2one);
+                        Assert.Single(to.C1sWhereC1C2many2one);
+                        Assert.Single(to.C1sWhereC1C2many2one);
                         Assert.Contains(from1, to.C1sWhereC1C2many2one);
                         Assert.Contains(from1, to.C1sWhereC1C2many2one);
                         from1.RemoveC1C2many2one();
@@ -2160,8 +2160,8 @@ namespace Allors.Database.Adapters
                         from1.C1C2many2one = to;
                         from1.C1C2many2one = to; // Twice
                         mark();
-                        _ = Assert.Single(to.C1sWhereC1C2many2one);
-                        _ = Assert.Single(to.C1sWhereC1C2many2one);
+                        Assert.Single(to.C1sWhereC1C2many2one);
+                        Assert.Single(to.C1sWhereC1C2many2one);
                         Assert.Equal(to, from1.C1C2many2one);
                         Assert.Equal(to, from1.C1C2many2one);
                         Assert.Empty(toAnother.C1sWhereC1C2many2one);
@@ -2175,8 +2175,8 @@ namespace Allors.Database.Adapters
                         Assert.Empty(to.C1sWhereC1C2many2one);
                         Assert.Equal(toAnother, from1.C1C2many2one);
                         Assert.Equal(toAnother, from1.C1C2many2one);
-                        _ = Assert.Single(toAnother.C1sWhereC1C2many2one);
-                        _ = Assert.Single(toAnother.C1sWhereC1C2many2one);
+                        Assert.Single(toAnother.C1sWhereC1C2many2one);
+                        Assert.Single(toAnother.C1sWhereC1C2many2one);
                         Assert.Contains(from1, toAnother.C1sWhereC1C2many2one);
                         Assert.Contains(from1, toAnother.C1sWhereC1C2many2one);
                         from1.C1C2many2one = null;
@@ -2241,8 +2241,8 @@ namespace Allors.Database.Adapters
                         mark();
                         Assert.Equal(to, from1.C1C2many2one);
                         Assert.Equal(to, from1.C1C2many2one);
-                        _ = Assert.Single(to.C1sWhereC1C2many2one);
-                        _ = Assert.Single(to.C1sWhereC1C2many2one);
+                        Assert.Single(to.C1sWhereC1C2many2one);
+                        Assert.Single(to.C1sWhereC1C2many2one);
                         Assert.Contains(from1, to.C1sWhereC1C2many2one);
                         Assert.Contains(from1, to.C1sWhereC1C2many2one);
                         Assert.Null(from2.C1C2many2one);
@@ -2254,14 +2254,14 @@ namespace Allors.Database.Adapters
                         mark();
                         Assert.Equal(to, from1.C1C2many2one);
                         Assert.Equal(to, from1.C1C2many2one);
-                        _ = Assert.Single(to.C1sWhereC1C2many2one);
-                        _ = Assert.Single(to.C1sWhereC1C2many2one);
+                        Assert.Single(to.C1sWhereC1C2many2one);
+                        Assert.Single(to.C1sWhereC1C2many2one);
                         Assert.Contains(from1, to.C1sWhereC1C2many2one);
                         Assert.Contains(from1, to.C1sWhereC1C2many2one);
                         Assert.Equal(toAnother, from2.C1C2many2one);
                         Assert.Equal(toAnother, from2.C1C2many2one);
-                        _ = Assert.Single(toAnother.C1sWhereC1C2many2one);
-                        _ = Assert.Single(toAnother.C1sWhereC1C2many2one);
+                        Assert.Single(toAnother.C1sWhereC1C2many2one);
+                        Assert.Single(toAnother.C1sWhereC1C2many2one);
                         Assert.Contains(from2, toAnother.C1sWhereC1C2many2one);
                         Assert.Contains(from2, toAnother.C1sWhereC1C2many2one);
                         from1.C1C2many2one = null;
@@ -2338,8 +2338,8 @@ namespace Allors.Database.Adapters
                         Assert.Equal(to, from1.C1C2many2one);
                         Assert.Null(from2.C1C2many2one);
                         Assert.Null(from2.C1C2many2one);
-                        _ = Assert.Single(to.C1sWhereC1C2many2one);
-                        _ = Assert.Single(to.C1sWhereC1C2many2one);
+                        Assert.Single(to.C1sWhereC1C2many2one);
+                        Assert.Single(to.C1sWhereC1C2many2one);
                         Assert.Contains(from1, to.C1sWhereC1C2many2one);
                         Assert.Contains(from1, to.C1sWhereC1C2many2one);
                         Assert.DoesNotContain(from2, to.C1sWhereC1C2many2one);
@@ -2477,8 +2477,8 @@ namespace Allors.Database.Adapters
                         from1.C3C4many2one = to;
                         from1.C3C4many2one = to; // Twice
                         mark();
-                        _ = Assert.Single(to.C3sWhereC3C4many2one);
-                        _ = Assert.Single(to.C3sWhereC3C4many2one);
+                        Assert.Single(to.C3sWhereC3C4many2one);
+                        Assert.Single(to.C3sWhereC3C4many2one);
                         Assert.Equal(from1, to.C3sWhereC3C4many2one[0]);
                         Assert.Equal(from1, to.C3sWhereC3C4many2one[0]);
                         Assert.Equal(to, from1.C3C4many2one);
@@ -2597,8 +2597,8 @@ namespace Allors.Database.Adapters
                         from2.RemoveC3C4many2one();
                         from2.RemoveC3C4many2one(); // Twice
                         mark();
-                        _ = Assert.Single(to.C3sWhereC3C4many2one);
-                        _ = Assert.Single(to.C3sWhereC3C4many2one);
+                        Assert.Single(to.C3sWhereC3C4many2one);
+                        Assert.Single(to.C3sWhereC3C4many2one);
                         Assert.Equal(from1, to.C3sWhereC3C4many2one[0]);
                         Assert.Equal(from1, to.C3sWhereC3C4many2one[0]);
                         Assert.Equal(to, from1.C3C4many2one);
@@ -2767,8 +2767,8 @@ namespace Allors.Database.Adapters
                         mark();
                         Assert.Equal(to, from1.C3C4many2one);
                         Assert.Equal(to, from1.C3C4many2one);
-                        _ = Assert.Single(to.C3sWhereC3C4many2one);
-                        _ = Assert.Single(to.C3sWhereC3C4many2one);
+                        Assert.Single(to.C3sWhereC3C4many2one);
+                        Assert.Single(to.C3sWhereC3C4many2one);
                         Assert.Contains(from1, to.C3sWhereC3C4many2one);
                         Assert.Contains(from1, to.C3sWhereC3C4many2one);
                         from1.RemoveC3C4many2one();
@@ -2808,8 +2808,8 @@ namespace Allors.Database.Adapters
                         from1.C3C4many2one = to;
                         from1.C3C4many2one = to; // Twice
                         mark();
-                        _ = Assert.Single(to.C3sWhereC3C4many2one);
-                        _ = Assert.Single(to.C3sWhereC3C4many2one);
+                        Assert.Single(to.C3sWhereC3C4many2one);
+                        Assert.Single(to.C3sWhereC3C4many2one);
                         Assert.Equal(to, from1.C3C4many2one);
                         Assert.Equal(to, from1.C3C4many2one);
                         Assert.Empty(toAnother.C3sWhereC3C4many2one);
@@ -2823,8 +2823,8 @@ namespace Allors.Database.Adapters
                         Assert.Empty(to.C3sWhereC3C4many2one);
                         Assert.Equal(toAnother, from1.C3C4many2one);
                         Assert.Equal(toAnother, from1.C3C4many2one);
-                        _ = Assert.Single(toAnother.C3sWhereC3C4many2one);
-                        _ = Assert.Single(toAnother.C3sWhereC3C4many2one);
+                        Assert.Single(toAnother.C3sWhereC3C4many2one);
+                        Assert.Single(toAnother.C3sWhereC3C4many2one);
                         Assert.Contains(from1, toAnother.C3sWhereC3C4many2one);
                         Assert.Contains(from1, toAnother.C3sWhereC3C4many2one);
                         from1.C3C4many2one = null;
@@ -2889,8 +2889,8 @@ namespace Allors.Database.Adapters
                         mark();
                         Assert.Equal(to, from1.C3C4many2one);
                         Assert.Equal(to, from1.C3C4many2one);
-                        _ = Assert.Single(to.C3sWhereC3C4many2one);
-                        _ = Assert.Single(to.C3sWhereC3C4many2one);
+                        Assert.Single(to.C3sWhereC3C4many2one);
+                        Assert.Single(to.C3sWhereC3C4many2one);
                         Assert.Contains(from1, to.C3sWhereC3C4many2one);
                         Assert.Contains(from1, to.C3sWhereC3C4many2one);
                         Assert.Null(from2.C3C4many2one);
@@ -2902,14 +2902,14 @@ namespace Allors.Database.Adapters
                         mark();
                         Assert.Equal(to, from1.C3C4many2one);
                         Assert.Equal(to, from1.C3C4many2one);
-                        _ = Assert.Single(to.C3sWhereC3C4many2one);
-                        _ = Assert.Single(to.C3sWhereC3C4many2one);
+                        Assert.Single(to.C3sWhereC3C4many2one);
+                        Assert.Single(to.C3sWhereC3C4many2one);
                         Assert.Contains(from1, to.C3sWhereC3C4many2one);
                         Assert.Contains(from1, to.C3sWhereC3C4many2one);
                         Assert.Equal(toAnother, from2.C3C4many2one);
                         Assert.Equal(toAnother, from2.C3C4many2one);
-                        _ = Assert.Single(toAnother.C3sWhereC3C4many2one);
-                        _ = Assert.Single(toAnother.C3sWhereC3C4many2one);
+                        Assert.Single(toAnother.C3sWhereC3C4many2one);
+                        Assert.Single(toAnother.C3sWhereC3C4many2one);
                         Assert.Contains(from2, toAnother.C3sWhereC3C4many2one);
                         Assert.Contains(from2, toAnother.C3sWhereC3C4many2one);
                         from1.C3C4many2one = null;
@@ -2986,8 +2986,8 @@ namespace Allors.Database.Adapters
                         Assert.Equal(to, from1.C3C4many2one);
                         Assert.Null(from2.C3C4many2one);
                         Assert.Null(from2.C3C4many2one);
-                        _ = Assert.Single(to.C3sWhereC3C4many2one);
-                        _ = Assert.Single(to.C3sWhereC3C4many2one);
+                        Assert.Single(to.C3sWhereC3C4many2one);
+                        Assert.Single(to.C3sWhereC3C4many2one);
                         Assert.Contains(from1, to.C3sWhereC3C4many2one);
                         Assert.Contains(from1, to.C3sWhereC3C4many2one);
                         Assert.DoesNotContain(from2, to.C3sWhereC3C4many2one);
@@ -3125,8 +3125,8 @@ namespace Allors.Database.Adapters
                         from1.I1I12many2one = to;
                         from1.I1I12many2one = to; // Twice
                         mark();
-                        _ = Assert.Single(to.I1sWhereI1I12many2one);
-                        _ = Assert.Single(to.I1sWhereI1I12many2one);
+                        Assert.Single(to.I1sWhereI1I12many2one);
+                        Assert.Single(to.I1sWhereI1I12many2one);
                         Assert.Equal(from1, to.I1sWhereI1I12many2one[0]);
                         Assert.Equal(from1, to.I1sWhereI1I12many2one[0]);
                         Assert.Equal(to, from1.I1I12many2one);
@@ -3245,8 +3245,8 @@ namespace Allors.Database.Adapters
                         from2.RemoveI1I12many2one();
                         from2.RemoveI1I12many2one(); // Twice
                         mark();
-                        _ = Assert.Single(to.I1sWhereI1I12many2one);
-                        _ = Assert.Single(to.I1sWhereI1I12many2one);
+                        Assert.Single(to.I1sWhereI1I12many2one);
+                        Assert.Single(to.I1sWhereI1I12many2one);
                         Assert.Equal(from1, to.I1sWhereI1I12many2one[0]);
                         Assert.Equal(from1, to.I1sWhereI1I12many2one[0]);
                         Assert.Equal(to, from1.I1I12many2one);
@@ -3416,8 +3416,8 @@ namespace Allors.Database.Adapters
                         mark();
                         Assert.Equal(to, from1.I1I12many2one);
                         Assert.Equal(to, from1.I1I12many2one);
-                        _ = Assert.Single(to.I1sWhereI1I12many2one);
-                        _ = Assert.Single(to.I1sWhereI1I12many2one);
+                        Assert.Single(to.I1sWhereI1I12many2one);
+                        Assert.Single(to.I1sWhereI1I12many2one);
                         Assert.Contains(from1, to.I1sWhereI1I12many2one);
                         Assert.Contains(from1, to.I1sWhereI1I12many2one);
                         from1.RemoveI1I12many2one();
@@ -3457,8 +3457,8 @@ namespace Allors.Database.Adapters
                         from1.I1I12many2one = to;
                         from1.I1I12many2one = to; // Twice
                         mark();
-                        _ = Assert.Single(to.I1sWhereI1I12many2one);
-                        _ = Assert.Single(to.I1sWhereI1I12many2one);
+                        Assert.Single(to.I1sWhereI1I12many2one);
+                        Assert.Single(to.I1sWhereI1I12many2one);
                         Assert.Equal(to, from1.I1I12many2one);
                         Assert.Equal(to, from1.I1I12many2one);
                         Assert.Empty(toAnother.I1sWhereI1I12many2one);
@@ -3472,8 +3472,8 @@ namespace Allors.Database.Adapters
                         Assert.Empty(to.I1sWhereI1I12many2one);
                         Assert.Equal(toAnother, from1.I1I12many2one);
                         Assert.Equal(toAnother, from1.I1I12many2one);
-                        _ = Assert.Single(toAnother.I1sWhereI1I12many2one);
-                        _ = Assert.Single(toAnother.I1sWhereI1I12many2one);
+                        Assert.Single(toAnother.I1sWhereI1I12many2one);
+                        Assert.Single(toAnother.I1sWhereI1I12many2one);
                         Assert.Contains(from1, toAnother.I1sWhereI1I12many2one);
                         Assert.Contains(from1, toAnother.I1sWhereI1I12many2one);
                         from1.I1I12many2one = null;
@@ -3538,8 +3538,8 @@ namespace Allors.Database.Adapters
                         mark();
                         Assert.Equal(to, from1.I1I12many2one);
                         Assert.Equal(to, from1.I1I12many2one);
-                        _ = Assert.Single(to.I1sWhereI1I12many2one);
-                        _ = Assert.Single(to.I1sWhereI1I12many2one);
+                        Assert.Single(to.I1sWhereI1I12many2one);
+                        Assert.Single(to.I1sWhereI1I12many2one);
                         Assert.Contains(from1, to.I1sWhereI1I12many2one);
                         Assert.Contains(from1, to.I1sWhereI1I12many2one);
                         Assert.Null(from2.I1I12many2one);
@@ -3551,14 +3551,14 @@ namespace Allors.Database.Adapters
                         mark();
                         Assert.Equal(to, from1.I1I12many2one);
                         Assert.Equal(to, from1.I1I12many2one);
-                        _ = Assert.Single(to.I1sWhereI1I12many2one);
-                        _ = Assert.Single(to.I1sWhereI1I12many2one);
+                        Assert.Single(to.I1sWhereI1I12many2one);
+                        Assert.Single(to.I1sWhereI1I12many2one);
                         Assert.Contains(from1, to.I1sWhereI1I12many2one);
                         Assert.Contains(from1, to.I1sWhereI1I12many2one);
                         Assert.Equal(toAnother, from2.I1I12many2one);
                         Assert.Equal(toAnother, from2.I1I12many2one);
-                        _ = Assert.Single(toAnother.I1sWhereI1I12many2one);
-                        _ = Assert.Single(toAnother.I1sWhereI1I12many2one);
+                        Assert.Single(toAnother.I1sWhereI1I12many2one);
+                        Assert.Single(toAnother.I1sWhereI1I12many2one);
                         Assert.Contains(from2, toAnother.I1sWhereI1I12many2one);
                         Assert.Contains(from2, toAnother.I1sWhereI1I12many2one);
                         from1.I1I12many2one = null;
@@ -3635,8 +3635,8 @@ namespace Allors.Database.Adapters
                         Assert.Equal(to, from1.I1I12many2one);
                         Assert.Null(from2.I1I12many2one);
                         Assert.Null(from2.I1I12many2one);
-                        _ = Assert.Single(to.I1sWhereI1I12many2one);
-                        _ = Assert.Single(to.I1sWhereI1I12many2one);
+                        Assert.Single(to.I1sWhereI1I12many2one);
+                        Assert.Single(to.I1sWhereI1I12many2one);
                         Assert.Contains(from1, to.I1sWhereI1I12many2one);
                         Assert.Contains(from1, to.I1sWhereI1I12many2one);
                         Assert.DoesNotContain(from2, to.I1sWhereI1I12many2one);
@@ -3777,9 +3777,9 @@ namespace Allors.Database.Adapters
                         mark();
                         from1.I1I12many2one = to;
                         mark(); // Twice
-                        _ = Assert.Single(to.I1sWhereI1I12many2one);
+                        Assert.Single(to.I1sWhereI1I12many2one);
                         mark();
-                        _ = Assert.Single(to.I1sWhereI1I12many2one);
+                        Assert.Single(to.I1sWhereI1I12many2one);
                         mark();
                         Assert.Equal(from1, to.I1sWhereI1I12many2one[0]);
                         mark();
@@ -3993,9 +3993,9 @@ namespace Allors.Database.Adapters
                         mark();
                         from2.RemoveI1I12many2one();
                         mark(); // Twice
-                        _ = Assert.Single(to.I1sWhereI1I12many2one);
+                        Assert.Single(to.I1sWhereI1I12many2one);
                         mark();
-                        _ = Assert.Single(to.I1sWhereI1I12many2one);
+                        Assert.Single(to.I1sWhereI1I12many2one);
                         mark();
                         Assert.Equal(from1, to.I1sWhereI1I12many2one[0]);
                         mark();
@@ -4289,9 +4289,9 @@ namespace Allors.Database.Adapters
                         mark();
                         Assert.Equal(to, from1.I1I12many2one);
                         mark();
-                        _ = Assert.Single(to.I1sWhereI1I12many2one);
+                        Assert.Single(to.I1sWhereI1I12many2one);
                         mark();
-                        _ = Assert.Single(to.I1sWhereI1I12many2one);
+                        Assert.Single(to.I1sWhereI1I12many2one);
                         mark();
                         Assert.Contains(from1, to.I1sWhereI1I12many2one);
                         mark();
@@ -4358,9 +4358,9 @@ namespace Allors.Database.Adapters
                         mark();
                         from1.I1I12many2one = to;
                         mark(); // Twice
-                        _ = Assert.Single(to.I1sWhereI1I12many2one);
+                        Assert.Single(to.I1sWhereI1I12many2one);
                         mark();
-                        _ = Assert.Single(to.I1sWhereI1I12many2one);
+                        Assert.Single(to.I1sWhereI1I12many2one);
                         mark();
                         Assert.Equal(to, from1.I1I12many2one);
                         mark();
@@ -4386,9 +4386,9 @@ namespace Allors.Database.Adapters
                         mark();
                         Assert.Equal(toAnother, from1.I1I12many2one);
                         mark();
-                        _ = Assert.Single(toAnother.I1sWhereI1I12many2one);
+                        Assert.Single(toAnother.I1sWhereI1I12many2one);
                         mark();
-                        _ = Assert.Single(toAnother.I1sWhereI1I12many2one);
+                        Assert.Single(toAnother.I1sWhereI1I12many2one);
                         mark();
                         Assert.Contains(from1, toAnother.I1sWhereI1I12many2one);
                         mark();
@@ -4503,9 +4503,9 @@ namespace Allors.Database.Adapters
                         mark();
                         Assert.Equal(to, from1.I1I12many2one);
                         mark();
-                        _ = Assert.Single(to.I1sWhereI1I12many2one);
+                        Assert.Single(to.I1sWhereI1I12many2one);
                         mark();
-                        _ = Assert.Single(to.I1sWhereI1I12many2one);
+                        Assert.Single(to.I1sWhereI1I12many2one);
                         mark();
                         Assert.Contains(from1, to.I1sWhereI1I12many2one);
                         mark();
@@ -4527,9 +4527,9 @@ namespace Allors.Database.Adapters
                         mark();
                         Assert.Equal(to, from1.I1I12many2one);
                         mark();
-                        _ = Assert.Single(to.I1sWhereI1I12many2one);
+                        Assert.Single(to.I1sWhereI1I12many2one);
                         mark();
-                        _ = Assert.Single(to.I1sWhereI1I12many2one);
+                        Assert.Single(to.I1sWhereI1I12many2one);
                         mark();
                         Assert.Contains(from1, to.I1sWhereI1I12many2one);
                         mark();
@@ -4539,9 +4539,9 @@ namespace Allors.Database.Adapters
                         mark();
                         Assert.Equal(toAnother, from2.I1I12many2one);
                         mark();
-                        _ = Assert.Single(toAnother.I1sWhereI1I12many2one);
+                        Assert.Single(toAnother.I1sWhereI1I12many2one);
                         mark();
-                        _ = Assert.Single(toAnother.I1sWhereI1I12many2one);
+                        Assert.Single(toAnother.I1sWhereI1I12many2one);
                         mark();
                         Assert.Contains(from2, toAnother.I1sWhereI1I12many2one);
                         mark();
@@ -4680,9 +4680,9 @@ namespace Allors.Database.Adapters
                         mark();
                         Assert.Null(from2.I1I12many2one);
                         mark();
-                        _ = Assert.Single(to.I1sWhereI1I12many2one);
+                        Assert.Single(to.I1sWhereI1I12many2one);
                         mark();
-                        _ = Assert.Single(to.I1sWhereI1I12many2one);
+                        Assert.Single(to.I1sWhereI1I12many2one);
                         mark();
                         Assert.Contains(from1, to.I1sWhereI1I12many2one);
                         mark();

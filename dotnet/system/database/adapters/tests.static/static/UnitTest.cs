@@ -188,7 +188,7 @@ namespace Allors.Database.Adapters
 
                     // Force a Flush
                     Extent<C1> extent = this.Transaction.Extent(m.C1);
-                    _ = extent.Filter.AddEquals(m.C1.C1AllorsBoolean, true);
+                    extent.Filter.AddEquals(m.C1.C1AllorsBoolean, true);
                     Assert.NotNull(extent.First);
 
                     // Garbage Collect
@@ -472,7 +472,7 @@ namespace Allors.Database.Adapters
 
                     // Force a Flush
                     Extent<C1> extent = this.Transaction.Extent(m.C1);
-                    _ = extent.Filter.AddEquals(m.C1.C1AllorsDateTime, new DateTime(1973, 03, 27, 1, 2, 3, 4, DateTimeKind.Utc));
+                    extent.Filter.AddEquals(m.C1.C1AllorsDateTime, new DateTime(1973, 03, 27, 1, 2, 3, 4, DateTimeKind.Utc));
                     var first = extent.First;
                     Assert.NotNull(first);
 
@@ -683,7 +683,7 @@ namespace Allors.Database.Adapters
 
                     // Force a Flush
                     Extent<C1> extent = this.Transaction.Extent(m.C1);
-                    _ = extent.Filter.AddEquals(m.C1.C1AllorsDecimal, 1M);
+                    extent.Filter.AddEquals(m.C1.C1AllorsDecimal, 1M);
                     Assert.NotNull(extent.First);
 
                     // Garbage Collect
@@ -892,7 +892,7 @@ namespace Allors.Database.Adapters
 
                     // Force a Flush
                     Extent<C1> extent = this.Transaction.Extent(m.C1);
-                    _ = extent.Filter.AddEquals(m.C1.C1AllorsDouble, 1);
+                    extent.Filter.AddEquals(m.C1.C1AllorsDouble, 1);
                     Assert.NotNull(extent.First);
 
                     // Garbage Collect
@@ -1106,7 +1106,7 @@ namespace Allors.Database.Adapters
 
                     // Force a Flush
                     Extent<C1> extent = this.Transaction.Extent(m.C1);
-                    _ = extent.Filter.AddEquals(m.C1.C1AllorsInteger, 1);
+                    extent.Filter.AddEquals(m.C1.C1AllorsInteger, 1);
                     Assert.NotNull(extent.First);
 
                     // Garbage Collect
@@ -1289,7 +1289,7 @@ namespace Allors.Database.Adapters
 
                     // Force a Flush
                     Extent<C1> extent = this.Transaction.Extent(m.C1);
-                    _ = extent.Filter.AddEquals(m.C1.C1StringLarge, aLarge);
+                    extent.Filter.AddEquals(m.C1.C1StringLarge, aLarge);
                     Assert.NotNull(extent.First);
 
                     // Garbage Collect
@@ -1492,7 +1492,7 @@ namespace Allors.Database.Adapters
 
                     // Force a Flush
                     Extent<C1> extent = this.Transaction.Extent(m.C1);
-                    _ = extent.Filter.AddEquals(m.C1.C1AllorsBinary, binary1);
+                    extent.Filter.AddEquals(m.C1.C1AllorsBinary, binary1);
                     Assert.NotNull(extent.First);
 
                     // Garbage Collect
@@ -1690,7 +1690,7 @@ namespace Allors.Database.Adapters
 
                     // Force a Flush
                     Extent<C1> extent = this.Transaction.Extent(m.C1);
-                    _ = extent.Filter.AddEquals(m.C1.C1AllorsString, "a");
+                    extent.Filter.AddEquals(m.C1.C1AllorsString, "a");
                     Assert.NotNull(extent.First);
 
                     // Garbage Collect
@@ -1863,7 +1863,7 @@ namespace Allors.Database.Adapters
 
                     // Force a Flush
                     Extent<C1> extent = this.Transaction.Extent(m.C1);
-                    _ = extent.Filter.AddEquals(m.C1.C1AllorsUnique, unique);
+                    extent.Filter.AddEquals(m.C1.C1AllorsUnique, unique);
                     Assert.NotNull(extent.First);
 
                     // Garbage Collect
@@ -1890,7 +1890,7 @@ namespace Allors.Database.Adapters
                 var values = new ArrayList();
                 for (var i = 0; i < 4000; i++)
                 {
-                    _ = values.Add(SingleUnit.Create(this.Transaction));
+                    values.Add(SingleUnit.Create(this.Transaction));
                 }
 
                 this.Transaction.Commit();

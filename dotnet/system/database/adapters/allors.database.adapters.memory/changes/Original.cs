@@ -115,11 +115,11 @@ namespace Allors.Database.Adapters.Memory
             {
                 if (associationType.IsOne)
                 {
-                    //var originalAssociation = this.OriginalCompositeAssociationByRoleType[associationType];
-                    //if (this.Strategy.ShouldTrim(associationType, originalAssociation))
-                    //{
-                    //    associationTypes.Remove(associationType);
-                    //}
+                    var originalAssociation = this.OriginalCompositeAssociationByRoleType[associationType];
+                    if (this.Strategy.ShouldTrim(associationType, originalAssociation))
+                    {
+                        associationTypes.Remove(associationType);
+                    }
                 }
                 else
                 {

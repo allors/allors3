@@ -119,30 +119,6 @@ namespace Allors.Database.Adapters.Memory
             return original;
         }
 
-        private IEnumerable<KeyValuePair<IObject, ISet<IAssociationType>>> AssociationTypesByRole()
-        {
-            foreach (var kvp in this.associationTypesByRole)
-            {
-                var strategy = kvp.Key;
-                if (strategy.IsDeleted)
-                {
-                    continue;
-                }
-
-                var original = this.Original(kvp.Key);
-                var associationTypes = kvp.Value;
-                original.Trim(associationTypes);
-
-                if (associationTypes.Count <= 0)
-                {
-                    continue;
-                }
-
-                var @object = strategy.GetObject();
-                yield return new KeyValuePair<IObject, ISet<IAssociationType>>(@object, associationTypes);
-            }
-        }
-
         private IEnumerable<KeyValuePair<IObject, ISet<IRoleType>>> RoleTypesByAssociation()
         {
             foreach (var kvp in this.roleTypesByAssociation)
@@ -164,6 +140,30 @@ namespace Allors.Database.Adapters.Memory
 
                 var @object = strategy.GetObject();
                 yield return new KeyValuePair<IObject, ISet<IRoleType>>(@object, roleTypes);
+            }
+        }
+
+        private IEnumerable<KeyValuePair<IObject, ISet<IAssociationType>>> AssociationTypesByRole()
+        {
+            foreach (var kvp in this.associationTypesByRole)
+            {
+                var strategy = kvp.Key;
+                if (strategy.IsDeleted)
+                {
+                    continue;
+                }
+
+                var original = this.Original(kvp.Key);
+                var associationTypes = kvp.Value;
+                original.Trim(associationTypes);
+
+                if (associationTypes.Count <= 0)
+                {
+                    continue;
+                }
+
+                var @object = strategy.GetObject();
+                yield return new KeyValuePair<IObject, ISet<IAssociationType>>(@object, associationTypes);
             }
         }
     }

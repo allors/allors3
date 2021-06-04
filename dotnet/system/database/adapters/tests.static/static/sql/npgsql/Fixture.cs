@@ -17,9 +17,9 @@ namespace Allors.Database.Adapters.Npgsql
             connection.Open();
             using var command = connection.CreateCommand();
             command.CommandText = $"DROP DATABASE IF EXISTS {database}";
-            _ = command.ExecuteNonQuery();
+            command.ExecuteNonQuery();
             command.CommandText = $"CREATE DATABASE {database}";
-            _ = command.ExecuteNonQuery();
+            command.ExecuteNonQuery();
         }
     }
 }

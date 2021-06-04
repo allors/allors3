@@ -106,11 +106,11 @@ namespace Allors.Database.Adapters
                 };
 
                 var arguments = new Mock<IArguments>();
-                _ = arguments.Setup(arg => arg.HasArgument("pString")).Returns(true);
-                _ = arguments.Setup(arg => arg.ResolveUnit(UnitTags.String, "pString")).Returns("ᴀbra");
+                arguments.Setup(arg => arg.HasArgument("pString")).Returns(true);
+                arguments.Setup(arg => arg.ResolveUnit(UnitTags.String, "pString")).Returns("ᴀbra");
                 var objects = this.Transaction.Resolve<C1>(extent, arguments.Object);
 
-                _ = Assert.Single(objects);
+                Assert.Single(objects);
             }
         }
 
@@ -206,7 +206,7 @@ namespace Allors.Database.Adapters
                 this.Profile.Transaction.Commit();
 
                 var extent = this.Transaction.Extent(m.C1);
-                _ = extent.Filter.AddEquals(m.C1.C1AllorsString, m.C1.C1StringEquals);
+                extent.Filter.AddEquals(m.C1.C1AllorsString, m.C1.C1StringEquals);
 
                 Assert.Single(extent);
             }

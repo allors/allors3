@@ -24,12 +24,12 @@ namespace Allors.Database.Adapters
 
                     foreach (var roleType in @class.DatabaseRoleTypes)
                     {
-                        _ = prefetchPolicyBuilder.WithRule(roleType);
+                        prefetchPolicyBuilder.WithRule(roleType);
                     }
 
                     foreach (var associationType in @class.DatabaseAssociationTypes)
                     {
-                        _ = prefetchPolicyBuilder.WithRule(associationType);
+                        prefetchPolicyBuilder.WithRule(associationType);
                     }
 
                     prefetchPolicy = prefetchPolicyBuilder.Build();
