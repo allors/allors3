@@ -38,7 +38,7 @@ namespace Allors.Database.Adapters.SqlClient
                 inStatement.Append(inObject.Id);
             }
 
-            if ((this.role.IsMany && this.role.RelationType.AssociationType.IsMany) || !this.role.RelationType.ExistExclusiveDatabaseClasses)
+            if (this.role.IsMany && this.role.RelationType.AssociationType.IsMany || !this.role.RelationType.ExistExclusiveDatabaseClasses)
             {
                 statement.Append(" (" + this.role.SingularFullName + "_R." + Mapping.ColumnNameForRole + " IS NULL OR ");
                 statement.Append(" NOT " + this.role.SingularFullName + "_R." + Mapping.ColumnNameForAssociation + " IN (");

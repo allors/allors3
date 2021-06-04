@@ -58,7 +58,7 @@ namespace Allors.Database.Data
             }
         }
 
-        private bool HasMissingArguments(IArguments arguments) => (this.Parameter != null && (arguments?.HasArgument(this.Parameter) == false)) || this.Extent?.HasMissingArguments(arguments) == true;
+        private bool HasMissingArguments(IArguments arguments) => this.Parameter != null && arguments?.HasArgument(this.Parameter) == false || this.Extent?.HasMissingArguments(arguments) == true;
 
         public void Accept(IVisitor visitor) => visitor.VisitContainedIn(this);
     }

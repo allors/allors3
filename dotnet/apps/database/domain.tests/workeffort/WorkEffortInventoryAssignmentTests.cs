@@ -184,8 +184,8 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(2, transactions.Count);
 
-            var consumption = transactions.First(t => t.Reason.Equals(reasons.Consumption) && (t.Quantity > 0));
-            var consumptionCancellation = transactions.First(t => t.Reason.Equals(reasons.Consumption) && (t.Quantity < 0));
+            var consumption = transactions.First(t => t.Reason.Equals(reasons.Consumption) && t.Quantity > 0);
+            var consumptionCancellation = transactions.First(t => t.Reason.Equals(reasons.Consumption) && t.Quantity < 0);
 
             Assert.Equal(10, consumption.Quantity);
             Assert.Equal(-10, consumptionCancellation.Quantity);
@@ -284,8 +284,8 @@ namespace Allors.Database.Domain.Tests
 
             // Assert
             var transactions = inventoryAssignment.InventoryItemTransactions;
-            var consumption = transactions.First(t => t.Reason.Equals(reasons.Consumption) && (t.Quantity > 0));
-            var consumptionCancellation = transactions.First(t => t.Reason.Equals(reasons.Consumption) && (t.Quantity < 0));
+            var consumption = transactions.First(t => t.Reason.Equals(reasons.Consumption) && t.Quantity > 0);
+            var consumptionCancellation = transactions.First(t => t.Reason.Equals(reasons.Consumption) && t.Quantity < 0);
 
             Assert.Equal(2, transactions.Count);
 
@@ -471,7 +471,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(true);
 
             // Assert
-            var consumption = inventoryAssignment.InventoryItemTransactions.First(t => t.Reason.Equals(reasons.Consumption) && (t.Quantity > 0));
+            var consumption = inventoryAssignment.InventoryItemTransactions.First(t => t.Reason.Equals(reasons.Consumption) && t.Quantity > 0);
             Assert.Equal(5, consumption.Quantity);
 
             // Re-arrange

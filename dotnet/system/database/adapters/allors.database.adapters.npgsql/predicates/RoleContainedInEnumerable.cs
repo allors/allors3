@@ -36,7 +36,7 @@ namespace Allors.Database.Adapters.Npgsql
                 inStatement.Append(inObject.Id);
             }
 
-            if ((this.role.IsMany && this.role.RelationType.AssociationType.IsMany) || !this.role.RelationType.ExistExclusiveDatabaseClasses)
+            if (this.role.IsMany && this.role.RelationType.AssociationType.IsMany || !this.role.RelationType.ExistExclusiveDatabaseClasses)
             {
                 // TODO: in combination with NOT gives error
                 statement.Append(" (" + this.role.SingularFullName + "_R." + Mapping.ColumnNameForRole + " IS NOT NULL AND ");

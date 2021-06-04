@@ -53,7 +53,7 @@ namespace Allors.Database.Domain
                         }
                     }
 
-                    @this.CanShip = (!@this.PartiallyShip && allItemsAvailable) || somethingToShip;
+                    @this.CanShip = !@this.PartiallyShip && allItemsAvailable || somethingToShip;
                 }
                 else
                 {

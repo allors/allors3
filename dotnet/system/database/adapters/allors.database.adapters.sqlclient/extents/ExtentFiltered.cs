@@ -160,7 +160,7 @@ namespace Allors.Database.Adapters.SqlClient
                 statement.Append(" FROM " + this.Mapping.TableNameForObjectByClass[rootClass] + " " + alias);
                 statement.AddJoins(rootClass, alias);
                 statement.AddWhere(rootClass, alias);
-                (this.filter?.BuildWhere(statement, alias));
+                this.filter?.BuildWhere(statement, alias);
             }
             else
             {
@@ -386,7 +386,7 @@ namespace Allors.Database.Adapters.SqlClient
                         statement.AddJoins(rootClass, alias);
                         statement.AddWhere(rootClass, alias);
 
-                        (this.filter?.BuildWhere(statement, alias));
+                        this.filter?.BuildWhere(statement, alias);
 
                         if (i < this.objectType.DatabaseClasses.Count() - 1)
                         {

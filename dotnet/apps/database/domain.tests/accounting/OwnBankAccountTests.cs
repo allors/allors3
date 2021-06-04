@@ -170,7 +170,7 @@ namespace Allors.Database.Domain.Tests
 
             internalOrganisation.DoAccounting = true;
 
-            (internalOrganisation).AddAssignedActiveCollectionMethod(collectionMethod);
+            internalOrganisation.AddAssignedActiveCollectionMethod(collectionMethod);
 
             Assert.True(this.Transaction.Derive(false).HasErrors);
 

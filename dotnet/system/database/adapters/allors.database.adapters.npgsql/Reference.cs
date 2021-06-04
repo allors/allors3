@@ -140,7 +140,7 @@ namespace Allors.Database.Adapters.Npgsql
             get
             {
                 Strategy strategy = null;
-                (this.weakReference?.TryGetTarget(out strategy));
+                this.weakReference?.TryGetTarget(out strategy);
                 return strategy;
             }
         }

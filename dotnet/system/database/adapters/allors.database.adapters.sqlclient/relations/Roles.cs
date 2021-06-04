@@ -183,8 +183,8 @@ namespace Allors.Database.Adapters.SqlClient
                 this.Reference.Transaction.TriggerFlush(previousRole.Value, roleType.AssociationType);
             }
 
-            if ((newRole == null && previousRole != null) ||
-                (newRole != null && !newRole.Equals(previousRole)))
+            if (newRole == null && previousRole != null ||
+                newRole != null && !newRole.Equals(previousRole))
             {
                 this.SetOriginal(roleType, newRole);
                 this.ModifiedRoleByRoleType[roleType] = newRole;
@@ -549,7 +549,7 @@ namespace Allors.Database.Adapters.SqlClient
                     return false;
                 }
 
-                return this.baseline.Contains(objectId) || (this.added != null && this.added.Contains(objectId));
+                return this.baseline.Contains(objectId) || this.added != null && this.added.Contains(objectId);
             }
 
             internal void Add(long objectId)

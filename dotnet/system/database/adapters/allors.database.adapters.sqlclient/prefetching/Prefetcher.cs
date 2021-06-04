@@ -111,7 +111,7 @@ namespace Allors.Database.Adapters.SqlClient
                     var associationReference = this.Transaction.State.ReferenceByObjectId[associatoinId];
 
                     Roles modifiedRoles = null;
-                    (this.Transaction.State.ModifiedRolesByReference?.TryGetValue(associationReference, out modifiedRoles));
+                    this.Transaction.State.ModifiedRolesByReference?.TryGetValue(associationReference, out modifiedRoles);
 
                     var cachedObject = cache.GetOrCreateCachedObject(@class, associatoinId, associationReference.Version);
 
@@ -225,7 +225,7 @@ namespace Allors.Database.Adapters.SqlClient
                         var roleId = (long)roleIdValue;
                         cachedObject.SetValue(roleType, roleId);
 
-                        (nestedObjectIds?.Add(roleId));
+                        nestedObjectIds?.Add(roleId);
                         if (nestedObjectIds == null)
                         {
                             leafs.Add(roleId);
@@ -277,7 +277,7 @@ namespace Allors.Database.Adapters.SqlClient
                 if (roleByAssociation.TryGetValue(reference, out var roleId))
                 {
                     cachedObject.SetValue(roleType, roleId);
-                    (nestedObjectIds?.Add(roleId));
+                    nestedObjectIds?.Add(roleId);
                     if (nestedObjectIds == null)
                     {
                         leafs.Add(roleId);
@@ -404,7 +404,7 @@ namespace Allors.Database.Adapters.SqlClient
             foreach (var reference in references)
             {
                 Roles modifiedRoles = null;
-                (this.Transaction.State.ModifiedRolesByReference?.TryGetValue(reference, out modifiedRoles));
+                this.Transaction.State.ModifiedRolesByReference?.TryGetValue(reference, out modifiedRoles);
 
                 if (modifiedRoles == null || !modifiedRoles.ModifiedRoleByRoleType.ContainsKey(roleType))
                 {
@@ -470,7 +470,7 @@ namespace Allors.Database.Adapters.SqlClient
                                               this.Transaction.State.GetOrCreateReferenceForExistingObject(associationType.ObjectType.ExclusiveDatabaseClass, associationId, this.Transaction) :
                                               this.Transaction.State.GetOrCreateReferenceForExistingObject(associationId, this.Transaction);
 
-                            (nestedObjectIds?.Add(association.ObjectId));
+                            nestedObjectIds?.Add(association.ObjectId);
                             if (nestedObjectIds == null)
                             {
                                 leafs.Add(associationId);
@@ -533,7 +533,7 @@ namespace Allors.Database.Adapters.SqlClient
                                           this.Transaction.State.GetOrCreateReferenceForExistingObject(associationType.ObjectType.ExclusiveDatabaseClass, associationId, this.Transaction) :
                                           this.Transaction.State.GetOrCreateReferenceForExistingObject(associationId, this.Transaction);
 
-                        (nestedObjectIds?.Add(associationId));
+                        nestedObjectIds?.Add(associationId);
                         if (nestedObjectIds == null)
                         {
                             leafs.Add(associationId);

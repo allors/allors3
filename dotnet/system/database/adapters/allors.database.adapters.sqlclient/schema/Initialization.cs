@@ -179,7 +179,7 @@ CREATE SCHEMA " + this.database.SchemaName;
                     var associationType = relationType.AssociationType;
                     var roleType = relationType.RoleType;
 
-                    if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
+                    if (!roleType.ObjectType.IsUnit && (associationType.IsMany && roleType.IsMany || !relationType.ExistExclusiveDatabaseClasses))
                     {
                         var tableName = this.mapping.TableNameForRelationByRelationType[relationType];
                         this.TruncateTable(connection, tableName);
@@ -212,7 +212,7 @@ CREATE SCHEMA " + this.database.SchemaName;
                     var associationType = relationType.AssociationType;
                     var roleType = relationType.RoleType;
 
-                    if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
+                    if (!roleType.ObjectType.IsUnit && (associationType.IsMany && roleType.IsMany || !relationType.ExistExclusiveDatabaseClasses))
                     {
                         var tableName = this.mapping.TableNameForRelationByRelationType[relationType];
                         this.DropTable(connection, tableName);
@@ -292,7 +292,7 @@ CREATE SCHEMA " + this.database.SchemaName;
                     var associationType = relationType.AssociationType;
                     var roleType = relationType.RoleType;
 
-                    if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
+                    if (!roleType.ObjectType.IsUnit && (associationType.IsMany && roleType.IsMany || !relationType.ExistExclusiveDatabaseClasses))
                     {
                         var tableName = this.mapping.TableNameForRelationByRelationType[relationType];
 
@@ -410,7 +410,7 @@ CREATE SCHEMA " + this.database.SchemaName;
                     {
                         var associationType = relationType.AssociationType;
                         var roleType = relationType.RoleType;
-                        if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
+                        if (!roleType.ObjectType.IsUnit && (associationType.IsMany && roleType.IsMany || !relationType.ExistExclusiveDatabaseClasses))
                         {
                             var tableName = this.mapping.TableNameForRelationByRelationType[relationType];
                             var indexName = "idx_" + relationType.RoleType.SingularFullName.ToLowerInvariant() + "_" + Mapping.ColumnNameForRole.ToLowerInvariant();

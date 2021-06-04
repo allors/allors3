@@ -26,7 +26,7 @@ namespace Allors.Database.Adapters.Memory
                 return ThreeValuedLogic.True;
             }
 
-            return (this.objectType is IInterface @interface && strategy.UncheckedObjectType.ExistSupertype(@interface))
+            return this.objectType is IInterface @interface && strategy.UncheckedObjectType.ExistSupertype(@interface)
                        ? ThreeValuedLogic.True
                        : ThreeValuedLogic.False;
         }

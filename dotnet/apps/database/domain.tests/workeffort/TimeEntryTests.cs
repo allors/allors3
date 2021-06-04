@@ -111,7 +111,7 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(4.00M, timeEntry.ActualHours);
 
             //// Re-arrange
-            (timeEntry).RemoveAmountOfTime();
+            timeEntry.RemoveAmountOfTime();
             timeEntry.TimeFrequency = frequencies.Day;
 
             // Act
@@ -122,7 +122,7 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(4.00M, timeEntry.ActualHours);
 
             //// Re-arrange
-            (timeEntry).RemoveAmountOfTime();
+            timeEntry.RemoveAmountOfTime();
             timeEntry.TimeFrequency = frequencies.Minute;
 
             // Act

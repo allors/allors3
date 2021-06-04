@@ -160,7 +160,7 @@ namespace Allors.Database.Adapters.Npgsql
                 statement.Append(" FROM " + this.Mapping.TableNameForObjectByClass[rootClass] + " " + alias);
                 statement.AddJoins(rootClass, alias);
                 statement.AddWhere(rootClass, alias);
-                (this.filter?.BuildWhere(statement, alias));
+                this.filter?.BuildWhere(statement, alias);
             }
             else
             {

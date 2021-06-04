@@ -38,7 +38,7 @@ namespace Allors.Database.Adapters.Memory
                 return ThreeValuedLogic.True;
             }
 
-            return (this.objectType is IInterface @interface && roleObjectType.ExistSupertype(@interface))
+            return this.objectType is IInterface @interface && roleObjectType.ExistSupertype(@interface)
                        ? ThreeValuedLogic.True
                        : ThreeValuedLogic.False;
         }

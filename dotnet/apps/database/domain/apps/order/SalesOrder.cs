@@ -417,7 +417,7 @@ namespace Allors.Database.Domain
                 {
                     var amountAlreadyInvoiced = orderItem.OrderItemBillingsWhereOrderItem.Sum(v => v.Amount);
 
-                    var leftToInvoice = (orderItem.QuantityOrdered * orderItem.UnitPrice) - amountAlreadyInvoiced;
+                    var leftToInvoice = orderItem.QuantityOrdered * orderItem.UnitPrice - amountAlreadyInvoiced;
 
                     if (leftToInvoice != 0)
                     {

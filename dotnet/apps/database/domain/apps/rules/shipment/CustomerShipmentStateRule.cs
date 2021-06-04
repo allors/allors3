@@ -105,7 +105,7 @@ namespace Allors.Database.Domain
 
                     if (@this.ShipmentState.Equals(new ShipmentStates(@this.Transaction()).OnHold) &&
                         !@this.HeldManually &&
-                        ((@this.ShipmentValue >= @this.Store.ShipmentThreshold) || @this.ReleasedManually))
+                        (@this.ShipmentValue >= @this.Store.ShipmentThreshold || @this.ReleasedManually))
                     {
                         @this.Continue();
                     }

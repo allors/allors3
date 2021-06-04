@@ -35,7 +35,7 @@ namespace Allors.Database.Domain
 
                 if (@this.ExistReservedFromNonSerialisedInventoryItem)
                 {
-                    if ((salesOrder.OrderKind?.ScheduleManually == true && @this.QuantityPendingShipment > 0)
+                    if (salesOrder.OrderKind?.ScheduleManually == true && @this.QuantityPendingShipment > 0
                         || !salesOrder.ExistOrderKind || !salesOrder.OrderKind.ScheduleManually)
                     {
                         var committedOutSameProductOtherItem = @this.ExistProduct ?

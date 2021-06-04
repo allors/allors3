@@ -15,8 +15,7 @@ namespace Allors.Database.Domain
         public static DateTime? ThroughDate(this WorkEffort @this) => @this.ActualCompletion ?? @this.ScheduledCompletion;
 
         public static TimeEntry[] BillableTimeEntries(this WorkEffort @this) => @this.ServiceEntriesWhereWorkEffort.OfType<TimeEntry>()
-            .Where(v => v.IsBillable
-                        && (!v.BillableAmountOfTime.HasValue && v.AmountOfTime.HasValue) || v.BillableAmountOfTime.HasValue)
+            .Where(v => v.IsBillable && !v.BillableAmountOfTime.HasValue && v.AmountOfTime.HasValue || v.BillableAmountOfTime.HasValue)
             .Select(v => v)
             .ToArray();
 
@@ -116,7 +115,7 @@ namespace Allors.Database.Domain
             var transaction = @this.Strategy.Transaction;
 
             var timeEntriesByBillingRate = @this.ServiceEntriesWhereWorkEffort.OfType<TimeEntry>()
-                .Where(v => (v.IsBillable && !v.BillableAmountOfTime.HasValue && v.AmountOfTime.HasValue) || v.BillableAmountOfTime.HasValue)
+                .Where(v => v.IsBillable && !v.BillableAmountOfTime.HasValue && v.AmountOfTime.HasValue || v.BillableAmountOfTime.HasValue)
                 .GroupBy(v => v.BillingRate)
                 .Select(v => v)
                 .ToArray();

@@ -51,7 +51,7 @@ namespace Allors.Database.Protocol.Json
                         var name = result.Name;
 
                         var @select = result.Select;
-                        if ((@select == null) && result.SelectRef.HasValue)
+                        if (@select == null && result.SelectRef.HasValue)
                         {
                             @select = this.preparedSelects.Get(result.SelectRef.Value);
                         }

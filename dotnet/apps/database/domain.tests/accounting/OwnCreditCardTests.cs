@@ -126,7 +126,7 @@ namespace Allors.Database.Domain.Tests
                 .WithGeneralLedgerAccount(internalOrganisationGlAccount)
                 .Build();
 
-            (this.InternalOrganisation).AddAssignedActiveCollectionMethod(collectionMethod);
+            this.InternalOrganisation.AddAssignedActiveCollectionMethod(collectionMethod);
 
             this.Transaction.Commit();
 

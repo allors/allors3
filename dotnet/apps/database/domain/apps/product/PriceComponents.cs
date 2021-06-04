@@ -166,16 +166,16 @@ namespace Allors.Database.Domain
                 }
             }
 
-            if ((withGeographicBoundary && !geographicBoundaryValid) ||
-                (withPartyClassification && !partyClassificationValid) ||
-                (withProductCategory && !productCategoryValid) ||
-                (withOrderKind && !orderKindValid) ||
-                (withOrderQuantityBreak && !orderQuantityBreakValid) ||
-                (withRevenueValueBreak && !revenueValueBreakValid) ||
-                (withRevenueQuantityBreak && !revenueQuantityBreakValid) ||
-                (withPackageQuantityBreak && !packageQuantityBreakValid) ||
-                (withOrderValue && !orderValueValid) ||
-                (withSalesChannel & !salesChannelValid))
+            if (withGeographicBoundary && !geographicBoundaryValid ||
+                withPartyClassification && !partyClassificationValid ||
+                withProductCategory && !productCategoryValid ||
+                withOrderKind && !orderKindValid ||
+                withOrderQuantityBreak && !orderQuantityBreakValid ||
+                withRevenueValueBreak && !revenueValueBreakValid ||
+                withRevenueQuantityBreak && !revenueQuantityBreakValid ||
+                withPackageQuantityBreak && !packageQuantityBreakValid ||
+                withOrderValue && !orderValueValid ||
+                withSalesChannel & !salesChannelValid)
             {
                 return false;
             }

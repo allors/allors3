@@ -253,7 +253,7 @@ namespace Allors.Database.Adapters.SqlClient
 
                     if (associationClass == null ||
                         !this.database.ContainsClass(relationType.AssociationType.ObjectType, associationClass) ||
-                        (relationType.RoleType.IsOne && rs.Length > 1))
+                        relationType.RoleType.IsOne && rs.Length > 1)
                     {
                         foreach (var r in rs)
                         {
@@ -297,7 +297,7 @@ namespace Allors.Database.Adapters.SqlClient
                     if (associationClass == null
                         || !this.database.ContainsClass(
                             relationType.AssociationType.ObjectType,
-                            associationClass) || (relationType.RoleType.IsOne && rs.Length > 1))
+                            associationClass) || relationType.RoleType.IsOne && rs.Length > 1)
                     {
                         foreach (var r in rs)
                         {
@@ -389,7 +389,7 @@ namespace Allors.Database.Adapters.SqlClient
                 var associationType = relationType.AssociationType;
                 var roleType = relationType.RoleType;
 
-                if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
+                if (!roleType.ObjectType.IsUnit && (associationType.IsMany && roleType.IsMany || !relationType.ExistExclusiveDatabaseClasses))
                 {
                     if (this.roleByAssociationIdByRelationTypeId.TryGetValue(relationType, out var roleByAssociationId))
                     {

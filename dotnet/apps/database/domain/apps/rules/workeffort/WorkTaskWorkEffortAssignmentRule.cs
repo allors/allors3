@@ -42,9 +42,9 @@ namespace Allors.Database.Domain
                         var matchingAssignment = @this.WorkEffortPartyAssignmentsWhereAssignment.FirstOrDefault
                             (a => a.Assignment.Equals(@this)
                             && a.Party.Equals(worker)
-                            && ((a.ExistFacility && a.Facility.Equals(facility)) || (!a.ExistFacility && facility == null))
-                            && (!a.ExistFromDate || (a.ExistFromDate && (a.FromDate <= from)))
-                            && (!a.ExistThroughDate || (a.ExistThroughDate && (a.ThroughDate >= through))));
+                            && (a.ExistFacility && a.Facility.Equals(facility) || !a.ExistFacility && facility == null)
+                            && (!a.ExistFromDate || a.ExistFromDate && a.FromDate <= @from)
+                            && (!a.ExistThroughDate || a.ExistThroughDate && a.ThroughDate >= through));
 
                         if (matchingAssignment == null)
                         {

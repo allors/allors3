@@ -57,8 +57,8 @@ namespace Allors.Database.Domain
             {
                 foreach (PurchaseOrderItem purchaseOrderItem in purchaseOrder.ValidOrderItems)
                 {
-                    if ((!purchaseOrderItem.ExistOrderItemBillingsWhereOrderItem &&
-                        purchaseOrderItem.PurchaseOrderItemShipmentState.IsReceived) || purchaseOrderItem.PurchaseOrderItemShipmentState.IsPartiallyReceived || (!purchaseOrderItem.ExistPart && purchaseOrderItem.QuantityReceived == 1))
+                    if (!purchaseOrderItem.ExistOrderItemBillingsWhereOrderItem &&
+                        purchaseOrderItem.PurchaseOrderItemShipmentState.IsReceived || purchaseOrderItem.PurchaseOrderItemShipmentState.IsPartiallyReceived || !purchaseOrderItem.ExistPart && purchaseOrderItem.QuantityReceived == 1)
                     {
                         orderItemsToBill.Add(purchaseOrderItem);
                     }

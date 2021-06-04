@@ -199,7 +199,7 @@ namespace Allors.Database.Adapters.SqlClient
                 var roleType = relationType.RoleType;
 
                 if (!roleType.ObjectType.IsUnit &&
-                    ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
+                    (associationType.IsMany && roleType.IsMany || !relationType.ExistExclusiveDatabaseClasses))
                 {
                     var tableName = this.mapping.TableNameForRelationByRelationType[relationType];
                     var table = this.Schema.GetTable(tableName);

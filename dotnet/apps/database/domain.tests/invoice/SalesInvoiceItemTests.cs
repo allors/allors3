@@ -684,7 +684,7 @@ namespace Allors.Database.Domain.Tests
 
             this.InstantiateObjects(this.Transaction);
 
-            (this.billToCustomer).AddPartyClassification(classification);
+            this.billToCustomer.AddPartyClassification(classification);
 
             this.invoice.ShipToCustomer = this.shipToCustomer;
 
@@ -720,7 +720,7 @@ namespace Allors.Database.Domain.Tests
 
             this.InstantiateObjects(this.Transaction);
 
-            (this.billToCustomer).AddPartyClassification(classification);
+            this.billToCustomer.AddPartyClassification(classification);
 
             this.invoice.ShipToCustomer = this.shipToCustomer;
 
@@ -758,7 +758,7 @@ namespace Allors.Database.Domain.Tests
 
             this.InstantiateObjects(this.Transaction);
 
-            (this.billToCustomer).AddPartyClassification(classification);
+            this.billToCustomer.AddPartyClassification(classification);
 
             this.invoice.ShipToCustomer = this.shipToCustomer;
 
@@ -794,7 +794,7 @@ namespace Allors.Database.Domain.Tests
 
             this.InstantiateObjects(this.Transaction);
 
-            (this.billToCustomer).AddPartyClassification(classification);
+            this.billToCustomer.AddPartyClassification(classification);
 
             this.invoice.ShipToCustomer = this.shipToCustomer;
 

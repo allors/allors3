@@ -27,7 +27,7 @@ namespace Allors
         {
             unchecked
             {
-                return (this.Id.GetHashCode() * 397) ^ this.Version.GetHashCode();
+                return this.Id.GetHashCode() * 397 ^ this.Version.GetHashCode();
             }
         }
     }

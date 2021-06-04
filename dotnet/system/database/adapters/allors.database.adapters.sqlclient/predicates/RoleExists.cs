@@ -28,7 +28,7 @@ namespace Allors.Database.Adapters.SqlClient
             }
             else
             {
-                if ((this.role.IsMany && this.role.RelationType.AssociationType.IsMany) || !this.role.RelationType.ExistExclusiveDatabaseClasses)
+                if (this.role.IsMany && this.role.RelationType.AssociationType.IsMany || !this.role.RelationType.ExistExclusiveDatabaseClasses)
                 {
                     statement.Append(" " + this.role.SingularFullName + "_R." + Mapping.ColumnNameForRole + " IS NOT NULL");
                 }

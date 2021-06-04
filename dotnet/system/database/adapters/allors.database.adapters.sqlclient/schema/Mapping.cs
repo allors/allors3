@@ -275,7 +275,7 @@ namespace Allors.Database.Adapters.SqlClient
                 var associationType = relationType.AssociationType;
                 var roleType = relationType.RoleType;
 
-                if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
+                if (!roleType.ObjectType.IsUnit && (associationType.IsMany && roleType.IsMany || !relationType.ExistExclusiveDatabaseClasses))
                 {
                     this.TableNameForRelationByRelationType.Add(relationType, this.Database.SchemaName + "." + this.NormalizeName(relationType.RoleType.SingularFullName));
                 }
@@ -372,7 +372,7 @@ namespace Allors.Database.Adapters.SqlClient
 
             foreach (var relationType in this.Database.MetaPopulation.DatabaseRelationTypes)
             {
-                if (!relationType.RoleType.ObjectType.IsUnit && ((relationType.AssociationType.IsMany && relationType.RoleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
+                if (!relationType.RoleType.ObjectType.IsUnit && (relationType.AssociationType.IsMany && relationType.RoleType.IsMany || !relationType.ExistExclusiveDatabaseClasses))
                 {
                     this.ProcedureNameForPrefetchAssociationByRelationType.Add(relationType, this.Database.SchemaName + "." + ProcedurePrefixForPrefetchAssociation + relationType.RoleType.SingularFullName.ToLowerInvariant());
                     this.ProcedureNameForClearRoleByRelationType.Add(relationType, this.Database.SchemaName + "." + ProcedurePrefixForClearRole + relationType.RoleType.SingularFullName.ToLowerInvariant());

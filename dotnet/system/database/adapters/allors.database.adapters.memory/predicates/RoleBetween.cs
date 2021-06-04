@@ -62,7 +62,7 @@ namespace Allors.Database.Adapters.Memory
                 return ThreeValuedLogic.Unknown;
             }
 
-            return (comparable.CompareTo(firstValue) >= 0 && comparable.CompareTo(secondValue) <= 0)
+            return comparable.CompareTo(firstValue) >= 0 && comparable.CompareTo(secondValue) <= 0
                        ? ThreeValuedLogic.True
                        : ThreeValuedLogic.False;
         }

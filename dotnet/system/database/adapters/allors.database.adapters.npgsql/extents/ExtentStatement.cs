@@ -47,7 +47,7 @@ namespace Allors.Database.Adapters.Npgsql
 
                 if (!role.ObjectType.IsUnit)
                 {
-                    if ((association.IsMany && role.IsMany) || !relationType.ExistExclusiveDatabaseClasses)
+                    if (association.IsMany && role.IsMany || !relationType.ExistExclusiveDatabaseClasses)
                     {
                         this.Append(" LEFT OUTER JOIN " + this.Mapping.TableNameForRelationByRelationType[relationType] + " " + role.SingularFullName + "_R");
                         this.Append(" ON " + alias + "." + Mapping.ColumnNameForObject + "=" + role.SingularFullName + "_R." + Mapping.ColumnNameForAssociation);
@@ -87,7 +87,7 @@ namespace Allors.Database.Adapters.Npgsql
                 var relationType = association.RelationType;
                 var role = relationType.RoleType;
 
-                if ((association.IsMany && role.IsMany) || !relationType.ExistExclusiveDatabaseClasses)
+                if (association.IsMany && role.IsMany || !relationType.ExistExclusiveDatabaseClasses)
                 {
                     this.Append(" LEFT OUTER JOIN " + this.Mapping.TableNameForRelationByRelationType[relationType] + " " + association.SingularFullName + "_A");
                     this.Append(" ON " + alias + "." + Mapping.ColumnNameForObject + "=" + association.SingularFullName + "_A." + Mapping.ColumnNameForRole);

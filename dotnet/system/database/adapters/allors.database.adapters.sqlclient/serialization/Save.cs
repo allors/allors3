@@ -154,7 +154,7 @@ namespace Allors.Database.Adapters.SqlClient
                     }
                     else
                     {
-                        if ((roleType.IsMany && associationType.IsMany) || !relation.ExistExclusiveDatabaseClasses)
+                        if (roleType.IsMany && associationType.IsMany || !relation.ExistExclusiveDatabaseClasses)
                         {
                             sql += "SELECT " + Mapping.ColumnNameForAssociation + "," + Mapping.ColumnNameForRole + "\n";
                             sql += "FROM " + this.database.Mapping.TableNameForRelationByRelationType[relation] + "\n";

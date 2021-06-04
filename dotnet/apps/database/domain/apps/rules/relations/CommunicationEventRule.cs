@@ -46,13 +46,13 @@ namespace Allors.Database.Domain
                 }
 
                 //TODO: Begin Run Asynchronously in the Background
-                if (!@this.ExistActualStart || (@this.ActualStart > @this.Strategy.Transaction.Now()))
+                if (!@this.ExistActualStart || @this.ActualStart > @this.Strategy.Transaction.Now())
                 {
                     @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Transaction).Scheduled;
                 }
 
                 if (@this.ExistActualStart && @this.ActualStart <= @this.Strategy.Transaction.Now() &&
-                    ((@this.ExistActualEnd && @this.ActualEnd > @this.Strategy.Transaction.Now()) || !@this.ExistActualEnd))
+                    (@this.ExistActualEnd && @this.ActualEnd > @this.Strategy.Transaction.Now() || !@this.ExistActualEnd))
                 {
                     @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Transaction).InProgress;
                 }
@@ -87,8 +87,8 @@ namespace Allors.Database.Domain
 
                 var organisation = parties.OfType<Person>()
                     .SelectMany(v => v.OrganisationContactRelationshipsWhereContact)
-                    .Where(v => (@this.ExistScheduledStart && v.FromDate <= @this.ScheduledStart && (!v.ExistThroughDate || v.ThroughDate >= @this.ScheduledEnd))
-                                || (@this.ExistActualStart && v.FromDate <= @this.ActualStart && (!v.ExistThroughDate || v.ThroughDate >= @this.ActualEnd)))
+                    .Where(v => @this.ExistScheduledStart && v.FromDate <= @this.ScheduledStart && (!v.ExistThroughDate || v.ThroughDate >= @this.ScheduledEnd)
+                                || @this.ExistActualStart && v.FromDate <= @this.ActualStart && (!v.ExistThroughDate || v.ThroughDate >= @this.ActualEnd))
                     .Select(v => v.Organisation);
 
                 @this.InvolvedParties = parties.Union(organisation).ToArray();

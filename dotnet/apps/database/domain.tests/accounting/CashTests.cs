@@ -85,7 +85,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             internalOrganisation.DoAccounting = true;
-            (internalOrganisation).AddAssignedActiveCollectionMethod(cash);
+            internalOrganisation.AddAssignedActiveCollectionMethod(cash);
 
             Assert.True(this.Transaction.Derive(false).HasErrors);
 

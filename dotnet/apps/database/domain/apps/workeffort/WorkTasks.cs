@@ -52,7 +52,7 @@ namespace Allors.Database.Domain
                         }
 
                         var timeEntriesByBillingRate = group.SelectMany(v => v.ServiceEntriesWhereWorkEffort.OfType<TimeEntry>())
-                            .Where(v => (v.IsBillable && !v.BillableAmountOfTime.HasValue && v.AmountOfTime.HasValue) || v.BillableAmountOfTime.HasValue)
+                            .Where(v => v.IsBillable && !v.BillableAmountOfTime.HasValue && v.AmountOfTime.HasValue || v.BillableAmountOfTime.HasValue)
                             .GroupBy(v => v.BillingRate)
                             .Select(v => v)
                             .ToArray();

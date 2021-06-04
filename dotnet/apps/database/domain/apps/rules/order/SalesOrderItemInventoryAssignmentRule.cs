@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
             {
                 var salesOrderItem = @this.SalesOrderItemWhereSalesOrderItemInventoryAssignment;
                 var state = salesOrderItem.SalesOrderItemState;
-                var inventoryItemChanged = @this.ExistCurrentVersion && (!Equals(@this.CurrentVersion.InventoryItem, @this.InventoryItem));
+                var inventoryItemChanged = @this.ExistCurrentVersion && !Equals(@this.CurrentVersion.InventoryItem, @this.InventoryItem);
 
                 foreach (InventoryTransactionReason createReason in state.InventoryTransactionReasonsToCreate)
                 {

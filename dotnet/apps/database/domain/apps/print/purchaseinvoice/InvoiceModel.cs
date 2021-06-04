@@ -19,8 +19,8 @@ namespace Allors.Database.Domain.Print.PurchaseInvoiceModel
 
             this.SubTotal = invoice.TotalBasePrice.ToString("N2", new CultureInfo("nl-BE"));
             this.TotalExVat = invoice.TotalExVat.ToString("N2", new CultureInfo("nl-BE"));
-            this.VatRate = (invoice.DerivedVatRate?.Rate.ToString("n2"))
-                ?? (invoice.ValidInvoiceItems.FirstOrDefault(v => v.ExistVatRate)?.VatRate.Rate.ToString("n2"))
+            this.VatRate = invoice.DerivedVatRate?.Rate.ToString("n2")
+                ?? invoice.ValidInvoiceItems.FirstOrDefault(v => v.ExistVatRate)?.VatRate.Rate.ToString("n2")
                 ?? "0";
             this.TotalVat = invoice.TotalVat.ToString("N2", new CultureInfo("nl-BE"));
             this.IrpfRate = invoice.DerivedIrpfRate?.Rate.ToString("n2");

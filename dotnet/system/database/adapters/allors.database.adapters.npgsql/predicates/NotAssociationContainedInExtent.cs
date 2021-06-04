@@ -31,7 +31,7 @@ namespace Allors.Database.Adapters.Npgsql
 
             inStatement.UseRole(this.association.RoleType);
 
-            if ((this.association.IsMany && this.association.RoleType.IsMany) || !this.association.RelationType.ExistExclusiveDatabaseClasses)
+            if (this.association.IsMany && this.association.RoleType.IsMany || !this.association.RelationType.ExistExclusiveDatabaseClasses)
             {
                 statement.Append(" (" + this.association.SingularFullName + "_A." + Mapping.ColumnNameForRole + " IS NULL OR");
                 statement.Append(" NOT " + this.association.SingularFullName + "_A." + Mapping.ColumnNameForRole + " IN (\n");

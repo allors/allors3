@@ -268,7 +268,7 @@ namespace Allors.Security
                 extent.Filter.AddEquals(m.Login.Key, providerKey);
 
                 var login = extent.FirstOrDefault();
-                (login?.Delete());
+                login?.Delete();
 
                 transaction.Derive();
                 transaction.Commit();

@@ -62,7 +62,7 @@ namespace Allors.Database.Domain
             if (possibleMatches)
             {
                 matchingItems = matchingItems.Where(i => i.Facility.Equals(this.Facility)).ToArray();
-                possibleMatches = (matchingItems != null) && (matchingItems.Length > 0);
+                possibleMatches = matchingItems != null && matchingItems.Length > 0;
             }
 
             if (possibleMatches)

@@ -33,18 +33,18 @@ namespace Allors.Database.Domain
 
             if(@this is ProductQuote)
             {
-                return ((@this.QuoteState.Equals(new QuoteStates(@this.Strategy.Transaction).Created)
-                  || @this.QuoteState.Equals(new QuoteStates(@this.Strategy.Transaction).Cancelled)
-                  || @this.QuoteState.Equals(new QuoteStates(@this.Strategy.Transaction).Rejected))
-                  && !@this.ExistRequest
-                  && !productQuote.ExistSalesOrderWhereQuote);
+                return (@this.QuoteState.Equals(new QuoteStates(@this.Strategy.Transaction).Created)
+                        || @this.QuoteState.Equals(new QuoteStates(@this.Strategy.Transaction).Cancelled)
+                        || @this.QuoteState.Equals(new QuoteStates(@this.Strategy.Transaction).Rejected))
+                       && !@this.ExistRequest
+                       && !productQuote.ExistSalesOrderWhereQuote;
             }
             else
             {
-                return ((@this.QuoteState.Equals(new QuoteStates(@this.Strategy.Transaction).Created)
-                  || @this.QuoteState.Equals(new QuoteStates(@this.Strategy.Transaction).Cancelled)
-                  || @this.QuoteState.Equals(new QuoteStates(@this.Strategy.Transaction).Rejected))
-                  && !@this.ExistRequest);
+                return (@this.QuoteState.Equals(new QuoteStates(@this.Strategy.Transaction).Created)
+                        || @this.QuoteState.Equals(new QuoteStates(@this.Strategy.Transaction).Cancelled)
+                        || @this.QuoteState.Equals(new QuoteStates(@this.Strategy.Transaction).Rejected))
+                       && !@this.ExistRequest;
             }
         } 
 
@@ -54,9 +54,9 @@ namespace Allors.Database.Domain
             var propasal = @this as Proposal;
             var statementOfWork = @this as StatementOfWork;
 
-            if ((productQuote != null && productQuote.IsDeletable())
-                || (propasal != null && propasal.IsDeletable())
-                || (statementOfWork != null && statementOfWork.IsDeletable()))
+            if (productQuote != null && productQuote.IsDeletable()
+                || propasal != null && propasal.IsDeletable()
+                || statementOfWork != null && statementOfWork.IsDeletable())
             {
                 foreach (OrderAdjustment orderAdjustment in @this.OrderAdjustments)
                 {

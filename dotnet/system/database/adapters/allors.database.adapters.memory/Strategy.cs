@@ -244,7 +244,7 @@ namespace Allors.Database.Adapters.Memory
 
         public void SetCompositeRoles(IRoleType roleType, IEnumerable<IObject> roles)
         {
-            if (roles == null || (roles is ICollection<IObject> collection && collection.Count == 0))
+            if (roles == null || roles is ICollection<IObject> collection && collection.Count == 0)
             {
                 this.RemoveCompositeRoles(roleType);
             }
@@ -1103,19 +1103,19 @@ namespace Allors.Database.Adapters.Memory
 
             if (addPreviousAssociation != null)
             {
-                this.ChangeLog.OnChangingCompositesRole(addPreviousAssociation, roleType, null, previousRole);
+                addPreviousAssociation.compositesRoleByRoleType.TryGetValue(roleType, out var newRolePreviousAssociationRole);
+                this.ChangeLog.OnChangingCompositesRole(addPreviousAssociation, roleType, null, newRolePreviousAssociationRole);
 
                 // Remove obsolete role
                 addPreviousAssociation.Backup(roleType);
-                addPreviousAssociation.compositesRoleByRoleType.TryGetValue(roleType, out var newRolePreviousAssociationStrategyRole);
-                if (newRolePreviousAssociationStrategyRole == null)
+                if (newRolePreviousAssociationRole == null)
                 {
-                    newRolePreviousAssociationStrategyRole = new HashSet<Strategy>();
-                    addPreviousAssociation.compositesRoleByRoleType[roleType] = newRolePreviousAssociationStrategyRole;
+                    newRolePreviousAssociationRole = new HashSet<Strategy>();
+                    addPreviousAssociation.compositesRoleByRoleType[roleType] = newRolePreviousAssociationRole;
                 }
 
-                newRolePreviousAssociationStrategyRole.Remove(add);
-                if (newRolePreviousAssociationStrategyRole.Count == 0)
+                newRolePreviousAssociationRole.Remove(add);
+                if (newRolePreviousAssociationRole.Count == 0)
                 {
                     addPreviousAssociation.compositesRoleByRoleType.Remove(roleType);
                 }

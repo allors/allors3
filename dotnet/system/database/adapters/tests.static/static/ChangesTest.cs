@@ -859,13 +859,52 @@ namespace Allors.Database.Adapters
                 c1b.AddC1C2one2many(c2a);
 
                 changes = this.Transaction.Checkpoint();
-                
+
                 Assert.Equal(2, changes.Associations.Count);
                 Assert.Contains(c1a, changes.Associations);
                 Assert.Contains(c1b, changes.Associations);
 
                 Assert.Single(changes.Roles);
                 Assert.Contains(c2a, changes.Roles);
+
+                // Remove and add same
+                c1b.RemoveC1C2one2many(c2a);
+                c1b.AddC1C2one2many(c2a);
+
+                changes = this.Transaction.Checkpoint();
+
+                Assert.Empty(changes.Associations);
+                Assert.Empty(changes.Roles);
+
+                // Remove all and add same
+                c1b.RemoveC1C2one2manies();
+                c1b.AddC1C2one2many(c2a);
+
+                changes = this.Transaction.Checkpoint();
+
+                Assert.Empty(changes.Associations);
+                Assert.Empty(changes.Roles);
+
+                c1b.RemoveC1C2one2manies();
+                this.Transaction.Checkpoint();
+
+                // Add and remove all
+                c1b.AddC1C2one2many(c2a);
+                c1b.RemoveC1C2one2manies();
+
+                changes = this.Transaction.Checkpoint();
+
+                Assert.Empty(changes.Associations);
+                Assert.Empty(changes.Roles);
+
+                // Add and remove
+                c1b.AddC1C2one2many(c2a);
+                c1b.RemoveC1C2one2many(c2a);
+
+                changes = this.Transaction.Checkpoint();
+
+                Assert.Empty(changes.Associations);
+                Assert.Empty(changes.Roles);
             }
         }
 

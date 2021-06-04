@@ -68,21 +68,21 @@ namespace Allors.Database.Protocol.Json
                             permission.Strategy.ObjectId,
                             permission.Class.Tag,
                             permission.RelationType.Tag,
-                            ((long)Operations.Read),
+                            (long)Operations.Read,
                         },
                         IWritePermission permission => new long[]
                         {
                             permission.Strategy.ObjectId,
                             permission.Class.Tag,
                             permission.RelationType.Tag,
-                            ((long)Operations.Write),
+                            (long)Operations.Write,
                         },
                         IExecutePermission permission => new long[]
                         {
                             permission.Strategy.ObjectId,
                             permission.Class.Tag,
                             permission.MethodType.Tag,
-                            ((long)Operations.Execute),
+                            (long)Operations.Execute,
                         },
                         _ => throw new Exception(),
                     }).ToArray();

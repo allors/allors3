@@ -77,11 +77,11 @@ namespace Allors.Database.Domain
                 }
             }
 
-            if ((withGeographicBoundary && !geographicBoundaryValid) ||
-                (withSpecifiedFor && !specifiedForValid) ||
-                (withShipmentMethod && !shipmentMethodValid) ||
-                (withCarrier && !carrierValid) ||
-                (withShipmentValueBreak && !shipmentValueBreakValid))
+            if (withGeographicBoundary && !geographicBoundaryValid ||
+                withSpecifiedFor && !specifiedForValid ||
+                withShipmentMethod && !shipmentMethodValid ||
+                withCarrier && !carrierValid ||
+                withShipmentValueBreak && !shipmentValueBreakValid)
             {
                 return false;
             }
