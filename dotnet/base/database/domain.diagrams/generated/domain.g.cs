@@ -533,9 +533,9 @@ namespace Allors.Domain
 
 						global::System.String _WorkingFullName {set;}
 
-						global::System.String DomainFullName {set;}
+						global::System.String _DomainFullName {set;}
 
-						global::System.String DomainGreeting {set;}
+						global::System.String _DomainGreeting {set;}
 
 						Gender Gender {set;}
 

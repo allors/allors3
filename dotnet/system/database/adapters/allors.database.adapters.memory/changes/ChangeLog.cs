@@ -31,18 +31,6 @@ namespace Allors.Database.Adapters.Memory
             this.originalByStrategy = new Dictionary<Strategy, Original>();
         }
 
-        public IEnumerable<Strategy> Created => this.created;
-
-        public IEnumerable<IStrategy> Deleted => this.deleted;
-
-        public IEnumerable<Strategy> Associations => this.roleTypesByAssociation.Keys;
-
-        public IEnumerable<Strategy> Roles => this.associationTypesByRole.Keys;
-
-        public IDictionary<Strategy, ISet<IRoleType>> RoleTypesByAssociation => this.roleTypesByAssociation;
-
-        public IDictionary<Strategy, ISet<IAssociationType>> AssociationTypesByRole => this.associationTypesByRole;
-
         internal void OnCreated(Strategy strategy) => this.created.Add(strategy);
 
         internal void OnDeleted(Strategy strategy) => this.deleted.Add(strategy);
@@ -54,7 +42,7 @@ namespace Allors.Database.Adapters.Memory
             _ = this.RoleTypes(association).Add(roleType);
         }
 
-        internal void OnChangingCompositeRole(Strategy association, IRoleType roleType, Strategy previousRole, Strategy newRole)
+        internal void OnChangingCompositeRole(Strategy association, IRoleType roleType, Strategy newRole, Strategy previousRole)
         {
             this.Original(association).OnChangingCompositeRole(roleType, previousRole);
 
@@ -71,9 +59,9 @@ namespace Allors.Database.Adapters.Memory
             _ = this.RoleTypes(association).Add(roleType);
         }
 
-        internal void OnChangingCompositesRole(Strategy association, IRoleType roleType, Strategy changedRole, IEnumerable<Strategy> previousRoleStrategies)
+        internal void OnChangingCompositesRole(Strategy association, IRoleType roleType, Strategy changedRole, IEnumerable<Strategy> previousRole)
         {
-            this.Original(association).OnChangingCompositesRole(roleType, previousRoleStrategies);
+            this.Original(association).OnChangingCompositesRole(roleType, previousRole);
 
             if (changedRole != null)
             {
@@ -83,39 +71,26 @@ namespace Allors.Database.Adapters.Memory
             _ = this.RoleTypes(association).Add(roleType);
         }
 
-        internal ChangeSet Checkpoint()
-        {
-            var created = this.created != null ? new HashSet<IObject>(this.created.Select(v => v.GetObject())) : null;
+        internal void OnChangingCompositeAssociation(Strategy role, IAssociationType associationType, Strategy previousAssociation)
+            => this.Original(role).OnChangingCompositeAssociation(associationType, previousAssociation);
 
-            foreach (var kvp in this.roleTypesByAssociation)
-            {
-                var original = this.Original(kvp.Key);
-                original.Trim(kvp.Value);
-            }
+        internal void OnChangingCompositesAssociation(Strategy role, IAssociationType roleType, IEnumerable<Strategy> previousAssociation)
+            => this.Original(role).OnChangingCompositesAssociation(roleType, previousAssociation);
 
-            foreach (var kvp in this.associationTypesByRole)
-            {
-                var original = this.Original(kvp.Key);
-                original.Trim(kvp.Value);
-            }
-
-            var roleTypesByAssociation = this.RoleTypesByAssociation
-                .Where(kvp => kvp.Value.Count > 0)
-                .ToDictionary(kvp => kvp.Key.GetObject(), kvp => kvp.Value);
-
-            var associationTypesByRole = this.AssociationTypesByRole
-                .Where(kvp => kvp.Value.Count > 0)
-                .ToDictionary(kvp => kvp.Key.GetObject(), kvp => kvp.Value);
-
-            return new ChangeSet(created, this.deleted, roleTypesByAssociation, associationTypesByRole);
-        }
+        internal ChangeSet Checkpoint() =>
+            new ChangeSet(
+                this.created != null ? new HashSet<IObject>(this.created.Select(v => v.GetObject())) : null,
+                this.deleted,
+                this.RoleTypesByAssociation().ToDictionary(kvp => kvp.Key, kvp => kvp.Value),
+                this.AssociationTypesByRole().ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
+            );
 
         private ISet<IRoleType> RoleTypes(Strategy associationId)
         {
-            if (!this.RoleTypesByAssociation.TryGetValue(associationId, out var roleTypes))
+            if (!this.roleTypesByAssociation.TryGetValue(associationId, out var roleTypes))
             {
                 roleTypes = new HashSet<IRoleType>();
-                this.RoleTypesByAssociation[associationId] = roleTypes;
+                this.roleTypesByAssociation[associationId] = roleTypes;
             }
 
             return roleTypes;
@@ -123,10 +98,10 @@ namespace Allors.Database.Adapters.Memory
 
         private ISet<IAssociationType> AssociationTypes(Strategy roleId)
         {
-            if (!this.AssociationTypesByRole.TryGetValue(roleId, out var associationTypes))
+            if (!this.associationTypesByRole.TryGetValue(roleId, out var associationTypes))
             {
                 associationTypes = new HashSet<IAssociationType>();
-                this.AssociationTypesByRole[roleId] = associationTypes;
+                this.associationTypesByRole[roleId] = associationTypes;
             }
 
             return associationTypes;
@@ -134,13 +109,62 @@ namespace Allors.Database.Adapters.Memory
 
         private Original Original(Strategy association)
         {
-            if (!this.originalByStrategy.TryGetValue(association, out var original))
+            if (this.originalByStrategy.TryGetValue(association, out var original))
             {
-                original = new Original(association);
+                return original;
             }
 
-            ;
+            original = new Original(association);
+            this.originalByStrategy.Add(association, original);
             return original;
+        }
+
+        private IEnumerable<KeyValuePair<IObject, ISet<IAssociationType>>> AssociationTypesByRole()
+        {
+            foreach (var kvp in this.associationTypesByRole)
+            {
+                var strategy = kvp.Key;
+                if (strategy.IsDeleted)
+                {
+                    continue;
+                }
+
+                var original = this.Original(kvp.Key);
+                var associationTypes = kvp.Value;
+                original.Trim(associationTypes);
+
+                if (associationTypes.Count <= 0)
+                {
+                    continue;
+                }
+
+                var @object = strategy.GetObject();
+                yield return new KeyValuePair<IObject, ISet<IAssociationType>>(@object, associationTypes);
+            }
+        }
+
+        private IEnumerable<KeyValuePair<IObject, ISet<IRoleType>>> RoleTypesByAssociation()
+        {
+            foreach (var kvp in this.roleTypesByAssociation)
+            {
+                var strategy = kvp.Key;
+                if (strategy.IsDeleted)
+                {
+                    continue;
+                }
+
+                var original = this.Original(kvp.Key);
+                var roleTypes = kvp.Value;
+                original.Trim(roleTypes);
+
+                if (roleTypes.Count <= 0)
+                {
+                    continue;
+                }
+
+                var @object = strategy.GetObject();
+                yield return new KeyValuePair<IObject, ISet<IRoleType>>(@object, roleTypes);
+            }
         }
     }
 }
