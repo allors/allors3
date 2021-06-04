@@ -27,7 +27,7 @@ namespace Allors.Database.Adapters
                 return null;
             }
 
-            _ = this.procedureByLowercaseName.TryGetValue(name.ToLowerInvariant(), out var procedure);
+            this.procedureByLowercaseName.TryGetValue(name.ToLowerInvariant(), out var procedure);
             return procedure;
         }
     }

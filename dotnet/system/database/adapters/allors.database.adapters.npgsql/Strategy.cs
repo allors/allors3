@@ -288,7 +288,7 @@ namespace Allors.Database.Adapters.Npgsql
                             this.Roles.AddCompositeRole(roleType, role);
                         }
 
-                        _ = newRoles.Add(role.ObjectId);
+                        newRoles.Add(role.ObjectId);
                     }
                 }
 

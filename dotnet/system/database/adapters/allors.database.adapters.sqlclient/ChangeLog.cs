@@ -68,41 +68,41 @@ namespace Allors.Database.Adapters.SqlClient
 
         internal void OnChangingUnitRole(long association, IRoleType roleType)
         {
-            _ = this.associations.Add(association);
+            this.associations.Add(association);
 
-            _ = this.RoleTypes(association).Add(roleType);
+            this.RoleTypes(association).Add(roleType);
         }
 
         internal void OnChangingCompositeRole(long association, IRoleType roleType, long? previousRole, long? newRole)
         {
-            _ = this.associations.Add(association);
+            this.associations.Add(association);
 
             if (previousRole != null)
             {
-                _ = this.roles.Add(previousRole.Value);
-                _ = this.AssociationTypes(previousRole.Value).Add(roleType.AssociationType);
+                this.roles.Add(previousRole.Value);
+                this.AssociationTypes(previousRole.Value).Add(roleType.AssociationType);
             }
 
             if (newRole != null)
             {
-                _ = this.roles.Add(newRole.Value);
-                _ = this.AssociationTypes(newRole.Value).Add(roleType.AssociationType);
+                this.roles.Add(newRole.Value);
+                this.AssociationTypes(newRole.Value).Add(roleType.AssociationType);
             }
 
-            _ = this.RoleTypes(association).Add(roleType);
+            this.RoleTypes(association).Add(roleType);
         }
 
         internal void OnChangingCompositesRole(long association, IRoleType roleType, Strategy changedRole)
         {
-            _ = this.associations.Add(association);
+            this.associations.Add(association);
 
             if (changedRole != null)
             {
-                _ = this.roles.Add(changedRole.ObjectId);
-                _ = this.AssociationTypes(changedRole.ObjectId).Add(roleType.AssociationType);
+                this.roles.Add(changedRole.ObjectId);
+                this.AssociationTypes(changedRole.ObjectId).Add(roleType.AssociationType);
             }
 
-            _ = this.RoleTypes(association).Add(roleType);
+            this.RoleTypes(association).Add(roleType);
         }
 
         private ISet<IRoleType> RoleTypes(long associationId)

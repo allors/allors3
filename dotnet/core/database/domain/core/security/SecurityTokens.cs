@@ -32,7 +32,7 @@ namespace Allors.Database.Domain
 
             var accessControls = new AccessControls(this.Transaction);
 
-            _ = merge(InitialSecurityTokenId, v =>
+            merge(InitialSecurityTokenId, v =>
               {
                   if (setup.Config.SetupSecurity)
                   {
@@ -42,7 +42,7 @@ namespace Allors.Database.Domain
                   }
               });
 
-            _ = merge(DefaultSecurityTokenId, v =>
+            merge(DefaultSecurityTokenId, v =>
               {
                   if (setup.Config.SetupSecurity)
                   {
@@ -51,7 +51,7 @@ namespace Allors.Database.Domain
                   }
               });
 
-            _ = merge(AdministratorSecurityTokenId, v =>
+            merge(AdministratorSecurityTokenId, v =>
               {
                   if (setup.Config.SetupSecurity)
                   {

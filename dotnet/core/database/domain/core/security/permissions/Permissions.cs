@@ -83,7 +83,7 @@ namespace Allors.Database.Domain
                                     .Id;
                             }
 
-                            _ = permissionIds.Add(permissionId);
+                            permissionIds.Add(permissionId);
                         }
 
                         {
@@ -96,7 +96,7 @@ namespace Allors.Database.Domain
                                     .Id;
                             }
 
-                            _ = permissionIds.Add(permissionId);
+                            permissionIds.Add(permissionId);
                         }
                     }
 
@@ -111,7 +111,7 @@ namespace Allors.Database.Domain
                                 .Id;
                         }
 
-                        _ = permissionIds.Add(permissionId);
+                        permissionIds.Add(permissionId);
                     }
                 }
                 else
@@ -121,13 +121,13 @@ namespace Allors.Database.Domain
                     {
                         var relationTypeId = roleType.RelationType.Id;
 
-                        _ = permissionIds.Add(new ReadPermissionBuilder(this.Transaction).WithClassPointer(@class.Id).WithRelationTypePointer(relationTypeId).Build().Id);
-                        _ = permissionIds.Add(new WritePermissionBuilder(this.Transaction).WithClassPointer(@class.Id).WithRelationTypePointer(relationTypeId).Build().Id);
+                        permissionIds.Add(new ReadPermissionBuilder(this.Transaction).WithClassPointer(@class.Id).WithRelationTypePointer(relationTypeId).Build().Id);
+                        permissionIds.Add(new WritePermissionBuilder(this.Transaction).WithClassPointer(@class.Id).WithRelationTypePointer(relationTypeId).Build().Id);
                     }
 
                     foreach (var methodType in @class.MethodTypes)
                     {
-                        _ = permissionIds.Add(new ExecutePermissionBuilder(this.Transaction).WithClassPointer(@class.Id).WithMethodTypePointer(methodType.Id).Build().Id);
+                        permissionIds.Add(new ExecutePermissionBuilder(this.Transaction).WithClassPointer(@class.Id).WithMethodTypePointer(methodType.Id).Build().Id);
                     }
                 }
             }
@@ -135,7 +135,7 @@ namespace Allors.Database.Domain
             // Delete obsolete permissions
             foreach (var permissionToDelete in new Permissions(this.Transaction).Extent().Where(v => !permissionIds.Contains(v.Id)))
             {
-                _ = permissionToDelete.Delete();
+                permissionToDelete.Delete();
             }
         }
 

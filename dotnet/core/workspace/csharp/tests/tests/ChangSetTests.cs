@@ -45,7 +45,7 @@ namespace Tests.Workspace
 
             c1a.C1AllorsString = "X";
 
-            _ = await session.Push();
+            await session.Push();
 
             var changeSet = session.Checkpoint();
 

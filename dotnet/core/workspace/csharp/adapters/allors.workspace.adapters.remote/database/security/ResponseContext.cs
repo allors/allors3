@@ -33,7 +33,7 @@ namespace Allors.Workspace.Adapters.Remote
 
             foreach (var accessControlId in value.Where(v => !this.database.AccessControlById.ContainsKey(v)))
             {
-                _ = this.MissingAccessControlIds.Add(accessControlId);
+                this.MissingAccessControlIds.Add(accessControlId);
             }
 
             return value;
@@ -48,7 +48,7 @@ namespace Allors.Workspace.Adapters.Remote
 
             foreach (var permissionId in value.Where(v => !this.database.Permissions.Contains(v)))
             {
-                _ = this.MissingPermissionIds.Add(permissionId);
+                this.MissingPermissionIds.Add(permissionId);
             }
 
             return value;

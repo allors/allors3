@@ -31,7 +31,7 @@ namespace Allors.Database.Domain.Derivations.Legacy.Default
             {
                 if (this.properties != null)
                 {
-                    _ = this.properties.Remove(lowerName);
+                    this.properties.Remove(lowerName);
                     if (this.properties.Count == 0)
                     {
                         this.properties = null;

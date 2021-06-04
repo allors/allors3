@@ -31,7 +31,7 @@ namespace Allors.Database.Configuration
             //    return new Extent(this.M.Organisation) { Predicate = new Equals(this.M.Organisation.Name) { Parameter = "name" } };
             //}
 
-            _ = this.ExtentById.TryGetValue(id, out var extent);
+            this.ExtentById.TryGetValue(id, out var extent);
             return extent;
         }
     }

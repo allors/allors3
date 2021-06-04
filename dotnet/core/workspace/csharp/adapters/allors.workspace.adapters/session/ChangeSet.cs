@@ -124,7 +124,7 @@ namespace Allors.Workspace.Adapters
                 this.AssociationsByRoleType.Add(roleType, associations);
             }
 
-            _ = associations.Add(association);
+            associations.Add(association);
         }
 
         private void AddRole(IRelationType relationType, Strategy role)
@@ -137,7 +137,7 @@ namespace Allors.Workspace.Adapters
                 this.RolesByAssociationType.Add(associationType, roles);
             }
 
-            _ = roles.Add(role);
+            roles.Add(role);
         }
     }
 }

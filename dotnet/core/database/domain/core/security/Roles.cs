@@ -39,11 +39,11 @@ namespace Allors.Database.Domain
         {
             var merge = this.Cache.Merger().Action();
 
-            _ = merge(AdministratorId, v => v.Name = "Administrator");
-            _ = merge(GuestId, v => v.Name = "Guest");
-            _ = merge(GuestCreatorId, v => v.Name = "GuestCreator");
-            _ = merge(CreatorId, v => v.Name = "Creator");
-            _ = merge(OwnerId, v => v.Name = "Owner");
+            merge(AdministratorId, v => v.Name = "Administrator");
+            merge(GuestId, v => v.Name = "Guest");
+            merge(GuestCreatorId, v => v.Name = "GuestCreator");
+            merge(CreatorId, v => v.Name = "Creator");
+            merge(OwnerId, v => v.Name = "Owner");
         }
     }
 }

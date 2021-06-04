@@ -24,7 +24,7 @@ namespace Allors.Database.Domain.Tests
             Assert.False(organisation.PostDeriveTrigger);
             Assert.False(organisation.PostDeriveTriggered);
 
-            _ = this.Transaction.Derive(false);
+            this.Transaction.Derive(false);
 
             Assert.True(organisation.PostDeriveTrigger);
             Assert.True(organisation.PostDeriveTriggered);

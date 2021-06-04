@@ -104,7 +104,7 @@ namespace Allors.Database.Data
                                 var role = @object.Strategy.GetCompositeRole(roleType);
                                 if (role != null)
                                 {
-                                    _ = objects.Add(role);
+                                    objects.Add(role);
                                     foreach (var node in this.Nodes)
                                     {
                                         node.Resolve(role, acls, objects);
@@ -116,7 +116,7 @@ namespace Allors.Database.Data
                                 var roles = @object.Strategy.GetCompositeRoles(roleType);
                                 foreach (IObject role in roles)
                                 {
-                                    _ = objects.Add(role);
+                                    objects.Add(role);
                                     foreach (var node in this.Nodes)
                                     {
                                         node.Resolve(role, acls, objects);
@@ -132,7 +132,7 @@ namespace Allors.Database.Data
                             var association = @object.Strategy.GetCompositeAssociation(associationType);
                             if (association != null)
                             {
-                                _ = objects.Add(association);
+                                objects.Add(association);
                                 foreach (var node in this.Nodes)
                                 {
                                     node.Resolve(association, acls, objects);
@@ -144,7 +144,7 @@ namespace Allors.Database.Data
                             var associations = @object.Strategy.GetCompositeAssociations(associationType);
                             foreach (IObject association in associations)
                             {
-                                _ = objects.Add(association);
+                                objects.Add(association);
                                 foreach (var node in this.Nodes)
                                 {
                                     node.Resolve(association, acls, objects);
@@ -160,7 +160,7 @@ namespace Allors.Database.Data
         {
             if (this.Nodes == null || this.Nodes.Length == 0)
             {
-                _ = prefetchPolicyBuilder.WithRule(this.PropertyType);
+                prefetchPolicyBuilder.WithRule(this.PropertyType);
             }
             else
             {
@@ -171,7 +171,7 @@ namespace Allors.Database.Data
                 }
 
                 var nestedPrefetchPolicy = nestedPrefetchPolicyBuilder.Build();
-                _ = prefetchPolicyBuilder.WithRule(this.PropertyType, nestedPrefetchPolicy);
+                prefetchPolicyBuilder.WithRule(this.PropertyType, nestedPrefetchPolicy);
             }
         }
 
@@ -179,7 +179,7 @@ namespace Allors.Database.Data
         {
             foreach (var propertyType in propertyTypes)
             {
-                _ = this.Add(propertyType);
+                this.Add(propertyType);
             }
 
             return this;

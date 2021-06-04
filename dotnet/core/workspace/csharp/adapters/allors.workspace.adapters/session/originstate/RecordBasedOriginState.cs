@@ -160,7 +160,7 @@ namespace Allors.Workspace.Adapters
                         var relationType = kvp.Key;
                         var current = kvp.Value;
 
-                        _ = this.PreviousChangedRoleByRelationType.TryGetValue(relationType, out var previous);
+                        this.PreviousChangedRoleByRelationType.TryGetValue(relationType, out var previous);
                         changeSet.Diff(this.Strategy, relationType, current, previous);
                     }
                 }

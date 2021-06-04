@@ -91,7 +91,7 @@ namespace Allors.Database.Adapters.SqlClient
 
         private void LoadObjects(XmlReader reader)
         {
-            _ = reader.MoveToContent();
+            reader.MoveToContent();
 
             while (reader.Read())
             {
@@ -147,7 +147,7 @@ insert into {tableName} (o, c)
 select o, c from allors._o
 where c = '{@class.Id}'";
 
-                        _ = command.ExecuteNonQuery();
+                        command.ExecuteNonQuery();
                     }
                 }
 
@@ -250,7 +250,7 @@ where c = '{@class.Id}'";
                             var associationIdString = reader.GetAttribute(Serialization.Association);
                             var associationId = long.Parse(associationIdString);
 
-                            _ = this.classByObjectId.TryGetValue(associationId, out var @class);
+                            this.classByObjectId.TryGetValue(associationId, out var @class);
 
                             if (@class == null || !allowedClasses.Contains(@class))
                             {
@@ -330,7 +330,7 @@ where c = '{@class.Id}'";
                     sqlParameter.ParameterName = Mapping.ParamNameForTableType;
                     sqlParameter.Value = this.database.CreateUnitRelationTable(relationType.RoleType, unitRelations);
 
-                    _ = command.Parameters.Add(sqlParameter);
+                    command.Parameters.Add(sqlParameter);
 
                     command.ExecuteNonQuery();
                 }

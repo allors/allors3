@@ -72,7 +72,7 @@ namespace Allors.Repository.Generation
             templateGroup.ErrorManager = new ErrorManager(new LogAdapter());
 
             var configurationTemplate = templateGroup.GetInstanceOf(TemplateConfiguration);
-            _ = configurationTemplate.Add(RepositoryKey, repository);
+            configurationTemplate.Add(RepositoryKey, repository);
 
             var configurationXml = new XmlDocument();
             configurationXml.LoadXml(configurationTemplate.Render());
@@ -84,7 +84,7 @@ namespace Allors.Repository.Generation
                 var template = templateGroup.GetInstanceOf(templateName);
                 var output = generation.GetAttribute(OutputKey);
 
-                _ = template.Add(RepositoryKey, repository);
+                template.Add(RepositoryKey, repository);
 
                 if (generation.HasAttribute(InputKey))
                 {

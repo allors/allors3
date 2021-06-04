@@ -85,7 +85,7 @@ namespace Allors.Database.Protocol.Json
                         else if (this.allowedClasses?.Contains(obj.Strategy.Class) == true)
                         {
                             var pushRequestRoles = pushRequestObject.Roles;
-                            _ = this.PushRequestRoles(pushRequestRoles, obj, pushResponse, objectByNewId);
+                            this.PushRequestRoles(pushRequestRoles, obj, pushResponse, objectByNewId);
                         }
                         else
                         {
@@ -124,7 +124,7 @@ namespace Allors.Database.Protocol.Json
                         var pushRequestRoles = pushRequestNewObject.Roles;
                         if (pushRequestRoles != null)
                         {
-                            _ = this.PushRequestRoles(pushRequestRoles, obj, pushResponse, objectByNewId);
+                            this.PushRequestRoles(pushRequestRoles, obj, pushResponse, objectByNewId);
                         }
                     }
                 }

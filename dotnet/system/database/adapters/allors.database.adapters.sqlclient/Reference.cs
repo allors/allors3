@@ -157,7 +157,7 @@ namespace Allors.Database.Adapters.SqlClient
             get
             {
                 Strategy strategy = null;
-                _ = (this.weakReference?.TryGetTarget(out strategy));
+                (this.weakReference?.TryGetTarget(out strategy));
                 return strategy;
             }
         }
@@ -183,7 +183,7 @@ namespace Allors.Database.Adapters.SqlClient
             var strategy = this.Target;
             if (strategy != null)
             {
-                _ = referencesWithStrategy.Add(this);
+                referencesWithStrategy.Add(this);
                 strategy.Release();
             }
         }
@@ -205,7 +205,7 @@ namespace Allors.Database.Adapters.SqlClient
             var strategy = this.Target;
             if (strategy != null)
             {
-                _ = referencesWithStrategy.Add(this);
+                referencesWithStrategy.Add(this);
                 strategy.Release();
             }
         }

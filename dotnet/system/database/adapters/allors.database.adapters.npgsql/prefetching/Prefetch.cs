@@ -66,7 +66,7 @@ namespace Allors.Database.Adapters.Npgsql
                                     var roles = this.prefetcher.Transaction.State.GetOrCreateRoles(reference);
                                     if (!roles.TryGetUnitRole(roleType, out var role))
                                     {
-                                        _ = referencesWithoutCachedRole.Add(reference);
+                                        referencesWithoutCachedRole.Add(reference);
                                     }
                                 }
 

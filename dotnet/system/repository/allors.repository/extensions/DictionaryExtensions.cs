@@ -12,7 +12,7 @@ namespace Allors.Repository
     {
         public static TValue Get<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key)
         {
-            _ = dict.TryGetValue(key, out var val);
+            dict.TryGetValue(key, out var val);
             return val;
         }
     }

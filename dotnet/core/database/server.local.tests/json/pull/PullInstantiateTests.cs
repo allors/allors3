@@ -22,7 +22,7 @@ namespace Tests
         public void SameWorkspace()
         {
             var m = this.M;
-            _ = this.SetUser("jane@example.com");
+            this.SetUser("jane@example.com");
 
             var x1 = new WorkspaceXObject1Builder(this.Transaction).Build();
 
@@ -51,7 +51,7 @@ namespace Tests
         public void DifferentWorkspace()
         {
             var m = this.M;
-            _ = this.SetUser("jane@example.com");
+            this.SetUser("jane@example.com");
 
             var x1 = new WorkspaceXObject1Builder(this.Transaction).Build();
 
@@ -78,7 +78,7 @@ namespace Tests
         public void NoneWorkspace()
         {
             var m = this.M;
-            _ = this.SetUser("jane@example.com");
+            this.SetUser("jane@example.com");
 
             var x1 = new WorkspaceXObject1Builder(this.Transaction).Build();
 

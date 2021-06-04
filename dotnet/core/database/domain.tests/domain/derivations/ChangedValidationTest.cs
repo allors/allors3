@@ -29,11 +29,11 @@ namespace Allors.Database.Domain.Tests
                 .WithOne2One(bb)
                 .Build();
 
-            _ = this.Transaction.Derive();
+            this.Transaction.Derive();
 
             cc.Assigned = "x";
 
-            _ = this.Transaction.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal("x", aa.Derived);
         }
@@ -52,11 +52,11 @@ namespace Allors.Database.Domain.Tests
                 .WithMany2One(bb)
                 .Build();
 
-            _ = this.Transaction.Derive();
+            this.Transaction.Derive();
 
             cc.Assigned = "x";
 
-            _ = this.Transaction.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal("x", aa.Derived);
         }
@@ -75,11 +75,11 @@ namespace Allors.Database.Domain.Tests
                 .WithOne2Many(bb)
                 .Build();
 
-            _ = this.Transaction.Derive();
+            this.Transaction.Derive();
 
             cc.Assigned = "x";
 
-            _ = this.Transaction.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal("x", aa.Derived);
         }
@@ -98,11 +98,11 @@ namespace Allors.Database.Domain.Tests
                 .WithMany2Many(bb)
                 .Build();
 
-            _ = this.Transaction.Derive();
+            this.Transaction.Derive();
 
             cc.Assigned = "x";
 
-            _ = this.Transaction.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal("x", aa.Derived);
         }
@@ -116,7 +116,7 @@ namespace Allors.Database.Domain.Tests
             c1.ChangedRolePingC1 = true;
             c2.ChangedRolePingC1 = true;
 
-            _ = this.Transaction.Derive();
+            this.Transaction.Derive();
 
             Assert.True(c1.ChangedRolePongC1);
             Assert.Null(c2.ChangedRolePongC1);
@@ -131,7 +131,7 @@ namespace Allors.Database.Domain.Tests
             c1.ChangedRolePingI1 = true;
             c2.ChangedRolePingI1 = true;
 
-            _ = this.Transaction.Derive();
+            this.Transaction.Derive();
 
             Assert.True(c1.ChangedRolePongI1);
             Assert.Null(c2.ChangedRolePongI1);
@@ -146,7 +146,7 @@ namespace Allors.Database.Domain.Tests
             c1.ChangedRolePingI12 = true;
             c2.ChangedRolePingI12 = true;
 
-            _ = this.Transaction.Derive();
+            this.Transaction.Derive();
 
             Assert.True(c1.ChangedRolePongI12);
             Assert.True(c2.ChangedRolePongI12);
@@ -161,7 +161,7 @@ namespace Allors.Database.Domain.Tests
             c1.ChangedRolePingS12 = true;
             c2.ChangedRolePingS12 = true;
 
-            _ = this.Transaction.Derive();
+            this.Transaction.Derive();
 
             Assert.True(c1.ChangedRolePongS12);
             Assert.True(c2.ChangedRolePongS12);

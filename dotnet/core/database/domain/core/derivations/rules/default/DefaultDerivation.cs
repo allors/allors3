@@ -78,7 +78,7 @@ namespace Allors.Database.Domain.Derivations.Rules.Default
                     var newObjects = changeSet.Created;
                     foreach (Object newObject in newObjects)
                     {
-                        _ = newObject.OnInit();
+                        newObject.OnInit();
                     }
                 }
 

@@ -216,9 +216,9 @@ namespace Allors.Database.Adapters.SqlClient
                     var decimalRelationTable = scaleEntry.Value;
 
                     var sql = new StringBuilder();
-                    _ = sql.Append("CREATE TYPE " + decimalRelationTable + " AS TABLE\n");
-                    _ = sql.Append("(" + this.TableTypeColumnNameForAssociation + " " + SqlTypeForObject + ",\n");
-                    _ = sql.Append(this.TableTypeColumnNameForRole + " DECIMAL(" + precision + "," + scale + ") )\n");
+                    sql.Append("CREATE TYPE " + decimalRelationTable + " AS TABLE\n");
+                    sql.Append("(" + this.TableTypeColumnNameForAssociation + " " + SqlTypeForObject + ",\n");
+                    sql.Append(this.TableTypeColumnNameForRole + " DECIMAL(" + precision + "," + scale + ") )\n");
 
                     this.TableTypeDefinitionByName.Add(decimalRelationTable, sql.ToString());
                 }

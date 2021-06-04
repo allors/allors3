@@ -31,12 +31,12 @@ namespace Allors.Workspace.Meta
         IEnumerable<IComposite> IMetaPopulation.Composites => this.Composites;
         IMetaObject IMetaPopulation.FindByTag(int tag)
         {
-            _ = this.MetaObjectByTag.TryGetValue(tag, out var metaObject);
+            this.MetaObjectByTag.TryGetValue(tag, out var metaObject);
             return metaObject;
         }
         IComposite IMetaPopulation.FindByName(string name)
         {
-            _ = this.CompositeByLowercaseName.TryGetValue(name.ToLowerInvariant(), out var composite);
+            this.CompositeByLowercaseName.TryGetValue(name.ToLowerInvariant(), out var composite);
             return composite;
         }
         void IMetaPopulation.Bind(Type[] types)
@@ -164,7 +164,7 @@ namespace Allors.Workspace.Meta
 
                 foreach (var objectType in this.Composites)
                 {
-                    _ = exclusiveRoleTypesObjectType.TryGetValue(objectType, out var exclusiveRoleTypes);
+                    exclusiveRoleTypesObjectType.TryGetValue(objectType, out var exclusiveRoleTypes);
                     objectType.ExclusiveRoleTypes = exclusiveRoleTypes ?? Array.Empty<IRoleTypeInternals>();
                 }
             }
@@ -177,7 +177,7 @@ namespace Allors.Workspace.Meta
 
                 foreach (var objectType in this.Composites)
                 {
-                    _ = exclusiveAssociationTypesByObjectType.TryGetValue(objectType, out var exclusiveAssociationTypes);
+                    exclusiveAssociationTypesByObjectType.TryGetValue(objectType, out var exclusiveAssociationTypes);
                     objectType.ExclusiveAssociationTypes = exclusiveAssociationTypes ?? Array.Empty<IAssociationTypeInternals>();
                 }
             }
@@ -190,7 +190,7 @@ namespace Allors.Workspace.Meta
 
                 foreach (var objectType in this.Composites)
                 {
-                    _ = exclusiveMethodTypeByObjectType.TryGetValue(objectType, out var exclusiveMethodTypes);
+                    exclusiveMethodTypeByObjectType.TryGetValue(objectType, out var exclusiveMethodTypes);
                     objectType.ExclusiveMethodTypes = exclusiveMethodTypes ?? Array.Empty<IMethodTypeInternals>();
                 }
             }

@@ -43,7 +43,7 @@ namespace Allors.Workspace.Adapters
 
         public WorkspaceRecord GetRecord(long id)
         {
-            _ = this.recordById.TryGetValue(id, out var workspaceObject);
+            this.recordById.TryGetValue(id, out var workspaceObject);
             return workspaceObject;
         }
 
@@ -53,8 +53,8 @@ namespace Allors.Workspace.Adapters
             {
                 this.WorkspaceClassByWorkspaceId.Add(id, @class);
 
-                _ = this.WorkspaceIdsByWorkspaceClass.TryGetValue(@class, out var ids);
-                _ = this.Numbers.Add(ids, id);
+                this.WorkspaceIdsByWorkspaceClass.TryGetValue(@class, out var ids);
+                this.Numbers.Add(ids, id);
                 this.WorkspaceIdsByWorkspaceClass[@class] = ids;
             }
 

@@ -51,10 +51,10 @@ namespace Allors.Workspace.Adapters.Local
         {
             var result = new Push(this);
 
-            _ = this.PushToDatabase(result);
+            this.PushToDatabase(result);
             if (!result.HasErrors)
             {
-                _ = this.PushToWorkspace(result);
+                this.PushToWorkspace(result);
             }
 
             return Task.FromResult<IPushResult>(result);
@@ -115,7 +115,7 @@ namespace Allors.Workspace.Adapters.Local
             {
                 if (!this.StrategyByWorkspaceId.TryGetValue(databaseObject.Id, out var strategy))
                 {
-                    _ = this.InstantiateDatabaseStrategy(databaseObject.Id);
+                    this.InstantiateDatabaseStrategy(databaseObject.Id);
                 }
                 else
                 {
@@ -144,7 +144,7 @@ namespace Allors.Workspace.Adapters.Local
 
                     var strategy = this.StrategyByWorkspaceId[workspaceId];
 
-                    _ = this.PushToDatabaseTracker.Created.Remove(strategy);
+                    this.PushToDatabaseTracker.Created.Remove(strategy);
 
                     this.RemoveStrategy(strategy);
                     var databaseRecord = this.Workspace.DatabaseConnection.OnPushed(databaseId, strategy.Class);
@@ -166,7 +166,7 @@ namespace Allors.Workspace.Adapters.Local
             {
                 if (!this.StrategyByWorkspaceId.ContainsKey(@object.Id))
                 {
-                    _ = this.InstantiateDatabaseStrategy(@object.Id);
+                    this.InstantiateDatabaseStrategy(@object.Id);
                 }
 
                 var strategy = this.GetStrategy(@object.Id);

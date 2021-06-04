@@ -22,7 +22,7 @@ namespace Allors.Database.Domain.Derivations
                 var message = new StringBuilder();
                 foreach (var error in this.Validation.Errors)
                 {
-                    _ = message.Append(error.Message + "\n");
+                    message.Append(error.Message + "\n");
                 }
 
                 return message.ToString();

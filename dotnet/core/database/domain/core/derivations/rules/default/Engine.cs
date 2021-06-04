@@ -67,7 +67,7 @@ namespace Allors.Database.Domain.Derivations.Rules.Default
                                     patternsByRoleType.Add(roleType, patterns);
                                 }
 
-                                _ = patterns.Add(rolePattern);
+                                patterns.Add(rolePattern);
                             }
 
                             break;
@@ -88,7 +88,7 @@ namespace Allors.Database.Domain.Derivations.Rules.Default
                                     patternsByAssociationType.Add(associationType, patterns);
                                 }
 
-                                _ = patterns.Add(associationPattern);
+                                patterns.Add(associationPattern);
                             }
 
                             break;

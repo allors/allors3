@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
 
         public IClass Get(long id)
         {
-            _ = this.classById.TryGetValue(id, out var @class);
+            this.classById.TryGetValue(id, out var @class);
             return @class;
         }
 

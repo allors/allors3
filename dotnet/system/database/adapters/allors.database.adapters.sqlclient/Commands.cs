@@ -215,7 +215,7 @@ namespace Allors.Database.Adapters.SqlClient
                 sqlParameter.ParameterName = Mapping.ParamNameForTableType;
                 sqlParameter.Value = this.Database.CreateUnitRelationTable(roleType, relations);
 
-                _ = command.Parameters.Add(sqlParameter);
+                command.Parameters.Add(sqlParameter);
             }
             else
             {
@@ -243,20 +243,20 @@ namespace Allors.Database.Adapters.SqlClient
                 command.AddObjectParameter(roles.Reference.ObjectId);
 
                 var sql = new StringBuilder();
-                _ = sql.Append("UPDATE " + this.Database.Mapping.TableNameForObjectByClass[exclusiveRootClass] + " SET\n");
+                sql.Append("UPDATE " + this.Database.Mapping.TableNameForObjectByClass[exclusiveRootClass] + " SET\n");
 
                 var count = 0;
                 foreach (var roleType in sortedRoleTypes)
                 {
                     if (count > 0)
                     {
-                        _ = sql.Append(" , ");
+                        sql.Append(" , ");
                     }
 
                     ++count;
 
                     var column = this.Database.Mapping.ColumnNameByRelationType[roleType.RelationType];
-                    _ = sql.Append(column + "=" + this.Database.Mapping.ParamNameByRoleType[roleType]);
+                    sql.Append(column + "=" + this.Database.Mapping.ParamNameByRoleType[roleType]);
 
                     var unit = roles.ModifiedRoleByRoleType[roleType];
                     var sqlParameter1 = command.CreateParameter();
@@ -264,10 +264,10 @@ namespace Allors.Database.Adapters.SqlClient
                     sqlParameter1.SqlDbType = this.Database.Mapping.GetSqlDbType(roleType);
                     sqlParameter1.Value = unit ?? DBNull.Value;
 
-                    _ = command.Parameters.Add(sqlParameter1);
+                    command.Parameters.Add(sqlParameter1);
                 }
 
-                _ = sql.Append("\nWHERE " + Mapping.ColumnNameForObject + "=" + Mapping.ParamNameForObject + "\n");
+                sql.Append("\nWHERE " + Mapping.ColumnNameForObject + "=" + Mapping.ParamNameForObject + "\n");
 
                 command.CommandText = sql.ToString();
                 command.ExecuteNonQuery();

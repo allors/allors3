@@ -27,17 +27,17 @@ namespace Allors.Database.Domain.Tests
                 .WithLastName("Doe")
                 .Build();
 
-            _ = this.Transaction.Derive();
+            this.Transaction.Derive();
 
             organisation.Owner = jane;
 
-            _ = this.Transaction.Derive();
+            this.Transaction.Derive();
 
             Assert.True(jane.Owning);
 
             organisation.RemoveOwner();
 
-            _ = this.Transaction.Derive();
+            this.Transaction.Derive();
 
             Assert.False(jane.Owning);
         }

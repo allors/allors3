@@ -83,7 +83,7 @@ namespace Allors.Database.Adapters.Memory
 
         internal void CopyToConnected(Allors.Database.Extent connectedExtent)
         {
-            _ = connectedExtent.AddSort(this.roleType, this.direction);
+            connectedExtent.AddSort(this.roleType, this.direction);
             if (this.subSorter != null)
             {
                 this.subSorter.CopyToConnected(connectedExtent);

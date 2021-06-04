@@ -69,7 +69,7 @@ namespace Allors.Workspace.Adapters
         public IEnumerable<T> Get<T>(IEnumerable<string> identities) where T : IObject => this.Get<T>(identities.Select(
             v =>
             {
-                _ = long.TryParse(v, out var id);
+                long.TryParse(v, out var id);
                 return id;
             }));
 
@@ -225,13 +225,13 @@ namespace Allors.Workspace.Adapters
             }
             else
             {
-                _ = strategies.Add(strategy);
+                strategies.Add(strategy);
             }
         }
 
         protected void RemoveStrategy(Strategy strategy)
         {
-            _ = this.StrategyByWorkspaceId.Remove(strategy.Id);
+            this.StrategyByWorkspaceId.Remove(strategy.Id);
 
             var @class = strategy.Class;
             if (!this.strategiesByClass.TryGetValue(@class, out var strategies))
@@ -239,7 +239,7 @@ namespace Allors.Workspace.Adapters
                 return;
             }
 
-            _ = strategies.Remove(strategy);
+            strategies.Remove(strategy);
         }
 
         protected IPushResult PushToWorkspace(IPushResult result)

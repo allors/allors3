@@ -24,7 +24,7 @@ namespace Allors.Database.Adapters
         {
             foreach (var objectToInvalidate in objectsToInvalidate)
             {
-                _ = this.classByObject.Remove(objectToInvalidate);
+                this.classByObject.Remove(objectToInvalidate);
             }
         }
     }

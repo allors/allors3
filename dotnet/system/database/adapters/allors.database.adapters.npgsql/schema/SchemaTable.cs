@@ -25,7 +25,7 @@ namespace Allors.Database.Adapters.Npgsql
 
         public SchemaTableColumn GetColumn(string columnName)
         {
-            _ = this.ColumnByLowercaseColumnName.TryGetValue(columnName.ToLowerInvariant(), out var tableColumn);
+            this.ColumnByLowercaseColumnName.TryGetValue(columnName.ToLowerInvariant(), out var tableColumn);
             return tableColumn;
         }
 

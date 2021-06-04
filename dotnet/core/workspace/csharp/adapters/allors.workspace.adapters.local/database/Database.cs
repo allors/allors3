@@ -87,7 +87,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public override Adapters.DatabaseRecord GetRecord(long id)
         {
-            _ = this.recordsById.TryGetValue(id, out var databaseObjects);
+            this.recordsById.TryGetValue(id, out var databaseObjects);
             return databaseObjects;
         }
 
@@ -102,15 +102,15 @@ namespace Allors.Workspace.Adapters.Local
             switch (operation)
             {
                 case Operations.Read:
-                    _ = permissionCacheEntry.RoleReadPermissionIdByRelationTypeId.TryGetValue(operandId,
+                    permissionCacheEntry.RoleReadPermissionIdByRelationTypeId.TryGetValue(operandId,
                         out permission);
                     break;
                 case Operations.Write:
-                    _ = permissionCacheEntry.RoleWritePermissionIdByRelationTypeId.TryGetValue(operandId,
+                    permissionCacheEntry.RoleWritePermissionIdByRelationTypeId.TryGetValue(operandId,
                         out permission);
                     break;
                 default:
-                    _ = permissionCacheEntry.MethodExecutePermissionIdByMethodTypeId.TryGetValue(operandId,
+                    permissionCacheEntry.MethodExecutePermissionIdByMethodTypeId.TryGetValue(operandId,
                         out permission);
                     break;
             }

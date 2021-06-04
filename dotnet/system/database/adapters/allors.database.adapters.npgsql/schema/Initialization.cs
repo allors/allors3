@@ -61,7 +61,7 @@ namespace Allors.Database.Adapters.Npgsql
 CREATE SCHEMA " + this.database.SchemaName;
                         using (var command = new NpgsqlCommand(cmdText, connection))
                         {
-                            _ = command.ExecuteNonQuery();
+                            command.ExecuteNonQuery();
                         }
                     }
                     finally
@@ -83,7 +83,7 @@ CREATE SCHEMA " + this.database.SchemaName;
                     {
                         using (var command = new NpgsqlCommand("DROP FUNCTION " + name, connection))
                         {
-                            _ = command.ExecuteNonQuery();
+                            command.ExecuteNonQuery();
                         }
                     }
                 }
@@ -173,16 +173,16 @@ CREATE SCHEMA " + this.database.SchemaName;
                 {
                     {
                         var sql = new StringBuilder();
-                        _ = sql.Append("CREATE TABLE " + this.mapping.TableNameForObjects + "\n");
-                        _ = sql.Append("(\n");
-                        _ = sql.Append(Mapping.ColumnNameForObject + " BIGSERIAL PRIMARY KEY,\n");
-                        _ = sql.Append(Mapping.ColumnNameForClass + " " + Mapping.SqlTypeForClass + ",\n");
-                        _ = sql.Append(Mapping.ColumnNameForVersion + " " + Mapping.SqlTypeForVersion + "\n");
-                        _ = sql.Append(")\n");
+                        sql.Append("CREATE TABLE " + this.mapping.TableNameForObjects + "\n");
+                        sql.Append("(\n");
+                        sql.Append(Mapping.ColumnNameForObject + " BIGSERIAL PRIMARY KEY,\n");
+                        sql.Append(Mapping.ColumnNameForClass + " " + Mapping.SqlTypeForClass + ",\n");
+                        sql.Append(Mapping.ColumnNameForVersion + " " + Mapping.SqlTypeForVersion + "\n");
+                        sql.Append(")\n");
 
                         using (var command = new NpgsqlCommand(sql.ToString(), connection))
                         {
-                            _ = command.ExecuteNonQuery();
+                            command.ExecuteNonQuery();
                         }
                     }
 
@@ -191,10 +191,10 @@ CREATE SCHEMA " + this.database.SchemaName;
                         var tableName = this.mapping.TableNameForObjectByClass[@class];
 
                         var sql = new StringBuilder();
-                        _ = sql.Append("CREATE TABLE " + tableName + "\n");
-                        _ = sql.Append("(\n");
-                        _ = sql.Append(Mapping.ColumnNameForObject + " " + Mapping.SqlTypeForObject + " PRIMARY KEY,\n");
-                        _ = sql.Append(Mapping.ColumnNameForClass + " " + Mapping.SqlTypeForClass);
+                        sql.Append("CREATE TABLE " + tableName + "\n");
+                        sql.Append("(\n");
+                        sql.Append(Mapping.ColumnNameForObject + " " + Mapping.SqlTypeForObject + " PRIMARY KEY,\n");
+                        sql.Append(Mapping.ColumnNameForClass + " " + Mapping.SqlTypeForClass);
 
                         foreach (var associationType in @class.DatabaseAssociationTypes)
                         {
@@ -202,7 +202,7 @@ CREATE SCHEMA " + this.database.SchemaName;
                             var roleType = relationType.RoleType;
                             if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && roleType.IsMany)
                             {
-                                _ = sql.Append(",\n" + this.mapping.ColumnNameByRelationType[relationType] + " " + Mapping.SqlTypeForObject);
+                                sql.Append(",\n" + this.mapping.ColumnNameByRelationType[relationType] + " " + Mapping.SqlTypeForObject);
                             }
                         }
 
@@ -212,22 +212,22 @@ CREATE SCHEMA " + this.database.SchemaName;
                             var associationType3 = relationType.AssociationType;
                             if (roleType.ObjectType.IsUnit)
                             {
-                                _ = sql.Append(",\n" + this.mapping.ColumnNameByRelationType[relationType] + " " + this.mapping.GetSqlType(roleType));
+                                sql.Append(",\n" + this.mapping.ColumnNameByRelationType[relationType] + " " + this.mapping.GetSqlType(roleType));
                             }
                             else
                             {
                                 if (!(associationType3.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && !roleType.IsMany)
                                 {
-                                    _ = sql.Append(",\n" + this.mapping.ColumnNameByRelationType[relationType] + " " + Mapping.SqlTypeForObject);
+                                    sql.Append(",\n" + this.mapping.ColumnNameByRelationType[relationType] + " " + Mapping.SqlTypeForObject);
                                 }
                             }
                         }
 
-                        _ = sql.Append(")\n");
+                        sql.Append(")\n");
 
                         using (var command = new NpgsqlCommand(sql.ToString(), connection))
                         {
-                            _ = command.ExecuteNonQuery();
+                            command.ExecuteNonQuery();
                         }
                     }
 
@@ -254,7 +254,7 @@ $@"CREATE TABLE {tableName}(
 
                             using (var command = new NpgsqlCommand(sql, connection))
                             {
-                                _ = command.ExecuteNonQuery();
+                                command.ExecuteNonQuery();
                             }
                         }
                     }
@@ -280,7 +280,7 @@ $@"CREATE TABLE {tableName}(
                         {
                             try
                             {
-                                _ = command.ExecuteNonQuery();
+                                command.ExecuteNonQuery();
                             }
                             catch (Exception e)
                             {
@@ -367,11 +367,11 @@ $@"CREATE TABLE {tableName}(
                                 var tableName = this.mapping.TableNameForRelationByRelationType[relationType];
                                 var indexName = "idx_" + relationType.RoleType.SingularFullName.ToLowerInvariant() + "_" + Mapping.ColumnNameForRole.ToLowerInvariant();
                                 var sql = new StringBuilder();
-                                _ = sql.Append("CREATE INDEX " + indexName + "\n");
-                                _ = sql.Append("ON " + tableName + " (" + Mapping.ColumnNameForRole + ")");
+                                sql.Append("CREATE INDEX " + indexName + "\n");
+                                sql.Append("ON " + tableName + " (" + Mapping.ColumnNameForRole + ")");
                                 using (var command = new NpgsqlCommand(sql.ToString(), connection))
                                 {
-                                    _ = command.ExecuteNonQuery();
+                                    command.ExecuteNonQuery();
                                 }
                             }
                         }
@@ -389,7 +389,7 @@ $@"CREATE TABLE {tableName}(
             var cmdText = @"TRUNCATE TABLE " + tableName + @";";
             using (var command = new NpgsqlCommand(cmdText, connection))
             {
-                _ = command.ExecuteNonQuery();
+                command.ExecuteNonQuery();
             }
         }
 
@@ -399,7 +399,7 @@ $@"CREATE TABLE {tableName}(
             {
                 using (var command = new NpgsqlCommand("DROP TABLE " + tableName, connection))
                 {
-                    _ = command.ExecuteNonQuery();
+                    command.ExecuteNonQuery();
                 }
             }
         }
@@ -407,11 +407,11 @@ $@"CREATE TABLE {tableName}(
         private void CreateIndex(NpgsqlConnection connection, string indexName, IRelationType relationType, string tableName)
         {
             var sql = new StringBuilder();
-            _ = sql.Append("CREATE INDEX " + indexName + "\n");
-            _ = sql.Append("ON " + tableName + " (" + this.mapping.ColumnNameByRelationType[relationType] + ")");
+            sql.Append("CREATE INDEX " + indexName + "\n");
+            sql.Append("ON " + tableName + " (" + this.mapping.ColumnNameByRelationType[relationType] + ")");
             using (var command = new NpgsqlCommand(sql.ToString(), connection))
             {
-                _ = command.ExecuteNonQuery();
+                command.ExecuteNonQuery();
             }
         }
     }

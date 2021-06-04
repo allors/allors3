@@ -16,9 +16,9 @@ namespace Allors.Workspace.Adapters
 
         public ISet<WorkspaceOriginState> Changed { get; set; }
 
-        public void OnCreated(Strategy strategy) => _ = (this.Created ??= new HashSet<Strategy>()).Add(strategy);
+        public void OnCreated(Strategy strategy) => (this.Created ??= new HashSet<Strategy>()).Add(strategy);
 
         public void OnChanged(WorkspaceOriginState state) =>
-            _ = (this.Changed ??= new HashSet<WorkspaceOriginState>()).Add(state);
+            (this.Changed ??= new HashSet<WorkspaceOriginState>()).Add(state);
     }
 }

@@ -92,7 +92,7 @@ namespace Allors.Database.Adapters
             {
                 if (metaRelation.RoleType.ObjectType.IsComposite && metaRelation.IsOneToOne)
                 {
-                    _ = relations.Add(metaRelation);
+                    relations.Add(metaRelation);
                 }
             }
 
@@ -106,7 +106,7 @@ namespace Allors.Database.Adapters
             {
                 if (metaRelation.RoleType.ObjectType.IsComposite && metaRelation.IsOneToMany)
                 {
-                    _ = relations.Add(metaRelation);
+                    relations.Add(metaRelation);
                 }
             }
 
@@ -120,7 +120,7 @@ namespace Allors.Database.Adapters
             {
                 if (metaRelation.RoleType.ObjectType.IsComposite && metaRelation.IsManyToOne)
                 {
-                    _ = relations.Add(metaRelation);
+                    relations.Add(metaRelation);
                 }
             }
 
@@ -134,7 +134,7 @@ namespace Allors.Database.Adapters
             {
                 if (metaRelation.RoleType.ObjectType.IsComposite && metaRelation.IsManyToMany)
                 {
-                    _ = relations.Add(metaRelation);
+                    relations.Add(metaRelation);
                 }
             }
 
@@ -262,7 +262,7 @@ namespace Allors.Database.Adapters
             {
                 if (metaRelation.RoleType.ObjectType.IsUnit)
                 {
-                    _ = relations.Add(metaRelation);
+                    relations.Add(metaRelation);
                 }
             }
 

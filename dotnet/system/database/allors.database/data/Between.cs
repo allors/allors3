@@ -32,12 +32,12 @@ namespace Allors.Database.Data
             if (this.Paths?.Count() == 2)
             {
                 var paths = this.Paths.ToArray();
-                _ = compositePredicate.AddBetween(this.RoleType, paths[0], paths[1]);
+                compositePredicate.AddBetween(this.RoleType, paths[0], paths[1]);
             }
             else
             {
                 var values = this.Parameter != null ? arguments.ResolveUnits(this.RoleType.ObjectType.Tag, this.Parameter) : this.Values?.ToArray();
-                _ = compositePredicate.AddBetween(this.RoleType, values[0], values[1]);
+                compositePredicate.AddBetween(this.RoleType, values[0], values[1]);
             }
         }
 

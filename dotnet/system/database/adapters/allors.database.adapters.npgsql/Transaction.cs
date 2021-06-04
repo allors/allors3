@@ -55,7 +55,7 @@ namespace Allors.Database.Adapters.Npgsql
                     return null;
                 }
 
-                _ = this.properties.TryGetValue(name, out var value);
+                this.properties.TryGetValue(name, out var value);
                 return value;
             }
 
@@ -68,7 +68,7 @@ namespace Allors.Database.Adapters.Npgsql
 
                 if (value == null)
                 {
-                    _ = this.properties.Remove(name);
+                    this.properties.Remove(name);
                 }
                 else
                 {
@@ -493,7 +493,7 @@ namespace Allors.Database.Adapters.Npgsql
                 this.State.TriggersFlushRolesByAssociationType[associationType] = associations;
             }
 
-            _ = associations.Add(role);
+            associations.Add(role);
         }
 
         internal void FlushConditionally(long roleId, IAssociationType associationType)

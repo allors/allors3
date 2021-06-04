@@ -26,11 +26,11 @@ namespace Allors.Database.Adapters.Npgsql
                     var role = extent.AssociationType.RoleType;
                     if (role.IsMany)
                     {
-                        _ = this.AddContains(role, allorsObject);
+                        this.AddContains(role, allorsObject);
                     }
                     else
                     {
-                        _ = this.AddEquals(role, allorsObject);
+                        this.AddEquals(role, allorsObject);
                     }
                 }
                 else
@@ -38,11 +38,11 @@ namespace Allors.Database.Adapters.Npgsql
                     var association = extent.RoleType.AssociationType;
                     if (association.IsMany)
                     {
-                        _ = this.AddContains(association, allorsObject);
+                        this.AddContains(association, allorsObject);
                     }
                     else
                     {
-                        _ = this.AddEquals(association, allorsObject);
+                        this.AddEquals(association, allorsObject);
                     }
                 }
             }

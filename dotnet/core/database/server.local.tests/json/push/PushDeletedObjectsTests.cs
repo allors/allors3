@@ -19,7 +19,7 @@ namespace Tests
         [Fact]
         public void SameWorkspace()
         {
-            _ = this.SetUser("jane@example.com");
+            this.SetUser("jane@example.com");
 
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Transaction.Commit();
@@ -27,7 +27,7 @@ namespace Tests
             var organisationId = organisation.Id;
             var organisationVersion = organisation.Strategy.ObjectVersion;
 
-            _ = organisation.Delete();
+            organisation.Delete();
             this.Transaction.Commit();
 
             var uri = new Uri(@"allors/push", UriKind.Relative);
@@ -56,7 +56,7 @@ namespace Tests
             var pushResponse = api.Push(pushRequest);
 
             Assert.True(pushResponse.HasErrors);
-            _ = Assert.Single(pushResponse.MissingErrors);
+            Assert.Single(pushResponse.MissingErrors);
             Assert.Contains(organisationId, pushResponse.MissingErrors);
         }
     }

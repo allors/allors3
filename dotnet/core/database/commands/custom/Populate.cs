@@ -29,12 +29,12 @@ namespace Commands
                 var config = new Config { DataPath = this.Parent.DataPath };
                 new Setup(session, config).Apply();
 
-                _ = session.Derive();
+                session.Derive();
                 session.Commit();
 
                 new Allors.Database.Domain.Upgrade(session, this.Parent.DataPath).Execute();
 
-                _ = session.Derive();
+                session.Derive();
                 session.Commit();
             }
 

@@ -36,7 +36,7 @@ namespace Allors.Database.Adapters.Npgsql
                 statement.Append(" (" + this.association.SingularFullName + "_A." + Mapping.ColumnNameForRole + " IS NULL OR");
                 statement.Append(" NOT " + this.association.SingularFullName + "_A." + Mapping.ColumnNameForRole + " IN (\n");
                 statement.Append(" SELECT " + Mapping.ColumnNameForRole + " FROM " + schema.TableNameForRelationByRelationType[this.association.RelationType] + " WHERE " + Mapping.ColumnNameForAssociation + " IN (");
-                _ = this.inExtent.BuildSql(inStatement);
+                this.inExtent.BuildSql(inStatement);
                 statement.Append(" )))\n");
             }
             else
@@ -45,14 +45,14 @@ namespace Allors.Database.Adapters.Npgsql
                 {
                     statement.Append(" (" + alias + "." + schema.ColumnNameByRelationType[this.association.RelationType] + " IS NULL OR ");
                     statement.Append(" NOT " + alias + "." + schema.ColumnNameByRelationType[this.association.RelationType] + " IN (\n");
-                    _ = this.inExtent.BuildSql(inStatement);
+                    this.inExtent.BuildSql(inStatement);
                     statement.Append(" ))\n");
                 }
                 else
                 {
                     statement.Append(" (" + this.association.SingularFullName + "_A." + Mapping.ColumnNameForObject + " IS NULL OR ");
                     statement.Append(" NOT " + this.association.SingularFullName + "_A." + Mapping.ColumnNameForObject + " IN (\n");
-                    _ = this.inExtent.BuildSql(inStatement);
+                    this.inExtent.BuildSql(inStatement);
                     statement.Append(" ))\n");
                 }
             }

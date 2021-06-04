@@ -33,17 +33,17 @@ namespace Allors.Database.Data
             {
                 if (this.PropertyType is IRoleType roleType)
                 {
-                    _ = compositePredicate.AddInstanceof(roleType, composite);
+                    compositePredicate.AddInstanceof(roleType, composite);
                 }
                 else
                 {
                     var associationType = (IAssociationType)this.PropertyType;
-                    _ = compositePredicate.AddInstanceof(associationType, composite);
+                    compositePredicate.AddInstanceof(associationType, composite);
                 }
             }
             else
             {
-                _ = compositePredicate.AddInstanceof(composite);
+                compositePredicate.AddInstanceof(composite);
             }
         }
 

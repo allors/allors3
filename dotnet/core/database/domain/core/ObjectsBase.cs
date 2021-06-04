@@ -33,7 +33,7 @@ namespace Allors.Database.Domain
             }
 
             var extent = this.Transaction.Extent(this.ObjectType);
-            _ = extent.Filter.AddEquals(roleType, parameter);
+            extent.Filter.AddEquals(roleType, parameter);
             return (T)extent.First;
         }
 

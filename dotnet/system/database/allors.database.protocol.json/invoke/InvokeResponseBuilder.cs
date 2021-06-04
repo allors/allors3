@@ -149,7 +149,7 @@ namespace Allors.Database.Protocol.Json
 
             try
             {
-                _ = method.Invoke(obj, null);
+                method.Invoke(obj, null);
             }
             catch (Exception e)
             {

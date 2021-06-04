@@ -104,11 +104,11 @@ namespace Allors.Database.Adapters.Memory
         {
             if (this.roleType.AssociationType.IsMany)
             {
-                _ = extent.Filter.AddContains(this.roleType.AssociationType, this.associationStrategy.GetObject());
+                extent.Filter.AddContains(this.roleType.AssociationType, this.associationStrategy.GetObject());
             }
             else
             {
-                _ = extent.Filter.AddEquals(this.roleType.AssociationType, this.associationStrategy.GetObject());
+                extent.Filter.AddEquals(this.roleType.AssociationType, this.associationStrategy.GetObject());
             }
         }
 

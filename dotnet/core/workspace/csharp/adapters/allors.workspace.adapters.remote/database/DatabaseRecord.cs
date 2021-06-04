@@ -71,7 +71,7 @@ namespace Allors.Workspace.Adapters.Remote
         public override object GetRole(IRoleType roleType)
         {
             object @object = null;
-            _ = this.RoleByRelationType?.TryGetValue(roleType.RelationType, out @object);
+            this.RoleByRelationType?.TryGetValue(roleType.RelationType, out @object);
             return @object;
         }
 

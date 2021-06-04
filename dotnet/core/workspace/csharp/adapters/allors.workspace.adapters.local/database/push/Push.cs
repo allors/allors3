@@ -66,7 +66,7 @@ namespace Allors.Workspace.Adapters.Local
                     if (this.AllowedClasses?.Contains(cls) == true)
                     {
                         var newObject = this.Build(cls);
-                        _ = this.Objects.Add(newObject);
+                        this.Objects.Add(newObject);
                         this.PushRequestRoles(local, newObject);
                         return newObject;
                     }

@@ -41,12 +41,12 @@ namespace Allors.Database.Adapters.SqlClient
             HashSet<long> referencesToInstantiate = null;
             foreach (var objectId in objectIds)
             {
-                _ = this.Transaction.State.ReferenceByObjectId.TryGetValue(objectId, out var reference);
+                this.Transaction.State.ReferenceByObjectId.TryGetValue(objectId, out var reference);
                 if (reference != null && reference.ExistsKnown && !reference.IsUnknownVersion)
                 {
                     if (reference.Exists && !reference.IsNew)
                     {
-                        _ = references.Add(reference);
+                        references.Add(reference);
                     }
                 }
                 else
@@ -56,7 +56,7 @@ namespace Allors.Database.Adapters.SqlClient
                         referencesToInstantiate = new HashSet<long>();
                     }
 
-                    _ = referencesToInstantiate.Add(objectId);
+                    referencesToInstantiate.Add(objectId);
                 }
             }
 
@@ -111,7 +111,7 @@ namespace Allors.Database.Adapters.SqlClient
                     var associationReference = this.Transaction.State.ReferenceByObjectId[associatoinId];
 
                     Roles modifiedRoles = null;
-                    _ = (this.Transaction.State.ModifiedRolesByReference?.TryGetValue(associationReference, out modifiedRoles));
+                    (this.Transaction.State.ModifiedRolesByReference?.TryGetValue(associationReference, out modifiedRoles));
 
                     var cachedObject = cache.GetOrCreateCachedObject(@class, associatoinId, associationReference.Version);
 
@@ -225,10 +225,10 @@ namespace Allors.Database.Adapters.SqlClient
                         var roleId = (long)roleIdValue;
                         cachedObject.SetValue(roleType, roleId);
 
-                        _ = (nestedObjectIds?.Add(roleId));
+                        (nestedObjectIds?.Add(roleId));
                         if (nestedObjectIds == null)
                         {
-                            _ = leafs.Add(roleId);
+                            leafs.Add(roleId);
                         }
                     }
                 }
@@ -277,10 +277,10 @@ namespace Allors.Database.Adapters.SqlClient
                 if (roleByAssociation.TryGetValue(reference, out var roleId))
                 {
                     cachedObject.SetValue(roleType, roleId);
-                    _ = (nestedObjectIds?.Add(roleId));
+                    (nestedObjectIds?.Add(roleId));
                     if (nestedObjectIds == null)
                     {
-                        _ = leafs.Add(roleId);
+                        leafs.Add(roleId);
                     }
                 }
                 else
@@ -404,7 +404,7 @@ namespace Allors.Database.Adapters.SqlClient
             foreach (var reference in references)
             {
                 Roles modifiedRoles = null;
-                _ = (this.Transaction.State.ModifiedRolesByReference?.TryGetValue(reference, out modifiedRoles));
+                (this.Transaction.State.ModifiedRolesByReference?.TryGetValue(reference, out modifiedRoles));
 
                 if (modifiedRoles == null || !modifiedRoles.ModifiedRoleByRoleType.ContainsKey(roleType))
                 {
@@ -470,10 +470,10 @@ namespace Allors.Database.Adapters.SqlClient
                                               this.Transaction.State.GetOrCreateReferenceForExistingObject(associationType.ObjectType.ExclusiveDatabaseClass, associationId, this.Transaction) :
                                               this.Transaction.State.GetOrCreateReferenceForExistingObject(associationId, this.Transaction);
 
-                            _ = (nestedObjectIds?.Add(association.ObjectId));
+                            (nestedObjectIds?.Add(association.ObjectId));
                             if (nestedObjectIds == null)
                             {
-                                _ = leafs.Add(associationId);
+                                leafs.Add(associationId);
                             }
                         }
 
@@ -533,10 +533,10 @@ namespace Allors.Database.Adapters.SqlClient
                                           this.Transaction.State.GetOrCreateReferenceForExistingObject(associationType.ObjectType.ExclusiveDatabaseClass, associationId, this.Transaction) :
                                           this.Transaction.State.GetOrCreateReferenceForExistingObject(associationId, this.Transaction);
 
-                        _ = (nestedObjectIds?.Add(associationId));
+                        (nestedObjectIds?.Add(associationId));
                         if (nestedObjectIds == null)
                         {
-                            _ = leafs.Add(associationId);
+                            leafs.Add(associationId);
                         }
                     }
 
@@ -592,11 +592,11 @@ namespace Allors.Database.Adapters.SqlClient
 
                         if (associationType.ObjectType.ExistExclusiveDatabaseClass)
                         {
-                            _ = this.Transaction.State.GetOrCreateReferenceForExistingObject(associationType.ObjectType.ExclusiveDatabaseClass, associationId, this.Transaction);
+                            this.Transaction.State.GetOrCreateReferenceForExistingObject(associationType.ObjectType.ExclusiveDatabaseClass, associationId, this.Transaction);
                         }
                         else
                         {
-                            _ = this.Transaction.State.GetOrCreateReferenceForExistingObject(associationId, this.Transaction);
+                            this.Transaction.State.GetOrCreateReferenceForExistingObject(associationId, this.Transaction);
                         }
                     }
                 }
@@ -668,7 +668,7 @@ namespace Allors.Database.Adapters.SqlClient
 
                     var associationId = reader.GetInt64(0);
                     associations.Add(associationId);
-                    _ = prefetchedAssociations.Add(associationId);
+                    prefetchedAssociations.Add(associationId);
                 }
             }
 
@@ -676,11 +676,11 @@ namespace Allors.Database.Adapters.SqlClient
             {
                 if (associationType.ObjectType.ExistExclusiveDatabaseClass)
                 {
-                    _ = this.Transaction.State.GetOrCreateReferenceForExistingObject(associationType.ObjectType.ExclusiveDatabaseClass, associationId, this.Transaction);
+                    this.Transaction.State.GetOrCreateReferenceForExistingObject(associationType.ObjectType.ExclusiveDatabaseClass, associationId, this.Transaction);
                 }
                 else
                 {
-                    _ = this.Transaction.State.GetOrCreateReferenceForExistingObject(associationId, this.Transaction);
+                    this.Transaction.State.GetOrCreateReferenceForExistingObject(associationId, this.Transaction);
                 }
             }
 
@@ -753,7 +753,7 @@ namespace Allors.Database.Adapters.SqlClient
                 {
                     if (modifiedRole != null)
                     {
-                        _ = nestedObjects.Add(modifiedRole.Value);
+                        nestedObjects.Add(modifiedRole.Value);
                     }
 
                     continue;
@@ -767,7 +767,7 @@ namespace Allors.Database.Adapters.SqlClient
                     {
                         if (role != null)
                         {
-                            _ = nestedObjects.Add((long)role);
+                            nestedObjects.Add((long)role);
                         }
 
                         continue;
@@ -834,11 +834,11 @@ namespace Allors.Database.Adapters.SqlClient
             {
                 if (associationByRole.TryGetValue(role, out var association))
                 {
-                    _ = nestedObjectIds.Add(association.ObjectId);
+                    nestedObjectIds.Add(association.ObjectId);
                     continue;
                 }
 
-                _ = references.Add(role);
+                references.Add(role);
             }
 
             return references;
@@ -860,7 +860,7 @@ namespace Allors.Database.Adapters.SqlClient
                     continue;
                 }
 
-                _ = references.Add(role);
+                references.Add(role);
             }
 
             return references;

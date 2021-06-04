@@ -56,7 +56,7 @@ namespace Allors.Database.Adapters.SqlClient
                             var associationIdString = this.reader.GetAttribute(Serialization.Association);
                             var associationId = long.Parse(associationIdString);
 
-                            _ = this.classByObjectId.TryGetValue(associationId, out var associationClass);
+                            this.classByObjectId.TryGetValue(associationId, out var associationClass);
 
                             if (associationClass == null || !allowedAssociationClasses.Contains(associationClass))
                             {
@@ -85,7 +85,7 @@ namespace Allors.Database.Adapters.SqlClient
                                         {
                                             var roleId = long.Parse(roleIdStringArray[0]);
 
-                                            _ = this.classByObjectId.TryGetValue(roleId, out var roleClass);
+                                            this.classByObjectId.TryGetValue(roleId, out var roleClass);
 
                                             if (roleClass == null || !allowedRoleClasses.Contains(roleClass))
                                             {
@@ -102,7 +102,7 @@ namespace Allors.Database.Adapters.SqlClient
                                             {
                                                 var roleId = long.Parse(roleIdString);
 
-                                                _ = this.classByObjectId.TryGetValue(roleId, out var roleClass);
+                                                this.classByObjectId.TryGetValue(roleId, out var roleClass);
 
                                                 if (roleClass == null || !allowedRoleClasses.Contains(roleClass))
                                                 {

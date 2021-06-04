@@ -48,7 +48,7 @@ namespace Tests.Workspace.Local
             using var transaction = this.Database.CreateTransaction();
             var config = new Config();
             new Setup(transaction, config).Apply();
-            _ = transaction.Derive();
+            transaction.Derive();
             transaction.Commit();
 
             var administrator = new PersonBuilder(transaction).WithUserName("administrator").Build();
@@ -56,7 +56,7 @@ namespace Tests.Workspace.Local
             transaction.Services().User = administrator;
 
             new TestPopulation(transaction, "full").Apply();
-            _ = transaction.Derive();
+            transaction.Derive();
             transaction.Commit();
         }
 

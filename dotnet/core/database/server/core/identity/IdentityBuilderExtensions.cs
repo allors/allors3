@@ -18,7 +18,7 @@ namespace Allors.Security
         private static IdentityBuilder AddAllorsUserStore(this IdentityBuilder builder)
         {
             var userStoreType = typeof(AllorsUserStore);
-            _ = builder.Services.AddScoped(typeof(IUserStore<>).MakeGenericType(builder.UserType), userStoreType);
+            builder.Services.AddScoped(typeof(IUserStore<>).MakeGenericType(builder.UserType), userStoreType);
             return builder;
         }
 
@@ -27,7 +27,7 @@ namespace Allors.Security
             if (builder.RoleType != null)
             {
                 var roleStoreType = typeof(AllorsRoleStore);
-                _ = builder.Services.AddScoped(typeof(IRoleStore<>).MakeGenericType(builder.RoleType), roleStoreType);
+                builder.Services.AddScoped(typeof(IRoleStore<>).MakeGenericType(builder.RoleType), roleStoreType);
             }
 
             return builder;

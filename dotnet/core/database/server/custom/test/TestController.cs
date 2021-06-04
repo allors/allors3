@@ -61,7 +61,7 @@ namespace Allors.Server.Controllers
                 {
                     var config = new Config();
                     new Setup(transaction, config).Apply();
-                    _ = transaction.Derive();
+                    transaction.Derive();
                     transaction.Commit();
 
                     var administrator = new PersonBuilder(transaction).WithUserName("administrator").Build();
@@ -69,7 +69,7 @@ namespace Allors.Server.Controllers
                     transaction.Services().User = administrator;
 
                     new TestPopulation(transaction, population).Apply();
-                    _ = transaction.Derive();
+                    transaction.Derive();
                     transaction.Commit();
                 }
 

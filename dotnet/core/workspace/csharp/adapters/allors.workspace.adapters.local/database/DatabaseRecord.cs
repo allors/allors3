@@ -36,7 +36,7 @@ namespace Allors.Workspace.Adapters.Local
                 return null;
             }
 
-            _ = this.roleByRoleType.TryGetValue(roleType, out var role);
+            this.roleByRoleType.TryGetValue(roleType, out var role);
             return role;
         }
 

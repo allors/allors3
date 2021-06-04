@@ -18,16 +18,16 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenNoRolesWhenCreatingARoleWithoutANameThenRoleIsInvalid()
         {
-            _ = new RoleBuilder(this.Transaction).Build();
+            new RoleBuilder(this.Transaction).Build();
 
             var validation = this.Transaction.Derive(false);
 
             Assert.True(validation.HasErrors);
-            _ = Assert.Single(validation.Errors);
+            Assert.Single(validation.Errors);
 
             var derivationError = validation.Errors[0];
 
-            _ = Assert.Single(derivationError.Relations);
+            Assert.Single(derivationError.Relations);
             Assert.Equal(typeof(DerivationErrorRequired), derivationError.GetType());
             Assert.Equal(this.M.Role.Name.RelationType, derivationError.Relations[0].RelationType);
         }
@@ -35,11 +35,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenARoleWhenCreatingARoleWithTheSameNameThenRoleIsInvalid()
         {
-            _ = new RoleBuilder(this.Transaction)
+            new RoleBuilder(this.Transaction)
                 .WithName("Same")
                 .Build();
 
-            _ = new RoleBuilder(this.Transaction)
+            new RoleBuilder(this.Transaction)
                 .WithName("Same")
                 .Build();
 
@@ -50,7 +50,7 @@ namespace Allors.Database.Domain.Tests
 
             foreach (var derivationError in validation.Errors)
             {
-                _ = Assert.Single(derivationError.Relations);
+                Assert.Single(derivationError.Relations);
                 Assert.Equal(typeof(DerivationErrorUnique), derivationError.GetType());
                 Assert.Equal(this.M.Role.Name.RelationType, derivationError.Relations[0].RelationType);
             }

@@ -30,19 +30,19 @@ namespace Allors.Database.Configuration
 
             if (!skipDefault)
             {
-                _ = configurationBuilder.AddJsonFile(Path.Combine(path, "appSettings.json"), true);
+                configurationBuilder.AddJsonFile(Path.Combine(path, "appSettings.json"), true);
             }
 
             if (!string.IsNullOrWhiteSpace(environmentName))
             {
-                _ = configurationBuilder.AddJsonFile(Path.Combine(path, $"appSettings.{environmentName}.json"), true);
+                configurationBuilder.AddJsonFile(Path.Combine(path, $"appSettings.{environmentName}.json"), true);
             }
 
-            _ = configurationBuilder.AddJsonFile(Path.Combine(path, $"appSettings.{platform}.json"), true);
+            configurationBuilder.AddJsonFile(Path.Combine(path, $"appSettings.{platform}.json"), true);
 
             if (!string.IsNullOrWhiteSpace(environmentName))
             {
-                _ = configurationBuilder.AddJsonFile(Path.Combine(path, $"appSettings.{environmentName}.{platform}.json"), true);
+                configurationBuilder.AddJsonFile(Path.Combine(path, $"appSettings.{environmentName}.{platform}.json"), true);
             }
         }
     }

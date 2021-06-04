@@ -100,7 +100,7 @@ namespace Allors.Workspace.Data
         public override string ToString()
         {
             var toString = new StringBuilder();
-            _ = toString.Append(this.PropertyType.Name + "\n");
+            toString.Append(this.PropertyType.Name + "\n");
             this.ToString(toString, this.Nodes, 1);
             return toString.ToString();
         }
@@ -110,7 +110,7 @@ namespace Allors.Workspace.Data
             foreach (var node in nodes)
             {
                 var indent = new string(' ', level * 2);
-                _ = toString.Append(indent + "- " + node.PropertyType + "\n");
+                toString.Append(indent + "- " + node.PropertyType + "\n");
                 this.ToString(toString, node.Nodes, level + 1);
             }
         }

@@ -28,7 +28,7 @@ namespace Allors.Database.Domain.Tests
         {
             var person = new PersonBuilder(this.Transaction).WithFirstName("John").WithLastName("Doe").Build();
 
-            _ = this.Transaction.Derive();
+            this.Transaction.Derive();
             this.Transaction.Commit();
 
             var organisation = new OrganisationBuilder(this.Transaction).WithName("Organisation").Build();
@@ -49,7 +49,7 @@ namespace Allors.Database.Domain.Tests
             var intialSecurityToken = new SecurityTokens(this.Transaction).InitialSecurityToken;
             intialSecurityToken.AddAccessControl(accessControl);
 
-            _ = this.Transaction.Derive();
+            this.Transaction.Derive();
             this.Transaction.Commit();
 
             var organisation = new OrganisationBuilder(this.Transaction).WithName("Organisation").Build();

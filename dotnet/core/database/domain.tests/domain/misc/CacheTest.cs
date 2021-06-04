@@ -17,7 +17,7 @@ namespace Allors.Database.Domain.Tests
         {
             var existingOrganisation = new OrganisationBuilder(this.Transaction).WithName("existing organisation").Build();
 
-            _ = this.Transaction.Derive();
+            this.Transaction.Derive();
             this.Transaction.Commit();
 
             var sessions = new[] { this.Transaction };

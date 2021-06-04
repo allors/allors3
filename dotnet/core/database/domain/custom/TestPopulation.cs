@@ -28,7 +28,7 @@ namespace Allors.Database.Domain
 
         private void Full()
         {
-            _ = new PersonBuilder(this.transaction).WithUserName("noacl").WithFirstName("no").WithLastName("acl").Build();
+            new PersonBuilder(this.transaction).WithUserName("noacl").WithFirstName("no").WithLastName("acl").Build();
             
             var noperm = new PersonBuilder(this.transaction).WithUserName("noperm").WithFirstName("no").WithLastName("perm").Build();
             var emptyRole = new RoleBuilder(this.transaction).WithName("Empty").Build();

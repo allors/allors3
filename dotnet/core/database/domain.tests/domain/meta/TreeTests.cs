@@ -33,14 +33,14 @@ namespace Allors.Database.Domain.Tests
                     .WithC1C2One2Many(c2C)
                     .Build();
 
-            _ = this.Transaction.Derive();
+            this.Transaction.Derive();
 
             var tree = new[] { new Node(this.M.C1.C1C2One2Manies) };
 
             var resolved = new HashSet<IObject>();
             tree.Resolve(c1A, this.AclsMock.Object, resolved);
 
-            _ = Assert.Single(resolved);
+            Assert.Single(resolved);
             Assert.Contains(c2A, resolved);
 
             resolved = new HashSet<IObject>();
@@ -74,7 +74,7 @@ namespace Allors.Database.Domain.Tests
             c2A.AddC2C2One2Many(c2C);
             c2A.AddC2C2One2Many(c2D);
 
-            _ = this.Transaction.Derive();
+            this.Transaction.Derive();
 
             this.Transaction.Commit();
 
@@ -114,11 +114,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void Legal()
         {
-            _ = new Node(this.M.C1.C1C1Many2Manies).Add(this.M.C1.C1C2Many2Manies);
+            new Node(this.M.C1.C1C1Many2Manies).Add(this.M.C1.C1C2Many2Manies);
 
-            _ = new Node(this.M.C1.C1C1Many2Manies).Add(this.M.I12.I12C2Many2Manies);
+            new Node(this.M.C1.C1C1Many2Manies).Add(this.M.I12.I12C2Many2Manies);
 
-            _ = new Node(this.M.C1.C1I12Many2Manies).Add(this.M.C1.I12C2Many2Manies);
+            new Node(this.M.C1.C1I12Many2Manies).Add(this.M.C1.I12C2Many2Manies);
         }
 
         [Fact]
@@ -129,7 +129,7 @@ namespace Allors.Database.Domain.Tests
 
                 try
                 {
-                    _ = new Node(this.M.C1.C1C1Many2Manies).Add(this.M.C2.C2C1Many2Manies);
+                    new Node(this.M.C1.C1C1Many2Manies).Add(this.M.C2.C2C1Many2Manies);
                 }
                 catch (ArgumentException)
                 {
@@ -152,13 +152,13 @@ namespace Allors.Database.Domain.Tests
         public void Prefetch()
         {
             var tree = new Node[0];
-            _ = tree.BuildPrefetchPolicy();
+            tree.BuildPrefetchPolicy();
 
             tree = new[] { new Node(this.M.C1.C1AllorsBinary) };
-            _ = tree.BuildPrefetchPolicy();
+            tree.BuildPrefetchPolicy();
 
             tree = new[] { new Node(this.M.C1.C1C1Many2Manies) };
-            _ = tree.BuildPrefetchPolicy();
+            tree.BuildPrefetchPolicy();
         }
     }
 }

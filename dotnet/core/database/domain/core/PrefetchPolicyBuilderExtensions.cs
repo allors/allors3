@@ -20,7 +20,7 @@ namespace Allors.Database.Domain
             // TODO: Cache
             foreach (var roleType in @class.DatabaseRoleTypes.Where(v => v.RelationType.WorkspaceNames.Length > 0))
             {
-                _ = @this.WithRule(roleType);
+                @this.WithRule(roleType);
             }
         }
 
@@ -45,12 +45,12 @@ namespace Allors.Database.Domain
                 var delegatedAccessRoleTypes = @class.DelegatedAccessRoleTypes;
                 foreach (var delegatedAccessRoleType in delegatedAccessRoleTypes)
                 {
-                    _ = @this.WithRule(delegatedAccessRoleType, builder);
+                    @this.WithRule(delegatedAccessRoleType, builder);
                 }
             }
 
-            _ = @this.WithRule(m.Object.SecurityTokens, SecurityTokenPrefetchPolicy);
-            _ = @this.WithRule(m.Object.DeniedPermissions);
+            @this.WithRule(m.Object.SecurityTokens, SecurityTokenPrefetchPolicy);
+            @this.WithRule(m.Object.DeniedPermissions);
         }
     }
 }

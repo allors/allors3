@@ -94,11 +94,11 @@ namespace Allors.Database.Adapters.Memory
                     {
                         foreach (var strategy in strategiesToDelete)
                         {
-                            _ = this.strategyByObjectId.Remove(strategy.ObjectId);
+                            this.strategyByObjectId.Remove(strategy.ObjectId);
 
                             if (this.strategiesByObjectType.TryGetValue(strategy.UncheckedObjectType, out var strategies))
                             {
-                                _ = strategies.Remove(strategy);
+                                strategies.Remove(strategy);
                             }
                         }
                     }
@@ -125,11 +125,11 @@ namespace Allors.Database.Adapters.Memory
                         strategy.Rollback();
                         if (strategy.IsDeleted)
                         {
-                            _ = this.strategyByObjectId.Remove(strategy.ObjectId);
+                            this.strategyByObjectId.Remove(strategy.ObjectId);
 
                             if (this.strategiesByObjectType.TryGetValue(strategy.UncheckedObjectType, out var strategies))
                             {
-                                _ = strategies.Remove(strategy);
+                                strategies.Remove(strategy);
                             }
                         }
                     }
@@ -335,7 +335,7 @@ namespace Allors.Database.Adapters.Memory
                 this.strategiesByObjectType.Add(strategy.UncheckedObjectType, strategies);
             }
 
-            _ = strategies.Add(strategy);
+            strategies.Add(strategy);
         }
 
         internal virtual HashSet<Strategy> GetStrategiesForExtentIncludingDeleted(IObjectType type)

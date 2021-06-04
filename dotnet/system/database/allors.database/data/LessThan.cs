@@ -31,12 +31,12 @@ namespace Allors.Database.Data
         {
             if (this.Path != null)
             {
-                _ = compositePredicate.AddLessThan(this.RoleType, this.Path);
+                compositePredicate.AddLessThan(this.RoleType, this.Path);
             }
             else
             {
                 var value = this.Parameter != null ? arguments.ResolveUnit(this.RoleType.ObjectType.Tag, this.Parameter) : this.Value;
-                _ = compositePredicate.AddLessThan(this.RoleType, value);
+                compositePredicate.AddLessThan(this.RoleType, value);
             }
         }
 

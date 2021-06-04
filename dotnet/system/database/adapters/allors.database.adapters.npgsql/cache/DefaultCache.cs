@@ -32,7 +32,7 @@ namespace Allors.Database.Adapters.Npgsql.Caching
                 {
                     foreach (var transientClass in transientObjectType.DatabaseClasses)
                     {
-                        _ = this.excludedClasses.Add(transientClass);
+                        this.excludedClasses.Add(transientClass);
                     }
                 }
 
@@ -78,7 +78,7 @@ namespace Allors.Database.Adapters.Npgsql.Caching
 
         public IClass GetObjectType(long objectId)
         {
-            _ = this.objectTypeByObjectId.TryGetValue(objectId, out var objectType);
+            this.objectTypeByObjectId.TryGetValue(objectId, out var objectType);
             return objectType;
         }
 
@@ -90,7 +90,7 @@ namespace Allors.Database.Adapters.Npgsql.Caching
             {
                 foreach (var changedObjectId in changedObjectIds)
                 {
-                    _ = this.cachedObjectByObjectId.TryRemove(changedObjectId, out var removedObject);
+                    this.cachedObjectByObjectId.TryRemove(changedObjectId, out var removedObject);
                 }
             }
         }

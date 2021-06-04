@@ -38,7 +38,7 @@ namespace Tests
             var api = new Api(this.Transaction, "X");
             var syncResponse = api.Sync(syncRequest);
 
-            _ = Assert.Single(syncResponse.Objects);
+            Assert.Single(syncResponse.Objects);
 
             var wx1 = syncResponse.Objects[0];
 

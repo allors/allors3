@@ -78,7 +78,7 @@ namespace Allors.Database.Adapters.SqlClient
                     if (!this.Reference.IsNew)
                     {
                         this.Reference.Transaction.Commands.GetUnitRoles(this);
-                        _ = this.cachedObject.TryGetValue(roleType, out role);
+                        this.cachedObject.TryGetValue(roleType, out role);
                     }
                 }
             }
@@ -96,7 +96,7 @@ namespace Allors.Database.Adapters.SqlClient
                 this.SetOriginal(roleType, role);
 
                 this.ModifiedRoleByRoleType[roleType] = role;
-                _ = this.RequireFlushRoles.Add(roleType);
+                this.RequireFlushRoles.Add(roleType);
 
                 this.Reference.Transaction.RequireFlush(this.Reference, this);
             }
@@ -132,7 +132,7 @@ namespace Allors.Database.Adapters.SqlClient
                     if (!this.Reference.IsNew)
                     {
                         this.Reference.Transaction.Commands.GetCompositeRole(this, roleType);
-                        _ = this.cachedObject.TryGetValue(roleType, out role);
+                        this.cachedObject.TryGetValue(roleType, out role);
                     }
                 }
             }
@@ -440,7 +440,7 @@ namespace Allors.Database.Adapters.SqlClient
                 this.requireFlushRoles = new HashSet<IRoleType>();
             }
 
-            _ = this.requireFlushRoles.Add(roleType);
+            this.requireFlushRoles.Add(roleType);
         }
 
         private long[] GetNonModifiedCompositeRoles(IRoleType roleType)
@@ -453,7 +453,7 @@ namespace Allors.Database.Adapters.SqlClient
                 }
 
                 this.Reference.Transaction.Commands.GetCompositesRole(this, roleType);
-                _ = this.cachedObject.TryGetValue(roleType, out roleOut);
+                this.cachedObject.TryGetValue(roleType, out roleOut);
                 var role = (long[])roleOut;
                 return role;
             }
@@ -561,7 +561,7 @@ namespace Allors.Database.Adapters.SqlClient
 
                 if (this.removed != null && this.removed.Contains(objectId))
                 {
-                    _ = this.removed.Remove(objectId);
+                    this.removed.Remove(objectId);
                     return;
                 }
 
@@ -572,7 +572,7 @@ namespace Allors.Database.Adapters.SqlClient
                         this.added = new HashSet<long>();
                     }
 
-                    _ = this.added.Add(objectId);
+                    this.added.Add(objectId);
                 }
             }
 
@@ -585,7 +585,7 @@ namespace Allors.Database.Adapters.SqlClient
 
                 if (this.added != null && this.added.Contains(objectId))
                 {
-                    _ = this.added.Remove(objectId);
+                    this.added.Remove(objectId);
                     return;
                 }
 
@@ -596,7 +596,7 @@ namespace Allors.Database.Adapters.SqlClient
                         this.removed = new HashSet<long>();
                     }
 
-                    _ = this.removed.Add(objectId);
+                    this.removed.Add(objectId);
                 }
             }
 

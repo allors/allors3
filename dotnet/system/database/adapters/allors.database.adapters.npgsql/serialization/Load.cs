@@ -91,7 +91,7 @@ namespace Allors.Database.Adapters.Npgsql
 
         private void LoadObjects(XmlReader reader)
         {
-            _ = reader.MoveToContent();
+            reader.MoveToContent();
 
             while (reader.Read())
             {
@@ -129,7 +129,7 @@ namespace Allors.Database.Adapters.Npgsql
                     writer.Write(values[2], NpgsqlDbType.Bigint);
                 }
 
-                _ = writer.Complete();
+                writer.Complete();
             }
 
             // TODO: move this to a stored procedure
@@ -150,7 +150,7 @@ insert into {tableName} (o, c)
 select o, c from allors._o
 where c = '{@class.Id}'";
 
-                        _ = command.ExecuteNonQuery();
+                        command.ExecuteNonQuery();
                     }
                 }
 
@@ -253,7 +253,7 @@ where c = '{@class.Id}'";
                             var associationIdString = reader.GetAttribute(Serialization.Association);
                             var associationId = long.Parse(associationIdString);
 
-                            _ = this.classByObjectId.TryGetValue(associationId, out var @class);
+                            this.classByObjectId.TryGetValue(associationId, out var @class);
 
                             if (@class == null || !allowedClasses.Contains(@class))
                             {

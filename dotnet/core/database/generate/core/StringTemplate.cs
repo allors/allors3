@@ -88,10 +88,10 @@ namespace Allors.Development.Repository.Generation
                 };
 
                 var configurationTemplate = templateGroup.GetInstanceOf(TemplateConfiguration);
-                _ = configurationTemplate.Add(MetaKey, metaPopulation);
+                configurationTemplate.Add(MetaKey, metaPopulation);
                 if (!string.IsNullOrWhiteSpace(workspaceName))
                 {
-                    _ = configurationTemplate.Add(WorkspaceNameKey, workspaceName);
+                    configurationTemplate.Add(WorkspaceNameKey, workspaceName);
                 }
 
                 var configurationXml = new XmlDocument();
@@ -104,10 +104,10 @@ namespace Allors.Development.Repository.Generation
                     var template = templateGroup.GetInstanceOf(templateName);
                     var output = generation.GetAttribute(OutputKey);
 
-                    _ = template.Add(MetaKey, metaPopulation);
+                    template.Add(MetaKey, metaPopulation);
                     if (!string.IsNullOrWhiteSpace(workspaceName))
                     {
-                        _ = template.Add(WorkspaceNameKey, workspaceName);
+                        template.Add(WorkspaceNameKey, workspaceName);
                     }
 
                     if (generation.HasAttribute(InputKey))
@@ -115,25 +115,25 @@ namespace Allors.Development.Repository.Generation
                         var input = new Guid(generation.GetAttribute(InputKey));
                         if (metaPopulation.FindById(input) is IObjectType objectType)
                         {
-                            _ = template.Add(ObjectTypeKey, objectType);
+                            template.Add(ObjectTypeKey, objectType);
                         }
                         else
                         {
                             if (metaPopulation.FindById(input) is IRelationType relationType)
                             {
-                                _ = template.Add(RelationTypeKey, relationType);
+                                template.Add(RelationTypeKey, relationType);
                             }
                             else
                             {
                                 if (metaPopulation.FindById(input) is IInheritance inheritance)
                                 {
-                                    _ = template.Add(InheritanceKey, inheritance);
+                                    template.Add(InheritanceKey, inheritance);
                                 }
                                 else
                                 {
                                     if (metaPopulation.FindById(input) is IMethodType methodType)
                                     {
-                                        _ = template.Add(MethodTypeKey, methodType);
+                                        template.Add(MethodTypeKey, methodType);
                                     }
                                     else
                                     {

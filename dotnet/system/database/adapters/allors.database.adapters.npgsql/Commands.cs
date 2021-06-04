@@ -233,20 +233,20 @@ namespace Allors.Database.Adapters.Npgsql
                 command.AddObjectParameter(roles.Reference.ObjectId);
 
                 var sql = new StringBuilder();
-                _ = sql.Append("UPDATE " + this.Database.Mapping.TableNameForObjectByClass[exclusiveRootClass] + " SET\n");
+                sql.Append("UPDATE " + this.Database.Mapping.TableNameForObjectByClass[exclusiveRootClass] + " SET\n");
 
                 var count = 0;
                 foreach (var roleType in sortedRoleTypes)
                 {
                     if (count > 0)
                     {
-                        _ = sql.Append(" , ");
+                        sql.Append(" , ");
                     }
 
                     ++count;
 
                     var column = this.Database.Mapping.ColumnNameByRelationType[roleType.RelationType];
-                    _ = sql.Append(column + "=" + this.Database.Mapping.ParamInvocationNameByRoleType[roleType]);
+                    sql.Append(column + "=" + this.Database.Mapping.ParamInvocationNameByRoleType[roleType]);
 
                     var unit = roles.ModifiedRoleByRoleType[roleType];
                     var sqlParameter = command.CreateParameter();
@@ -254,10 +254,10 @@ namespace Allors.Database.Adapters.Npgsql
                     sqlParameter.NpgsqlDbType = this.Database.Mapping.GetNpgsqlDbType(roleType);
                     sqlParameter.Value = unit ?? DBNull.Value;
 
-                    _ = command.Parameters.Add(sqlParameter);
+                    command.Parameters.Add(sqlParameter);
                 }
 
-                _ = sql.Append("\nWHERE " + Mapping.ColumnNameForObject + "=" + Mapping.ParamInvocationNameForObject + "\n");
+                sql.Append("\nWHERE " + Mapping.ColumnNameForObject + "=" + Mapping.ParamInvocationNameForObject + "\n");
 
                 command.CommandText = sql.ToString();
                 command.CommandType = CommandType.Text;

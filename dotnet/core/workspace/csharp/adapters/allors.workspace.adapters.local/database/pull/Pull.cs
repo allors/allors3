@@ -88,7 +88,7 @@ namespace Allors.Workspace.Adapters.Local
                         session.Prefetch(prefetcher, @object);
                     }
 
-                    _ = this.DatabaseObjects.Add(@object);
+                    this.DatabaseObjects.Add(@object);
                     this.DatabaseObjectByName[name] = @object;
                     tree?.Resolve(@object, this.AccessControlLists, this.DatabaseObjects);
                 }
@@ -183,7 +183,7 @@ namespace Allors.Workspace.Adapters.Local
         {
             if (collection?.Count > 0)
             {
-                _ = this.DatabaseCollectionsByName.TryGetValue(name, out var existingCollection);
+                this.DatabaseCollectionsByName.TryGetValue(name, out var existingCollection);
 
                 var filteredCollection = collection.Where(v =>
                     this.AllowedClasses != null && this.AllowedClasses.Contains(v.Strategy.Class));

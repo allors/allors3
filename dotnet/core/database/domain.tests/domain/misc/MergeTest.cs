@@ -157,7 +157,7 @@ namespace Allors.Database.Domain.Tests
 
             c1B.Merge(c1A);
 
-            _ = Assert.Single(c1A.C1C2Many2Manies);
+            Assert.Single(c1A.C1C2Many2Manies);
         }
 
         [Fact]

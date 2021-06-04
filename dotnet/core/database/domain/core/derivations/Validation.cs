@@ -83,7 +83,7 @@ namespace Allors.Database.Domain.Derivations
                     {
                         var transaction = association.Strategy.Transaction;
                         var extent = transaction.Extent(objectType);
-                        _ = extent.Filter.AddEquals(roleType, role);
+                        extent.Filter.AddEquals(roleType, role);
                         if (extent.Count != 1)
                         {
                             this.AddError(new DerivationErrorUnique(this, association, roleType));

@@ -87,7 +87,7 @@ namespace Tests.Workspace
 
             Assert.Equal("X", c1a.C1AllorsString);
 
-            _ = await session.Push();
+            await session.Push();
 
             Assert.Equal("X", c1a.C1AllorsString);
         }
@@ -115,7 +115,7 @@ namespace Tests.Workspace
 
             Assert.Single(changeSet.AssociationsByRoleType);
 
-            _ = await session.Push();
+            await session.Push();
 
             var session2 = this.Workspace.CreateSession();
 

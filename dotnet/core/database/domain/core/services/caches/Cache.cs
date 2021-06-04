@@ -42,7 +42,7 @@ namespace Allors.Database.Domain
                 if (!this.cache.TryGetValue(key, out var objectId))
                 {
                     var extent = this.Transaction.Extent<TObject>();
-                    _ = extent.Filter.AddEquals(this.RoleType, key);
+                    extent.Filter.AddEquals(this.RoleType, key);
 
                     var @object = extent.First;
                     if (@object != null)

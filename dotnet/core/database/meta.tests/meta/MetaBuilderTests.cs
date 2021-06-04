@@ -17,7 +17,7 @@ namespace Allors.Database.Domain.Tests
         public void Build()
         {
             var metaBuilder = new MetaBuilder();
-            _ = metaBuilder.Build();
+            metaBuilder.Build();
         }
 
     }

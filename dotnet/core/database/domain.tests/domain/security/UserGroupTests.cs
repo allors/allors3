@@ -21,16 +21,16 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenNoUserGroupWhenCreatingAUserGroupWithoutANameThenUserGroupIsInvalid()
         {
-            _ = new UserGroupBuilder(this.Transaction).Build();
+            new UserGroupBuilder(this.Transaction).Build();
 
             var validation = this.Transaction.Derive(false);
 
             Assert.True(validation.HasErrors);
-            _ = Assert.Single(validation.Errors);
+            Assert.Single(validation.Errors);
 
             var derivationError = validation.Errors[0];
 
-            _ = Assert.Single(derivationError.Relations);
+            Assert.Single(derivationError.Relations);
             Assert.Equal(typeof(DerivationErrorRequired), derivationError.GetType());
             Assert.Equal(this.M.UserGroup.Name.RelationType, derivationError.Relations[0].RelationType);
         }
@@ -38,8 +38,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenAUserGroupWhenCreatingAUserGroupWithTheSameNameThenUserGroupIsInvalid()
         {
-            _ = new UserGroupBuilder(this.Transaction).WithName("Same").Build();
-            _ = new UserGroupBuilder(this.Transaction).WithName("Same").Build();
+            new UserGroupBuilder(this.Transaction).WithName("Same").Build();
+            new UserGroupBuilder(this.Transaction).WithName("Same").Build();
 
             var validation = this.Transaction.Derive(false);
 
@@ -48,7 +48,7 @@ namespace Allors.Database.Domain.Tests
 
             foreach (var derivationError in validation.Errors)
             {
-                _ = Assert.Single(derivationError.Relations);
+                Assert.Single(derivationError.Relations);
                 Assert.Equal(typeof(DerivationErrorUnique), derivationError.GetType());
                 Assert.Equal(this.M.UserGroup.Name.RelationType, derivationError.Relations[0].RelationType);
             }

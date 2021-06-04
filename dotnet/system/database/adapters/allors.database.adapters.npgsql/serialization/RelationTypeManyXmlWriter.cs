@@ -117,10 +117,10 @@ namespace Allors.Database.Adapters.Npgsql
 
             if (this.rolesStringBuilder.Length != 0)
             {
-                _ = this.rolesStringBuilder.Append(Serialization.ObjectsSplitter);
+                this.rolesStringBuilder.Append(Serialization.ObjectsSplitter);
             }
 
-            _ = this.rolesStringBuilder.Append(XmlConvert.ToString(roleId));
+            this.rolesStringBuilder.Append(XmlConvert.ToString(roleId));
         }
 
         /// <summary>

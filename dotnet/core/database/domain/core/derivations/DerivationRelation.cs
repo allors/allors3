@@ -63,10 +63,10 @@ namespace Allors.Database.Domain.Derivations
                 }
                 else
                 {
-                    _ = stringBuilder.Append(", ");
+                    stringBuilder.Append(", ");
                 }
 
-                _ = stringBuilder.Append(relation);
+                stringBuilder.Append(relation);
             }
 
             return stringBuilder.ToString();

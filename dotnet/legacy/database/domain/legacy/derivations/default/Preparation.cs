@@ -29,7 +29,7 @@ namespace Allors.Database.Domain.Derivations.Legacy.Default
                 var newObjects = changeSet.Created;
                 foreach (Object newObject in newObjects)
                 {
-                    _ = newObject.OnInit();
+                    newObject.OnInit();
                 }
             }
 
@@ -61,8 +61,8 @@ namespace Allors.Database.Domain.Derivations.Legacy.Default
             {
                 if (!@object.Strategy.IsDeleted)
                 {
-                    _ = @object.OnPreDerive(x => x.WithIteration(this.Iteration));
-                    _ = this.PreDerived.Add(@object);
+                    @object.OnPreDerive(x => x.WithIteration(this.Iteration));
+                    this.PreDerived.Add(@object);
                 }
             }
         }

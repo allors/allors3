@@ -96,7 +96,7 @@ namespace Allors.Database.Adapters
                         foreach (var concreteType in ((Composite)role.ObjectType).Classes)
                         {
                             var roleObject = this.GetTransaction().Create(concreteType);
-                            _ = extent.Filter.AddEquals(role, roleObject);
+                            extent.Filter.AddEquals(role, roleObject);
                         }
                     }
                 }
@@ -108,7 +108,7 @@ namespace Allors.Database.Adapters
                         foreach (var concreteType in association.ObjectType.DatabaseClasses)
                         {
                             var associationObject = this.GetTransaction().Create(concreteType);
-                            _ = extent.Filter.AddEquals(association, associationObject);
+                            extent.Filter.AddEquals(association, associationObject);
                         }
                     }
                 }
@@ -127,11 +127,11 @@ namespace Allors.Database.Adapters
                 foreach (var role in concreteClass.DatabaseRoleTypes)
                 {
                     var extent = this.GetTransaction().Extent(concreteClass);
-                    _ = extent.Filter.AddExists(role);
+                    extent.Filter.AddExists(role);
 
                     foreach (var association in concreteClass.DatabaseAssociationTypes)
                     {
-                        _ = extent.Filter.AddExists(association);
+                        extent.Filter.AddExists(association);
                     }
 
                     int count = extent.Count;

@@ -39,7 +39,7 @@ namespace Allors.Database.Adapters.Memory
         {
             this.Original(association).OnChangingUnitRole(roleType, previousRole);
 
-            _ = this.RoleTypes(association).Add(roleType);
+            this.RoleTypes(association).Add(roleType);
         }
 
         internal void OnChangingCompositeRole(Strategy association, IRoleType roleType, Strategy newRole, Strategy previousRole)
@@ -48,15 +48,15 @@ namespace Allors.Database.Adapters.Memory
 
             if (previousRole != null)
             {
-                _ = this.AssociationTypes(previousRole).Add(roleType.AssociationType);
+                this.AssociationTypes(previousRole).Add(roleType.AssociationType);
             }
 
             if (newRole != null)
             {
-                _ = this.AssociationTypes(newRole).Add(roleType.AssociationType);
+                this.AssociationTypes(newRole).Add(roleType.AssociationType);
             }
 
-            _ = this.RoleTypes(association).Add(roleType);
+            this.RoleTypes(association).Add(roleType);
         }
 
         internal void OnChangingCompositesRole(Strategy association, IRoleType roleType, Strategy changedRole, IEnumerable<Strategy> previousRole)
@@ -65,10 +65,10 @@ namespace Allors.Database.Adapters.Memory
 
             if (changedRole != null)
             {
-                _ = this.AssociationTypes(changedRole).Add(roleType.AssociationType);
+                this.AssociationTypes(changedRole).Add(roleType.AssociationType);
             }
 
-            _ = this.RoleTypes(association).Add(roleType);
+            this.RoleTypes(association).Add(roleType);
         }
 
         internal void OnChangingCompositeAssociation(Strategy role, IAssociationType associationType, Strategy previousAssociation)

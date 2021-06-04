@@ -35,7 +35,7 @@ namespace Allors.Database.Data.Tests
             var node = m.UserGroup.Members.Node(v => v.User.UniqueId.Node());
 
             Assert.Equal(m.UserGroup.Members, node.PropertyType);
-            _ = Assert.Single(node.Nodes);
+            Assert.Single(node.Nodes);
 
             var child = node.Nodes.First();
 

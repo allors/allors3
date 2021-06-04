@@ -74,7 +74,7 @@ namespace Allors.Workspace.Adapters.Remote
 
             if (!result.HasErrors)
             {
-                _ = this.PushToWorkspace(result);
+                this.PushToWorkspace(result);
             }
 
             return result;
@@ -92,7 +92,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 if (!this.StrategyByWorkspaceId.ContainsKey(v.Id))
                 {
-                    _ = this.InstantiateDatabaseStrategy(v.Id);
+                    this.InstantiateDatabaseStrategy(v.Id);
                 }
             }
 
@@ -109,7 +109,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 if (!this.StrategyByWorkspaceId.TryGetValue(databaseObject.Id, out var strategy))
                 {
-                    _ = this.InstantiateDatabaseStrategy(databaseObject.Id);
+                    this.InstantiateDatabaseStrategy(databaseObject.Id);
                 }
                 else
                 {
@@ -125,7 +125,7 @@ namespace Allors.Workspace.Adapters.Remote
                 if (securityRequest != null)
                 {
                     securityResponse = await database.Security(securityRequest);
-                    _ = database.SecurityResponse(securityResponse);
+                    database.SecurityResponse(securityResponse);
                 }
             }
         }
@@ -198,7 +198,7 @@ namespace Allors.Workspace.Adapters.Remote
 
                         var strategy = this.StrategyByWorkspaceId[workspaceId];
 
-                        _ = this.PushToDatabaseTracker.Created.Remove(strategy);
+                        this.PushToDatabaseTracker.Created.Remove(strategy);
 
                         this.RemoveStrategy(strategy);
                         var databaseRecord = this.Workspace.DatabaseConnection.OnPushed(databaseId, strategy.Class);
@@ -220,7 +220,7 @@ namespace Allors.Workspace.Adapters.Remote
                 {
                     if (!this.StrategyByWorkspaceId.ContainsKey(id))
                     {
-                        _ = this.InstantiateDatabaseStrategy(id);
+                        this.InstantiateDatabaseStrategy(id);
                     }
 
                     var strategy = this.GetStrategy(id);

@@ -36,7 +36,7 @@ namespace Allors.Server
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            _ = services.AddSingleton(this.Configuration);
+            services.AddSingleton(this.Configuration);
 
             var workspaceConfig = new WorkspaceConfig(new Dictionary<HostString, string>
             {
@@ -44,15 +44,15 @@ namespace Allors.Server
             });
 
             // Allors
-            _ = services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            _ = services.AddSingleton<IPolicyService, PolicyService>();
-            _ = services.AddSingleton<IDatabaseService, DatabaseService>();
-            _ = services.AddSingleton(workspaceConfig);
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<IPolicyService, PolicyService>();
+            services.AddSingleton<IDatabaseService, DatabaseService>();
+            services.AddSingleton(workspaceConfig);
             // Allors Scoped
-            _ = services.AddScoped<ITransactionService, TransactionService>();
-            _ = services.AddScoped<IWorkspaceService, WorkspaceService>();
+            services.AddScoped<ITransactionService, TransactionService>();
+            services.AddScoped<IWorkspaceService, WorkspaceService>();
 
-            _ = services.AddCors(options =>
+            services.AddCors(options =>
                   options.AddDefaultPolicy(
                       builder => builder
                           .WithOrigins("http://localhost", "http://localhost:4000", "http://localhost:4200", "http://localhost:9876")
@@ -60,10 +60,10 @@ namespace Allors.Server
                           .AllowAnyMethod()
                           .AllowCredentials()));
 
-            _ = services.AddDefaultIdentity<IdentityUser>()
+            services.AddDefaultIdentity<IdentityUser>()
                 .AddAllorsStores();
 
-            _ = services.AddAuthentication(option => option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme)
+            services.AddAuthentication(option => option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
@@ -73,8 +73,8 @@ namespace Allors.Server
                         ValidateAudience = false,
                     });
 
-            _ = services.AddResponseCaching();
-            _ = services.AddControllersWithViews();
+            services.AddResponseCaching();
+            services.AddControllersWithViews();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -90,14 +90,14 @@ namespace Allors.Server
 
             if (env.IsDevelopment())
             {
-                _ = app.UseDeveloperExceptionPage();
+                app.UseDeveloperExceptionPage();
             }
             else
             {
-                _ = app.UseHsts();
+                app.UseHsts();
             }
 
-            _ = app.UseCors();
+            app.UseCors();
 
             var jsnlogConfiguration = new JsnlogConfiguration
             {
@@ -110,19 +110,19 @@ namespace Allors.Server
             app.UseJSNLog(new LoggingAdapter(loggerFactory), jsnlogConfiguration);
 
             // app.UseHttpsRedirection();
-            _ = app.UseRouting();
-            _ = app.UseAuthentication();
-            _ = app.UseAuthorization();
+            app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
-            _ = app.ConfigureExceptionHandler(env, loggerFactory);
+            app.ConfigureExceptionHandler(env, loggerFactory);
 
-            _ = app.UseResponseCaching();
-            _ = app.UseEndpoints(endpoints =>
+            app.UseResponseCaching();
+            app.UseEndpoints(endpoints =>
               {
-                  _ = endpoints.MapControllerRoute(
+                  endpoints.MapControllerRoute(
                       name: "default",
                       pattern: "allors/{controller=Home}/{action=Index}/{id?}");
-                  _ = endpoints.MapControllers();
+                  endpoints.MapControllers();
               });
         }
     }

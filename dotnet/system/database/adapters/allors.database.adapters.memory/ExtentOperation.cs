@@ -75,7 +75,7 @@ namespace Allors.Database.Adapters.Memory
                         {
                             if (this.Strategies.Contains(strategy))
                             {
-                                _ = this.Strategies.Remove(strategy);
+                                this.Strategies.Remove(strategy);
                             }
                         }
 

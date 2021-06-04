@@ -56,7 +56,7 @@ namespace Allors.Database.Adapters.SqlClient
                     sqlParameter.SqlDbType = SqlDbType.DateTime2;
                 }
 
-                _ = this.SqlCommand.Parameters.Add(sqlParameter);
+                this.SqlCommand.Parameters.Add(sqlParameter);
             }
 
             if (value == null || value == DBNull.Value)
@@ -76,7 +76,7 @@ namespace Allors.Database.Adapters.SqlClient
             sqlParameter.SqlDbType = Mapping.SqlDbTypeForObject;
             sqlParameter.Value = objectId;
 
-            _ = this.SqlCommand.Parameters.Add(sqlParameter);
+            this.SqlCommand.Parameters.Add(sqlParameter);
         }
 
         internal void AddTypeParameter(IClass @class)
@@ -86,7 +86,7 @@ namespace Allors.Database.Adapters.SqlClient
             sqlParameter.SqlDbType = Mapping.SqlDbTypeForClass;
             sqlParameter.Value = @class.Id;
 
-            _ = this.Parameters.Add(sqlParameter);
+            this.Parameters.Add(sqlParameter);
         }
 
         internal void AddCountParameter(int count)
@@ -96,7 +96,7 @@ namespace Allors.Database.Adapters.SqlClient
             sqlParameter.SqlDbType = Mapping.SqlDbTypeForCount;
             sqlParameter.Value = count;
 
-            _ = this.Parameters.Add(sqlParameter);
+            this.Parameters.Add(sqlParameter);
         }
 
         internal void AddCompositeRoleParameter(long objectId)
@@ -106,7 +106,7 @@ namespace Allors.Database.Adapters.SqlClient
             sqlParameter.SqlDbType = Mapping.SqlDbTypeForObject;
             sqlParameter.Value = objectId;
 
-            _ = this.Parameters.Add(sqlParameter);
+            this.Parameters.Add(sqlParameter);
         }
 
         internal void AddAssociationParameter(long objectId)
@@ -116,7 +116,7 @@ namespace Allors.Database.Adapters.SqlClient
             sqlParameter.SqlDbType = Mapping.SqlDbTypeForObject;
             sqlParameter.Value = objectId;
 
-            _ = this.Parameters.Add(sqlParameter);
+            this.Parameters.Add(sqlParameter);
         }
 
         internal void AddObjectTableParameter(IEnumerable<Reference> references)
@@ -127,7 +127,7 @@ namespace Allors.Database.Adapters.SqlClient
             sqlParameter.ParameterName = Mapping.ParamNameForTableType;
             sqlParameter.Value = new CompositesRoleDataRecords(this.Mapping, references);
 
-            _ = this.Parameters.Add(sqlParameter);
+            this.Parameters.Add(sqlParameter);
         }
 
         internal void AddObjectTableParameter(IEnumerable<long> objectIds)
@@ -139,7 +139,7 @@ namespace Allors.Database.Adapters.SqlClient
             sqlParameter.Value = new ObjectDataRecord(this.Mapping, objectIds);
             ;
 
-            _ = this.Parameters.Add(sqlParameter);
+            this.Parameters.Add(sqlParameter);
         }
 
         internal void AddCompositeRoleTableParameter(IEnumerable<CompositeRelation> relations)
@@ -150,7 +150,7 @@ namespace Allors.Database.Adapters.SqlClient
             sqlParameter.ParameterName = Mapping.ParamNameForTableType;
             sqlParameter.Value = new CompositeRoleDataRecords(this.Mapping, relations);
 
-            _ = this.Parameters.Add(sqlParameter);
+            this.Parameters.Add(sqlParameter);
         }
 
         internal void AddAssociationTableParameter(long objectId)
@@ -160,7 +160,7 @@ namespace Allors.Database.Adapters.SqlClient
             sqlParameter.SqlDbType = Mapping.SqlDbTypeForObject;
             sqlParameter.Value = objectId;
 
-            _ = this.Parameters.Add(sqlParameter);
+            this.Parameters.Add(sqlParameter);
         }
 
         internal object ExecuteScalar()
@@ -182,7 +182,7 @@ namespace Allors.Database.Adapters.SqlClient
 
             try
             {
-                _ = this.SqlCommand.ExecuteNonQuery();
+                this.SqlCommand.ExecuteNonQuery();
             }
             finally
             {

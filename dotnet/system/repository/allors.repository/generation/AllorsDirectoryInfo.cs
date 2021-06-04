@@ -56,10 +56,10 @@ namespace Allors.Repository.Generation
                 {
                     if (relativePath.Length > 0)
                     {
-                        _ = relativePath.Append(Path.DirectorySeparatorChar);
+                        relativePath.Append(Path.DirectorySeparatorChar);
                     }
 
-                    _ = relativePath.Append("..");
+                    relativePath.Append("..");
                 }
 
                 for (var i = ancestors.Count - 1; i >= 0; --i)
@@ -67,10 +67,10 @@ namespace Allors.Repository.Generation
                     var ancestor = ancestors[i];
                     if (relativePath.Length > 0)
                     {
-                        _ = relativePath.Append(Path.DirectorySeparatorChar);
+                        relativePath.Append(Path.DirectorySeparatorChar);
                     }
 
-                    _ = relativePath.Append(ancestor.DirectoryInfo.Name);
+                    relativePath.Append(ancestor.DirectoryInfo.Name);
                 }
 
                 return relativePath.ToString();

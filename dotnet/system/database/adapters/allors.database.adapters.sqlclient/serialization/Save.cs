@@ -127,7 +127,7 @@ namespace Allors.Database.Adapters.SqlClient
                             exclusiveRootClasses = new HashSet<IObjectType>();
                             foreach (var concreteClass in associationType.ObjectType.DatabaseClasses)
                             {
-                                _ = exclusiveRootClasses.Add(concreteClass.ExclusiveDatabaseClass);
+                                exclusiveRootClasses.Add(concreteClass.ExclusiveDatabaseClass);
                             }
 
                             exclusiverRootClassesByObjectType[associationType.ObjectType] = exclusiveRootClasses;

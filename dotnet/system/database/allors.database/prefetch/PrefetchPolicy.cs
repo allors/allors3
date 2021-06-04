@@ -72,7 +72,7 @@ namespace Allors.Database
                 foreach (var rule in rules)
                 {
                     var indent = new string(' ', level * 2);
-                    _ = toString.Append(indent + "- " + rule.PropertyType + "\n");
+                    toString.Append(indent + "- " + rule.PropertyType + "\n");
 
                     if (rule.PrefetchPolicy != null)
                     {

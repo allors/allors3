@@ -42,7 +42,7 @@ namespace Allors.Server.Tests
             configurationBuilder.AddCrossPlatform(".");
             configurationBuilder.AddCrossPlatform(root);
             configurationBuilder.AddCrossPlatform(Path.Combine(root, "commands"));
-            _ = configurationBuilder.AddEnvironmentVariables();
+            configurationBuilder.AddEnvironmentVariables();
 
             var configuration = configurationBuilder.Build();
 

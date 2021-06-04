@@ -59,7 +59,7 @@ namespace Allors.Database.Domain.Derivations.Legacy.Default
                 this.Graph.Mark(@object);
                 if (!this.Preparation.Objects.Contains(@object) || this.Preparation.PreDerived.Contains(@object))
                 {
-                    _ = this.MarkedBacklog.Add(@object);
+                    this.MarkedBacklog.Add(@object);
                 }
             }
         }
@@ -106,7 +106,7 @@ namespace Allors.Database.Domain.Derivations.Legacy.Default
                     this.Preparation.Execute();
                 }
 
-                _ = this.Graph.Derive(postDeriveBacklog);
+                this.Graph.Derive(postDeriveBacklog);
 
                 this.Cycle.Derivation.DerivedObjects.UnionWith(postDeriveBacklog);
             }

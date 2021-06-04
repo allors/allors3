@@ -66,7 +66,7 @@ namespace Allors.Workspace.Derivations.Default
                                     patternsByRoleType.Add(roleType, patterns);
                                 }
 
-                                _ = patterns.Add(rolePattern);
+                                patterns.Add(rolePattern);
                             }
 
                             break;
@@ -87,7 +87,7 @@ namespace Allors.Workspace.Derivations.Default
                                     patternsByAssociationType.Add(associationType, patterns);
                                 }
 
-                                _ = patterns.Add(associationPattern);
+                                patterns.Add(associationPattern);
                             }
 
                             break;

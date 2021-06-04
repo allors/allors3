@@ -62,7 +62,7 @@ namespace Allors.Database.Configuration
 
         public ISet<IClass> GetWorkspaceClasses(string workspaceName)
         {
-            _ = this.workspaceClassesByWorkspaceName.TryGetValue(workspaceName, out var classes);
+            this.workspaceClassesByWorkspaceName.TryGetValue(workspaceName, out var classes);
             return classes;
         }
     }

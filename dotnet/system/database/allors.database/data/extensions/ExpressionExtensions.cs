@@ -31,7 +31,7 @@ namespace Allors.Database.Data
         public static Node Node<T>(this Expression<Func<T, IPropertyType>> @this, IMetaPopulation metaPopulation) where T : IComposite
         {
             var visitor = new MemberExpressionsVisitor();
-            _ = visitor.Visit(@this);
+            visitor.Visit(@this);
 
             return Node<T>(metaPopulation, visitor);
         }
@@ -39,7 +39,7 @@ namespace Allors.Database.Data
         public static Node Node<T>(this Expression<Func<T, IComposite>> @this, IMetaPopulation metaPopulation) where T : IComposite
         {
             var visitor = new MemberExpressionsVisitor();
-            _ = visitor.Visit(@this);
+            visitor.Visit(@this);
 
             return Node<T>(metaPopulation, visitor);
         }

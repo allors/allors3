@@ -28,19 +28,19 @@ namespace Allors.Database.Domain
                 var roles = new Roles(this.Transaction);
                 var userGroups = new UserGroups(this.Transaction);
 
-                _ = merge(SalesId, v =>
+                merge(SalesId, v =>
                   {
                       v.Role = roles.Creator;
                       v.AddSubjectGroup(userGroups.Sales);
                   });
 
-                _ = merge(OperationsId, v =>
+                merge(OperationsId, v =>
                   {
                       v.Role = roles.Creator;
                       v.AddSubjectGroup(userGroups.Operations);
                   });
 
-                _ = merge(ProcurementId, v =>
+                merge(ProcurementId, v =>
                   {
                       v.Role = roles.Administrator;
                       v.AddSubjectGroup(userGroups.Procurement);

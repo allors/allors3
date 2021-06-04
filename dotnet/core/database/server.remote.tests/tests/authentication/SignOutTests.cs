@@ -15,8 +15,8 @@ namespace Allors.Server.Tests
     {
         public SignOutTests()
         {
-            _ = new PersonBuilder(this.Transaction).WithUserName("user").Build().SetPassword("p@ssw0rd");
-            _ = this.Transaction.Derive();
+            new PersonBuilder(this.Transaction).WithUserName("user").Build().SetPassword("p@ssw0rd");
+            this.Transaction.Derive();
             this.Transaction.Commit();
         }
 
@@ -30,10 +30,10 @@ namespace Allors.Server.Tests
             };
 
             var signInUri = new Uri("Authentication/Token", UriKind.Relative);
-            _ = await this.PostAsJsonAsync(signInUri, args);
+            await this.PostAsJsonAsync(signInUri, args);
 
             var signOutUri = new Uri("Authentication/SignOut", UriKind.Relative);
-            _ = await this.PostAsJsonAsync(signOutUri, null);
+            await this.PostAsJsonAsync(signOutUri, null);
         }
     }
 }

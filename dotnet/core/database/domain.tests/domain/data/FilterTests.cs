@@ -41,7 +41,7 @@ namespace Allors.Database.Domain.Tests
             var queryExtent = filter.Build(this.Transaction);
 
             var extent = this.Transaction.Extent(this.M.Person);
-            _ = extent.Filter.AddEquals(this.M.Person.FirstName, "John");
+            extent.Filter.AddEquals(this.M.Person.FirstName, "John");
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
         }
@@ -74,8 +74,8 @@ namespace Allors.Database.Domain.Tests
 
             var extent = this.Transaction.Extent(this.M.Person);
             var and = extent.Filter.AddAnd();
-            _ = and.AddEquals(this.M.Person.FirstName, "John");
-            _ = and.AddEquals(this.M.Person.LastName, "Doe");
+            and.AddEquals(this.M.Person.FirstName, "John");
+            and.AddEquals(this.M.Person.LastName, "Doe");
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
         }

@@ -37,7 +37,7 @@ namespace Allors.Workspace.Adapters
         public object GetRole(IRoleType roleType)
         {
             object @object = null;
-            _ = this.roleByRelationType?.TryGetValue(roleType.RelationType, out @object);
+            this.roleByRelationType?.TryGetValue(roleType.RelationType, out @object);
             return @object;
         }
 

@@ -23,7 +23,7 @@ namespace Allors.Database.Domain.Tests
                 .WithLastName("Doe")
                 .Build();
 
-            _ = this.Transaction.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal("Jane Doe", person.DomainFullName);
             Assert.Equal("Hello Jane Doe!", person.DomainGreeting);

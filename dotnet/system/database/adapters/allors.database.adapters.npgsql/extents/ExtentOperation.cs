@@ -40,7 +40,7 @@ namespace Allors.Database.Adapters.Npgsql
         internal override string BuildSql(ExtentStatement statement)
         {
             statement.Append("(");
-            _ = this.first.BuildSql(statement);
+            this.first.BuildSql(statement);
             statement.Append(")");
 
             switch (this.operationType)
@@ -59,7 +59,7 @@ namespace Allors.Database.Adapters.Npgsql
             }
 
             statement.Append("(");
-            _ = this.second.BuildSql(statement);
+            this.second.BuildSql(statement);
             statement.Append(")");
 
             return null;

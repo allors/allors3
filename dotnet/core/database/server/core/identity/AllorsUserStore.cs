@@ -87,7 +87,7 @@ namespace Allors.Security
 
                     new UserGroups(transaction).Creators.AddMember(user);
 
-                    _ = transaction.Derive();
+                    transaction.Derive();
                     transaction.Commit();
 
                     identityUser.Id = user.Id.ToString();
@@ -123,7 +123,7 @@ namespace Allors.Security
                     user.UserLockoutEnabled = identityUser.LockoutEnabled;
                     user.UserAccessFailedCount = identityUser.AccessFailedCount;
 
-                    _ = transaction.Derive();
+                    transaction.Derive();
                     transaction.Commit();
 
                     return IdentityResult.Success;
@@ -146,10 +146,10 @@ namespace Allors.Security
 
                     if (user is Deletable)
                     {
-                        _ = ((Deletable)user).Delete();
+                        ((Deletable)user).Delete();
                     }
 
-                    _ = transaction.Derive();
+                    transaction.Derive();
                     transaction.Commit();
 
                     return IdentityResult.Success;
@@ -222,7 +222,7 @@ namespace Allors.Security
 
                 user.AddLogin(login);
 
-                _ = transaction.Derive();
+                transaction.Derive();
                 transaction.Commit();
             }
         }
@@ -236,8 +236,8 @@ namespace Allors.Security
             using (var transaction = this.database.CreateTransaction())
             {
                 var extent = new Logins(transaction).Extent();
-                _ = extent.Filter.AddEquals(m.Login.Provider, loginProvider);
-                _ = extent.Filter.AddEquals(m.Login.Key, providerKey);
+                extent.Filter.AddEquals(m.Login.Provider, loginProvider);
+                extent.Filter.AddEquals(m.Login.Key, providerKey);
 
                 var user = extent.FirstOrDefault()?.UserWhereLogin;
                 return user?.AsIdentityUser();
@@ -264,13 +264,13 @@ namespace Allors.Security
             using (var transaction = this.database.CreateTransaction())
             {
                 var extent = new Logins(transaction).Extent();
-                _ = extent.Filter.AddEquals(m.Login.Provider, loginProvider);
-                _ = extent.Filter.AddEquals(m.Login.Key, providerKey);
+                extent.Filter.AddEquals(m.Login.Provider, loginProvider);
+                extent.Filter.AddEquals(m.Login.Key, providerKey);
 
                 var login = extent.FirstOrDefault();
-                _ = (login?.Delete());
+                (login?.Delete());
 
-                _ = transaction.Derive();
+                transaction.Derive();
                 transaction.Commit();
             }
         }

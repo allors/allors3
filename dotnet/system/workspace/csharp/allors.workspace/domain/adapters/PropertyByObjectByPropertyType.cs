@@ -45,11 +45,11 @@ namespace Allors.Workspace.Adapters
                 originalValue = null;
             }
 
-            _ = this.changedPropertyByObjectByPropertyType.TryGetValue(propertyType, out var changedValueByPropertyType);
+            this.changedPropertyByObjectByPropertyType.TryGetValue(propertyType, out var changedValueByPropertyType);
 
             if (propertyType.IsOne ? Equals(newValue, originalValue) : this.numbers.AreEqual(newValue, originalValue))
             {
-                _ = changedValueByPropertyType?.Remove(@object);
+                changedValueByPropertyType?.Remove(@object);
             }
             else
             {
@@ -74,7 +74,7 @@ namespace Allors.Workspace.Adapters
                     var propertyType = kvp.Key;
                     var changedPropertyByObject = kvp.Value;
 
-                    _ = this.propertyByObjectByPropertyType.TryGetValue(propertyType, out var propertyByObject);
+                    this.propertyByObjectByPropertyType.TryGetValue(propertyType, out var propertyByObject);
 
                     foreach (var kvp2 in changedPropertyByObject)
                     {
@@ -83,7 +83,7 @@ namespace Allors.Workspace.Adapters
 
                         if (changedProperty == null)
                         {
-                            _ = propertyByObject?.Remove(@object);
+                            propertyByObject?.Remove(@object);
                         }
                         else
                         {
@@ -99,7 +99,7 @@ namespace Allors.Workspace.Adapters
 
                     if (propertyByObject?.Count == 0)
                     {
-                        _ = this.propertyByObjectByPropertyType.Remove(propertyType);
+                        this.propertyByObjectByPropertyType.Remove(propertyType);
                     }
                 }
 
