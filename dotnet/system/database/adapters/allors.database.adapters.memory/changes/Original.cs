@@ -123,11 +123,11 @@ namespace Allors.Database.Adapters.Memory
                 }
                 else
                 {
-                    //var originalAssociation = this.OriginalCompositesAssociationByRoleType[associationType];
-                    //if (this.Strategy.ShouldTrim(associationType, originalAssociation))
-                    //{
-                    //    associationTypes.Remove(associationType);
-                    //}
+                    var originalAssociation = this.OriginalCompositesAssociationByRoleType[associationType];
+                    if (this.Strategy.ShouldTrim(associationType, originalAssociation))
+                    {
+                        associationTypes.Remove(associationType);
+                    }
                 }
             }
         }

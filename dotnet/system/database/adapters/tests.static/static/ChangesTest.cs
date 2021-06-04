@@ -550,189 +550,101 @@ namespace Allors.Database.Adapters
                 var c1a = (C1)this.Transaction.Create(m.C1);
                 var c1b = (C1)this.Transaction.Create(m.C1);
                 var c2a = (C2)this.Transaction.Create(m.C2);
+                var c2b = C2.Create(this.Transaction);
+
+                c1a.Name = "c1a";
+                c1b.Name = "c1b";
+                c2a.Name = "c2a";
+                c2b.Name = "c2b";
 
                 this.Transaction.Commit();
 
-                c1a = (C1)this.Transaction.Instantiate(c1a);
-                var c2b = C2.Create(this.Transaction);
-                this.Transaction.Instantiate(c2a);
+                // Reset empty role
+                c1a.C1C2many2one = null;
 
                 var changes = this.Transaction.Checkpoint();
 
-                c1a.C1C2many2one = null;
+                Assert.Empty(changes.Associations);
+                Assert.Empty(changes.Roles);
 
-                var associations = changes.Associations.ToArray();
-                var roles = changes.Roles.ToArray();
-
-                Assert.Empty(associations);
-                Assert.Empty(roles);
-
-                c1a.RemoveC1C2many2one();
-
-                associations = changes.Associations.ToArray();
-                roles = changes.Roles.ToArray();
-
-                Assert.Empty(associations);
-                Assert.Empty(roles);
-
-                c1a.C1C2many2one = c2b;
-
-                changes = this.Transaction.Checkpoint();
-
-                associations = changes.Associations.ToArray();
-                roles = changes.Roles.ToArray();
-
-                Assert.Single(associations);
-                Assert.Contains(c1a, associations);
-
-                Assert.Single(roles);
-                Assert.Contains(c2b, roles);
-
-                Assert.Single(changes.GetRoleTypes(c1a));
-                Assert.Equal(m.C1.C1C2many2one, changes.GetRoleTypes(c1a).First());
-
-                Assert.Contains(c1a, associations);
-                Assert.DoesNotContain(c2b, associations);
-                Assert.DoesNotContain(c2a, associations);
-
-                Assert.DoesNotContain(c1a, roles);
-                Assert.Contains(c2b, roles);
-                Assert.DoesNotContain(c2a, roles);
-
-                c1a.C1C2many2one = c2b;
-
-                changes = this.Transaction.Checkpoint();
-
-                associations = changes.Associations.ToArray();
-                roles = changes.Roles.ToArray();
-
-                Assert.Empty(associations);
-                Assert.Empty(roles);
-
-                c1a.C1C2many2one = c2a;
-
-                changes = this.Transaction.Checkpoint();
-
-                associations = changes.Associations.ToArray();
-                roles = changes.Roles.ToArray();
-
-                Assert.Single(associations);
-                Assert.Contains(c1a, associations);
-
-                Assert.Equal(2, roles.Length);
-                Assert.Contains(c2b, roles);
-                Assert.Contains(c2a, roles);
-
-                Assert.Single(changes.GetRoleTypes(c1a));
-                Assert.Equal(m.C1.C1C2many2one, changes.GetRoleTypes(c1a).First());
-
-                Assert.Contains(c1a, associations);
-                Assert.DoesNotContain(c2b, associations);
-                Assert.DoesNotContain(c2a, associations);
-
-                Assert.DoesNotContain(c1a, roles);
-                Assert.Contains(c2b, roles);
-                Assert.Contains(c2a, roles);
-
-                changes = this.Transaction.Checkpoint();
-
-                associations = changes.Associations.ToArray();
-                roles = changes.Roles.ToArray();
-
-                Assert.Empty(associations);
-                Assert.Empty(roles);
-                Assert.Empty(changes.GetRoleTypes(c1a));
-                Assert.Empty(changes.GetRoleTypes(c2b));
-                Assert.Empty(changes.GetRoleTypes(c2a));
-
+                // Remove empty role
                 c1a.RemoveC1C2many2one();
 
                 changes = this.Transaction.Checkpoint();
 
-                associations = changes.Associations.ToArray();
-                roles = changes.Roles.ToArray();
+                Assert.Empty(changes.Associations);
+                Assert.Empty(changes.Roles);
 
-                Assert.Single(associations);
-                Assert.Contains(c1a, associations);
+                // Set role
+                c1a.C1C2many2one = c2b;
 
-                Assert.Single(roles);
-                Assert.Contains(c2a, roles);
+                changes = this.Transaction.Checkpoint();
+                Assert.Single(changes.Associations);
+                Assert.Contains(c1a, changes.Associations);
+
+                Assert.Single(changes.Roles);
+                Assert.Contains(c2b, changes.Roles);
 
                 Assert.Single(changes.GetRoleTypes(c1a));
                 Assert.Equal(m.C1.C1C2many2one, changes.GetRoleTypes(c1a).First());
 
-                Assert.Contains(c1a, associations);
-                Assert.DoesNotContain(c2b, associations);
-                Assert.DoesNotContain(c2a, associations);
-
-                Assert.DoesNotContain(c1a, roles);
-                Assert.DoesNotContain(c2b, roles);
-                Assert.Contains(c2a, roles);
+                // Set same role
+                c1a.C1C2many2one = c2b;
 
                 changes = this.Transaction.Checkpoint();
 
-                associations = changes.Associations.ToArray();
-                roles = changes.Roles.ToArray();
+                Assert.Empty(changes.Associations);
+                Assert.Empty(changes.Roles);
 
-                Assert.Empty(associations);
-                Assert.Empty(roles);
-                Assert.Empty(changes.GetRoleTypes(c1a));
-                Assert.Empty(changes.GetRoleTypes(c2b));
-                Assert.Empty(changes.GetRoleTypes(c2a));
-
+                // Set different role
                 c1a.C1C2many2one = c2a;
 
-                this.Transaction.Rollback();
+                changes = this.Transaction.Checkpoint();
 
-                associations = changes.Associations.ToArray();
-                roles = changes.Roles.ToArray();
+                Assert.Single(changes.Associations);
+                Assert.Contains(c1a, changes.Associations);
 
-                Assert.Empty(associations);
-                Assert.Empty(roles);
-                Assert.Empty(changes.GetRoleTypes(c1a));
-                Assert.Empty(changes.GetRoleTypes(c2b));
-                Assert.Empty(changes.GetRoleTypes(c2a));
+                Assert.Equal(2, changes.Roles.Count);
+                Assert.Contains(c2b, changes.Roles);
+                Assert.Contains(c2a, changes.Roles);
 
-                c1a.C1C2many2one = c2a;
+                Assert.Single(changes.GetRoleTypes(c1a));
+                Assert.Equal(m.C1.C1C2many2one, changes.GetRoleTypes(c1a).First());
 
-                this.Transaction.Commit();
+                // Remove role
+                c1a.RemoveC1C2many2one();
 
-                associations = changes.Associations.ToArray();
-                roles = changes.Roles.ToArray();
+                changes = this.Transaction.Checkpoint();
 
-                Assert.Empty(associations);
-                Assert.Empty(roles);
-                Assert.Empty(changes.GetRoleTypes(c1a));
-                Assert.Empty(changes.GetRoleTypes(c2b));
-                Assert.Empty(changes.GetRoleTypes(c2a));
+                Assert.Single(changes.Associations);
+                Assert.Contains(c1a, changes.Associations);
+
+                Assert.Single(changes.Roles);
+                Assert.Contains(c2a, changes.Roles);
+
+                Assert.Single(changes.GetRoleTypes(c1a));
+                Assert.Equal(m.C1.C1C2many2one, changes.GetRoleTypes(c1a).First());
+
+                // Add and Remove
+                c1b.C1C2many2one = c2a;
+                c1b.RemoveC1C2many2one();
+
+                changes = this.Transaction.Checkpoint();
+
+                Assert.Empty(changes.Associations);
+                Assert.Empty(changes.Roles);
 
                 c1b.C1C2many2one = c2a;
+                this.Transaction.Checkpoint();
 
-                changes = this.Transaction.Checkpoint();
-
-                associations = changes.Associations.ToArray();
-                roles = changes.Roles.ToArray();
-
-                Assert.Single(associations);
-                Assert.Single(roles);
-                Assert.Empty(changes.GetRoleTypes(c1a));
-                Assert.Single(changes.GetRoleTypes(c1b));
-                Assert.Empty(changes.GetRoleTypes(c2b));
-                Assert.Empty(changes.GetRoleTypes(c2a));
-
+                // Remove and add
                 c1b.RemoveC1C2many2one();
                 c1b.C1C2many2one = c2a;
 
                 changes = this.Transaction.Checkpoint();
 
-                associations = changes.Associations.ToArray();
-                roles = changes.Roles.ToArray();
-
-                Assert.Empty(associations);
-                Assert.Empty(roles);
-                Assert.Empty(changes.GetRoleTypes(c1a));
-                Assert.Empty(changes.GetRoleTypes(c2b));
-                Assert.Empty(changes.GetRoleTypes(c2a));
+                Assert.Empty(changes.Associations);
+                Assert.Empty(changes.Roles);
             }
         }
 
@@ -838,7 +750,7 @@ namespace Allors.Database.Adapters
                 Assert.Single(changes.GetRoleTypes(c1a));
                 Assert.Equal(m.C1.C1C2one2manies, changes.GetRoleTypes(c1a).First());
 
-                // Remove element
+                // Remove other element
                 c1a.RemoveC1C2one2many(c2b);
 
                 changes = this.Transaction.Checkpoint();
@@ -919,253 +831,160 @@ namespace Allors.Database.Adapters
                 var c1a = (C1)this.Transaction.Create(m.C1);
                 var c1b = (C1)this.Transaction.Create(m.C1);
                 var c2a = (C2)this.Transaction.Create(m.C2);
+                var c2b = C2.Create(this.Transaction);
+
+                c1a.Name = "c1a";
+                c1b.Name = "c1b";
+                c2a.Name = "c2a";
+                c2b.Name = "c2b";
 
                 this.Transaction.Commit();
 
-                c1a = (C1)this.Transaction.Instantiate(c1a);
-                var c2b = C2.Create(this.Transaction);
-                this.Transaction.Instantiate(c2a);
-
+                // Reset empty role
                 c1a.C1C2many2manies = null;
 
                 var changes = this.Transaction.Checkpoint();
 
-                var associations = changes.Associations.ToArray();
-                var roles = changes.Roles.ToArray();
+                Assert.Empty(changes.Associations);
+                Assert.Empty(changes.Roles);
 
-                Assert.Empty(associations);
-                Assert.Empty(roles);
-
+                // Remove role
                 c1a.RemoveC1C2many2manies();
 
                 changes = this.Transaction.Checkpoint();
 
-                associations = changes.Associations.ToArray();
-                roles = changes.Roles.ToArray();
+                Assert.Empty(changes.Associations);
+                Assert.Empty(changes.Roles);
 
-                Assert.Empty(associations);
-                Assert.Empty(roles);
-
+                // Remove non existing
                 c1a.RemoveC1C2many2many(c2b);
 
                 changes = this.Transaction.Checkpoint();
 
-                associations = changes.Associations.ToArray();
-                roles = changes.Roles.ToArray();
+                Assert.Empty(changes.Associations);
+                Assert.Empty(changes.Roles);
 
-                Assert.Empty(associations);
-                Assert.Empty(roles);
-
+                // Add element
                 c1a.AddC1C2many2many(c2b);
 
                 changes = this.Transaction.Checkpoint();
 
-                associations = changes.Associations.ToArray();
-                roles = changes.Roles.ToArray();
+                Assert.Single(changes.Associations);
+                Assert.Contains(c1a, changes.Associations);
 
-                Assert.Single(associations);
-                Assert.Contains(c1a, associations);
-
-                Assert.Single(roles);
-                Assert.Contains(c2b, roles);
+                Assert.Single(changes.Roles);
+                Assert.Contains(c2b, changes.Roles);
 
                 Assert.Single(changes.GetRoleTypes(c1a));
                 Assert.Equal(m.C1.C1C2many2manies, changes.GetRoleTypes(c1a).First());
 
-                Assert.Contains(c1a, associations);
-                Assert.DoesNotContain(c2b, associations);
-                Assert.DoesNotContain(c2a, associations);
-
-                Assert.DoesNotContain(c1a, roles);
-                Assert.Contains(c2b, roles);
-                Assert.DoesNotContain(c2a, roles);
-
+                // Add same element
                 c1a.AddC1C2many2many(c2b);
 
                 changes = this.Transaction.Checkpoint();
 
-                associations = changes.Associations.ToArray();
-                roles = changes.Roles.ToArray();
+                Assert.Empty(changes.Associations);
+                Assert.Empty(changes.Roles);
 
-                Assert.Empty(associations);
-                Assert.Empty(roles);
-
+                // Set same element
                 c1a.C1C2many2manies = new[] { c2b };
 
                 changes = this.Transaction.Checkpoint();
 
-                associations = changes.Associations.ToArray();
-                roles = changes.Roles.ToArray();
+                Assert.Empty(changes.Associations);
+                Assert.Empty(changes.Roles);
 
-                Assert.Empty(associations);
-                Assert.Empty(roles);
-
+                // Add another element
                 c1a.AddC1C2many2many(c2a);
 
                 changes = this.Transaction.Checkpoint();
 
-                associations = changes.Associations.ToArray();
-                roles = changes.Roles.ToArray();
+                Assert.Single(changes.Associations);
+                Assert.Contains(c1a, changes.Associations);
 
-                Assert.Single(associations);
-                Assert.Contains(c1a, associations);
-
-                Assert.Single(roles);
-                Assert.Contains(c2a, roles);
+                Assert.Single(changes.Roles);
+                Assert.Contains(c2a, changes.Roles);
 
                 Assert.Single(changes.GetRoleTypes(c1a));
                 Assert.Equal(m.C1.C1C2many2manies, changes.GetRoleTypes(c1a).First());
 
-                Assert.Contains(c1a, associations);
-                Assert.DoesNotContain(c2b, associations);
-                Assert.DoesNotContain(c2a, associations);
-
-                Assert.DoesNotContain(c1a, roles);
-                Assert.DoesNotContain(c2b, roles);
-                Assert.Contains(c2a, roles);
-
-                changes = this.Transaction.Checkpoint();
-
-                associations = changes.Associations.ToArray();
-                roles = changes.Roles.ToArray();
-
-                Assert.Empty(associations);
-                Assert.Empty(roles);
-                Assert.Empty(changes.GetRoleTypes(c1a));
-                Assert.Empty(changes.GetRoleTypes(c2b));
-                Assert.Empty(changes.GetRoleTypes(c2a));
-
+                // Remove element
                 c1a.RemoveC1C2many2many(c2a);
 
                 changes = this.Transaction.Checkpoint();
 
-                associations = changes.Associations.ToArray();
-                roles = changes.Roles.ToArray();
+                Assert.Single(changes.Associations);
+                Assert.Contains(c1a, changes.Associations);
 
-                Assert.Single(associations);
-                Assert.Contains(c1a, associations);
-
-                Assert.Single(roles);
-                Assert.Contains(c2a, roles);
+                Assert.Single(changes.Roles);
+                Assert.Contains(c2a, changes.Roles);
 
                 Assert.Single(changes.GetRoleTypes(c1a));
                 Assert.Equal(m.C1.C1C2many2manies, changes.GetRoleTypes(c1a).First());
 
-                Assert.Contains(c1a, associations);
-                Assert.DoesNotContain(c2b, associations);
-                Assert.DoesNotContain(c2a, associations);
-
-                Assert.DoesNotContain(c1a, roles);
-                Assert.DoesNotContain(c2b, roles);
-                Assert.Contains(c2a, roles);
-
-                changes = this.Transaction.Checkpoint();
-
-                associations = changes.Associations.ToArray();
-                roles = changes.Roles.ToArray();
-
-                Assert.Empty(associations);
-                Assert.Empty(roles);
-                Assert.Empty(changes.GetRoleTypes(c1a));
-                Assert.Empty(changes.GetRoleTypes(c2b));
-                Assert.Empty(changes.GetRoleTypes(c2a));
-
+                // Remove other element
                 c1a.RemoveC1C2many2many(c2b);
 
                 changes = this.Transaction.Checkpoint();
+                
+                Assert.Single(changes.Associations);
+                Assert.Contains(c1a, changes.Associations);
 
-                associations = changes.Associations.ToArray();
-                roles = changes.Roles.ToArray();
-
-                Assert.Single(associations);
-                Assert.Contains(c1a, associations);
-
-                Assert.Single(roles);
-                Assert.Contains(c2b, roles);
+                Assert.Single(changes.Roles);
+                Assert.Contains(c2b, changes.Roles);
 
                 Assert.Single(changes.GetRoleTypes(c1a));
                 Assert.Equal(m.C1.C1C2many2manies, changes.GetRoleTypes(c1a).First());
 
-                Assert.Contains(c1a, associations);
-                Assert.DoesNotContain(c2b, associations);
-                Assert.DoesNotContain(c2a, associations);
-
-                Assert.DoesNotContain(c1a, roles);
-                Assert.Contains(c2b, roles);
-                Assert.DoesNotContain(c2a, roles);
-
-                changes = this.Transaction.Checkpoint();
-
-                associations = changes.Associations.ToArray();
-                roles = changes.Roles.ToArray();
-
-                Assert.Empty(associations);
-                Assert.Empty(roles);
-                Assert.Empty(changes.GetRoleTypes(c1a));
-                Assert.Empty(changes.GetRoleTypes(c2b));
-                Assert.Empty(changes.GetRoleTypes(c2a));
-
+                // Add same to other
                 c1a.AddC1C2many2many(c2a);
 
-                this.Transaction.Rollback();
-
                 changes = this.Transaction.Checkpoint();
-
-                associations = changes.Associations.ToArray();
-                roles = changes.Roles.ToArray();
-
-                Assert.Empty(associations);
-                Assert.Empty(roles);
-
-                Assert.Empty(changes.GetRoleTypes(c1a));
-                Assert.Empty(changes.GetRoleTypes(c2b));
-                Assert.Empty(changes.GetRoleTypes(c2a));
-
-                c1a.AddC1C2many2many(c2a);
-
-                this.Transaction.Commit();
-
-                changes = this.Transaction.Checkpoint();
-
-                associations = changes.Associations.ToArray();
-                roles = changes.Roles.ToArray();
-
-                Assert.Empty(associations);
-                Assert.Empty(roles);
-
-                Assert.Empty(changes.GetRoleTypes(c1a));
-                Assert.Empty(changes.GetRoleTypes(c2b));
-                Assert.Empty(changes.GetRoleTypes(c2a));
-
+                
+                Assert.Single(changes.Associations);
+                Assert.Single(changes.Roles);
+                
                 c1b.AddC1C2many2many(c2a);
+                this.Transaction.Checkpoint();
 
-                changes = this.Transaction.Checkpoint();
-
-                associations = changes.Associations.ToArray();
-                roles = changes.Roles.ToArray();
-
-                Assert.Single(associations);
-                Assert.Single(roles);
-                Assert.Empty(changes.GetRoleTypes(c1a));
-                Assert.Single(changes.GetRoleTypes(c1b));
-                Assert.Empty(changes.GetRoleTypes(c2b));
-                Assert.Empty(changes.GetRoleTypes(c2a));
-
+                // Remove and add same
                 c1b.RemoveC1C2many2manies();
                 c1b.AddC1C2many2many(c2a);
 
                 changes = this.Transaction.Checkpoint();
 
-                associations = changes.Associations.ToArray();
-                roles = changes.Roles.ToArray();
+                Assert.Empty(changes.Associations);
+                Assert.Empty(changes.Roles);
 
-                Assert.Empty(associations);
-                Assert.Empty(roles);
+                // Remove all and add same
+                c1b.RemoveC1C2many2manies();
+                c1b.AddC1C2many2many(c2a);
 
-                Assert.Empty(changes.GetRoleTypes(c1a));
-                Assert.Empty(changes.GetRoleTypes(c2b));
-                Assert.Empty(changes.GetRoleTypes(c2a));
+                changes = this.Transaction.Checkpoint();
 
+                Assert.Empty(changes.Associations);
+                Assert.Empty(changes.Roles);
+
+                c1b.RemoveC1C2many2manies();
+                this.Transaction.Checkpoint();
+
+                // Add and remove all
+                c1b.AddC1C2many2many(c2a);
+                c1b.RemoveC1C2many2manies();
+
+                changes = this.Transaction.Checkpoint();
+
+                Assert.Empty(changes.Associations);
+                Assert.Empty(changes.Roles);
+
+                // Add and remove
+                c1b.AddC1C2many2many(c2a);
+                c1b.RemoveC1C2many2manies();
+
+                changes = this.Transaction.Checkpoint();
+
+                Assert.Empty(changes.Associations);
+                Assert.Empty(changes.Roles);
             }
         }
 
