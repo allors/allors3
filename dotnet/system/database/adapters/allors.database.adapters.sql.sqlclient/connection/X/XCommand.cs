@@ -12,15 +12,18 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
     using Meta;
 
-    public class Command : IDisposable, ICommand
+    public class XCommand : ICommand
     {
-        internal Command(Mapping mapping, SqlCommand command)
+        private XParameterCollection parameters;
+
+        internal XCommand(Mapping mapping, SqlCommand command)
         {
             this.Mapping = mapping;
             this.SqlCommand = command;
+            this.parameters = new XParameterCollection(this.SqlCommand.Parameters);
         }
 
-        internal SqlParameterCollection Parameters => this.SqlCommand.Parameters;
+        public ISqlParameterCollection Parameters => this.parameters;
 
         public CommandType CommandType
         {
@@ -42,8 +45,8 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public void Dispose() => this.SqlCommand.Dispose();
 
-        internal SqlParameter CreateParameter() => this.SqlCommand.CreateParameter();
-
+        public ISqlParameter CreateParameter() => new XParameter(this.SqlCommand.CreateParameter());
+        
         public void AddInParameter(string parameterName, object value)
         {
             var sqlParameter = this.SqlCommand.Parameters.Contains(parameterName) ? this.SqlCommand.Parameters[parameterName] : null;
@@ -81,131 +84,126 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public void AddTypeParameter(IClass @class)
         {
-            var sqlParameter = this.CreateParameter();
+            var sqlParameter = this.SqlCommand.CreateParameter();
             sqlParameter.ParameterName = Mapping.ParamNameForClass;
             sqlParameter.SqlDbType = Mapping.SqlDbTypeForClass;
             sqlParameter.Value = @class.Id;
 
-            this.Parameters.Add(sqlParameter);
+            this.parameters.Add(sqlParameter);
         }
 
         public void AddCountParameter(int count)
         {
-            var sqlParameter = this.CreateParameter();
+            var sqlParameter = this.SqlCommand.CreateParameter();
             sqlParameter.ParameterName = Mapping.ParamNameForCount;
             sqlParameter.SqlDbType = Mapping.SqlDbTypeForCount;
             sqlParameter.Value = count;
 
-            this.Parameters.Add(sqlParameter);
+            this.parameters.Add(sqlParameter);
+        }
+
+        public void AddUnitRoleParameter(IRoleType roleType, object unit)
+        {
+            var sqlParameter = this.SqlCommand.CreateParameter();
+            sqlParameter.ParameterName = this.Mapping.ParamNameByRoleType[roleType];
+            sqlParameter.SqlDbType = this.Mapping.GetSqlDbType(roleType);
+            sqlParameter.Value = unit ?? DBNull.Value;
+
+            this.parameters.Add(sqlParameter);
+        }
+
+        public void AddUnitTableParameter(IRoleType roleType, IEnumerable<UnitRelation> relations)
+        {
+            var sqlParameter = this.SqlCommand.CreateParameter();
+            sqlParameter.SqlDbType = SqlDbType.Structured;
+            sqlParameter.TypeName = this.Mapping.GetTableTypeName(roleType);
+            sqlParameter.ParameterName = Mapping.ParamNameForTableType;
+            sqlParameter.Value = new UnitRoleDataRecords(this.Mapping, roleType, relations);
+
+            this.parameters.Add(sqlParameter);
         }
 
         public void AddCompositeRoleParameter(long objectId)
         {
-            var sqlParameter = this.CreateParameter();
+            var sqlParameter = this.SqlCommand.CreateParameter();
             sqlParameter.ParameterName = Mapping.ParamNameForCompositeRole;
             sqlParameter.SqlDbType = Mapping.SqlDbTypeForObject;
             sqlParameter.Value = objectId;
 
-            this.Parameters.Add(sqlParameter);
+            this.parameters.Add(sqlParameter);
         }
 
         public void AddAssociationParameter(long objectId)
         {
-            var sqlParameter = this.CreateParameter();
+            var sqlParameter = this.SqlCommand.CreateParameter();
             sqlParameter.ParameterName = Mapping.ParamNameForAssociation;
             sqlParameter.SqlDbType = Mapping.SqlDbTypeForObject;
             sqlParameter.Value = objectId;
 
-            this.Parameters.Add(sqlParameter);
+            this.parameters.Add(sqlParameter);
         }
 
         public void AddObjectTableParameter(IEnumerable<Reference> references)
         {
-            var sqlParameter = this.CreateParameter();
+            var sqlParameter = this.SqlCommand.CreateParameter();
             sqlParameter.SqlDbType = SqlDbType.Structured;
             sqlParameter.TypeName = this.Mapping.TableTypeNameForObject;
             sqlParameter.ParameterName = Mapping.ParamNameForTableType;
             sqlParameter.Value = new CompositesRoleDataRecords(this.Mapping, references);
 
-            this.Parameters.Add(sqlParameter);
+            this.parameters.Add(sqlParameter);
         }
 
         public void AddObjectTableParameter(IEnumerable<long> objectIds)
         {
-            var sqlParameter = this.CreateParameter();
+            var sqlParameter = this.SqlCommand.CreateParameter();
             sqlParameter.SqlDbType = SqlDbType.Structured;
             sqlParameter.TypeName = this.Mapping.TableTypeNameForObject;
             sqlParameter.ParameterName = Mapping.ParamNameForTableType;
             sqlParameter.Value = new ObjectDataRecord(this.Mapping, objectIds);
-            ;
 
-            this.Parameters.Add(sqlParameter);
+            this.parameters.Add(sqlParameter);
         }
 
         public void AddCompositeRoleTableParameter(IEnumerable<CompositeRelation> relations)
         {
-            var sqlParameter = this.CreateParameter();
+            var sqlParameter = this.SqlCommand.CreateParameter();
             sqlParameter.SqlDbType = SqlDbType.Structured;
             sqlParameter.TypeName = this.Mapping.TableTypeNameForCompositeRelation;
             sqlParameter.ParameterName = Mapping.ParamNameForTableType;
             sqlParameter.Value = new CompositeRoleDataRecords(this.Mapping, relations);
 
-            this.Parameters.Add(sqlParameter);
+            this.parameters.Add(sqlParameter);
         }
 
         public void AddAssociationTableParameter(long objectId)
         {
-            var sqlParameter = this.CreateParameter();
+            var sqlParameter = this.SqlCommand.CreateParameter();
             sqlParameter.ParameterName = Mapping.ParamNameForAssociation;
             sqlParameter.SqlDbType = Mapping.SqlDbTypeForObject;
             sqlParameter.Value = objectId;
 
-            this.Parameters.Add(sqlParameter);
+            this.parameters.Add(sqlParameter);
         }
 
-        public object ExecuteScalar()
-        {
-            return this.SqlCommand.ExecuteScalar();
-        }
+        public object ExecuteScalar() => this.SqlCommand.ExecuteScalar();
 
-        public void ExecuteNonQuery()
-        {
-            this.SqlCommand.ExecuteNonQuery();
-        }
+        public void ExecuteNonQuery() => this.SqlCommand.ExecuteNonQuery();
 
         public DataReader ExecuteReader() => new XDataReader(this.SqlCommand.ExecuteReader());
 
-        public object GetValue(DataReader reader, int tag, int i)
-        {
-            switch (tag)
+        public object GetValue(DataReader reader, int tag, int i) =>
+            tag switch
             {
-                case UnitTags.Binary:
-                    return reader.GetValue(i);
-
-                case UnitTags.Boolean:
-                    return reader.GetBoolean(i);
-
-                case UnitTags.DateTime:
-                    return reader.GetDateTime(i);
-
-                case UnitTags.Decimal:
-                    return reader.GetDecimal(i);
-
-                case UnitTags.Float:
-                    return reader.GetDouble(i);
-
-                case UnitTags.Integer:
-                    return reader.GetInt32(i);
-
-                case UnitTags.String:
-                    return reader.GetString(i);
-
-                case UnitTags.Unique:
-                    return reader.GetGuid(i);
-
-                default:
-                    throw new ArgumentException("Unknown Unit Tag: " + tag);
-            }
-        }
+                UnitTags.Binary => reader.GetValue(i),
+                UnitTags.Boolean => reader.GetBoolean(i),
+                UnitTags.DateTime => reader.GetDateTime(i),
+                UnitTags.Decimal => reader.GetDecimal(i),
+                UnitTags.Float => reader.GetDouble(i),
+                UnitTags.Integer => reader.GetInt32(i),
+                UnitTags.String => reader.GetString(i),
+                UnitTags.Unique => reader.GetGuid(i),
+                _ => throw new ArgumentException("Unknown Unit Tag: " + tag)
+            };
     }
 }

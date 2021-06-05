@@ -18,7 +18,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         private Dictionary<string, object> properties;
 
-        internal Transaction(Database database, Connection connection, ITransactionServices scope)
+        internal Transaction(Database database, IConnection connection, ITransactionServices scope)
         {
             this.Database = database;
             this.Connection = connection;
@@ -32,7 +32,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             this.Services.OnInit(this);
         }
 
-        public Connection Connection { get; }
+        public IConnection Connection { get; }
 
         public Commands Commands { get; }
 

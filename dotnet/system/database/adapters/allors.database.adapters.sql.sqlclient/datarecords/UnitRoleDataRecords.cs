@@ -14,13 +14,13 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
     internal class UnitRoleDataRecords : IEnumerable<SqlDataRecord>
     {
-        private readonly Database database;
+        private readonly Mapping mapping;
         private readonly IRoleType roleType;
         private readonly IEnumerable<UnitRelation> relations;
 
-        internal UnitRoleDataRecords(Database database, IRoleType roleType, IEnumerable<UnitRelation> relations)
+        internal UnitRoleDataRecords(Mapping mapping, IRoleType roleType, IEnumerable<UnitRelation> relations)
         {
-            this.database = database;
+            this.mapping = mapping;
             this.roleType = roleType;
             this.relations = relations;
         }
@@ -29,8 +29,8 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         {
             var metaData = new[]
                                 {
-                                    new SqlMetaData(this.database.Mapping.TableTypeColumnNameForAssociation, SqlDbType.BigInt),
-                                    this.database.GetSqlMetaData(this.database.Mapping.TableTypeColumnNameForRole, this.roleType),
+                                    new SqlMetaData(this.mapping.TableTypeColumnNameForAssociation, SqlDbType.BigInt),
+                                    this.GetSqlMetaData(this.mapping.TableTypeColumnNameForRole, this.roleType),
                                 };
             var sqlDataRecord = new SqlDataRecord(metaData);
 
@@ -52,5 +52,50 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         }
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+        private SqlMetaData GetSqlMetaData(string name, IRoleType roleType)
+        {
+            var unit = (IUnit)roleType.ObjectType;
+            switch (unit.Tag)
+            {
+                case UnitTags.String:
+                    if (roleType.Size == -1 || roleType.Size > 4000)
+                    {
+                        return new SqlMetaData(name, SqlDbType.NVarChar, -1);
+                    }
+
+                    return new SqlMetaData(name, SqlDbType.NVarChar, roleType.Size.Value);
+
+                case UnitTags.Integer:
+                    return new SqlMetaData(name, SqlDbType.Int);
+
+                case UnitTags.Decimal:
+                    return new SqlMetaData(name, SqlDbType.Decimal, (byte)roleType.Precision.Value, (byte)roleType.Scale.Value);
+
+                case UnitTags.Float:
+                    return new SqlMetaData(name, SqlDbType.Float);
+
+                case UnitTags.Boolean:
+                    return new SqlMetaData(name, SqlDbType.Bit);
+
+                case UnitTags.DateTime:
+                    return new SqlMetaData(name, SqlDbType.DateTime2);
+
+                case UnitTags.Unique:
+                    return new SqlMetaData(name, SqlDbType.UniqueIdentifier);
+
+                case UnitTags.Binary:
+                    if (roleType.Size == -1 || roleType.Size > 8000)
+                    {
+                        return new SqlMetaData(name, SqlDbType.VarBinary, -1);
+                    }
+
+                    return new SqlMetaData(name, SqlDbType.VarBinary, (long)roleType.Size);
+
+                default:
+                    throw new Exception("!UNKNOWN VALUE TYPE!");
+            }
+        }
+
     }
 }

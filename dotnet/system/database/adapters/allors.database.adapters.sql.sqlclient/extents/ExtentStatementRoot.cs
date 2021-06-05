@@ -15,7 +15,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         private readonly Dictionary<object, string> paramNameByParamValue;
         private readonly StringBuilder sql;
         private int aliasIndex;
-        private Command command;
+        private ICommand command;
         private int parameterIndex;
 
         internal ExtentStatementRoot(SqlExtent extent) : base(extent)
@@ -50,7 +50,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         internal override ExtentStatement CreateChild(SqlExtent extent, IRoleType role) => new ExtentStatementChild(this, extent, role);
 
-        internal Command CreateDbCommand(string alias)
+        internal ICommand CreateDbCommand(string alias)
         {
             if (this.sql.Length == 0)
             {

@@ -416,35 +416,19 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         public string GetTableTypeName(IRoleType roleType)
         {
             var unitTypeTag = ((IUnit)roleType.ObjectType).Tag;
-            switch (unitTypeTag)
+            return unitTypeTag switch
             {
-                case UnitTags.String:
-                    return this.TableTypeNameForStringRelation;
-
-                case UnitTags.Integer:
-                    return this.TableTypeNameForIntegerRelation;
-
-                case UnitTags.Float:
-                    return this.TableTypeNameForFloatRelation;
-
-                case UnitTags.Boolean:
-                    return this.TableTypeNameForBooleanRelation;
-
-                case UnitTags.DateTime:
-                    return this.TableTypeNameForDateTimeRelation;
-
-                case UnitTags.Unique:
-                    return this.TableTypeNameForUniqueRelation;
-
-                case UnitTags.Binary:
-                    return this.TableTypeNameForBinaryRelation;
-
-                case UnitTags.Decimal:
-                    return this.TableTypeNameForDecimalRelationByScaleByPrecision[roleType.Precision.Value][roleType.Scale.Value];
-
-                default:
-                    throw new ArgumentException("Unknown Unit ObjectType: " + unitTypeTag);
-            }
+                UnitTags.String => this.TableTypeNameForStringRelation,
+                UnitTags.Integer => this.TableTypeNameForIntegerRelation,
+                UnitTags.Float => this.TableTypeNameForFloatRelation,
+                UnitTags.Boolean => this.TableTypeNameForBooleanRelation,
+                UnitTags.DateTime => this.TableTypeNameForDateTimeRelation,
+                UnitTags.Unique => this.TableTypeNameForUniqueRelation,
+                UnitTags.Binary => this.TableTypeNameForBinaryRelation,
+                UnitTags.Decimal => this.TableTypeNameForDecimalRelationByScaleByPrecision[roleType.Precision.Value][
+                    roleType.Scale.Value],
+                _ => throw new ArgumentException("Unknown Unit ObjectType: " + unitTypeTag)
+            };
         }
 
         internal string NormalizeName(string name)
@@ -505,35 +489,18 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         internal SqlDbType GetSqlDbType(IRoleType roleType)
         {
             var unit = (IUnit)roleType.ObjectType;
-            switch (unit.Tag)
+            return unit.Tag switch
             {
-                case UnitTags.String:
-                    return SqlDbType.NVarChar;
-
-                case UnitTags.Integer:
-                    return SqlDbType.Int;
-
-                case UnitTags.Decimal:
-                    return SqlDbType.Decimal;
-
-                case UnitTags.Float:
-                    return SqlDbType.Float;
-
-                case UnitTags.Boolean:
-                    return SqlDbType.Bit;
-
-                case UnitTags.DateTime:
-                    return SqlDbType.DateTime2;
-
-                case UnitTags.Unique:
-                    return SqlDbType.UniqueIdentifier;
-
-                case UnitTags.Binary:
-                    return SqlDbType.VarBinary;
-
-                default:
-                    throw new Exception("Unknown Unit Type");
-            }
+                UnitTags.String => SqlDbType.NVarChar,
+                UnitTags.Integer => SqlDbType.Int,
+                UnitTags.Decimal => SqlDbType.Decimal,
+                UnitTags.Float => SqlDbType.Float,
+                UnitTags.Boolean => SqlDbType.Bit,
+                UnitTags.DateTime => SqlDbType.DateTime2,
+                UnitTags.Unique => SqlDbType.UniqueIdentifier,
+                UnitTags.Binary => SqlDbType.VarBinary,
+                _ => throw new Exception("Unknown Unit Type")
+            };
         }
 
         private void LoadObjects(IClass @class)
@@ -855,44 +822,19 @@ END";
             var name = this.Database.SchemaName + "." + ProcedurePrefixForSetRole + @class.Name.ToLowerInvariant() + "_" + roleType.SingularFullName.ToLowerInvariant();
             procedureNameForSetUnitRoleByRelationType.Add(relationType, name);
 
-            string tableTypeName;
-            switch (unitTypeTag)
+            string tableTypeName = unitTypeTag switch
             {
-                case UnitTags.String:
-                    tableTypeName = this.TableTypeNameForStringRelation;
-                    break;
-
-                case UnitTags.Integer:
-                    tableTypeName = this.TableTypeNameForIntegerRelation;
-                    break;
-
-                case UnitTags.Float:
-                    tableTypeName = this.TableTypeNameForFloatRelation;
-                    break;
-
-                case UnitTags.Decimal:
-                    tableTypeName = this.TableTypeNameForDecimalRelationByScaleByPrecision[roleType.Precision.Value][roleType.Scale.Value];
-                    break;
-
-                case UnitTags.Boolean:
-                    tableTypeName = this.TableTypeNameForBooleanRelation;
-                    break;
-
-                case UnitTags.DateTime:
-                    tableTypeName = this.TableTypeNameForDateTimeRelation;
-                    break;
-
-                case UnitTags.Unique:
-                    tableTypeName = this.TableTypeNameForUniqueRelation;
-                    break;
-
-                case UnitTags.Binary:
-                    tableTypeName = this.TableTypeNameForBinaryRelation;
-                    break;
-
-                default:
-                    throw new ArgumentException("Unknown Unit ObjectType: " + roleType.ObjectType.SingularName);
-            }
+                UnitTags.String => this.TableTypeNameForStringRelation,
+                UnitTags.Integer => this.TableTypeNameForIntegerRelation,
+                UnitTags.Float => this.TableTypeNameForFloatRelation,
+                UnitTags.Decimal => this.TableTypeNameForDecimalRelationByScaleByPrecision[roleType.Precision.Value][
+                    roleType.Scale.Value],
+                UnitTags.Boolean => this.TableTypeNameForBooleanRelation,
+                UnitTags.DateTime => this.TableTypeNameForDateTimeRelation,
+                UnitTags.Unique => this.TableTypeNameForUniqueRelation,
+                UnitTags.Binary => this.TableTypeNameForBinaryRelation,
+                _ => throw new ArgumentException("Unknown Unit ObjectType: " + roleType.ObjectType.SingularName)
+            };
 
             var definition = $@"
 CREATE PROCEDURE {name}

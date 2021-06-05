@@ -2,8 +2,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 {
     public interface IConnection
     {
-        Command CreateCommand();
+        ICommand CreateCommand();
+
         void Commit();
+
         void Rollback();
     }
 }

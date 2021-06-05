@@ -27,23 +27,13 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             {
                 var columnName = columnNames[i];
 
-                switch (columnName.ToLowerInvariant())
+                this.getValueFuncs[i] = columnName.ToLowerInvariant() switch
                 {
-                    case Mapping.ColumnNameForObject:
-                        this.getValueFuncs[i] = current => current.Key;
-                        break;
-
-                    case Mapping.ColumnNameForClass:
-                        this.getValueFuncs[i] = current => current.Value.Id;
-                        break;
-
-                    case Mapping.ColumnNameForVersion:
-                        this.getValueFuncs[i] = current => objectVersionByObjectId[current.Key];
-                        break;
-
-                    default:
-                        throw new Exception("Unknown column name " + columnName);
-                }
+                    Mapping.ColumnNameForObject => current => current.Key,
+                    Mapping.ColumnNameForClass => current => current.Value.Id,
+                    Mapping.ColumnNameForVersion => current => objectVersionByObjectId[current.Key],
+                    _ => throw new Exception("Unknown column name " + columnName)
+                };
             }
         }
 

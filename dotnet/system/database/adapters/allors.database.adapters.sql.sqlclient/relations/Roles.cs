@@ -40,16 +40,16 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         }
 
         internal Dictionary<IRoleType, object> ModifiedRoleByRoleType =>
-            this.modifiedRoleByRoleType ?? (this.modifiedRoleByRoleType = new Dictionary<IRoleType, object>());
+            this.modifiedRoleByRoleType ??= new Dictionary<IRoleType, object>();
 
         private Dictionary<IRoleType, object> OriginalRoleByRoleType =>
-            this.originalRoleByRoleType ?? (this.originalRoleByRoleType = new Dictionary<IRoleType, object>());
+            this.originalRoleByRoleType ??= new Dictionary<IRoleType, object>();
 
         private HashSet<IRoleType> RequireFlushRoles =>
-            this.requireFlushRoles ?? (this.requireFlushRoles = new HashSet<IRoleType>());
+            this.requireFlushRoles ??= new HashSet<IRoleType>();
 
         private Dictionary<IRoleType, CompositesRole> ModifiedRolesByRoleType =>
-            this.modifiedCompositesRoleByRoleType ?? (this.modifiedCompositesRoleByRoleType = new Dictionary<IRoleType, CompositesRole>());
+            this.modifiedCompositesRoleByRoleType ??= new Dictionary<IRoleType, CompositesRole>();
 
         internal bool TryGetUnitRole(IRoleType roleType, out object role)
         {

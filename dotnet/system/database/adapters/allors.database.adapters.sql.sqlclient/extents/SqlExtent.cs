@@ -27,7 +27,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         internal ExtentSort Sorter { get; private set; }
 
-        private IList<long> ObjectIds => this.objectIds ?? (this.objectIds = this.GetObjectIds());
+        private IList<long> ObjectIds => this.objectIds ??= this.GetObjectIds();
 
         internal new IObject this[int index] => this.GetItem(index);
 

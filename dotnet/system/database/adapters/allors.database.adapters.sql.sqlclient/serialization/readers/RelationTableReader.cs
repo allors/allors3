@@ -25,19 +25,12 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             {
                 var columnName = columnNames[i];
 
-                switch (columnName.ToLowerInvariant())
+                this.getValueFuncs[i] = columnName.ToLowerInvariant() switch
                 {
-                    case Mapping.ColumnNameForAssociation:
-                        this.getValueFuncs[i] = current => current.Key;
-                        break;
-
-                    case Mapping.ColumnNameForRole:
-                        this.getValueFuncs[i] = current => current.Value;
-                        break;
-
-                    default:
-                        throw new Exception("Unknown column name " + columnName);
-                }
+                    Mapping.ColumnNameForAssociation => current => current.Key,
+                    Mapping.ColumnNameForRole => current => current.Value,
+                    _ => throw new Exception("Unknown column name " + columnName)
+                };
             }
         }
 

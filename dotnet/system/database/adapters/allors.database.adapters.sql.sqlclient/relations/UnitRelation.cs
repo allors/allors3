@@ -5,7 +5,7 @@
 
 namespace Allors.Database.Adapters.Sql.SqlClient
 {
-    internal class UnitRelation
+    public class UnitRelation
     {
         internal readonly long Association;
         internal readonly object Role;

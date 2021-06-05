@@ -19,7 +19,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public Database Database { get; }
 
-        public Connection Connection { get; }
+        public IConnection Connection { get; }
 
         public void Dispose() => this.Rollback();
 

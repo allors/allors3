@@ -15,10 +15,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
     internal class Prefetcher
     {
-        private Dictionary<IClass, Command> prefetchUnitRolesByClass;
-        private Dictionary<IRoleType, Command> prefetchCompositeRoleByRoleType;
-        private Dictionary<IRoleType, Command> prefetchCompositesRoleByRoleType;
-        private Dictionary<IAssociationType, Command> prefetchCompositeAssociationByAssociationType;
+        private Dictionary<IClass, ICommand> prefetchUnitRolesByClass;
+        private Dictionary<IRoleType, ICommand> prefetchCompositeRoleByRoleType;
+        private Dictionary<IRoleType, ICommand> prefetchCompositesRoleByRoleType;
+        private Dictionary<IAssociationType, ICommand> prefetchCompositeAssociationByAssociationType;
 
         public Prefetcher(Transaction transaction) => this.Transaction = transaction;
 
@@ -26,13 +26,13 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public Database Database => this.Transaction.Database;
 
-        private Dictionary<IClass, Command> PrefetchUnitRolesByClass => this.prefetchUnitRolesByClass ?? (this.prefetchUnitRolesByClass = new Dictionary<IClass, Command>());
+        private Dictionary<IClass, ICommand> PrefetchUnitRolesByClass => this.prefetchUnitRolesByClass ??= new Dictionary<IClass, ICommand>();
 
-        private Dictionary<IRoleType, Command> PrefetchCompositeRoleByRoleType => this.prefetchCompositeRoleByRoleType ?? (this.prefetchCompositeRoleByRoleType = new Dictionary<IRoleType, Command>());
+        private Dictionary<IRoleType, ICommand> PrefetchCompositeRoleByRoleType => this.prefetchCompositeRoleByRoleType ??= new Dictionary<IRoleType, ICommand>();
 
-        private Dictionary<IRoleType, Command> PrefetchCompositesRoleByRoleType => this.prefetchCompositesRoleByRoleType ?? (this.prefetchCompositesRoleByRoleType = new Dictionary<IRoleType, Command>());
+        private Dictionary<IRoleType, ICommand> PrefetchCompositesRoleByRoleType => this.prefetchCompositesRoleByRoleType ??= new Dictionary<IRoleType, ICommand>();
 
-        private Dictionary<IAssociationType, Command> PrefetchCompositeAssociationByAssociationType => this.prefetchCompositeAssociationByAssociationType ?? (this.prefetchCompositeAssociationByAssociationType = new Dictionary<IAssociationType, Command>());
+        private Dictionary<IAssociationType, ICommand> PrefetchCompositeAssociationByAssociationType => this.prefetchCompositeAssociationByAssociationType ??= new Dictionary<IAssociationType, ICommand>();
 
         internal HashSet<Reference> GetReferencesForPrefetching(IEnumerable<long> objectIds)
         {

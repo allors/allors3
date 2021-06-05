@@ -106,14 +106,14 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public IConnectionFactory ConnectionFactory
         {
-            get => this.connectionFactory ??= new ConnectionFactory();
+            get => this.connectionFactory ??= new XConnectionFactory();
 
             set => this.connectionFactory = value;
         }
 
         public IConnectionFactory ManagementConnectionFactory
         {
-            get => this.managementConnectionFactory ??= new ConnectionFactory();
+            get => this.managementConnectionFactory ??= new XConnectionFactory();
 
             set => this.managementConnectionFactory = value;
         }
@@ -192,7 +192,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             return this.CreateTransaction(connection);
         }
 
-        public ITransaction CreateTransaction(Connection connection)
+        public ITransaction CreateTransaction(IConnection connection)
         {
             if (!this.IsValid)
             {
@@ -312,7 +312,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         internal IEnumerable<SqlDataRecord> CreateCompositeRelationTable(IEnumerable<CompositeRelation> relations) => new CompositeRoleDataRecords(this.mapping, relations);
 
-        internal IEnumerable<SqlDataRecord> CreateUnitRelationTable(IRoleType roleType, IEnumerable<UnitRelation> relations) => new UnitRoleDataRecords(this, roleType, relations);
+        internal IEnumerable<SqlDataRecord> CreateUnitRelationTable(IRoleType roleType, IEnumerable<UnitRelation> relations) => new UnitRoleDataRecords(this.mapping, roleType, relations);
 
         internal Type GetDomainType(IObjectType objectType) => this.ObjectFactory.GetType(objectType);
 
@@ -327,51 +327,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
 
             return sortedUnitRoles;
-        }
-
-        // TODO: inline
-        internal SqlMetaData GetSqlMetaData(string name, IRoleType roleType)
-        {
-            var unit = (IUnit)roleType.ObjectType;
-            switch (unit.Tag)
-            {
-                case UnitTags.String:
-                    if (roleType.Size == -1 || roleType.Size > 4000)
-                    {
-                        return new SqlMetaData(name, SqlDbType.NVarChar, -1);
-                    }
-
-                    return new SqlMetaData(name, SqlDbType.NVarChar, roleType.Size.Value);
-
-                case UnitTags.Integer:
-                    return new SqlMetaData(name, SqlDbType.Int);
-
-                case UnitTags.Decimal:
-                    return new SqlMetaData(name, SqlDbType.Decimal, (byte)roleType.Precision.Value, (byte)roleType.Scale.Value);
-
-                case UnitTags.Float:
-                    return new SqlMetaData(name, SqlDbType.Float);
-
-                case UnitTags.Boolean:
-                    return new SqlMetaData(name, SqlDbType.Bit);
-
-                case UnitTags.DateTime:
-                    return new SqlMetaData(name, SqlDbType.DateTime2);
-
-                case UnitTags.Unique:
-                    return new SqlMetaData(name, SqlDbType.UniqueIdentifier);
-
-                case UnitTags.Binary:
-                    if (roleType.Size == -1 || roleType.Size > 8000)
-                    {
-                        return new SqlMetaData(name, SqlDbType.VarBinary, -1);
-                    }
-
-                    return new SqlMetaData(name, SqlDbType.VarBinary, (long)roleType.Size);
-
-                default:
-                    throw new Exception("!UNKNOWN VALUE TYPE!");
-            }
         }
 
         private void ResetSchema() => this.mapping = null;

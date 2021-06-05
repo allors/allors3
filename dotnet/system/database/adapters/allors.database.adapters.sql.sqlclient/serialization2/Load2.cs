@@ -276,16 +276,12 @@ where c = '{@class.Id}'";
                                     if (reader.IsEmptyElement)
                                     {
                                         var unitType = (IUnit)relationType.RoleType.ObjectType;
-                                        switch (unitType.Tag)
+                                        unit = unitType.Tag switch
                                         {
-                                            case UnitTags.String:
-                                                unit = string.Empty;
-                                                break;
-
-                                            case UnitTags.Binary:
-                                                unit = Array.Empty<byte>();
-                                                break;
-                                        }
+                                            UnitTags.String => string.Empty,
+                                            UnitTags.Binary => Array.Empty<byte>(),
+                                            _ => unit
+                                        };
                                     }
                                     else
                                     {
@@ -316,22 +312,11 @@ where c = '{@class.Id}'";
                 {
                     var @class = kvp.Key;
                     var unitRelations = kvp.Value;
-
-                    var tableTypeName = this.database.Mapping.GetTableTypeName(relationType.RoleType);
-
                     var sql = this.database.Mapping.ProcedureNameForSetUnitRoleByRelationTypeByClass[@class][relationType];
                     var command = con.CreateCommand();
                     command.CommandText = sql;
                     command.CommandType = CommandType.StoredProcedure;
-
-                    var sqlParameter = command.CreateParameter();
-                    sqlParameter.SqlDbType = SqlDbType.Structured;
-                    sqlParameter.TypeName = tableTypeName;
-                    sqlParameter.ParameterName = Mapping.ParamNameForTableType;
-                    sqlParameter.Value = this.database.CreateUnitRelationTable(relationType.RoleType, unitRelations);
-
-                    command.Parameters.Add(sqlParameter);
-
+                    command.AddUnitTableParameter(relationType.RoleType, unitRelations);
                     command.ExecuteNonQuery();
                 }
 
