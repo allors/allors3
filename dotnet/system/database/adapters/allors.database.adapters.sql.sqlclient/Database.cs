@@ -106,14 +106,14 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public IConnectionFactory ConnectionFactory
         {
-            get => this.connectionFactory ??= new XConnectionFactory();
+            get => this.connectionFactory ??= new ConnectionFactory(this);
 
             set => this.connectionFactory = value;
         }
 
         public IConnectionFactory ManagementConnectionFactory
         {
-            get => this.managementConnectionFactory ??= new XConnectionFactory();
+            get => this.managementConnectionFactory ??= new ConnectionFactory(this);
 
             set => this.managementConnectionFactory = value;
         }
@@ -188,7 +188,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public ITransaction CreateTransaction()
         {
-            var connection = this.ConnectionFactory.Create(this);
+            var connection = this.ConnectionFactory.Create();
             return this.CreateTransaction(connection);
         }
 

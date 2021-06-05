@@ -12,15 +12,15 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
     using Meta;
 
-    public class XCommand : ICommand
+    public class Command : ICommand
     {
-        private XParameterCollection parameters;
+        private ParameterCollection parameters;
 
-        internal XCommand(Mapping mapping, SqlCommand command)
+        internal Command(Mapping mapping, SqlCommand command)
         {
             this.Mapping = mapping;
             this.SqlCommand = command;
-            this.parameters = new XParameterCollection(this.SqlCommand.Parameters);
+            this.parameters = new ParameterCollection(this.SqlCommand.Parameters);
         }
 
         public ISqlParameterCollection Parameters => this.parameters;
@@ -45,7 +45,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public void Dispose() => this.SqlCommand.Dispose();
 
-        public ISqlParameter CreateParameter() => new XParameter(this.SqlCommand.CreateParameter());
+        public ISqlParameter CreateParameter() => new Parameter(this.SqlCommand.CreateParameter());
         
         public void AddInParameter(string parameterName, object value)
         {
@@ -190,9 +190,9 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public void ExecuteNonQuery() => this.SqlCommand.ExecuteNonQuery();
 
-        public DataReader ExecuteReader() => new XDataReader(this.SqlCommand.ExecuteReader());
+        public IReader ExecuteReader() => new Reader(this.SqlCommand.ExecuteReader());
 
-        public object GetValue(DataReader reader, int tag, int i) =>
+        public object GetValue(IReader reader, int tag, int i) =>
             tag switch
             {
                 UnitTags.Binary => reader.GetValue(i),

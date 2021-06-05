@@ -12,7 +12,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         internal ManagementTransaction(Database database, IConnectionFactory connectionFactory)
         {
             this.Database = database;
-            this.Connection = connectionFactory.Create(database);
+            this.Connection = connectionFactory.Create();
         }
 
         ~ManagementTransaction() => this.Dispose();

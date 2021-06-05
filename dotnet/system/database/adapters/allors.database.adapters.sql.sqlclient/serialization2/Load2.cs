@@ -305,7 +305,7 @@ where c = '{@class.Id}'";
                 }
             }
 
-            var con = this.database.ConnectionFactory.Create(this.database);
+            var con = this.database.ConnectionFactory.Create();
             try
             {
                 foreach (var kvp in unitRelationsByClass)
@@ -330,7 +330,7 @@ where c = '{@class.Id}'";
 
         private void LoadCompositeRelations(XmlReader reader, IRelationType relationType)
         {
-            var con = this.database.ConnectionFactory.Create(this.database);
+            var con = this.database.ConnectionFactory.Create();
             try
             {
                 var relations = new CompositeRelations(

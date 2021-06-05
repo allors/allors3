@@ -7,6 +7,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 {
     public interface IConnectionFactory
     {
-        IConnection Create(Database database);
+        IConnection Create();
     }
 }

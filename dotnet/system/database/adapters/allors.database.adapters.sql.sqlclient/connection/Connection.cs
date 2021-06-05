@@ -7,11 +7,11 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 {
     using Microsoft.Data.SqlClient;
 
-    public class XConnection : IConnection
+    public class Connection : IConnection
     {
         internal Database Database { get; }
 
-        internal XConnection(Database database) => this.Database = database;
+        internal Connection(Database database) => this.Database = database;
 
         protected SqlConnection SqlConnection { get; private set; }
 
@@ -80,6 +80,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
         }
 
-        protected ICommand CreateCommand(Mapping mapping, SqlCommand sqlCommand) => new XCommand(mapping, sqlCommand);
+        protected ICommand CreateCommand(Mapping mapping, SqlCommand sqlCommand) => new Command(mapping, sqlCommand);
     }
 }

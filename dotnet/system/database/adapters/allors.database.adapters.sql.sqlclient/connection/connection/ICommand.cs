@@ -41,10 +41,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         void ExecuteNonQuery();
 
-        DataReader ExecuteReader();
+        IReader ExecuteReader();
 
         ISqlParameter CreateParameter();
 
-        object GetValue(DataReader reader, int tag, int i);
+        object GetValue(IReader reader, int tag, int i);
     }
 }

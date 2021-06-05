@@ -5,8 +5,12 @@
 
 namespace Allors.Database.Adapters.Sql.SqlClient
 {
-    public sealed class XConnectionFactory : IConnectionFactory
+    public sealed class ConnectionFactory : IConnectionFactory
     {
-        public IConnection Create(Database database) => new XConnection(database);
+        private readonly Database database;
+
+        public ConnectionFactory(Database database) => this.database = database;
+
+        public IConnection Create() => new Connection(this.database);
     }
 }

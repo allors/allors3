@@ -8,21 +8,21 @@ namespace Allors.Database.Adapters.Sql.SqlClient
     using System.Collections.Generic;
     using Microsoft.Data.SqlClient;
 
-    public class XParameterCollection : ISqlParameterCollection
+    public class ParameterCollection : ISqlParameterCollection
     {
         private readonly SqlParameterCollection sqlCommandParameters;
-        private readonly Dictionary<string, XParameter> parametersByLowercaseName;
+        private readonly Dictionary<string, Parameter> parametersByLowercaseName;
 
-        public XParameterCollection(SqlParameterCollection sqlCommandParameters)
+        public ParameterCollection(SqlParameterCollection sqlCommandParameters)
         {
             this.sqlCommandParameters = sqlCommandParameters;
-            this.parametersByLowercaseName = new Dictionary<string, XParameter>();
+            this.parametersByLowercaseName = new Dictionary<string, Parameter>();
         }
 
         public void Add(SqlParameter sqlParameter)
         {
             this.sqlCommandParameters.Add(sqlParameter);
-            this.parametersByLowercaseName.Add(sqlParameter.ParameterName, new XParameter(sqlParameter));
+            this.parametersByLowercaseName.Add(sqlParameter.ParameterName, new Parameter(sqlParameter));
         }
 
         public ISqlParameter this[string name]

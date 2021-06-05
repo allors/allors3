@@ -119,7 +119,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command.Parameters[Mapping.ParamNameForObject].Value = reference.ObjectId;
             }
 
-            using (DataReader reader = command.ExecuteReader())
+            using (IReader reader = command.ExecuteReader())
             {
                 if (reader.Read())
                 {

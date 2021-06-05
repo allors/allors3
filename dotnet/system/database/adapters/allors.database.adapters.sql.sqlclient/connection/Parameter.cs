@@ -7,11 +7,11 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 {
     using Microsoft.Data.SqlClient;
 
-    public class XParameter : ISqlParameter
+    public class Parameter : ISqlParameter
     {
         public SqlParameter SqlParameter { get; }
 
-        public XParameter(SqlParameter sqlParameter) => this.SqlParameter = sqlParameter;
+        public Parameter(SqlParameter sqlParameter) => this.SqlParameter = sqlParameter;
 
         public object Value
         {
