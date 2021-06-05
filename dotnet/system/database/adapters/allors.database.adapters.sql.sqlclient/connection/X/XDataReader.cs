@@ -30,7 +30,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public override int GetInt32(int i) => this.reader.GetInt32(i);
 
-        public override long GetInt64(int i) => throw new System.NotImplementedException();
+        public override long GetInt64(int i) => this.reader.GetInt64(i);
 
         public override string GetString(int i) => this.reader.GetString(i);
 
@@ -38,6 +38,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public override bool IsDBNull(int i) => this.reader.IsDBNull(i);
 
-        public override void Dispose() => throw new System.NotImplementedException();
+        public override void Dispose() => this.reader.Dispose();
     }
 }
