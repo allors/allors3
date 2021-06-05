@@ -6,7 +6,7 @@
 //   Defines the Default type.
 // </summary>
 
-namespace Allors.Database.Adapters.Npgsql
+namespace Allors.Database.Adapters.Sql.Npgsql
 {
     using Xunit;
     using Adapters;

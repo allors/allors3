@@ -57,10 +57,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Adapters", "Adapters", "{6F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database.Adapters.Memory", "System\Database\Adapters\Allors.Database.Adapters.Memory\Allors.Database.Adapters.Memory.csproj", "{2E51588E-5B68-4567-89BC-D5BF23477533}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database.Adapters.Npgsql", "System\Database\Adapters\Allors.Database.Adapters.Npgsql\Allors.Database.Adapters.Npgsql.csproj", "{3EE40273-63C4-4256-B696-095AE3CCEF02}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database.Adapters.SqlClient", "System\Database\Adapters\Allors.Database.Adapters.SqlClient\Allors.Database.Adapters.SqlClient.csproj", "{C3522D53-6374-4AED-9A98-B22EA151CBF4}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "System\Database\Adapters\Domain\Domain.csproj", "{FBD5B903-8399-4B35-8817-9C0B38934A42}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Generate", "System\Database\Adapters\Generate\Generate.csproj", "{A721433D-B667-4623-A451-51360D6EC048}"
@@ -213,6 +209,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resources", "legacy\databas
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Generate", "legacy\database\generate\Generate.csproj", "{04EEF324-81B7-481B-AAFA-9332F3789495}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database.Adapters.Sql", "system\database\adapters\allors.database.adapters.sql\Allors.Database.Adapters.Sql.csproj", "{250FB5D8-A9CF-4528-9A9D-53BB803AAB45}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database.Adapters.Sql.Npgsql", "system\database\adapters\allors.database.adapters.sql.npgsql\Allors.Database.Adapters.Sql.Npgsql.csproj", "{ACB9C906-8E04-4480-A198-7FE83008E9B5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database.Adapters.Sql.SqlClient", "system\database\adapters\allors.database.adapters.sql.sqlclient\Allors.Database.Adapters.Sql.SqlClient.csproj", "{2848F034-C0E1-4934-AD2C-982A23BB940C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -279,14 +281,6 @@ Global
 		{2E51588E-5B68-4567-89BC-D5BF23477533}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E51588E-5B68-4567-89BC-D5BF23477533}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E51588E-5B68-4567-89BC-D5BF23477533}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3EE40273-63C4-4256-B696-095AE3CCEF02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3EE40273-63C4-4256-B696-095AE3CCEF02}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3EE40273-63C4-4256-B696-095AE3CCEF02}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3EE40273-63C4-4256-B696-095AE3CCEF02}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C3522D53-6374-4AED-9A98-B22EA151CBF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C3522D53-6374-4AED-9A98-B22EA151CBF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C3522D53-6374-4AED-9A98-B22EA151CBF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C3522D53-6374-4AED-9A98-B22EA151CBF4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FBD5B903-8399-4B35-8817-9C0B38934A42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FBD5B903-8399-4B35-8817-9C0B38934A42}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBD5B903-8399-4B35-8817-9C0B38934A42}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -543,6 +537,18 @@ Global
 		{04EEF324-81B7-481B-AAFA-9332F3789495}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04EEF324-81B7-481B-AAFA-9332F3789495}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04EEF324-81B7-481B-AAFA-9332F3789495}.Release|Any CPU.Build.0 = Release|Any CPU
+		{250FB5D8-A9CF-4528-9A9D-53BB803AAB45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{250FB5D8-A9CF-4528-9A9D-53BB803AAB45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{250FB5D8-A9CF-4528-9A9D-53BB803AAB45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{250FB5D8-A9CF-4528-9A9D-53BB803AAB45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACB9C906-8E04-4480-A198-7FE83008E9B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACB9C906-8E04-4480-A198-7FE83008E9B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACB9C906-8E04-4480-A198-7FE83008E9B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACB9C906-8E04-4480-A198-7FE83008E9B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2848F034-C0E1-4934-AD2C-982A23BB940C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2848F034-C0E1-4934-AD2C-982A23BB940C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2848F034-C0E1-4934-AD2C-982A23BB940C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2848F034-C0E1-4934-AD2C-982A23BB940C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -572,8 +578,6 @@ Global
 		{E3A3553B-2050-499A-8E33-DB6C93C579E4} = {9C68988B-09AE-4C63-A5AB-4EE71649283D}
 		{6F829382-0804-4D82-8679-C69B14230287} = {9C68988B-09AE-4C63-A5AB-4EE71649283D}
 		{2E51588E-5B68-4567-89BC-D5BF23477533} = {6F829382-0804-4D82-8679-C69B14230287}
-		{3EE40273-63C4-4256-B696-095AE3CCEF02} = {6F829382-0804-4D82-8679-C69B14230287}
-		{C3522D53-6374-4AED-9A98-B22EA151CBF4} = {6F829382-0804-4D82-8679-C69B14230287}
 		{FBD5B903-8399-4B35-8817-9C0B38934A42} = {6F829382-0804-4D82-8679-C69B14230287}
 		{A721433D-B667-4623-A451-51360D6EC048} = {6F829382-0804-4D82-8679-C69B14230287}
 		{BBC3A24E-4F61-4631-8D9E-D915970691A1} = {6F829382-0804-4D82-8679-C69B14230287}
@@ -648,6 +652,9 @@ Global
 		{8C1E9333-C88E-4D2C-9CF6-ACF2B80C93F9} = {7FFA1B41-2280-4BB5-8B1B-8C48214B99B9}
 		{D5A9D668-B24F-40D5-BDB7-EA975512521A} = {7FFA1B41-2280-4BB5-8B1B-8C48214B99B9}
 		{04EEF324-81B7-481B-AAFA-9332F3789495} = {7FFA1B41-2280-4BB5-8B1B-8C48214B99B9}
+		{250FB5D8-A9CF-4528-9A9D-53BB803AAB45} = {6F829382-0804-4D82-8679-C69B14230287}
+		{ACB9C906-8E04-4480-A198-7FE83008E9B5} = {6F829382-0804-4D82-8679-C69B14230287}
+		{2848F034-C0E1-4934-AD2C-982A23BB940C} = {6F829382-0804-4D82-8679-C69B14230287}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {00D78C3D-8536-4549-B1EE-C19BD0C50387}

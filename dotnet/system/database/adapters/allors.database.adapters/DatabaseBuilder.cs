@@ -41,7 +41,7 @@ namespace Allors.Database.Adapters
 
                 case "NPGSQL":
 
-                    return new Npgsql.Database(this.scope, new Npgsql.Configuration
+                    return new Sql.Npgsql.Database(this.scope, new Sql.Npgsql.Configuration
                     {
                         ObjectFactory = this.objectFactory,
                         ConnectionString = connectionString,
@@ -52,7 +52,7 @@ namespace Allors.Database.Adapters
                 case "SQLCLIENT":
                 default:
 
-                    return new SqlClient.Database(this.scope, new SqlClient.Configuration
+                    return new Sql.SqlClient.Database(this.scope, new Sql.SqlClient.Configuration
                     {
                         ObjectFactory = this.objectFactory,
                         ConnectionString = connectionString,

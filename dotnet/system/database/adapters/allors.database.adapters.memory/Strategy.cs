@@ -892,19 +892,19 @@ namespace Allors.Database.Adapters.Memory
 
         internal bool ShouldTrim(IRoleType roleType, Strategy[] originalRole)
         {
-            this.compositesRoleByRoleType.TryGetValue(roleType, out var roles);
+            this.compositesRoleByRoleType.TryGetValue(roleType, out var role);
 
-            if (roles == null)
+            if (role == null)
             {
                 return originalRole == null || originalRole.Length == 0;
             }
 
             if (originalRole == null)
             {
-                return roles.Count == 0;
+                return role.Count == 0;
             }
 
-            return roles.SetEquals(originalRole);
+            return role.SetEquals(originalRole);
         }
 
         internal bool ShouldTrim(IAssociationType associationType, Strategy originalAssociation)

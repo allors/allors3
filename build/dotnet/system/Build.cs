@@ -36,7 +36,7 @@ partial class Build
             {
                 DotNetTest(s => s
                     .SetProjectFile(Paths.DotnetSystemAdaptersStaticTests)
-                    .SetFilter("FullyQualifiedName~Allors.Database.Adapters.SqlClient")
+                    .SetFilter("FullyQualifiedName~Allors.Database.Adapters.Sql.SqlClient")
                     .SetLogger("trx;LogFileName=AdaptersSqlClient.trx")
                     .SetResultsDirectory(Paths.ArtifactsTests));
             }
@@ -50,7 +50,7 @@ partial class Build
             {
                 DotNetTest(s => s
                     .SetProjectFile(Paths.DotnetSystemAdaptersStaticTests)
-                    .SetFilter("FullyQualifiedName~Allors.Database.Adapters.Npgsql")
+                    .SetFilter("FullyQualifiedName~Allors.Database.Adapters.Sql.Npgsql")
                     .SetLogger("trx;LogFileName=AdaptersNpgsql.trx")
                     .SetResultsDirectory(Paths.ArtifactsTests));
             }

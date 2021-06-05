@@ -6,7 +6,7 @@
 //   Defines the Default type.
 // </summary>
 
-namespace Allors.Database.Adapters.SqlClient
+namespace Allors.Database.Adapters.Sql.SqlClient
 {
     using Adapters;
     using Xunit;

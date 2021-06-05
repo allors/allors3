@@ -15,7 +15,7 @@ namespace Allors.Server.Tests
     using System.Text.Json;
     using System.Threading.Tasks;
     using Database;
-    using Database.Adapters.SqlClient;
+    using Database.Adapters.Sql.SqlClient;
     using Database.Domain;
     using Database.Configuration;
     using Database.Domain.Derivations.Rules.Default;
