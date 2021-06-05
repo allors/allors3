@@ -106,14 +106,14 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public IConnectionFactory ConnectionFactory
         {
-            get => this.connectionFactory ??= new DefaultConnectionFactory();
+            get => this.connectionFactory ??= new ConnectionFactory();
 
             set => this.connectionFactory = value;
         }
 
         public IConnectionFactory ManagementConnectionFactory
         {
-            get => this.managementConnectionFactory ??= new DefaultConnectionFactory();
+            get => this.managementConnectionFactory ??= new ConnectionFactory();
 
             set => this.managementConnectionFactory = value;
         }

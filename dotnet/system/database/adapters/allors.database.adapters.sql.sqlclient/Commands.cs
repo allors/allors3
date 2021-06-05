@@ -119,7 +119,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command.Parameters[Mapping.ParamNameForObject].Value = reference.ObjectId;
             }
 
-            using (DbDataReader reader = command.ExecuteReader())
+            using (DataReader reader = command.ExecuteReader())
             {
                 if (reader.Read())
                 {
@@ -375,7 +375,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
 
             var objectIds = new List<long>();
-            using (DbDataReader reader = command.ExecuteReader())
+            using (var reader = command.ExecuteReader())
             {
                 while (reader.Read())
                 {
@@ -563,7 +563,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
 
             var objectIds = new List<object>();
-            using (DbDataReader reader = command.ExecuteReader())
+            using (var reader = command.ExecuteReader())
             {
                 while (reader.Read())
                 {

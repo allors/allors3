@@ -5,8 +5,8 @@
 
 namespace Allors.Database.Adapters.Sql.SqlClient
 {
-    public sealed class DefaultConnectionFactory : IConnectionFactory
+    public sealed class ConnectionFactory : IConnectionFactory
     {
-        public Connection Create(Database database) => new DefaultConnection(database);
+        public Connection Create(Database database) => new Connection(database);
     }
 }

@@ -5,12 +5,12 @@
 
 namespace Allors.Database.Adapters.Sql.SqlClient
 {
-    internal class CompositeRelation
+    public class CompositeRelation
     {
-        internal readonly long Association;
-        internal readonly long Role;
+        public readonly long Association;
+        public readonly long Role;
 
-        internal CompositeRelation(long association, long role)
+        public CompositeRelation(long association, long role)
         {
             this.Association = association;
             this.Role = role;

@@ -100,7 +100,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command.Parameters[Mapping.ParamNameForTableType].Value = this.Database.CreateObjectTable(references);
             }
 
-            using (DbDataReader reader = command.ExecuteReader())
+            using (var reader = command.ExecuteReader())
             {
                 var sortedUnitRoles = this.Database.GetSortedUnitRolesByObjectType(@class);
                 var cache = this.Database.Cache;
@@ -203,7 +203,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command.Parameters[Mapping.ParamNameForTableType].Value = this.Database.CreateObjectTable(references);
             }
 
-            using (DbDataReader reader = command.ExecuteReader())
+            using (var reader = command.ExecuteReader())
             {
                 var cache = this.Database.Cache;
 
@@ -258,7 +258,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
 
             var roleByAssociation = new Dictionary<Reference, long>();
-            using (DbDataReader reader = command.ExecuteReader())
+            using (var reader = command.ExecuteReader())
             {
                 while (reader.Read())
                 {
@@ -313,7 +313,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
 
             var rolesByAssociation = new Dictionary<Reference, List<long>>();
-            using (DbDataReader reader = command.ExecuteReader())
+            using (var reader = command.ExecuteReader())
             {
                 while (reader.Read())
                 {
@@ -382,7 +382,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
 
             var rolesByAssociation = new Dictionary<Reference, List<long>>();
-            using (DbDataReader reader = command.ExecuteReader())
+            using (var reader = command.ExecuteReader())
             {
                 while (reader.Read())
                 {
@@ -451,7 +451,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command.Parameters[Mapping.ParamNameForTableType].Value = this.Database.CreateObjectTable(references);
             }
 
-            using (DbDataReader reader = command.ExecuteReader())
+            using (var reader = command.ExecuteReader())
             {
                 while (reader.Read())
                 {
@@ -509,7 +509,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
 
             var prefetchedAssociationByRole = new Dictionary<Reference, long>();
-            using (DbDataReader reader = command.ExecuteReader())
+            using (var reader = command.ExecuteReader())
             {
                 while (reader.Read())
                 {
@@ -571,7 +571,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
 
             var prefetchedAssociationByRole = new Dictionary<Reference, List<long>>();
-            using (DbDataReader reader = command.ExecuteReader())
+            using (var reader = command.ExecuteReader())
             {
                 while (reader.Read())
                 {
@@ -653,7 +653,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             var prefetchedAssociations = new HashSet<long>();
 
             var prefetchedAssociationByRole = new Dictionary<Reference, List<long>>();
-            using (DbDataReader reader = command.ExecuteReader())
+            using (var reader = command.ExecuteReader())
             {
                 while (reader.Read())
                 {

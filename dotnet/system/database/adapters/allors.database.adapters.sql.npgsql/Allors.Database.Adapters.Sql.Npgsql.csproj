@@ -7,6 +7,5 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Allors.Database\Allors.Database.csproj" />
-    <ProjectReference Include="..\allors.database.adapters.sql\Allors.Database.Adapters.Sql.csproj" />
   </ItemGroup>
 </Project>

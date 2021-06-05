@@ -12,9 +12,9 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
     using Meta;
 
-    public abstract class Command : IDisposable
+    public class Command : IDisposable, ICommand
     {
-        protected internal Command(Mapping mapping, SqlCommand command)
+        internal Command(Mapping mapping, SqlCommand command)
         {
             this.Mapping = mapping;
             this.SqlCommand = command;
@@ -22,14 +22,14 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         internal SqlParameterCollection Parameters => this.SqlCommand.Parameters;
 
-        internal CommandType CommandType
+        public CommandType CommandType
         {
             get => this.SqlCommand.CommandType;
 
             set => this.SqlCommand.CommandType = value;
         }
 
-        internal string CommandText
+        public string CommandText
         {
             get => this.SqlCommand.CommandText;
 
@@ -44,7 +44,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         internal SqlParameter CreateParameter() => this.SqlCommand.CreateParameter();
 
-        internal void AddInParameter(string parameterName, object value)
+        public void AddInParameter(string parameterName, object value)
         {
             var sqlParameter = this.SqlCommand.Parameters.Contains(parameterName) ? this.SqlCommand.Parameters[parameterName] : null;
             if (sqlParameter == null)
@@ -69,7 +69,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
         }
 
-        internal void AddObjectParameter(long objectId)
+        public void AddObjectParameter(long objectId)
         {
             var sqlParameter = this.SqlCommand.CreateParameter();
             sqlParameter.ParameterName = Mapping.ParamNameForObject;
@@ -79,7 +79,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             this.SqlCommand.Parameters.Add(sqlParameter);
         }
 
-        internal void AddTypeParameter(IClass @class)
+        public void AddTypeParameter(IClass @class)
         {
             var sqlParameter = this.CreateParameter();
             sqlParameter.ParameterName = Mapping.ParamNameForClass;
@@ -89,7 +89,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             this.Parameters.Add(sqlParameter);
         }
 
-        internal void AddCountParameter(int count)
+        public void AddCountParameter(int count)
         {
             var sqlParameter = this.CreateParameter();
             sqlParameter.ParameterName = Mapping.ParamNameForCount;
@@ -99,7 +99,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             this.Parameters.Add(sqlParameter);
         }
 
-        internal void AddCompositeRoleParameter(long objectId)
+        public void AddCompositeRoleParameter(long objectId)
         {
             var sqlParameter = this.CreateParameter();
             sqlParameter.ParameterName = Mapping.ParamNameForCompositeRole;
@@ -109,7 +109,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             this.Parameters.Add(sqlParameter);
         }
 
-        internal void AddAssociationParameter(long objectId)
+        public void AddAssociationParameter(long objectId)
         {
             var sqlParameter = this.CreateParameter();
             sqlParameter.ParameterName = Mapping.ParamNameForAssociation;
@@ -119,7 +119,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             this.Parameters.Add(sqlParameter);
         }
 
-        internal void AddObjectTableParameter(IEnumerable<Reference> references)
+        public void AddObjectTableParameter(IEnumerable<Reference> references)
         {
             var sqlParameter = this.CreateParameter();
             sqlParameter.SqlDbType = SqlDbType.Structured;
@@ -130,7 +130,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             this.Parameters.Add(sqlParameter);
         }
 
-        internal void AddObjectTableParameter(IEnumerable<long> objectIds)
+        public void AddObjectTableParameter(IEnumerable<long> objectIds)
         {
             var sqlParameter = this.CreateParameter();
             sqlParameter.SqlDbType = SqlDbType.Structured;
@@ -142,7 +142,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             this.Parameters.Add(sqlParameter);
         }
 
-        internal void AddCompositeRoleTableParameter(IEnumerable<CompositeRelation> relations)
+        public void AddCompositeRoleTableParameter(IEnumerable<CompositeRelation> relations)
         {
             var sqlParameter = this.CreateParameter();
             sqlParameter.SqlDbType = SqlDbType.Structured;
@@ -153,7 +153,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             this.Parameters.Add(sqlParameter);
         }
 
-        internal void AddAssociationTableParameter(long objectId)
+        public void AddAssociationTableParameter(long objectId)
         {
             var sqlParameter = this.CreateParameter();
             sqlParameter.ParameterName = Mapping.ParamNameForAssociation;
@@ -163,62 +163,24 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             this.Parameters.Add(sqlParameter);
         }
 
-        internal object ExecuteScalar()
+        public object ExecuteScalar()
         {
-            this.OnExecuting();
-            try
-            {
-                return this.SqlCommand.ExecuteScalar();
-            }
-            finally
-            {
-                this.OnExecuted();
-            }
+            return this.SqlCommand.ExecuteScalar();
         }
 
-        internal void ExecuteNonQuery()
+        public void ExecuteNonQuery()
         {
-            this.OnExecuting();
-
-            try
-            {
-                this.SqlCommand.ExecuteNonQuery();
-            }
-            finally
-            {
-                this.OnExecuted();
-            }
+            this.SqlCommand.ExecuteNonQuery();
         }
 
-        internal SqlDataReader ExecuteReader()
-        {
-            this.OnExecuting();
+        public DataReader ExecuteReader() => new XDataReader(this.SqlCommand.ExecuteReader());
 
-            try
-            {
-                return this.SqlCommand.ExecuteReader();
-            }
-            finally
-            {
-                this.OnExecuted();
-            }
-        }
-
-        internal object GetValue(SqlDataReader reader, int tag, int i)
+        public object GetValue(DataReader reader, int tag, int i)
         {
             switch (tag)
             {
-                case UnitTags.String:
-                    return reader.GetString(i);
-
-                case UnitTags.Integer:
-                    return reader.GetInt32(i);
-
-                case UnitTags.Float:
-                    return reader.GetDouble(i);
-
-                case UnitTags.Decimal:
-                    return reader.GetDecimal(i);
+                case UnitTags.Binary:
+                    return reader.GetValue(i);
 
                 case UnitTags.Boolean:
                     return reader.GetBoolean(i);
@@ -226,23 +188,24 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 case UnitTags.DateTime:
                     return reader.GetDateTime(i);
 
+                case UnitTags.Decimal:
+                    return reader.GetDecimal(i);
+
+                case UnitTags.Float:
+                    return reader.GetDouble(i);
+
+                case UnitTags.Integer:
+                    return reader.GetInt32(i);
+
+                case UnitTags.String:
+                    return reader.GetString(i);
+
                 case UnitTags.Unique:
                     return reader.GetGuid(i);
-
-                case UnitTags.Binary:
-                    return reader.GetValue(i);
 
                 default:
                     throw new ArgumentException("Unknown Unit Tag: " + tag);
             }
         }
-
-        #region Events
-
-        protected abstract void OnExecuting();
-
-        protected abstract void OnExecuted();
-
-        #endregion Events
     }
 }
