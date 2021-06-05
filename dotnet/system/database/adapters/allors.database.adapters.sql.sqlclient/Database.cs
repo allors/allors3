@@ -308,8 +308,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         internal IEnumerable<SqlDataRecord> CreateVersionedObjectTable(Dictionary<long, long> versionedObjects) => new VersionedObjectDataRecord(this.mapping, versionedObjects);
 
-        internal IEnumerable<SqlDataRecord> CreateObjectTable(IEnumerable<Reference> references) => new CompositesRoleDataRecords(this.mapping, references);
-
         internal IEnumerable<SqlDataRecord> CreateCompositeRelationTable(IEnumerable<CompositeRelation> relations) => new CompositeRoleDataRecords(this.mapping, relations);
 
         internal IEnumerable<SqlDataRecord> CreateUnitRelationTable(IRoleType roleType, IEnumerable<UnitRelation> relations) => new UnitRoleDataRecords(this.mapping, roleType, relations);

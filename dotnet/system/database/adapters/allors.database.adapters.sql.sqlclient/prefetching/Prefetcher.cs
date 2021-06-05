@@ -12,6 +12,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
     using System.Linq;
 
     using Meta;
+    using Microsoft.Data.SqlClient.Server;
 
     internal class Prefetcher
     {
@@ -92,13 +93,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command = this.Transaction.Connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddObjectTableParameter(references);
                 this.prefetchUnitRolesByClass[@class] = command;
             }
-            else
-            {
-                command.Parameters[Mapping.ParamNameForTableType].Value = this.Database.CreateObjectTable(references);
-            }
+
+            command.AddCompositesRoleTableParameter(references.Select(v => v.ObjectId));
 
             using (var reader = command.ExecuteReader())
             {
@@ -195,13 +193,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command = this.Transaction.Connection.CreateCommand();
                 command.CommandText = this.Database.Mapping.ProcedureNameForPrefetchRoleByRelationType[roleType.RelationType];
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddObjectTableParameter(references);
                 this.prefetchCompositeRoleByRoleType[roleType] = command;
             }
-            else
-            {
-                command.Parameters[Mapping.ParamNameForTableType].Value = this.Database.CreateObjectTable(references);
-            }
+
+            command.AddCompositesRoleTableParameter(references.Select(v => v.ObjectId));
 
             using (var reader = command.ExecuteReader())
             {
@@ -249,13 +244,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command = this.Transaction.Connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddObjectTableParameter(references);
                 this.prefetchCompositeRoleByRoleType[roleType] = command;
             }
-            else
-            {
-                command.Parameters[Mapping.ParamNameForTableType].Value = this.Database.CreateObjectTable(references);
-            }
+
+            command.AddCompositesRoleTableParameter(references.Select(v => v.ObjectId));
 
             var roleByAssociation = new Dictionary<Reference, long>();
             using (var reader = command.ExecuteReader())
@@ -304,13 +296,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command = this.Transaction.Connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddObjectTableParameter(references);
                 this.prefetchCompositesRoleByRoleType[roleType] = command;
             }
-            else
-            {
-                command.Parameters[Mapping.ParamNameForTableType].Value = this.Database.CreateObjectTable(references);
-            }
+
+            command.AddCompositesRoleTableParameter(references.Select(v => v.ObjectId));
 
             var rolesByAssociation = new Dictionary<Reference, List<long>>();
             using (var reader = command.ExecuteReader())
@@ -373,13 +362,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command = this.Transaction.Connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddObjectTableParameter(references);
                 this.prefetchCompositesRoleByRoleType[roleType] = command;
             }
-            else
-            {
-                command.Parameters[Mapping.ParamNameForTableType].Value = this.Database.CreateObjectTable(references);
-            }
+
+            command.AddCompositesRoleTableParameter(references.Select(v => v.ObjectId));
 
             var rolesByAssociation = new Dictionary<Reference, List<long>>();
             using (var reader = command.ExecuteReader())
@@ -443,13 +429,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command = this.Transaction.Connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddObjectTableParameter(references);
                 this.prefetchCompositeAssociationByAssociationType[associationType] = command;
             }
-            else
-            {
-                command.Parameters[Mapping.ParamNameForTableType].Value = this.Database.CreateObjectTable(references);
-            }
+
+            command.AddCompositesRoleTableParameter(references.Select(v => v.ObjectId));
 
             using (var reader = command.ExecuteReader())
             {
@@ -500,13 +483,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command = this.Transaction.Connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddObjectTableParameter(roles);
                 this.prefetchCompositeAssociationByAssociationType[associationType] = command;
             }
-            else
-            {
-                command.Parameters[Mapping.ParamNameForTableType].Value = this.Database.CreateObjectTable(roles);
-            }
+
+            command.ObjectTableParameter(roles.Select(v => v.ObjectId));
 
             var prefetchedAssociationByRole = new Dictionary<Reference, long>();
             using (var reader = command.ExecuteReader())
@@ -562,13 +542,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command = this.Transaction.Connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddObjectTableParameter(roles);
                 this.prefetchCompositeAssociationByAssociationType[associationType] = command;
             }
-            else
-            {
-                command.Parameters[Mapping.ParamNameForTableType].Value = this.Database.CreateObjectTable(roles);
-            }
+
+            command.ObjectTableParameter(roles.Select(v => v.ObjectId));
 
             var prefetchedAssociationByRole = new Dictionary<Reference, List<long>>();
             using (var reader = command.ExecuteReader())
@@ -642,13 +619,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command = this.Transaction.Connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddObjectTableParameter(roles);
                 this.prefetchCompositeAssociationByAssociationType[associationType] = command;
             }
-            else
-            {
-                command.Parameters[Mapping.ParamNameForTableType].Value = this.Database.CreateObjectTable(roles);
-            }
+
+            command.ObjectTableParameter(roles.Select(v => v.ObjectId));
 
             var prefetchedAssociations = new HashSet<long>();
 

@@ -13,12 +13,12 @@ namespace Allors.Database.Adapters.Sql.SqlClient
     internal class CompositesRoleDataRecords : IEnumerable<SqlDataRecord>
     {
         private readonly Mapping mapping;
-        private readonly IEnumerable<Reference> strategies;
+        private readonly IEnumerable<long> ids;
 
-        internal CompositesRoleDataRecords(Mapping mapping, IEnumerable<Reference> strategies)
+        internal CompositesRoleDataRecords(Mapping mapping, IEnumerable<long> ids)
         {
             this.mapping = mapping;
-            this.strategies = strategies;
+            this.ids = ids;
         }
 
         public IEnumerator<SqlDataRecord> GetEnumerator()
@@ -26,9 +26,9 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             var objectArrayElement = this.mapping.TableTypeColumnNameForObject;
             var metaData = new SqlMetaData(objectArrayElement, SqlDbType.BigInt);
             var sqlDataRecord = new SqlDataRecord(metaData);
-            foreach (var strategy in this.strategies)
+            foreach (var id in this.ids)
             {
-                sqlDataRecord.SetInt64(0, strategy.ObjectId);
+                sqlDataRecord.SetInt64(0, id);
                 yield return sqlDataRecord;
             }
         }

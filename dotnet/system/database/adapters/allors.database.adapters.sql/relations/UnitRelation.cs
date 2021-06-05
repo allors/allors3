@@ -7,10 +7,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 {
     public class UnitRelation
     {
-        internal readonly long Association;
-        internal readonly object Role;
+        public readonly long Association;
+        public readonly object Role;
 
-        internal UnitRelation(long association, object role)
+        public UnitRelation(long association, object role)
         {
             this.Association = association;
             this.Role = role;

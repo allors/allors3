@@ -11,30 +11,28 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         string CommandText { get; set; }
 
-        ISqlParameterCollection Parameters { get; }
-
         void AddInParameter(string parameterName, object value);
 
-        void AddObjectParameter(long objectId);
+        void ObjectParameter(long objectId);
 
         void AddTypeParameter(IClass @class);
 
         void AddCountParameter(int count);
 
         void AddUnitRoleParameter(IRoleType roleType, object unit);
-
-        void AddUnitTableParameter(IRoleType roleType, IEnumerable<UnitRelation> relations);
-
+        
         void AddCompositeRoleParameter(long objectId);
 
         void AddAssociationParameter(long objectId);
 
-        void AddObjectTableParameter(IEnumerable<Reference> references);
+        void AddCompositesRoleTableParameter(IEnumerable<long> objectIds);
 
-        void AddObjectTableParameter(IEnumerable<long> objectIds);
-        
+        void ObjectTableParameter(IEnumerable<long> objectIds);
+
+        void UnitTableParameter(IRoleType roleType, IEnumerable<UnitRelation> relations);
+
         void AddCompositeRoleTableParameter(IEnumerable<CompositeRelation> relations);
-
+        
         void AddAssociationTableParameter(long objectId);
 
         object ExecuteScalar();
@@ -42,8 +40,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         void ExecuteNonQuery();
 
         IReader ExecuteReader();
-
-        ISqlParameter CreateParameter();
 
         object GetValue(IReader reader, int tag, int i);
     }

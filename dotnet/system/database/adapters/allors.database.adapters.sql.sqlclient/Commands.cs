@@ -9,9 +9,11 @@ namespace Allors.Database.Adapters.Sql.SqlClient
     using System.Collections.Generic;
     using System.Data;
     using System.Data.Common;
+    using System.Linq;
     using System.Text;
 
     using Meta;
+    using Microsoft.Data.SqlClient.Server;
 
     public sealed class Commands
     {
@@ -86,15 +88,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddObjectParameter(strategy.ObjectId);
-
                 this.deleteObjectByClass[@class] = command;
             }
-            else
-            {
-                command.Parameters[Mapping.ParamNameForObject].Value = strategy.ObjectId;
-            }
 
+            command.ObjectParameter(strategy.ObjectId);
             command.ExecuteNonQuery();
         }
 
@@ -111,15 +108,12 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddObjectParameter(reference.ObjectId);
                 this.getUnitRolesByClass[@class] = command;
             }
-            else
-            {
-                command.Parameters[Mapping.ParamNameForObject].Value = reference.ObjectId;
-            }
 
-            using (IReader reader = command.ExecuteReader())
+            command.ObjectParameter(reference.ObjectId);
+
+            using (var reader = command.ExecuteReader())
             {
                 if (reader.Read())
                 {
@@ -192,8 +186,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         {
             this.setUnitRoleByRoleTypeByClass ??= new Dictionary<IClass, Dictionary<IRoleType, ICommand>>();
 
-            var schema = this.Database.Mapping;
-
             if (!this.setUnitRoleByRoleTypeByClass.TryGetValue(exclusiveRootClass, out var commandByRoleType))
             {
                 commandByRoleType = new Dictionary<IRoleType, ICommand>();
@@ -206,13 +198,9 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
+            }
 
-                command.AddUnitTableParameter(roleType, relations);
-            }
-            else
-            {
-                command.Parameters[Mapping.ParamNameForTableType].Value = this.Database.CreateUnitRelationTable(roleType, relations);
-            }
+            command.UnitTableParameter(roleType, relations);
 
             command.ExecuteNonQuery();
         }
@@ -232,7 +220,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             if (!setUnitRoleByRoleType.TryGetValue(sortedRoleTypes, out var command))
             {
                 command = this.connection.CreateCommand();
-                command.AddObjectParameter(roles.Reference.ObjectId);
+                command.ObjectParameter(roles.Reference.ObjectId);
 
                 var sql = new StringBuilder();
                 sql.Append("UPDATE " + this.Database.Mapping.TableNameForObjectByClass[exclusiveRootClass] + " SET\n");
@@ -263,12 +251,12 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
             else
             {
-                command.Parameters[Mapping.ParamNameForObject].Value = roles.Reference.ObjectId;
+                command.ObjectParameter(roles.Reference.ObjectId);
 
                 foreach (var roleType in sortedRoleTypes)
                 {
                     var unit = roles.ModifiedRoleByRoleType[roleType];
-                    command.Parameters[this.Database.Mapping.ParamNameByRoleType[roleType]].Value = unit ?? DBNull.Value;
+                    command.AddUnitRoleParameter(roleType, unit);
                 }
 
                 command.ExecuteNonQuery();
@@ -287,13 +275,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddAssociationTableParameter(reference.ObjectId);
                 this.getCompositeRoleByRoleType[roleType] = command;
             }
-            else
-            {
-                command.Parameters[Mapping.ParamNameForAssociation].Value = reference.ObjectId;
-            }
+
+            command.AddAssociationTableParameter(reference.ObjectId);
 
             var result = command.ExecuteScalar();
             if (result == null || result == DBNull.Value)
@@ -319,13 +304,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddCompositeRoleTableParameter(relations);
                 this.setCompositeRoleByRoleType[roleType] = command;
             }
-            else
-            {
-                command.Parameters[Mapping.ParamNameForTableType].Value = this.Database.CreateCompositeRelationTable(relations);
-            }
+
+            command.AddCompositeRoleTableParameter(relations);
 
             command.ExecuteNonQuery();
         }
@@ -353,13 +335,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddAssociationParameter(reference.ObjectId);
                 this.getCompositesRoleByRoleType[roleType] = command;
             }
-            else
-            {
-                command.Parameters[Mapping.ParamNameForAssociation].Value = reference.ObjectId;
-            }
+
+            command.AddAssociationParameter(reference.ObjectId);
 
             var objectIds = new List<long>();
             using (var reader = command.ExecuteReader())
@@ -384,13 +363,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddCompositeRoleTableParameter(relations);
                 this.addCompositeRoleByRoleType[roleType] = command;
             }
-            else
-            {
-                command.Parameters[Mapping.ParamNameForTableType].Value = this.Database.CreateCompositeRelationTable(relations);
-            }
+
+            command.AddCompositeRoleTableParameter(relations);
 
             command.ExecuteNonQuery();
         }
@@ -405,13 +381,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddCompositeRoleTableParameter(relations);
                 this.removeCompositeRoleByRoleType[roleType] = command;
             }
-            else
-            {
-                command.Parameters[Mapping.ParamNameForTableType].Value = this.Database.CreateCompositeRelationTable(relations);
-            }
+
+            command.AddCompositeRoleTableParameter(relations);
 
             command.ExecuteNonQuery();
         }
@@ -427,13 +400,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddObjectTableParameter(associations);
                 this.clearCompositeAndCompositesRoleByRoleType[roleType] = command;
             }
-            else
-            {
-                command.Parameters[Mapping.ParamNameForTableType].Value = this.Database.CreateObjectTable(associations);
-            }
+
+            command.ObjectTableParameter(associations);
 
             command.ExecuteNonQuery();
         }
@@ -451,13 +421,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddCompositeRoleParameter(role.ObjectId);
                 this.getCompositeAssociationByAssociationType[associationType] = command;
             }
-            else
-            {
-                command.Parameters[Mapping.ParamNameForCompositeRole].Value = role.ObjectId;
-            }
+
+            command.AddCompositeRoleParameter(role.ObjectId);
 
             var result = command.ExecuteScalar();
 
@@ -484,13 +451,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddCompositeRoleParameter(role.ObjectId);
                 this.getCompositesAssociationByAssociationType[associationType] = command;
             }
-            else
-            {
-                command.Parameters[Mapping.ParamNameForCompositeRole].Value = role.ObjectId;
-            }
+
+            command.AddCompositeRoleParameter(role.ObjectId);
 
             var objectIds = new List<long>();
             using (var reader = command.ExecuteReader())
@@ -515,13 +479,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddTypeParameter(@class);
                 this.createObjectByClass[@class] = command;
             }
-            else
-            {
-                command.Parameters[Mapping.ParamNameForClass].Value = (object)@class.Id;
-            }
+
+            command.AddTypeParameter(@class);
 
             var result = command.ExecuteScalar();
             var objectId = long.Parse(result.ToString());
@@ -539,15 +500,11 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddTypeParameter(@class);
-                command.AddCountParameter(count);
                 this.createObjectsByClass[@class] = command;
             }
-            else
-            {
-                command.Parameters[Mapping.ParamNameForClass].Value = @class.Id;
-                command.Parameters[Mapping.ParamNameForCount].Value = count;
-            }
+
+            command.AddTypeParameter(@class);
+            command.AddCountParameter(count);
 
             var objectIds = new List<object>();
             using (var reader = command.ExecuteReader())
@@ -582,13 +539,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
-                command.AddObjectParameter(objectId);
                 this.instantiateObject = command;
             }
-            else
-            {
-                command.Parameters[Mapping.ParamNameForObject].Value = objectId;
-            }
+
+            command.ObjectParameter(objectId);
 
             using (var reader = command.ExecuteReader())
             {
@@ -614,13 +568,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddObjectTableParameter(objectIds);
                 this.instantiateObjects = command;
             }
-            else
-            {
-                command.Parameters[Mapping.ParamNameForTableType].Value = this.Database.CreateObjectTable(objectIds);
-            }
+
+            command.ObjectTableParameter(objectIds);
 
             using (var reader = command.ExecuteReader())
             {
@@ -649,13 +600,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddObjectTableParameter(references);
                 this.getVersion = command;
             }
-            else
-            {
-                command.Parameters[Mapping.ParamNameForTableType].Value = this.Database.CreateObjectTable(references);
-            }
+
+            command.AddCompositesRoleTableParameter(references.Select(v => v.ObjectId));
 
             var versionByObjectId = new Dictionary<long, long>();
 
@@ -682,16 +630,12 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
-                // TODO: Remove dependency on State
-                command.AddObjectTableParameter(changed);
                 this.updateVersions = command;
             }
-            else
-            {
-                // TODO: Remove dependency on State
-                command.Parameters[Mapping.ParamNameForTableType].Value = this.Database.CreateObjectTable(changed);
-            }
 
+            // TODO: Remove dependency on State
+            command.ObjectTableParameter(changed);
+            
             command.ExecuteNonQuery();
         }
 

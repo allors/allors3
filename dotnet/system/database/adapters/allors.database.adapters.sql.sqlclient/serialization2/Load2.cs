@@ -316,7 +316,7 @@ where c = '{@class.Id}'";
                     var command = con.CreateCommand();
                     command.CommandText = sql;
                     command.CommandType = CommandType.StoredProcedure;
-                    command.AddUnitTableParameter(relationType.RoleType, unitRelations);
+                    command.UnitTableParameter(relationType.RoleType, unitRelations);
                     command.ExecuteNonQuery();
                 }
 
