@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Allors.Database.Adapters.Sql.SqlClient.Transaction">
+    <Position X="1" Y="0.5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>kBYAQkAAAGAAAgUGCAQkACAAABRQAEAAQAAQBQAJgAA=</HashCode>
+      <FileName>Transaction.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="State" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Allors.Database.Adapters.Sql.SqlClient.State">
+    <Position X="6" Y="0.5" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AAAQIAAEAQEAAiAAAAAEgAAgAAQAEAAAAAAACAANAAA=</HashCode>
+      <FileName>State.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

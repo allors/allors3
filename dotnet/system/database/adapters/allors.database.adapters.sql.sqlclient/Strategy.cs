@@ -213,8 +213,16 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 this.AssertExist();
                 roleType.CompositeRoleChecks(this, newRoleObject);
 
-                var newRoleObjectId = (Strategy)newRoleObject.Strategy;
-                this.Roles.SetCompositeRole(roleType, newRoleObjectId);
+                var newRole = (Strategy)newRoleObject.Strategy;
+
+                if (roleType.AssociationType.IsOne)
+                {
+                    this.Roles.SetCompositeRoleOne2One(roleType, newRole);
+                }
+                else
+                {
+                    this.Roles.SetCompositeRoleMany2One(roleType, newRole);
+                }
             }
         }
 
@@ -223,7 +231,14 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             this.AssertExist();
             roleType.CompositeRoleChecks(this);
 
-            this.Roles.RemoveCompositeRole(roleType);
+            if (roleType.AssociationType.IsOne)
+            {
+                this.Roles.RemoveCompositeRoleOne2One(roleType);
+            }
+            else
+            {
+                this.Roles.RemoveCompositeRoleMany2One(roleType);
+            }
         }
 
         public virtual bool ExistCompositeRoles(IRoleType roleType) => this.GetCompositeRoles(roleType).Count != 0;

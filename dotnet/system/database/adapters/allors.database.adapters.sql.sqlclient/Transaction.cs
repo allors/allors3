@@ -241,7 +241,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         {
             try
             {
-                return new ChangeSet(this, this.State.ChangeLog);
+                return this.State.ChangeLog.Checkpoint();
             }
             finally
             {
