@@ -8,7 +8,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\system\protocol\allors.protocol.json.systemtextjson\Allors.Protocol.Json.Default.csproj" />
+    <ProjectReference Include="..\..\..\..\..\system\protocol\allors.protocol.json.default\Allors.Protocol.Json.Default.csproj" />
     <ProjectReference Include="..\..\..\..\..\System\Workspace\CSharp\Allors.Workspace.Protocol.Json\Allors.Workspace.Protocol.Json.csproj" />
     <ProjectReference Include="..\Allors.Workspace.Adapters.Remote\Allors.Workspace.Adapters.Remote.csproj" />
     <ProjectReference Include="..\Allors.Workspace.Adapters\Allors.Workspace.Adapters.csproj" />

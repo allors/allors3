@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\System\Database\Allors.Database.Protocol.Json\Allors.Database.Protocol.Json.csproj" />
-    <ProjectReference Include="..\..\..\system\protocol\allors.protocol.json.systemtextjson\Allors.Protocol.Json.Default.csproj" />
+    <ProjectReference Include="..\..\..\system\protocol\allors.protocol.json.default\Allors.Protocol.Json.Default.csproj" />
     <ProjectReference Include="..\Meta\Meta.csproj" />
     <ProjectReference Include="..\Resources\Resources.csproj" />
   </ItemGroup>
