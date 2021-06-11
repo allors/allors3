@@ -18,29 +18,29 @@ namespace Allors.Database.Protocol.Json
             {
                 var derivationErrorResponse = new ResponseDerivationError
                 {
-                    ErrorMessage = derivationError.Message,
-                    Roles = derivationError.Relations.Select(x => new[] { x.Association.Id, x.RelationType.Tag }).ToArray(),
+                    e = derivationError.Message,
+                    r = derivationError.Relations.Select(x => new[] { x.Association.Id, x.RelationType.Tag }).ToArray(),
                 };
 
-                @this.DerivationErrors = @this.DerivationErrors != null ?
-                                             new List<ResponseDerivationError>(@this.DerivationErrors) { derivationErrorResponse }.ToArray() :
+                @this._d = @this._d != null ?
+                                             new List<ResponseDerivationError>(@this._d) { derivationErrorResponse }.ToArray() :
                                              new List<ResponseDerivationError> { derivationErrorResponse }.ToArray();
             }
         }
 
         public static void AddVersionError(this Response @this, IObject obj) =>
-            @this.VersionErrors = @this.VersionErrors != null ?
-                new List<long>(@this.VersionErrors) { obj.Id }.ToArray() :
+            @this._v = @this._v != null ?
+                new List<long>(@this._v) { obj.Id }.ToArray() :
                 new List<long> { obj.Id }.ToArray();
 
         public static void AddAccessError(this Response @this, IObject obj) =>
-            @this.AccessErrors = @this.AccessErrors != null ?
-                new List<long>(@this.AccessErrors) { obj.Id }.ToArray() :
+            @this._a = @this._a != null ?
+                new List<long>(@this._a) { obj.Id }.ToArray() :
                 new List<long> { obj.Id }.ToArray();
 
         public static void AddMissingError(this Response @this, long id) =>
-            @this.MissingErrors = @this.MissingErrors != null ?
-                new List<long>(@this.MissingErrors) { id }.ToArray() :
+            @this._m = @this._m != null ?
+                new List<long>(@this._m) { id }.ToArray() :
                 new List<long> { id }.ToArray();
     }
 }

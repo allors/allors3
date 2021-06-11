@@ -8,6 +8,7 @@ namespace Allors.Database.Protocol.Json
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Allors.Protocol.Json;
     using Allors.Protocol.Json.Data;
     using Meta;
     using Extent = Data.Extent;
@@ -22,6 +23,7 @@ namespace Allors.Database.Protocol.Json
     public class FromJsonVisitor : Allors.Protocol.Json.Data.IVisitor
     {
         private readonly ITransaction transaction;
+        private readonly IUnitConvert unitConvert;
         private IMetaPopulation metaPopulation;
 
         private readonly Stack<Data.IExtent> extents;
@@ -32,9 +34,10 @@ namespace Allors.Database.Protocol.Json
         private readonly Stack<Node> nodes;
         private readonly Stack<Sort> sorts;
 
-        public FromJsonVisitor(ITransaction transaction)
+        public FromJsonVisitor(ITransaction transaction, IUnitConvert unitConvert)
         {
             this.transaction = transaction;
+            this.unitConvert = unitConvert;
             this.metaPopulation = this.transaction.Database.ObjectFactory.MetaPopulation;
 
             this.extents = new Stack<Data.IExtent>();
@@ -59,23 +62,23 @@ namespace Allors.Database.Protocol.Json
             Data.IExtentOperator extentOperator = null;
             Data.IExtent sortable = null;
 
-            switch (visited.Kind)
+            switch (visited.k)
             {
                 case ExtentKind.Extent:
-                    if (!visited.ObjectType.HasValue)
+                    if (!visited.t.HasValue)
                     {
-                        throw new Exception("Unknown extent kind " + visited.Kind);
+                        throw new Exception("Unknown extent kind " + visited.k);
                     }
 
-                    var objectType = (IComposite)this.metaPopulation.FindByTag(visited.ObjectType.Value);
+                    var objectType = (IComposite)this.metaPopulation.FindByTag(visited.t.Value);
                     var extent = new Extent(objectType);
                     sortable = extent;
 
                     this.extents.Push(extent);
 
-                    if (visited.Predicate != null)
+                    if (visited.p != null)
                     {
-                        visited.Predicate.Accept(this);
+                        visited.p.Accept(this);
                         extent.Predicate = this.predicates.Pop();
                     }
 
@@ -94,19 +97,19 @@ namespace Allors.Database.Protocol.Json
                     break;
 
                 default:
-                    throw new Exception("Unknown extent kind " + visited.Kind);
+                    throw new Exception("Unknown extent kind " + visited.k);
             }
 
             sortable ??= extentOperator;
 
-            if (visited.Sorting?.Length > 0)
+            if (visited.s?.Length > 0)
             {
-                var length = visited.Sorting.Length;
+                var length = visited.s.Length;
 
                 sortable.Sorting = new Data.Sort[length];
                 for (var i = 0; i < length; i++)
                 {
-                    var sorting = visited.Sorting[i];
+                    var sorting = visited.s[i];
                     sorting.Accept(this);
                     sortable.Sorting[i] = this.sorts.Pop();
                 }
@@ -116,14 +119,14 @@ namespace Allors.Database.Protocol.Json
             {
                 this.extents.Push(extentOperator);
 
-                if (visited.Operands?.Length > 0)
+                if (visited.o?.Length > 0)
                 {
-                    var length = visited.Operands.Length;
+                    var length = visited.o.Length;
 
                     extentOperator.Operands = new Data.IExtent[length];
                     for (var i = 0; i < length; i++)
                     {
-                        var operand = visited.Operands[i];
+                        var operand = visited.o[i];
                         operand.Accept(this);
                         extentOperator.Operands[i] = this.extents.Pop();
                     }
@@ -137,18 +140,18 @@ namespace Allors.Database.Protocol.Json
 
             this.selects.Push(@select);
 
-            if (visited.Step != null)
+            if (visited.s != null)
             {
-                visited.Step.Accept(this);
+                visited.s.Accept(this);
                 @select.Step = this.steps.Pop();
             }
 
-            if (visited.Include?.Length > 0)
+            if (visited.i?.Length > 0)
             {
-                @select.Include = new Node[visited.Include.Length];
-                for (var i = 0; i < visited.Include.Length; i++)
+                @select.Include = new Node[visited.i.Length];
+                for (var i = 0; i < visited.i.Length; i++)
                 {
-                    visited.Include[i].Accept(this);
+                    visited.i[i].Accept(this);
                     @select.Include[i] = this.nodes.Pop();
                 }
             }
@@ -156,14 +159,14 @@ namespace Allors.Database.Protocol.Json
 
         public void VisitNode(Allors.Protocol.Json.Data.Node visited)
         {
-            var propertyType = (IPropertyType)this.metaPopulation.FindAssociationType(visited.AssociationType) ?? this.metaPopulation.FindRoleType(visited.RoleType);
+            var propertyType = (IPropertyType)this.metaPopulation.FindAssociationType(visited.a) ?? this.metaPopulation.FindRoleType(visited.r);
             var node = new Node(propertyType);
 
             this.nodes.Push(node);
 
-            if (visited.Nodes?.Length > 0)
+            if (visited.n?.Length > 0)
             {
-                foreach (var childNode in visited.Nodes)
+                foreach (var childNode in visited.n)
                 {
                     childNode.Accept(this);
                     node.Add(this.nodes.Pop());
@@ -173,24 +176,24 @@ namespace Allors.Database.Protocol.Json
 
         public void VisitPredicate(Predicate visited)
         {
-            switch (visited.Kind)
+            switch (visited.k)
             {
                 case PredicateKind.And:
                     var and = new Data.And
                     {
-                        Dependencies = visited.Dependencies,
+                        Dependencies = visited.d,
                     };
 
                     this.predicates.Push(and);
 
-                    if (visited.Operands?.Length > 0)
+                    if (visited.ops?.Length > 0)
                     {
-                        var length = visited.Operands.Length;
+                        var length = visited.ops.Length;
 
                         and.Operands = new Data.IPredicate[length];
                         for (var i = 0; i < length; i++)
                         {
-                            var operand = visited.Operands[i];
+                            var operand = visited.ops[i];
                             operand.Accept(this);
                             and.Operands[i] = this.predicates.Pop();
                         }
@@ -201,19 +204,19 @@ namespace Allors.Database.Protocol.Json
                 case PredicateKind.Or:
                     var or = new Data.Or
                     {
-                        Dependencies = visited.Dependencies
+                        Dependencies = visited.d
                     };
 
                     this.predicates.Push(or);
 
-                    if (visited.Operands?.Length > 0)
+                    if (visited.ops?.Length > 0)
                     {
-                        var length = visited.Operands.Length;
+                        var length = visited.ops.Length;
 
                         or.Operands = new Data.IPredicate[length];
                         for (var i = 0; i < length; i++)
                         {
-                            var operand = visited.Operands[i];
+                            var operand = visited.ops[i];
                             operand.Accept(this);
                             or.Operands[i] = this.predicates.Pop();
                         }
@@ -224,32 +227,32 @@ namespace Allors.Database.Protocol.Json
                 case PredicateKind.Not:
                     var not = new Data.Not
                     {
-                        Dependencies = visited.Dependencies,
+                        Dependencies = visited.d,
                     };
 
                     this.predicates.Push(not);
 
-                    if (visited.Operand != null)
+                    if (visited.op != null)
                     {
-                        visited.Operand.Accept(this);
+                        visited.op.Accept(this);
                         not.Operand = this.predicates.Pop();
                     }
 
                     break;
 
                 default:
-                    var associationType = this.metaPopulation.FindAssociationType(visited.AssociationType);
-                    var roleType = this.metaPopulation.FindRoleType(visited.RoleType);
+                    var associationType = this.metaPopulation.FindAssociationType(visited.a);
+                    var roleType = this.metaPopulation.FindRoleType(visited.r);
                     var propertyType = (IPropertyType)associationType ?? roleType;
 
-                    switch (visited.Kind)
+                    switch (visited.k)
                     {
                         case PredicateKind.InstanceOf:
 
                             var instanceOf = new Data.Instanceof(propertyType)
                             {
-                                Dependencies = visited.Dependencies,
-                                ObjectType = visited.ObjectType != null ? (IComposite)this.transaction.Database.MetaPopulation.FindByTag(visited.ObjectType.Value) : null
+                                Dependencies = visited.d,
+                                ObjectType = visited.o != null ? (IComposite)this.transaction.Database.MetaPopulation.FindByTag(visited.o.Value) : null
                             };
 
                             this.predicates.Push(instanceOf);
@@ -259,8 +262,8 @@ namespace Allors.Database.Protocol.Json
 
                             var exists = new Data.Exists(propertyType)
                             {
-                                Dependencies = visited.Dependencies,
-                                Parameter = visited.Parameter,
+                                Dependencies = visited.d,
+                                Parameter = visited.p,
                             };
 
                             this.predicates.Push(exists);
@@ -270,9 +273,9 @@ namespace Allors.Database.Protocol.Json
 
                             var contains = new Data.Contains(propertyType)
                             {
-                                Dependencies = visited.Dependencies,
-                                Parameter = visited.Parameter,
-                                Object = visited.Object.HasValue ? this.transaction.Instantiate(visited.Object.Value) : null,
+                                Dependencies = visited.d,
+                                Parameter = visited.p,
+                                Object = visited.ob.HasValue ? this.transaction.Instantiate(visited.ob.Value) : null,
                             };
 
                             this.predicates.Push(contains);
@@ -282,19 +285,19 @@ namespace Allors.Database.Protocol.Json
 
                             var containedIn = new Data.ContainedIn(propertyType)
                             {
-                                Dependencies = visited.Dependencies,
-                                Parameter = visited.Parameter
+                                Dependencies = visited.d,
+                                Parameter = visited.p
                             };
 
                             this.predicates.Push(containedIn);
 
-                            if (visited.Objects != null)
+                            if (visited.obs != null)
                             {
-                                containedIn.Objects = visited.Objects.Select(this.transaction.Instantiate).ToArray();
+                                containedIn.Objects = visited.obs.Select(this.transaction.Instantiate).ToArray();
                             }
-                            else if (visited.Extent != null)
+                            else if (visited.e != null)
                             {
-                                visited.Extent.Accept(this);
+                                visited.e.Accept(this);
                                 containedIn.Extent = this.extents.Pop();
                             }
 
@@ -304,22 +307,22 @@ namespace Allors.Database.Protocol.Json
 
                             var equals = new Data.Equals(propertyType)
                             {
-                                Dependencies = visited.Dependencies,
-                                Parameter = visited.Parameter,
-                                Path = this.metaPopulation.FindRoleType(visited.Path)
+                                Dependencies = visited.d,
+                                Parameter = visited.p,
+                                Path = this.metaPopulation.FindRoleType(visited.pa)
                             };
 
                             this.predicates.Push(equals);
 
-                            if (visited.Object != null)
+                            if (visited.ob != null)
                             {
-                                equals.Object = visited.Object.HasValue
-                                    ? this.transaction.Instantiate(visited.Object.Value)
+                                equals.Object = visited.ob.HasValue
+                                    ? this.transaction.Instantiate(visited.ob.Value)
                                     : null;
                             }
-                            else if (visited.Value != null)
+                            else if (visited.v != null)
                             {
-                                var value = UnitConvert.FromJson(((IRoleType)propertyType).ObjectType.Tag, visited.Value);
+                                var value = this.unitConvert.FromJson(((IRoleType)propertyType).ObjectType.Tag, visited.v);
                                 equals.Value = value;
                             }
 
@@ -329,10 +332,10 @@ namespace Allors.Database.Protocol.Json
 
                             var between = new Data.Between(roleType)
                             {
-                                Dependencies = visited.Dependencies,
-                                Parameter = visited.Parameter,
-                                Values = visited.Values?.Select(v => UnitConvert.FromJson(roleType.ObjectType.Tag, v)).ToArray(),
-                                Paths = visited.Paths?.Select(v => this.metaPopulation.FindRoleType(v)).ToArray()
+                                Dependencies = visited.d,
+                                Parameter = visited.p,
+                                Values = visited.vs?.Select(v => this.unitConvert.FromJson(roleType.ObjectType.Tag, v)).ToArray(),
+                                Paths = visited.pas?.Select(v => this.metaPopulation.FindRoleType(v)).ToArray()
                             };
 
                             this.predicates.Push(between);
@@ -343,10 +346,10 @@ namespace Allors.Database.Protocol.Json
 
                             var greaterThan = new Data.GreaterThan(roleType)
                             {
-                                Dependencies = visited.Dependencies,
-                                Parameter = visited.Parameter,
-                                Value = UnitConvert.FromJson(roleType.ObjectType.Tag, visited.Value),
-                                Path = this.metaPopulation.FindRoleType(visited.Path)
+                                Dependencies = visited.d,
+                                Parameter = visited.p,
+                                Value = this.unitConvert.FromJson(roleType.ObjectType.Tag, visited.v),
+                                Path = this.metaPopulation.FindRoleType(visited.pa)
                             };
 
                             this.predicates.Push(greaterThan);
@@ -357,10 +360,10 @@ namespace Allors.Database.Protocol.Json
 
                             var lessThan = new Data.LessThan(roleType)
                             {
-                                Dependencies = visited.Dependencies,
-                                Parameter = visited.Parameter,
-                                Value = UnitConvert.FromJson(roleType.ObjectType.Tag, visited.Value),
-                                Path = this.metaPopulation.FindRoleType(visited.Path)
+                                Dependencies = visited.d,
+                                Parameter = visited.p,
+                                Value = this.unitConvert.FromJson(roleType.ObjectType.Tag, visited.v),
+                                Path = this.metaPopulation.FindRoleType(visited.pa)
                             };
 
                             this.predicates.Push(lessThan);
@@ -371,9 +374,9 @@ namespace Allors.Database.Protocol.Json
 
                             var like = new Data.Like(roleType)
                             {
-                                Dependencies = visited.Dependencies,
-                                Parameter = visited.Parameter,
-                                Value = UnitConvert.FromJson(roleType.ObjectType.Tag, visited.Value)?.ToString(),
+                                Dependencies = visited.d,
+                                Parameter = visited.p,
+                                Value = this.unitConvert.FromJson(roleType.ObjectType.Tag, visited.v)?.ToString(),
                             };
 
                             this.predicates.Push(like);
@@ -381,7 +384,7 @@ namespace Allors.Database.Protocol.Json
                             break;
 
                         default:
-                            throw new Exception("Unknown predicate kind " + visited.Kind);
+                            throw new Exception("Unknown predicate kind " + visited.k);
                     }
 
                     break;
@@ -392,26 +395,26 @@ namespace Allors.Database.Protocol.Json
         {
             var pull = new Pull
             {
-                ExtentRef = visited.ExtentRef,
-                ObjectType = visited.ObjectType.HasValue ? (IObjectType)this.transaction.Database.MetaPopulation.FindByTag(visited.ObjectType.Value) : null,
-                Object = visited.Object != null ? this.transaction.Instantiate(visited.Object.Value) : null,
-                Arguments = new Arguments(visited.Arguments),
+                ExtentRef = visited.er,
+                ObjectType = visited.t.HasValue ? (IObjectType)this.transaction.Database.MetaPopulation.FindByTag(visited.t.Value) : null,
+                Object = visited.o != null ? this.transaction.Instantiate(visited.o.Value) : null,
+                Arguments = new Arguments(visited.a, this.unitConvert),
             };
 
-            if (visited.Extent != null)
+            if (visited.e != null)
             {
-                visited.Extent.Accept(this);
+                visited.e.Accept(this);
                 pull.Extent = this.extents.Pop();
             }
 
-            if (visited.Results?.Length > 0)
+            if (visited.r?.Length > 0)
             {
-                var length = visited.Results.Length;
+                var length = visited.r.Length;
 
                 pull.Results = new Result[length];
                 for (var i = 0; i < length; i++)
                 {
-                    var result = visited.Results[i];
+                    var result = visited.r[i];
                     result.Accept(this);
                     pull.Results[i] = this.results.Pop();
                 }
@@ -424,15 +427,15 @@ namespace Allors.Database.Protocol.Json
         {
             var result = new Result
             {
-                SelectRef = visited.SelectRef,
-                Name = visited.Name,
-                Skip = visited.Skip,
-                Take = visited.Take,
+                SelectRef = visited.r,
+                Name = visited.n,
+                Skip = visited.k,
+                Take = visited.t,
             };
 
-            if (visited.Select != null)
+            if (visited.s != null)
             {
-                visited.Select.Accept(this);
+                visited.s.Accept(this);
                 result.Select = this.selects.Pop();
             }
 
@@ -443,8 +446,8 @@ namespace Allors.Database.Protocol.Json
         {
             var sort = new Sort
             {
-                SortDirection = visited.SortDirection,
-                RoleType = visited.RoleType != null ? (IRoleType)this.transaction.Database.ObjectFactory.MetaPopulation.FindByTag(visited.RoleType.Value) : null,
+                SortDirection = visited.d,
+                RoleType = visited.r != null ? (IRoleType)this.transaction.Database.ObjectFactory.MetaPopulation.FindByTag(visited.r.Value) : null,
             };
 
             this.sorts.Push(sort);
@@ -452,7 +455,7 @@ namespace Allors.Database.Protocol.Json
 
         public void VisitStep(Allors.Protocol.Json.Data.Step visited)
         {
-            var propertyType = (IPropertyType)this.metaPopulation.FindAssociationType(visited.AssociationType) ?? this.metaPopulation.FindRoleType(visited.RoleType);
+            var propertyType = (IPropertyType)this.metaPopulation.FindAssociationType(visited.a) ?? this.metaPopulation.FindRoleType(visited.r);
 
             var step = new Step
             {
@@ -461,30 +464,30 @@ namespace Allors.Database.Protocol.Json
 
             this.steps.Push(step);
 
-            if (visited.Next != null)
+            if (visited.n != null)
             {
-                visited.Next.Accept(this);
+                visited.n.Accept(this);
                 step.Next = this.steps.Pop();
             }
 
-            if (visited.Include?.Length > 0)
+            if (visited.i?.Length > 0)
             {
-                step.Include = new Node[visited.Include.Length];
-                for (var i = 0; i < visited.Include.Length; i++)
+                step.Include = new Node[visited.i.Length];
+                for (var i = 0; i < visited.i.Length; i++)
                 {
-                    visited.Include[i].Accept(this);
+                    visited.i[i].Accept(this);
                     step.Include[i] = this.nodes.Pop();
                 }
             }
         }
 
         public void VisitProcedure(Allors.Protocol.Json.Data.Procedure procedure) =>
-            this.Procedure = new Procedure(procedure.Name)
+            this.Procedure = new Procedure(procedure.n)
             {
-                Collections = procedure.Collections?.ToDictionary(kvp => kvp.Key, kvp => this.transaction.Instantiate(kvp.Value)),
-                Objects = procedure.Objects?.ToDictionary(kvp => kvp.Key, kvp => this.transaction.Instantiate(kvp.Value)),
-                Values = procedure.Values,
-                Pool = procedure.Pool?.ToDictionary(v => this.transaction.Instantiate(v[0]), v => v[1])
+                Collections = procedure.c?.ToDictionary(kvp => kvp.Key, kvp => this.transaction.Instantiate(kvp.Value)),
+                Objects = procedure.o?.ToDictionary(kvp => kvp.Key, kvp => this.transaction.Instantiate(kvp.Value)),
+                Values = procedure.v,
+                Pool = procedure.p?.ToDictionary(v => this.transaction.Instantiate(v[0]), v => v[1])
             };
     }
 }

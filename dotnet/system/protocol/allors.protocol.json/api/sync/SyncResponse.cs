@@ -5,14 +5,16 @@
 
 namespace Allors.Protocol.Json.Api.Sync
 {
-    using System.Text.Json.Serialization;
-
     public class SyncResponse
     {
-        [JsonPropertyName("o")]
-        public SyncResponseObject[] Objects { get; set; }
+        /// <summary>
+        /// Objects
+        /// </summary>
+        public SyncResponseObject[] o { get; set; }
 
-        [JsonPropertyName("a")]
-        public long[][] AccessControls { get; set; }
+        /// <summary>
+        /// AccessControls
+        /// </summary>
+        public long[][] a { get; set; }
     }
 }

@@ -5,21 +5,17 @@
 
 namespace Allors.Protocol.Json.Api
 {
-    using System.Text.Json.Serialization;
-
     public class ResponseDerivationError
     {
         /// <summary>
-        /// Gets or sets the error message.
+        /// ErrorMessage
         /// </summary>
-        [JsonPropertyName("e")]
-        public string ErrorMessage { get; set; }
+        public string e { get; set; }
 
         /// <summary>
-        /// Gets or sets the roles.
+        /// Roles
         /// [][AssociationId, RelationTypeId]
         /// </summary>
-        [JsonPropertyName("r")]
-        public long[][] Roles { get; set; }
+        public long[][] r { get; set; }
     }
 }

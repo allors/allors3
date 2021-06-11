@@ -8,12 +8,15 @@ namespace Allors.Database.Protocol.Json
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Allors.Protocol.Json;
     using Meta;
     using Allors.Protocol.Json.Api.Sync;
     using Security;
 
     public class SyncResponseBuilder
     {
+        private readonly IUnitConvert unitConvert;
+
         private readonly AccessControlsWriter accessControlsWriter;
         private readonly PermissionsWriter permissionsWriter;
 
@@ -21,11 +24,12 @@ namespace Allors.Database.Protocol.Json
         private readonly ISet<IClass> allowedClasses;
         private readonly Action<IEnumerable<IObject>> prefetch;
 
-        public SyncResponseBuilder(ITransaction transaction, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, Action<IEnumerable<IObject>> prefetch)
+        public SyncResponseBuilder(ITransaction transaction, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, Action<IEnumerable<IObject>> prefetch, IUnitConvert unitConvert)
         {
             this.transaction = transaction;
             this.allowedClasses = allowedClasses;
             this.prefetch = prefetch;
+            this.unitConvert = unitConvert;
 
             this.AccessControlLists = accessControlLists;
 
@@ -37,30 +41,30 @@ namespace Allors.Database.Protocol.Json
 
         public SyncResponse Build(SyncRequest syncRequest)
         {
-            var objects = this.transaction.Instantiate(syncRequest.Objects)
+            var objects = this.transaction.Instantiate(syncRequest.o)
                 .Where(v => this.allowedClasses?.Contains(v.Strategy.Class) == true)
                 .ToArray();
 
             this.prefetch(objects);
 
-            static SyncResponseRole CreateSyncResponseRole(IObject @object, IRoleType roleType)
+            static SyncResponseRole CreateSyncResponseRole(IObject @object, IRoleType roleType, IUnitConvert unitConvert)
             {
-                var syncResponseRole = new SyncResponseRole { RoleType = roleType.RelationType.Tag };
+                var syncResponseRole = new SyncResponseRole { t = roleType.RelationType.Tag };
 
                 if (roleType.ObjectType.IsUnit)
                 {
-                    syncResponseRole.Value = UnitConvert.ToJson(@object.Strategy.GetUnitRole(roleType));
+                    syncResponseRole.v = unitConvert.ToJson(@object.Strategy.GetUnitRole(roleType));
                 }
                 else if (roleType.IsOne)
                 {
-                    syncResponseRole.Object = @object.Strategy.GetCompositeRole(roleType)?.Id;
+                    syncResponseRole.o = @object.Strategy.GetCompositeRole(roleType)?.Id;
                 }
                 else
                 {
                     var roles = @object.Strategy.GetCompositeRoles(roleType);
                     if (roles.Count > 0)
                     {
-                        syncResponseRole.Collection = roles.Select(roleObject => roleObject.Id).ToArray();
+                        syncResponseRole.c = roles.Select(roleObject => roleObject.Id).ToArray();
                     }
                 }
 
@@ -69,26 +73,26 @@ namespace Allors.Database.Protocol.Json
 
             return new SyncResponse
             {
-                Objects = objects.Select(v =>
+                o = objects.Select(v =>
                 {
-                    var @class = (IClass)v.Strategy.Class;
+                    var @class = v.Strategy.Class;
                     var acl = this.AccessControlLists[v];
 
                     return new SyncResponseObject
                     {
-                        Id = v.Id,
-                        Version = v.Strategy.ObjectVersion,
-                        ObjectType = v.Strategy.Class.Tag,
+                        i = v.Id,
+                        v = v.Strategy.ObjectVersion,
+                        t = v.Strategy.Class.Tag,
                         // TODO: Cache
-                        Roles = @class.DatabaseRoleTypes?.Where(v => v.RelationType.WorkspaceNames.Length > 0)
+                        r = @class.DatabaseRoleTypes?.Where(v => v.RelationType.WorkspaceNames.Length > 0)
                             .Where(w => acl.CanRead(w) && v.Strategy.ExistRole(w))
-                            .Select(w => CreateSyncResponseRole(v, w))
+                            .Select(w => CreateSyncResponseRole(v, w, this.unitConvert))
                             .ToArray(),
-                        AccessControls = this.accessControlsWriter.Write(v)?.ToArray(),
-                        DeniedPermissions = this.permissionsWriter.Write(v)?.ToArray(),
+                        a = this.accessControlsWriter.Write(v)?.ToArray(),
+                        d = this.permissionsWriter.Write(v)?.ToArray(),
                     };
                 }).ToArray(),
-                AccessControls = this.AccessControlLists.EffectivePermissionIdsByAccessControl.Keys
+                a = this.AccessControlLists.EffectivePermissionIdsByAccessControl.Keys
                     .Select(v => new[] { v.Strategy.ObjectId, v.Strategy.ObjectVersion })
                     .ToArray(),
             };

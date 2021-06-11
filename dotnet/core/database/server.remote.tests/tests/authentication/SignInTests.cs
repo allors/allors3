@@ -28,15 +28,15 @@ namespace Allors.Server.Tests
         {
             var args = new AuthenticationTokenRequest
             {
-                Login = "Jane",
-                Password = "p@ssw0rd",
+                l = "Jane",
+                p = "p@ssw0rd",
             };
 
             var uri = new Uri("Authentication/Token", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, args);
             var siginInResponse = await this.ReadAsAsync<AuthenticationTokenResponse>(response);
 
-            Assert.True(siginInResponse.Authenticated);
+            Assert.True(siginInResponse.a);
         }
 
         [Fact]
@@ -44,15 +44,15 @@ namespace Allors.Server.Tests
         {
             var args = new AuthenticationTokenRequest
             {
-                Login = "Jeff",
-                Password = "p@ssw0rd",
+                l = "Jeff",
+                p = "p@ssw0rd",
             };
 
             var uri = new Uri("Authentication/Token", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, args);
             var siginInResponse = await this.ReadAsAsync<AuthenticationTokenResponse>(response);
 
-            Assert.False(siginInResponse.Authenticated);
+            Assert.False(siginInResponse.a);
         }
 
         [Fact]
@@ -60,15 +60,15 @@ namespace Allors.Server.Tests
         {
             var args = new AuthenticationTokenRequest
             {
-                Login = "John",
-                Password = "",
+                l = "John",
+                p = "",
             };
 
             var uri = new Uri("Authentication/Token", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, args);
             var siginInResponse = await this.ReadAsAsync<AuthenticationTokenResponse>(response);
 
-            Assert.False(siginInResponse.Authenticated);
+            Assert.False(siginInResponse.a);
         }
 
         [Fact]
@@ -76,14 +76,14 @@ namespace Allors.Server.Tests
         {
             var args = new AuthenticationTokenRequest
             {
-                Login = "John",
+                l = "John",
             };
 
             var uri = new Uri("Authentication/Token", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, args);
             var signInResponse = await this.ReadAsAsync<AuthenticationTokenResponse>(response);
 
-            Assert.False(signInResponse.Authenticated);
+            Assert.False(signInResponse.a);
         }
     }
 }

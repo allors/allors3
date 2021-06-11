@@ -13,6 +13,7 @@ namespace Allors.Database.Protocol.Json
     using Allors.Protocol.Json.Api.Push;
     using Allors.Protocol.Json.Api.Security;
     using Allors.Protocol.Json.Api.Sync;
+    using Allors.Protocol.Json.SystemTextJson;
     using Data;
     using Derivations;
     using Domain;
@@ -38,6 +39,8 @@ namespace Allors.Database.Protocol.Json
             this.PreparedExtents = databaseContext.PreparedExtents;
             this.Build = @class => (IObject)DefaultObjectBuilder.Build(transaction, @class);
             this.Derive = () => this.Transaction.Derive(false);
+
+            this.UnitConvert = new UnitConvert();
         }
 
         public ITransaction Transaction { get; }
@@ -60,6 +63,8 @@ namespace Allors.Database.Protocol.Json
 
         public Func<IValidation> Derive { get; }
 
+        public UnitConvert UnitConvert { get; }
+
         public InvokeResponse Invoke(InvokeRequest invokeRequest)
         {
             var invokeResponseBuilder = new InvokeResponseBuilder(this.Transaction, this.Derive, this.AccessControlLists, this.AllowedClasses);
@@ -68,13 +73,13 @@ namespace Allors.Database.Protocol.Json
 
         public PullResponse Pull(PullRequest pullRequest)
         {
-            var response = new PullResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents);
+            var response = new PullResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert);
             return response.Build(pullRequest);
         }
 
         public PushResponse Push(PushRequest pushRequest)
         {
-            var responseBuilder = new PushResponseBuilder(this.Transaction, this.Derive, this.MetaPopulation, this.AccessControlLists, this.AllowedClasses, this.Build);
+            var responseBuilder = new PushResponseBuilder(this.Transaction, this.Derive, this.MetaPopulation, this.AccessControlLists, this.AllowedClasses, this.Build, this.UnitConvert);
             return responseBuilder.Build(pushRequest);
         }
 
@@ -98,7 +103,7 @@ namespace Allors.Database.Protocol.Json
                 }
             }
 
-            var responseBuilder = new SyncResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, Prefetch);
+            var responseBuilder = new SyncResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, Prefetch, this.UnitConvert);
             return responseBuilder.Build(syncRequest);
         }
 
@@ -111,7 +116,7 @@ namespace Allors.Database.Protocol.Json
         // TODO: Delete
         public PullResponseBuilder CreatePullResponseBuilder()
         {
-            var response = new PullResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents);
+            var response = new PullResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert);
             return response;
         }
     }

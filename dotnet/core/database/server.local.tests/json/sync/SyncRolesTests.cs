@@ -33,22 +33,22 @@ namespace Tests
 
             var syncRequest = new SyncRequest
             {
-                Objects = new[] { x1.Id },
+                o = new[] { x1.Id },
             };
             var api = new Api(this.Transaction, "X");
             var syncResponse = api.Sync(syncRequest);
 
-            Assert.Single(syncResponse.Objects);
+            Assert.Single(syncResponse.o);
 
-            var wx1 = syncResponse.Objects[0];
+            var wx1 = syncResponse.o[0];
 
-            Assert.Equal(2, wx1.Roles.Length);
+            Assert.Equal(2, wx1.r.Length);
 
             var wx1WorkspaceXString = wx1.GetRole(m.WorkspaceXObject1.WorkspaceXString);
             var wx1WorkspaceXYString = wx1.GetRole(m.WorkspaceXObject1.WorkspaceXYString);
 
-            Assert.Equal("x1:x", wx1WorkspaceXString.Value);
-            Assert.Equal("x1:xy", wx1WorkspaceXYString.Value);
+            Assert.Equal("x1:x", wx1WorkspaceXString.v);
+            Assert.Equal("x1:xy", wx1WorkspaceXYString.v);
         }
 
 
@@ -69,12 +69,12 @@ namespace Tests
 
             var syncRequest = new SyncRequest
             {
-                Objects = new[] { x1.Id},
+                o = new[] { x1.Id},
             };
             var api = new Api(this.Transaction, "None");
             var syncResponse = api.Sync(syncRequest);
 
-            Assert.Empty(syncResponse.Objects);
+            Assert.Empty(syncResponse.o);
         }
     }
 }

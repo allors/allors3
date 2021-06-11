@@ -25,8 +25,8 @@ namespace Allors.Server.Tests
         {
             var args = new AuthenticationTokenRequest
             {
-                Login = "user",
-                Password = "p@ssw0rd",
+                l = "user",
+                p = "p@ssw0rd",
             };
 
             var signInUri = new Uri("Authentication/Token", UriKind.Relative);

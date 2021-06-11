@@ -30,9 +30,9 @@ namespace Allors.Database.Protocol.Json
 
         public InvokeResponse Build(InvokeRequest invokeRequest)
         {
-            var invocations = invokeRequest.List;
-            var isolated = invokeRequest.Options?.Isolated ?? false;
-            var continueOnError = invokeRequest.Options?.ContinueOnError ?? false;
+            var invocations = invokeRequest.l;
+            var isolated = invokeRequest.o?.i ?? false;
+            var continueOnError = invokeRequest.o?.c ?? false;
 
             var invokeResponse = new InvokeResponse();
             if (isolated)
@@ -103,15 +103,15 @@ namespace Allors.Database.Protocol.Json
         private bool Invoke(Invocation invocation, InvokeResponse invokeResponse)
         {
             // TODO: M should be a methodTypeId instead of the methodName
-            if (invocation.Method == 0 || invocation.Id == 0 || invocation.Version == 0)
+            if (invocation.m == 0 || invocation.i == 0 || invocation.v == 0)
             {
                 throw new ArgumentException();
             }
 
-            var obj = this.transaction.Instantiate(invocation.Id);
+            var obj = this.transaction.Instantiate(invocation.i);
             if (obj == null)
             {
-                invokeResponse.AddMissingError(invocation.Id);
+                invokeResponse.AddMissingError(invocation.i);
                 return true;
             }
 
@@ -125,14 +125,14 @@ namespace Allors.Database.Protocol.Json
 
             // TODO: Cache and filter for workspace
             var methodTypes = composite.MethodTypes.Where(v => v.WorkspaceNames.Length > 0);
-            var methodType = methodTypes.FirstOrDefault(x => x.Tag.Equals(invocation.Method));
+            var methodType = methodTypes.FirstOrDefault(x => x.Tag.Equals(invocation.m));
 
             if (methodType == null)
             {
-                throw new Exception("Method " + invocation.Method + " not found.");
+                throw new Exception("Method " + invocation.m + " not found.");
             }
 
-            if (!invocation.Version.Equals(obj.Strategy.ObjectVersion))
+            if (!invocation.v.Equals(obj.Strategy.ObjectVersion))
             {
                 invokeResponse.AddVersionError(obj);
                 return true;
@@ -159,7 +159,7 @@ namespace Allors.Database.Protocol.Json
                     innerException = innerException.InnerException;
                 }
 
-                invokeResponse.ErrorMessage = innerException.Message;
+                invokeResponse._e = innerException.Message;
                 return true;
             }
 

@@ -5,25 +5,33 @@
 
 namespace Allors.Protocol.Json.Api
 {
-    using System.Text.Json.Serialization;
-
     public abstract class Response
     {
-        public bool HasErrors => this.VersionErrors?.Length > 0 || this.AccessErrors?.Length > 0 || this.MissingErrors?.Length > 0 || this.DerivationErrors?.Length > 0 || !string.IsNullOrWhiteSpace(this.ErrorMessage);
+        public bool HasErrors => this._v?.Length > 0 || this._a?.Length > 0 || this._m?.Length > 0 || this._d?.Length > 0 || !string.IsNullOrWhiteSpace(this._e);
 
-        [JsonPropertyName("_e")]
-        public string ErrorMessage { get; set; }
+        /// <summary>
+        /// ErrorMessage
+        /// </summary>
+        public string _e { get; set; }
 
-        [JsonPropertyName("_v")]
-        public long[] VersionErrors { get; set; }
+        /// <summary>
+        /// VersionErrors
+        /// </summary>
+        public long[] _v { get; set; }
 
-        [JsonPropertyName("_a")]
-        public long[] AccessErrors { get; set; }
+        /// <summary>
+        /// AccessErrors
+        /// </summary>
+        public long[] _a { get; set; }
 
-        [JsonPropertyName("_m")]
-        public long[] MissingErrors { get; set; }
+        /// <summary>
+        /// MissingErrors
+        /// </summary>
+        public long[] _m { get; set; }
 
-        [JsonPropertyName("_d")]
-        public ResponseDerivationError[] DerivationErrors { get; set; }
+        /// <summary>
+        /// DerivationErrors
+        /// </summary>
+        public ResponseDerivationError[] _d { get; set; }
     }
 }

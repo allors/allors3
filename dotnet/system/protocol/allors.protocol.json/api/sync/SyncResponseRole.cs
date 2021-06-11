@@ -6,21 +6,28 @@
 namespace Allors.Protocol.Json.Api.Sync
 {
     using System.Diagnostics;
-    using System.Text.Json.Serialization;
-
-    [DebuggerDisplay("{Value} [{RoleType}]")]
+    
+    [DebuggerDisplay("{v} [{t}]")]
     public class SyncResponseRole
     {
-        [JsonPropertyName("t")]
-        public int RoleType { get; set; }
+        /// <summary>
+        /// RoleType
+        /// </summary>
+        public int t { get; set; }
 
-        [JsonPropertyName("c")]
-        public long[] Collection { get; set; }
+        /// <summary>
+        /// Collection
+        /// </summary>
+        public long[] c { get; set; }
 
-        [JsonPropertyName("o")]
-        public long? Object { get; set; }
+        /// <summary>
+        /// Object
+        /// </summary>
+        public long? o { get; set; }
 
-        [JsonPropertyName("v")]
-        public object Value { get; set; }
+        /// <summary>
+        /// Value
+        /// </summary>
+        public object v { get; set; }
     }
 }

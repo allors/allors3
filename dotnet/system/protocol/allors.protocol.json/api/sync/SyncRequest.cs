@@ -5,11 +5,11 @@
 
 namespace Allors.Protocol.Json.Api.Sync
 {
-    using System.Text.Json.Serialization;
-
     public class SyncRequest
     {
-        [JsonPropertyName("o")]
-        public long[] Objects { get; set; }
+        /// <summary>
+        /// Objects
+        /// </summary>
+        public long[] o { get; set; }
     }
 }

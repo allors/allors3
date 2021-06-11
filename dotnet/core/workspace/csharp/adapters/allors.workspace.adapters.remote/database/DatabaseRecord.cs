@@ -20,12 +20,12 @@ namespace Allors.Workspace.Adapters.Remote
         internal DatabaseRecord(DatabaseConnection database, IClass @class, long id) : base(@class, id, 0) => this.database = database;
 
         internal DatabaseRecord(DatabaseConnection database, ResponseContext ctx, SyncResponseObject syncResponseObject)
-            : base((IClass)database.Configuration.MetaPopulation.FindByTag(syncResponseObject.ObjectType), syncResponseObject.Id, syncResponseObject.Version)
+            : base((IClass)database.Configuration.MetaPopulation.FindByTag(syncResponseObject.t), syncResponseObject.i, syncResponseObject.v)
         {
             this.database = database;
-            this.syncResponseRoles = syncResponseObject.Roles;
-            this.AccessControlIds = ctx.CheckForMissingAccessControls(syncResponseObject.AccessControls);
-            this.DeniedPermissions = ctx.CheckForMissingPermissions(syncResponseObject.DeniedPermissions);
+            this.syncResponseRoles = syncResponseObject.r;
+            this.AccessControlIds = ctx.CheckForMissingAccessControls(syncResponseObject.a);
+            this.DeniedPermissions = ctx.CheckForMissingPermissions(syncResponseObject.d);
         }
 
         internal long[] AccessControlIds { get; }
@@ -42,23 +42,23 @@ namespace Allors.Workspace.Adapters.Remote
 
                     var metaPopulation = this.database.Configuration.MetaPopulation;
                     this.roleByRelationType = this.syncResponseRoles.ToDictionary(
-                        v => (IRelationType)meta.FindByTag(v.RoleType),
+                        v => (IRelationType)meta.FindByTag(v.t),
                         v =>
                         {
-                            var roleType = ((IRelationType)metaPopulation.FindByTag(v.RoleType)).RoleType;
+                            var roleType = ((IRelationType)metaPopulation.FindByTag(v.t)).RoleType;
 
                             var objectType = roleType.ObjectType;
                             if (objectType.IsUnit)
                             {
-                                return UnitConvert.FromJson(roleType.ObjectType.Tag, v.Value);
+                                return this.database.UnitConvert.FromJson(roleType.ObjectType.Tag, v.v);
                             }
 
                             if (roleType.IsOne)
                             {
-                                return v.Object;
+                                return v.o;
                             }
 
-                            return v.Collection;
+                            return v.c;
                         });
 
                     this.syncResponseRoles = null;

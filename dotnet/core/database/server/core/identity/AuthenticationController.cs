@@ -44,19 +44,19 @@ namespace Allors.Server
         {
             if (this.ModelState.IsValid)
             {
-                var user = await this.UserManager.FindByNameAsync(request.Login);
+                var user = await this.UserManager.FindByNameAsync(request.l);
 
                 if (user != null)
                 {
-                    var result = await this.SignInManager.CheckPasswordSignInAsync(user, request.Password, false);
+                    var result = await this.SignInManager.CheckPasswordSignInAsync(user, request.p, false);
                     if (result.Succeeded)
                     {
                         var token = user.CreateToken(this.Configuration);
                         var response = new AuthenticationTokenResponse
                         {
-                            Authenticated = true,
-                            UserId = user.Id,
-                            Token = token,
+                            a = true,
+                            u = user.Id,
+                            t = token,
                         };
                         return this.Ok(response);
                     }

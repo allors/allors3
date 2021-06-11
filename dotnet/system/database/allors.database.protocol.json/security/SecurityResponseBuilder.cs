@@ -30,37 +30,37 @@ namespace Allors.Database.Protocol.Json
         {
             var securityResponse = new SecurityResponse();
 
-            if (securityRequest.AccessControls?.Length > 0)
+            if (securityRequest.a?.Length > 0)
             {
-                var accessControlIds = securityRequest.AccessControls;
+                var accessControlIds = securityRequest.a;
                 var accessControls = this.transaction.Instantiate(accessControlIds).Cast<IAccessControl>().ToArray();
 
-                securityResponse.AccessControls = accessControls
+                securityResponse.a = accessControls
                     .Select(v =>
                     {
                         var response = new SecurityResponseAccessControl
                         {
-                            Id = v.Strategy.ObjectId,
-                            Version = v.Strategy.ObjectVersion,
+                            i = v.Strategy.ObjectId,
+                            v = v.Strategy.ObjectVersion,
                         };
 
                         if (this.AccessControlLists.EffectivePermissionIdsByAccessControl.TryGetValue(v, out var x))
                         {
-                            response.PermissionIds = x.ToArray();
+                            response.p = x.ToArray();
                         }
 
                         return response;
                     }).ToArray();
             }
 
-            if (securityRequest.Permissions?.Length > 0)
+            if (securityRequest.p?.Length > 0)
             {
-                var permissionIds = securityRequest.Permissions;
+                var permissionIds = securityRequest.p;
                 var permissions = this.transaction.Instantiate(permissionIds)
                     .Cast<IPermission>()
                     .Where(v => this.allowedClasses?.Contains(v.Class) == true);
 
-                securityResponse.Permissions = permissions.Select(v =>
+                securityResponse.p = permissions.Select(v =>
                     v switch
                     {
                         IReadPermission permission => new long[]

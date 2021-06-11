@@ -5,15 +5,18 @@
 
 namespace Allors.Protocol.Json.Data
 {
-    using System.Text.Json.Serialization;
 
     public class Sort : IVisitable
     {
-        [JsonPropertyName("r")]
-        public int? RoleType { get; set; }
+        /// <summary>
+        /// Role Type
+        /// </summary>
+        public int? r { get; set; }
 
-        [JsonPropertyName("d")]
-        public SortDirection SortDirection { get; set; }
+        /// <summary>
+        /// Sort Direction
+        /// </summary>
+        public SortDirection d { get; set; }
 
         public void Accept(IVisitor visitor) => visitor.VisitSort(this);
     }

@@ -13,6 +13,8 @@ namespace Tests
     using Allors.Database.Domain;
     using Allors.Protocol.Json.Api.Pull;
     using Allors.Database.Protocol.Json;
+    using Allors.Protocol.Json;
+    using Allors.Protocol.Json.SystemTextJson;
     using Xunit;
     using Extent = Allors.Database.Data.Extent;
     using Pull = Allors.Database.Data.Pull;
@@ -20,7 +22,9 @@ namespace Tests
 
     public class PullTests : ApiTest, IClassFixture<Fixture>
     {
-        public PullTests(Fixture fixture) : base(fixture) { }
+        public PullTests(Fixture fixture) : base(fixture) => this.UnitConvert = new UnitConvert();
+
+        public IUnitConvert UnitConvert { get; }
 
         [Fact]
         public void WithDeniedPermissions()
@@ -38,16 +42,16 @@ namespace Tests
             var pull = new Pull { Extent = new Extent(m.Data) };
             var pullRequest = new PullRequest
             {
-                List = new[]
+                l = new[]
                 {
-                    pull.ToJson()
+                    pull.ToJson(this.UnitConvert)
                 },
             };
 
             var api = new Api(this.Transaction, "Default");
             var pullResponse = api.Pull(pullRequest);
 
-            var namedCollection = pullResponse.Collections["Datas"];
+            var namedCollection = pullResponse.c["Datas"];
 
             Assert.Single(namedCollection);
 
@@ -55,7 +59,7 @@ namespace Tests
 
             Assert.Equal(data.Id, namedObject);
 
-            var objects = pullResponse.Pool;
+            var objects = pullResponse.p;
 
             Assert.Single(objects);
 
@@ -66,10 +70,10 @@ namespace Tests
 
             Assert.NotNull(@object);
 
-            Assert.Equal(data.Strategy.ObjectId, @object.Id);
-            Assert.Equal(data.Strategy.ObjectVersion, @object.Version);
-            Assert.Equal(acl.AccessControls.Select(v=>v.Strategy.ObjectId), @object.AccessControls);
-            Assert.Equal(acl.DeniedPermissionIds, @object.DeniedPermissions);
+            Assert.Equal(data.Strategy.ObjectId, @object.i);
+            Assert.Equal(data.Strategy.ObjectVersion, @object.v);
+            Assert.Equal(acl.AccessControls.Select(v=>v.Strategy.ObjectId), @object.a);
+            Assert.Equal(acl.DeniedPermissionIds, @object.d);
         }
 
         [Fact]
@@ -79,12 +83,12 @@ namespace Tests
 
             var pullRequest = new PullRequest
             {
-                List = new[]
+                l = new[]
                   {
                       new Allors.Protocol.Json.Data.Pull
                           {
-                              ExtentRef = PreparedExtents.OrganisationByName,
-                              Arguments = new Dictionary<string, object> { ["name"] = "Acme" },
+                              er = PreparedExtents.OrganisationByName,
+                              a = new Dictionary<string, object> { ["name"] = "Acme" },
                           },
                   },
             };
@@ -92,7 +96,7 @@ namespace Tests
             var api = new Api(this.Transaction, "Default");
             var pullResponse = api.Pull(pullRequest);
 
-            var organisations = pullResponse.Collections["Organisations"];
+            var organisations = pullResponse.c["Organisations"];
 
             Assert.Single(organisations);
         }
@@ -104,12 +108,12 @@ namespace Tests
 
             var pullRequest = new PullRequest
             {
-                List = new[]
+                l = new[]
                   {
                       new Allors.Protocol.Json.Data.Pull
                           {
-                              ExtentRef = PreparedExtents.OrganisationByName,
-                              Arguments = new Dictionary<string, object> { ["name"] = "Acme" },
+                              er = PreparedExtents.OrganisationByName,
+                              a = new Dictionary<string, object> { ["name"] = "Acme" },
                           },
                   },
             };
@@ -117,7 +121,7 @@ namespace Tests
             var api = new Api(this.Transaction, "Default");
             var pullResponse = api.Pull(pullRequest);
 
-            var organisations = pullResponse.Collections["Organisations"];
+            var organisations = pullResponse.c["Organisations"];
 
             Assert.Single(organisations);
         }
@@ -138,16 +142,16 @@ namespace Tests
 
             var pullRequest = new PullRequest
             {
-                List = new[]
+                l = new[]
                       {
-                          pull.ToJson()
+                          pull.ToJson(this.UnitConvert)
                       },
             };
 
             var api = new Api(this.Transaction, "Default");
             var pullResponse = api.Pull(pullRequest);
 
-            var namedCollection = pullResponse.Collections["Datas"];
+            var namedCollection = pullResponse.c["Datas"];
 
             Assert.Single(namedCollection);
 
@@ -155,7 +159,7 @@ namespace Tests
 
             Assert.Equal(data.Id, namedObject);
 
-            var objects = pullResponse.Pool;
+            var objects = pullResponse.p;
 
             Assert.Single(objects);
 
@@ -166,9 +170,9 @@ namespace Tests
 
             Assert.NotNull(@object);
 
-            Assert.Equal(data.Strategy.ObjectId, @object.Id);
-            Assert.Equal(data.Strategy.ObjectVersion, @object.Version);
-            Assert.Equal(acl.AccessControls.Select(v=>v.Strategy.ObjectId), @object.AccessControls);
+            Assert.Equal(data.Strategy.ObjectId, @object.i);
+            Assert.Equal(data.Strategy.ObjectVersion, @object.v);
+            Assert.Equal(acl.AccessControls.Select(v=>v.Strategy.ObjectId), @object.a);
         }
 
         [Fact]
@@ -192,16 +196,16 @@ namespace Tests
 
             var pullRequest = new PullRequest
             {
-                List = new[]
+                l = new[]
                 {
-                    pull.ToJson()
+                    pull.ToJson(this.UnitConvert)
                 },
             };
 
             var api = new Api(this.Transaction, "Default");
             var pullResponse = api.Pull(pullRequest);
 
-            var namedCollection = pullResponse.Collections["Datas"];
+            var namedCollection = pullResponse.c["Datas"];
 
             Assert.Single(namedCollection);
 
@@ -209,7 +213,7 @@ namespace Tests
 
             Assert.Equal(data.Id, namedObject);
 
-            var objects = pullResponse.Pool;
+            var objects = pullResponse.p;
 
             Assert.Single(objects);
 
@@ -220,9 +224,9 @@ namespace Tests
 
             Assert.NotNull(@object);
 
-            Assert.Equal(data.Strategy.ObjectId, @object.Id);
-            Assert.Equal(data.Strategy.ObjectVersion, @object.Version);
-            Assert.Equal(acl.AccessControls.Select(v=>v.Strategy.ObjectId), @object.AccessControls);
+            Assert.Equal(data.Strategy.ObjectId, @object.i);
+            Assert.Equal(data.Strategy.ObjectVersion, @object.v);
+            Assert.Equal(acl.AccessControls.Select(v=>v.Strategy.ObjectId), @object.a);
         }
     }
 }

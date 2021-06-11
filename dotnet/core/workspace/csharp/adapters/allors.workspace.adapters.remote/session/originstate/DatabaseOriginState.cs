@@ -17,23 +17,25 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal PushRequestNewObject PushNew() => new PushRequestNewObject
         {
-            WorkspaceId = this.Id,
-            ObjectType = this.Class.Tag,
-            Roles = this.PushRoles()
+            w = this.Id,
+            t = this.Class.Tag,
+            r = this.PushRoles()
         };
 
         internal PushRequestObject PushExisting() => new PushRequestObject
         {
-            DatabaseId = this.Id,
-            Version = this.Version,
-            Roles = this.PushRoles()
+            d = this.Id,
+            v = this.Version,
+            r = this.PushRoles()
         };
 
         private PushRequestRole[] PushRoles()
         {
             if (this.ChangedRoleByRelationType?.Count > 0)
             {
-                var numbers = this.RemoteStrategy.Session.Workspace.DatabaseConnection.Numbers;
+                var database = this.RemoteStrategy.Session.Workspace.DatabaseConnection;
+
+                var numbers = database.Numbers;
 
                 var roles = new List<PushRequestRole>();
 
@@ -42,17 +44,17 @@ namespace Allors.Workspace.Adapters.Remote
                     var relationType = keyValuePair.Key;
                     var roleValue = keyValuePair.Value;
 
-                    var pushRequestRole = new PushRequestRole { RelationType = relationType.Tag };
+                    var pushRequestRole = new PushRequestRole { t = relationType.Tag };
 
                     if (relationType.RoleType.ObjectType.IsUnit)
                     {
-                        pushRequestRole.SetUnitRole = UnitConvert.ToJson(roleValue);
+                        pushRequestRole.u = database.UnitConvert.ToJson(roleValue);
                     }
                     else
                     {
                         if (relationType.RoleType.IsOne)
                         {
-                            pushRequestRole.SetCompositeRole = (long?)roleValue;
+                            pushRequestRole.c = (long?)roleValue;
                         }
                         else
                         {

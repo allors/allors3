@@ -6,24 +6,33 @@
 namespace Allors.Protocol.Json.Data
 {
     using System;
-    using System.Text.Json.Serialization;
 
     public class Result : IVisitable
     {
-        [JsonPropertyName("r")]
-        public Guid? SelectRef { get; set; }
+        /// <summary>
+        /// Select Ref
+        /// </summary>
+        public Guid? r { get; set; }
 
-        [JsonPropertyName("s")]
-        public Select Select { get; set; }
+        /// <summary>
+        /// Select
+        /// </summary>
+        public Select s { get; set; }
 
-        [JsonPropertyName("n")]
-        public string Name { get; set; }
+        /// <summary>
+        /// Name
+        /// </summary>
+        public string n { get; set; }
 
-        [JsonPropertyName("k")]
-        public int? Skip { get; set; }
+        /// <summary>
+        /// Skip
+        /// </summary>
+        public int? k { get; set; }
 
-        [JsonPropertyName("t")]
-        public int? Take { get; set; }
+        /// <summary>
+        /// Take
+        /// </summary>
+        public int? t { get; set; }
 
         public void Accept(IVisitor visitor) => visitor.VisitResult(this);
     }

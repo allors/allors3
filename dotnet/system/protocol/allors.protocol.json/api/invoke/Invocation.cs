@@ -5,17 +5,22 @@
 
 namespace Allors.Protocol.Json.Api.Invoke
 {
-    using System.Text.Json.Serialization;
 
     public class Invocation
     {
-        [JsonPropertyName("i")]
-        public long Id { get; set; }
+        /// <summary>
+        /// Id
+        /// </summary>
+        public long i { get; set; }
 
-        [JsonPropertyName("v")]
-        public long Version { get; set; }
+        /// <summary>
+        /// Version
+        /// </summary>
+        public long v { get; set; }
 
-        [JsonPropertyName("m")]
-        public int Method { get; set; }
+        /// <summary>
+        /// Method
+        /// </summary>
+        public int m { get; set; }
     }
 }

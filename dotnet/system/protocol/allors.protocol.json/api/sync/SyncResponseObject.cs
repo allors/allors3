@@ -5,28 +5,38 @@
 
 namespace Allors.Protocol.Json.Api.Sync
 {
-    using System.Text.Json.Serialization;
-
     public class SyncResponseObject
     {
-        [JsonPropertyName("i")]
-        public long Id { get; set; }
+        /// <summary>
+        /// Id
+        /// </summary>
+        public long i { get; set; }
 
-        [JsonPropertyName("v")]
-        public long Version { get; set; }
+        /// <summary>
+        /// Version
+        /// </summary>
+        public long v { get; set; }
 
-        [JsonPropertyName("t")]
-        public int ObjectType { get; set; }
+        /// <summary>
+        /// ObjectType
+        /// </summary>
+        public int t { get; set; }
 
-        [JsonPropertyName("a")]
-        public long[] AccessControls { get; set; }
+        /// <summary>
+        /// AccessControls
+        /// </summary>
+        public long[] a { get; set; }
 
-        [JsonPropertyName("d")]
-        public long[] DeniedPermissions { get; set; }
+        /// <summary>
+        /// DeniedPermissions
+        /// </summary>
+        public long[] d { get; set; }
 
-        [JsonPropertyName("r")]
-        public SyncResponseRole[] Roles { get; set; }
+        /// <summary>
+        /// Roles
+        /// </summary>
+        public SyncResponseRole[] r { get; set; }
 
-        public override string ToString() => $"{this.ObjectType} [{this.Id}:{this.Version}]";
+        public override string ToString() => $"{this.t} [{this.i}:{this.v}]";
     }
 }

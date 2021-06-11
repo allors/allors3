@@ -5,11 +5,11 @@
 
 namespace Allors.Protocol.Json.Api.Push
 {
-    using System.Text.Json.Serialization;
-
     public class PushResponse : Response
     {
-        [JsonPropertyName("n")]
+        /// <summary>
+        /// New Objects
+        /// </summary>
         public PushResponseNewObject[] NewObjects { get; set; }
     }
 }

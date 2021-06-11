@@ -29,13 +29,13 @@ namespace Tests
 
             var syncRequest = new SyncRequest
             {
-                Objects = new[] { organisation.Id },
+                o = new[] { organisation.Id },
             };
 
             var api = new Api(this.Transaction, "Default");
             var syncResponse = api.Sync(syncRequest);
 
-            Assert.Empty(syncResponse.Objects);
+            Assert.Empty(syncResponse.o);
         }
 
         [Fact]
@@ -48,18 +48,18 @@ namespace Tests
 
             var syncRequest = new SyncRequest
             {
-                Objects = new[] { person.Id },
+                o = new[] { person.Id },
             };
 
             var api = new Api(this.Transaction, "Default");
             var syncResponse = api.Sync(syncRequest);
 
-            Assert.Single(syncResponse.Objects);
-            var syncObject = syncResponse.Objects[0];
+            Assert.Single(syncResponse.o);
+            var syncObject = syncResponse.o[0];
 
-            Assert.Equal(person.Id, syncObject.Id);
-            Assert.Equal(this.M.Person.Tag, syncObject.ObjectType);
-            Assert.Equal(person.Strategy.ObjectVersion, syncObject.Version);
+            Assert.Equal(person.Id, syncObject.i);
+            Assert.Equal(this.M.Person.Tag, syncObject.t);
+            Assert.Equal(person.Strategy.ObjectVersion, syncObject.v);
         }
 
 
@@ -77,17 +77,17 @@ namespace Tests
 
             var syncRequest = new SyncRequest
             {
-                Objects = new[] { person.Id },
+                o = new[] { person.Id },
             };
 
             var api = new Api(this.Transaction, "Default");
             var syncResponse = api.Sync(syncRequest);
 
-            Assert.Single(syncResponse.Objects);
-            var syncObject = syncResponse.Objects[0];
+            Assert.Single(syncResponse.o);
+            var syncObject = syncResponse.o[0];
 
-            Assert.Empty(syncObject.AccessControls);
-            Assert.Null(syncObject.DeniedPermissions);
+            Assert.Empty(syncObject.a);
+            Assert.Null(syncObject.d);
         }
     }
 }

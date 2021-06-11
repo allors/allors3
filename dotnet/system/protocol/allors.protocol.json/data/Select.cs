@@ -5,15 +5,18 @@
 
 namespace Allors.Protocol.Json.Data
 {
-    using System.Text.Json.Serialization;
 
     public class Select : IVisitable
     {
-        [JsonPropertyName("s")]
-        public Step Step { get; set; }
+        /// <summary>
+        /// Step
+        /// </summary>
+        public Step s { get; set; }
 
-        [JsonPropertyName("i")]
-        public Node[] Include { get; set; }
+        /// <summary>
+        /// Include
+        /// </summary>
+        public Node[] i { get; set; }
         
         public void Accept(IVisitor visitor) => visitor.VisitSelect(this);
     }

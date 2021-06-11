@@ -15,7 +15,7 @@ namespace Tests.Workspace.Remote
     using Allors.Workspace.Meta;
     using Allors.Workspace.Meta.Lazy;
     using Xunit;
-    using DatabaseConnection = Allors.Workspace.Adapters.Remote.DatabaseConnection;
+    using DatabaseConnection = Allors.Workspace.Adapters.Remote.Default.DatabaseConnection;
 
     public class Profile : IProfile
     {

@@ -11,11 +11,15 @@ namespace Tests
     using Allors.Database.Domain;
     using Allors.Protocol.Json.Api.Pull;
     using Allors.Database.Protocol.Json;
+    using Allors.Protocol.Json;
+    using Allors.Protocol.Json.SystemTextJson;
     using Xunit;
 
     public class PullExtentTests : ApiTest, IClassFixture<Fixture>
     {
-        public PullExtentTests(Fixture fixture) : base(fixture) { }
+        public PullExtentTests(Fixture fixture) : base(fixture) => this.UnitConvert = new UnitConvert();
+
+        public IUnitConvert UnitConvert { get; }
 
         [Fact]
         public void SameWorkspace()
@@ -30,15 +34,15 @@ namespace Tests
             var pull = new Pull { Extent = new Extent(m.WorkspaceXObject1) };
             var pullRequest = new PullRequest
             {
-                List = new[]
+                l = new[]
                 {
-                    pull.ToJson()
+                    pull.ToJson(this.UnitConvert)
                 },
             };
 
             var api = new Api(this.Transaction, "X");
             var pullResponse = api.Pull(pullRequest);
-            var wx1s = pullResponse.Collections["WorkspaceXObject1s"];
+            var wx1s = pullResponse.c["WorkspaceXObject1s"];
 
             Assert.Single(wx1s);
 
@@ -64,15 +68,15 @@ namespace Tests
 
             var pullRequest = new PullRequest
             {
-                List = new[]
+                l = new[]
                 {
-                   pull.ToJson()
+                   pull.ToJson(this.UnitConvert)
                 }
             };
 
             var api = new Api(this.Transaction, "Y");
             var pullResponse = api.Pull(pullRequest);
-            var wx1s = pullResponse.Collections["WorkspaceXObject1s"];
+            var wx1s = pullResponse.c["WorkspaceXObject1s"];
 
             Assert.Empty(wx1s);
         }
@@ -93,16 +97,16 @@ namespace Tests
             };
             var pullRequest = new PullRequest
             {
-                List = new[]
+                l = new[]
                 {
-                    pull.ToJson()
+                    pull.ToJson(this.UnitConvert)
                 },
             };
 
             var api = new Api(this.Transaction, "None");
             var pullResponse = api.Pull(pullRequest);
 
-            var wx1s = pullResponse.Collections["WorkspaceXObject1s"];
+            var wx1s = pullResponse.c["WorkspaceXObject1s"];
 
             Assert.Empty(wx1s);
         }

@@ -5,15 +5,18 @@
 
 namespace Allors.Protocol.Json.Api.Pull
 {
-    using System.Text.Json.Serialization;
     using Data;
 
     public class PullRequest
     {
-        [JsonPropertyName("l")]
-        public Pull[] List { get; set; }
+        /// <summary>
+        /// List
+        /// </summary>
+        public Pull[] l { get; set; }
 
-        [JsonPropertyName("p")]
-        public Procedure Procedure { get; set; }
+        /// <summary>
+        /// Procedure
+        /// </summary>
+        public Procedure p { get; set; }
     }
 }

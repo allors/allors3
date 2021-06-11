@@ -8,19 +8,25 @@ namespace Allors.Database.Protocol.Json
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Allors.Protocol.Json;
     using Data;
 
     public class Arguments : IArguments
     {
         private readonly IDictionary<string, object> arguments;
+        private readonly IUnitConvert unitConvert;
 
-        public Arguments(IDictionary<string, object> arguments) => this.arguments = arguments;
+        public Arguments(IDictionary<string, object> arguments, IUnitConvert unitConvert)
+        {
+            this.arguments = arguments;
+            this.unitConvert = unitConvert;
+        }
 
         public bool HasArgument(string name) => this.arguments.ContainsKey(name);
 
-        public object ResolveUnit(int tag, string name) => UnitConvert.FromJson(tag, this.arguments[name]);
+        public object ResolveUnit(int tag, string name) => this.unitConvert.FromJson(tag, this.arguments[name]);
 
-        public object[] ResolveUnits(int tag, string name) => ((object[])this.arguments[name]).Select(v => UnitConvert.FromJson(tag, v)).ToArray();
+        public object[] ResolveUnits(int tag, string name) => ((object[])this.arguments[name]).Select(v => this.unitConvert.FromJson(tag, v)).ToArray();
 
         public long ResolveObject(string name) => Convert.ToInt64(this.arguments[name]);
 

@@ -19,7 +19,13 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class Session : Adapters.Session
     {
-        internal Session(Adapters.Workspace workspace, ISessionServices sessionServices) : base(workspace, sessionServices) => this.Services.OnInit(this);
+        internal Session(Workspace workspace, ISessionServices sessionServices) : base(workspace, sessionServices)
+        {
+            this.Services.OnInit(this);
+            this.DatabaseConnection = workspace.DatabaseConnection;
+        }
+
+        public DatabaseConnection DatabaseConnection { get; set; }
 
         public new Workspace Workspace => (Workspace)base.Workspace;
 
@@ -29,17 +35,17 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var invokeRequest = new InvokeRequest
             {
-                List = methods.Select(v => new Invocation
+                l = methods.Select(v => new Invocation
                 {
-                    Id = v.Object.Id,
-                    Version = ((Strategy)v.Object.Strategy).DatabaseOriginState.Version,
-                    Method = v.MethodType.Tag
+                    i = v.Object.Id,
+                    v = ((Strategy)v.Object.Strategy).DatabaseOriginState.Version,
+                    m = v.MethodType.Tag
                 }).ToArray(),
-                Options = options != null
+                o = options != null
                     ? new Allors.Protocol.Json.Api.Invoke.InvokeOptions
                     {
-                        ContinueOnError = options.ContinueOnError,
-                        Isolated = options.Isolated
+                        c = options.ContinueOnError,
+                        i = options.Isolated
                     }
                     : null
             };
@@ -50,7 +56,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public override async Task<IPullResult> Pull(params Pull[] pulls)
         {
-            var pullRequest = new PullRequest { List = pulls.Select(v => v.ToJson()).ToArray() };
+            var pullRequest = new PullRequest { l = pulls.Select(v => v.ToJson(this.DatabaseConnection.UnitConvert)).ToArray() };
 
             var pullResponse = await this.Workspace.DatabaseConnection.Pull(pullRequest);
             return await this.OnPull(pullResponse);
@@ -60,8 +66,8 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var pullRequest = new PullRequest
             {
-                Procedure = procedure.ToJson(),
-                List = pulls.Select(v => v.ToJson()).ToArray()
+                p = procedure.ToJson(this.DatabaseConnection.UnitConvert),
+                l = pulls.Select(v => v.ToJson(this.DatabaseConnection.UnitConvert)).ToArray()
             };
 
             var pullResponse = await this.Workspace.DatabaseConnection.Pull(pullRequest);
@@ -83,16 +89,16 @@ namespace Allors.Workspace.Adapters.Remote
         private async Task<IPullResult> OnPull(PullResponse pullResponse)
         {
             var syncRequest = this.Workspace.DatabaseConnection.Diff(pullResponse);
-            if (syncRequest.Objects.Length > 0)
+            if (syncRequest.o.Length > 0)
             {
                 await this.Sync(syncRequest);
             }
 
-            foreach (var v in pullResponse.Pool)
+            foreach (var v in pullResponse.p)
             {
-                if (!this.StrategyByWorkspaceId.ContainsKey(v.Id))
+                if (!this.StrategyByWorkspaceId.ContainsKey(v.i))
                 {
-                    this.InstantiateDatabaseStrategy(v.Id);
+                    this.InstantiateDatabaseStrategy(v.i);
                 }
             }
 
@@ -105,11 +111,11 @@ namespace Allors.Workspace.Adapters.Remote
             var syncResponse = await database.Sync(syncRequest);
             var securityRequest = database.SyncResponse(syncResponse);
 
-            foreach (var databaseObject in syncResponse.Objects)
+            foreach (var databaseObject in syncResponse.o)
             {
-                if (!this.StrategyByWorkspaceId.TryGetValue(databaseObject.Id, out var strategy))
+                if (!this.StrategyByWorkspaceId.TryGetValue(databaseObject.i, out var strategy))
                 {
-                    this.InstantiateDatabaseStrategy(databaseObject.Id);
+                    this.InstantiateDatabaseStrategy(databaseObject.i);
                 }
                 else
                 {
@@ -178,8 +184,8 @@ namespace Allors.Workspace.Adapters.Remote
 
         private PushRequest PushRequest() => new PushRequest
         {
-            NewObjects = this.PushToDatabaseTracker.Created?.Select(v => ((Strategy)v).DatabasePushNew()).ToArray(),
-            Objects = this.PushToDatabaseTracker.Changed?.Select(v => ((Strategy)v.Strategy).DatabasePushExisting()).ToArray()
+            n = this.PushToDatabaseTracker.Created?.Select(v => ((Strategy)v).DatabasePushNew()).ToArray(),
+            o = this.PushToDatabaseTracker.Changed?.Select(v => ((Strategy)v.Strategy).DatabasePushExisting()).ToArray()
         };
 
         private async Task<PushResult> PushToDatabase()
@@ -193,8 +199,8 @@ namespace Allors.Workspace.Adapters.Remote
                 {
                     foreach (var pushResponseNewObject in pushResponse.NewObjects)
                     {
-                        var workspaceId = pushResponseNewObject.WorkspaceId;
-                        var databaseId = pushResponseNewObject.DatabaseId;
+                        var workspaceId = pushResponseNewObject.w;
+                        var databaseId = pushResponseNewObject.d;
 
                         var strategy = this.StrategyByWorkspaceId[workspaceId];
 
@@ -207,13 +213,13 @@ namespace Allors.Workspace.Adapters.Remote
                     }
                 }
                 
-                var objects = pushRequest.Objects?.Select(v => v.DatabaseId).ToArray() ?? Array.Empty<long>();
+                var objects = pushRequest.o?.Select(v => v.d).ToArray() ?? Array.Empty<long>();
                 if (pushResponse.NewObjects != null)
                 {
-                    objects = objects.Union(pushResponse.NewObjects.Select(v => v.DatabaseId)).ToArray();
+                    objects = objects.Union(pushResponse.NewObjects.Select(v => v.d)).ToArray();
                 }
 
-                var syncRequests = new SyncRequest { Objects = objects };
+                var syncRequests = new SyncRequest { o = objects };
                 await this.Sync(syncRequests);
                 
                 foreach (var id in objects)

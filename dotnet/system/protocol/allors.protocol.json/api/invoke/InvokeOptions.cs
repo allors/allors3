@@ -5,14 +5,16 @@
 
 namespace Allors.Protocol.Json.Api.Invoke
 {
-    using System.Text.Json.Serialization;
-
     public class InvokeOptions
     {
-        [JsonPropertyName("i")]
-        public bool Isolated { get; set; }
+        /// <summary>
+        ///  Isolated
+        /// </summary>
+        public bool i { get; set; }
 
-        [JsonPropertyName("c")]
-        public bool ContinueOnError { get; set; }
+        /// <summary>
+        ///  Continue On Error
+        /// </summary>
+        public bool c { get; set; }
     }
 }

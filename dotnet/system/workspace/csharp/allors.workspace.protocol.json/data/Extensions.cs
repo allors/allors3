@@ -7,21 +7,22 @@ namespace Allors.Workspace.Protocol.Json
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Allors.Protocol.Json;
     using Procedure = Allors.Protocol.Json.Data.Procedure;
     using Pull = Allors.Protocol.Json.Data.Pull;
 
     public static class Extensions
     {
-        public static Pull ToJson(this Data.Pull pull)
+        public static Pull ToJson(this Data.Pull pull, IUnitConvert unitConvert)
         {
-            var toJsonVisitor = new ToJsonVisitor();
+            var toJsonVisitor = new ToJsonVisitor(unitConvert);
             pull.Accept(toJsonVisitor);
             return toJsonVisitor.Pull;
         }
 
-        public static Procedure ToJson(this Data.Procedure procedure)
+        public static Procedure ToJson(this Data.Procedure procedure, IUnitConvert unitConvert)
         {
-            var toJsonVisitor = new ToJsonVisitor();
+            var toJsonVisitor = new ToJsonVisitor(unitConvert);
             procedure.Accept(toJsonVisitor);
             return toJsonVisitor.Procedure;
         }

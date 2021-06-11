@@ -6,6 +6,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
+    using Allors.Protocol.Json.SystemTextJson;
     using Database;
     using Domain;
     using Protocol.Json;
@@ -26,7 +27,7 @@ namespace Allors.Database.Domain.Tests
             var arguments = new Arguments(new Dictionary<string, object>
             {
                 { "name", "Acme" },
-            });
+            }, new UnitConvert());
 
             Extent<Organisation> organizations = organizationByName.Build(this.Session, arguments).ToArray();
 

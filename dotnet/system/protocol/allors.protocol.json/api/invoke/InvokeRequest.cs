@@ -5,14 +5,16 @@
 
 namespace Allors.Protocol.Json.Api.Invoke
 {
-    using System.Text.Json.Serialization;
-
     public class InvokeRequest
     {
-        [JsonPropertyName("l")]
-        public Invocation[] List { get; set; }
+        /// <summary>
+        ///  List
+        /// </summary>
+        public Invocation[] l { get; set; }
 
-        [JsonPropertyName("o")]
-        public InvokeOptions Options { get; set; }
+        /// <summary>
+        /// Options
+        /// </summary>
+        public InvokeOptions o { get; set; }
     }
 }

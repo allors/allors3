@@ -5,21 +5,25 @@
 
 namespace Allors.Protocol.Json.Api.Push
 {
-    using System.Text.Json.Serialization;
-
     /// <summary>
     ///  New objects require NI and T.
     ///  Existing objects require I and V.
     /// </summary>
     public class PushRequestNewObject
     {
-        [JsonPropertyName("w")]
-        public long WorkspaceId { get; set; }
+        /// <summary>
+        /// Workspace Id
+        /// </summary>
+        public long w { get; set; }
 
-        [JsonPropertyName("t")]
-        public int ObjectType { get; set; }
+        /// <summary>
+        /// Object Type
+        /// </summary>
+        public int t { get; set; }
 
-        [JsonPropertyName("r")]
-        public PushRequestRole[] Roles { get; set; }
+        /// <summary>
+        /// Roles
+        /// </summary>
+        public PushRequestRole[] r { get; set; }
     }
 }

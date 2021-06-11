@@ -24,13 +24,13 @@ namespace Allors.Workspace.Adapters.Remote
 
         public bool HasErrors => this.response.HasErrors;
 
-        public string ErrorMessage => this.response.ErrorMessage;
+        public string ErrorMessage => this.response._e;
 
-        public IEnumerable<IObject> VersionErrors => this.session.Get<IObject>(this.response.VersionErrors);
+        public IEnumerable<IObject> VersionErrors => this.session.Get<IObject>(this.response._v);
 
-        public IEnumerable<IObject> AccessErrors => this.session.Get<IObject>(this.response.AccessErrors);
+        public IEnumerable<IObject> AccessErrors => this.session.Get<IObject>(this.response._a);
 
-        public IEnumerable<IObject> MissingErrors => this.session.Get<IObject>(this.response.MissingErrors);
+        public IEnumerable<IObject> MissingErrors => this.session.Get<IObject>(this.response._m);
 
         public IEnumerable<IDerivationError> DerivationErrors
         {
@@ -41,9 +41,9 @@ namespace Allors.Workspace.Adapters.Remote
                     return this.derivationErrors;
                 }
 
-                if (this.response.DerivationErrors?.Length > 0)
+                if (this.response._d?.Length > 0)
                 {
-                    return this.derivationErrors ??= this.response.DerivationErrors
+                    return this.derivationErrors ??= this.response._d
                         .Select(v => (IDerivationError)new DerivationError(this.session, v)).ToArray();
                 }
 

@@ -97,13 +97,13 @@ namespace Allors.Server.Tests
         {
             var args = new AuthenticationTokenRequest
             {
-                Login = user.UserName,
+                l = user.UserName,
             };
 
             var uri = new Uri(LoginUrl, UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, args);
             var signInResponse = await this.ReadAsAsync<AuthenticationTokenResponse>(response);
-            this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", signInResponse.Token);
+            this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", signInResponse.t);
         }
 
         protected void SignOut() => this.HttpClient.DefaultRequestHeaders.Authorization = null;

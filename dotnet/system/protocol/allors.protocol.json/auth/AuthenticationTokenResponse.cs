@@ -5,17 +5,21 @@
 
 namespace Allors.Protocol.Json.Auth
 {
-    using System.Text.Json.Serialization;
-
     public class AuthenticationTokenResponse
     {
-        [JsonPropertyName("a")]
-        public bool Authenticated { get; set; }
+        /// <summary>
+        /// Authenticated
+        /// </summary>
+        public bool a { get; set; }
 
-        [JsonPropertyName("u")]
-        public string UserId { get; set; }
+        /// <summary>
+        /// UserId
+        /// </summary>
+        public string u { get; set; }
 
-        [JsonPropertyName("t")]
-        public string Token { get; set; }
+        /// <summary>
+        /// Token
+        /// </summary>
+        public string t { get; set; }
     }
 }

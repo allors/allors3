@@ -9,6 +9,7 @@ namespace Allors.Database.Domain
     using System.Text;
     using System.Xml.Serialization;
     using Allors.Protocol.Json.Data;
+    using Allors.Protocol.Json.SystemTextJson;
     using Protocol.Json;
 
 
@@ -20,14 +21,14 @@ namespace Allors.Database.Domain
             {
                 using TextReader reader = new StringReader(this.Content);
                 var protocolSelect = (Select)XmlSerializer.Deserialize(reader);
-                return protocolSelect.FromJson(this.Strategy.Transaction);
+                return protocolSelect.FromJson(this.Strategy.Transaction, new UnitConvert());
             }
 
             set
             {
                 var stringBuilder = new StringBuilder();
                 using TextWriter writer = new StringWriter(stringBuilder);
-                XmlSerializer.Serialize(writer, value.ToJson());
+                XmlSerializer.Serialize(writer, value.ToJson(new UnitConvert()));
                 this.Content = stringBuilder.ToString();
             }
         }

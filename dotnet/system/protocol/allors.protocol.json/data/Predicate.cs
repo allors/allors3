@@ -5,54 +5,82 @@
 
 namespace Allors.Protocol.Json.Data
 {
-    using System.Text.Json.Serialization;
-
     public class Predicate : IVisitable
     {
-        [JsonPropertyName("k")]
-        public PredicateKind Kind { get; set; }
+        /// <summary>
+        /// Kind
+        /// </summary>
+        public PredicateKind k { get; set; }
 
-        [JsonPropertyName("a")]
-        public int? AssociationType { get; set; }
+        /// <summary>
+        /// Association Type
+        /// </summary>
+        public int? a { get; set; }
 
-        [JsonPropertyName("r")]
-        public int? RoleType { get; set; }
+        /// <summary>
+        /// Role Type
+        /// </summary>
+        public int? r { get; set; }
 
-        [JsonPropertyName("t")]
-        public int? ObjectType { get; set; }
+        /// <summary>
+        /// Object Type
+        /// </summary>
+        public int? o { get; set; }
 
-        [JsonPropertyName("p")]
-        public string Parameter { get; set; }
+        /// <summary>
+        /// Parameter
+        /// </summary>
+        public string p { get; set; }
 
-        [JsonPropertyName("d")]
-        public string[] Dependencies { get; set; }
+        /// <summary>
+        /// Dependencies
+        /// </summary>
+        public string[] d { get; set; }
 
-        [JsonPropertyName("op")]
-        public Predicate Operand { get; set; }
+        /// <summary>
+        /// Operand
+        /// </summary>
+        public Predicate op { get; set; }
 
-        [JsonPropertyName("ops")]
-        public Predicate[] Operands { get; set; }
+        /// <summary>
+        /// Operands
+        /// </summary>
+        public Predicate[] ops { get; set; }
 
-        [JsonPropertyName("ob")]
-        public long? Object { get; set; }
+        /// <summary>
+        /// Object
+        /// </summary>
+        public long? ob { get; set; }
 
-        [JsonPropertyName("obs")]
-        public long[] Objects { get; set; }
+        /// <summary>
+        /// Objects
+        /// </summary>
+        public long[] obs { get; set; }
 
-        [JsonPropertyName("v")]
-        public object Value { get; set; }
+        /// <summary>
+        /// Value
+        /// </summary>
+        public object v { get; set; }
 
-        [JsonPropertyName("vs")]
-        public object[] Values { get; set; }
+        /// <summary>
+        /// Values
+        /// </summary>
+        public object[] vs { get; set; }
 
-        [JsonPropertyName("pa")]
-        public int? Path { get; set; }
+        /// <summary>
+        /// Path
+        /// </summary>
+        public int? pa { get; set; }
 
-        [JsonPropertyName("pas")]
-        public int[] Paths { get; set; }
+        /// <summary>
+        /// Paths
+        /// </summary>
+        public int[] pas { get; set; }
 
-        [JsonPropertyName("e")]
-        public Extent Extent { get; set; }
+        /// <summary>
+        /// Extent
+        /// </summary>
+        public Extent e { get; set; }
 
         public void Accept(IVisitor visitor) => visitor.VisitPredicate(this);
     }

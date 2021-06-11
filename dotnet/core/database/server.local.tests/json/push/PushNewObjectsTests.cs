@@ -22,7 +22,7 @@ namespace Tests
 
             var pushRequest = new PushRequest
             {
-                NewObjects = new[] { new PushRequestNewObject { ObjectType = this.M.WorkspaceXObject1.Tag, WorkspaceId = -1 }, },
+                n = new[] { new PushRequestNewObject { t = this.M.WorkspaceXObject1.Tag, w = -1 }, },
             };
 
             var api = new Api(this.Transaction, "X");
@@ -30,7 +30,7 @@ namespace Tests
 
             this.Transaction.Rollback();
 
-            var x1 = (WorkspaceXObject1)this.Transaction.Instantiate(pushResponse.NewObjects[0].DatabaseId);
+            var x1 = (WorkspaceXObject1)this.Transaction.Instantiate(pushResponse.NewObjects[0].d);
 
             Assert.NotNull(x1);
         }
@@ -42,7 +42,7 @@ namespace Tests
 
             var pushRequest = new PushRequest
             {
-                NewObjects = new[] { new PushRequestNewObject { ObjectType = this.M.WorkspaceXObject1.Tag, WorkspaceId = -1 }, },
+                n = new[] { new PushRequestNewObject { t = this.M.WorkspaceXObject1.Tag, w = -1 }, },
             };
 
             var api = new Api(this.Transaction, "Y");
@@ -50,7 +50,7 @@ namespace Tests
 
             this.Transaction.Rollback();
 
-            var x1 = (WorkspaceXObject1)this.Transaction.Instantiate(pushResponse.NewObjects[0].DatabaseId);
+            var x1 = (WorkspaceXObject1)this.Transaction.Instantiate(pushResponse.NewObjects[0].d);
 
             Assert.Null(x1);
         }
@@ -62,7 +62,7 @@ namespace Tests
 
             var pushRequest = new PushRequest
             {
-                NewObjects = new[] { new PushRequestNewObject { ObjectType = this.M.WorkspaceXObject1.Tag, WorkspaceId = -1 }, },
+                n = new[] { new PushRequestNewObject { t = this.M.WorkspaceXObject1.Tag, w = -1 }, },
             };
 
             var api = new Api(this.Transaction, "None");
@@ -70,7 +70,7 @@ namespace Tests
 
             this.Transaction.Rollback();
 
-            var x1 = (WorkspaceNoneObject1)this.Transaction.Instantiate(pushResponse.NewObjects[0].DatabaseId);
+            var x1 = (WorkspaceNoneObject1)this.Transaction.Instantiate(pushResponse.NewObjects[0].d);
 
             Assert.Null(x1);
         }
@@ -81,7 +81,7 @@ namespace Tests
 
             var pushRequest = new PushRequest
             {
-                NewObjects = new[] { new PushRequestNewObject { ObjectType = this.M.WorkspaceYObject1.Tag, WorkspaceId = -1 }, },
+                n = new[] { new PushRequestNewObject { t = this.M.WorkspaceYObject1.Tag, w = -1 }, },
             };
 
             var api = new Api(this.Transaction, "None");
@@ -89,7 +89,7 @@ namespace Tests
 
             this.Transaction.Rollback();
 
-            var y1 = (WorkspaceNoneObject1)this.Transaction.Instantiate(pushResponse.NewObjects[0].DatabaseId);
+            var y1 = (WorkspaceNoneObject1)this.Transaction.Instantiate(pushResponse.NewObjects[0].d);
 
             Assert.Null(y1);
         }
@@ -101,7 +101,7 @@ namespace Tests
 
             var pushRequest = new PushRequest
             {
-                NewObjects = new[] { new PushRequestNewObject { ObjectType = this.M.WorkspaceNoneObject1.Tag, WorkspaceId = -1 }, },
+                n = new[] { new PushRequestNewObject { t = this.M.WorkspaceNoneObject1.Tag, w = -1 }, },
             };
 
             var api = new Api(this.Transaction, "X");
@@ -109,7 +109,7 @@ namespace Tests
 
             this.Transaction.Rollback();
 
-            var none1 = (WorkspaceNoneObject1)this.Transaction.Instantiate(pushResponse.NewObjects[0].DatabaseId);
+            var none1 = (WorkspaceNoneObject1)this.Transaction.Instantiate(pushResponse.NewObjects[0].d);
 
             Assert.Null(none1);
         }
@@ -121,7 +121,7 @@ namespace Tests
 
             var pushRequest = new PushRequest
             {
-                NewObjects = new[] { new PushRequestNewObject { ObjectType = this.M.WorkspaceNoneObject1.Tag, WorkspaceId = -1 }, },
+                n = new[] { new PushRequestNewObject { t = this.M.WorkspaceNoneObject1.Tag, w = -1 }, },
             };
 
             var api = new Api(this.Transaction, "Y");
@@ -129,7 +129,7 @@ namespace Tests
 
             this.Transaction.Rollback();
 
-            var none1 = (WorkspaceNoneObject1)this.Transaction.Instantiate(pushResponse.NewObjects[0].DatabaseId);
+            var none1 = (WorkspaceNoneObject1)this.Transaction.Instantiate(pushResponse.NewObjects[0].d);
 
             Assert.Null(none1);
         }
@@ -141,7 +141,7 @@ namespace Tests
 
             var pushRequest = new PushRequest
             {
-                NewObjects = new[] { new PushRequestNewObject { ObjectType = this.M.WorkspaceNoneObject1.Tag, WorkspaceId = -1 }, },
+                n = new[] { new PushRequestNewObject { t = this.M.WorkspaceNoneObject1.Tag, w = -1 }, },
             };
 
             var api = new Api(this.Transaction, "None");
@@ -149,7 +149,7 @@ namespace Tests
 
             this.Transaction.Rollback();
 
-            var none1 = (WorkspaceNoneObject1)this.Transaction.Instantiate(pushResponse.NewObjects[0].DatabaseId);
+            var none1 = (WorkspaceNoneObject1)this.Transaction.Instantiate(pushResponse.NewObjects[0].d);
 
             Assert.Null(none1);
         }

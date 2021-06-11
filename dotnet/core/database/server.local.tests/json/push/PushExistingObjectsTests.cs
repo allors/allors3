@@ -42,18 +42,18 @@ namespace Tests
 
             var pushRequest = new PushRequest
             {
-                Objects = new[]
+                o = new[]
                 {
                     new PushRequestObject
                     {
-                        DatabaseId = this.x1.Id,
-                        Version = this.x1.Strategy.ObjectVersion,
-                        Roles = new []
+                        d = this.x1.Id,
+                        v = this.x1.Strategy.ObjectVersion,
+                        r = new []
                         {
                             new PushRequestRole
                             {
-                                RelationType = this.M.WorkspaceXObject1.WorkspaceXString.RelationType.Tag,
-                                SetUnitRole = "x string"
+                                t = this.M.WorkspaceXObject1.WorkspaceXString.RelationType.Tag,
+                                u = "x string"
                             },
                         }
                     },
@@ -77,18 +77,18 @@ namespace Tests
 
             var pushRequest = new PushRequest
             {
-                Objects = new[]
+                o = new[]
                 {
                     new PushRequestObject
                     {
-                        DatabaseId = this.x1.Id,
-                        Version = this.x1.Strategy.ObjectVersion,
-                        Roles = new []
+                        d = this.x1.Id,
+                        v = this.x1.Strategy.ObjectVersion,
+                        r = new []
                         {
                             new PushRequestRole
                             {
-                                RelationType = this.M.WorkspaceXObject1.WorkspaceXString.RelationType.Tag,
-                                SetUnitRole = "x string"
+                                t = this.M.WorkspaceXObject1.WorkspaceXString.RelationType.Tag,
+                                u = "x string"
                             },
                         }
                     },

@@ -16,15 +16,15 @@ namespace Allors.Workspace.Adapters.Remote
         {
             this.Workspace = session.Workspace;
 
-            this.Objects = response.Objects.ToDictionary(
+            this.Objects = response.o.ToDictionary(
                 pair => pair.Key,
                 pair => session.Get<IObject>(pair.Value),
                 StringComparer.OrdinalIgnoreCase);
-            this.Collections = response.Collections.ToDictionary(
+            this.Collections = response.c.ToDictionary(
                 pair => pair.Key,
                 pair => pair.Value.Select(session.Get<IObject>).ToArray(),
                 StringComparer.OrdinalIgnoreCase);
-            this.Values = response.Values.ToDictionary(
+            this.Values = response.v.ToDictionary(
                 pair => pair.Key,
                 pair => pair.Value,
                 StringComparer.OrdinalIgnoreCase);

@@ -7,27 +7,38 @@ namespace Allors.Protocol.Json.Data
 {
     using System;
     using System.Collections.Generic;
-    using System.Text.Json.Serialization;
 
     public class Pull : IVisitable
     {
-        [JsonPropertyName("er")]
-        public Guid? ExtentRef { get; set; }
+        /// <summary>
+        /// ExtentRef
+        /// </summary>
+        public Guid? er { get; set; }
 
-        [JsonPropertyName("e")]
-        public Extent Extent { get; set; }
+        /// <summary>
+        /// Extent
+        /// </summary>
+        public Extent e { get; set; }
 
-        [JsonPropertyName("t")]
-        public int? ObjectType { get; set; }
+        /// <summary>
+        /// Object Type
+        /// </summary>
+        public int? t { get; set; }
 
-        [JsonPropertyName("o")]
-        public long? Object { get; set; }
+        /// <summary>
+        /// Object
+        /// </summary>
+        public long? o { get; set; }
 
-        [JsonPropertyName("r")]
-        public Result[] Results { get; set; }
+        /// <summary>
+        /// Results
+        /// </summary>
+        public Result[] r { get; set; }
 
-        [JsonPropertyName("a")]
-        public IDictionary<string, object> Arguments { get; set; }
+        /// <summary>
+        /// Arguments
+        /// </summary>
+        public IDictionary<string, object> a { get; set; }
 
         public void Accept(IVisitor visitor) => visitor.VisitPull(this);
     }

@@ -5,23 +5,31 @@
 
 namespace Allors.Protocol.Json.Api.Push
 {
-    using System.Text.Json.Serialization;
-
     public class PushRequestRole
     {
-        [JsonPropertyName("t")]
-        public int RelationType { get; set; }
+        /// <summary>
+        /// Relation Type
+        /// </summary>
+        public int t { get; set; }
 
-        [JsonPropertyName("u")]
-        public object SetUnitRole { get; set; }
+        /// <summary>
+        /// Set Unit Role
+        /// </summary>
+        public object u { get; set; }
 
-        [JsonPropertyName("c")]
-        public long? SetCompositeRole { get; set; }
+        /// <summary>
+        /// Set Composite Role
+        /// </summary>
+        public long? c { get; set; }
 
-        [JsonPropertyName("a")]
+        /// <summary>
+        /// Add Composites Role
+        /// </summary>
         public long[] AddCompositesRole { get; set; }
 
-        [JsonPropertyName("r")]
+        /// <summary>
+        /// Remove Composites Role
+        /// </summary>
         public long[] RemoveCompositesRole { get; set; }
     }
 }

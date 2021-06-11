@@ -5,17 +5,21 @@
 
 namespace Allors.Protocol.Json.Api.Security
 {
-    using System.Text.Json.Serialization;
-
     public class SecurityResponseAccessControl
     {
-        [JsonPropertyName("i")]
-        public long Id { get; set; }
+        /// <summary>
+        /// Id
+        /// </summary>
+        public long i { get; set; }
 
-        [JsonPropertyName("v")]
-        public long Version { get; set; }
+        /// <summary>
+        /// Version
+        /// </summary>
+        public long v { get; set; }
 
-        [JsonPropertyName("p")]
-        public long[] PermissionIds { get; set; }
+        /// <summary>
+        /// PermissionIds
+        /// </summary>
+        public long[] p { get; set; }
     }
 }

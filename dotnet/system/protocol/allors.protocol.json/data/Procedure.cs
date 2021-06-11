@@ -6,27 +6,34 @@
 namespace Allors.Protocol.Json.Data
 {
     using System.Collections.Generic;
-    using System.Text.Json.Serialization;
 
     public class Procedure : IVisitable
     {
-        [JsonPropertyName("n")]
-        public string Name { get; set; }
-
-        [JsonPropertyName("c")]
-        public IDictionary<string, long[]> Collections { get; set; }
-
-        [JsonPropertyName("o")]
-        public IDictionary<string, long> Objects { get; set; }
-
-        [JsonPropertyName("v")]
-        public IDictionary<string, string> Values { get; set; }
+        /// <summary>
+        /// Name
+        /// </summary>
+        public string n { get; set; }
 
         /// <summary>
+        /// Collections
+        /// </summary>
+        public IDictionary<string, long[]> c { get; set; }
+
+        /// <summary>
+        /// Objects
+        /// </summary>
+        public IDictionary<string, long> o { get; set; }
+
+        /// <summary>
+        /// Values
+        /// </summary>
+        public IDictionary<string, string> v { get; set; }
+
+        /// <summary>
+        /// Pool
         /// [][id,version]
         /// </summary>
-        [JsonPropertyName("p")]
-        public long[][] Pool { get; set; }
+        public long[][] p { get; set; }
 
         public void Accept(IVisitor visitor) => visitor.VisitProcedure(this);
     }

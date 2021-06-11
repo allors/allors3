@@ -41,13 +41,13 @@ namespace Tests
 
             var invokeRequest = new InvokeRequest
             {
-                List = new Invocation[]
+                l = new Invocation[]
                 {
                     new Invocation
                     {
-                        Id = this.x1.Id,
-                        Version = this.x1.Strategy.ObjectVersion,
-                        Method = this.M.WorkspaceXObject1.DoX.Tag
+                        i = this.x1.Id,
+                        v = this.x1.Strategy.ObjectVersion,
+                        m = this.M.WorkspaceXObject1.DoX.Tag
                     },
                 },
             };
@@ -65,13 +65,13 @@ namespace Tests
 
             var invokeRequest = new InvokeRequest
             {
-                List = new Invocation[]
+                l = new Invocation[]
                 {
                     new Invocation
                     {
-                        Id = this.x1.Id,
-                        Version = this.x1.Strategy.ObjectVersion,
-                        Method = this.M.WorkspaceXObject1.DoX.Tag
+                        i = this.x1.Id,
+                        v = this.x1.Strategy.ObjectVersion,
+                        m = this.M.WorkspaceXObject1.DoX.Tag
                     },
                 },
             };
@@ -81,9 +81,9 @@ namespace Tests
 
             Assert.True(invokeResponse.HasErrors);
 
-            Assert.Single(invokeResponse.AccessErrors);
+            Assert.Single(invokeResponse._a);
 
-            var accessError = invokeResponse.AccessErrors[0];
+            var accessError = invokeResponse._a[0];
 
             Assert.Equal(this.x1.Id, accessError);
         }
@@ -95,13 +95,13 @@ namespace Tests
 
             var invokeRequest = new InvokeRequest
             {
-                List = new Invocation[]
+                l = new Invocation[]
                 {
                     new Invocation
                     {
-                        Id = this.x1.Id,
-                        Version = this.x1.Strategy.ObjectVersion,
-                        Method = this.M.WorkspaceXObject1.DoX.Tag
+                        i = this.x1.Id,
+                        v = this.x1.Strategy.ObjectVersion,
+                        m = this.M.WorkspaceXObject1.DoX.Tag
                     },
                 },
             };
@@ -111,9 +111,9 @@ namespace Tests
 
             Assert.True(invokeResponse.HasErrors);
 
-            Assert.Single(invokeResponse.AccessErrors);
+            Assert.Single(invokeResponse._a);
 
-            var accessError = invokeResponse.AccessErrors[0];
+            var accessError = invokeResponse._a[0];
 
             Assert.Equal(this.x1.Id, accessError);
         }

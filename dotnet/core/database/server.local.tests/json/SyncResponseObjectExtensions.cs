@@ -12,6 +12,6 @@ namespace Tests
 
     public static class SyncResponseObjectExtensions
     {
-        public static SyncResponseRole GetRole(this SyncResponseObject @this, IRoleType roletype) => @this.Roles.FirstOrDefault(v => v.RoleType.Equals(roletype.RelationType.Tag));
+        public static SyncResponseRole GetRole(this SyncResponseObject @this, IRoleType roletype) => @this.r.FirstOrDefault(v => v.t.Equals(roletype.RelationType.Tag));
     }
 }

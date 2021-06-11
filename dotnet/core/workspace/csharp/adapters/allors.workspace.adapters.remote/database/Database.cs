@@ -8,23 +8,18 @@ namespace Allors.Workspace.Adapters.Remote
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Net.Http;
-    using System.Net.Http.Headers;
-    using System.Text;
-    using System.Text.Json;
     using System.Threading.Tasks;
+    using Allors.Protocol.Json;
     using Allors.Protocol.Json.Api.Invoke;
     using Allors.Protocol.Json.Api.Pull;
     using Allors.Protocol.Json.Api.Push;
     using Allors.Protocol.Json.Api.Security;
     using Allors.Protocol.Json.Api.Sync;
-    using Allors.Protocol.Json.Auth;
     using Collections;
     using Meta;
     using Numbers;
-    using Polly;
 
-    public class DatabaseConnection : Adapters.DatabaseConnection
+    public abstract class DatabaseConnection : Adapters.DatabaseConnection
     {
         private readonly Dictionary<long, DatabaseRecord> recordsById;
 
@@ -35,18 +30,13 @@ namespace Allors.Workspace.Adapters.Remote
         private readonly WorkspaceIdGenerator workspaceIdGenerator;
         private readonly Func<IWorkspaceServices> servicesBuilder;
 
-        public DatabaseConnection(Configuration configuration, Func<IWorkspaceServices> servicesBuilder, HttpClient httpClient, WorkspaceIdGenerator workspaceIdGenerator, INumbers numbers) : base(configuration)
+        protected DatabaseConnection(Adapters.Configuration configuration, Func<IWorkspaceServices> servicesBuilder, WorkspaceIdGenerator workspaceIdGenerator, INumbers numbers) : base(configuration)
         {
-            this.HttpClient = httpClient;
-            this.workspaceIdGenerator = workspaceIdGenerator;
-            this.servicesBuilder = servicesBuilder;
             this.Numbers = numbers;
-
-            this.HttpClient.DefaultRequestHeaders.Accept.Clear();
-            this.HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
             this.AccessControlById = new Dictionary<long, AccessControl>();
 
+            this.workspaceIdGenerator = workspaceIdGenerator;
+            this.servicesBuilder = servicesBuilder;
             this.recordsById = new Dictionary<long, DatabaseRecord>();
 
             this.readPermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, long>>();
@@ -56,85 +46,20 @@ namespace Allors.Workspace.Adapters.Remote
             this.Permissions = new HashSet<long>();
         }
 
-        public IAsyncPolicy Policy { get; set; } = Polly.Policy
-            .Handle<HttpRequestException>()
-            .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+        public abstract IUnitConvert UnitConvert { get; }
 
-        public HttpClient HttpClient { get; }
+        internal INumbers Numbers { get; }
 
-        public INumbers Numbers { get; }
-
-        public string UserId { get; private set; }
-
-        internal Dictionary<long, AccessControl> AccessControlById { get; }
+        public string UserId { get; protected set; }
 
         internal ISet<long> Permissions { get; }
 
-        ~DatabaseConnection() => this.HttpClient.Dispose();
-
-        public async Task<bool> Login(Uri url, string username, string password)
-        {
-            var request = new AuthenticationTokenRequest { Login = username, Password = password };
-            using var response = await this.PostAsJsonAsync(url, request);
-            response.EnsureSuccessStatusCode();
-            var authResult = await this.ReadAsAsync<AuthenticationTokenResponse>(response);
-            if (!authResult.Authenticated)
-            {
-                return false;
-            }
-
-            this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authResult.Token);
-            this.UserId = authResult.UserId;
-
-            return true;
-        }
-
-        public override long GetPermission(IClass @class, IOperandType operandType, Operations operation)
-        {
-            switch (operation)
-            {
-                case Operations.Read:
-                    if (this.readPermissionByOperandTypeByClass.TryGetValue(@class,
-                        out var readPermissionByOperandType))
-                    {
-                        if (readPermissionByOperandType.TryGetValue(operandType, out var readPermission))
-                        {
-                            return readPermission;
-                        }
-                    }
-
-                    return 0;
-
-                case Operations.Write:
-                    if (this.writePermissionByOperandTypeByClass.TryGetValue(@class,
-                        out var writePermissionByOperandType))
-                    {
-                        if (writePermissionByOperandType.TryGetValue(operandType, out var writePermission))
-                        {
-                            return writePermission;
-                        }
-                    }
-
-                    return 0;
-
-                default:
-                    if (this.executePermissionByOperandTypeByClass.TryGetValue(@class,
-                        out var executePermissionByOperandType))
-                    {
-                        if (executePermissionByOperandType.TryGetValue(operandType, out var executePermission))
-                        {
-                            return executePermission;
-                        }
-                    }
-
-                    return 0;
-            }
-        }
+        internal Dictionary<long, AccessControl> AccessControlById { get; }
 
         internal SecurityRequest SyncResponse(SyncResponse syncResponse)
         {
             var ctx = new ResponseContext(this);
-            foreach (var syncResponseObject in syncResponse.Objects)
+            foreach (var syncResponseObject in syncResponse.o)
             {
                 var databaseObjects = new DatabaseRecord(this, ctx, syncResponseObject);
                 this.recordsById[databaseObjects.Id] = databaseObjects;
@@ -144,60 +69,19 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 return new SecurityRequest
                 {
-                    AccessControls = ctx.MissingAccessControlIds.Select(v => v).ToArray(),
-                    Permissions = ctx.MissingPermissionIds.Select(v => v).ToArray()
+                    a = ctx.MissingAccessControlIds.Select(v => v).ToArray(),
+                    p = ctx.MissingPermissionIds.Select(v => v).ToArray()
                 };
             }
 
             return null;
         }
 
-        internal SyncRequest Diff(PullResponse response) =>
-            new SyncRequest
-            {
-                Objects = response.Pool
-                    .Where(v =>
-                    {
-                        if (!this.recordsById.TryGetValue(v.Id, out var rec))
-                        {
-                            return true;
-                        }
-
-                        if (!rec.Version.Equals(v.Version))
-                        {
-                            return true;
-                        }
-
-                        if (!this.Numbers.AreEqual(rec.AccessControlIds, v.AccessControls))
-                        {
-                            return true;
-                        }
-
-                        if (!this.Numbers.AreEqual(rec.DeniedPermissions, v.DeniedPermissions))
-                        {
-                            return true;
-                        }
-
-                        // TODO: Use smarter updates for DeniedPermissions
-
-                        return false;
-                    })
-                    .Select(v => v.Id).ToArray()
-            };
-
-        public override IWorkspace CreateWorkspace() => new Workspace(this, this.servicesBuilder(), this.Numbers, this.workspaceIdGenerator);
-
-        public override Adapters.DatabaseRecord GetRecord(long id)
-        {
-            this.recordsById.TryGetValue(id, out var databaseObjects);
-            return databaseObjects;
-        }
-
         internal SecurityRequest SecurityResponse(SecurityResponse securityResponse)
         {
-            if (securityResponse.Permissions != null)
+            if (securityResponse.p != null)
             {
-                foreach (var syncResponsePermission in securityResponse.Permissions)
+                foreach (var syncResponsePermission in securityResponse.p)
                 {
                     var id = syncResponsePermission[0];
                     var @class = (IClass)this.Configuration.MetaPopulation.FindByTag((int)syncResponsePermission[1]);
@@ -248,13 +132,13 @@ namespace Allors.Workspace.Adapters.Remote
             }
 
             HashSet<long> missingPermissionIds = null;
-            if (securityResponse.AccessControls != null)
+            if (securityResponse.a != null)
             {
-                foreach (var syncResponseAccessControl in securityResponse.AccessControls)
+                foreach (var syncResponseAccessControl in securityResponse.a)
                 {
-                    var id = syncResponseAccessControl.Id;
-                    var version = syncResponseAccessControl.Version;
-                    var permissionsIds = syncResponseAccessControl.PermissionIds
+                    var id = syncResponseAccessControl.i;
+                    var version = syncResponseAccessControl.v;
+                    var permissionsIds = syncResponseAccessControl.p
                         ?.Select(v =>
                         {
                             if (this.Permissions.Contains(v))
@@ -277,55 +161,44 @@ namespace Allors.Workspace.Adapters.Remote
 
             if (missingPermissionIds != null)
             {
-                return new SecurityRequest { Permissions = missingPermissionIds.ToArray() };
+                return new SecurityRequest { p = missingPermissionIds.ToArray() };
             }
 
             return null;
         }
 
-        internal async Task<PullResponse> Pull(PullRequest pullRequest)
-        {
-            var uri = new Uri("pull", UriKind.Relative);
-            var response = await this.PostAsJsonAsync(uri, pullRequest);
-            response.EnsureSuccessStatusCode();
-            return await this.ReadAsAsync<PullResponse>(response);
-        }
+        internal SyncRequest Diff(PullResponse response) =>
+            new SyncRequest
+            {
+                o = response.p
+                    .Where(v =>
+                    {
+                        if (!this.recordsById.TryGetValue(v.i, out var rec))
+                        {
+                            return true;
+                        }
 
-        internal async Task<SyncResponse> Sync(SyncRequest syncRequest)
-        {
-            var uri = new Uri("sync", UriKind.Relative);
-            var response = await this.PostAsJsonAsync(uri, syncRequest);
-            response.EnsureSuccessStatusCode();
+                        if (!rec.Version.Equals(v.v))
+                        {
+                            return true;
+                        }
 
-            return await this.ReadAsAsync<SyncResponse>(response);
-        }
+                        if (!this.Numbers.AreEqual(rec.AccessControlIds, v.a))
+                        {
+                            return true;
+                        }
 
-        internal async Task<PushResponse> Push(PushRequest pushRequest)
-        {
-            var uri = new Uri("push", UriKind.Relative);
-            var response = await this.PostAsJsonAsync(uri, pushRequest);
-            response.EnsureSuccessStatusCode();
+                        if (!this.Numbers.AreEqual(rec.DeniedPermissions, v.d))
+                        {
+                            return true;
+                        }
 
-            return await this.ReadAsAsync<PushResponse>(response);
-        }
+                        // TODO: Use smarter updates for DeniedPermissions
 
-        internal async Task<InvokeResponse> Invoke(InvokeRequest invokeRequest)
-        {
-            var uri = new Uri("invoke", UriKind.Relative);
-            var response = await this.PostAsJsonAsync(uri, invokeRequest);
-            response.EnsureSuccessStatusCode();
-
-            return await this.ReadAsAsync<InvokeResponse>(response);
-        }
-
-        internal async Task<SecurityResponse> Security(SecurityRequest securityRequest)
-        {
-            var uri = new Uri("security", UriKind.Relative);
-            var response = await this.PostAsJsonAsync(uri, securityRequest);
-            response.EnsureSuccessStatusCode();
-
-            return await this.ReadAsAsync<SecurityResponse>(response);
-        }
+                        return false;
+                    })
+                    .Select(v => v.i).ToArray()
+            };
 
         internal DatabaseRecord OnPushed(long id, IClass @class)
         {
@@ -334,21 +207,64 @@ namespace Allors.Workspace.Adapters.Remote
             return record;
         }
 
-        private async Task<HttpResponseMessage> PostAsJsonAsync(Uri uri, object args) =>
-            await this.Policy.ExecuteAsync(
-                async () =>
-                {
-                    // TODO: use SerializeToUtf8Bytes()
-                    var json = JsonSerializer.Serialize(args);
-                    return await this.HttpClient.PostAsync(
-                        uri,
-                        new StringContent(json, Encoding.UTF8, "application/json"));
-                });
-
-        private async Task<T> ReadAsAsync<T>(HttpResponseMessage response)
+        public override long GetPermission(IClass @class, IOperandType operandType, Operations operation)
         {
-            var json = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<T>(json);
+            switch (operation)
+            {
+                case Operations.Read:
+                    if (this.readPermissionByOperandTypeByClass.TryGetValue(@class,
+                        out var readPermissionByOperandType))
+                    {
+                        if (readPermissionByOperandType.TryGetValue(operandType, out var readPermission))
+                        {
+                            return readPermission;
+                        }
+                    }
+
+                    return 0;
+
+                case Operations.Write:
+                    if (this.writePermissionByOperandTypeByClass.TryGetValue(@class,
+                        out var writePermissionByOperandType))
+                    {
+                        if (writePermissionByOperandType.TryGetValue(operandType, out var writePermission))
+                        {
+                            return writePermission;
+                        }
+                    }
+
+                    return 0;
+
+                default:
+                    if (this.executePermissionByOperandTypeByClass.TryGetValue(@class,
+                        out var executePermissionByOperandType))
+                    {
+                        if (executePermissionByOperandType.TryGetValue(operandType, out var executePermission))
+                        {
+                            return executePermission;
+                        }
+                    }
+
+                    return 0;
+            }
         }
+
+        public override IWorkspace CreateWorkspace() => new Workspace(this, this.servicesBuilder(), this.Numbers, this.workspaceIdGenerator);
+
+        public override Adapters.DatabaseRecord GetRecord(long id)
+        {
+            this.recordsById.TryGetValue(id, out var databaseObjects);
+            return databaseObjects;
+        }
+
+        public abstract Task<PullResponse> Pull(PullRequest pullRequest);
+
+        public abstract Task<SyncResponse> Sync(SyncRequest syncRequest);
+
+        public abstract Task<PushResponse> Push(PushRequest pushRequest);
+
+        public abstract Task<InvokeResponse> Invoke(InvokeRequest invokeRequest);
+
+        public abstract Task<SecurityResponse> Security(SecurityRequest securityRequest);
     }
 }

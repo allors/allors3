@@ -5,21 +5,27 @@
 
 namespace Allors.Protocol.Json.Data
 {
-    using System.Text.Json.Serialization;
-
     public class Step : IVisitable
     {
-        [JsonPropertyName("a")]
-        public int? AssociationType { get; set; }
+        /// <summary>
+        /// Association Type
+        /// </summary>
+        public int? a { get; set; }
 
-        [JsonPropertyName("r")]
-        public int? RoleType { get; set; }
+        /// <summary>
+        /// RoleType
+        /// </summary>
+        public int? r { get; set; }
 
-        [JsonPropertyName("n")]
-        public Step Next { get; set; }
+        /// <summary>
+        /// Next
+        /// </summary>
+        public Step n { get; set; }
 
-        [JsonPropertyName("i")]
-        public Node[] Include { get; set; }
+        /// <summary>
+        /// Include
+        /// </summary>
+        public Node[] i { get; set; }
 
         public void Accept(IVisitor visitor) => visitor.VisitStep(this);
     }

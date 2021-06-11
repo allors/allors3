@@ -6,20 +6,27 @@
 namespace Allors.Protocol.Json.Api.Pull
 {
     using System.Collections.Generic;
-    using System.Text.Json.Serialization;
 
     public class PullArgs
     {
-        [JsonPropertyName("c")]
-        public IDictionary<string, long[]> Collections { get; set; }
+        /// <summary>
+        ///  Collections
+        /// </summary>
+        public IDictionary<string, long[]> c { get; set; }
 
-        [JsonPropertyName("o")]
-        public IDictionary<string, long> Objects { get; set; }
+        /// <summary>
+        /// Objects
+        /// </summary>
+        public IDictionary<string, long> o { get; set; }
 
-        [JsonPropertyName("v")]
-        public IDictionary<string, object> Values { get; set; }
+        /// <summary>
+        /// Values
+        /// </summary>
+        public IDictionary<string, object> v { get; set; }
 
-        [JsonPropertyName("p")]
-        public long[][] Pool { get; set; }
+        /// <summary>
+        /// Pool
+        /// </summary>
+        public long[][] p { get; set; }
     }
 }

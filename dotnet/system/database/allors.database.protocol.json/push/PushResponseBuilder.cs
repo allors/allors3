@@ -8,6 +8,7 @@ namespace Allors.Database.Protocol.Json
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Allors.Protocol.Json;
     using Meta;
     using Allors.Protocol.Json.Api.Push;
     using Derivations;
@@ -15,19 +16,21 @@ namespace Allors.Database.Protocol.Json
 
     public class PushResponseBuilder
     {
+        private readonly IUnitConvert unitConvert;
         private readonly ITransaction transaction;
         private readonly Func<IValidation> derive;
         private readonly IMetaPopulation metaPopulation;
         private readonly ISet<IClass> allowedClasses;
         private readonly Func<IClass, IObject> build;
 
-        public PushResponseBuilder(ITransaction transaction, Func<IValidation> derive, IMetaPopulation metaPopulation, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, Func<IClass, IObject> build)
+        public PushResponseBuilder(ITransaction transaction, Func<IValidation> derive, IMetaPopulation metaPopulation, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, Func<IClass, IObject> build, IUnitConvert unitConvert)
         {
             this.transaction = transaction;
             this.derive = derive;
             this.metaPopulation = metaPopulation;
             this.allowedClasses = allowedClasses;
             this.build = build;
+            this.unitConvert = unitConvert;
             this.AccessControlLists = accessControlLists;
         }
 
@@ -37,13 +40,13 @@ namespace Allors.Database.Protocol.Json
         {
             var pushResponse = new PushResponse();
             Dictionary<long, IObject> objectByNewId = null;
-            if (pushRequest.NewObjects != null && pushRequest.NewObjects.Length > 0)
+            if (pushRequest.n != null && pushRequest.n.Length > 0)
             {
-                objectByNewId = pushRequest.NewObjects.ToDictionary(
-                    x => x.WorkspaceId,
+                objectByNewId = pushRequest.n.ToDictionary(
+                    x => x.w,
                     x =>
                         {
-                            var cls = (IClass)this.metaPopulation.FindByTag(x.ObjectType);
+                            var cls = (IClass)this.metaPopulation.FindByTag(x.t);
                             if (this.allowedClasses?.Contains(cls) == true)
                             {
                                 return this.build(cls);
@@ -56,10 +59,10 @@ namespace Allors.Database.Protocol.Json
                         });
             }
 
-            if (pushRequest.Objects != null && pushRequest.Objects.Length > 0)
+            if (pushRequest.o != null && pushRequest.o.Length > 0)
             {
                 // bulk load all objects
-                var objectIds = pushRequest.Objects.Select(v => v.DatabaseId).ToArray();
+                var objectIds = pushRequest.o.Select(v => v.d).ToArray();
                 var objects = this.transaction.Instantiate(objectIds);
 
                 if (objectIds.Length != objects.Length)
@@ -74,17 +77,17 @@ namespace Allors.Database.Protocol.Json
 
                 if (!pushResponse.HasErrors)
                 {
-                    foreach (var pushRequestObject in pushRequest.Objects)
+                    foreach (var pushRequestObject in pushRequest.o)
                     {
-                        var obj = this.transaction.Instantiate(pushRequestObject.DatabaseId);
+                        var obj = this.transaction.Instantiate(pushRequestObject.d);
 
-                        if (!pushRequestObject.Version.Equals(obj.Strategy.ObjectVersion))
+                        if (!pushRequestObject.v.Equals(obj.Strategy.ObjectVersion))
                         {
                             pushResponse.AddVersionError(obj);
                         }
                         else if (this.allowedClasses?.Contains(obj.Strategy.Class) == true)
                         {
-                            var pushRequestRoles = pushRequestObject.Roles;
+                            var pushRequestRoles = pushRequestObject.r;
                             this.PushRequestRoles(pushRequestRoles, obj, pushResponse, objectByNewId);
                         }
                         else
@@ -104,10 +107,10 @@ namespace Allors.Database.Protocol.Json
                     previousCountOutstandingRoles = countOutstandingRoles;
                     countOutstandingRoles = 0;
 
-                    foreach (var pushRequestNewObject in pushRequest.NewObjects.OrderByDescending(v => v.WorkspaceId))
+                    foreach (var pushRequestNewObject in pushRequest.n.OrderByDescending(v => v.w))
                     {
-                        var obj = objectByNewId[pushRequestNewObject.WorkspaceId];
-                        var pushRequestRoles = pushRequestNewObject.Roles;
+                        var obj = objectByNewId[pushRequestNewObject.w];
+                        var pushRequestRoles = pushRequestNewObject.r;
                         if (pushRequestRoles != null)
                         {
                             countOutstandingRoles += this.PushRequestRoles(pushRequestRoles, obj, pushResponse, objectByNewId, true);
@@ -118,10 +121,10 @@ namespace Allors.Database.Protocol.Json
 
                 if (countOutstandingRoles > 0)
                 {
-                    foreach (var pushRequestNewObject in pushRequest.NewObjects)
+                    foreach (var pushRequestNewObject in pushRequest.n)
                     {
-                        var obj = objectByNewId[pushRequestNewObject.WorkspaceId];
-                        var pushRequestRoles = pushRequestNewObject.Roles;
+                        var obj = objectByNewId[pushRequestNewObject.w];
+                        var pushRequestRoles = pushRequestNewObject.r;
                         if (pushRequestRoles != null)
                         {
                             this.PushRequestRoles(pushRequestRoles, obj, pushResponse, objectByNewId);
@@ -152,8 +155,8 @@ namespace Allors.Database.Protocol.Json
             {
                 pushResponse.NewObjects = objectByNewId?.Select(kvp => new PushResponseNewObject
                 {
-                    DatabaseId = kvp.Value?.Id ?? 0,
-                    WorkspaceId = kvp.Key,
+                    d = kvp.Value?.Id ?? 0,
+                    w = kvp.Key,
                 }).ToArray();
 
                 this.transaction.Commit();
@@ -183,7 +186,7 @@ namespace Allors.Database.Protocol.Json
                 var roleTypes = composite.DatabaseRoleTypes.Where(v => v.RelationType.WorkspaceNames.Length > 0);
                 var acl = this.AccessControlLists[obj];
 
-                var roleType = ((IRelationType)this.metaPopulation.FindByTag(pushRequestRole.RelationType)).RoleType;
+                var roleType = ((IRelationType)this.metaPopulation.FindByTag(pushRequestRole.t)).RoleType;
                 if (roleType != null)
                 {
                     if (acl.CanWrite(roleType))
@@ -191,23 +194,23 @@ namespace Allors.Database.Protocol.Json
                         if (roleType.ObjectType.IsUnit)
                         {
                             var unitType = (IUnit)roleType.ObjectType;
-                            var role = UnitConvert.FromJson(unitType.Tag, pushRequestRole.SetUnitRole);
+                            var role = this.unitConvert.FromJson(unitType.Tag, pushRequestRole.u);
                             obj.Strategy.SetUnitRole(roleType, role);
                         }
                         else
                         {
                             if (roleType.IsOne)
                             {
-                                if (!pushRequestRole.SetCompositeRole.HasValue)
+                                if (!pushRequestRole.c.HasValue)
                                 {
                                     obj.Strategy.RemoveCompositeRole(roleType);
                                 }
                                 else
                                 {
-                                    var role = this.GetRole(pushRequestRole.SetCompositeRole.Value, objectByNewId);
+                                    var role = this.GetRole(pushRequestRole.c.Value, objectByNewId);
                                     if (role == null)
                                     {
-                                        pushResponse.AddMissingError(pushRequestRole.SetCompositeRole.Value);
+                                        pushResponse.AddMissingError(pushRequestRole.c.Value);
                                     }
                                     else
                                     {

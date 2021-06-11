@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Protocol.Json
 {
+    using Allors.Protocol.Json;
     using Meta;
     using Pull = Allors.Protocol.Json.Data.Pull;
     using Select = Data.Select;
@@ -15,51 +16,51 @@ namespace Allors.Database.Protocol.Json
 
         public static IRoleType FindRoleType(this IMetaPopulation @this, int? tag) => tag != null ? ((IRelationType)@this.FindByTag(tag.Value)).RoleType : null;
 
-        public static Data.Pull FromJson(this Pull pull, ITransaction transaction)
+        public static Data.Pull FromJson(this Pull pull, ITransaction transaction, IUnitConvert unitConvert)
         {
-            var fromJsonVisitor = new FromJsonVisitor(transaction);
+            var fromJsonVisitor = new FromJsonVisitor(transaction, unitConvert);
             pull.Accept(fromJsonVisitor);
             return fromJsonVisitor.Pull;
         }
 
-        public static Data.IExtent FromJson(this Allors.Protocol.Json.Data.Extent extent, ITransaction transaction)
+        public static Data.IExtent FromJson(this Allors.Protocol.Json.Data.Extent extent, ITransaction transaction, IUnitConvert unitConvert)
         {
-            var fromJsonVisitor = new FromJsonVisitor(transaction);
+            var fromJsonVisitor = new FromJsonVisitor(transaction, unitConvert);
             extent.Accept(fromJsonVisitor);
             return fromJsonVisitor.Extent;
         }
 
-        public static Select FromJson(this Allors.Protocol.Json.Data.Select @select, ITransaction transaction)
+        public static Select FromJson(this Allors.Protocol.Json.Data.Select @select, ITransaction transaction, IUnitConvert unitConvert)
         {
-            var fromJsonVisitor = new FromJsonVisitor(transaction);
+            var fromJsonVisitor = new FromJsonVisitor(transaction, unitConvert);
             @select.Accept(fromJsonVisitor);
             return fromJsonVisitor.Select;
         }
 
-        public static Data.Procedure FromJson(this Allors.Protocol.Json.Data.Procedure procedure, ITransaction transaction)
+        public static Data.Procedure FromJson(this Allors.Protocol.Json.Data.Procedure procedure, ITransaction transaction, IUnitConvert unitConvert)
         {
-            var fromJsonVisitor = new FromJsonVisitor(transaction);
+            var fromJsonVisitor = new FromJsonVisitor(transaction, unitConvert);
             procedure.Accept(fromJsonVisitor);
             return fromJsonVisitor.Procedure;
         }
 
-        public static Pull ToJson(this Data.Pull pull)
+        public static Pull ToJson(this Data.Pull pull, IUnitConvert unitConvert)
         {
-            var toJsonVisitor = new ToJsonVisitor();
+            var toJsonVisitor = new ToJsonVisitor(unitConvert);
             pull.Accept(toJsonVisitor);
             return toJsonVisitor.Pull;
         }
 
-        public static Allors.Protocol.Json.Data.Extent ToJson(this Data.IExtent extent)
+        public static Allors.Protocol.Json.Data.Extent ToJson(this Data.IExtent extent, IUnitConvert unitConvert)
         {
-            var toJsonVisitor = new ToJsonVisitor();
+            var toJsonVisitor = new ToJsonVisitor(unitConvert);
             extent.Accept(toJsonVisitor);
             return toJsonVisitor.Extent;
         }
 
-        public static Allors.Protocol.Json.Data.Select ToJson(this Select extent)
+        public static Allors.Protocol.Json.Data.Select ToJson(this Select extent, IUnitConvert unitConvert)
         {
-            var toJsonVisitor = new ToJsonVisitor();
+            var toJsonVisitor = new ToJsonVisitor(unitConvert);
             extent.Accept(toJsonVisitor);
             return toJsonVisitor.Select;
         }

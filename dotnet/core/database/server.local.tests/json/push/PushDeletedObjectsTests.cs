@@ -34,18 +34,18 @@ namespace Tests
 
             var pushRequest = new PushRequest
             {
-                Objects = new[]
+                o = new[]
                 {
                     new PushRequestObject
                     {
-                        DatabaseId = organisationId,
-                        Version = organisationVersion,
-                        Roles = new[]
+                        d = organisationId,
+                        v = organisationVersion,
+                        r = new[]
                         {
                             new PushRequestRole
                             {
-                              RelationType = this.M.Organisation.Name.RelationType.Tag,
-                              SetUnitRole = "Acme"
+                              t = this.M.Organisation.Name.RelationType.Tag,
+                              u = "Acme"
                             },
                         },
                     },
@@ -56,8 +56,8 @@ namespace Tests
             var pushResponse = api.Push(pushRequest);
 
             Assert.True(pushResponse.HasErrors);
-            Assert.Single(pushResponse.MissingErrors);
-            Assert.Contains(organisationId, pushResponse.MissingErrors);
+            Assert.Single(pushResponse._m);
+            Assert.Contains(organisationId, pushResponse._m);
         }
     }
 }
