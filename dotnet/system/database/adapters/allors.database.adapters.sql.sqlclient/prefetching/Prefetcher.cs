@@ -171,7 +171,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                             }
                         }
 
-                        if (modifiedRoles == null || !modifiedRoles.ModifiedRoleByRoleType.ContainsKey(roleType))
+                        if (modifiedRoles == null || !modifiedRoles.EnsureModifiedRoleByRoleType.ContainsKey(roleType))
                         {
                             cachedObject.SetValue(roleType, unit);
                         }
@@ -392,7 +392,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 Roles modifiedRoles = null;
                 this.Transaction.State.ModifiedRolesByReference?.TryGetValue(reference, out modifiedRoles);
 
-                if (modifiedRoles == null || !modifiedRoles.ModifiedRoleByRoleType.ContainsKey(roleType))
+                if (modifiedRoles == null || !modifiedRoles.EnsureModifiedRoleByRoleType.ContainsKey(roleType))
                 {
                     var cachedObject = cache.GetOrCreateCachedObject(reference.Class, reference.ObjectId, reference.Version);
 
@@ -693,7 +693,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             {
                 if (this.Transaction.State.ModifiedRolesByReference != null &&
                     this.Transaction.State.ModifiedRolesByReference.TryGetValue(association, out var roles) &&
-                    roles.TryGetUnitRole(roleType, out var modifiedRole))
+                    roles.PrefetchTryGetUnitRole(roleType))
                 {
                     continue;
                 }
@@ -723,7 +723,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             {
                 if (this.Transaction.State.ModifiedRolesByReference != null &&
                     this.Transaction.State.ModifiedRolesByReference.TryGetValue(association, out var roles) &&
-                    roles.TryGetCompositeRole(roleType, out var modifiedRole))
+                    roles.PrefetchTryGetCompositeRole(roleType, out var modifiedRole))
                 {
                     if (modifiedRole != null)
                     {
@@ -764,7 +764,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             {
                 if (this.Transaction.State.ModifiedRolesByReference != null &&
                     this.Transaction.State.ModifiedRolesByReference.TryGetValue(association, out var roles) &&
-                    roles.TryGetModifiedCompositesRoleIds(roleType, out var modifiedRole))
+                    roles.PrefetchTryGetCompositesRole(roleType, out var modifiedRole))
                 {
                     nestedObjects.UnionWith(modifiedRole);
                     continue;

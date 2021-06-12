@@ -21,6 +21,8 @@ namespace Allors.Database.Adapters.Sql.Caching
 
         public long Version { get; }
 
+        public bool Contains(IRoleType roleType) => this.roleByRoleType.ContainsKey(roleType);
+
         public bool TryGetValue(IRoleType roleType, out object value) => this.roleByRoleType.TryGetValue(roleType, out value);
 
         public void SetValue(IRoleType roleType, object value) => this.roleByRoleType[roleType] = value;

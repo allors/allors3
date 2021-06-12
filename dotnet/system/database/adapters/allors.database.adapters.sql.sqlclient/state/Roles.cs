@@ -47,32 +47,9 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
         }
 
-        internal Dictionary<IRoleType, object> ModifiedRoleByRoleType =>
-            this.modifiedRoleByRoleType ??= new Dictionary<IRoleType, object>();
+        internal Dictionary<IRoleType, object> EnsureModifiedRoleByRoleType => this.modifiedRoleByRoleType ??= new Dictionary<IRoleType, object>();
 
-        private HashSet<IRoleType> RequireFlushRoles => this.requireFlushRoles ??= new HashSet<IRoleType>();
-
-        private Dictionary<IRoleType, CompositesRole> RawModifiedRolesByRoleType { get; set; }
-
-        private Dictionary<IRoleType, CompositesRole> EnsureModifiedRolesByRoleType => this.RawModifiedRolesByRoleType ??= new Dictionary<IRoleType, CompositesRole>();
-
-        internal bool TryGetUnitRole(IRoleType roleType, out object role)
-        {
-            role = null;
-            if (this.TryGetModifiedRole(roleType, ref role))
-            {
-                return true;
-            }
-
-            if (this.CachedObject != null && this.CachedObject.TryGetValue(roleType, out role))
-            {
-                return true;
-            }
-
-            return this.Reference.IsNew;
-        }
-
-        private bool TryGetModifiedRole(IRoleType roleType, ref object role) => this.modifiedRoleByRoleType != null && this.modifiedRoleByRoleType.TryGetValue(roleType, out role);
+        private HashSet<IRoleType> EnsureRequireFlushRoles => this.requireFlushRoles ??= new HashSet<IRoleType>();
 
         internal object GetUnitRole(IRoleType roleType)
         {
@@ -100,37 +77,17 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         internal void SetUnitRole(IRoleType roleType, object role)
         {
             var previousRole = this.GetUnitRole(roleType);
-            if (!Equals(previousRole, role))
+            // R = PR
+            if (Equals(previousRole, role))
             {
-                this.State.ChangeLog.OnChangingUnitRole(this.Reference.Strategy, roleType, role, previousRole);
-
-                this.ModifiedRoleByRoleType[roleType] = role;
-                this.RequireFlush(roleType);
-            }
-        }
-
-        internal bool TryGetCompositeRole(IRoleType roleType, out long? roleId)
-        {
-            roleId = null;
-
-            object role = null;
-
-            if (this.TryGetModifiedRole(roleType, ref role))
-            {
-                roleId = (long?)role;
-                return true;
+                return;
             }
 
-            if (this.CachedObject == null || !this.CachedObject.TryGetValue(roleType, out role))
-            {
-                if (!this.Reference.IsNew)
-                {
-                    return false;
-                }
-            }
+            // A ----> R
+            this.EnsureModifiedRoleByRoleType[roleType] = role;
+            this.RequireFlush(roleType);
 
-            roleId = (long?)role;
-            return true;
+            this.State.ChangeLog.OnChangingUnitRole(this.Reference.Strategy, roleType, role, previousRole);
         }
 
         internal long? GetCompositeRole(IRoleType roleType)
@@ -190,7 +147,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             associationByRole[role.Reference] = this.Reference;
 
             // A ----> R
-            this.ModifiedRoleByRoleType[roleType] = roleId;
+            this.EnsureModifiedRoleByRoleType[roleType] = roleId;
             this.RequireFlush(roleType);
         }
 
@@ -228,7 +185,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             this.Transaction.TriggerFlush(roleId, roleType.AssociationType);
 
             // A ----> R
-            this.ModifiedRoleByRoleType[roleType] = roleId;
+            this.EnsureModifiedRoleByRoleType[roleType] = roleId;
             this.RequireFlush(roleType);
         }
 
@@ -254,24 +211,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
             var role = this.State.GetOrCreateReferenceForExistingObject(roleId.Value, this.Transaction).Strategy;
             this.RemoveCompositeRoleMany2One(roleType, role);
-        }
-
-        internal bool TryGetModifiedCompositesRole(IRoleType roleType, out CompositesRole compositesRole)
-        {
-            compositesRole = null;
-            return this.RawModifiedRolesByRoleType != null && this.RawModifiedRolesByRoleType.TryGetValue(roleType, out compositesRole);
-        }
-
-        internal bool TryGetModifiedCompositesRoleIds(IRoleType roleType, out IEnumerable<long> roleIds)
-        {
-            roleIds = null;
-
-            if (this.TryGetModifiedCompositesRole(roleType, out var compositesRole))
-            {
-                roleIds = compositesRole.ObjectIds;
-            }
-
-            return false;
         }
 
         internal IEnumerable<long> GetCompositesRole(IRoleType roleType)
@@ -389,7 +328,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         {
             IRoleType unitRole = null;
             List<IRoleType> unitRoles = null;
-            foreach (var flushRole in this.RequireFlushRoles)
+            foreach (var flushRole in this.EnsureRequireFlushRoles)
             {
                 if (flushRole.ObjectType.IsUnit)
                 {
@@ -423,7 +362,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     }
                     else
                     {
-                        var roles = this.EnsureModifiedRolesByRoleType[flushRole];
+                        var roles = (CompositesRole)this.modifiedRoleByRoleType[flushRole];
                         roles.Flush(flush, this, flushRole);
                     }
                 }
@@ -442,6 +381,60 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             this.requireFlushRoles = null;
         }
 
+        #region Prefetch
+        internal bool PrefetchTryGetUnitRole(IRoleType roleType)
+        {
+            if (this.modifiedRoleByRoleType != null && this.modifiedRoleByRoleType.ContainsKey(roleType))
+            {
+                return true;
+            }
+
+            if (this.CachedObject != null && this.CachedObject.Contains(roleType))
+            {
+                return true;
+            }
+
+            return this.Reference.IsNew;
+        }
+
+        internal bool PrefetchTryGetCompositeRole(IRoleType roleType, out long? roleId)
+        {
+            roleId = null;
+
+            object role = null;
+
+            if (this.TryGetModifiedRole(roleType, ref role))
+            {
+                roleId = (long?)role;
+                return true;
+            }
+
+            if (this.CachedObject == null || !this.CachedObject.TryGetValue(roleType, out role))
+            {
+                if (!this.Reference.IsNew)
+                {
+                    return false;
+                }
+            }
+
+            roleId = (long?)role;
+            return true;
+        }
+
+        internal bool PrefetchTryGetCompositesRole(IRoleType roleType, out IEnumerable<long> roleIds)
+        {
+            roleIds = null;
+
+            if (this.TryGetModifiedCompositesRole(roleType, out var compositesRole))
+            {
+                roleIds = compositesRole.ObjectIds;
+            }
+
+            return false;
+        }
+        #endregion
+
+        #region Extent
         internal int ExtentCount(IRoleType roleType) => this.TryGetModifiedCompositesRole(roleType, out var compositesRole) ? compositesRole.Count : this.GetNonModifiedCompositeRoles(roleType).Length;
 
         internal IObject ExtentFirst(Transaction transaction, IRoleType roleType)
@@ -492,6 +485,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
             return Array.IndexOf(this.GetNonModifiedCompositeRoles(roleType), objectId) >= 0;
         }
+        #endregion
 
         private long[] GetNonModifiedCompositeRoles(IRoleType roleType)
         {
@@ -516,7 +510,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             var associationByRole = this.State.GetAssociationByRole(roleType.AssociationType);
             associationByRole[role.Reference] = null;
 
-            this.ModifiedRoleByRoleType[roleType] = null;
+            this.EnsureModifiedRoleByRoleType[roleType] = null;
             this.RequireFlush(roleType);
         }
 
@@ -526,7 +520,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
             this.Transaction.TriggerFlush(role.ObjectId, roleType.AssociationType);
 
-            this.ModifiedRoleByRoleType[roleType] = null;
+            this.EnsureModifiedRoleByRoleType[roleType] = null;
             this.RequireFlush(roleType);
         }
 
@@ -538,13 +532,23 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
 
             compositesRole = new CompositesRole(this.GetCompositesRole(roleType));
-            this.EnsureModifiedRolesByRoleType[roleType] = compositesRole;
+            this.EnsureModifiedRoleByRoleType[roleType] = compositesRole;
             return compositesRole;
+        }
+
+        private bool TryGetModifiedRole(IRoleType roleType, ref object role) => this.modifiedRoleByRoleType != null && this.modifiedRoleByRoleType.TryGetValue(roleType, out role);
+
+        private bool TryGetModifiedCompositesRole(IRoleType roleType, out CompositesRole compositesRole)
+        {
+            object role = null;
+            var result = this.modifiedRoleByRoleType != null && this.modifiedRoleByRoleType.TryGetValue(roleType, out role);
+            compositesRole = (CompositesRole)role;
+            return result;
         }
 
         private void RequireFlush(IRoleType roleType)
         {
-            this.RequireFlushRoles.Add(roleType);
+            this.EnsureRequireFlushRoles.Add(roleType);
             this.Transaction.RequireFlush(this.Reference, this);
         }
     }

@@ -11,6 +11,8 @@ namespace Allors.Database.Adapters.Sql.Caching
     {
         long Version { get; }
 
+        bool Contains(IRoleType roleType);
+
         bool TryGetValue(IRoleType roleType, out object value);
 
         void SetValue(IRoleType roleType, object value);

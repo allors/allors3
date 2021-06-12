@@ -238,7 +238,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     var column = this.Database.Mapping.ColumnNameByRelationType[roleType.RelationType];
                     sql.Append(column + "=" + this.Database.Mapping.ParamNameByRoleType[roleType]);
 
-                    var unit = roles.ModifiedRoleByRoleType[roleType];
+                    var unit = roles.EnsureModifiedRoleByRoleType[roleType];
                     command.AddUnitRoleParameter(roleType, unit);
                 }
 
@@ -255,7 +255,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
                 foreach (var roleType in sortedRoleTypes)
                 {
-                    var unit = roles.ModifiedRoleByRoleType[roleType];
+                    var unit = roles.EnsureModifiedRoleByRoleType[roleType];
                     command.AddUnitRoleParameter(roleType, unit);
                 }
 
