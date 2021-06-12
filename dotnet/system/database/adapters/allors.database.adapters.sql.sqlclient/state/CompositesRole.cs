@@ -6,13 +6,11 @@
 namespace Allors.Database.Adapters.Sql.SqlClient
 {
     using System.Collections.Generic;
-    using System.Linq;
     using Meta;
 
     internal class CompositesRole
     {
         private readonly HashSet<long> baseline;
-        private HashSet<long> original;
         private HashSet<long> added;
         private HashSet<long> removed;
 
@@ -53,35 +51,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
         }
 
-        internal long? First
-        {
-            get
-            {
-                if (this.removed == null || this.removed.Count == 0)
-                {
-                    if (this.baseline.Count > 0)
-                    {
-                        return this.baseline.First();
-                    }
-
-                    if (this.added != null && this.added.Count > 0)
-                    {
-                        return this.added.First();
-                    }
-
-                    return null;
-                }
-
-                var roles = this.ObjectIds;
-                if (roles.Count > 0)
-                {
-                    return roles.First();
-                }
-
-                return null;
-            }
-        }
-
         internal bool Contains(long objectId)
         {
             if (this.removed != null && this.removed.Contains(objectId))
@@ -89,16 +58,11 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 return false;
             }
 
-            return this.baseline.Contains(objectId) || this.added != null && this.added.Contains(objectId);
+            return this.baseline.Contains(objectId) || this.added?.Contains(objectId) == true;
         }
 
         internal void Add(long objectId)
         {
-            if (this.original == null)
-            {
-                this.original = new HashSet<long>(this.baseline);
-            }
-
             if (this.removed != null && this.removed.Contains(objectId))
             {
                 this.removed.Remove(objectId);
@@ -118,11 +82,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         internal void Remove(long objectId)
         {
-            if (this.original == null)
-            {
-                this.original = new HashSet<long>(this.baseline);
-            }
-
             if (this.added != null && this.added.Contains(objectId))
             {
                 this.added.Remove(objectId);

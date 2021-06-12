@@ -17,27 +17,65 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         private readonly HashSet<Strategy> created;
         private readonly HashSet<IStrategy> deleted;
 
+        private readonly HashSet<Strategy> changedRoleTypes;
+        private readonly HashSet<Strategy> changedAssociationTypes;
 
         internal ChangeLog()
         {
             this.created = new HashSet<Strategy>();
             this.deleted = new HashSet<IStrategy>();
+            this.changedRoleTypes = new HashSet<Strategy>();
+            this.changedAssociationTypes = new HashSet<Strategy>();
         }
 
         internal void OnCreated(Strategy strategy) => this.created.Add(strategy);
 
         internal void OnDeleted(Strategy strategy) => this.deleted.Add(strategy);
 
-        internal void OnChangingUnitRole(Strategy association, IRoleType roleType, object role, object previousRole)
-        {
-        }
+        internal void OnChangedRoleTypes(Strategy strategy) => this.changedRoleTypes.Add(strategy);
+
+        internal void OnChangedAssociationTypes(Strategy strategy) => this.changedAssociationTypes.Add(strategy);
 
         internal ChangeSet Checkpoint() =>
             new ChangeSet(
                 this.created != null ? new HashSet<IObject>(this.created.Select(v => v.GetObject())) : null,
                 this.deleted,
-                null,
-                null
+                this.RoleTypesByAssociation().ToDictionary(kvp => kvp.Key, kvp => kvp.Value),
+                this.AssociationTypesByRole().ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
             );
+
+        private IEnumerable<KeyValuePair<IObject, ISet<IRoleType>>> RoleTypesByAssociation()
+        {
+            foreach (var strategy in this.changedRoleTypes)
+            {
+                if (strategy.IsDeleted)
+                {
+                    continue;
+                }
+
+                var changedRoleTypes = strategy.CheckpointRoleTypes;
+                if (changedRoleTypes != null)
+                {
+                    yield return new KeyValuePair<IObject, ISet<IRoleType>>(strategy.GetObject(), changedRoleTypes);
+                }
+            }
+        }
+
+        private IEnumerable<KeyValuePair<IObject, ISet<IAssociationType>>> AssociationTypesByRole()
+        {
+            foreach (var strategy in this.changedAssociationTypes)
+            {
+                if (strategy.IsDeleted)
+                {
+                    continue;
+                }
+
+                var changedAssociationTypes = strategy.CheckpointAssociationTypes;
+                if (changedAssociationTypes != null)
+                {
+                    yield return new KeyValuePair<IObject, ISet<IAssociationType>>(strategy.GetObject(), changedAssociationTypes);
+                }
+            }
+        }
     }
 }

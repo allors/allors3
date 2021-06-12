@@ -23,7 +23,7 @@ namespace Allors.Database.Adapters
 
         public abstract void Dispose();
 
-        [Fact(Skip = "Temporary")]
+        [Fact]
         public void StringRole()
         {
             foreach (var init in this.Inits)
@@ -237,7 +237,7 @@ namespace Allors.Database.Adapters
             }
         }
 
-        [Fact(Skip = "Temporary")]
+        [Fact]
         public void BooleanRole()
         {
             foreach (var init in this.Inits)
@@ -429,7 +429,7 @@ namespace Allors.Database.Adapters
             }
         }
 
-        [Fact(Skip = "Temporary")]
+        [Fact]
         public void One2OneRole()
         {
             foreach (var init in this.Inits)
@@ -539,7 +539,7 @@ namespace Allors.Database.Adapters
             }
         }
 
-        [Fact(Skip = "Temporary")]
+        [Fact]
         public void Many2OneRole()
         {
             foreach (var init in this.Inits)
@@ -648,7 +648,7 @@ namespace Allors.Database.Adapters
             }
         }
 
-        [Fact(Skip = "Temporary")]
+        [Fact]
         public void One2ManyRoles()
         {
             foreach (var init in this.Inits)
@@ -820,7 +820,7 @@ namespace Allors.Database.Adapters
             }
         }
 
-        [Fact(Skip = "Temporary")]
+        [Fact]
         public void Many2ManyRoles()
         {
             foreach (var init in this.Inits)
@@ -988,7 +988,7 @@ namespace Allors.Database.Adapters
             }
         }
 
-        [Fact(Skip = "Temporary")]
+        [Fact]
         public void Delete()
         {
             foreach (var init in this.Inits)
@@ -1029,7 +1029,7 @@ namespace Allors.Database.Adapters
             }
         }
 
-        [Fact(Skip = "Temporary")]
+        [Fact]
         public void Create()
         {
             foreach (var init in this.Inits)

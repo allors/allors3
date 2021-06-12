@@ -14,6 +14,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
     using Adapters;
     using Caching;
+    using Collections;
     using Meta;
 
     public class Strategy : IStrategy
@@ -23,8 +24,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         private ICachedObject cachedObject;
 
         private Dictionary<IRoleType, object> modifiedRoleByRoleType;
-
         private HashSet<IRoleType> requireFlushRoles;
+
+        private Dictionary<IRoleType, object> originalRoleByRoleType;
+        private Dictionary<IAssociationType, object> originalAssociationByAssociationType;
 
         internal Strategy(Reference reference)
         {
@@ -74,6 +77,66 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 return this.cachedObject;
             }
         }
+
+        internal ISet<IRoleType> CheckpointRoleTypes
+        {
+            get
+            {
+                if (this.originalRoleByRoleType == null)
+                {
+                    return null;
+                }
+
+                ISet<IRoleType> changedRoleTypes = null;
+
+                foreach (var kvp in this.originalRoleByRoleType)
+                {
+                    var roleType = kvp.Key;
+                    var originalRole = kvp.Value;
+
+                    if (!Equals(originalRole, this.GetUnitRoleInternal(roleType)))
+                    {
+                        changedRoleTypes ??= new HashSet<IRoleType>();
+                        changedRoleTypes.Add(roleType);
+                    }
+                }
+
+
+                this.originalRoleByRoleType = null;
+
+                return changedRoleTypes;
+            }
+        }
+
+        public ISet<IAssociationType> CheckpointAssociationTypes
+        {
+            get
+            {
+                if (this.originalAssociationByAssociationType == null)
+                {
+                    return null;
+                }
+
+                ISet<IAssociationType> changedAssociationTypes = null;
+
+                foreach (var kvp in this.originalAssociationByAssociationType)
+                {
+                    var associationType = kvp.Key;
+                    var originalAssociation = kvp.Value;
+
+                    //if (!Equals(originalAssociation, this.GetCompositeAssociation(associationType)))
+                    //{
+                    //    changedAssociationTypes ??= new HashSet<IAssociationType>();
+                    //    changedAssociationTypes.Add(associationType);
+                    //}
+                }
+
+                this.originalAssociationByAssociationType = null;
+
+                return changedAssociationTypes;
+            }
+        }
+
 
         internal Dictionary<IRoleType, object> EnsureModifiedRoleByRoleType => this.modifiedRoleByRoleType ??= new Dictionary<IRoleType, object>();
 
@@ -556,11 +619,11 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 return;
             }
 
+            this.OnChangedUnitRole(roleType, previousRole);
+
             // A ----> R
             this.EnsureModifiedRoleByRoleType[roleType] = role;
             this.RequireFlush(roleType);
-
-            this.State.ChangeLog.OnChangingUnitRole(this.Reference.Strategy, roleType, role, previousRole);
         }
 
         private long? GetCompositeRoleInternal(IRoleType roleType)
@@ -917,6 +980,22 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             this.State.RequireFlush(this);
         }
 
+        #endregion
+
+        #region Changelog
+        private void OnChangedUnitRole(IRoleType roleType, object previousRole)
+        {
+            this.originalRoleByRoleType ??= new Dictionary<IRoleType, object>();
+            if (this.originalRoleByRoleType.ContainsKey(roleType))
+            {
+                return;
+            }
+
+            this.originalRoleByRoleType.Add(roleType, previousRole);
+
+            this.State.ChangeLog.OnChangedRoleTypes(this);
+        }
+        
         #endregion
 
         #region Prefetch
