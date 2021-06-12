@@ -764,7 +764,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             {
                 if (this.Transaction.State.ModifiedRolesByReference != null &&
                     this.Transaction.State.ModifiedRolesByReference.TryGetValue(association, out var roles) &&
-                    roles.TryGetCompositesRole(roleType, out var modifiedRole))
+                    roles.TryGetModifiedCompositesRoleIds(roleType, out var modifiedRole))
                 {
                     nestedObjects.UnionWith(modifiedRole);
                     continue;
