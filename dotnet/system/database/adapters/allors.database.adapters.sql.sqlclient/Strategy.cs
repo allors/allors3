@@ -280,7 +280,14 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 roleType.CompositeRolesChecks(this, roleObject);
 
                 var role = (Strategy)roleObject.Strategy;
-                this.Roles.RemoveCompositeRole(roleType, role);
+                if (roleType.AssociationType.IsOne)
+                {
+                    this.Roles.RemoveCompositeRoleOne2Many(roleType, role);
+                }
+                else
+                {
+                    this.Roles.RemoveCompositeRoleMany2Many(roleType, role);
+                }
             }
         }
 
@@ -327,7 +334,15 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 {
                     if (!newRoles.Contains(previousRole))
                     {
-                        this.Roles.RemoveCompositeRole(roleType, this.Transaction.State.GetOrCreateReferenceForExistingObject(previousRole, this.Transaction).Strategy);
+                        var role = this.Transaction.State.GetOrCreateReferenceForExistingObject(previousRole, this.Transaction).Strategy;
+                        if (roleType.AssociationType.IsOne)
+                        {
+                            this.Roles.RemoveCompositeRoleOne2Many(roleType, role);
+                        }
+                        else
+                        {
+                            this.Roles.RemoveCompositeRoleMany2Many(roleType, role);
+                        }
                     }
                 }
             }
@@ -343,7 +358,16 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
             foreach (var previousRole in previousRoles)
             {
-                this.Roles.RemoveCompositeRole(roleType, this.Transaction.State.GetOrCreateReferenceForExistingObject(previousRole, this.Transaction).Strategy);
+                var role = this.Transaction.State.GetOrCreateReferenceForExistingObject(previousRole, this.Transaction).Strategy;
+                if (roleType.AssociationType.IsOne)
+                {
+                    this.Roles.RemoveCompositeRoleOne2Many(roleType, role);
+                }
+                else
+                {
+                    this.Roles.RemoveCompositeRoleMany2Many(roleType, role);
+                }
+
             }
         }
 
