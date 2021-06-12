@@ -35,7 +35,7 @@ namespace Allors.Database.Domain
 
             var extent = this.Transaction.Extent(this.ObjectType);
             extent.Filter.AddEquals(roleType, parameter);
-            return (T)extent.First();
+            return (T)extent.FirstOrDefault();
         }
 
         protected virtual void CorePrepare(Setup setup) => setup.Add(this);

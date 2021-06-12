@@ -6,6 +6,8 @@
 
 namespace Allors.Database.Domain
 {
+    using System.Linq;
+
     public partial class AccountingPeriod
     {
         // TODO: Cache
