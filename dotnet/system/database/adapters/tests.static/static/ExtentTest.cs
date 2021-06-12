@@ -14226,7 +14226,7 @@ namespace Allors.Database.Adapters
                 try
                 {
                     extent.Filter.AddEquals(m.C1.C1AllorsBinary, Zero2Four.Zero);
-                    first = (C1)extent.First;
+                    first = (C1)extent.First();
                 }
                 catch
                 {

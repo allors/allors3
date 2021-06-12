@@ -9,7 +9,7 @@ namespace Allors.Database
     using System;
     using System.Collections;
     using System.Collections.Generic;
-
+    using System.Linq;
     using Meta;
 
     /// <summary>
@@ -55,7 +55,7 @@ namespace Allors.Database
         /// If there are no objects then null is returned.
         /// </summary>
         /// <value>The first.</value>
-        public T First => (T)this.BaseExtent.First;
+        public T First => (T)this.BaseExtent.First();
 
         /// <summary>
         /// Gets a value indicating whether the <see cref="T:System.Collections.IList"/> has a fixed size.

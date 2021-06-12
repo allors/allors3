@@ -17,8 +17,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public override int Count => this.ObjectIds.Count;
 
-        public override IObject First => this.ObjectIds.Count > 0 ? this.Transaction.State.GetOrCreateReferenceForExistingObject(this.ObjectIds[0], this.Transaction).Strategy.GetObject() : null;
-
         internal override SqlExtent ContainedInExtent => this;
 
         internal ExtentOperation ParentOperationExtent { get; set; }

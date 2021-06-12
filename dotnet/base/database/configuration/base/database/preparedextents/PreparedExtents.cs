@@ -7,6 +7,7 @@ namespace Allors.Database.Configuration
 {
     using System;
     using System.Collections.Concurrent;
+    using System.Linq;
     using Data;
     using Domain;
 
@@ -36,7 +37,7 @@ namespace Allors.Database.Configuration
                         Predicate = new Equals(m.PersistentPreparedExtent.UniqueId) { Value = id },
                     };
 
-                    var preparedExtent = (PersistentPreparedExtent)filter.Build(transaction).First;
+                    var preparedExtent = (PersistentPreparedExtent)filter.Build(transaction).First();
                     if (preparedExtent != null)
                     {
                         extent = preparedExtent.Extent;

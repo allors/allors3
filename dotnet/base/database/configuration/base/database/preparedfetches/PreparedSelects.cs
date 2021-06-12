@@ -7,6 +7,7 @@ namespace Allors.Database.Configuration
 {
     using System;
     using System.Collections.Concurrent;
+    using System.Linq;
     using Data;
     using Domain;
 
@@ -36,7 +37,7 @@ namespace Allors.Database.Configuration
                         Predicate = new Equals(m.PersistentPreparedSelect.UniqueId) { Value = id },
                     };
 
-                    var preparedSelect = (PersistentPreparedSelect)filter.Build(transaction).First;
+                    var preparedSelect = (PersistentPreparedSelect)filter.Build(transaction).First();
                     if (preparedSelect != null)
                     {
                         select = preparedSelect.Select;

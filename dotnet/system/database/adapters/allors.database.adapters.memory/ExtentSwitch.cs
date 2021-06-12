@@ -7,6 +7,7 @@ namespace Allors.Database.Adapters.Memory
 {
     using System;
     using System.Collections;
+    using System.Linq;
     using Meta;
 
     public class ExtentSwitch : Allors.Database.Extent
@@ -37,19 +38,6 @@ namespace Allors.Database.Adapters.Memory
             {
                 this.Upgrade();
                 return this.extent.Filter;
-            }
-        }
-
-        public override IObject First
-        {
-            get
-            {
-                if (this.extent != null)
-                {
-                    return this.extent.First;
-                }
-
-                return this.strategyExtent.First;
             }
         }
 

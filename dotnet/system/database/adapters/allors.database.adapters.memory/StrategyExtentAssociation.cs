@@ -31,8 +31,6 @@ namespace Allors.Database.Adapters.Memory
 
         public override ICompositePredicate Filter => throw new NotSupportedException();
 
-        public override IObject First => this.GetStrategies().Select(strategy => strategy.GetObject()).FirstOrDefault();
-
         public override IComposite ObjectType => this.associationType.ObjectType;
 
         internal override Transaction Transaction => this.roleStrategy.Transaction;

@@ -10,6 +10,7 @@ namespace Allors.Database
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Linq;
     using Meta;
 
     /// <summary>
@@ -34,13 +35,6 @@ namespace Allors.Database
         /// <value>The filter is a top level AND filter. If you require an OR or a NOT filter
         /// then simply add it to this AND filter.</value>
         public abstract ICompositePredicate Filter { get; }
-
-        /// <summary>
-        /// Gets the first object from the Extent.
-        /// If there are no objects then null is returned.
-        /// </summary>
-        /// <value>The first.</value>
-        public abstract IObject First { get; }
 
         /// <summary>
         /// Gets a value indicating whether the <see cref="T:System.Collections.IList"></see> has a fixed size.
@@ -292,24 +286,6 @@ namespace Allors.Database
             /// then simply add it to this AND filter.
             /// </value>
             public override ICompositePredicate Filter => throw new NotSupportedException("A converted extent does not support a filter");
-
-            /// <summary>
-            /// Gets the first object from the Extent.
-            /// If there are no objects then null is returned.
-            /// </summary>
-            /// <value>The first.</value>
-            public override IObject First
-            {
-                get
-                {
-                    if (this.objects.Length > 0)
-                    {
-                        return this.objects[0];
-                    }
-
-                    return null;
-                }
-            }
 
             /// <summary>
             /// Gets the object type of this extent.

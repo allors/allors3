@@ -48,25 +48,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
         }
 
-        public override IObject First
-        {
-            get
-            {
-                if (this.upgrade != null)
-                {
-                    return this.upgrade.First;
-                }
-
-                var associations = this.strategy.ExtentGetCompositeAssociations(this.associationType);
-                if (associations.Length == 0)
-                {
-                    return null;
-                }
-
-                return this.strategy.Transaction.State.GetOrCreateReferenceForExistingObject(associations[0], this.strategy.Transaction).Strategy.GetObject();
-            }
-        }
-
         public override IComposite ObjectType => this.strategy.Class;
 
         internal override SqlExtent ContainedInExtent

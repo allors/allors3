@@ -30,15 +30,6 @@ namespace Allors.Database.Adapters.Memory
             }
         }
 
-        public override IObject First
-        {
-            get
-            {
-                this.Evaluate();
-                return (from Strategy strategy in this.Strategies select strategy.GetObject()).FirstOrDefault();
-            }
-        }
-
         public Extent Parent
         {
             get => this.parent;

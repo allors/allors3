@@ -46,19 +46,6 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             }
         }
 
-        public override IObject First
-        {
-            get
-            {
-                if (this.upgrade != null)
-                {
-                    return this.upgrade.First;
-                }
-
-                return this.strategy.ExtentRolesFirst(this.roleType);
-            }
-        }
-
         public override IComposite ObjectType => this.strategy.Class;
 
         internal override SqlExtent ContainedInExtent
