@@ -370,26 +370,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public override string ToString() => "Transaction[id=" + this.GetHashCode() + "] " + this.Database;
 
-        internal Reference GetAssociation(Strategy roleStrategy, IAssociationType associationType)
-        {
-            var associationByRole = this.State.GetAssociationByRole(associationType);
-
-            if (!associationByRole.TryGetValue(roleStrategy.Reference, out var association))
-            {
-                this.FlushConditionally(roleStrategy.ObjectId, associationType);
-                association = this.Commands.GetCompositeAssociation(roleStrategy.Reference, associationType);
-                associationByRole[roleStrategy.Reference] = association;
-            }
-
-            return association;
-        }
-
-        internal void SetAssociation(Reference previousAssociation, Strategy roleStrategy, IAssociationType associationType)
-        {
-            var associationByRole = this.State.GetAssociationByRole(associationType);
-            associationByRole[roleStrategy.Reference] = previousAssociation;
-        }
-
         internal Reference[] GetOrCreateReferencesForExistingObjects(IEnumerable<long> objectIds) => this.State.GetOrCreateReferencesForExistingObjects(objectIds, this);
 
         internal long[] GetAssociations(Strategy roleStrategy, IAssociationType associationType)
@@ -404,16 +384,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
 
             return associations;
-        }
-
-        internal void AddAssociation(Reference association, Reference role, IAssociationType associationType)
-        {
-            var associationsByRole = this.State.GetAssociationsByRole(associationType);
-
-            if (associationsByRole.TryGetValue(role, out var associations))
-            {
-                associationsByRole[role] = associations.Add(association.ObjectId);
-            }
         }
 
         internal void RemoveAssociation(Reference association, Reference role, IAssociationType associationType)

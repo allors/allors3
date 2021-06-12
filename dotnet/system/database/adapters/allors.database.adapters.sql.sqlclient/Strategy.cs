@@ -253,12 +253,21 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         {
             this.AssertExist();
 
-            if (roleObject != null)
+            if (roleObject == null)
             {
-                roleType.CompositeRolesChecks(this, roleObject);
+                return;
+            }
 
-                var role = (Strategy)roleObject.Strategy;
-                this.Roles.AddCompositeRole(roleType, role);
+            roleType.CompositeRolesChecks(this, roleObject);
+            var role = (Strategy)roleObject.Strategy;
+
+            if (roleType.AssociationType.IsOne)
+            {
+                this.Roles.AddCompositeRoleOne2Many(roleType, role);
+            }
+            else
+            {
+                this.Roles.AddCompositeRoleMany2Many(roleType, role);
             }
         }
 
@@ -300,7 +309,14 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
                         if (!previousRoles.Contains(role.ObjectId))
                         {
-                            this.Roles.AddCompositeRole(roleType, role);
+                            if (roleType.AssociationType.IsOne)
+                            {
+                                this.Roles.AddCompositeRoleOne2Many(roleType, role);
+                            }
+                            else
+                            {
+                                this.Roles.AddCompositeRoleMany2Many(roleType, role);
+                            }
                         }
 
                         newRoles.Add(role.ObjectId);
@@ -340,7 +356,16 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         public virtual IObject GetCompositeAssociation(IAssociationType associationType)
         {
             this.AssertExist();
-            var association = this.Transaction.GetAssociation(this, associationType);
+            var associationByRole = this.Transaction.State.GetAssociationByRole(associationType);
+
+            if (!associationByRole.TryGetValue(this.Reference, out var association1))
+            {
+                this.Transaction.FlushConditionally(this.ObjectId, associationType);
+                association1 = this.Transaction.Commands.GetCompositeAssociation(this.Reference, associationType);
+                associationByRole[this.Reference] = association1;
+            }
+
+            var association = association1;
             return association?.Strategy.GetObject();
         }
 

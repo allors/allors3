@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Allors.Database.Adapters.Sql.SqlClient.State">
+    <Position X="0.75" Y="0.5" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AAAQIAAEAQEAAiAAAAAEgAAgAAQAEAAAAAAACAANAAA=</HashCode>
+      <FileName>State.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Allors.Database.Adapters.Sql.SqlClient.Strategy">
+    <Position X="6.75" Y="0.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>QFSAoA2IAAABoCCEgAaSBQAAAgEhQiAAAAAUAREJAUI=</HashCode>
+      <FileName>Strategy.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="roles" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Allors.Database.Adapters.Sql.SqlClient.Roles">
+    <Position X="11.25" Y="0.5" Width="3.5" />
+    <NestedTypes>
+      <Class Name="Allors.Database.Adapters.Sql.SqlClient.Roles.CompositesRole" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>relations\Roles.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AATASAKBAQCBASQCAAQQgIAAAAAAAACAEEBAgBQJgAg=</HashCode>
+      <FileName>relations\Roles.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Reference" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Allors.Database.Adapters.Sql.SqlClient.Reference">
+    <Position X="16.5" Y="0.5" Width="2" />
+    <NestedTypes>
+      <Enum Name="Allors.Database.Adapters.Sql.SqlClient.Reference.Flags" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Reference.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>YACAAHAAAAAAAAAmkAIAADAAAAIBAIAAAEAQABEAAAQ=</HashCode>
+      <FileName>Reference.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
