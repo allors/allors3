@@ -20,7 +20,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         private Dictionary<IRoleType, List<CompositeRelation>> removeCompositeRoleRelationsByRoleType;
         private Dictionary<IRoleType, IList<long>> clearCompositeAndCompositesRoleRelationsByRoleType;
 
-        internal Flush(Transaction transaction, Dictionary<Reference, Roles> unsyncedRolesByReference)
+        internal Flush(Transaction transaction, Dictionary<Reference, Strategy> unsyncedRolesByReference)
         {
             this.transaction = transaction;
 

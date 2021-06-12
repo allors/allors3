@@ -30,13 +30,13 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         internal Dictionary<long, Reference> ReferenceByObjectId { get; set; }
 
-        internal Dictionary<Reference, Roles> ModifiedRolesByReference { get; set; }
+        internal Dictionary<Reference, Strategy> ModifiedRolesByReference { get; set; }
 
         internal Dictionary<IAssociationType, Dictionary<Reference, Reference>> AssociationByRoleByAssociationType { get; set; }
 
         internal Dictionary<IAssociationType, Dictionary<Reference, long[]>> AssociationsByRoleByAssociationType { get; set; }
 
-        internal Dictionary<Reference, Roles> UnflushedRolesByReference { get; set; }
+        internal Dictionary<Reference, Strategy> UnflushedRolesByReference { get; set; }
 
         internal Dictionary<IAssociationType, HashSet<long>> TriggersFlushRolesByAssociationType { get; set; }
 
@@ -166,14 +166,14 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             return strategyReference;
         }
 
-        public Roles GetOrCreateRoles(Reference reference)
+        public Strategy GetOrCreateRoles(Reference reference)
         {
             if (this.ModifiedRolesByReference == null)
             {
-                return new Roles(reference);
+                return new Strategy(reference);
             }
 
-            return this.ModifiedRolesByReference.TryGetValue(reference, out var roles) ? roles : new Roles(reference);
+            return this.ModifiedRolesByReference.TryGetValue(reference, out var roles) ? roles : new Strategy(reference);
         }
 
         public Dictionary<Reference, Reference> GetAssociationByRole(IAssociationType associationType)
@@ -214,10 +214,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         }
 
         #region Flushing
-        public void RequireFlush(Roles roles)
+        public void RequireFlush(Strategy roles)
         {
-            this.UnflushedRolesByReference ??= new Dictionary<Reference, Roles>();
-            this.ModifiedRolesByReference ??= new Dictionary<Reference, Roles>();
+            this.UnflushedRolesByReference ??= new Dictionary<Reference, Strategy>();
+            this.ModifiedRolesByReference ??= new Dictionary<Reference, Strategy>();
 
             this.UnflushedRolesByReference[roles.Reference] = roles;
             this.ModifiedRolesByReference[roles.Reference] = roles;

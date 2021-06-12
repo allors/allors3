@@ -108,7 +108,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     var associatoinId = reader.GetInt64(0);
                     var associationReference = this.Transaction.State.ReferenceByObjectId[associatoinId];
 
-                    Roles modifiedRoles = null;
+                    Strategy modifiedRoles = null;
                     this.Transaction.State.ModifiedRolesByReference?.TryGetValue(associationReference, out modifiedRoles);
 
                     var cachedObject = cache.GetOrCreateCachedObject(@class, associatoinId, associationReference.Version);
@@ -389,7 +389,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             var cache = this.Database.Cache;
             foreach (var reference in references)
             {
-                Roles modifiedRoles = null;
+                Strategy modifiedRoles = null;
                 this.Transaction.State.ModifiedRolesByReference?.TryGetValue(reference, out modifiedRoles);
 
                 if (modifiedRoles == null || !modifiedRoles.EnsureModifiedRoleByRoleType.ContainsKey(roleType))

@@ -140,22 +140,22 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
         }
 
-        internal void Flush(Flush flush, Roles roles, IRoleType roleType)
+        internal void Flush(Flush flush, Strategy strategy, IRoleType roleType)
         {
             if (this.Count == 0)
             {
-                flush.ClearCompositeAndCompositesRole(roles.Reference, roleType);
+                flush.ClearCompositeAndCompositesRole(strategy.Reference, roleType);
             }
             else
             {
                 if (this.added != null && this.added.Count > 0)
                 {
-                    flush.AddCompositeRole(roles.Reference, roleType, this.added);
+                    flush.AddCompositeRole(strategy.Reference, roleType, this.added);
                 }
 
                 if (this.removed != null && this.removed.Count > 0)
                 {
-                    flush.RemoveCompositeRole(roles.Reference, roleType, this.removed);
+                    flush.RemoveCompositeRole(strategy.Reference, roleType, this.removed);
                 }
             }
 

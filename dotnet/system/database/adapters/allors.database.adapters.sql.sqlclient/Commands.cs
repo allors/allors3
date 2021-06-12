@@ -95,11 +95,11 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             command.ExecuteNonQuery();
         }
 
-        internal void GetUnitRoles(Roles roles)
+        internal void GetUnitRoles(Strategy strategy)
         {
             this.getUnitRolesByClass ??= new Dictionary<IClass, ICommand>();
 
-            var reference = roles.Reference;
+            var reference = strategy.Reference;
             var @class = reference.Class;
 
             if (!this.getUnitRolesByClass.TryGetValue(@class, out var command))
@@ -176,7 +176,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                             }
                         }
 
-                        roles.CachedObject.SetValue(roleType, unit);
+                        strategy.CachedObject.SetValue(roleType, unit);
                     }
                 }
             }
@@ -205,11 +205,11 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             command.ExecuteNonQuery();
         }
 
-        internal void SetUnitRoles(Roles roles, List<IRoleType> sortedRoleTypes)
+        internal void SetUnitRoles(Strategy strategy, List<IRoleType> sortedRoleTypes)
         {
             this.setUnitRolesByRoleTypeByClass ??= new Dictionary<IClass, Dictionary<IList<IRoleType>, ICommand>>();
 
-            var exclusiveRootClass = roles.Reference.Class.ExclusiveDatabaseClass;
+            var exclusiveRootClass = strategy.Reference.Class.ExclusiveDatabaseClass;
 
             if (!this.setUnitRolesByRoleTypeByClass.TryGetValue(exclusiveRootClass, out var setUnitRoleByRoleType))
             {
@@ -220,7 +220,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             if (!setUnitRoleByRoleType.TryGetValue(sortedRoleTypes, out var command))
             {
                 command = this.connection.CreateCommand();
-                command.ObjectParameter(roles.Reference.ObjectId);
+                command.ObjectParameter(strategy.Reference.ObjectId);
 
                 var sql = new StringBuilder();
                 sql.Append("UPDATE " + this.Database.Mapping.TableNameForObjectByClass[exclusiveRootClass] + " SET\n");
@@ -238,7 +238,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     var column = this.Database.Mapping.ColumnNameByRelationType[roleType.RelationType];
                     sql.Append(column + "=" + this.Database.Mapping.ParamNameByRoleType[roleType]);
 
-                    var unit = roles.EnsureModifiedRoleByRoleType[roleType];
+                    var unit = strategy.EnsureModifiedRoleByRoleType[roleType];
                     command.AddUnitRoleParameter(roleType, unit);
                 }
 
@@ -251,11 +251,11 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
             else
             {
-                command.ObjectParameter(roles.Reference.ObjectId);
+                command.ObjectParameter(strategy.Reference.ObjectId);
 
                 foreach (var roleType in sortedRoleTypes)
                 {
-                    var unit = roles.EnsureModifiedRoleByRoleType[roleType];
+                    var unit = strategy.EnsureModifiedRoleByRoleType[roleType];
                     command.AddUnitRoleParameter(roleType, unit);
                 }
 
@@ -263,11 +263,11 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
         }
 
-        internal void GetCompositeRole(Roles roles, IRoleType roleType)
+        internal void GetCompositeRole(Strategy strategy, IRoleType roleType)
         {
             this.getCompositeRoleByRoleType ??= new Dictionary<IRoleType, ICommand>();
 
-            var reference = roles.Reference;
+            var reference = strategy.Reference;
 
             if (!this.getCompositeRoleByRoleType.TryGetValue(roleType, out var command))
             {
@@ -283,13 +283,13 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             var result = command.ExecuteScalar();
             if (result == null || result == DBNull.Value)
             {
-                roles.CachedObject.SetValue(roleType, null);
+                strategy.CachedObject.SetValue(roleType, null);
             }
             else
             {
                 var objectId = this.transaction.State.GetObjectIdForExistingObject(result.ToString());
                 // TODO: Should add to objectsToLoad
-                roles.CachedObject.SetValue(roleType, objectId);
+                strategy.CachedObject.SetValue(roleType, objectId);
             }
         }
 
@@ -312,11 +312,11 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             command.ExecuteNonQuery();
         }
 
-        internal void GetCompositesRole(Roles roles, IRoleType roleType)
+        internal void GetCompositesRole(Strategy strategy, IRoleType roleType)
         {
             this.getCompositesRoleByRoleType ??= new Dictionary<IRoleType, ICommand>();
 
-            var reference = roles.Reference;
+            var reference = strategy.Reference;
 
             if (!this.getCompositesRoleByRoleType.TryGetValue(roleType, out var command))
             {
@@ -350,7 +350,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 }
             }
 
-            roles.CachedObject.SetValue(roleType, objectIds.ToArray());
+            strategy.CachedObject.SetValue(roleType, objectIds.ToArray());
         }
 
         internal void AddCompositeRole(List<CompositeRelation> relations, IRoleType roleType)

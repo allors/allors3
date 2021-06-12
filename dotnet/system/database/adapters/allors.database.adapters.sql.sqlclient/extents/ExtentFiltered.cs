@@ -101,7 +101,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     return this.Strategy.ExtentGetCompositeAssociations(this.AssociationType);
                 }
 
-                return this.Strategy.Roles.GetCompositesRole(this.RoleType).ToList();
+                return this.Strategy.GetCompositesRole(this.RoleType).ToList();
             }
 
             this.transaction.State.Flush();

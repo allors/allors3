@@ -75,7 +75,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         {
             get
             {
-                var roles = this.strategy.Roles.GetCompositesRole(this.roleType);
+                var roles = this.strategy.GetCompositesRole(this.roleType);
                 return this.strategy.Transaction.GetOrCreateReferencesForExistingObjects(roles);
             }
         }
