@@ -67,7 +67,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         protected override IList<long> GetObjectIds()
         {
-            this.Transaction.Flush();
+            this.Transaction.State.Flush();
 
             var statement = new ExtentStatementRoot(this);
             var alias = this.BuildSql(statement);

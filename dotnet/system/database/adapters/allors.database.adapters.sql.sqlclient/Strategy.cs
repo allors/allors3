@@ -384,7 +384,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
             if (!associationByRole.TryGetValue(this.Reference, out var association1))
             {
-                this.Transaction.FlushConditionally(this.ObjectId, associationType);
+                this.Transaction.State.FlushConditionally(this.ObjectId, associationType);
                 association1 = this.Transaction.Commands.GetCompositeAssociation(this.Reference, associationType);
                 associationByRole[this.Reference] = association1;
             }

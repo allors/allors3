@@ -462,7 +462,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
                         associationByRole[role] = association;
 
-                        this.Transaction.FlushConditionally(roleId, associationType);
+                        this.Transaction.State.FlushConditionally(roleId, associationType);
                     }
                 }
             }
@@ -522,7 +522,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
                     associationByRole[role] = association;
 
-                    this.Transaction.FlushConditionally(role.ObjectId, associationType);
+                    this.Transaction.State.FlushConditionally(role.ObjectId, associationType);
                 }
             }
         }
@@ -599,7 +599,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                         }
                     }
 
-                    this.Transaction.FlushConditionally(role.ObjectId, associationType);
+                    this.Transaction.State.FlushConditionally(role.ObjectId, associationType);
                 }
             }
         }
@@ -678,7 +678,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                         }
                     }
 
-                    this.Transaction.FlushConditionally(role.ObjectId, associationType);
+                    this.Transaction.State.FlushConditionally(role.ObjectId, associationType);
                 }
             }
         }

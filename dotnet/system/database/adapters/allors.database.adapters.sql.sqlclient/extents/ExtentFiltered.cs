@@ -100,32 +100,28 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 {
                     return this.Strategy.ExtentGetCompositeAssociations(this.AssociationType);
                 }
-                else
-                {
-                    return this.Strategy.Roles.GetCompositesRole(this.RoleType).ToList();
-                }
+
+                return this.Strategy.Roles.GetCompositesRole(this.RoleType).ToList();
             }
 
-            this.transaction.Flush();
+            this.transaction.State.Flush();
 
             var statement = new ExtentStatementRoot(this);
             var objectIds = new List<long>();
 
             var alias = this.BuildSql(statement);
 
-            using (var command = statement.CreateDbCommand(alias))
+            using var command = statement.CreateDbCommand(alias);
+            if (command == null)
             {
-                if (command != null)
-                {
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            var objectId = this.transaction.State.GetObjectIdForExistingObject(reader.GetValue(0).ToString());
-                            objectIds.Add(objectId);
-                        }
-                    }
-                }
+                return objectIds;
+            }
+
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                var objectId = this.transaction.State.GetObjectIdForExistingObject(reader.GetValue(0).ToString());
+                objectIds.Add(objectId);
             }
 
             return objectIds;

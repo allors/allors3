@@ -24,7 +24,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             this.Connection = connection;
             this.Services = scope;
 
-            this.State = new State();
+            this.State = new State(this);
 
             this.Prefetcher = new Prefetcher(this);
             this.Commands = new Commands(this, connection);
@@ -230,7 +230,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
             if (references.Count != 0)
             {
-                this.Flush();
+                this.State.Flush();
 
                 var prefetcher = new Prefetch(this.Prefetcher, prefetchPolicy, references);
                 prefetcher.Execute();
@@ -268,7 +268,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     this.busyCommittingOrRollingBack = true;
 
                     var accessed = new List<long>(this.State.ReferenceByObjectId.Keys);
-                    this.Flush();
+                    this.State.Flush();
 
                     var changed = this.State.ModifiedRolesByReference?.Select(dictionaryEntry => dictionaryEntry.Key.ObjectId).ToArray() ?? Array.Empty<long>();
                     if (changed.Length > 0)
@@ -378,7 +378,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
             if (!associationsByRole.TryGetValue(roleStrategy.Reference, out var associations))
             {
-                this.FlushConditionally(roleStrategy.ObjectId, associationType);
+                this.State.FlushConditionally(roleStrategy.ObjectId, associationType);
                 associations = this.Commands.GetCompositesAssociation(roleStrategy, associationType);
                 associationsByRole[roleStrategy.Reference] = associations;
             }
@@ -393,18 +393,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             if (associationsByRole.TryGetValue(role, out var associations))
             {
                 associationsByRole[role] = associations.Remove(association.ObjectId);
-            }
-        }
-
-        internal void Flush()
-        {
-            if (this.State.UnflushedRolesByReference != null)
-            {
-                var flush = new Flush(this, this.State.UnflushedRolesByReference);
-                flush.Execute();
-
-                this.State.UnflushedRolesByReference = null;
-                this.State.TriggersFlushRolesByAssociationType = null;
             }
         }
 
@@ -432,56 +420,11 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
         }
 
-        internal void RequireFlush(Reference association, Roles roles)
-        {
-            if (this.State.UnflushedRolesByReference == null)
-            {
-                this.State.UnflushedRolesByReference = new Dictionary<Reference, Roles>();
-            }
-
-            this.State.UnflushedRolesByReference[association] = roles;
-
-            if (this.State.ModifiedRolesByReference == null)
-            {
-                this.State.ModifiedRolesByReference = new Dictionary<Reference, Roles>();
-            }
-
-            this.State.ModifiedRolesByReference[association] = roles;
-        }
-
-        internal void TriggerFlush(long role, IAssociationType associationType)
-        {
-            if (this.State.TriggersFlushRolesByAssociationType == null)
-            {
-                this.State.TriggersFlushRolesByAssociationType = new Dictionary<IAssociationType, HashSet<long>>();
-            }
-
-            if (!this.State.TriggersFlushRolesByAssociationType.TryGetValue(associationType, out var associations))
-            {
-                associations = new HashSet<long>();
-                this.State.TriggersFlushRolesByAssociationType[associationType] = associations;
-            }
-
-            associations.Add(role);
-        }
-
-        internal void FlushConditionally(long roleId, IAssociationType associationType)
-        {
-            if (this.State.TriggersFlushRolesByAssociationType != null)
-            {
-                if (this.State.TriggersFlushRolesByAssociationType.TryGetValue(associationType, out var roles))
-                {
-                    if (roles.Contains(roleId))
-                    {
-                        this.Flush();
-                    }
-                }
-            }
-        }
-
         internal void InstantiateReferences(IEnumerable<long> objectIds)
         {
             var forceEvaluation = this.Commands.InstantiateReferences(objectIds).ToArray();
         }
+
+      
     }
 }

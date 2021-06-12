@@ -12,8 +12,9 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
     public sealed class State
     {
-        public State()
+        public State(Transaction transaction)
         {
+            this.Transaction = transaction;
             this.ReferenceByObjectId = new Dictionary<long, Reference>();
 
             this.ExistingObjectIdsWithoutReference = new HashSet<long>();
@@ -42,6 +43,8 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         internal HashSet<long> ExistingObjectIdsWithoutReference { get; set; }
 
         internal HashSet<Reference> ReferencesWithoutVersions { get; set; }
+
+        private Transaction Transaction { get; }
 
         public Reference GetOrCreateReferenceForExistingObject(long objectId, Transaction transaction)
         {
@@ -165,35 +168,36 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public Roles GetOrCreateRoles(Reference reference)
         {
-            if (this.ModifiedRolesByReference != null)
+            if (this.ModifiedRolesByReference == null)
             {
-                if (this.ModifiedRolesByReference.TryGetValue(reference, out var roles))
-                {
-                    return roles;
-                }
+                return new Roles(reference);
             }
 
-            return new Roles(reference);
+            return this.ModifiedRolesByReference.TryGetValue(reference, out var roles) ? roles : new Roles(reference);
         }
 
         public Dictionary<Reference, Reference> GetAssociationByRole(IAssociationType associationType)
         {
-            if (!this.AssociationByRoleByAssociationType.TryGetValue(associationType, out var associationByRole))
+            if (this.AssociationByRoleByAssociationType.TryGetValue(associationType, out var associationByRole))
             {
-                associationByRole = new Dictionary<Reference, Reference>();
-                this.AssociationByRoleByAssociationType[associationType] = associationByRole;
+                return associationByRole;
             }
+
+            associationByRole = new Dictionary<Reference, Reference>();
+            this.AssociationByRoleByAssociationType[associationType] = associationByRole;
 
             return associationByRole;
         }
 
         public Dictionary<Reference, long[]> GetAssociationsByRole(IAssociationType associationType)
         {
-            if (!this.AssociationsByRoleByAssociationType.TryGetValue(associationType, out var associationsByRole))
+            if (this.AssociationsByRoleByAssociationType.TryGetValue(associationType, out var associationsByRole))
             {
-                associationsByRole = new Dictionary<Reference, long[]>();
-                this.AssociationsByRoleByAssociationType[associationType] = associationsByRole;
+                return associationsByRole;
             }
+
+            associationsByRole = new Dictionary<Reference, long[]>();
+            this.AssociationsByRoleByAssociationType[associationType] = associationsByRole;
 
             return associationsByRole;
         }
@@ -208,5 +212,61 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
             return objectId;
         }
+
+        #region Flushing
+        public void RequireFlush(Roles roles)
+        {
+            this.UnflushedRolesByReference ??= new Dictionary<Reference, Roles>();
+            this.ModifiedRolesByReference ??= new Dictionary<Reference, Roles>();
+
+            this.UnflushedRolesByReference[roles.Reference] = roles;
+            this.ModifiedRolesByReference[roles.Reference] = roles;
+        }
+
+        public void TriggerFlush(long role, IAssociationType associationType)
+        {
+            this.TriggersFlushRolesByAssociationType ??= new Dictionary<IAssociationType, HashSet<long>>();
+
+            if (!this.TriggersFlushRolesByAssociationType.TryGetValue(associationType, out var associations))
+            {
+                associations = new HashSet<long>();
+                this.TriggersFlushRolesByAssociationType[associationType] = associations;
+            }
+
+            associations.Add(role);
+        }
+
+        public void Flush()
+        {
+            if (this.UnflushedRolesByReference == null)
+            {
+                return;
+            }
+
+            var flush = new Flush(this.Transaction, this.UnflushedRolesByReference);
+            flush.Execute();
+
+            this.UnflushedRolesByReference = null;
+            this.TriggersFlushRolesByAssociationType = null;
+        }
+
+        internal void FlushConditionally(long roleId, IAssociationType associationType)
+        {
+            if (this.TriggersFlushRolesByAssociationType == null)
+            {
+                return;
+            }
+
+            if (!this.TriggersFlushRolesByAssociationType.TryGetValue(associationType, out var roles))
+            {
+                return;
+            }
+
+            if (roles.Contains(roleId))
+            {
+                this.Flush();
+            }
+        }
+        #endregion
     }
 }
