@@ -59,35 +59,41 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         internal bool TryGetUnitRole(IRoleType roleType, out object role)
         {
             role = null;
-            if (this.modifiedRoleByRoleType == null || !this.modifiedRoleByRoleType.TryGetValue(roleType, out role))
+            if (this.TryGetModifiedRole(roleType, ref role))
             {
-                if (this.CachedObject == null || !this.CachedObject.TryGetValue(roleType, out role))
-                {
-                    if (!this.Reference.IsNew)
-                    {
-                        return false;
-                    }
-                }
+                return true;
             }
 
-            return true;
+            if (this.CachedObject != null && this.CachedObject.TryGetValue(roleType, out role))
+            {
+                return true;
+            }
+
+            return this.Reference.IsNew;
         }
+
+        private bool TryGetModifiedRole(IRoleType roleType, ref object role) => this.modifiedRoleByRoleType != null && this.modifiedRoleByRoleType.TryGetValue(roleType, out role);
 
         internal object GetUnitRole(IRoleType roleType)
         {
             object role = null;
-            if (this.modifiedRoleByRoleType == null || !this.modifiedRoleByRoleType.TryGetValue(roleType, out role))
+            if (this.TryGetModifiedRole(roleType, ref role))
             {
-                if (this.CachedObject == null || !this.CachedObject.TryGetValue(roleType, out role))
-                {
-                    if (!this.Reference.IsNew)
-                    {
-                        this.Transaction.Commands.GetUnitRoles(this);
-                        this.cachedObject.TryGetValue(roleType, out role);
-                    }
-                }
+                return role;
             }
 
+            if (this.CachedObject != null && this.CachedObject.TryGetValue(roleType, out role))
+            {
+                return role;
+            }
+
+            if (this.Reference.IsNew)
+            {
+                return role;
+            }
+
+            this.Transaction.Commands.GetUnitRoles(this);
+            this.cachedObject.TryGetValue(roleType, out role);
             return role;
         }
 
@@ -108,14 +114,18 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             roleId = null;
 
             object role = null;
-            if (this.modifiedRoleByRoleType == null || !this.modifiedRoleByRoleType.TryGetValue(roleType, out role))
+
+            if (this.TryGetModifiedRole(roleType, ref role))
             {
-                if (this.CachedObject == null || !this.CachedObject.TryGetValue(roleType, out role))
+                roleId = (long?)role;
+                return true;
+            }
+
+            if (this.CachedObject == null || !this.CachedObject.TryGetValue(roleType, out role))
+            {
+                if (!this.Reference.IsNew)
                 {
-                    if (!this.Reference.IsNew)
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
 
@@ -126,7 +136,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         internal long? GetCompositeRole(IRoleType roleType)
         {
             object role = null;
-            if (this.modifiedRoleByRoleType != null && this.modifiedRoleByRoleType.TryGetValue(roleType, out role))
+            if (this.TryGetModifiedRole(roleType, ref role))
             {
                 return (long?)role;
             }
