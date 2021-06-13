@@ -245,7 +245,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
             finally
             {
-                this.State.ChangeLog = new ChangeLog();
+                this.State.ChangeLog.Reset();
             }
         }
 
@@ -298,7 +298,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     this.State.AssociationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Reference, Reference>>();
                     this.State.AssociationsByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Reference, long[]>>();
 
-                    this.State.ChangeLog = new ChangeLog();
+                    this.State.ChangeLog.Reset();
 
                     this.Database.Cache.OnCommit(accessed, changed);
 
@@ -346,7 +346,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     this.State.AssociationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Reference, Reference>>();
                     this.State.AssociationsByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Reference, long[]>>();
 
-                    this.State.ChangeLog = new ChangeLog();
+                    this.State.ChangeLog.Reset();
 
                     this.Database.Cache.OnRollback(accessed);
 
@@ -424,7 +424,5 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         {
             var forceEvaluation = this.Commands.InstantiateReferences(objectIds).ToArray();
         }
-
-      
     }
 }

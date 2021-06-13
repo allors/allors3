@@ -26,7 +26,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             this.ChangeLog = new ChangeLog();
         }
 
-        internal ChangeLog ChangeLog { get; set; }
+        internal ChangeLog ChangeLog { get; }
 
         internal Dictionary<long, Reference> ReferenceByObjectId { get; set; }
 

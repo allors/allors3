@@ -14,11 +14,11 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
     internal sealed class ChangeLog
     {
-        private readonly HashSet<Strategy> created;
-        private readonly HashSet<IStrategy> deleted;
+        private HashSet<Strategy> created;
+        private HashSet<IStrategy> deleted;
 
-        private readonly HashSet<Strategy> changedRoleTypes;
-        private readonly HashSet<Strategy> changedAssociationTypes;
+        private HashSet<Strategy> changedRoleTypes;
+        private HashSet<Strategy> changedAssociationTypes;
 
         internal ChangeLog()
         {
@@ -32,9 +32,27 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         internal void OnDeleted(Strategy strategy) => this.deleted.Add(strategy);
 
-        internal void OnChangedRoleTypes(Strategy strategy) => this.changedRoleTypes.Add(strategy);
+        internal void OnChangedRoles(Strategy strategy) => this.changedRoleTypes.Add(strategy);
 
-        internal void OnChangedAssociationTypes(Strategy strategy) => this.changedAssociationTypes.Add(strategy);
+        internal void OnChangedAssociations(Strategy strategy) => this.changedAssociationTypes.Add(strategy);
+
+        internal void Reset()
+        {
+            foreach (var changedRoleType in this.changedRoleTypes)
+            {
+                changedRoleType.OnChangeLogReset();
+            }
+
+            foreach (var changedAssociationType in this.changedAssociationTypes)
+            {
+                changedAssociationType.OnChangeLogReset();
+            }
+
+            this.created = new HashSet<Strategy>();
+            this.deleted = new HashSet<IStrategy>();
+            this.changedRoleTypes = new HashSet<Strategy>();
+            this.changedAssociationTypes = new HashSet<Strategy>();
+        }
 
         internal ChangeSet Checkpoint() =>
             new ChangeSet(

@@ -24,7 +24,7 @@ namespace Allors.Database
         /// The services for this transaction.
         /// </summary>
         ITransactionServices Services { get; }
-        
+
         /// <summary>
         /// Creates a change set of all changes up to this checkpoint,
         /// starting from either the beginning of the transaction or

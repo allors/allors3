@@ -14,7 +14,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
     using Adapters;
     using Caching;
-    using Collections;
     using Meta;
 
     public class Strategy : IStrategy
@@ -78,69 +77,13 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
         }
 
-        internal ISet<IRoleType> CheckpointRoleTypes
-        {
-            get
-            {
-                if (this.originalRoleByRoleType == null)
-                {
-                    return null;
-                }
-
-                ISet<IRoleType> changedRoleTypes = null;
-
-                foreach (var kvp in this.originalRoleByRoleType)
-                {
-                    var roleType = kvp.Key;
-                    var originalRole = kvp.Value;
-
-                    if (!Equals(originalRole, this.GetUnitRoleInternal(roleType)))
-                    {
-                        changedRoleTypes ??= new HashSet<IRoleType>();
-                        changedRoleTypes.Add(roleType);
-                    }
-                }
-
-
-                this.originalRoleByRoleType = null;
-
-                return changedRoleTypes;
-            }
-        }
-
-        public ISet<IAssociationType> CheckpointAssociationTypes
-        {
-            get
-            {
-                if (this.originalAssociationByAssociationType == null)
-                {
-                    return null;
-                }
-
-                ISet<IAssociationType> changedAssociationTypes = null;
-
-                foreach (var kvp in this.originalAssociationByAssociationType)
-                {
-                    var associationType = kvp.Key;
-                    var originalAssociation = kvp.Value;
-
-                    //if (!Equals(originalAssociation, this.GetCompositeAssociation(associationType)))
-                    //{
-                    //    changedAssociationTypes ??= new HashSet<IAssociationType>();
-                    //    changedAssociationTypes.Add(associationType);
-                    //}
-                }
-
-                this.originalAssociationByAssociationType = null;
-
-                return changedAssociationTypes;
-            }
-        }
-
-
         internal Dictionary<IRoleType, object> EnsureModifiedRoleByRoleType => this.modifiedRoleByRoleType ??= new Dictionary<IRoleType, object>();
 
         private HashSet<IRoleType> EnsureRequireFlushRoles => this.requireFlushRoles ??= new HashSet<IRoleType>();
+
+        private Dictionary<IRoleType, object> EnsureOriginalRoleByRoleType => this.originalRoleByRoleType ??= new Dictionary<IRoleType, object>();
+
+        private Dictionary<IAssociationType, object> EnsureOriginalAssociationByAssociationType => this.originalAssociationByAssociationType ??= new Dictionary<IAssociationType, object>();
 
         private State State { get; }
 
@@ -468,16 +411,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         public virtual IObject GetCompositeAssociation(IAssociationType associationType)
         {
             this.AssertExist();
-            var associationByRole = this.Transaction.State.GetAssociationByRole(associationType);
-
-            if (!associationByRole.TryGetValue(this.Reference, out var association1))
-            {
-                this.Transaction.State.FlushConditionally(this.ObjectId, associationType);
-                association1 = this.Transaction.Commands.GetCompositeAssociation(this.Reference, associationType);
-                associationByRole[this.Reference] = association1;
-            }
-
-            var association = association1;
+            var association = this.GetCompositeAssociationInternal(associationType);
             return association?.Strategy.GetObject();
         }
 
@@ -619,9 +553,8 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 return;
             }
 
-            this.OnChangedUnitRole(roleType, previousRole);
-
             // A ----> R
+            this.OnChangingUnitRole(roleType, previousRole);
             this.EnsureModifiedRoleByRoleType[roleType] = role;
             this.RequireFlush(roleType);
         }
@@ -679,10 +612,12 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             roleAssociation?.RemoveCompositeRoleOne2One(roleType, role);
 
             // A <---- R
+            this.OnChangingCompositeRole(roleType, previousRoleId);
             var associationByRole = this.State.GetAssociationByRole(roleType.AssociationType);
             associationByRole[role.Reference] = this.Reference;
 
             // A ----> R
+            role.OnChangingCompositeAssociation(roleType.AssociationType, roleAssociation?.ObjectId);
             this.EnsureModifiedRoleByRoleType[roleType] = roleId;
             this.RequireFlush(roleType);
         }
@@ -712,15 +647,19 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
 
             // A <---- R
+            this.OnChangingCompositeRole(roleType, previousRoleId);
             var associationsByRole = this.State.GetAssociationsByRole(roleType.AssociationType);
+            long[] roleAssociation = null;
             if (associationsByRole.TryGetValue(role.Reference, out var associations))
             {
+                roleAssociation = associations;
                 associationsByRole[role.Reference] = associations.Add(this.Reference.ObjectId);
             }
 
             this.State.TriggerFlush(roleId, roleType.AssociationType);
 
             // A ----> R
+            role.OnChangingCompositesAssociation(roleType.AssociationType, roleAssociation);
             this.EnsureModifiedRoleByRoleType[roleType] = roleId;
             this.RequireFlush(roleType);
         }
@@ -762,11 +701,11 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         private void AddCompositeRoleOne2Many(IRoleType roleType, Strategy role)
         {
             /*  [if exist]        [then remove]        set
-            *
-            *  RA ----- R         RA       R       RA    -- R       RA ----- R
-            *                ->                +        -        =       -
-            *   A ----- PR         A --x-- PR       A --    PR       A --    PR
-            */
+             *
+             *  RA ----- R         RA       R       RA    -- R       RA ----- R
+             *                ->                +        -        =       -
+             *   A ----- PR         A --x-- PR       A --    PR       A --    PR
+             */
             var previousRoleIds = this.GetCompositesRole(roleType);
 
             // R in PR 
@@ -792,11 +731,11 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         private void AddCompositeRoleMany2Many(IRoleType roleType, Strategy role)
         {
             /*  [if exist]        [no remove]         set
-            *
-            *  RA ----- R         RA       R       RA    -- R       RA ----- R
-            *                ->                +        -        =       -
-            *   A ----- PR         A       PR       A --    PR       A --    PR
-            */
+             *
+             *  RA ----- R         RA       R       RA    -- R       RA ----- R
+             *                ->                +        -        =       -
+             *   A ----- PR         A       PR       A --    PR       A --    PR
+             */
             var previousRoleIds = this.GetCompositesRole(roleType);
 
             // R in PR 
@@ -862,21 +801,39 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         private void RemoveCompositeRoleOne2One(IRoleType roleType, Strategy role)
         {
+            /*                        delete
+             *
+             *   A ----- R    ->     A       R  =   A       R 
+             */
             var associationByRole = this.State.GetAssociationByRole(roleType.AssociationType);
             associationByRole[role.Reference] = null;
 
+            // A ----> R
             this.EnsureModifiedRoleByRoleType[roleType] = null;
             this.RequireFlush(roleType);
+
+            this.OnChangingCompositeRole(roleType, role.ObjectId);
+            role.OnChangingCompositeAssociation(roleType.AssociationType, this.ObjectId);
         }
 
         private void RemoveCompositeRoleMany2One(IRoleType roleType, Strategy role)
         {
-            this.Transaction.RemoveAssociation(this.Reference, role.Reference, roleType.AssociationType);
+            /*                        delete
+             *  RA --                                RA --
+             *       -        ->                 =        -
+             *   A ----- R           A --x-- R             -- R
+             */
 
+            // A <---- R
+            this.Transaction.RemoveAssociation(this.Reference, role.Reference, roleType.AssociationType);
             this.State.TriggerFlush(role.ObjectId, roleType.AssociationType);
 
+            // A ----> R
             this.EnsureModifiedRoleByRoleType[roleType] = null;
             this.RequireFlush(roleType);
+
+            this.OnChangingCompositeRole(roleType, role.ObjectId);
+            role.OnChangingCompositeAssociation(roleType.AssociationType, this.ObjectId);
         }
 
         private CompositesRole GetOrCreateModifiedCompositeRoles(IRoleType roleType)
@@ -916,6 +873,20 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             this.Transaction.Commands.GetCompositesRole(this, roleType);
             this.cachedObject.TryGetValue(roleType, out roleOut);
             return (long[])roleOut;
+        }
+
+        private Reference GetCompositeAssociationInternal(IAssociationType associationType)
+        {
+            var associationByRole = this.Transaction.State.GetAssociationByRole(associationType);
+
+            if (!associationByRole.TryGetValue(this.Reference, out var association))
+            {
+                this.Transaction.State.FlushConditionally(this.ObjectId, associationType);
+                association = this.Transaction.Commands.GetCompositeAssociation(this.Reference, associationType);
+                associationByRole[this.Reference] = association;
+            }
+
+            return association;
         }
 
         #endregion
@@ -983,19 +954,164 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         #endregion
 
         #region Changelog
-        private void OnChangedUnitRole(IRoleType roleType, object previousRole)
+        internal ISet<IRoleType> CheckpointRoleTypes
         {
-            this.originalRoleByRoleType ??= new Dictionary<IRoleType, object>();
-            if (this.originalRoleByRoleType.ContainsKey(roleType))
+            get
+            {
+                if (this.originalRoleByRoleType == null)
+                {
+                    return null;
+                }
+
+                ISet<IRoleType> changedRoleTypes = null;
+
+                foreach (var kvp in this.originalRoleByRoleType)
+                {
+                    var roleType = kvp.Key;
+                    var originalRole = kvp.Value;
+
+                    if (roleType.ObjectType.IsUnit)
+                    {
+                        var role = this.GetUnitRoleInternal(roleType);
+
+                        if (!Equals(originalRole, role))
+                        {
+                            changedRoleTypes ??= new HashSet<IRoleType>();
+                            changedRoleTypes.Add(roleType);
+                        }
+                    }
+                    else
+                    {
+                        if (roleType.IsOne)
+                        {
+                            var role = this.GetCompositeRoleInternal(roleType);
+
+                            if (!Equals(originalRole, role))
+                            {
+                                changedRoleTypes ??= new HashSet<IRoleType>();
+                                changedRoleTypes.Add(roleType);
+                            }
+                        }
+                        else
+                        {
+                            // TODO;
+                        }
+                    }
+
+                }
+
+
+                this.originalRoleByRoleType = null;
+
+                return changedRoleTypes;
+            }
+        }
+
+        internal ISet<IAssociationType> CheckpointAssociationTypes
+        {
+            get
+            {
+                if (this.originalAssociationByAssociationType == null)
+                {
+                    return null;
+                }
+
+                ISet<IAssociationType> changedAssociationTypes = null;
+
+                foreach (var kvp in this.originalAssociationByAssociationType)
+                {
+                    var associationType = kvp.Key;
+                    var originalAssociation = kvp.Value;
+
+                    if (associationType.IsOne)
+                    {
+                        var association = this.GetCompositeAssociationInternal(associationType)?.ObjectId;
+                        if (!Equals(originalAssociation, association))
+                        {
+                            changedAssociationTypes ??= new HashSet<IAssociationType>();
+                            changedAssociationTypes.Add(associationType);
+                        }
+                    }
+                    else
+                    {
+                        var association = this.Transaction.GetAssociations(this, associationType);
+
+                        if (originalAssociation == null)
+                        {
+                            if (association.Length > 0)
+                            {
+                                changedAssociationTypes ??= new HashSet<IAssociationType>();
+                                changedAssociationTypes.Add(associationType);
+                            }
+
+                            continue;
+                        }
+
+                        var originalSet = new HashSet<long>((long[])originalAssociation);
+
+                        if (!originalSet.SetEquals(association))
+                        {
+                            changedAssociationTypes ??= new HashSet<IAssociationType>();
+                            changedAssociationTypes.Add(associationType);
+                        }
+                    }
+                }
+
+                this.originalAssociationByAssociationType = null;
+
+                return changedAssociationTypes;
+            }
+        }
+
+        internal virtual void OnChangeLogReset()
+        {
+            this.originalRoleByRoleType = null;
+            this.originalAssociationByAssociationType = null;
+        }
+
+        private void OnChangingUnitRole(IRoleType roleType, object originalRole)
+        {
+            if (this.EnsureOriginalRoleByRoleType.ContainsKey(roleType))
             {
                 return;
             }
 
-            this.originalRoleByRoleType.Add(roleType, previousRole);
-
-            this.State.ChangeLog.OnChangedRoleTypes(this);
+            this.originalRoleByRoleType.Add(roleType, originalRole);
+            this.State.ChangeLog.OnChangedRoles(this);
         }
-        
+
+        private void OnChangingCompositeRole(IRoleType roleType, long? originalRoleId)
+        {
+            if (this.EnsureOriginalRoleByRoleType.ContainsKey(roleType))
+            {
+                return;
+            }
+
+            this.originalRoleByRoleType.Add(roleType, originalRoleId);
+            this.State.ChangeLog.OnChangedRoles(this);
+        }
+
+        private void OnChangingCompositeAssociation(IAssociationType associationType, long? originalAssociation)
+        {
+            if (this.EnsureOriginalAssociationByAssociationType.ContainsKey(associationType))
+            {
+                return;
+            }
+
+            this.originalAssociationByAssociationType.Add(associationType, originalAssociation);
+            this.State.ChangeLog.OnChangedAssociations(this);
+        }
+
+        private void OnChangingCompositesAssociation(IAssociationType associationType, long[] originalAssociation)
+        {
+            if (this.EnsureOriginalAssociationByAssociationType.ContainsKey(associationType))
+            {
+                return;
+            }
+
+            this.originalAssociationByAssociationType.Add(associationType, originalAssociation);
+            this.State.ChangeLog.OnChangedAssociations(this);
+        }
         #endregion
 
         #region Prefetch
