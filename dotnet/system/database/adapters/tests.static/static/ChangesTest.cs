@@ -579,6 +579,7 @@ namespace Allors.Database.Adapters
                 c1a.C1C2many2one = c2b;
 
                 changes = this.Transaction.Checkpoint();
+
                 Assert.Single(changes.Associations);
                 Assert.Contains(c1a, changes.Associations);
 

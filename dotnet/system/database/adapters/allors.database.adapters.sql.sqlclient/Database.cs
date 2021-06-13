@@ -17,6 +17,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
     using Caching;
     using Meta;
     using Microsoft.Data.SqlClient.Server;
+    using Numbers;
 
     public class Database : IDatabase
     {
@@ -185,6 +186,8 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 return this.mapping;
             }
         }
+
+        internal INumbers Numbers = new ArrayNumbers();
 
         public ITransaction CreateTransaction()
         {

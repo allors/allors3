@@ -649,17 +649,15 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             // A <---- R
             this.OnChangingCompositeRole(roleType, previousRoleId);
             var associationsByRole = this.State.GetAssociationsByRole(roleType.AssociationType);
-            long[] roleAssociation = null;
             if (associationsByRole.TryGetValue(role.Reference, out var associations))
             {
-                roleAssociation = associations;
                 associationsByRole[role.Reference] = associations.Add(this.Reference.ObjectId);
             }
 
             this.State.TriggerFlush(roleId, roleType.AssociationType);
 
             // A ----> R
-            role.OnChangingCompositesAssociation(roleType.AssociationType, roleAssociation);
+            role.OnChangingCompositesAssociationAdd(roleType.AssociationType, this.ObjectId);
             this.EnsureModifiedRoleByRoleType[roleType] = roleId;
             this.RequireFlush(roleType);
         }
@@ -833,7 +831,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             this.RequireFlush(roleType);
 
             this.OnChangingCompositeRole(roleType, role.ObjectId);
-            role.OnChangingCompositeAssociation(roleType.AssociationType, this.ObjectId);
+            role.OnChangingCompositesAssociationRemove(roleType.AssociationType, this.ObjectId);
         }
 
         private CompositesRole GetOrCreateModifiedCompositeRoles(IRoleType roleType)
@@ -1011,6 +1009,8 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         {
             get
             {
+                var numbers = this.Transaction.Database.Numbers;
+
                 if (this.originalAssociationByAssociationType == null)
                 {
                     return null;
@@ -1026,34 +1026,25 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     if (associationType.IsOne)
                     {
                         var association = this.GetCompositeAssociationInternal(associationType)?.ObjectId;
-                        if (!Equals(originalAssociation, association))
+                        if (Equals(originalAssociation, association))
                         {
-                            changedAssociationTypes ??= new HashSet<IAssociationType>();
-                            changedAssociationTypes.Add(associationType);
-                        }
-                    }
-                    else
-                    {
-                        var association = this.Transaction.GetAssociations(this, associationType);
-
-                        if (originalAssociation == null)
-                        {
-                            if (association.Length > 0)
-                            {
-                                changedAssociationTypes ??= new HashSet<IAssociationType>();
-                                changedAssociationTypes.Add(associationType);
-                            }
-
                             continue;
                         }
 
-                        var originalSet = new HashSet<long>((long[])originalAssociation);
+                        changedAssociationTypes ??= new HashSet<IAssociationType>();
+                        changedAssociationTypes.Add(associationType);
+                    }
+                    else
+                    {
+                        var changeTracker = (ChangeTracker)originalAssociation;
 
-                        if (!originalSet.SetEquals(association))
+                        if (numbers.Except(changeTracker.Add, changeTracker.Remove) == null && numbers.Except(changeTracker.Remove, changeTracker.Add) == null)
                         {
-                            changedAssociationTypes ??= new HashSet<IAssociationType>();
-                            changedAssociationTypes.Add(associationType);
+                            continue;
                         }
+
+                        changedAssociationTypes ??= new HashSet<IAssociationType>();
+                        changedAssociationTypes.Add(associationType);
                     }
                 }
 
@@ -1091,6 +1082,14 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             this.State.ChangeLog.OnChangedRoles(this);
         }
 
+        private void OnChangingCompositesRoleAdd(IRoleType roleType, long originalRole)
+        {
+        }
+
+        private void OnChangingCompositesRoleRemove(IRoleType roleType, long originalRole)
+        {
+        }
+
         private void OnChangingCompositeAssociation(IAssociationType associationType, long? originalAssociation)
         {
             if (this.EnsureOriginalAssociationByAssociationType.ContainsKey(associationType))
@@ -1102,14 +1101,27 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             this.State.ChangeLog.OnChangedAssociations(this);
         }
 
-        private void OnChangingCompositesAssociation(IAssociationType associationType, long[] originalAssociation)
+        private void OnChangingCompositesAssociationAdd(IAssociationType associationType, long originalAssociation)
         {
-            if (this.EnsureOriginalAssociationByAssociationType.ContainsKey(associationType))
-            {
-                return;
-            }
+            var numbers = this.Transaction.Database.Numbers;
+            this.EnsureOriginalAssociationByAssociationType.TryGetValue(associationType, out var temp);
 
-            this.originalAssociationByAssociationType.Add(associationType, originalAssociation);
+            var changeTracker = (ChangeTracker?)temp ?? new ChangeTracker();
+            changeTracker.Add = numbers.Add(changeTracker.Add, originalAssociation);
+            this.originalAssociationByAssociationType[associationType] = changeTracker;
+
+            this.State.ChangeLog.OnChangedAssociations(this);
+        }
+
+        private void OnChangingCompositesAssociationRemove(IAssociationType associationType, long originalAssociation)
+        {
+            var numbers = this.Transaction.Database.Numbers;
+            this.EnsureOriginalAssociationByAssociationType.TryGetValue(associationType, out var temp);
+
+            var changeTracker = (ChangeTracker?)temp ?? new ChangeTracker();
+            changeTracker.Remove = numbers.Add(changeTracker.Remove, originalAssociation);
+            this.originalAssociationByAssociationType[associationType] = changeTracker;
+
             this.State.ChangeLog.OnChangedAssociations(this);
         }
         #endregion
