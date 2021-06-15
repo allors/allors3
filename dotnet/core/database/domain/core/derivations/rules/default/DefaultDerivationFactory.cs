@@ -13,7 +13,7 @@ namespace Allors.Database.Domain.Derivations.Rules.Default
 
         public Engine Engine { get; }
 
-        public int MaxCycles { get; set; } = 10;
+        public int MaxCycles { get; set; } = 100;
 
         public IDerivation CreateDerivation(ITransaction transaction) => new DefaultDerivation(transaction, new Validation(), this.Engine, this.MaxCycles, false);
     }
