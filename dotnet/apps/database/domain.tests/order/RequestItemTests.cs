@@ -30,7 +30,7 @@ namespace Allors.Database.Domain.Tests
             var requestItem = new RequestItemBuilder(this.Transaction).Build();
             request.AddRequestItem(requestItem);
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtLeastOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtLeastOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.RequestItem.Product,
@@ -48,7 +48,7 @@ namespace Allors.Database.Domain.Tests
 
             requestItem.Product = new UnifiedGoodBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.RequestItem.Product,
@@ -66,7 +66,7 @@ namespace Allors.Database.Domain.Tests
 
             requestItem.ProductFeature = new ColourBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.RequestItem.Product,
@@ -85,7 +85,7 @@ namespace Allors.Database.Domain.Tests
 
             requestItem.Description = "Description";
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.RequestItem.Product,
@@ -103,7 +103,7 @@ namespace Allors.Database.Domain.Tests
 
             requestItem.NeededSkill = new NeededSkillBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.RequestItem.Product,
@@ -121,7 +121,7 @@ namespace Allors.Database.Domain.Tests
 
             requestItem.Deliverable = new DeliverableBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.RequestItem.Product,
@@ -139,7 +139,7 @@ namespace Allors.Database.Domain.Tests
 
             requestItem.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.RequestItem.SerialisedItem,

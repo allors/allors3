@@ -172,7 +172,7 @@ namespace Allors.Database.Domain.Tests
 
             quoteItem.InvoiceItemType = new InvoiceItemTypes(this.Transaction).ProductItem;
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtLeastOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtLeastOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.QuoteItem.Product,
@@ -198,7 +198,7 @@ namespace Allors.Database.Domain.Tests
 
             quoteItem.Product = product;
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.QuoteItem.Product,
@@ -224,7 +224,7 @@ namespace Allors.Database.Domain.Tests
 
             quoteItem.ProductFeature = productFeature;
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.QuoteItem.Product,
@@ -250,7 +250,7 @@ namespace Allors.Database.Domain.Tests
 
             quoteItem.Deliverable = deliverable;
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.QuoteItem.Product,
@@ -276,7 +276,7 @@ namespace Allors.Database.Domain.Tests
 
             quoteItem.WorkEffort = workTask;
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.QuoteItem.Product,
@@ -302,7 +302,7 @@ namespace Allors.Database.Domain.Tests
 
             quoteItem.SerialisedItem = serialisedItem;
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.QuoteItem.SerialisedItem,

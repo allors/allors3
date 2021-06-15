@@ -656,7 +656,7 @@ namespace Allors.Database.Domain.Tests
 
             orderItem.Part = serialisedPart;
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtLeastOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtLeastOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.PurchaseOrderItem.SerialisedItem,
@@ -677,7 +677,7 @@ namespace Allors.Database.Domain.Tests
 
             orderItem.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.PurchaseOrderItem.SerialisedItem,
@@ -698,7 +698,7 @@ namespace Allors.Database.Domain.Tests
 
             orderItem.SerialNumber = "number";
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.PurchaseOrderItem.SerialisedItem,

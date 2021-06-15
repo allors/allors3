@@ -2019,7 +2019,7 @@ namespace Allors.Database.Domain.Tests
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithPart(part).WithProduct(product).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SalesInvoiceItem.Product,
@@ -2038,7 +2038,7 @@ namespace Allors.Database.Domain.Tests
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithProductFeature(colour).WithProduct(product).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SalesInvoiceItem.Product,
@@ -2057,7 +2057,7 @@ namespace Allors.Database.Domain.Tests
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithProductFeature(colour).WithSerialisedItem(serialisedItem).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SalesInvoiceItem.SerialisedItem,
@@ -2076,7 +2076,7 @@ namespace Allors.Database.Domain.Tests
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithPart(part).WithSerialisedItem(serialisedItem).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SalesInvoiceItem.SerialisedItem,
@@ -2094,7 +2094,7 @@ namespace Allors.Database.Domain.Tests
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithSerialisedItem(serialisedItem).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorRequired>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SalesInvoiceItem.NextSerialisedItemAvailability,

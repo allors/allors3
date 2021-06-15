@@ -67,7 +67,7 @@ namespace Allors.Database.Domain.Tests
 
             partyContactMechanism.UseAsDefault = true;
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorRequired>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
             Assert.Equal(new IRoleType[]
             {
                 this.M. PartyContactMechanism.ContactPurposes,
@@ -87,7 +87,7 @@ namespace Allors.Database.Domain.Tests
             partyContactMechanism.RemoveContactPurposes();
 
             {
-                var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorRequired>();
+                var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
                 Assert.Equal(new IRoleType[]
                 {
                     this.M.PartyContactMechanism.ContactPurposes,

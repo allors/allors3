@@ -33,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Protocol.Json", "..\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Shared", "..\dotnet\System\Shared\Allors.Shared.csproj", "{329CB912-CE84-4185-939E-7CDCE8304E09}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Protocol.Json.Default", "..\dotnet\system\protocol\allors.protocol.json.default\Allors.Protocol.Json.Default.csproj", "{E96931E4-2931-4AF5-9A9E-93F2FF8F095A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{329CB912-CE84-4185-939E-7CDCE8304E09}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{329CB912-CE84-4185-939E-7CDCE8304E09}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{329CB912-CE84-4185-939E-7CDCE8304E09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E96931E4-2931-4AF5-9A9E-93F2FF8F095A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E96931E4-2931-4AF5-9A9E-93F2FF8F095A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E96931E4-2931-4AF5-9A9E-93F2FF8F095A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E96931E4-2931-4AF5-9A9E-93F2FF8F095A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -104,6 +110,7 @@ Global
 		{99F190F4-746A-482D-9291-5359FC88E0FF} = {F899580C-01C7-418D-8B5D-4E88580F0316}
 		{645381ED-E18F-4835-A158-28BB1EFCDF1C} = {F899580C-01C7-418D-8B5D-4E88580F0316}
 		{329CB912-CE84-4185-939E-7CDCE8304E09} = {F899580C-01C7-418D-8B5D-4E88580F0316}
+		{E96931E4-2931-4AF5-9A9E-93F2FF8F095A} = {F899580C-01C7-418D-8B5D-4E88580F0316}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C4BD046D-C81E-41F3-B82E-DED455C38924}

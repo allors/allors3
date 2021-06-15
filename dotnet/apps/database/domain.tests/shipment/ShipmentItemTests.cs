@@ -37,7 +37,7 @@ namespace Allors.Database.Domain.Tests
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithPart(good1.Part).WithQuantity(1).Build();
             shipment.AddShipmentItem(shipmentItem);
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorRequired>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.ShipmentItem.UnitPurchasePrice,
@@ -69,7 +69,7 @@ namespace Allors.Database.Domain.Tests
             shipmentItem.RemoveNextSerialisedItemAvailability();
 
             {
-                var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorRequired>();
+                var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
                 Assert.Equal(new IRoleType[]
                 {
                     this.M.ShipmentItem.NextSerialisedItemAvailability,
@@ -94,7 +94,7 @@ namespace Allors.Database.Domain.Tests
             shipmentItem.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
 
             {
-                var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorRequired>();
+                var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
                 Assert.Equal(new IRoleType[]
                 {
                     this.M.ShipmentItem.NextSerialisedItemAvailability,
@@ -332,7 +332,7 @@ namespace Allors.Database.Domain.Tests
 
             shipmentItem.RemoveUnitPurchasePrice();
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorRequired>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.ShipmentItem.UnitPurchasePrice,
@@ -351,7 +351,7 @@ namespace Allors.Database.Domain.Tests
 
             shipmentItem.Part = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorRequired>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.ShipmentItem.UnitPurchasePrice,

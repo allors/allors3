@@ -242,7 +242,7 @@ namespace Allors.Database.Domain.Tests
 
             var validation = this.Transaction.Derive(false);
 
-            var errors = validation.Errors.Cast<DerivationErrorRequired>().ToArray();
+            var errors = validation.Errors.OfType<DerivationErrorRequired>().ToArray();
             Assert.Equal(new IRoleType[]
             {
                 this.M.BankAccount.Bank,

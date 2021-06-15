@@ -57,12 +57,13 @@ namespace Allors.Database.Domain.Tests
 
             agreementProductApplicability.AgreementItem = new AgreementSectionBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
+
             Assert.Equal(new IRoleType[]
-            {
+               {
                 this.M.AgreementProductApplicability.Agreement,
                 this.M.AgreementProductApplicability.AgreementItem,
-            }, errors.SelectMany(v => v.RoleTypes));
+               }, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -75,7 +76,7 @@ namespace Allors.Database.Domain.Tests
 
             agreementProductApplicability.Agreement = new SalesAgreementBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.AgreementProductApplicability.Agreement,

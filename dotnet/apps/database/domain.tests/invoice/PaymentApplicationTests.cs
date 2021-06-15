@@ -73,7 +73,7 @@ namespace Allors.Database.Domain.Tests
                                         .WithAmountApplied(partialAmount)
                                         .Build();
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtLeastOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtLeastOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.PaymentApplication.AmountApplied,
@@ -95,7 +95,7 @@ namespace Allors.Database.Domain.Tests
                                         .Build();
 
             // TODO: Shouldn't this be Required?
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtLeastOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtLeastOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.PaymentApplication.AmountApplied,

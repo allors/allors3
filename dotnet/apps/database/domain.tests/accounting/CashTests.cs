@@ -114,7 +114,7 @@ namespace Allors.Database.Domain.Tests
 
             this.InternalOrganisation.DefaultCollectionMethod = cash;
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtLeastOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtLeastOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.Cash.GeneralLedgerAccount,
@@ -130,7 +130,7 @@ namespace Allors.Database.Domain.Tests
 
             cash.GeneralLedgerAccount = new OrganisationGlAccountBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.Cash.GeneralLedgerAccount,
@@ -146,7 +146,7 @@ namespace Allors.Database.Domain.Tests
 
             cash.Journal = new JournalBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.Cash.GeneralLedgerAccount,

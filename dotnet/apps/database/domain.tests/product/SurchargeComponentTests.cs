@@ -58,7 +58,7 @@ namespace Allors.Database.Domain.Tests
 
             surchargeComponent.Price = 1;
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SurchargeComponent.Price,
@@ -74,7 +74,7 @@ namespace Allors.Database.Domain.Tests
 
             surchargeComponent.Percentage = 1;
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SurchargeComponent.Price,

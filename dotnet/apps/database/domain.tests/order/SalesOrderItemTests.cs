@@ -1597,7 +1597,7 @@ namespace Allors.Database.Domain.Tests
 
             item.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorRequired>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SalesOrderItem.NextSerialisedItemAvailability,
@@ -1615,7 +1615,7 @@ namespace Allors.Database.Domain.Tests
 
             item.RemoveNextSerialisedItemAvailability();
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorRequired>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SalesOrderItem.NextSerialisedItemAvailability,
@@ -1757,7 +1757,7 @@ namespace Allors.Database.Domain.Tests
 
             item.AddOrderedWithFeature(new SalesOrderItemBuilder(this.Transaction).Build());
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorRequired>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SalesOrderItem.ProductFeature,
@@ -1774,7 +1774,7 @@ namespace Allors.Database.Domain.Tests
 
             item.AddOrderedWithFeature(new SalesOrderItemBuilder(this.Transaction).WithProduct(product).Build());
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorNotAllowed>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorNotAllowed>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SalesOrderItem.Product,
@@ -1789,7 +1789,7 @@ namespace Allors.Database.Domain.Tests
 
             item.ProductFeature = new ColourBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorNotAllowed>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorNotAllowed>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SalesOrderItem.ProductFeature,
@@ -1855,7 +1855,7 @@ namespace Allors.Database.Domain.Tests
 
             item.ProductFeature = new ColourBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SalesOrderItem.Product,
@@ -1875,7 +1875,7 @@ namespace Allors.Database.Domain.Tests
 
             item.Product = product;
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SalesOrderItem.Product,
@@ -1895,7 +1895,7 @@ namespace Allors.Database.Domain.Tests
 
             item.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SalesOrderItem.SerialisedItem,
@@ -1915,7 +1915,7 @@ namespace Allors.Database.Domain.Tests
 
             item.ProductFeature = new ColourBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SalesOrderItem.SerialisedItem,
@@ -1973,7 +1973,7 @@ namespace Allors.Database.Domain.Tests
 
             item.ReservedFromSerialisedInventoryItem = serialisedInventoryItem;
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SalesOrderItem.ReservedFromSerialisedInventoryItem,
@@ -2012,7 +2012,7 @@ namespace Allors.Database.Domain.Tests
 
             item.AddSurchargeAdjustment(new SurchargeAdjustmentBuilder(this.Transaction).Build());
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SalesOrderItem.AssignedUnitPrice,
@@ -2030,7 +2030,7 @@ namespace Allors.Database.Domain.Tests
 
             item.AssignedUnitPrice = 1;
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SalesOrderItem.AssignedUnitPrice,

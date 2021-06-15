@@ -3283,7 +3283,7 @@ namespace Allors.Database.Domain.Tests
 
             order.RemoveDerivedShipToAddress();
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorRequired>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SalesOrder.ShipToCustomer,
@@ -3307,7 +3307,7 @@ namespace Allors.Database.Domain.Tests
 
             order.RemoveDerivedBillToContactMechanism();
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorRequired>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SalesOrder.ShipToCustomer,

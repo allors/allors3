@@ -702,7 +702,7 @@ namespace Allors.Database.Domain.Tests
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtLeastOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtLeastOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.PurchaseOrder.TakenViaSupplier,
@@ -720,7 +720,7 @@ namespace Allors.Database.Domain.Tests
 
             order.TakenViaSupplier = this.InternalOrganisation.ActiveSuppliers.First;
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.PurchaseOrder.TakenViaSupplier,
@@ -738,7 +738,7 @@ namespace Allors.Database.Domain.Tests
 
             order.TakenViaSubcontractor = this.InternalOrganisation.ActiveSubContractors.First;
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.PurchaseOrder.TakenViaSupplier,

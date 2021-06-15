@@ -141,7 +141,7 @@ namespace Allors.Database.Domain.Tests
 
             serialisedItem.AcquisitionYear = 2020;
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SerialisedItem.AcquiredDate,
@@ -157,7 +157,7 @@ namespace Allors.Database.Domain.Tests
 
             serialisedItem.AcquiredDate = this.Transaction.Now();
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SerialisedItem.AcquiredDate,

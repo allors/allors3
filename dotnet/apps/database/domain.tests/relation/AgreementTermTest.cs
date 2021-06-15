@@ -159,7 +159,7 @@ namespace Allors.Database.Domain.Tests
 
             agreementTerm.RemoveTermType();
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtLeastOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtLeastOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.InvoiceTerm.TermType,

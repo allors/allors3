@@ -58,7 +58,7 @@ namespace Allors.Database.Domain.Tests
 
             discountComponent.Price = 1;
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.DiscountComponent.Price,
@@ -74,7 +74,7 @@ namespace Allors.Database.Domain.Tests
 
             discountComponent.Percentage = 1;
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.DiscountComponent.Price,

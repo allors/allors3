@@ -123,7 +123,7 @@ namespace Allors.Database.Domain.Tests
                 .WithNextExecutionDate(this.Transaction.Now().AddDays(1))
                 .Build();
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorRequired>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.RepeatingPurchaseInvoice.DayOfWeek,
@@ -189,7 +189,7 @@ namespace Allors.Database.Domain.Tests
                 .WithNextExecutionDate(nextExecutionDate)
                 .Build();
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorNotAllowed>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorNotAllowed>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.RepeatingSalesInvoice.DayOfWeek,
@@ -565,7 +565,7 @@ namespace Allors.Database.Domain.Tests
 
             repeatingInvoice.RemoveDayOfWeek();
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorRequired>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.RepeatingPurchaseInvoice.DayOfWeek,
@@ -582,7 +582,7 @@ namespace Allors.Database.Domain.Tests
 
             repeatingInvoice.DayOfWeek = new DaysOfWeek(this.Transaction).Monday;
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorNotAllowed>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorNotAllowed>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.RepeatingSalesInvoice.DayOfWeek,

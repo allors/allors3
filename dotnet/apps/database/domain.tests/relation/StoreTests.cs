@@ -83,7 +83,7 @@ namespace Allors.Database.Domain.Tests
 
             store.AddFiscalYearsStoreSequenceNumber(new FiscalYearStoreSequenceNumbersBuilder(this.Transaction).Build());
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.Store.FiscalYearsStoreSequenceNumbers,
@@ -99,7 +99,7 @@ namespace Allors.Database.Domain.Tests
 
             store.SalesInvoiceNumberCounter = new CounterBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.Cast<DerivationErrorAtMostOne>();
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.Store.FiscalYearsStoreSequenceNumbers,
