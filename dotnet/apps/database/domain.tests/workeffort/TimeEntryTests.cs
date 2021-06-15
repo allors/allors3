@@ -200,7 +200,7 @@ namespace Allors.Database.Domain.Tests
         {
             var basePrice = new TimeEntryBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
+            var errors = this.Transaction.Derive(false).Errors.ToList();
             Assert.Contains(errors, e => e.Message.StartsWith("TimeEntry.WorkEffort, TimeEntry.EngagementItem at least one"));
         }
 
@@ -209,7 +209,7 @@ namespace Allors.Database.Domain.Tests
         {
             var basePrice = new TimeEntryBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
+            var errors = this.Transaction.Derive(false).Errors.ToList();
             Assert.Contains(errors, e => e.Message.StartsWith("TimeEntry.TimeSheetWhereTimeEntry is required"));
         }
 
@@ -252,9 +252,9 @@ namespace Allors.Database.Domain.Tests
 
         //    employee.TimeSheetWhereWorker.AddTimeEntry(secondTimeEntry);
 
-        //    var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
+        //    var errors = this.Transaction.Derive(false).Errors.ToList();
         //    var expectedMessage = ErrorMessages.WorkerActiveTimeEntry.Replace("{0}", secondTimeEntry.WorkEffort?.WorkEffortNumber);
-        //    Assert.NotNull(errors.Find(e => e.Message.Equals(expectedMessage)));
+        //    Assert.NotNull(errors.Find(e => e.Message.Contains(expectedMessage)));
         //}
     }
 
@@ -1127,7 +1127,7 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(new IRoleType[]
             {
                 this.M.TimeEntry.BillingFrequency,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]

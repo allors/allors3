@@ -7,6 +7,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Allors.Database.Derivations;
     using Resources;
     using Xunit;
@@ -399,9 +400,8 @@ namespace Allors.Database.Domain.Tests
 
             journal.ContraAccount = internalOrganisationGlAccount2;
 
-            var expectedMessage = $"{journal} {this.M.Journal.ContraAccount} {ErrorMessages.ContraAccountChanged}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.ContraAccountChanged));
         }
 
         [Fact]
@@ -491,9 +491,8 @@ namespace Allors.Database.Domain.Tests
 
             journal.JournalType = new JournalTypes(this.Transaction).Cash;
 
-            var expectedMessage = $"{journal} {this.M.Journal.JournalType} {ErrorMessages.JournalTypeChanged}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.JournalTypeChanged));
         }
     }
 
@@ -515,9 +514,8 @@ namespace Allors.Database.Domain.Tests
 
             journal.ContraAccount = new OrganisationGlAccountBuilder(this.Transaction).Build();
 
-            var expectedMessage = $"{journal} {this.M.Journal.ContraAccount} {ErrorMessages.ContraAccountChanged}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.ContraAccountChanged));
         }
 
         [Fact]
@@ -535,9 +533,8 @@ namespace Allors.Database.Domain.Tests
 
             journal.JournalType = new JournalTypeBuilder(this.Transaction).Build();
 
-            var expectedMessage = $"{journal} {this.M.Journal.JournalType} {ErrorMessages.JournalTypeChanged}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.JournalTypeChanged));
         }
     }
 }

@@ -8,6 +8,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Allors.Database.Derivations;
     using Xunit;
 
@@ -22,7 +23,7 @@ namespace Allors.Database.Domain.Tests
 
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
+            var errors = this.Transaction.Derive(false).Errors.ToList();
             Assert.Contains(errors, e => e.Message.Equals("NonUnifiedGood.Part is required"));
         }
     }

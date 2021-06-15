@@ -7,6 +7,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Allors.Database.Derivations;
     using Xunit;
 
@@ -24,9 +25,8 @@ namespace Allors.Database.Domain.Tests
 
             exchangeRate.FromCurrency = currency;
 
-            var expectedMessage = $"{exchangeRate}, {exchangeRate.FromCurrency}, Currencies can not be same";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains("Currencies can not be same"));
         }
 
         [Fact]
@@ -39,9 +39,8 @@ namespace Allors.Database.Domain.Tests
 
             exchangeRate.ToCurrency = currency;
 
-            var expectedMessage = $"{exchangeRate}, {exchangeRate.FromCurrency}, Currencies can not be same";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains("Currencies can not be same"));
         }
     }
 }

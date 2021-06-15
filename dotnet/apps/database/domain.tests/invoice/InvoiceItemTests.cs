@@ -48,9 +48,8 @@ namespace Allors.Database.Domain.Tests
                                     .WithAmountApplied(extraAmount)
                                     .Build();
 
-            var expectedMessage = $"{invoiceItem} { this.M.PaymentApplication.AmountApplied} { ErrorMessages.PaymentApplicationNotLargerThanInvoiceItemAmount}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedMessage)));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PaymentApplicationNotLargerThanInvoiceItemAmount)));
         }
 
         [Fact]
@@ -71,9 +70,8 @@ namespace Allors.Database.Domain.Tests
 
             invoiceItem.AssignedUnitPrice = 0;
 
-            var expectedMessage = $"{invoiceItem} { this.M.PaymentApplication.AmountApplied} { ErrorMessages.PaymentApplicationNotLargerThanInvoiceItemAmount}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedMessage)));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PaymentApplicationNotLargerThanInvoiceItemAmount)));
         }
 
         [Fact]
@@ -94,9 +92,8 @@ namespace Allors.Database.Domain.Tests
 
             invoiceItem.AssignedUnitPrice = 0;
 
-            var expectedMessage = $"{invoiceItem} { this.M.PaymentApplication.AmountApplied} { ErrorMessages.PaymentApplicationNotLargerThanInvoiceItemAmount}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedMessage)));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PaymentApplicationNotLargerThanInvoiceItemAmount)));
         }
     }
 }

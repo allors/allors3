@@ -83,11 +83,10 @@ namespace Allors.Database.Domain.Tests
             shipment.AddShipmentItem(shipmentItem);
             this.Transaction.Derive(false);
 
-            var orderShipment = new OrderShipmentBuilder(this.Transaction).WithQuantity(orderItem.QuantityOrdered + 1).WithOrderItem(orderItem).WithShipmentItem(shipmentItem).Build();
+            new OrderShipmentBuilder(this.Transaction).WithQuantity(orderItem.QuantityOrdered + 1).WithOrderItem(orderItem).WithShipmentItem(shipmentItem).Build();
 
-            var expectedMessage = $"{orderShipment}, { this.M.OrderShipment.Quantity}, { ErrorMessages.SalesOrderItemQuantityToShipNowNotAvailable}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.SalesOrderItemQuantityToShipNowNotAvailable));
         }
     }
 }

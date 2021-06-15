@@ -69,7 +69,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.PostalAddress.PostalAddressBoundaries,
                 this.M.PostalAddress.Locality,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -87,7 +87,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.PostalAddress.PostalAddressBoundaries,
                 this.M.PostalAddress.Region,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -105,7 +105,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.PostalAddress.PostalAddressBoundaries,
                 this.M.PostalAddress.PostalCode,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -123,7 +123,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.PostalAddress.PostalAddressBoundaries,
                 this.M.PostalAddress.Country,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -141,7 +141,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.PostalAddress.PostalAddressBoundaries,
                 this.M.PostalAddress.Locality,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -155,10 +155,7 @@ namespace Allors.Database.Domain.Tests
             postalAddress.RemoveCountry();
 
             var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
-            Assert.Equal(new IRoleType[]
-            {
-                this.M.PostalAddress.Country,
-            }, errors.SelectMany(v => v.RoleTypes));
+            Assert.Contains(this.M.PostalAddress.Country, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -175,7 +172,7 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(new IRoleType[]
             {
                 this.M.PostalAddress.Locality,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
     }
 }

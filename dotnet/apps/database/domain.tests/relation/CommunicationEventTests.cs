@@ -217,7 +217,7 @@ namespace Allors.Database.Domain.Tests
 
             phoneComEvent.ScheduledEnd = this.Transaction.Now().AddHours(-1);
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
+            var errors = this.Transaction.Derive(false).Errors.ToList();
             Assert.Contains(errors, e => e.Message.StartsWith("Scheduled end date before scheduled start date"));
         }
 
@@ -229,7 +229,7 @@ namespace Allors.Database.Domain.Tests
 
             phoneComEvent.ActualEnd = this.Transaction.Now().AddHours(-1);
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
+            var errors = this.Transaction.Derive(false).Errors.ToList();
             Assert.Contains(errors, e => e.Message.StartsWith("Actual end date before actual start date"));
         }
 

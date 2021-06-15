@@ -807,9 +807,8 @@ namespace Allors.Database.Domain.Tests
 
             workTask.TakenBy = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
 
-            var expectedMessage = $"{workTask} { this.M.WorkTask.TakenBy} { ErrorMessages.InternalOrganisationChanged}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InternalOrganisationChanged));
         }
 
         [Fact]
@@ -903,7 +902,7 @@ namespace Allors.Database.Domain.Tests
 
             worker.TimeSheetWhereWorker.AddTimeEntry(timeEntry);
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
+            var errors = this.Transaction.Derive(false).Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains("No Work Effort Party Assignment matches Worker"));
         }
 

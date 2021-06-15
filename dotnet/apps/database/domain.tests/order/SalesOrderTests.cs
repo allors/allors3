@@ -1939,9 +1939,8 @@ namespace Allors.Database.Domain.Tests
 
             item4.QuantityOrdered = 0;
 
-            var expectedMessage = $"{item4} {this.M.SalesOrderItem.QuantityOrdered} {ErrorMessages.InvalidQuantity}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
         }
 
         [Fact]
@@ -1991,9 +1990,8 @@ namespace Allors.Database.Domain.Tests
 
             item4.RemoveAssignedUnitPrice();
 
-            var expectedMessage = $"{item4}, {this.M.SalesOrderItem.UnitBasePrice} No BasePrice with a Price";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains("No BasePrice with a Price"));
 
             Assert.Contains(item1, order.ValidOrderItems);
             Assert.Contains(item2, order.ValidOrderItems);
@@ -3143,8 +3141,7 @@ namespace Allors.Database.Domain.Tests
 
             order.TakenBy = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
 
-            var expectedError = $"{order} {this.M.SalesOrder.TakenBy} {ErrorMessages.InternalOrganisationChanged}";
-            Assert.Equal(expectedError, this.Transaction.Derive(false).Errors[0].Message);
+            Assert.Contains(ErrorMessages.InternalOrganisationChanged, this.Transaction.Derive(false).Errors.Select(v => v.Message));
         }
 
         [Fact]
@@ -3246,9 +3243,8 @@ namespace Allors.Database.Domain.Tests
 
             var order = new SalesOrderBuilder(this.Transaction).WithBillToCustomer(customer).Build();
 
-            var expectedMessage = $"{order} {this.M.SalesOrder.BillToCustomer} { ErrorMessages.PartyIsNotACustomer}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotACustomer));
         }
 
         [Fact]
@@ -3261,9 +3257,8 @@ namespace Allors.Database.Domain.Tests
 
             var order = new SalesOrderBuilder(this.Transaction).WithShipToCustomer(customer).Build();
 
-            var expectedMessage = $"{order} {this.M.SalesOrder.ShipToCustomer} { ErrorMessages.PartyIsNotACustomer}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotACustomer));
         }
 
         [Fact]
@@ -3284,10 +3279,7 @@ namespace Allors.Database.Domain.Tests
             order.RemoveDerivedShipToAddress();
 
             var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
-            Assert.Equal(new IRoleType[]
-            {
-                this.M.SalesOrder.ShipToCustomer,
-            }, errors.SelectMany(v => v.RoleTypes));
+            Assert.Equal(this.M.SalesOrder.ShipToCustomer, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -3308,10 +3300,7 @@ namespace Allors.Database.Domain.Tests
             order.RemoveDerivedBillToContactMechanism();
 
             var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
-            Assert.Equal(new IRoleType[]
-            {
-                this.M.SalesOrder.ShipToCustomer,
-            }, errors.SelectMany(v => v.RoleTypes));
+            Assert.Contains(this.M.SalesOrder.ShipToCustomer, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -3466,7 +3455,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.True(order.CanInvoice);
 
-            foreach(SalesOrderItem salesOrderItem in order.SalesOrderItems)
+            foreach (SalesOrderItem salesOrderItem in order.SalesOrderItems)
             {
                 salesOrderItem.Cancel();
             }
@@ -3880,9 +3869,8 @@ namespace Allors.Database.Domain.Tests
             var orderItem = new SalesOrderItemBuilder(this.Transaction).WithProduct(product).WithQuantityOrdered(1).Build();
             order.AddSalesOrderItem(orderItem);
 
-            var expectedMessage = $"{orderItem}, {this.M.SalesOrderItem.UnitBasePrice} No BasePrice with a Price";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains("No BasePrice with a Price"));
 
             Assert.Equal(0, order.TotalExVat);
 
@@ -4685,7 +4673,7 @@ namespace Allors.Database.Domain.Tests
 
             invoice.Send();
             this.Transaction.Derive();
-       
+
             var paymentApplication = new PaymentApplicationBuilder(this.Transaction)
                 .WithInvoiceItem(invoiceItem)
                 .WithAmountApplied(invoiceItem.TotalIncVat - 1)

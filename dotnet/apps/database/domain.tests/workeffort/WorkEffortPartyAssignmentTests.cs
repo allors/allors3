@@ -87,7 +87,7 @@ namespace Allors.Database.Domain.Tests
 
             employee.TimeSheetWhereWorker.AddTimeEntry(timeEntry);
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
+            var errors = this.Transaction.Derive(false).Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains("No Work Effort Party Assignment matches Worker"));
 
             // Re-Arrange
@@ -101,7 +101,7 @@ namespace Allors.Database.Domain.Tests
             employee.TimeSheetWhereWorker.AddTimeEntry(timeEntry);
 
             // Act
-            errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
+            errors = this.Transaction.Derive(false).Errors.ToList();
 
             // Assert
             Assert.Empty(errors);
@@ -134,9 +134,8 @@ namespace Allors.Database.Domain.Tests
 
             workEffortPartyAssignment.AddAssignmentRate(assignedRate);
 
-            var expectedMessage = $"{workEffortPartyAssignment}, { this.M.WorkEffortPartyAssignment.AssignmentRates}, { ErrorMessages.WorkEffortRateError}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.WorkEffortRateError));
         }
     }
 }

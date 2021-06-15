@@ -7,6 +7,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Allors.Database.Derivations;
     using Resources;
     using Xunit;
@@ -163,9 +164,8 @@ namespace Allors.Database.Domain.Tests
 
             packagingContent.ShipmentItem = shipmentItem;
 
-            var expectedMessage = $"{packagingContent}, { this.M.PackagingContent.Quantity}, { ErrorMessages.PackagingContentMaximum}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PackagingContentMaximum));
         }
 
         [Fact]
@@ -183,9 +183,8 @@ namespace Allors.Database.Domain.Tests
 
             shipmentItem.Quantity = 9;
 
-            var expectedMessage = $"{packagingContent}, { this.M.PackagingContent.Quantity}, { ErrorMessages.PackagingContentMaximum}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PackagingContentMaximum));
         }
 
         [Fact]
@@ -203,9 +202,8 @@ namespace Allors.Database.Domain.Tests
 
             shipmentItem.QuantityShipped = 1;
 
-            var expectedMessage = $"{packagingContent}, { this.M.PackagingContent.Quantity}, { ErrorMessages.PackagingContentMaximum}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PackagingContentMaximum));
         }
     }
 }

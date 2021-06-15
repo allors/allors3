@@ -124,7 +124,7 @@ namespace Allors.Database.Domain.Tests
         {
             new InvoiceTermBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
+            var errors = this.Transaction.Derive(false).Errors.ToList();
             Assert.Contains(errors, e => e.Message.StartsWith("InvoiceTerm.TermType, InvoiceTerm.Description at least one"));
         }
     }
@@ -140,12 +140,12 @@ namespace Allors.Database.Domain.Tests
                 .WithDescription("description")
                 .Build();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
+            var errors = this.Transaction.Derive(false).Errors.ToList();
             Assert.DoesNotContain(errors, e => e.Message.StartsWith("InvoiceTerm.TermType, InvoiceTerm.Description at least one"));
 
             agreementTerm.RemoveDescription();
 
-            errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
+            errors = this.Transaction.Derive(false).Errors.ToList();
             Assert.Contains(errors, e => e.Message.StartsWith("InvoiceTerm.TermType, InvoiceTerm.Description at least one"));
         }
 
@@ -164,7 +164,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.InvoiceTerm.TermType,
                 this.M.InvoiceTerm.Description,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
     }
 }

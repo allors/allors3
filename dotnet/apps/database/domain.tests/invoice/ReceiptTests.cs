@@ -7,6 +7,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Database.Derivations;
     using Resources;
     using Xunit;
@@ -154,10 +155,9 @@ namespace Allors.Database.Domain.Tests
 
             receipt.AddPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice.SalesInvoiceItems[0]).WithAmountApplied(1).Build());
 
-            var expectedMessage = $"{receipt} { this.M.Payment.Amount} { ErrorMessages.PaymentAmountIsToSmall}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
+            var errors = this.Transaction.Derive(false).Errors.ToList();
 
-            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedMessage)));
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PaymentAmountIsToSmall)));
         }
 
         private void InstantiateObjects(ITransaction transaction)

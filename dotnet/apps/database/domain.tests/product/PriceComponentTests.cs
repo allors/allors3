@@ -355,7 +355,7 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(new IRoleType[]
             {
                 this.M.BasePrice.Currency,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]

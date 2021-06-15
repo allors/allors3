@@ -53,9 +53,8 @@ namespace Allors.Database.Domain.Tests
 
             receipt.AddPaymentApplication(paymentApplication);
 
-            var expectedMessage = $"{receipt} {this.M.Payment.Amount} {ErrorMessages.PaymentAmountIsToSmall}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Contains(expectedMessage)));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PaymentAmountIsToSmall)));
         }
 
         [Fact]
@@ -73,12 +72,9 @@ namespace Allors.Database.Domain.Tests
                                         .WithAmountApplied(partialAmount)
                                         .Build();
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtLeastOne>();
-            Assert.Equal(new IRoleType[]
-            {
-                this.M.PaymentApplication.AmountApplied,
-                this.M.InvoiceItem.AmountPaid,
-            }, errors.SelectMany(v => v.RoleTypes));
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtLeastOne>().ToList();
+            Assert.Contains(this.M.PaymentApplication.AmountApplied, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.InvoiceItem.AmountPaid, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -96,10 +92,7 @@ namespace Allors.Database.Domain.Tests
 
             // TODO: Shouldn't this be Required?
             var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtLeastOne>();
-            Assert.Equal(new IRoleType[]
-            {
-                this.M.PaymentApplication.AmountApplied,
-            }, errors.SelectMany(v => v.RoleTypes));
+            Assert.Contains(this.M.PaymentApplication.AmountApplied, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -119,9 +112,8 @@ namespace Allors.Database.Domain.Tests
                 .WithEffectiveDate(this.Transaction.Now())
                 .Build();
 
-            var expectedMessage = $"{paymentApp} { this.M.PaymentApplication.AmountApplied} { ErrorMessages.PaymentApplicationNotLargerThanPaymentAmount}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Contains(expectedMessage)));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PaymentApplicationNotLargerThanPaymentAmount)));
         }
 
         [Fact]
@@ -141,9 +133,8 @@ namespace Allors.Database.Domain.Tests
                 .WithEffectiveDate(this.Transaction.Now())
                 .Build();
 
-            var expectedMessage = $"{paymentApp} { this.M.PaymentApplication.AmountApplied} { ErrorMessages.PaymentApplicationNotLargerThanInvoiceAmount}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Contains(expectedMessage)));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PaymentApplicationNotLargerThanInvoiceAmount)));
         }
     }
 }

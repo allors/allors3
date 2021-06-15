@@ -105,55 +105,49 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenBankAccount_WhenValidatingIban_ThenIllegalCharactersResultInValidationError()
         {
-            var bankAccount = new BankAccountBuilder(this.Transaction).WithIban("-=jw").Build();
+            new BankAccountBuilder(this.Transaction).WithIban("-=jw").Build();
 
-            var expectedErrorMessage = $"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanIllegalCharacters}";
-
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedErrorMessage)));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.IbanIllegalCharacters)));
 
             this.Transaction.Rollback();
 
             new BankAccountBuilder(this.Transaction).WithIban("TR33000610+51978645,841326").Build();
 
-            errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedErrorMessage)));
+            errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.IbanIllegalCharacters)));
         }
 
         [Fact]
         public void GivenBankAccount_WhenValidatingIban_ThenWrongStructureResultsInValidationError()
         {
-            var bankAccount = new BankAccountBuilder(this.Transaction).WithIban("D497888").Build();
+            new BankAccountBuilder(this.Transaction).WithIban("D497888").Build();
 
-            var expectedErrorMessage = $"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanStructuralFailure}";
-
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedErrorMessage)));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.IbanStructuralFailure)));
         }
 
         [Fact]
         public void GivenBankAccount_WhenValidatingIban_ThenWrongCheckDigitsResultInValidationError()
         {
-            var bankAccount = new BankAccountBuilder(this.Transaction).WithIban("TR000006100519786457841326").Build();
+            new BankAccountBuilder(this.Transaction).WithIban("TR000006100519786457841326").Build();
 
-            var expectedErrorMessage = $"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanCheckDigitsError}";
-
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedErrorMessage)));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.IbanCheckDigitsError)));
 
             this.Transaction.Rollback();
 
             new BankAccountBuilder(this.Transaction).WithIban("TR010006100519786457841326").Build();
 
-            errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedErrorMessage)));
+            errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.IbanCheckDigitsError)));
 
             this.Transaction.Rollback();
 
             new BankAccountBuilder(this.Transaction).WithIban("TR990006100519786457841326").Build();
 
-            errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedErrorMessage)));
+            errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.IbanCheckDigitsError)));
         }
 
         [Fact]
@@ -162,48 +156,42 @@ namespace Allors.Database.Domain.Tests
             var bankAccount = new BankAccountBuilder(this.Transaction).WithIban("XX330006100519786457841326").Build();
             var expectedErrorMessage = $"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanValidationUnavailable}";
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedErrorMessage)));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(expectedErrorMessage)));
         }
 
         [Fact]
         public void GivenBankAccount_WhenValidatingIban_ThenWronglengthResultsInValidationError()
         {
-            var bankAccount = new BankAccountBuilder(this.Transaction).WithIban("TR3300061005196457841326").Build();
+            new BankAccountBuilder(this.Transaction).WithIban("TR3300061005196457841326").Build();
 
-            var expectedErrorMessage = $"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanLengthFailure}";
-
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedErrorMessage)));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.IbanLengthFailure)));
 
             this.Transaction.Rollback();
 
             new BankAccountBuilder(this.Transaction).WithIban("TR3300061005197864578413268").Build();
 
-            errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedErrorMessage)));
+            errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.IbanLengthFailure)));
         }
 
         [Fact]
         public void GivenBankAccount_WhenValidatingIban_ThenWrongStuctureForCountryResultsInValidationError()
         {
-            var bankAccount = new BankAccountBuilder(this.Transaction).WithIban("LV80B12K0000435195001").Build();
+            new BankAccountBuilder(this.Transaction).WithIban("LV80B12K0000435195001").Build();
 
-            var expectedErrorMessage = $"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanStructuralFailure}";
-
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedErrorMessage)));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.IbanStructuralFailure)));
         }
 
         [Fact]
         public void GivenBankAccount_WhenValidatingIban_ThenInvalidIbanResultsInValidationError()
         {
-            var bankAccount = new BankAccountBuilder(this.Transaction).WithIban("TR330006100519716457841326").Build();
+            new BankAccountBuilder(this.Transaction).WithIban("TR330006100519716457841326").Build();
 
-            var expectedErrorMessage = $"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanIncorrect}";
-
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedErrorMessage)));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.IbanIncorrect)));
         }
 
         [Fact]
@@ -228,8 +216,8 @@ namespace Allors.Database.Domain.Tests
             bankAccount.Iban = "TR330006100519716457841326";
 
             var expectedErrorMessage = $"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanIncorrect}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedErrorMessage)));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(expectedErrorMessage)));
         }
 
         [Fact]
@@ -248,7 +236,7 @@ namespace Allors.Database.Domain.Tests
                 this.M.BankAccount.Bank,
                 this.M.BankAccount.Currency,
                 this.M.BankAccount.NameOnAccount
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
     }
 }

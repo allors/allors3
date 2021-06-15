@@ -173,11 +173,8 @@ namespace Allors.Database.Domain.Tests
             quoteItem.InvoiceItemType = new InvoiceItemTypes(this.Transaction).ProductItem;
 
             var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtLeastOne>();
-            Assert.Equal(new IRoleType[]
-            {
-                this.M.QuoteItem.Product,
-                this.M.QuoteItem.ProductFeature,
-            }, errors.SelectMany(v => v.RoleTypes));
+            Assert.Contains(this.M.QuoteItem.Product, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.QuoteItem.ProductFeature, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -203,7 +200,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.QuoteItem.Product,
                 this.M.QuoteItem.ProductFeature,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -229,7 +226,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.QuoteItem.Product,
                 this.M.QuoteItem.ProductFeature,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -250,12 +247,9 @@ namespace Allors.Database.Domain.Tests
 
             quoteItem.Deliverable = deliverable;
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
-            Assert.Equal(new IRoleType[]
-            {
-                this.M.QuoteItem.Product,
-                this.M.QuoteItem.ProductFeature,
-            }, errors.SelectMany(v => v.RoleTypes));
+            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>().ToList();
+            Assert.Contains(this.M.QuoteItem.Product, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.QuoteItem.ProductFeature, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -281,7 +275,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.QuoteItem.Product,
                 this.M.QuoteItem.ProductFeature,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -307,7 +301,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.QuoteItem.SerialisedItem,
                 this.M.QuoteItem.ProductFeature,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -328,9 +322,8 @@ namespace Allors.Database.Domain.Tests
 
             quoteItem.Quantity = 2;
 
-            var expectedMessage = $"{quoteItem}, { this.M.QuoteItem.Quantity}, { ErrorMessages.SerializedItemQuantity}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedMessage)));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.SerializedItemQuantity)));
         }
 
         [Fact]
@@ -805,9 +798,8 @@ namespace Allors.Database.Domain.Tests
             var quoteItem = new QuoteItemBuilder(this.Transaction).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
 
-            var expectedMessage = $"{quoteItem}, {this.M.SalesOrderItem.UnitBasePrice} No BasePrice with a Price";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains("No BasePrice with a Price"));
 
             Assert.Equal(0, quote.TotalExVat);
 

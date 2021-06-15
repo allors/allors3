@@ -7,6 +7,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Allors.Database.Derivations;
     using Resources;
     using Xunit;
@@ -20,7 +21,7 @@ namespace Allors.Database.Domain.Tests
         {
             var basePrice = new BasePriceBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
+            var errors = this.Transaction.Derive(false).Errors.ToList();
             Assert.Contains(errors, e => e.Message.StartsWith("BasePrice.Part, BasePrice.Product, BasePrice.ProductFeature at least one"));
         }
 
@@ -32,7 +33,7 @@ namespace Allors.Database.Domain.Tests
 
             basePrice.RemovePart();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
+            var errors = this.Transaction.Derive(false).Errors.ToList();
             Assert.Contains(errors, e => e.Message.StartsWith("BasePrice.Part, BasePrice.Product, BasePrice.ProductFeature at least one"));
         }
 
@@ -44,9 +45,8 @@ namespace Allors.Database.Domain.Tests
 
             basePrice.OrderQuantityBreak = new OrderQuantityBreakBuilder(this.Transaction).Build();
 
-            var expectedMessage = $"{basePrice} { this.M.BasePrice.OrderQuantityBreak} { ErrorMessages.BasePriceOrderQuantityBreakNotAllowed}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.BasePriceOrderQuantityBreakNotAllowed));
         }
 
         [Fact]
@@ -57,9 +57,8 @@ namespace Allors.Database.Domain.Tests
 
             basePrice.OrderValue = new OrderValueBuilder(this.Transaction).Build();
 
-            var expectedMessage = $"{basePrice} { this.M.BasePrice.OrderValue} { ErrorMessages.BasePriceOrderValueNotAllowed}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.BasePriceOrderValueNotAllowed));
         }
 
         [Fact]

@@ -84,9 +84,8 @@ namespace Allors.Database.Domain.Tests
                 .WithTakenViaSupplier(supplier)
                 .Build();
 
-            var expectedMessage = $"{order} { this.M.PurchaseOrder.TakenViaSupplier} { ErrorMessages.PartyIsNotASupplier}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotASupplier));
 
             new SupplierRelationshipBuilder(this.Transaction).WithSupplier(supplier).Build();
 
@@ -610,9 +609,8 @@ namespace Allors.Database.Domain.Tests
 
             order.OrderedBy = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
 
-            var expectedMessage = $"{order} { this.M.PurchaseOrder.OrderedBy} { ErrorMessages.InternalOrganisationChanged}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InternalOrganisationChanged));
         }
 
         [Fact]
@@ -624,9 +622,8 @@ namespace Allors.Database.Domain.Tests
             var supplierRelationship = this.InternalOrganisation.ActiveSuppliers.First.SupplierRelationshipsWhereSupplier.First;
             supplierRelationship.ThroughDate = supplierRelationship.FromDate;
 
-            var expectedMessage = $"{order} { this.M.PurchaseOrder.TakenViaSupplier} { ErrorMessages.PartyIsNotASupplier}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotASupplier));
         }
 
         [Fact]
@@ -638,9 +635,8 @@ namespace Allors.Database.Domain.Tests
             var supplierRelationship = this.InternalOrganisation.ActiveSuppliers.First.SupplierRelationshipsWhereSupplier.First;
             order.OrderDate = supplierRelationship.FromDate.AddDays(-1);
 
-            var expectedMessage = $"{order} { this.M.PurchaseOrder.TakenViaSupplier} { ErrorMessages.PartyIsNotASupplier}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotASupplier));
         }
 
         [Fact]
@@ -651,9 +647,8 @@ namespace Allors.Database.Domain.Tests
 
             order.TakenViaSupplier = new OrganisationBuilder(this.Transaction).Build();
 
-            var expectedMessage = $"{order} { this.M.PurchaseOrder.TakenViaSupplier} { ErrorMessages.PartyIsNotASupplier}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotASupplier));
         }
 
         [Fact]
@@ -664,9 +659,8 @@ namespace Allors.Database.Domain.Tests
 
             order.TakenViaSubcontractor = new OrganisationBuilder(this.Transaction).Build();
 
-            var expectedMessage = $"{order} { this.M.PurchaseOrder.TakenViaSubcontractor} { ErrorMessages.PartyIsNotASubcontractor}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotASubcontractor));
         }
 
         [Fact]
@@ -678,9 +672,8 @@ namespace Allors.Database.Domain.Tests
             var subcontractorRelationship = this.InternalOrganisation.ActiveSubContractors.First.SubContractorRelationshipsWhereSubContractor.First;
             subcontractorRelationship.ThroughDate = subcontractorRelationship.FromDate;
 
-            var expectedMessage = $"{order} { this.M.PurchaseOrder.TakenViaSubcontractor} { ErrorMessages.PartyIsNotASubcontractor}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotASubcontractor));
         }
 
         [Fact]
@@ -692,9 +685,8 @@ namespace Allors.Database.Domain.Tests
             var subcontractorRelationship = this.InternalOrganisation.ActiveSubContractors.First.SubContractorRelationshipsWhereSubContractor.First;
             order.OrderDate = subcontractorRelationship.FromDate.AddDays(-1);
 
-            var expectedMessage = $"{order} { this.M.PurchaseOrder.TakenViaSubcontractor} { ErrorMessages.PartyIsNotASubcontractor}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotASubcontractor));
         }
 
         [Fact]
@@ -707,7 +699,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.PurchaseOrder.TakenViaSupplier,
                 this.M.PurchaseOrder.TakenViaSubcontractor,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -725,7 +717,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.PurchaseOrder.TakenViaSupplier,
                 this.M.PurchaseOrder.TakenViaSubcontractor,
-           }, errors.SelectMany(v => v.RoleTypes));
+           }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -743,7 +735,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.PurchaseOrder.TakenViaSupplier,
                 this.M.PurchaseOrder.TakenViaSubcontractor,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]

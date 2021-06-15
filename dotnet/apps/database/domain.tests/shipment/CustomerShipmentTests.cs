@@ -7,6 +7,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Allors.Database.Derivations;
     using Allors.Database.Domain.TestPopulation;
     using Xunit;
@@ -1351,7 +1352,7 @@ namespace Allors.Database.Domain.Tests
         {
             new CustomerShipmentBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
+            var errors = this.Transaction.Derive(false).Errors.ToList();
             Assert.Contains(errors, e => e.Message.Equals("CustomerShipment.ShipToParty is required"));
         }
     }

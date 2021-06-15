@@ -7,6 +7,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Allors.Database.Derivations;
     using Resources;
     using Xunit;
@@ -101,11 +102,10 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedBicThrowValidationError()
         {
-            var bank = new BankBuilder(this.Transaction).WithBic("invalid").Build();
+            new BankBuilder(this.Transaction).WithBic("invalid").Build();
 
-            var expectedMessage = $"{bank}, {bank.Bic}, {ErrorMessages.NotAValidBic}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.NotAValidBic));
         }
     }
 }

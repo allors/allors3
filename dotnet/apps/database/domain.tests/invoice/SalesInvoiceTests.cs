@@ -169,8 +169,7 @@ namespace Allors.Database.Domain.Tests
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Transaction).SalesInvoice)
                 .Build();
 
-            var expectedError = $"{salesInvoice} {this.M.SalesInvoice.BillToCustomer} {ErrorMessages.PartyIsNotACustomer}";
-            Assert.Equal(expectedError, this.Transaction.Derive(false).Errors[0].Message);
+            Assert.Contains(ErrorMessages.PartyIsNotACustomer, this.Transaction.Derive(false).Errors[0].Message);
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).Build();
 
@@ -196,12 +195,11 @@ namespace Allors.Database.Domain.Tests
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Transaction).SalesInvoice)
                 .Build();
 
-            var expectedError = $"{salesInvoice} {this.M.SalesInvoice.ShipToCustomer} {ErrorMessages.PartyIsNotACustomer}";
-            Assert.Contains(expectedError, this.Transaction.Derive(false).Errors.Select(v => v.Message));
+            Assert.Contains(ErrorMessages.PartyIsNotACustomer, this.Transaction.Derive(false).Errors.Select(v => v.Message));
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(shipToCustomer).Build();
 
-            Assert.DoesNotContain(expectedError, this.Transaction.Derive(false).Errors.Select(v => v.Message));
+            Assert.DoesNotContain(ErrorMessages.PartyIsNotACustomer, this.Transaction.Derive(false).Errors.Select(v => v.Message));
         }
 
         [Fact]
@@ -1549,8 +1547,7 @@ namespace Allors.Database.Domain.Tests
 
             invoice.BilledFrom = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
 
-            var expectedError = $"{invoice} {this.M.SalesInvoice.BilledFrom} {ErrorMessages.InternalOrganisationChanged}";
-            Assert.Equal(expectedError, this.Transaction.Derive(false).Errors[0].Message);
+            Assert.Contains(ErrorMessages.InternalOrganisationChanged, this.Transaction.Derive(false).Errors[0].Message);
         }
 
         [Fact]
@@ -1632,9 +1629,8 @@ namespace Allors.Database.Domain.Tests
 
             var invoice = new SalesInvoiceBuilder(this.Transaction).WithBillToCustomer(customer).Build();
 
-            var expectedMessage = $"{invoice} {this.M.SalesInvoice.BillToCustomer} { ErrorMessages.PartyIsNotACustomer}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotACustomer));
         }
 
         [Fact]
@@ -1647,9 +1643,8 @@ namespace Allors.Database.Domain.Tests
 
             var invoice = new SalesInvoiceBuilder(this.Transaction).WithShipToCustomer(customer).Build();
 
-            var expectedMessage = $"{invoice} {this.M.SalesInvoice.ShipToCustomer} { ErrorMessages.PartyIsNotACustomer}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotACustomer));
         }
 
         [Fact]
@@ -1746,11 +1741,9 @@ namespace Allors.Database.Domain.Tests
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             var invoice = new SalesInvoiceBuilder(this.Transaction).WithBillToCustomer(customer).Build();
 
-            var expectedMessage = $"{invoice} {this.M.SalesInvoice.BillToCustomer} { ErrorMessages.PartyIsNotACustomer}";
-
             customer.CustomerRelationshipsWhereCustomer.First.FromDate = invoice.InvoiceDate.AddDays(+1);
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotACustomer));
         }
 
         [Fact]
@@ -1759,11 +1752,9 @@ namespace Allors.Database.Domain.Tests
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             var invoice = new SalesInvoiceBuilder(this.Transaction).WithBillToCustomer(customer).Build();
 
-            var expectedMessage = $"{invoice} {this.M.SalesInvoice.BillToCustomer} { ErrorMessages.PartyIsNotACustomer}";
-
             customer.CustomerRelationshipsWhereCustomer.First.ThroughDate = this.Transaction.Now().AddDays(-1);
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotACustomer));
         }
 
         [Fact]
@@ -1772,11 +1763,9 @@ namespace Allors.Database.Domain.Tests
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             var invoice = new SalesInvoiceBuilder(this.Transaction).WithShipToCustomer(customer).Build();
 
-            var expectedMessage = $"{invoice} {this.M.SalesInvoice.ShipToCustomer} { ErrorMessages.PartyIsNotACustomer}";
-
             customer.CustomerRelationshipsWhereCustomer.First.FromDate = invoice.InvoiceDate.AddDays(+1);
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotACustomer));
         }
 
         [Fact]
@@ -1785,11 +1774,9 @@ namespace Allors.Database.Domain.Tests
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             var invoice = new SalesInvoiceBuilder(this.Transaction).WithShipToCustomer(customer).Build();
 
-            var expectedMessage = $"{invoice} {this.M.SalesInvoice.ShipToCustomer} { ErrorMessages.PartyIsNotACustomer}";
-
             customer.CustomerRelationshipsWhereCustomer.First.ThroughDate = this.Transaction.Now().AddDays(-1);
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotACustomer));
         }
 
         [Fact]
@@ -1798,13 +1785,12 @@ namespace Allors.Database.Domain.Tests
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             var invoice = new SalesInvoiceBuilder(this.Transaction).WithBillToCustomer(customer).Build();
 
-            var expectedMessage = $"{invoice} {this.M.SalesInvoice.BillToCustomer} { ErrorMessages.PartyIsNotACustomer}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.DoesNotContain(errors, e => e.Message.Contains(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.DoesNotContain(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotACustomer));
 
             invoice.InvoiceDate = customer.CustomerRelationshipsWhereCustomer.First.FromDate.AddDays(-1);
-            errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+            errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotACustomer));
         }
 
         [Fact]
@@ -1813,13 +1799,12 @@ namespace Allors.Database.Domain.Tests
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             var invoice = new SalesInvoiceBuilder(this.Transaction).WithShipToCustomer(customer).Build();
 
-            var expectedMessage = $"{invoice} {this.M.SalesInvoice.ShipToCustomer} { ErrorMessages.PartyIsNotACustomer}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.DoesNotContain(errors, e => e.Message.Contains(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.DoesNotContain(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotACustomer));
 
             invoice.InvoiceDate = customer.CustomerRelationshipsWhereCustomer.First.FromDate.AddDays(-1);
-            errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+            errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotACustomer));
         }
 
         [Fact]
@@ -2474,9 +2459,8 @@ namespace Allors.Database.Domain.Tests
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(product).WithQuantity(1).Build();
             invoice.AddSalesInvoiceItem(invoiceItem);
 
-            var expectedMessage = $"{invoiceItem}, {this.M.SalesOrderItem.UnitBasePrice} No BasePrice with a Price";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains("No BasePrice with a Price"));
 
             Assert.Equal(0, invoice.TotalIncVat);
 

@@ -190,8 +190,7 @@ namespace Allors.Database.Domain.Tests
 
             quote.Issuer = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
 
-            var expectedError = $"{quote} {this.M.ProductQuote.Issuer} {ErrorMessages.InternalOrganisationChanged}";
-            Assert.Equal(expectedError, this.Transaction.Derive(false).Errors[0].Message);
+            Assert.Contains(ErrorMessages.InternalOrganisationChanged, this.Transaction.Derive(false).Errors[0].Message);
         }
 
         [Fact]

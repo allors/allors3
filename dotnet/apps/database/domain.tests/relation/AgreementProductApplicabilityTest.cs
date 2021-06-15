@@ -22,7 +22,7 @@ namespace Allors.Database.Domain.Tests
         {
             new AgreementProductApplicabilityBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
+            var errors = this.Transaction.Derive(false).Errors.ToList();
             Assert.Contains(errors, e => e.Message.StartsWith("AgreementProductApplicability.Agreement, AgreementProductApplicability.AgreementItem at least one"));
         }
     }
@@ -38,12 +38,12 @@ namespace Allors.Database.Domain.Tests
                 .WithAgreement(new SalesAgreementBuilder(this.Transaction).Build())
                 .Build();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
+            var errors = this.Transaction.Derive(false).Errors.ToList();
             Assert.DoesNotContain(errors, e => e.Message.StartsWith("AgreementProductApplicability.Agreement, AgreementProductApplicability.AgreementItem at least one"));
 
             agreementProductApplicability.RemoveAgreement();
 
-            errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
+            errors = this.Transaction.Derive(false).Errors.ToList();
             Assert.Contains(errors, e => e.Message.StartsWith("AgreementProductApplicability.Agreement, AgreementProductApplicability.AgreementItem at least one"));
         }
 
@@ -63,7 +63,7 @@ namespace Allors.Database.Domain.Tests
                {
                 this.M.AgreementProductApplicability.Agreement,
                 this.M.AgreementProductApplicability.AgreementItem,
-               }, errors.SelectMany(v => v.RoleTypes));
+               }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -81,7 +81,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.AgreementProductApplicability.Agreement,
                 this.M.AgreementProductApplicability.AgreementItem,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
     }
 }

@@ -7,6 +7,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Allors.Database.Derivations;
     using Resources;
     using Xunit;
@@ -150,9 +151,8 @@ namespace Allors.Database.Domain.Tests
 
             chart.AddGeneralLedgerAccount(glAccount0001Dup);
 
-            var expectedMessage = $"{glAccount0001Dup}, { this.M.GeneralLedgerAccount.ReferenceNumber}, { ErrorMessages.AccountNumberUniqueWithinChartOfAccounts}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.AccountNumberUniqueWithinChartOfAccounts));
 
             new ChartOfAccountsBuilder(this.Transaction).WithName("another Chart").WithGeneralLedgerAccount(glAccount0001Dup).Build();
 
@@ -179,9 +179,8 @@ namespace Allors.Database.Domain.Tests
                                                             .Build())
                 .Build();
 
-            var expectedMessage = $"{glAccount}, { this.M.GeneralLedgerAccount.CostCenterRequired}, { ErrorMessages.NotACostCenterAccount}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.NotACostCenterAccount));
         }
 
         [Fact]
@@ -204,9 +203,8 @@ namespace Allors.Database.Domain.Tests
                                                             .Build())
                 .Build();
 
-            var expectedMessage = $"{glAccount}, { this.M.GeneralLedgerAccount.CostUnitRequired}, { ErrorMessages.NotACostUnitAccount}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.NotACostUnitAccount));
         }
     }
 
@@ -281,9 +279,8 @@ namespace Allors.Database.Domain.Tests
             var glAccount = new GeneralLedgerAccountBuilder(this.Transaction).WithReferenceNumber("1").Build();
             chartOfAccounts.AddGeneralLedgerAccount(glAccount);
 
-            var expectedMessage = $"{glAccount}, { this.M.GeneralLedgerAccount.ReferenceNumber}, { ErrorMessages.AccountNumberUniqueWithinChartOfAccounts}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.AccountNumberUniqueWithinChartOfAccounts));
         }
 
         [Fact]
@@ -297,14 +294,13 @@ namespace Allors.Database.Domain.Tests
             var glAccount = new GeneralLedgerAccountBuilder(this.Transaction).WithReferenceNumber("2").Build();
             chartOfAccounts.AddGeneralLedgerAccount(glAccount);
 
-            var expectedMessage = $"{glAccount}, { this.M.GeneralLedgerAccount.ReferenceNumber}, { ErrorMessages.AccountNumberUniqueWithinChartOfAccounts}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.DoesNotContain(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.DoesNotContain(errors, e => e.Message.Contains(ErrorMessages.AccountNumberUniqueWithinChartOfAccounts));
 
             glAccount.ReferenceNumber = "1";
 
-            errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.AccountNumberUniqueWithinChartOfAccounts));
         }
 
         [Fact]
@@ -315,9 +311,8 @@ namespace Allors.Database.Domain.Tests
 
             glAccount.CostCenterRequired = true;
 
-            var expectedMessage = $"{glAccount}, { this.M.GeneralLedgerAccount.CostCenterRequired}, { ErrorMessages.NotACostCenterAccount}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.NotACostCenterAccount));
         }
 
         [Fact]
@@ -328,9 +323,8 @@ namespace Allors.Database.Domain.Tests
 
             glAccount.CostCenterAccount = false;
 
-            var expectedMessage = $"{glAccount}, { this.M.GeneralLedgerAccount.CostCenterRequired}, { ErrorMessages.NotACostCenterAccount}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.NotACostCenterAccount));
         }
 
         [Fact]
@@ -341,9 +335,8 @@ namespace Allors.Database.Domain.Tests
 
             glAccount.CostUnitRequired = true;
 
-            var expectedMessage = $"{glAccount}, { this.M.GeneralLedgerAccount.CostUnitRequired}, { ErrorMessages.NotACostUnitAccount}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.NotACostUnitAccount));
         }
 
         [Fact]
@@ -354,9 +347,8 @@ namespace Allors.Database.Domain.Tests
 
             glAccount.CostUnitAccount = false;
 
-            var expectedMessage = $"{glAccount}, { this.M.GeneralLedgerAccount.CostUnitRequired}, { ErrorMessages.NotACostUnitAccount}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.NotACostUnitAccount));
         }
     }
 }

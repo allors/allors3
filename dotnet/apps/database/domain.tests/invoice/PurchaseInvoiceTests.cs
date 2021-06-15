@@ -51,9 +51,8 @@ namespace Allors.Database.Domain.Tests
                 .WithBilledFrom(supplier2)
                 .Build();
 
-            var expectedMessage = $"{invoice} { this.M.PurchaseInvoice.BilledFrom} { ErrorMessages.PartyIsNotASupplier}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotASupplier));
 
             new SupplierRelationshipBuilder(this.Transaction).WithSupplier(supplier2).Build();
 
@@ -309,9 +308,8 @@ namespace Allors.Database.Domain.Tests
 
             invoice.BilledTo = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
 
-            var expectedMessage = $"{invoice} { this.M.PurchaseInvoice.BilledTo} { ErrorMessages.InternalOrganisationChanged}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InternalOrganisationChanged));
         }
 
         [Fact]
@@ -340,9 +338,8 @@ namespace Allors.Database.Domain.Tests
 
             invoice.BilledFrom = new OrganisationBuilder(this.Transaction).Build();
 
-            var expectedMessage = $"{invoice} { this.M.PurchaseInvoice.BilledFrom} { ErrorMessages.PartyIsNotASupplier}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotASupplier));
         }
 
         [Fact]

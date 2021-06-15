@@ -68,10 +68,7 @@ namespace Allors.Database.Domain.Tests
             partyContactMechanism.UseAsDefault = true;
 
             var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
-            Assert.Equal(new IRoleType[]
-            {
-                this.M. PartyContactMechanism.ContactPurposes,
-            }, errors.SelectMany(v => v.RoleTypes));
+            Assert.Contains(this.M.PartyContactMechanism.ContactPurposes, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -91,7 +88,7 @@ namespace Allors.Database.Domain.Tests
                 Assert.Equal(new IRoleType[]
                 {
                     this.M.PartyContactMechanism.ContactPurposes,
-                }, errors.SelectMany(v => v.RoleTypes));
+                }, errors.SelectMany(v => v.RoleTypes).Distinct());
             }
         }
 

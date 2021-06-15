@@ -2020,11 +2020,8 @@ namespace Allors.Database.Domain.Tests
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
             var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
-            Assert.Equal(new IRoleType[]
-            {
-                this.M.SalesInvoiceItem.Product,
-                this.M.SalesInvoiceItem.Part,
-            }, errors.SelectMany(v => v.RoleTypes));
+            Assert.Contains(this.M.SalesInvoiceItem.Product, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.SalesInvoiceItem.Part, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -2043,7 +2040,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.SalesInvoiceItem.Product,
                 this.M.SalesInvoiceItem.ProductFeatures,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -2062,7 +2059,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.SalesInvoiceItem.SerialisedItem,
                 this.M.SalesInvoiceItem.ProductFeatures,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -2081,7 +2078,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.SalesInvoiceItem.SerialisedItem,
                 this.M.SalesInvoiceItem.Part,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -2098,7 +2095,7 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(new IRoleType[]
             {
                 this.M.SalesInvoiceItem.NextSerialisedItemAvailability,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -2111,9 +2108,8 @@ namespace Allors.Database.Domain.Tests
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithPart(part).WithQuantity(1).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var expectedMessage = $"{invoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.DoesNotContain(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.DoesNotContain(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
         }
 
         [Fact]
@@ -2126,9 +2122,8 @@ namespace Allors.Database.Domain.Tests
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithPart(part).WithQuantity(2).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var expectedMessage = $"{invoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedMessage)));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.InvalidQuantity)));
         }
 
         [Fact]
@@ -2141,9 +2136,8 @@ namespace Allors.Database.Domain.Tests
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithPart(part).WithQuantity(0).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var expectedMessage = $"{invoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedMessage)));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.InvalidQuantity)));
         }
 
         [Fact]
@@ -2156,9 +2150,8 @@ namespace Allors.Database.Domain.Tests
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithPart(part).WithQuantity(0).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var expectedMessage = $"{invoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedMessage)));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.InvalidQuantity)));
         }
 
         [Fact]
@@ -2172,9 +2165,8 @@ namespace Allors.Database.Domain.Tests
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithInvoiceItemType(service).WithQuantity(service.MaxQuantity + 1).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var expectedMessage = $"{invoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedMessage)));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.InvalidQuantity)));
         }
 
         [Fact]
@@ -2188,9 +2180,8 @@ namespace Allors.Database.Domain.Tests
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithInvoiceItemType(service).WithQuantity(service.MaxQuantity).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var expectedMessage = $"{invoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.DoesNotContain(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.DoesNotContain(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
         }
 
         [Fact]
@@ -2403,9 +2394,8 @@ namespace Allors.Database.Domain.Tests
 
             invoiceItem.InvoiceItemType = new InvoiceItemTypes(this.Transaction).PartItem;
 
-            var expectedMessage = $"{invoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
         }
 
         [Fact]
@@ -2416,9 +2406,8 @@ namespace Allors.Database.Domain.Tests
 
             invoiceItem.Quantity = 0;
 
-            var expectedMessage = $"{invoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
         }
     }
 

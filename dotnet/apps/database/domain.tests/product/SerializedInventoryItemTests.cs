@@ -333,7 +333,7 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(2)
                 .Build();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
+            var errors = this.Transaction.Derive(false).Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains("Invalid transaction"));
         }
     }

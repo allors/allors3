@@ -41,7 +41,7 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(new IRoleType[]
             {
                 this.M.ShipmentItem.UnitPurchasePrice,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
     }
 
@@ -73,7 +73,7 @@ namespace Allors.Database.Domain.Tests
                 Assert.Equal(new IRoleType[]
                 {
                     this.M.ShipmentItem.NextSerialisedItemAvailability,
-                }, errors.SelectMany(v => v.RoleTypes));
+                }, errors.SelectMany(v => v.RoleTypes).Distinct());
             }
         }
 
@@ -98,7 +98,7 @@ namespace Allors.Database.Domain.Tests
                 Assert.Equal(new IRoleType[]
                 {
                     this.M.ShipmentItem.NextSerialisedItemAvailability,
-                }, errors.SelectMany(v => v.RoleTypes));
+                }, errors.SelectMany(v => v.RoleTypes).Distinct());
             }
         }
 
@@ -116,9 +116,8 @@ namespace Allors.Database.Domain.Tests
 
             shipmentItem.Quantity = 2;
 
-            var expectedMessage = $"{shipmentItem}, { this.M.ShipmentItem.Quantity}, { ErrorMessages.SerializedItemQuantity}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.SerializedItemQuantity));
         }
 
         [Fact]
@@ -133,9 +132,8 @@ namespace Allors.Database.Domain.Tests
 
             shipmentItem.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
 
-            var expectedMessage = $"{shipmentItem}, { this.M.ShipmentItem.Quantity}, { ErrorMessages.SerializedItemQuantity}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.SerializedItemQuantity));
         }
 
         [Fact]
@@ -336,7 +334,7 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(new IRoleType[]
             {
                 this.M.ShipmentItem.UnitPurchasePrice,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -355,7 +353,7 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(new IRoleType[]
             {
                 this.M.ShipmentItem.UnitPurchasePrice,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
     }
 

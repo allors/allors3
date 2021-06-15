@@ -7,6 +7,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Allors.Database.Derivations;
     using Resources;
     using Xunit;
@@ -23,9 +24,8 @@ namespace Allors.Database.Domain.Tests
 
             pickListItem.Quantity = 1;
 
-            var expectedMessage = $"{pickListItem}, { this.M.PickListItem.QuantityPicked}, { ErrorMessages.PickListItemQuantityMoreThanAllowed}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PickListItemQuantityMoreThanAllowed));
         }
 
         [Fact]
@@ -36,9 +36,8 @@ namespace Allors.Database.Domain.Tests
 
             pickListItem.QuantityPicked = 11;
 
-            var expectedMessage = $"{pickListItem}, { this.M.PickListItem.QuantityPicked}, { ErrorMessages.PickListItemQuantityMoreThanAllowed}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PickListItemQuantityMoreThanAllowed));
         }
 
         [Fact]

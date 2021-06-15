@@ -53,9 +53,8 @@ namespace Allors.Database.Domain.Tests
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .Build();
 
-            var expectedMessage = $"{assignmentRate}, { this.M.WorkEffortAssignmentRate.RateType}, { ErrorMessages.WorkEffortRateError}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.WorkEffortRateError));
         }
     }
 
@@ -100,14 +99,13 @@ namespace Allors.Database.Domain.Tests
             var workEffortAssignmentRate2 = new WorkEffortAssignmentRateBuilder(this.Transaction).WithWorkEffort(workTask).WithRateType(new RateTypes(this.Transaction).OvertimeRate).Build();
             this.Transaction.Derive(false);
 
-            var expectedMessage = $"{workEffortAssignmentRate2}, { this.M.WorkEffortAssignmentRate.RateType}, { ErrorMessages.WorkEffortRateError}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.DoesNotContain(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.DoesNotContain(errors, e => e.Message.Contains(ErrorMessages.WorkEffortRateError));
 
             workEffortAssignmentRate2.RateType = new RateTypes(this.Transaction).StandardRate;
 
-            errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.WorkEffortRateError));
         }
     }
 }

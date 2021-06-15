@@ -10,6 +10,7 @@ namespace Allors.Database.Domain.Tests
     using Database.Derivations;
     using Resources;
     using Xunit;
+    using System.Linq;
 
     public class PaymentExtensionTests : DomainTest, IClassFixture<Fixture>
     {
@@ -32,9 +33,8 @@ namespace Allors.Database.Domain.Tests
                 .WithEffectiveDate(this.Transaction.Now())
                 .Build();
 
-            var expectedMessage = $"{receipt} { this.M.Receipt.Amount} { ErrorMessages.PaymentAmountIsToSmall}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.Contains(expectedMessage)));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PaymentAmountIsToSmall)));
         }
     }
 }

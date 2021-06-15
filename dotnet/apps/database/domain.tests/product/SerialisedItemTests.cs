@@ -29,9 +29,8 @@ namespace Allors.Database.Domain.Tests
             var newItem = new SerialisedItemBuilder(this.Transaction).WithSerialNumber(serialNumber).Build();
             good.AddSerialisedItem(newItem);
 
-            var expectedMessage = $"{newItem} { this.M.SerialisedItem.SerialNumber} { ErrorMessages.SameSerialNumber}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.SameSerialNumber));
         }
 
         [Fact]
@@ -146,7 +145,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.SerialisedItem.AcquiredDate,
                 this.M.SerialisedItem.AcquisitionYear,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -162,7 +161,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.SerialisedItem.AcquiredDate,
                 this.M.SerialisedItem.AcquisitionYear,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -300,9 +299,8 @@ namespace Allors.Database.Domain.Tests
 
             serialisedItem2.SerialNumber = "1";
 
-            var expectedMessage = $"{serialisedItem2} { this.M.SerialisedItem.SerialNumber} { ErrorMessages.SameSerialNumber}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.SameSerialNumber));
         }
 
         [Fact]

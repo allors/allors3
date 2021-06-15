@@ -22,7 +22,7 @@ namespace Allors.Database.Domain.Tests
         {
             var surchargeComponent = new SurchargeComponentBuilder(this.Transaction).Build();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
+            var errors = this.Transaction.Derive(false).Errors.ToList();
             Assert.Contains(errors, e => e.Message.StartsWith("SurchargeComponent.Price, SurchargeComponent.Percentage at least one"));
         }
 
@@ -34,7 +34,7 @@ namespace Allors.Database.Domain.Tests
 
             surchargeComponent.RemovePrice();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
+            var errors = this.Transaction.Derive(false).Errors.ToList();
             Assert.Contains(errors, e => e.Message.StartsWith("SurchargeComponent.Price, SurchargeComponent.Percentage at least one"));
         }
 
@@ -46,7 +46,7 @@ namespace Allors.Database.Domain.Tests
 
             surchargeComponent.RemovePercentage();
 
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
+            var errors = this.Transaction.Derive(false).Errors.ToList();
             Assert.Contains(errors, e => e.Message.StartsWith("SurchargeComponent.Price, SurchargeComponent.Percentage at least one"));
         }
 
@@ -63,7 +63,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.SurchargeComponent.Price,
                 this.M.SurchargeComponent.Percentage,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -79,7 +79,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.SurchargeComponent.Price,
                 this.M.SurchargeComponent.Percentage,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
     }
 }

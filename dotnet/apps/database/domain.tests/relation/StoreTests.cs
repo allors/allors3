@@ -88,7 +88,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.Store.FiscalYearsStoreSequenceNumbers,
                 this.M.Store.SalesInvoiceNumberCounter,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -104,7 +104,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.Store.FiscalYearsStoreSequenceNumbers,
                 this.M.Store.SalesInvoiceNumberCounter,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
     }
 }

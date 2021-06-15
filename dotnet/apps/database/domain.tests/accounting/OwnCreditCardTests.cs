@@ -212,7 +212,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.OwnBankAccount.GeneralLedgerAccount,
                 this.M.OwnBankAccount.Journal,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -228,7 +228,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.OwnCreditCard.GeneralLedgerAccount,
                 this.M.OwnCreditCard.Journal,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -244,7 +244,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.OwnCreditCard.GeneralLedgerAccount,
                 this.M.OwnCreditCard.Journal,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]

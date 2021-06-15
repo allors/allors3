@@ -7,6 +7,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Allors.Database.Derivations;
     using Xunit;
 
@@ -225,9 +226,8 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(2)
                 .Build();
 
-            var expectedMessage = $"{inventoryItemTransaction} { this.M.InventoryItemTransaction.Quantity} Serialised Inventory Items only accept Quantities of -1, 0, and 1.";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains("Serialised Inventory Items only accept Quantities of -1, 0, and 1."));
         }
 
         [Fact]
@@ -244,9 +244,8 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(1)
                 .Build();
 
-            var expectedMessage = $"{inventoryItemTransaction} { this.M.InventoryItemTransaction.SerialisedItem} The Serial Number is required for Inventory Item Transactions involving Serialised Inventory Items.";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains("The Serial Number is required for Inventory Item Transactions involving Serialised Inventory Items."));
         }
 
         [Fact]
@@ -263,9 +262,8 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(2)
                 .Build();
 
-            var expectedMessage = $"{inventoryItemTransaction} { this.M.InventoryItemTransaction.Reason} Invalid transaction";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains("Invalid transaction"));
         }
 
         [Fact]
@@ -282,9 +280,8 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(2)
                 .Build();
 
-            var expectedMessage = $"{inventoryItemTransaction} { this.M.InventoryItemTransaction.Reason} Invalid transaction";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains("Invalid transaction"));
         }
 
         [Fact]
@@ -308,9 +305,9 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(1)
                 .Build();
 
-            var expectedMessage = $"{inventoryItemTransaction} { this.M.InventoryItemTransaction.SerialisedItem} Serialised item already in inventory";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var expectedMessage = $"{inventoryItemTransaction} { this.M.InventoryItemTransaction.SerialisedItem} ";
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
         }
     }
 }

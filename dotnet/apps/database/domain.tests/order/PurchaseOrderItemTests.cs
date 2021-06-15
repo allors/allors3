@@ -105,9 +105,8 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddPurchaseOrderItem(item);
 
-            var expectedMessage = $"{item} { this.M.PurchaseOrderItem.QuantityOrdered} { ErrorMessages.InvalidQuantity}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
 
             this.Transaction.Rollback();
 
@@ -119,8 +118,8 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddPurchaseOrderItem(item);
 
-            errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
 
             this.Transaction.Rollback();
 
@@ -155,9 +154,8 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddPurchaseOrderItem(item);
 
-            var expectedMessage = $"{item} { this.M.PurchaseOrderItem.QuantityOrdered} { ErrorMessages.InvalidQuantity}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
 
             this.Transaction.Rollback();
 
@@ -170,8 +168,8 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddPurchaseOrderItem(item);
 
-            errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
 
             this.Transaction.Rollback();
 
@@ -205,9 +203,8 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddPurchaseOrderItem(item);
 
-            var expectedMessage = $"{item} { this.M.PurchaseOrderItem.QuantityOrdered} { ErrorMessages.InvalidQuantity}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
 
             this.Transaction.Rollback();
 
@@ -661,7 +658,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.PurchaseOrderItem.SerialisedItem,
                 this.M.PurchaseOrderItem.SerialNumber,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -682,7 +679,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.PurchaseOrderItem.SerialisedItem,
                 this.M.PurchaseOrderItem.SerialNumber,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -703,7 +700,7 @@ namespace Allors.Database.Domain.Tests
             {
                 this.M.PurchaseOrderItem.SerialisedItem,
                 this.M.PurchaseOrderItem.SerialNumber,
-            }, errors.SelectMany(v => v.RoleTypes));
+            }, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -719,9 +716,8 @@ namespace Allors.Database.Domain.Tests
 
             orderItem.QuantityOrdered = 2;
 
-            var expectedMessage = $"{orderItem} { this.M.PurchaseOrderItem.QuantityOrdered} { ErrorMessages.InvalidQuantity}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
         }
 
         [Fact]
@@ -734,9 +730,8 @@ namespace Allors.Database.Domain.Tests
 
             orderItem.QuantityOrdered = 2;
 
-            var expectedMessage = $"{orderItem} { this.M.PurchaseOrderItem.QuantityOrdered} { ErrorMessages.InvalidQuantity}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
         }
 
         [Fact]
@@ -751,9 +746,8 @@ namespace Allors.Database.Domain.Tests
 
             orderItem.QuantityOrdered = 0;
 
-            var expectedMessage = $"{orderItem} { this.M.PurchaseOrderItem.QuantityOrdered} { ErrorMessages.InvalidQuantity}";
-            var errors = new List<IDerivationError>(this.Transaction.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+            var errors = this.Transaction.Derive(false).Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
         }
 
         [Fact]
