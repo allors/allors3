@@ -3279,7 +3279,7 @@ namespace Allors.Database.Domain.Tests
             order.RemoveDerivedShipToAddress();
 
             var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
-            Assert.Equal(this.M.SalesOrder.ShipToCustomer, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.SalesOrder.ShipToCustomer, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
